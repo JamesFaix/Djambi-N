@@ -18,7 +18,7 @@ namespace Djambi.Model
                 ? throw new InvalidOperationException($"Cannot get {nameof(Error)} from a {nameof(Value)} {nameof(Result)}.") 
                 : _error;
 
-        public bool HasValue => Error == null;
+        public bool HasValue => _error == null;
 
         internal Result(T value, Exception error)
         {

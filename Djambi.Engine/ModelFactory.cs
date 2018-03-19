@@ -11,7 +11,7 @@ namespace Djambi.Engine
         private int _lastPieceId = 0;
         private int NextPieceId => ++_lastPieceId;
 
-        private static readonly Regex _validPlayerNameRegex = new Regex("^[A-Za-z0-9_- ]$");
+        private static readonly Regex _validPlayerNameRegex = new Regex(@"^[A-Za-z0-9_\- ]$");
         
         public Result<GameState> InitializeGame(IEnumerable<string> playerNames)
         {
