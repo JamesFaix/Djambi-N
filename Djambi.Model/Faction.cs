@@ -9,6 +9,9 @@
             Id = id;
         }
 
+        public override string ToString() =>
+            $"Id: {Id}";
+
         public static Faction Create(int id) =>
             new Faction(id);
     }

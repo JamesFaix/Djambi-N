@@ -12,9 +12,10 @@
             Y = y;
         }
 
+        public override string ToString() =>
+            $"({X}, {Y})";
+
         public static Location Create(int x, int y) =>
             new Location(x, y);
-
-        public static Location Default { get; } = new Location(0, 0);
     }
 }

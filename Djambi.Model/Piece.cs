@@ -26,6 +26,9 @@
             Location = location;
         }
 
+        public override string ToString() =>
+            $"Id: {Id}, Type: {Type}, Faction: {Faction}, IsAlive: {IsAlive}, Location: {Location}";
+
         public static Piece Create(
             int id, 
             PieceType type, 

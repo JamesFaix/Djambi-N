@@ -154,7 +154,7 @@ namespace Djambi.Engine
 
             if (piecesOutOfBounds.Any()){
                 return new Exception($"The following pieces are in invalid locations.\n" + 
-                    string.Join("\n", piecesOutOfBounds.Select(p => $"{p.Type} ({p.Location.X}, {p.Location.Y})")))
+                    string.Join("\n", piecesOutOfBounds.Select(p => $"{p.Type} {p.Location}")))
                     .ToErrorResult<GameState>();
             }
 

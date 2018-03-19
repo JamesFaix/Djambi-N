@@ -25,6 +25,9 @@ namespace Djambi.Model
             Factions = factions.ToImmutableList();
         }
 
+        public override string ToString() =>
+            $"Id: {Id}, Name: {Name}, IsAlive: {IsAlive}, Factions: [{string.Join(", ", Factions)}]";
+
         public static Player Create(
             int id, 
             string name,
