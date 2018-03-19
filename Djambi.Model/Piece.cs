@@ -6,9 +6,7 @@
 
         public PieceType Type { get; }
 
-        public int? Owner { get; }
-
-        public int? OriginalOwner { get; }
+        public int Faction { get; }
 
         public bool IsAlive { get; }
 
@@ -17,15 +15,13 @@
         private Piece(
             int id, 
             PieceType type, 
-            int? owner, 
-            int? originalOwner,
+            int faction, 
             bool isAlive, 
             Location location)
         {
             Id = id;
             Type = type;
-            Owner = owner;
-            OriginalOwner = originalOwner;
+            Faction = faction;
             IsAlive = isAlive;
             Location = location;
         }
@@ -33,10 +29,9 @@
         public static Piece Create(
             int id, 
             PieceType type, 
-            int? owner, 
-            int? originalOwner, 
+            int faction, 
             bool isAlive, 
             Location location) =>
-            new Piece(id, type, owner, originalOwner, isAlive, location);
+            new Piece(id, type, faction, isAlive, location);
     }
 }
