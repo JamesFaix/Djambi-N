@@ -1,6 +1,6 @@
 ﻿namespace Djambi.Engine
 {
-    static class Constants
+    public static class Constants
     {
         public const int BoardSize = 9;
 

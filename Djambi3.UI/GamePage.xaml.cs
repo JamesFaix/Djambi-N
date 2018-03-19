@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Djambi3.UI
+namespace Djambi.UI
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for Page2.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class Page2 : Page
     {
-        public MainWindow()
+        public Page2()
         {
             InitializeComponent();
         }
