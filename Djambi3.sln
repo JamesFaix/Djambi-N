@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26430.14
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Djambi3.UI", "Djambi3.UI\Djambi3.UI.csproj", "{30BB8762-FF40-4770-9FA3-D038F117D7A9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Djambi.UI", "Djambi3.UI\Djambi.UI.csproj", "{30BB8762-FF40-4770-9FA3-D038F117D7A9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Djambi.Model", "Djambi.Model\Djambi.Model.csproj", "{F66C24A5-D814-462F-95F0-4DBA96F05C35}"
 EndProject
