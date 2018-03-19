@@ -97,6 +97,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Djambi.Engine\Djambi.Engine.csproj">
+      <Project>{801b54ba-1351-44d1-a07e-aaa2aba35494}</Project>
+      <Name>Djambi.Engine</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Djambi.Model\Djambi.Model.csproj">
       <Project>{f66c24a5-d814-462f-95f0-4dba96f05c35}</Project>
       <Name>Djambi.Model</Name>
