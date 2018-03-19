@@ -6,13 +6,22 @@
 
         public string Name { get; }
 
-        private Player(int id, string name)
+        public bool IsAlive { get; }
+
+        private Player(
+            int id, 
+            string name, 
+            bool isAlive)
         {
             Id = id;
             Name = name;
+            IsAlive = isAlive;
         }
 
-        public static Player Create(int id, string name) =>
-            new Player(id, name);
+        public static Player Create(
+            int id, 
+            string name,
+            bool isAlive) =>
+            new Player(id, name, isAlive);
 	}
 }

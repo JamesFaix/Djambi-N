@@ -14,7 +14,13 @@
 
         public Location Location { get; }
 
-        private Piece(int id, PieceType type, int? owner, int? originalOwner, bool isAlive, Location location)
+        private Piece(
+            int id, 
+            PieceType type, 
+            int? owner, 
+            int? originalOwner,
+            bool isAlive, 
+            Location location)
         {
             Id = id;
             Type = type;
@@ -24,7 +30,13 @@
             Location = location;
         }
 
-        public static Piece Create(int id, PieceType type, int? owner, int? originalOwner, bool isAlive, Location location) =>
+        public static Piece Create(
+            int id, 
+            PieceType type, 
+            int? owner, 
+            int? originalOwner, 
+            bool isAlive, 
+            Location location) =>
             new Piece(id, type, owner, originalOwner, isAlive, location);
     }
 }
