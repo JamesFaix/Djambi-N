@@ -42,6 +42,7 @@
       <HintPath>..\packages\System.Collections.Immutable.1.4.0\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
     </Reference>
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -117,6 +118,17 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\assassin.png" />
+    <Resource Include="Images\chief.png" />
+    <Resource Include="Images\corpse.png" />
+    <Resource Include="Images\militant.png" />
+    <Resource Include="Images\necromobile.png" />
+    <Resource Include="Images\reporter.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\diplomat.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
