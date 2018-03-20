@@ -80,6 +80,7 @@ namespace Djambi.Engine
                 .ToList();
 
             var colors = EnumUtility.GetValues<PlayerColor>()
+                .Except(new[] { PlayerColor.Dead })
                 .Shuffle()
                 .ToList();
 

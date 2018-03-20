@@ -24,5 +24,26 @@ namespace Djambi.Engine
 
             return list;
         }
+
+        public static IEnumerable<TResult> LeftOuterJoin<TLeft, TRight, TKey, TResult>(
+            this IEnumerable<TLeft> first,
+            IEnumerable<TRight> second,
+            Func<TLeft, TKey> getLeftKey,
+            Func<TRight, TKey> getRightKey,
+            Func<TLeft, TRight, TResult> getResult,
+            Func<TLeft, TResult> getDefaultResult)
+        {
+            IEnumerable<TResult> getGroupResults (TLeft left, IEnumerable<TRight> rights)
+            {
+                rights = rights.ToList();
+                return rights.Any()
+                    ? rights.Select(r => getResult(left, r))
+                    : Enumerable.Repeat(getDefaultResult(left), 1);
+            }
+
+            return first
+                .GroupJoin(second, getLeftKey, getRightKey, getGroupResults)
+                .SelectMany(seq => seq);
+        }
     }
 }

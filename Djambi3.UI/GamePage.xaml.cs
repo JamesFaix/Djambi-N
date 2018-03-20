@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,10 +21,7 @@ namespace Djambi.UI
         private readonly Brush _whiteBrush;
         private readonly Brush _blackBrush;
         private readonly Brush _grayBrush;
-        private readonly Brush _redBrush;
-        private readonly Brush _yellowBrush;
-        private readonly Brush _greenBrush;
-        private readonly Brush _blueBrush;
+        private readonly Dictionary<PlayerColor, Brush> _playerColorBrushes;
 
         public GamePage()
         {
@@ -38,10 +36,16 @@ namespace Djambi.UI
             _whiteBrush = new SolidColorBrush(Colors.White);
             _blackBrush = new SolidColorBrush(Colors.Black);
             _grayBrush = new SolidColorBrush(Colors.Gray);
-            _redBrush = new SolidColorBrush(Colors.Red);
-            _yellowBrush = new SolidColorBrush(Colors.Yellow);
-            _greenBrush = new SolidColorBrush(Colors.Green);
-            _blueBrush = new SolidColorBrush(Colors.Blue);
+            _playerColorBrushes = new Dictionary<PlayerColor, Brush>
+            {
+                [PlayerColor.Red] = new SolidColorBrush(Colors.Red),
+                [PlayerColor.Orange] = new SolidColorBrush(Colors.Orange),
+                [PlayerColor.Yellow] = new SolidColorBrush(Colors.Yellow),
+                [PlayerColor.Green] = new SolidColorBrush(Colors.Green),
+                [PlayerColor.Blue] = new SolidColorBrush(Colors.Blue),
+                [PlayerColor.Purple] = new SolidColorBrush(Colors.Purple),
+                [PlayerColor.Dead] = new SolidColorBrush(Colors.Gray)
+            };
 
             DrawBoard();
             DrawGameState();
@@ -98,40 +102,47 @@ namespace Djambi.UI
         {
             var state = StateManager.Current;
 
-            foreach (var piece in state.Pieces)
+            var piecesWithColors = state.Pieces
+                .LeftOuterJoin(state.Players,
+                    piece => piece.PlayerId,
+                    player => player.Id,
+                    (piece, player) => new
+                    {
+                        Piece = piece,
+                        Color = player.Color
+                    },
+                    piece => new
+                    {
+                        Piece = piece,
+                        Color = PlayerColor.Dead
+                    });
+
+            foreach (var piece in piecesWithColors)
             {
                 var ell = new Ellipse
                 {
-                    Fill = GetPieceBrush(piece.Faction),
+                    Fill = _playerColorBrushes[piece.Color],
                     Stretch = Stretch.Uniform,
                 };
 
                 gridBoard.Children.Add(ell);
                 //-1 because grid is 0-based but game is 1-based
-                Grid.SetColumn(ell, piece.Location.X - 1);
-                Grid.SetRow(ell, piece.Location.Y - 1);
+                Grid.SetColumn(ell, piece.Piece.Location.X - 1);
+                Grid.SetRow(ell, piece.Piece.Location.Y - 1);
                 Grid.SetZIndex(ell, 1);
 
                 var image = new Image
                 {
-                    Source = new BitmapImage(new Uri(GetPieceImagePath(piece), UriKind.Relative)),
+                    Source = new BitmapImage(new Uri(GetPieceImagePath(piece.Piece), UriKind.Relative)),
                     Height = 30,
                     Width = 30                    
                 };
 
                 gridBoard.Children.Add(image);
-                Grid.SetColumn(image, piece.Location.X - 1);
-                Grid.SetRow(image, piece.Location.Y - 1);
+                Grid.SetColumn(image, piece.Piece.Location.X - 1);
+                Grid.SetRow(image, piece.Piece.Location.Y - 1);
                 Grid.SetZIndex(image, 2);
             }
-
-            var neutralFactions = state.Factions.Select(f => f.Id)
-                .Except(state.Players.SelectMany(p => p.Factions));
-
-            lblFactions.Content = $"Factions: {Environment.NewLine}  " +
-                state.Players.Select(p => $"{p.Name}: {p.Factions.ToDelimitedString(", ")}")
-                    .ToDelimitedString(Environment.NewLine + "  ") +
-                $"{Environment.NewLine}  (Neutral): {neutralFactions.ToDelimitedString(", ")}";
             
             lblTurnCycle.Content =
                 $"Turns: {Environment.NewLine}  " +
@@ -142,18 +153,6 @@ namespace Djambi.UI
                         (tc, p) => p)
                     .Select((p, n) => $"{n+1}. {p.Name}")
                     .ToDelimitedString(Environment.NewLine + "  ");
-        }
-
-        private Brush GetPieceBrush(int factionId)
-        {
-            switch (factionId)
-            {
-                case 1: return _redBrush;
-                case 2: return _yellowBrush;
-                case 3: return _greenBrush;
-                case 4: return _blueBrush;
-                default: throw new Exception("Invalid factionId");
-            }
         }
 
         private string GetPieceImagePath(Piece piece)
