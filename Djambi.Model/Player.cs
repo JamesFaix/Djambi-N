@@ -13,6 +13,8 @@ namespace Djambi.Model
 
         public bool IsVirtual { get; }
 
+        public PlayerColor Color { get; }
+
         public ImmutableList<int> ConqueredPlayerIds { get; }
 
         private Player(
@@ -20,12 +22,14 @@ namespace Djambi.Model
             string name, 
             bool isAlive,
             bool isVirtual,
+            PlayerColor color,
             IEnumerable<int> conqueredPlayerIds)
         {
             Id = id;
             Name = name;
             IsAlive = isAlive;
             IsVirtual = IsVirtual;
+            Color = color;
             ConqueredPlayerIds = conqueredPlayerIds.ToImmutableList();
         }
 
@@ -40,7 +44,8 @@ namespace Djambi.Model
             string name,
             bool isAlive,
             bool isVirtual,
+            PlayerColor color,
             IEnumerable<int> conqueredPlayerIds) =>
-            new Player(id, name, isAlive, isVirtual, conqueredPlayerIds);
+            new Player(id, name, isAlive, isVirtual, color, conqueredPlayerIds);
 	}
 }

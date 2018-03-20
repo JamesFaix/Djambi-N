@@ -79,21 +79,44 @@ namespace Djambi.Engine
                 .Shuffle()
                 .ToList();
 
-            var players = nonVirtualPlayerNames
-                .Select((name, n) => Player.Create(n + 1, name,
-                    isAlive: true,
-                    isVirtual: false,
-                    conqueredPlayerIds: Enumerable.Empty<int>()))
+            var colors = EnumUtility.GetValues<PlayerColor>()
+                .Shuffle()
                 .ToList();
 
-            var i = 0;
+            var playerIds = Enumerable.Range(1, Constants.MaxPlayerCount)
+                .Shuffle()
+                .ToList();
+
+            var players = new List<Player>();
+
+            while(nonVirtualPlayerNames.Count > 0)
+            {
+                players.Add(Player.Create(
+                    playerIds[0],
+                    nonVirtualPlayerNames[0],
+                    isAlive: true,
+                    isVirtual: false,
+                    color: colors[0],
+                    conqueredPlayerIds: Enumerable.Empty<int>()));
+
+                playerIds.RemoveAt(0);
+                nonVirtualPlayerNames.RemoveAt(0);
+                colors.RemoveAt(0);
+            }
+            
             while (players.Count < Constants.MaxPlayerCount)
             {
-                var name = usableVirtualPlayerNames[i];
-                players.Add(Player.Create(i, name, 
+                players.Add(Player.Create(
+                    playerIds[0],
+                    usableVirtualPlayerNames[0], 
                     isAlive: false, 
-                    isVirtual: true, 
+                    isVirtual: true,
+                    color: colors[0],
                     conqueredPlayerIds: Enumerable.Empty<int>()));
+
+                playerIds.RemoveAt(0);
+                usableVirtualPlayerNames.RemoveAt(0);
+                colors.RemoveAt(0);
             }
 
             return players;
