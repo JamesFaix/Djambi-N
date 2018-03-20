@@ -17,7 +17,8 @@ namespace Djambi.Engine
 
             return _validator.ValidatePlayerNames(nameList)
                 .Map(_ => CreateInitialGameState(nameList))
-                .Bind(_validator.ValidateGameState);
+                .Bind(state => _validator.ValidateGameState(state)
+                    .Map(_ => state));
         }
         
         private GameState CreateInitialGameState(List<string> playerNames)

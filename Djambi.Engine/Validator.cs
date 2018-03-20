@@ -107,7 +107,7 @@ namespace Djambi.Engine
         private static string GetSimplifiedPlayerName(string name) =>
             name.Replace(" ", "").ToUpperInvariant();
 
-        public Result<GameState> ValidateGameState(GameState state)
+        public Result<Unit> ValidateGameState(GameState state)
         {
             var piecesOutOfBounds = state.Pieces
                 .Where(p => !p.Location.IsValid())
@@ -117,10 +117,10 @@ namespace Djambi.Engine
             {
                 return new Exception($"The following pieces are in invalid locations.\n" +
                     string.Join("\n", piecesOutOfBounds.Select(p => $"{p.Type} {p.Location}")))
-                    .ToErrorResult<GameState>();
+                    .ToErrorResult<Unit>();
             }
 
-            return state.ToResult();
+            return Unit.Value.ToResult();
         }
     }
 }

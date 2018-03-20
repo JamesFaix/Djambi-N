@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -8,18 +9,24 @@ namespace Djambi.UI
 {
     public partial class MainMenuPage : Page
     {
-        private readonly Validator _validator = new Validator();
+        private readonly Validator _validator;
+        private readonly ModelFactory _modelFactory;
 
         public MainMenuPage()
         {
+            _validator = new Validator();
+            _modelFactory = new ModelFactory();
             InitializeComponent();
         }
+
+        private IEnumerable<string> GetPlayerNames() =>
+            listPlayerNames.Items.OfType<object>()
+                .Select(o => o.ToString());
 
         private void btnAddPlayer_Click(object sender, RoutedEventArgs e)
         {
             var name = textPlayerName.Text;
-            var existingNames = listPlayerNames.Items.OfType<object>()
-                .Select(o => o.ToString());
+            var existingNames = GetPlayerNames();
 
             var validationResult = _validator.ValidateNewPlayerName(existingNames, name);
 
@@ -48,7 +55,18 @@ namespace Djambi.UI
 
         private void btnStartGame_Click(object sender, RoutedEventArgs e)
         {
-            this.NavigationService.Navigate(new Uri("GamePage.xaml", UriKind.Relative));
+            _modelFactory
+                .InitializeGame(GetPlayerNames())
+                .OnValue(state => 
+                {
+                    StateManager.SetCurrentState(state);
+                    this.NavigationService.Navigate(new Uri("GamePage.xaml", UriKind.Relative));
+                })
+                .OnError(error =>
+                {
+                    lblNameValidation.Content = error.Message;
+                    btnStartGame.IsEnabled = false;
+                });
         }
 
         private void OnPlayerCountChanged()

@@ -19,5 +19,25 @@ namespace Djambi.Engine
 
         public static Result<T> Assert<T>(this Result<T> @this, Func<T, bool> condition, Func<Exception> getError) =>
             @this.HasValue && condition(@this.Value) ? @this : Result.Error<T>(getError());
+
+        public static Result<T> OnValue<T>(this Result<T> @this, Action<T> action)
+        {
+            if (@this.HasValue)
+            {
+                action(@this.Value);
+            }
+
+            return @this;
+        }
+
+        public static Result<T> OnError<T>(this Result<T> @this, Action<Exception> action)
+        {
+            if (!@this.HasValue)
+            {
+                action(@this.Error);
+            }
+
+            return @this;
+        }
     }
 }

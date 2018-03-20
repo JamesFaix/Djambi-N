@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 
 namespace Djambi.Model
 {
@@ -31,5 +32,12 @@ namespace Djambi.Model
             IEnumerable<Piece> pieces, 
             IEnumerable<int> turnCycle) =>
             new GameState(players, factions, pieces, turnCycle);
+
+        public static GameState Empty { get; } = 
+            new GameState(
+                Enumerable.Empty<Player>(), 
+                Enumerable.Empty<Faction>(), 
+                Enumerable.Empty<Piece>(), 
+                Enumerable.Empty<int>());
     }
 }
