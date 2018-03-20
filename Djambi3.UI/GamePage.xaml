@@ -17,13 +17,20 @@
                         Content="Quit to Menu"
                         Click="btnQuitToMenu_Click"/>
             </StackPanel>
-            <Border BorderBrush="Gray" 
-                    BorderThickness="3" 
-                    Height="600" 
-                    Width="600"
-                    Margin="10">
-                <Grid x:Name="gridBoard"/>
-            </Border>
+            <StackPanel Orientation="Horizontal">
+                <Border BorderBrush="Gray" 
+                        BorderThickness="3" 
+                        Height="600" 
+                        Width="600"
+                        Margin="10">
+                    <Grid x:Name="gridBoard"/>
+                </Border>
+                <Border BorderBrush="Gray" 
+                        BorderThickness="3" 
+                        Margin="10">
+                    <Label x:Name="lblTurnCycle" />
+                </Border>
+            </StackPanel>
         </StackPanel>
     </Border>
 </Page>

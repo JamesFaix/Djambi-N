@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using MoreLinq;
 using Djambi.Engine;
 using Djambi.Model;
 
@@ -122,6 +124,19 @@ namespace Djambi.UI
                 Grid.SetRow(image, piece.Location.Y - 1);
                 Grid.SetZIndex(image, 2);
             }
+
+            var turnCycleText = 
+                state.TurnCycle
+                    .Join(state.Players,
+                        tc => tc,
+                        p => p.Id,
+                        (tc, p) => p)
+                    .Select((p, n) => $"{n+1}. {p.Name}")
+                    .ToDelimitedString(Environment.NewLine + "  ");
+
+            turnCycleText = $"Turns: {Environment.NewLine}  {turnCycleText}";
+
+            lblTurnCycle.Content = turnCycleText;
         }
 
         private Brush GetPieceBrush(int factionId)
