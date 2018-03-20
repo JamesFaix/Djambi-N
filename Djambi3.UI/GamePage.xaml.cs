@@ -101,7 +101,12 @@ namespace Djambi.UI
         private void DrawGameState()
         {
             var state = StateManager.Current;
+            DrawPieces(state);
+            DrawTurnCycle(state);
+        }
 
+        private void DrawPieces(GameState state)
+        {
             var piecesWithColors = state.Pieces
                 .LeftOuterJoin(state.Players,
                     piece => piece.PlayerId,
@@ -135,7 +140,7 @@ namespace Djambi.UI
                 {
                     Source = new BitmapImage(new Uri(GetPieceImagePath(piece.Piece), UriKind.Relative)),
                     Height = 30,
-                    Width = 30                    
+                    Width = 30
                 };
 
                 gridBoard.Children.Add(image);
@@ -143,16 +148,6 @@ namespace Djambi.UI
                 Grid.SetRow(image, piece.Piece.Location.Y - 1);
                 Grid.SetZIndex(image, 2);
             }
-            
-            lblTurnCycle.Content =
-                $"Turns: {Environment.NewLine}  " +
-                state.TurnCycle
-                    .Join(state.Players,
-                        tc => tc,
-                        p => p.Id,
-                        (tc, p) => p)
-                    .Select((p, n) => $"{n+1}. {p.Name}")
-                    .ToDelimitedString(Environment.NewLine + "  ");
         }
 
         private string GetPieceImagePath(Piece piece)
@@ -184,6 +179,58 @@ namespace Djambi.UI
 
                 default:
                     throw new Exception("Invalid PieceType");
+            }
+        }
+
+        private void DrawTurnCycle(GameState state)
+        {
+            var turnDetails = state.TurnCycle
+                .Join(state.Players,
+                    turnPlayerId => turnPlayerId,
+                    player => player.Id,
+                    (t, p) => new
+                    {
+                        Name = p.Name,
+                        Color = p.Color
+                    })
+                .ToList();
+
+            for (var i = 0; i < turnDetails.Count; i++)
+            {
+                gridTurnCycle.RowDefinitions.Add(new RowDefinition
+                {
+                    Name = $"gridTurnCycleRow{i}"
+                });
+
+                var turn = turnDetails[i];
+
+                var rect = new Rectangle
+                {
+                    Fill = _playerColorBrushes[turn.Color],
+                    Stretch = Stretch.Uniform
+                };
+
+                gridTurnCycle.Children.Add(rect);
+                Grid.SetColumn(rect, 0);
+                Grid.SetRow(rect, i);
+
+                var indexLabel = new Label
+                {
+                    Content = (i+1).ToString()
+                };
+
+                gridTurnCycle.Children.Add(indexLabel);
+                Grid.SetColumn(indexLabel, 0);
+                Grid.SetRow(indexLabel, i);
+
+                var nameLabel = new Label
+                {
+                    Content = turn.Name
+                };
+
+                gridTurnCycle.Children.Add(nameLabel);
+                Grid.SetColumn(nameLabel, 1);
+                Grid.SetRow(nameLabel, i);
             }
         }
 
