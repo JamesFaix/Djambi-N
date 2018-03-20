@@ -21,6 +21,8 @@ namespace Djambi.UI
     /// </summary>
     public partial class Page1 : Page
     {
+        private readonly Validator _validator = new Validator();
+
         public Page1()
         {
             InitializeComponent();
@@ -29,10 +31,21 @@ namespace Djambi.UI
         private void btnAddPlayer_Click(object sender, RoutedEventArgs e)
         {
             var name = textPlayerName.Text;
-            //Validate name
-            listPlayerNames.Items.Add(name);
+            var existingNames = listPlayerNames.Items.OfType<object>()
+                .Select(o => o.ToString());
 
-            OnPlayerCountChanged();
+            var validationResult = _validator.ValidateNewPlayerName(existingNames, name);
+
+            if (validationResult.HasValue)
+            {
+                listPlayerNames.Items.Add(name);
+                lblNameValidation.Content = string.Empty;
+                OnPlayerCountChanged();
+            }
+            else
+            {
+                lblNameValidation.Content = validationResult.Error.Message;
+            }
         }
 
         private void btnRemovePlayer_Click(object sender, RoutedEventArgs e)

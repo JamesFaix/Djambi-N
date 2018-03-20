@@ -30,6 +30,9 @@
                                 Width="60"
                                 IsEnabled="False"/>
                     </StackPanel>
+                    <Label x:Name="lblNameValidation" 
+                           Content="" 
+                           Foreground="Red"/>
                 </StackPanel>
             </Border>
             <Button x:Name="btnStartGame" 

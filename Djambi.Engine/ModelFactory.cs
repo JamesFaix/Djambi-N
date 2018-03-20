@@ -1,74 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Djambi.Model;
 
 namespace Djambi.Engine
 {
     public class ModelFactory
     {
+        private readonly Validator _validator = new Validator();
+
         private int _lastPieceId = 0;
         private int NextPieceId => ++_lastPieceId;
-
-        private static readonly Regex _validPlayerNameRegex = new Regex(@"^[A-Za-z0-9_\- ]$");
         
         public Result<GameState> InitializeGame(IEnumerable<string> playerNames)
         {
-            return ValidatePlayerNames(playerNames)
-                .Map(CreateInitialGameState)
-                .Bind(ValidateGameState);
-        }
-        
-        private Result<List<string>> ValidatePlayerNames(IEnumerable<string> playerNames)
-        {
-            if (playerNames == null)
-            {
-                return new ArgumentNullException(nameof(playerNames))
-                    .ToErrorResult<List<string>>();
-            }
-
             var nameList = playerNames.ToList();
 
-            if (nameList.Count < Constants.MinPlayerCount || nameList.Count > Constants.MaxPlayerCount)
-            {
-                return new ArgumentException($"There must be between {Constants.MinPlayerCount} and {Constants.MaxPlayerCount} players.", nameof(playerNames))
-                    .ToErrorResult<List<string>>();
-            }
-
-            var invalidNames = nameList.Where(name => !_validPlayerNameRegex.IsMatch(name)).ToList();
-
-            if (invalidNames.Any())
-            {
-                return new AggregateException(
-                    $"Player names must have only letters, numbers, - (dash), _ (underscore), and (space).", 
-                    invalidNames.Select(name => new ArgumentException(name)))
-                   .ToErrorResult<List<string>>();
-            }
-            
-            var namesGroupedBySimilarity = nameList
-                .Select(name => new
-                {
-                    Input = name,
-                    Simplified = name.Replace(" ", "").ToUpperInvariant()
-                })
-                .GroupBy(name => name.Simplified);
-
-            if (namesGroupedBySimilarity.Any(group => group.Count() > 1))
-            {
-                var invalidInputNames = namesGroupedBySimilarity
-                        .Where(group => group.Count() > 1)
-                        .SelectMany(group => group.Select(name => name.Input));
-
-                return new AggregateException(
-                    $"Player names cannot differ only by capitalization and whitespace.",
-                    invalidInputNames.Select(name => new ArgumentException(name)))
-                    .ToErrorResult<List<string>>();
-            }
-
-            return nameList.ToResult();
+            return _validator.ValidatePlayerNames(nameList)
+                .Map(_ => CreateInitialGameState(nameList))
+                .Bind(_validator.ValidateGameState);
         }
-
+        
         private GameState CreateInitialGameState(List<string> playerNames)
         {
             var factions = Enumerable.Range(1, Constants.FactionCount)
@@ -144,21 +95,6 @@ namespace Djambi.Engine
             }
 
             return pieces;
-        }
-
-        private Result<GameState> ValidateGameState(GameState state)
-        {
-            var piecesOutOfBounds = state.Pieces
-                .Where(p => !p.Location.IsValid())
-                .ToList();
-
-            if (piecesOutOfBounds.Any()){
-                return new Exception($"The following pieces are in invalid locations.\n" + 
-                    string.Join("\n", piecesOutOfBounds.Select(p => $"{p.Type} {p.Location}")))
-                    .ToErrorResult<GameState>();
-            }
-
-            return state.ToResult();
-        }
+        }        
     }
 }
