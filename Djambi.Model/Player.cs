@@ -11,28 +11,36 @@ namespace Djambi.Model
 
         public bool IsAlive { get; }
 
-        public ImmutableList<int> Factions { get; }
+        public bool IsVirtual { get; }
+
+        public ImmutableList<int> ConqueredPlayerIds { get; }
 
         private Player(
             int id, 
             string name, 
             bool isAlive,
-            IEnumerable<int> factions)
+            bool isVirtual,
+            IEnumerable<int> conqueredPlayerIds)
         {
             Id = id;
             Name = name;
             IsAlive = isAlive;
-            Factions = factions.ToImmutableList();
+            IsVirtual = IsVirtual;
+            ConqueredPlayerIds = conqueredPlayerIds.ToImmutableList();
         }
 
         public override string ToString() =>
-            $"Id: {Id}, Name: {Name}, IsAlive: {IsAlive}, Factions: [{string.Join(", ", Factions)}]";
+            $"Id: {Id}, " + 
+            $"Name: {Name}, " + 
+            $"IsAlive: {IsAlive}, " + 
+            $"IsVirtual: {IsVirtual}";
 
         public static Player Create(
             int id, 
             string name,
             bool isAlive,
-            IEnumerable<int> factions) =>
-            new Player(id, name, isAlive, factions);
+            bool isVirtual,
+            IEnumerable<int> conqueredPlayerIds) =>
+            new Player(id, name, isAlive, isVirtual, conqueredPlayerIds);
 	}
 }
