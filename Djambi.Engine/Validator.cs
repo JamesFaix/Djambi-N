@@ -104,7 +104,7 @@ namespace Djambi.Engine
             }
         }
 
-        private static string GetSimplifiedPlayerName(string name) =>
+        internal string GetSimplifiedPlayerName(string name) =>
             name.Replace(" ", "").ToUpperInvariant();
 
         public Result<Unit> ValidateGameState(GameState state)
