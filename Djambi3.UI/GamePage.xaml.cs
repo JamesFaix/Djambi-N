@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
@@ -51,6 +52,8 @@ namespace Djambi.UI
             DrawGameState();
         }
 
+        #region Drawing
+
         private void DrawBoard()
         {
             for (var i = 0; i < Constants.BoardSize; i++)
@@ -74,6 +77,7 @@ namespace Djambi.UI
                         Fill = GetCellBrush(r, c),
                         Stretch = Stretch.Uniform
                     };
+                    rect.InputBindings.Add(GetCellClickedInputBinding(Location.Create(c + 1, r + 1)));
 
                     gridBoard.Children.Add(rect);
                     Grid.SetColumn(rect, c);
@@ -129,6 +133,8 @@ namespace Djambi.UI
                     Fill = _playerColorBrushes[piece.Color],
                     Stretch = Stretch.Uniform,
                 };
+                var clickBinding = GetCellClickedInputBinding(piece.Piece.Location);
+                ell.InputBindings.Add(clickBinding);
 
                 gridBoard.Children.Add(ell);
                 //-1 because grid is 0-based but game is 1-based
@@ -142,6 +148,7 @@ namespace Djambi.UI
                     Height = 30,
                     Width = 30
                 };
+                image.InputBindings.Add(clickBinding);
 
                 gridBoard.Children.Add(image);
                 Grid.SetColumn(image, piece.Piece.Location.X - 1);
@@ -234,6 +241,10 @@ namespace Djambi.UI
             }
         }
 
+        #endregion
+
+        #region Event handlers
+
         private void btnQuitToMenu_Click(object sender, RoutedEventArgs e)
         {
             var result = MessageBox.Show(
@@ -247,5 +258,32 @@ namespace Djambi.UI
                 this.NavigationService.Navigate(new Uri("MainMenuPage.xaml", UriKind.Relative));
             }
         }
+
+        private InputBinding GetCellClickedInputBinding(Location location)
+        {
+            var gest = new MouseGesture(MouseAction.LeftClick);
+            return new InputBinding(new CellClickedCommand(location), gest);
+        } 
+
+        private class CellClickedCommand : ICommand
+        {
+            public Location Location { get; }
+
+            public CellClickedCommand(Location location)
+            {
+                Location = location;
+            }
+
+            public event EventHandler CanExecuteChanged;
+
+            public bool CanExecute(object parameter) => true;
+
+            public void Execute(object parameter)
+            {
+                var x = 1;
+            }
+        }
+
+        #endregion
     }
 }
