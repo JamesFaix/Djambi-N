@@ -104,7 +104,7 @@ namespace Djambi.UI
 
         private void DrawGameState()
         {
-            var state = StateManager.Current;
+            var state = StateManager.GameState;
             DrawPieces(state);
             DrawTurnCycle(state);
         }

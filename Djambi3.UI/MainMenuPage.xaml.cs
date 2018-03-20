@@ -65,7 +65,8 @@ namespace Djambi.UI
                 .InitializeGame(GetPlayerNames())
                 .OnValue(state => 
                 {
-                    StateManager.SetCurrentState(state);
+                    StateManager.SetGameState(state);
+                    StateManager.SetInteractionState(InteractionState.AwaitingSubjectSelection);
                     this.NavigationService.Navigate(new Uri("GamePage.xaml", UriKind.Relative));
                 })
                 .OnError(error =>
