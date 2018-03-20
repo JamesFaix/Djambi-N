@@ -125,7 +125,16 @@ namespace Djambi.UI
                 Grid.SetZIndex(image, 2);
             }
 
-            var turnCycleText = 
+            var neutralFactions = state.Factions.Select(f => f.Id)
+                .Except(state.Players.SelectMany(p => p.Factions));
+
+            lblFactions.Content = $"Factions: {Environment.NewLine}  " +
+                state.Players.Select(p => $"{p.Name}: {p.Factions.ToDelimitedString(", ")}")
+                    .ToDelimitedString(Environment.NewLine + "  ") +
+                $"{Environment.NewLine}  (Neutral): {neutralFactions.ToDelimitedString(", ")}";
+            
+            lblTurnCycle.Content =
+                $"Turns: {Environment.NewLine}  " +
                 state.TurnCycle
                     .Join(state.Players,
                         tc => tc,
@@ -133,10 +142,6 @@ namespace Djambi.UI
                         (tc, p) => p)
                     .Select((p, n) => $"{n+1}. {p.Name}")
                     .ToDelimitedString(Environment.NewLine + "  ");
-
-            turnCycleText = $"Turns: {Environment.NewLine}  {turnCycleText}";
-
-            lblTurnCycle.Content = turnCycleText;
         }
 
         private Brush GetPieceBrush(int factionId)

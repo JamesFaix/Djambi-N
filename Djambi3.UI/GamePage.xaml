@@ -28,7 +28,10 @@
                 <Border BorderBrush="Gray" 
                         BorderThickness="3" 
                         Margin="10">
-                    <Label x:Name="lblTurnCycle" />
+                    <StackPanel>
+                        <Label x:Name="lblFactions" />
+                        <Label x:Name="lblTurnCycle" />
+                    </StackPanel>
                 </Border>
             </StackPanel>
         </StackPanel>
