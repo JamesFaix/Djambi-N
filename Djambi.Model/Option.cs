@@ -16,7 +16,7 @@ namespace Djambi.Model
 
         public T Value =>
             _hasValue
-                ? throw new InvalidOperationException($"Cannot get {nameof(Value)} from a {nameof(None)} {nameof(Option)}.")
+                ? throw new InvalidOperationException($"Cannot get {nameof(Value)} from a None {nameof(Option)}.")
                 : _value;
 
         public bool HasValue => _hasValue;
