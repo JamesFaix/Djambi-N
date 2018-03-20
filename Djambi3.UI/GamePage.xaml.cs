@@ -18,9 +18,9 @@ namespace Djambi.UI
     /// <summary>
     /// Interaction logic for Page2.xaml
     /// </summary>
-    public partial class Page2 : Page
+    public partial class GamePage : Page
     {
-        public Page2()
+        public GamePage()
         {
             InitializeComponent();
         }
