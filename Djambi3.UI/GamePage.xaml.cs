@@ -13,6 +13,10 @@ namespace Djambi.UI
     /// </summary>
     public partial class GamePage : Page
     {
+        private readonly Brush _whiteBrush;
+        private readonly Brush _blackBrush;
+        private readonly Brush _grayBrush;
+
         public GamePage()
         {
             InitializeComponent();
@@ -22,6 +26,10 @@ namespace Djambi.UI
                 window.SetBinding(Window.MinHeightProperty, new Binding() { Source = this.MinHeight });
                 window.SetBinding(Window.MinWidthProperty, new Binding() { Source = this.MinWidth });
             };
+
+            _whiteBrush = new SolidColorBrush(Colors.White);
+            _blackBrush = new SolidColorBrush(Colors.Black);
+            _grayBrush = new SolidColorBrush(Colors.Gray);
 
             DrawBoard();
         }
@@ -44,20 +52,32 @@ namespace Djambi.UI
             {
                 for (var c = 0; c < Constants.BoardSize; c++)
                 {
-                    var color = (c + r) % 2 == 0
-                        ? Colors.Black
-                        : Colors.White;
-
                     var rect = new Rectangle
                     {
-                        Fill = new SolidColorBrush(color),
-                        Stretch = Stretch.Uniform,
+                        Fill = GetCellBrush(r, c),
+                        Stretch = Stretch.Uniform
                     };
 
                     gridBoard.Children.Add(rect);
                     Grid.SetColumn(rect, c);
                     Grid.SetRow(rect, r);
                 }
+            }
+        }
+
+        private Brush GetCellBrush(int row, int column)
+        {
+            //-1 because WPF grids are 0-based, but the game is 1-based
+            if (row == Constants.BoardCenter - 1
+            && column == Constants.BoardCenter - 1)
+            {
+                return _grayBrush;
+            }
+            else
+            {
+                return (row + column) % 2 == 0
+                    ? _blackBrush
+                    : _whiteBrush;
             }
         }
 
