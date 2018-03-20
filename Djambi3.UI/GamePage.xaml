@@ -10,11 +10,11 @@
       ShowsNavigationUI="False">
     <Border BorderBrush="Gray" BorderThickness="3">
         <StackPanel Background="LightGray">
-            <TextBlock Margin="10,10,10,10">Game</TextBlock>
-            <TextBlock  HorizontalAlignment="Left"
-                    Margin="10,10,10,10">
-                <Hyperlink NavigateUri="MainMenuPage.xaml">Go To Main Menu</Hyperlink>
-            </TextBlock>
+            <StackPanel Orientation="Horizontal">
+                <Button x:Name="btnQuitToMenu"
+                        Content="Quit to Menu"
+                        Click="btnQuitToMenu_Click"/>
+            </StackPanel>
         </StackPanel>
     </Border>
 </Page>

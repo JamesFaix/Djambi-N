@@ -1,17 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Djambi.UI
 {
@@ -23,6 +12,20 @@ namespace Djambi.UI
         public GamePage()
         {
             InitializeComponent();
+        }
+
+        private void btnQuitToMenu_Click(object sender, RoutedEventArgs e)
+        {
+            var result = MessageBox.Show(
+                "Are you sure you want to quit and return to the main menu?",
+                "Quit Game",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                this.NavigationService.Navigate(new Uri("MainMenuPage.xaml", UriKind.Relative));
+            }
         }
     }
 }

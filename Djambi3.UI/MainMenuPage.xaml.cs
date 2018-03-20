@@ -17,6 +17,12 @@ namespace Djambi.UI
             _validator = new Validator();
             _modelFactory = new ModelFactory();
             InitializeComponent();
+
+#if DEBUG
+            listPlayerNames.Items.Add("Mario");
+            listPlayerNames.Items.Add("Luigi");
+            OnPlayerCountChanged();
+#endif
         }
 
         private IEnumerable<string> GetPlayerNames() =>
