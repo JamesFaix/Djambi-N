@@ -265,25 +265,6 @@ namespace Djambi.UI
             return new InputBinding(new CellClickedCommand(location), gest);
         } 
 
-        private class CellClickedCommand : ICommand
-        {
-            public Location Location { get; }
-
-            public CellClickedCommand(Location location)
-            {
-                Location = location;
-            }
-
-            public event EventHandler CanExecuteChanged;
-
-            public bool CanExecute(object parameter) => true;
-
-            public void Execute(object parameter)
-            {
-                var x = 1;
-            }
-        }
-
         #endregion
     }
 }

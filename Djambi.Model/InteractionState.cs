@@ -1,4 +1,4 @@
-﻿namespace Djambi.Engine
+﻿namespace Djambi.Model
 {
     public enum InteractionState
     {
