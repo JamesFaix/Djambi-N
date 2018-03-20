@@ -10,12 +10,12 @@ namespace Djambi.UI
     public partial class MainMenuPage : Page
     {
         private readonly Validator _validator;
-        private readonly ModelFactory _modelFactory;
+        private readonly GameStateInitializer _modelFactory;
 
         public MainMenuPage()
         {
             _validator = new Validator();
-            _modelFactory = new ModelFactory();
+            _modelFactory = new GameStateInitializer();
             InitializeComponent();
 
 #if DEBUG

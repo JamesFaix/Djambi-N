@@ -5,7 +5,7 @@ using Djambi.Model;
 
 namespace Djambi.Engine
 {
-    public class ModelFactory
+    public class GameStateInitializer
     {
         private readonly Validator _validator = new Validator();
 
