@@ -20,10 +20,10 @@ namespace Djambi.UI
 
         public void Execute(object parameter)
         {
-            var state = StateManager.Turn.State;
+            var state = StateManager.TurnState.Status;
             switch (state)
             {
-                case TurnState.AwaitingSelection:
+                case TurnStatus.AwaitingSelection:
                     StateManager.MakeSelection(Location)
                         .OnValue(_ =>
                         {
@@ -36,13 +36,13 @@ namespace Djambi.UI
                         });
                     break;
 
-                case TurnState.AwaitingConfirmation:
-                case TurnState.Paused:
-                case TurnState.Error:
+                case TurnStatus.AwaitingConfirmation:
+                case TurnStatus.Paused:
+                case TurnStatus.Error:
                     break; //Do nothing; you can't click cells or pieces in these states
 
                 default:
-                    throw new Exception($"Invalid {nameof(TurnState)} ({state})");
+                    throw new Exception($"Invalid {nameof(TurnStatus)} ({state})");
             }
         }
     }

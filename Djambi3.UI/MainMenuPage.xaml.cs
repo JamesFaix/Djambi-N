@@ -67,9 +67,9 @@ namespace Djambi.UI
                 .OnValue(state => 
                 {
                     StateManager.SetGameState(state);
-                    StateManager.SetTurn(
-                        Turn.Create(
-                            TurnState.AwaitingSelection,
+                    StateManager.SetTurnState(
+                        TurnState.Create(
+                            TurnStatus.AwaitingSelection,
                             Enumerable.Empty<Location>(),
                             selectionRequired: true));
 

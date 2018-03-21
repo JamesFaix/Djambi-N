@@ -12,15 +12,15 @@ namespace Djambi.Engine
         {
             _validator = new Validator();
             GameState = GameState.Empty;
-            Turn = Turn.Create(
-                TurnState.Paused, 
+            TurnState = TurnState.Create(
+                TurnStatus.Paused, 
                 Enumerable.Empty<Location>(),
                 false);
         }
 
         public static GameState GameState { get; private set; }
 
-        public static Turn Turn { get; private set; }
+        public static TurnState TurnState { get; private set; }
 
         public static Result<Unit> SetGameState(GameState state)
         {
@@ -28,10 +28,10 @@ namespace Djambi.Engine
                 .OnValue(_ => { GameState = state; });
         }
 
-        public static Result<Unit> SetTurn(Turn turn)
+        public static Result<Unit> SetTurnState(TurnState state)
         {
             //TODO: Do some validation here
-            Turn = turn;
+            TurnState = state;
             return Unit.Value.ToResult();
         }
 
@@ -49,7 +49,7 @@ namespace Djambi.Engine
             /*
              * Check if the given location is a valid selection
              * If not, error
-             * If valid, update turn & return
+             * If valid, update turn state & return
              */
 
             return Unit.Value.ToResult();
