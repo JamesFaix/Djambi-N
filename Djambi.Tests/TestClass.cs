@@ -10,9 +10,9 @@ namespace Djambi.Tests
         [Test]
         public void InitializingGameStateShouldSucceed()
         {
-            var factory = new GameStateInitializer();
+            var gameInitializationService = new GameInitializationService();
             var playerNames = new[] { "A", "B", "C", "D" };
-            var state = factory.InitializeGame(playerNames);
+            var state = gameInitializationService.InitializeGame(playerNames);
             state.HasValue.ShouldBeTrue();
         }
     }

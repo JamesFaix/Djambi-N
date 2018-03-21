@@ -6,7 +6,7 @@ using Djambi.Model;
 
 namespace Djambi.Engine
 {
-    public class Validator
+    public class ValidationService
     {
         private static readonly Regex _validPlayerNameRegex = new Regex(@"^[A-Za-z0-9_\- ]{1,64}$");
 

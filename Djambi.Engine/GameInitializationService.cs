@@ -5,9 +5,9 @@ using Djambi.Model;
 
 namespace Djambi.Engine
 {
-    public class GameStateInitializer
+    public class GameInitializationService
     {
-        private readonly Validator _validator = new Validator();
+        private readonly ValidationService _validator = new ValidationService();
 
         private readonly string[] _virtualPlayerNames = new[]
         {

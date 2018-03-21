@@ -10,13 +10,13 @@ namespace Djambi.UI
 {
     public partial class MainMenuPage : Page
     {
-        private readonly Validator _validator;
-        private readonly GameStateInitializer _modelFactory;
+        private readonly ValidationService _validationService;
+        private readonly GameInitializationService _gameInitializationService;
 
         public MainMenuPage()
         {
-            _validator = new Validator();
-            _modelFactory = new GameStateInitializer();
+            _validationService = new ValidationService();
+            _gameInitializationService = new GameInitializationService();
             InitializeComponent();
 
 #if DEBUG
@@ -35,7 +35,7 @@ namespace Djambi.UI
             var name = textPlayerName.Text;
             var existingNames = GetPlayerNames();
 
-            var validationResult = _validator.ValidateNewPlayerName(existingNames, name);
+            var validationResult = _validationService.ValidateNewPlayerName(existingNames, name);
 
             if (validationResult.HasValue)
             {
@@ -62,7 +62,7 @@ namespace Djambi.UI
 
         private void btnStartGame_Click(object sender, RoutedEventArgs e)
         {
-            _modelFactory
+            _gameInitializationService
                 .InitializeGame(GetPlayerNames())
                 .OnValue(state => 
                 {

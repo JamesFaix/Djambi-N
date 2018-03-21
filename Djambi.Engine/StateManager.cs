@@ -6,11 +6,11 @@ namespace Djambi.Engine
 {
     public static class StateManager
     {
-        private static readonly Validator _validator;
+        private static readonly ValidationService _validationService;
         
         static StateManager()
         {
-            _validator = new Validator();
+            _validationService = new ValidationService();
             GameState = GameState.Empty;
             TurnState = TurnState.Create(
                 TurnStatus.Paused, 
@@ -24,7 +24,7 @@ namespace Djambi.Engine
 
         public static Result<Unit> SetGameState(GameState state)
         {
-            return _validator.ValidateGameState(state)
+            return _validationService.ValidateGameState(state)
                 .OnValue(_ => { GameState = state; });
         }
 
