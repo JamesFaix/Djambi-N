@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 
 namespace Djambi.Model
 {
@@ -26,5 +27,11 @@ namespace Djambi.Model
             IEnumerable<Selection> selections,
             bool selectionRequired) => 
             new TurnState(status, selections, selectionRequired);
+
+        public static TurnState Empty() =>
+            new TurnState(
+                TurnStatus.AwaitingSelection, 
+                Enumerable.Empty<Selection>(), 
+                true);
     }
 }

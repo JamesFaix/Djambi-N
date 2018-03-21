@@ -64,17 +64,9 @@ namespace Djambi.UI
 
         private void btnStartGame_Click(object sender, RoutedEventArgs e)
         {
-            _gameInitializationService
-                .InitializeGame(GetPlayerNames())
+            StateManager.StartGame(GetPlayerNames())
                 .OnValue(state => 
                 {
-                    StateManager.SetGameState(state);
-                    StateManager.SetTurnState(
-                        TurnState.Create(
-                            TurnStatus.AwaitingSelection,
-                            Enumerable.Empty<Selection>(),
-                            selectionRequired: true));
-
                     this.NavigationService.Navigate(new Uri("GamePage.xaml", UriKind.Relative));
                 })
                 .OnError(error =>

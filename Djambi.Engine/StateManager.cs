@@ -9,10 +9,12 @@ namespace Djambi.Engine
     public static class StateManager
     {
         private static readonly ValidationService _validationService;
+        private static readonly GameInitializationService _gameInitializationService;
         
         static StateManager()
         {
             _validationService = new ValidationService();
+            _gameInitializationService = new GameInitializationService();
             GameState = GameState.Empty;
             TurnState = TurnState.Create(
                 TurnStatus.Paused, 
@@ -24,17 +26,16 @@ namespace Djambi.Engine
 
         public static TurnState TurnState { get; private set; }
 
-        public static Result<Unit> SetGameState(GameState state)
+        public static Result<Unit> StartGame(IEnumerable<string> playerNames)
         {
-            return _validationService.ValidateGameState(state)
-                .OnValue(_ => { GameState = state; });
-        }
-
-        public static Result<Unit> SetTurnState(TurnState state)
-        {
-            //TODO: Do some validation here
-            TurnState = state;
-            return Unit.Value.ToResult();
+            return _gameInitializationService
+               .InitializeGame(playerNames)
+               .OnValue(state =>
+               {
+                   GameState = state;
+                   TurnState = TurnState.Empty();
+               })
+               .Map(_ => Unit.Value);
         }
 
         public static IEnumerable<Selection> GetValidSelections()
@@ -54,6 +55,23 @@ namespace Djambi.Engine
              * If valid, update turn state & return
              */
 
+            return Unit.Value.ToResult();
+        }
+
+        public static Result<Unit> ConfirmTurn()
+        {
+            /*
+             * Check if TurnState is valid
+             * If not, error
+             * If valid, update GameState
+             */
+
+            return Unit.Value.ToResult();
+        }
+
+        public static Result<Unit> CancelTurn()
+        {
+            TurnState = TurnState.Empty();
             return Unit.Value.ToResult();
         }
     }
