@@ -7,10 +7,13 @@ namespace Djambi.UI
 {
     internal class CellClickedCommand : ICommand
     {
+        public GamePage Page { get; }
+
         public Location Location { get; }
 
-        public CellClickedCommand(Location location)
+        public CellClickedCommand(GamePage page, Location location)
         {
+            Page = page;
             Location = location;
         }
 
@@ -25,11 +28,7 @@ namespace Djambi.UI
             {
                 case TurnStatus.AwaitingSelection:
                     StateManager.MakeSelection(Location)
-                        .OnValue(_ =>
-                        {
-                            //Draw selection
-                            //Query current state
-                        })
+                        .OnValue(_ => Page.OnSelectionMade())
                         .OnError(error => 
                         { 
                             //Inform the user of an invalid request or something

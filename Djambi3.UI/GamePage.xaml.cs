@@ -50,6 +50,8 @@ namespace Djambi.UI
 
             DrawBoard();
             DrawGameState();
+            var validSelections = StateManager.GetValidSelections();
+            //TODO: Draw valid selections
         }
 
         #region Drawing
@@ -262,8 +264,15 @@ namespace Djambi.UI
         private InputBinding GetCellClickedInputBinding(Location location)
         {
             var gest = new MouseGesture(MouseAction.LeftClick);
-            return new InputBinding(new CellClickedCommand(location), gest);
+            return new InputBinding(new CellClickedCommand(this, location), gest);
         } 
+
+        public void OnSelectionMade()
+        {
+            //Draw selection
+            //Query current state
+            //Draw valid selections
+        }
 
         #endregion
     }

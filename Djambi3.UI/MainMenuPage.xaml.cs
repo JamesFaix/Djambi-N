@@ -70,7 +70,7 @@ namespace Djambi.UI
                     StateManager.SetTurnState(
                         TurnState.Create(
                             TurnStatus.AwaitingSelection,
-                            Enumerable.Empty<Location>(),
+                            Enumerable.Empty<Selection>(),
                             selectionRequired: true));
 
                     this.NavigationService.Navigate(new Uri("GamePage.xaml", UriKind.Relative));

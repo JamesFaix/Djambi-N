@@ -14,7 +14,7 @@ namespace Djambi.Engine
             GameState = GameState.Empty;
             TurnState = TurnState.Create(
                 TurnStatus.Paused, 
-                Enumerable.Empty<Location>(),
+                Enumerable.Empty<Selection>(),
                 false);
         }
 
@@ -35,13 +35,13 @@ namespace Djambi.Engine
             return Unit.Value.ToResult();
         }
 
-        public static IEnumerable<Location> GetValidSelections()
+        public static IEnumerable<Selection> GetValidSelections()
         {
             /*
              * Calculate all possible actions based on current turn 
              */
 
-            return Enumerable.Empty<Location>();
+            return Enumerable.Empty<Selection>();
         }
 
         public static Result<Unit> MakeSelection(Location location)
