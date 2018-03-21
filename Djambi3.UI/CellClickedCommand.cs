@@ -20,14 +20,15 @@ namespace Djambi.UI
 
         public void Execute(object parameter)
         {
-            var state = StateManager.Interaction.State;
+            var state = StateManager.Turn.State;
             switch (state)
             {
-                case InteractionState.AwaitingSubjectSelection:
-                    StateManager.SelectSubject(Location)
-                        .OnValue(legalMoves =>
+                case TurnState.AwaitingSelection:
+                    StateManager.MakeSelection(Location)
+                        .OnValue(_ =>
                         {
-                            //Draw possible actions
+                            //Draw selection
+                            //Query current state
                         })
                         .OnError(error => 
                         { 
@@ -35,37 +36,13 @@ namespace Djambi.UI
                         });
                     break;
 
-                case InteractionState.AwaitingDestinationSelection:
-                    StateManager.SelectDestination(Location)
-                        .OnValue(legalMoves =>
-                        {
-                            //Draw possible actions
-                        })
-                        .OnError(error =>
-                        {
-                            //Inform the user of an invalid request or something
-                        });
-                    break;
-
-                case InteractionState.AwaitingTargetSelection:
-                    StateManager.SelectTarget(Location)
-                        .OnValue(legalMoves =>
-                        {
-                            //Draw possible actions
-                        })
-                        .OnError(error =>
-                        {
-                            //Inform the user of an invalid request or something
-                        });
-                    break;
-
-                case InteractionState.AwaitingConfirmation:
-                case InteractionState.Paused:
-                case InteractionState.Error:
+                case TurnState.AwaitingConfirmation:
+                case TurnState.Paused:
+                case TurnState.Error:
                     break; //Do nothing; you can't click cells or pieces in these states
 
                 default:
-                    throw new Exception($"Invalid {nameof(InteractionState)} ({state})");
+                    throw new Exception($"Invalid {nameof(TurnState)} ({state})");
             }
         }
     }

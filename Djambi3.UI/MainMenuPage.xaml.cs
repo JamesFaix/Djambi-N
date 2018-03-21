@@ -67,12 +67,11 @@ namespace Djambi.UI
                 .OnValue(state => 
                 {
                     StateManager.SetGameState(state);
-                    StateManager.SetInteraction(
-                        Interaction.Create(
-                            InteractionState.AwaitingSubjectSelection, 
-                            Option.None<Piece>(),
-                            Option.None<Location>(),
-                            Option.None<Piece>()));
+                    StateManager.SetTurn(
+                        Turn.Create(
+                            TurnState.AwaitingSelection,
+                            Enumerable.Empty<Location>(),
+                            selectionRequired: true));
 
                     this.NavigationService.Navigate(new Uri("GamePage.xaml", UriKind.Relative));
                 })

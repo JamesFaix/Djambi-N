@@ -1,4 +1,6 @@
-﻿using Djambi.Model;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Djambi.Model;
 
 namespace Djambi.Engine
 {
@@ -10,16 +12,15 @@ namespace Djambi.Engine
         {
             _validator = new Validator();
             GameState = GameState.Empty;
-            Interaction = Interaction.Create(
-                InteractionState.Paused, 
-                Option.None<Piece>(), 
-                Option.None<Location>(), 
-                Option.None<Piece>());
+            Turn = Turn.Create(
+                TurnState.Paused, 
+                Enumerable.Empty<Location>(),
+                false);
         }
 
         public static GameState GameState { get; private set; }
 
-        public static Interaction Interaction { get; private set; }
+        public static Turn Turn { get; private set; }
 
         public static Result<Unit> SetGameState(GameState state)
         {
@@ -27,61 +28,31 @@ namespace Djambi.Engine
                 .OnValue(_ => { GameState = state; });
         }
 
-        public static Result<Unit> SetInteraction(Interaction interaction)
+        public static Result<Unit> SetTurn(Turn turn)
         {
             //TODO: Do some validation here
-            Interaction = interaction;
+            Turn = turn;
             return Unit.Value.ToResult();
         }
 
-        public static PossibleActions GetPossibleActions()
+        public static IEnumerable<Location> GetValidSelections()
         {
             /*
-             * Calculate all possible actions based on current interaction 
+             * Calculate all possible actions based on current turn 
              */
+
+            return Enumerable.Empty<Location>();
         }
 
-        public static Result<PossibleActions> SelectSubject(Location location)
+        public static Result<Unit> MakeSelection(Location location)
         {
             /*
-             * Find the piece at the given location
-             * If there is none, error
-             * Check if the piece belongs to the current player
+             * Check if the given location is a valid selection
              * If not, error
-             * Get legal moves for piece
-             * If none, error
-             * Set Subject
-             * Set state to AwaitingDestinationSelection or AwaitingTargetSelection
-             * Return possible actions
+             * If valid, update turn & return
              */
-        }
 
-        public static Result<PossibleActions> SelectDestination(Location location)
-        {
-            /*
-             * Check if there is a Subject
-             * If not, error
-             * Check if the given location is a legal destination for the Subject
-             * If not, error
-             * Set Destination (and maybe Target)
-             * Set state to AwaitingTargetSelection or AwaitingConfirmation
-             * Return possible actions
-             */
-        }
-
-        public static Result<PossibleActions> SelectTarget(Location location)
-        {
-            /*
-             * Check if there is a Subject and Destination
-             * If not, error
-             * Check if there is a piece at the given location
-             * If not, error
-             * Check if the piece is a legal target for the Subject
-             * If not, error
-             * Set Target
-             * Set state to AwaitingConfirmation
-             * Return possible actions
-             */
+            return Unit.Value.ToResult();
         }
     }
 }
