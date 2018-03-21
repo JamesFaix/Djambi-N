@@ -1,25 +1,24 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Djambi.Engine.Extensions;
 using Djambi.Engine.Services;
 using Djambi.Model;
 
 namespace Djambi.Engine
 {
-    public static class StateManager
+    public static class Controller
     {
         private static readonly ValidationService _validationService;
         private static readonly GameInitializationService _gameInitializationService;
+        private static readonly SelectionService _selectionService;
         
-        static StateManager()
+        static Controller()
         {
             _validationService = new ValidationService();
             _gameInitializationService = new GameInitializationService();
+            _selectionService = new SelectionService();
+
             GameState = GameState.Empty;
-            TurnState = TurnState.Create(
-                TurnStatus.Paused, 
-                Enumerable.Empty<Selection>(),
-                false);
+            TurnState = TurnState.MainMenu;
         }
 
         public static GameState GameState { get; private set; }
@@ -33,19 +32,13 @@ namespace Djambi.Engine
                .OnValue(state =>
                {
                    GameState = state;
-                   TurnState = TurnState.Empty();
+                   TurnState = TurnState.Empty;
                })
                .Map(_ => Unit.Value);
         }
 
-        public static IEnumerable<Selection> GetValidSelections()
-        {
-            /*
-             * Calculate all possible actions based on current turn 
-             */
-
-            return Enumerable.Empty<Selection>();
-        }
+        public static Result<IEnumerable<Selection>> GetValidSelections() =>
+            _selectionService.GetValidSelections(GameState, TurnState);
 
         public static Result<Unit> MakeSelection(Location location)
         {
@@ -71,7 +64,7 @@ namespace Djambi.Engine
 
         public static Result<Unit> CancelTurn()
         {
-            TurnState = TurnState.Empty();
+            TurnState = TurnState.Empty;
             return Unit.Value.ToResult();
         }
     }

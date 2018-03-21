@@ -24,11 +24,11 @@ namespace Djambi.UI
 
         public void Execute(object parameter)
         {
-            var state = StateManager.TurnState.Status;
+            var state = Controller.TurnState.Status;
             switch (state)
             {
                 case TurnStatus.AwaitingSelection:
-                    StateManager.MakeSelection(Location)
+                    Controller.MakeSelection(Location)
                         .OnValue(_ => Page.OnSelectionMade())
                         .OnError(error => 
                         { 

@@ -1,6 +1,8 @@
-﻿namespace Djambi.Model
+﻿using System;
+
+namespace Djambi.Model
 {
-    public class Location
+    public class Location : IEquatable<Location>
     {
         public int X { get; }
 
@@ -17,5 +19,31 @@
 
         public static Location Create(int x, int y) =>
             new Location(x, y);
+
+        #region Equality
+
+        public bool Equals(Location other)
+        {
+            if (other == null) return false;
+            return X == other.X && Y == other.Y;
+        }
+
+        public override bool Equals(object obj) => Equals(obj as Location);
+
+        public override int GetHashCode() => X + (Y << 16);
+
+        public static bool operator == (Location a, Location b)
+        {
+            if (a == null) return b == null;
+            return a.Equals(b);
+        }
+
+        public static bool operator != (Location a, Location b)
+        {
+            if (a == null) return b != null;
+            return !a.Equals(b);
+        }
+
+        #endregion
     }
 }

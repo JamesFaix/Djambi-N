@@ -64,7 +64,7 @@ namespace Djambi.UI
 
         private void btnStartGame_Click(object sender, RoutedEventArgs e)
         {
-            StateManager.StartGame(GetPlayerNames())
+            Controller.StartGame(GetPlayerNames())
                 .OnValue(state => 
                 {
                     this.NavigationService.Navigate(new Uri("GamePage.xaml", UriKind.Relative));

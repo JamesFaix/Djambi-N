@@ -50,7 +50,7 @@ namespace Djambi.UI
 
             DrawBoard();
             DrawGameState();
-            var validSelections = StateManager.GetValidSelections();
+            var validSelections = Controller.GetValidSelections();
             //TODO: Draw valid selections
         }
 
@@ -106,7 +106,7 @@ namespace Djambi.UI
 
         private void DrawGameState()
         {
-            var state = StateManager.GameState;
+            var state = Controller.GameState;
             DrawPieces(state);
             DrawTurnCycle(state);
         }

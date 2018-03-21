@@ -28,10 +28,16 @@ namespace Djambi.Model
             bool selectionRequired) => 
             new TurnState(status, selections, selectionRequired);
 
-        public static TurnState Empty() =>
+        public static TurnState Empty { get; } =
             new TurnState(
-                TurnStatus.AwaitingSelection, 
-                Enumerable.Empty<Selection>(), 
+                TurnStatus.AwaitingSelection,
+                Enumerable.Empty<Selection>(),
                 true);
+
+        public static TurnState MainMenu { get; } =
+            new TurnState(
+                TurnStatus.Paused,
+                Enumerable.Empty<Selection>(),
+                false);
     }
 }
