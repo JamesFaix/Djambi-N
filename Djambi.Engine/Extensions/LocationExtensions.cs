@@ -1,4 +1,5 @@
-﻿using Djambi.Model;
+﻿using System;
+using Djambi.Model;
 using static System.Math;
 
 namespace Djambi.Engine.Extensions
@@ -12,23 +13,45 @@ namespace Djambi.Engine.Extensions
             @this.Y <= Constants.BoardSize;
 
         public static Location Offset(this Location @this, int x, int y) =>
-            Location.Create(@this.X + x, @this.Y + y);
-
-        public static bool IsColinear(this Location @this, Location other)
+            Location.Create(@this.X + x, @this.Y + y);    
+        
+        public static Location Offset(this Location @this, Directions direction, int value)
         {
-            //Vertical or horizontal
-            if (@this.X == other.X || @this.Y == other.Y)
+            switch (direction)
             {
-                return true;
-            }
+                case Directions.Left:
+                    return Location.Create(@this.X - value, @this.Y);
 
-            //Diagonal
-            if (Abs(@this.X - other.X) == Abs(@this.Y - other.Y))
-            {
-                return true;
-            }
+                case Directions.UpLeft:
+                    return Location.Create(@this.X - value, @this.Y + value);
 
-            return false;
+                case Directions.Up:
+                    return Location.Create(@this.X, @this.Y + value);
+
+                case Directions.UpRight:
+                    return Location.Create(@this.X + value, @this.Y + value);
+                    
+                case Directions.Right:
+                    return Location.Create(@this.X + value, @this.Y);
+
+                case Directions.DownRight:
+                    return Location.Create(@this.X + value, @this.Y - value);
+
+                case Directions.Down:
+                    return Location.Create(@this.X, @this.Y - value);
+
+                case Directions.DownLeft:
+                    return Location.Create(@this.X - value, @this.Y - value);
+
+                default:
+                    throw new Exception($"Invalid {nameof(Directions)} value ({direction}).");
+            }
         }
+
+        public static int Distance(this Location @this, Location other) =>
+            Max(Abs(@this.X - other.X), Abs(@this.Y - other.Y));
+
+        public static bool IsMaze(this Location @this) =>
+            @this.X == Constants.BoardCenter && @this.Y == Constants.BoardCenter;
     }
 }

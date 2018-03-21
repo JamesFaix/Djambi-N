@@ -93,66 +93,201 @@ namespace Djambi.Engine.Services
 
         private Result<IEnumerable<Selection>> GetAssassinDestinations(Piece piece, GameState state)
         {
-            /*
-             * Colinear locations
-             * Cannot be blocked by another piece
-             * Cannot be Maze unless enemy Chief is there
-             * Cannot contain allied piece or Corpse
-             */
+            var index = IndexPiecesByLocation(state);
+
+            return GetColinearNonBlockedLocations(piece, state)
+                .Select(loc => GetLocationWithPiece(loc, index))
+                .Where(lwp =>
+                {
+                    if (lwp.Location.IsMaze())
+                    {
+                        //Cannot be Maze unless enemy Chief is there
+                        return lwp.Piece != null
+                            ? lwp.Piece.PlayerId != piece.PlayerId 
+                                && lwp.Piece.Type == PieceType.Chief                                
+                            : false;
+                    }
+                    else
+                    {
+                        //Cannot contain allied piece or Corpse
+                        return lwp.Piece != null
+                            ? lwp.Piece.PlayerId != piece.PlayerId
+                                && lwp.Piece.IsAlive
+                            : true;
+                    }
+                })
+                .Select(CreateSelection)
+                .ToResult();
         }
 
         private Result<IEnumerable<Selection>> GetChiefDestinations(Piece piece, GameState state)
         {
-            /*
-             * Colinear locations
-             * Cannot be blocked by another piece
-             * Cannot contain allied piece or Corpse
-             */
+            var index = IndexPiecesByLocation(state);
+
+            return GetColinearNonBlockedLocations(piece, state)
+                .Select(loc => GetLocationWithPiece(loc, index))
+                .Where(lwp =>
+                {
+                    //Cannot contain allied piece or Corpse
+                    return lwp.Piece != null
+                        ? lwp.Piece.PlayerId != piece.PlayerId
+                            && lwp.Piece.IsAlive
+                        : true;
+                })
+                .Select(CreateSelection)
+                .ToResult();
         }
 
         private Result<IEnumerable<Selection>> GetDiplomatDestinations(Piece piece, GameState state)
         {
-            /*
-             * Colinear locations
-             * Cannot be blocked by another piece
-             * Cannot be Maze unless enemy Chief is there
-             * Cannot contain allied piece or Corpse
-             */
+            var index = IndexPiecesByLocation(state);
+
+            return GetColinearNonBlockedLocations(piece, state)
+                .Select(loc => GetLocationWithPiece(loc, index))
+                .Where(lwp =>
+                {
+                    if (lwp.Location.IsMaze())
+                    {
+                        //Cannot be Maze unless enemy Chief is there
+                        return lwp.Piece != null
+                            ? lwp.Piece.PlayerId != piece.PlayerId
+                                && lwp.Piece.Type == PieceType.Chief
+                            : false;
+                    }
+                    else
+                    {
+                        //Cannot contain allied piece or Corpse
+                        return lwp.Piece != null
+                            ? lwp.Piece.PlayerId != piece.PlayerId
+                                && lwp.Piece.IsAlive
+                            : true;
+                    }
+                })
+                .Select(CreateSelection)
+                .ToResult();
         }
 
         private Result<IEnumerable<Selection>> GetMilitantDestinations(Piece piece, GameState state)
         {
-            /*
-             * Colinear locations with max distance of 2 
-             * Cannot be blocked by another piece
-             * Cannot be Maze
-             * Cannot contain allied piece or Corpse
-             */
+            var index = IndexPiecesByLocation(state);
+
+            return GetColinearNonBlockedLocations(piece, state)
+                .Select(loc => GetLocationWithPiece(loc, index))
+                .Where(lwp =>
+                {
+                    if (piece.Location.Distance(lwp.Location) > 2)
+                    {
+                        return false;
+                    }
+
+                    if (lwp.Location.IsMaze())
+                    {
+                        return false;
+                    }
+                    
+                    //Cannot contain allied piece or Corpse
+                    return lwp.Piece != null
+                        ? lwp.Piece.PlayerId != piece.PlayerId
+                            && lwp.Piece.IsAlive
+                        : true;
+                })
+                .Select(CreateSelection)
+                .ToResult();
         }
 
         private Result<IEnumerable<Selection>> GetNecromobileDestinations(Piece piece, GameState state)
         {
-            /*
-             * Colinear locations
-             * Cannot be blocked by another piece
-             * Cannot be Maze unless corpse is there
-             * Cannot contain living piece
-             */
+            var index = IndexPiecesByLocation(state);
+
+            return GetColinearNonBlockedLocations(piece, state)
+                .Select(loc => GetLocationWithPiece(loc, index))
+                .Where(lwp =>
+                {
+                    if (lwp.Location.IsMaze())
+                    {
+                        //Cannot be Maze unless Corpse is there
+                        return lwp.Piece != null 
+                           && !lwp.Piece.IsAlive;
+                    }
+                    else
+                    {
+                        //Cannot contain living piece
+                        return lwp.Piece == null 
+                           || !lwp.Piece.IsAlive;
+                    }
+                })
+                .Select(CreateSelection)
+                .ToResult();
         }
 
         private Result<IEnumerable<Selection>> GetReporterDestinations(Piece piece, GameState state)
         {
-            /*
-             * Colinear locations
-             * Cannot be blocked by another piece
-             * Cannot be Maze
-             * Cannot contain any piece
-             */
+            var index = IndexPiecesByLocation(state);
+
+            return GetColinearNonBlockedLocations(piece, state)
+                .Select(loc => GetLocationWithPiece(loc, index))
+                .Where(lwp => !lwp.Location.IsMaze()
+                            && lwp.Piece == null)
+                .Select(CreateSelection)
+                .ToResult();
         }
 
         private Result<IEnumerable<Selection>> GetAdditionalSelections(Piece piece, GameState state, ImmutableList<Selection> selections)
         {
             //Find targets or cells to place corpse in
+
+            return Enumerable.Empty<Selection>().ToResult();
+        }
+
+        private IEnumerable<Location> GetColinearNonBlockedLocations(Piece piece, GameState state)
+        {
+            foreach (var dir in EnumUtility.GetValues<Directions>())
+            {
+                var loc = piece.Location.Offset(dir, 1);
+
+            //TODO: Refactor to not use GOTO
+            next:
+                if (!loc.IsValid())
+                {
+                    continue;
+                }
+                if (state.Pieces.Any(p => p.Location == loc))
+                {
+                    yield return loc;
+                    continue;
+                }
+                else
+                {
+                    yield return loc;
+                    loc = loc.Offset(dir, 1);
+                    goto next;
+                }
+            }
+        }
+
+        private Dictionary<Location, Piece> IndexPiecesByLocation(GameState state) =>
+            state.Pieces.ToDictionary(p => p.Location, p => p);
+
+        private LocationWithPiece GetLocationWithPiece(Location location, Dictionary<Location, Piece> index) =>
+            new LocationWithPiece(location, index.TryGetValue(location, out var p) ? p : null);
+
+        private Selection CreateSelection(LocationWithPiece lwp)
+        {
+            var desc = lwp.Piece == null ? "Move" : $"Target {lwp.Piece.Type}";
+            return Selection.Create(lwp.Location, desc);
+        }
+
+        private class LocationWithPiece
+        {
+            public Location Location { get; }
+
+            public Piece Piece { get; }
+
+            public LocationWithPiece(Location location, Piece piece)
+            {
+                Location = location;
+                Piece = piece;
+            }
         }
     }
 }
