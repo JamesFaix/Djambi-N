@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Djambi.Engine.Extensions;
 using Djambi.Model;
 
-namespace Djambi.Engine
+namespace Djambi.Engine.Services
 {
     public class ValidationService
     {

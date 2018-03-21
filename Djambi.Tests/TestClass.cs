@@ -1,6 +1,6 @@
-﻿using Djambi.Engine;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using Shouldly;
+using Djambi.Engine.Services;
 
 namespace Djambi.Tests
 {

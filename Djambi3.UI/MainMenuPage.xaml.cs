@@ -5,6 +5,8 @@ using System.Windows;
 using System.Windows.Controls;
 using Djambi.Model;
 using Djambi.Engine;
+using Djambi.Engine.Extensions;
+using Djambi.Engine.Services;
 
 namespace Djambi.UI
 {

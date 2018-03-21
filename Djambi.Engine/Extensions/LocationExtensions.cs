@@ -1,6 +1,6 @@
 ﻿using Djambi.Model;
 
-namespace Djambi.Engine
+namespace Djambi.Engine.Extensions
 {
     static class LocationExtensions
     {

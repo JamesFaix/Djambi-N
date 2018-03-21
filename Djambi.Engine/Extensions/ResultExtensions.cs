@@ -1,7 +1,7 @@
 ﻿using System;
 using Djambi.Model;
 
-namespace Djambi.Engine
+namespace Djambi.Engine.Extensions
 {
     public static class ResultExtensions
     {

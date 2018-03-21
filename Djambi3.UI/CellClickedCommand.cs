@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 using Djambi.Engine;
+using Djambi.Engine.Extensions;
 using Djambi.Model;
 
 namespace Djambi.UI

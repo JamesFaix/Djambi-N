@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Djambi.Engine
+namespace Djambi.Engine.Extensions
 {
     public static class IEnumerableExtensions
     {
