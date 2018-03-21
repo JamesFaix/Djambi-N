@@ -17,6 +17,43 @@ __Note:__ This readme is currently incomplete.  Please see the link to the Wikip
 ### The pieces
 - Each player has 9 pieces: 1 _Chief_, 1 _Assassin_, 1 _Reporter_, 1 _Diplomat_, 1 _Necromobile_, and 4 _Militants_. 
 - All pieces can move in all 8 directions (horizontal, vertical, and diagonal).
-- Most pieces can move up to 9 spaces in a single direction in one turn.  The _Militant_ can only move up to 2 spaces per turn.
+
+#Militant
+- Can move up to 2 cells
+- Destination can be any cell except the Maze or a cell occupied by an ally piece
+- If destination contains enemy piece, it is killed
+- Must place Corpse in any unoccupied cell, except the Maze
+	
+#Chief
+- Can move up to 8 cells
+- Destination can be any cell not occupied by an ally piece
+- If destination contains enemy piece, it is killed
+- Must place Corpse in any unoccupied cell, except the Maze
+
+#Assassin
+- Can move up to 8 cells
+- Destination can be any cell except the Maze or a cell occupied by an ally piece
+- Destination can be the Maze if an enemy Chief is there, if so the Assassin must move to another unoccupied cell afterward
+- If destination contains enemy piece, it is killed
+- Corpse is placed in the cell the Assassin started in
+
+#Reporter
+- Can move up to 8 cells
+- Destination can be any unoccupied cell or the Maze
+- Can target a piece horizontally or vertically adjacent to destination
+- Corpse stays in its cell (this is the only way to have a corpse in the Maze)
+
+#Diplomat
+- Can move up to 8 cells
+- Destination can be any cell except the Maze or a cell occupied by an ally piece
+- Destination can be the Maze if an enemy Chief is there, if so the Diplomat must move to another unoccupied cell afterward
+- Does not kill target, but moves to any unoccupied cell
+- Cannot move a non-Chief piece to the Maze
+
+#Necromobile
+- Can move up to 8 cells
+- Destination can be any unoccupied cell except the Maze or any cell occupied by a Corpse
+- Destination can be the Maze if a Corpse is there, if so the Necromobile must move to another unoccupied cell afterward	
+- Move Corpse to any unoccupied cell, except the Maze
 
  [1]: https://en.wikipedia.org/wiki/Djambi
