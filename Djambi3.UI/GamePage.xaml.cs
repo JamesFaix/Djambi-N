@@ -15,9 +15,6 @@ using Djambi.Model;
 
 namespace Djambi.UI
 {
-    /// <summary>
-    /// Interaction logic for Page2.xaml
-    /// </summary>
     public partial class GamePage : Page
     {
         private readonly Brush _whiteBrush;
@@ -334,6 +331,9 @@ namespace Djambi.UI
                     Stretch = Stretch.Uniform
                 };
 
+                var clickBinding = GetCellClickedInputBinding(s.Location);
+                rect.InputBindings.Add(clickBinding);
+
                 gridBoard.Children.Add(rect);
                 Grid.SetColumn(rect, s.Location.X - 1);
                 Grid.SetRow(rect, s.Location.Y - 1);
@@ -375,6 +375,8 @@ namespace Djambi.UI
                 Opacity = _selectionOpacity,
                 Stretch = Stretch.Uniform
             };
+            var clickBinding = GetCellClickedInputBinding(selection.Location);
+            rect.InputBindings.Add(clickBinding);
 
             gridBoard.Children.Add(rect);
             Grid.SetColumn(rect, selection.Location.X - 1);

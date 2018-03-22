@@ -30,9 +30,10 @@ namespace Djambi.UI
                 case TurnStatus.AwaitingSelection:
                     Controller.MakeSelection(Location)
                         .OnValue(_ => Page.OnSelectionMade())
-                        .OnError(error => 
-                        { 
-                            //Inform the user of an invalid request or something
+                        .OnError(error =>
+                        {
+                            //TODO: Display error somehow
+                            throw new Exception("Whoops");
                         });
                     break;
 
