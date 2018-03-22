@@ -33,7 +33,7 @@ namespace Djambi.UI
                         .OnError(error =>
                         {
                             //TODO: Display error somehow
-                            throw new Exception("Whoops");
+                            throw error;
                         });
                     break;
 

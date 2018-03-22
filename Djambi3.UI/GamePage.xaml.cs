@@ -27,6 +27,9 @@ namespace Djambi.UI
         private const double _selectionOpacity = 0.5;
         private const string _selectionOptionRectName = "SelectionOption";
         private const string _selectionRectName = "Selection";
+        private const string _pieceElementName = "Piece";
+        private const string _turnCycleElementName = "Turn";
+        private const string _playerElementName = "Player";
 
         public GamePage()
         {
@@ -49,13 +52,13 @@ namespace Djambi.UI
             _selectionBrush = new SolidColorBrush(Colors.Green);
 
             DrawBoard();
-            DrawGameState();
+            RedrawGameState();
             Controller.GetValidSelections()
                 .OnValue(DrawSelectionOptions)
                 .OnError(error =>
                 {
                     //TODO: Display error somehow
-                    throw new Exception("Whoops");
+                    throw error;
                 });
         }
 
@@ -109,16 +112,35 @@ namespace Djambi.UI
             }
         }
 
-        private void DrawGameState()
+        private void RedrawGameState()
         {
             var state = Controller.GameState;
-            DrawPieces(state);
-            DrawTurnCycle(state);
-            DrawPlayers(state);
+            RedrawPieces(state);
+            RedrawTurnCycle(state);
+            RedrawPlayers(state);
+            Controller.GetValidSelections()
+                .OnValue(DrawSelectionOptions)
+                .OnError(error =>
+                {
+                    //TODO: Display error somehow
+                    throw error;
+                });
         }
 
-        private void DrawPieces(GameState state)
+        private void RedrawPieces(GameState state)
         {
+            //Remove old elements
+            var pieceElements = gridBoard.Children
+                .OfType<FrameworkElement>()
+                .Where(element => element.Name == _pieceElementName)
+                .ToList();
+
+            foreach (var element in pieceElements)
+            {
+                gridBoard.Children.Remove(element);
+            }
+
+            //Draw new elements
             var piecesWithColors = state.Pieces
                 .LeftOuterJoin(state.Players,
                     piece => piece.PlayerId,
@@ -138,6 +160,7 @@ namespace Djambi.UI
             {
                 var ell = new Ellipse
                 {
+                    Name = _pieceElementName,
                     Fill = _playerColorBrushes[piece.Color],
                     Stretch = Stretch.Uniform,
                 };
@@ -153,6 +176,7 @@ namespace Djambi.UI
                 var image = new Image
                 {
                     Source = new BitmapImage(new Uri(GetPieceImagePath(piece.Piece), UriKind.Relative)),
+                    Name = _pieceElementName,
                     Height = 30,
                     Width = 30
                 };
@@ -197,8 +221,20 @@ namespace Djambi.UI
             }
         }
 
-        private void DrawTurnCycle(GameState state)
+        private void RedrawTurnCycle(GameState state)
         {
+            //Remove old elements
+            var turnElements = gridTurnCycle.Children
+                .OfType<FrameworkElement>()
+                .Where(element => element.Name == _turnCycleElementName)
+                .ToList();
+
+            foreach (var element in turnElements)
+            {
+                gridTurnCycle.Children.Remove(element);
+            }
+
+            //Draw new elements
             var turnDetails = state.TurnCycle
                 .Join(state.Players,
                     turnPlayerId => turnPlayerId,
@@ -221,6 +257,7 @@ namespace Djambi.UI
 
                 var rect = new Rectangle
                 {
+                    Name = _turnCycleElementName,
                     Fill = _playerColorBrushes[turn.Color],
                     Stretch = Stretch.Uniform
                 };
@@ -231,6 +268,7 @@ namespace Djambi.UI
 
                 var indexLabel = new Label
                 {
+                    Name = _turnCycleElementName,
                     Content = (i+1).ToString()
                 };
 
@@ -240,6 +278,7 @@ namespace Djambi.UI
 
                 var nameLabel = new Label
                 {
+                    Name = _turnCycleElementName,
                     Content = turn.Name
                 };
 
@@ -249,8 +288,20 @@ namespace Djambi.UI
             }
         }
 
-        private void DrawPlayers(GameState state)
+        private void RedrawPlayers(GameState state)
         {
+            //Remove old elements
+            var playerElements = gridPlayers.Children
+                .OfType<FrameworkElement>()
+                .Where(element => element.Name == _playerElementName)
+                .ToList();
+
+            foreach (var element in playerElements)
+            {
+                gridPlayers.Children.Remove(element);
+            }
+
+            //Draw new elements
             var players = state.Players;
 
             for (var i = 0; i < players.Count; i++)
@@ -264,6 +315,7 @@ namespace Djambi.UI
 
                 var rect = new Rectangle
                 {
+                    Name = _playerElementName,
                     Fill = _playerColorBrushes[player.Color],
                     Stretch = Stretch.Uniform
                 };
@@ -274,6 +326,7 @@ namespace Djambi.UI
                 
                 var nameLabel = new Label
                 {
+                    Name = _playerElementName,
                     Content = GetPlayerLabelText(player)
                 };
 
@@ -383,6 +436,20 @@ namespace Djambi.UI
             Grid.SetRow(rect, selection.Location.Y - 1);
         }
 
+        private void EnableOrDisableConfirmButtons()
+        {
+            if (Controller.TurnState.Status == TurnStatus.AwaitingConfirmation)
+            {
+                btnConfirm.IsEnabled = true;
+                btnCancel.IsEnabled = true;
+            }
+            else
+            {
+                btnConfirm.IsEnabled = false;
+                btnCancel.IsEnabled = false;
+            }
+        }
+        
         #endregion
 
         #region Event handlers
@@ -401,6 +468,37 @@ namespace Djambi.UI
             }
         }
 
+        private void btnConfirm_Click(object sender, RoutedEventArgs e)
+        {
+            Controller.ConfirmTurn()
+                .OnValue(_ =>
+                {
+                    ClearSelectionOptions();
+                    ClearSelections();
+                    RedrawGameState();
+                })
+                .OnError(error =>
+                {
+                    //TODO: Display error somehow
+                    throw error;
+                });
+        }
+
+        private void btnCancel_Click(object sender, RoutedEventArgs e)
+        {
+            Controller.CancelTurn()
+                .OnValue(_ =>
+                {
+                    ClearSelectionOptions();
+                    ClearSelections();
+                })
+                .OnError(error =>
+                {
+                    //TODO: Display error somehow
+                    throw error;
+                });
+        }
+
         private InputBinding GetCellClickedInputBinding(Location location)
         {
             var gest = new MouseGesture(MouseAction.LeftClick);
@@ -416,8 +514,9 @@ namespace Djambi.UI
                 .OnError(error =>
                 {
                     //TODO: Display error somehow
-                    throw new Exception("Whoops");
+                    throw error;
                 });
+            EnableOrDisableConfirmButtons();
         }
 
         #endregion

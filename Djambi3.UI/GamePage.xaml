@@ -60,6 +60,20 @@
                             <ListBox x:Name="listGameLog" Height="100" Width="200" />
                         </StackPanel>
                     </Border>
+                    <Border BorderBrush="Gray" 
+                            BorderThickness="3" 
+                            Margin="10">
+                        <StackPanel>
+                            <Button x:Name="btnConfirm" 
+                                    Content="Confirm turn actions" 
+                                    Click="btnConfirm_Click"
+                                    IsEnabled="False"/>
+                            <Button x:Name="btnCancel" 
+                                    Content="Cancel turn actions"
+                                    Click="btnCancel_Click"
+                                    IsEnabled="False"/>
+                        </StackPanel>
+                    </Border>
                 </StackPanel>
             </StackPanel>
         </StackPanel>
