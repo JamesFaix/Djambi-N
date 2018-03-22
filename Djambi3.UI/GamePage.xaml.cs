@@ -24,6 +24,12 @@ namespace Djambi.UI
         private readonly Brush _blackBrush;
         private readonly Brush _grayBrush;
         private readonly Dictionary<PlayerColor, Brush> _playerColorBrushes;
+        private readonly Brush _selectionOptionBrush;
+        private readonly Brush _selectionBrush;
+
+        private const double _selectionOpacity = 0.5;
+        private const string _selectionOptionRectName = "SelectionOption";
+        private const string _selectionRectName = "Selection";
 
         public GamePage()
         {
@@ -42,11 +48,18 @@ namespace Djambi.UI
                 [PlayerColor.Purple] = new SolidColorBrush(Colors.Purple),
                 [PlayerColor.Dead] = new SolidColorBrush(Colors.Gray)
             };
+            _selectionOptionBrush = new SolidColorBrush(Colors.Yellow);
+            _selectionBrush = new SolidColorBrush(Colors.Green);
 
             DrawBoard();
             DrawGameState();
-            var validSelections = Controller.GetValidSelections();
-            //TODO: Draw valid selections
+            Controller.GetValidSelections()
+                .OnValue(DrawSelectionOptions)
+                .OnError(error =>
+                {
+                    //TODO: Display error somehow
+                    throw new Exception("Whoops");
+                });
         }
 
         #region Drawing
@@ -309,6 +322,65 @@ namespace Djambi.UI
             return sb.ToString();
         }
 
+        private void DrawSelectionOptions(IEnumerable<Selection> selectionOptions)
+        {
+            foreach (var s in selectionOptions)
+            {
+                var rect = new Rectangle
+                {
+                    Name = _selectionOptionRectName,
+                    Fill = _selectionOptionBrush,
+                    Opacity = _selectionOpacity,
+                    Stretch = Stretch.Uniform
+                };
+
+                gridBoard.Children.Add(rect);
+                Grid.SetColumn(rect, s.Location.X - 1);
+                Grid.SetRow(rect, s.Location.Y - 1);
+            }
+        }
+
+        private void ClearSelectionOptions()
+        {
+            var selectionOptions = gridBoard.Children
+                .OfType<Rectangle>()
+                .Where(r => r.Name == _selectionOptionRectName)
+                .ToList();
+
+            foreach (var rect in selectionOptions)
+            {
+                gridBoard.Children.Remove(rect);
+            }
+        }
+
+        private void ClearSelections()
+        {
+            var selections = gridBoard.Children
+                .OfType<Rectangle>()
+                .Where(r => r.Name == _selectionRectName)
+                .ToList();
+
+            foreach (var rect in selections)
+            {
+                gridBoard.Children.Remove(rect);
+            }
+        }
+
+        private void DrawSelection(Selection selection)
+        {
+            var rect = new Rectangle
+            {
+                Name = _selectionRectName,
+                Fill = _selectionBrush,
+                Opacity = _selectionOpacity,
+                Stretch = Stretch.Uniform
+            };
+
+            gridBoard.Children.Add(rect);
+            Grid.SetColumn(rect, selection.Location.X - 1);
+            Grid.SetRow(rect, selection.Location.Y - 1);
+        }
+
         #endregion
 
         #region Event handlers
@@ -335,9 +407,15 @@ namespace Djambi.UI
 
         public void OnSelectionMade()
         {
-            //Draw selection
-            //Query current state
-            //Draw valid selections
+            ClearSelectionOptions();
+            DrawSelection(Controller.TurnState.Selections.Last());
+            Controller.GetValidSelections()
+                .OnValue(DrawSelectionOptions)
+                .OnError(error =>
+                {
+                    //TODO: Display error somehow
+                    throw new Exception("Whoops");
+                });
         }
 
         #endregion

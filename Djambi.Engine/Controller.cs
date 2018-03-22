@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Djambi.Engine.Extensions;
 using Djambi.Engine.Services;
 using Djambi.Model;
@@ -42,13 +44,26 @@ namespace Djambi.Engine
 
         public static Result<Unit> MakeSelection(Location location)
         {
-            /*
-             * Check if the given location is a valid selection
-             * If not, error
-             * If valid, update turn state & return
-             */
+            if (TurnState.Status != TurnStatus.AwaitingSelection)
+            {
+                return new Exception($"Invalid turn status ({TurnState.Status}).")
+                    .ToErrorResult<Unit>();
+            }
 
-            return Unit.Value.ToResult();
+            var selection = GetValidSelections()
+                .Value //TODO: Unwrap safely
+                .SingleOrDefault(s => s.Location == location);
+
+            if (selection == null)
+            {
+                return new Exception($"Invalid selection {location}.")
+                    .ToErrorResult<Unit>();
+            }
+            else
+            {
+                TurnState = _selectionService.GetNextTurnState(GameState, TurnState, selection);
+                return Unit.Value.ToResult();
+            }
         }
 
         public static Result<Unit> ConfirmTurn()

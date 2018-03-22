@@ -34,13 +34,13 @@ namespace Djambi.Model
 
         public static bool operator == (Location a, Location b)
         {
-            if (a == null) return b == null;
+            if (Equals(a, null)) return Equals(b, null);
             return a.Equals(b);
         }
 
         public static bool operator != (Location a, Location b)
         {
-            if (a == null) return b != null;
+            if (Equals(a, null)) return !Equals(b, null);
             return !a.Equals(b);
         }
 

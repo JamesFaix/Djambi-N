@@ -9,35 +9,28 @@ namespace Djambi.Model
         public TurnStatus Status { get; }
 
         public ImmutableList<Selection> Selections { get; }
-
-        public bool SelectionRequired { get; }
-
+        
         private TurnState(
             TurnStatus status,
-            IEnumerable<Selection> selections,
-            bool selectionRequired)
+            IEnumerable<Selection> selections)
         {
             Status = status;
             Selections = selections.ToImmutableList();
-            SelectionRequired = selectionRequired;
         }
 
         public static TurnState Create(
             TurnStatus status,
-            IEnumerable<Selection> selections,
-            bool selectionRequired) => 
-            new TurnState(status, selections, selectionRequired);
+            IEnumerable<Selection> selections) => 
+            new TurnState(status, selections);
 
         public static TurnState Empty { get; } =
             new TurnState(
                 TurnStatus.AwaitingSelection,
-                Enumerable.Empty<Selection>(),
-                true);
+                Enumerable.Empty<Selection>());
 
         public static TurnState MainMenu { get; } =
             new TurnState(
                 TurnStatus.Paused,
-                Enumerable.Empty<Selection>(),
-                false);
+                Enumerable.Empty<Selection>());
     }
 }
