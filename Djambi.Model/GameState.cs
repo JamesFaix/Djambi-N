@@ -12,6 +12,8 @@ namespace Djambi.Model
         
         public ImmutableList<int> TurnCycle { get; }
 
+        public ImmutableDictionary<Location, Piece> PiecesIndexedByLocation { get; }
+
         private GameState(
             IEnumerable<Player> players, 
             IEnumerable<Piece> pieces,
@@ -20,6 +22,7 @@ namespace Djambi.Model
             Players = players.ToImmutableList();
             Pieces = pieces.ToImmutableList();
             TurnCycle = turnCycle.ToImmutableList();
+            PiecesIndexedByLocation = Pieces.ToImmutableDictionary(p => p.Location, p => p);
         }
 
         public static GameState Create(

@@ -96,10 +96,8 @@ namespace Djambi.Engine.Services
 
         private Result<IEnumerable<Selection>> GetAssassinDestinations(Piece piece, GameState state)
         {
-            var index = IndexPiecesByLocation(state);
-
             return GetColinearNonBlockedLocations(piece, state)
-                .Select(loc => GetLocationWithPiece(loc, index))
+                .Select(loc => GetLocationWithPiece(loc, state.PiecesIndexedByLocation))
                 .Where(lwp =>
                 {
                     if (lwp.Location.IsMaze())
@@ -125,10 +123,8 @@ namespace Djambi.Engine.Services
 
         private Result<IEnumerable<Selection>> GetChiefDestinations(Piece piece, GameState state)
         {
-            var index = IndexPiecesByLocation(state);
-
             return GetColinearNonBlockedLocations(piece, state)
-                .Select(loc => GetLocationWithPiece(loc, index))
+                .Select(loc => GetLocationWithPiece(loc, state.PiecesIndexedByLocation))
                 .Where(lwp =>
                 {
                     //Cannot contain allied piece or Corpse
@@ -143,10 +139,8 @@ namespace Djambi.Engine.Services
 
         private Result<IEnumerable<Selection>> GetDiplomatDestinations(Piece piece, GameState state)
         {
-            var index = IndexPiecesByLocation(state);
-
             return GetColinearNonBlockedLocations(piece, state)
-                .Select(loc => GetLocationWithPiece(loc, index))
+                .Select(loc => GetLocationWithPiece(loc, state.PiecesIndexedByLocation))
                 .Where(lwp =>
                 {
                     if (lwp.Location.IsMaze())
@@ -172,10 +166,8 @@ namespace Djambi.Engine.Services
 
         private Result<IEnumerable<Selection>> GetMilitantDestinations(Piece piece, GameState state)
         {
-            var index = IndexPiecesByLocation(state);
-
             return GetColinearNonBlockedLocations(piece, state)
-                .Select(loc => GetLocationWithPiece(loc, index))
+                .Select(loc => GetLocationWithPiece(loc, state.PiecesIndexedByLocation))
                 .Where(lwp =>
                 {
                     if (piece.Location.Distance(lwp.Location) > 2)
@@ -200,10 +192,8 @@ namespace Djambi.Engine.Services
 
         private Result<IEnumerable<Selection>> GetNecromobileDestinations(Piece piece, GameState state)
         {
-            var index = IndexPiecesByLocation(state);
-
             return GetColinearNonBlockedLocations(piece, state)
-                .Select(loc => GetLocationWithPiece(loc, index))
+                .Select(loc => GetLocationWithPiece(loc, state.PiecesIndexedByLocation))
                 .Where(lwp =>
                 {
                     if (lwp.Location.IsMaze())
@@ -225,10 +215,8 @@ namespace Djambi.Engine.Services
 
         private Result<IEnumerable<Selection>> GetReporterDestinations(Piece piece, GameState state)
         {
-            var index = IndexPiecesByLocation(state);
-
             return GetColinearNonBlockedLocations(piece, state)
-                .Select(loc => GetLocationWithPiece(loc, index))
+                .Select(loc => GetLocationWithPiece(loc, state.PiecesIndexedByLocation))
                 .Where(lwp => !lwp.Location.IsMaze()
                             && lwp.Piece == null)
                 .Select(CreateSelection)
@@ -267,11 +255,8 @@ namespace Djambi.Engine.Services
                 }
             }
         }
-
-        private Dictionary<Location, Piece> IndexPiecesByLocation(GameState state) =>
-            state.Pieces.ToDictionary(p => p.Location, p => p);
-
-        private LocationWithPiece GetLocationWithPiece(Location location, Dictionary<Location, Piece> index) =>
+        
+        private LocationWithPiece GetLocationWithPiece(Location location, ImmutableDictionary<Location, Piece> index) =>
             new LocationWithPiece(location, index.TryGetValue(location, out var p) ? p : null);
 
         private Selection CreateSelection(LocationWithPiece lwp)
