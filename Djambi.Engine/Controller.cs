@@ -50,20 +50,22 @@ namespace Djambi.Engine
                     .ToErrorResult<Unit>();
             }
 
-            var selection = GetValidSelections()
-                .Value //TODO: Unwrap safely
-                .SingleOrDefault(s => s.Location == location);
+            return GetValidSelections()
+                .Bind(selections =>
+                {
+                    var selection = selections.SingleOrDefault(s => s.Location == location);
 
-            if (selection == null)
-            {
-                return new Exception($"Invalid selection {location}.")
-                    .ToErrorResult<Unit>();
-            }
-            else
-            {
-                TurnState = _selectionService.GetNextTurnState(GameState, TurnState, selection);
-                return Unit.Value.ToResult();
-            }
+                    if (selection == null)
+                    {
+                        return new Exception($"Invalid selection {location}.")
+                            .ToErrorResult<Unit>();
+                    }
+                    else
+                    {
+                        TurnState = _selectionService.GetNextTurnState(GameState, TurnState, selection);
+                        return Unit.Value.ToResult();
+                    }
+                });            
         }
 
         public static Result<Unit> ConfirmTurn()
