@@ -43,7 +43,10 @@ namespace Djambi.Engine.Services
                         var destinations = GetPieceDestinations(piece, gameState);
                         return destinations.HasValue && destinations.Value.Any();
                     })
-                    .Select(piece => Selection.Create(piece.Location, "Move piece"))
+                    .Select(piece => Selection.Create(
+                        piece.Location, 
+                        SelectionType.MoveDestination, 
+                        $"Use {piece.Type} at {piece.Location}."))
                     .ToResult();
             }
             else
@@ -273,8 +276,20 @@ namespace Djambi.Engine.Services
 
         private Selection CreateSelection(LocationWithPiece lwp)
         {
-            var desc = lwp.Piece == null ? "Move" : $"Target {lwp.Piece.Type}";
-            return Selection.Create(lwp.Location, desc);
+            if (lwp.Piece == null)
+            {
+                return Selection.Create(
+                    lwp.Location,
+                    SelectionType.MoveDestination,
+                    $"Move to {lwp.Location}.");
+            }
+            else
+            {
+                return Selection.Create(
+                    lwp.Location,
+                    SelectionType.MoveDestinationWithTarget,
+                    $"Move to {lwp.Location} and target {lwp.Piece.Type}.");
+            }
         }
 
         private class LocationWithPiece
