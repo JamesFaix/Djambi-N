@@ -43,6 +43,19 @@
                             BorderThickness="3" 
                             Margin="10">
                         <StackPanel>
+                            <Label Content="Players" />
+                            <Grid x:Name="gridPlayers">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="20"/>
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                    <Border BorderBrush="Gray" 
+                            BorderThickness="3" 
+                            Margin="10">
+                        <StackPanel>
                             <Label Content="Log" />
                             <ListBox x:Name="listGameLog" Height="100" Width="200" />
                         </StackPanel>

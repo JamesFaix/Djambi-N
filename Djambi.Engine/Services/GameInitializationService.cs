@@ -38,17 +38,18 @@ namespace Djambi.Engine.Services
         {
             var players = CreatePlayers(playerNames);
 
-            //Shuffle playerIds 
-            players = players.Shuffle().ToList();
-            players = players.Select((p, id) => p.SetId(id + 1)).ToList();
-            
+            //Assign random corner to each player
+            var corners = EnumUtility.GetValues<Corners>().Shuffle();
+
             //Create pieces
             var pieces = players
-                .SelectMany(p => GetPlayerPieces(p.Id))
+                .Zip(corners, (p, c) => new { Player = p, Corner = c })
+                .SelectMany(pc => GetPlayerPieces(pc.Player.Id, pc.Corner))
                 .ToList();
             
             //Create random turn cycle
             var turnCycle = players
+                .Where(p => !p.IsVirtual)
                 .Select(p => p.Id)
                 .Shuffle();
 
@@ -111,7 +112,7 @@ namespace Djambi.Engine.Services
                 players.Add(Player.Create(
                     playerIds[0],
                     usableVirtualPlayerNames[0], 
-                    isAlive: false, 
+                    isAlive: true, 
                     isVirtual: true,
                     color: colors[0],
                     conqueredPlayerIds: Enumerable.Empty<int>()));
@@ -124,7 +125,7 @@ namespace Djambi.Engine.Services
             return players;
         }
 
-        private IEnumerable<Piece> GetPlayerPieces(int playerId)
+        private IEnumerable<Piece> GetPlayerPieces(int playerId, Corners corner)
         {
             /*
              * Start each player's pieces at locations from -1 to 1 in X and Y dimensions.
@@ -156,26 +157,26 @@ namespace Djambi.Engine.Services
             IEnumerable<Piece> Offset(IEnumerable<Piece> seq, int x, int y) =>
                 seq.Select(p => MovePiece(p, p.Location.Offset(x, y)));
 
-            switch (playerId)
+            switch (corner)
             {
-                case 1:
+                case Corners.BottomLeft:
                     pieces = Offset(pieces, 2, 2);
                     break;
 
-                case 2:
+                case Corners.BottomRight:
                     pieces = Offset(InvertX(pieces), 8, 2);
                     break;
 
-                case 3:
+                case Corners.TopLeft:
                     pieces = Offset(InvertY(pieces), 2, 8);
                     break;
 
-                case 4:
+                case Corners.TopRight:
                     pieces = Offset(InvertY(InvertX(pieces)), 8, 8);
                     break;
 
                 default:
-                    throw new ArgumentOutOfRangeException($"PlayerId must be between 1 and {Constants.MaxPlayerCount}.", nameof(playerId));
+                    throw new Exception($"Invalid {nameof(Corners)} value ({corner}).");
             }
 
             return pieces;

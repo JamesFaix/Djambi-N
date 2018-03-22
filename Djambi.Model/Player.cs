@@ -28,7 +28,7 @@ namespace Djambi.Model
             Id = id;
             Name = name;
             IsAlive = isAlive;
-            IsVirtual = IsVirtual;
+            IsVirtual = isVirtual;
             Color = color;
             ConqueredPlayerIds = conqueredPlayerIds.ToImmutableList();
         }

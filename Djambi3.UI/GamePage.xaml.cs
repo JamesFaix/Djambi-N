@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -62,11 +63,11 @@ namespace Djambi.UI
             {
                 gridBoard.RowDefinitions.Add(new RowDefinition
                 {
-                    Name = $"gridBoardRow{i}"
+                    Name = $"{nameof(gridBoard)}Row{i}"
                 });
                 gridBoard.ColumnDefinitions.Add(new ColumnDefinition
                 {
-                    Name = $"gridBoardColumn{i}"
+                    Name = $"{nameof(gridBoard)}Column{i}"
                 });
             }
 
@@ -109,6 +110,7 @@ namespace Djambi.UI
             var state = Controller.GameState;
             DrawPieces(state);
             DrawTurnCycle(state);
+            DrawPlayers(state);
         }
 
         private void DrawPieces(GameState state)
@@ -208,7 +210,7 @@ namespace Djambi.UI
             {
                 gridTurnCycle.RowDefinitions.Add(new RowDefinition
                 {
-                    Name = $"gridTurnCycleRow{i}"
+                    Name = $"{nameof(gridTurnCycle)}Row{i}"
                 });
 
                 var turn = turnDetails[i];
@@ -241,6 +243,76 @@ namespace Djambi.UI
                 Grid.SetColumn(nameLabel, 1);
                 Grid.SetRow(nameLabel, i);
             }
+        }
+
+        private void DrawPlayers(GameState state)
+        {
+            var players = state.Players;
+
+            for (var i = 0; i < players.Count; i++)
+            {
+                gridPlayers.RowDefinitions.Add(new RowDefinition
+                {
+                    Name = $"{nameof(gridPlayers)}Row{i}"
+                });
+
+                var player = players[i];
+
+                var rect = new Rectangle
+                {
+                    Fill = _playerColorBrushes[player.Color],
+                    Stretch = Stretch.Uniform
+                };
+
+                gridPlayers.Children.Add(rect);
+                Grid.SetColumn(rect, 0);
+                Grid.SetRow(rect, i);
+                
+                var nameLabel = new Label
+                {
+                    Content = GetPlayerLabelText(player)
+                };
+
+                gridPlayers.Children.Add(nameLabel);
+                Grid.SetColumn(nameLabel, 1);
+                Grid.SetRow(nameLabel, i);
+            }
+        }
+
+        private string GetPlayerLabelText(Player player)
+        {
+            /*
+             * Formatting will look like one of the following
+             *     Player1
+             *     Player2 (Neutral)
+             *     Player3 (Eliminated)
+             *     Player4 (Neutral, Eliminated)
+             */
+
+            var sb = new StringBuilder(player.Name);
+
+            if (!player.IsAlive || player.IsVirtual)
+            {
+                sb.Append(" (");
+
+                if (player.IsVirtual)
+                {
+                    sb.Append("Neutral");
+
+                    if (!player.IsAlive)
+                    {
+                        sb.Append(", ");
+                    }
+                }
+                if (!player.IsAlive)
+                {
+                    sb.Append("Eliminated");
+                }
+
+                sb.Append(")");
+            }
+
+            return sb.ToString();
         }
 
         #endregion
