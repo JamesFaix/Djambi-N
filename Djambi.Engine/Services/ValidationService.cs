@@ -108,20 +108,111 @@ namespace Djambi.Engine.Services
         internal string GetSimplifiedPlayerName(string name) =>
             name.Replace(" ", "").ToUpperInvariant();
 
-        public Result<Unit> ValidateGameState(GameState state)
+        public Result<Unit> ValidateGameState(GameState game)
         {
-            var piecesOutOfBounds = state.Pieces
+            var errors = new List<Exception>();
+
+            var piecesOutOfBounds = game.Pieces
                 .Where(p => !p.Location.IsValid())
                 .ToList();
 
             if (piecesOutOfBounds.Any())
             {
-                return new Exception($"The following pieces are in invalid locations.\n" +
-                    string.Join("\n", piecesOutOfBounds.Select(p => $"{p.Type} {p.Location}")))
-                    .ToErrorResult<Unit>();
+                errors.Add(new Exception($"The following pieces are in invalid locations.\n" +
+                    string.Join("\n", piecesOutOfBounds.Select(p => $"{p.Type} {p.Location}"))));
             }
 
-            return Unit.Value.ToResult();
+            var deadPlayerIds = game.Players
+                .Where(p => !p.IsAlive)
+                .Select(p => p.Id)
+                .ToList();
+
+            var piecesOwnedByDeadPlayer = game.Pieces
+                .Where(p => p.PlayerId.HasValue 
+                    && deadPlayerIds.Contains(p.PlayerId.Value))
+                .ToList();
+
+            if (piecesOwnedByDeadPlayer.Any())
+            {
+                errors.Add(new Exception($"The following pieces are controlled by a dead player.\n" +
+                    string.Join("\n", piecesOwnedByDeadPlayer.Select(p => $"{p.Type} {p.Location}"))));
+            }
+
+            var piecesSharingLocation = game.Pieces
+                .GroupBy(p => p.Location)
+                .Where(g => g.Count() > 1)
+                .SelectMany(g => g)
+                .ToList();
+
+            if (piecesSharingLocation.Any())
+            {
+                errors.Add(new Exception($"The following pieces are stacked.\n" +
+                    string.Join("\n", piecesSharingLocation.Select(p => $"{p.Type} {p.Location}"))));
+            }
+
+            return errors.Any()
+                ? new AggregateException(errors).ToErrorResult<Unit>()
+                : Unit.Value.ToResult();
+        }
+
+        public Result<Unit> ValidateTurnState(GameState game, TurnState turn)
+        {
+            var errors = new List<Exception>();
+
+            if (turn.Status != TurnStatus.AwaitingConfirmation)
+            {
+                errors.Add(new Exception($"Turn status is {turn.Status}."));
+            }
+
+            if (turn.Selections.Count < 2 || turn.Selections.Count > 4)
+            {
+                errors.Add(new Exception("A turn must have between 2 and 4 selections."));
+            }
+            else
+            {
+                if (turn.Selections[0].Type != SelectionType.Subject)
+                {
+                    errors.Add(new Exception($"First selection must be {SelectionType.Subject}."));
+                }
+
+                if (!game.PiecesIndexedByLocation.TryGetValue(turn.Selections[0].Location, out var subject))
+                {
+                    errors.Add(new Exception($"First selection must be a location with a piece."));
+                }
+
+                if (subject.PlayerId == null || subject.PlayerId.Value != game.TurnCycle[0])
+                {
+                    errors.Add(new Exception("Subject must be controlled by the current player."));
+                }
+
+                switch (turn.Selections[1].Type)
+                {
+                    case SelectionType.MoveDestination:
+                        if (game.PiecesIndexedByLocation.ContainsKey(turn.Selections[1].Location))
+                        {
+                            errors.Add(new Exception($"{SelectionType.MoveDestination} must have a location with no pieces."));
+                        }
+                        break;
+
+                    case SelectionType.MoveDestinationWithTarget:
+                        if (!game.PiecesIndexedByLocation.TryGetValue(turn.Selections[1].Location, out var target)
+                            || target.PlayerId == subject.PlayerId)
+                        {
+                            errors.Add(new Exception($"{SelectionType.MoveDestinationWithTarget} must have a location with an enemy piece."));
+                        }
+                        break;
+
+                    default:
+                        errors.Add(new Exception($"Second selection must be {SelectionType.MoveDestination} or {SelectionType.MoveDestinationWithTarget}."));
+                        break;
+                }
+
+                //TODO: Validate 3rd and 4th selections
+            }
+
+            return errors.Any()
+                ? new AggregateException(errors).ToErrorResult<Unit>()
+                : Unit.Value.ToResult();
         }
     }
 }

@@ -180,6 +180,6 @@ namespace Djambi.Engine.Services
             }
 
             return pieces;
-        }        
+        }
     }
 }

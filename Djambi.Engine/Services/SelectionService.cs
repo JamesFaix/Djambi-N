@@ -9,11 +9,9 @@ namespace Djambi.Engine.Services
 {
     class SelectionService
     {
-        public Result<IEnumerable<Selection>> GetValidSelections(
-            GameState gameState, 
-            TurnState turnState)
+        public Result<IEnumerable<Selection>> GetValidSelections(GameState game, TurnState turn)
         {
-            var livingPlayers = gameState.Players
+            var livingPlayers = game.Players
                 .Where(p => p.IsAlive)
                 .ToList();
 
@@ -23,8 +21,8 @@ namespace Djambi.Engine.Services
                     .ToErrorResult<IEnumerable<Selection>>();
             }
 
-            var currentPlayerId = gameState.TurnCycle.First();
-            var currentPlayersPieces = gameState.Pieces
+            var currentPlayerId = game.TurnCycle.First();
+            var currentPlayersPieces = game.Pieces
                 .Where(piece => piece.PlayerId == currentPlayerId)
                 .ToList();
 
@@ -34,13 +32,13 @@ namespace Djambi.Engine.Services
                     .ToErrorResult<IEnumerable<Selection>>();
             }
 
-            if (turnState.Selections.Count == 0)
+            if (turn.Selections.Count == 0)
             {
                 return currentPlayersPieces
                     .Where(piece => 
                     {
                         //Filter out pieces that would have no valid destinations (surrounded)
-                        var destinations = GetPieceDestinations(piece, gameState);
+                        var destinations = GetPieceDestinations(piece, game);
                         return destinations.HasValue && destinations.Value.Any();
                     })
                     .Select(piece => Selection.Create(
@@ -51,8 +49,8 @@ namespace Djambi.Engine.Services
             }
             else
             {
-                var pieceToMove = gameState.Pieces
-                    .Where(piece => piece.Location == turnState.Selections[0].Location)
+                var pieceToMove = game.Pieces
+                    .Where(piece => piece.Location == turn.Selections[0].Location)
                     .SingleOrDefault();
 
                 if (pieceToMove == null)
@@ -61,197 +59,197 @@ namespace Djambi.Engine.Services
                         .ToErrorResult<IEnumerable<Selection>>();
                 }
 
-                if (turnState.Selections.Count == 1)
+                if (turn.Selections.Count == 1)
                 {
-                    return GetPieceDestinations(pieceToMove, gameState);
+                    return GetPieceDestinations(pieceToMove, game);
                 }
                 else
                 {
-                    return GetAdditionalSelections(pieceToMove, gameState, turnState.Selections);
+                    return GetAdditionalSelections(pieceToMove, game, turn.Selections);
                 }
             }
         }
 
         #region Get next turn state
 
-        public TurnState GetNextTurnState(GameState gameState, TurnState turnState, Selection newSelection)
+        public TurnState GetNextTurnState(GameState game, TurnState turn, Selection newSelection)
         {
             //The new selection is the piece to move, so the next selection is the destination
-            if (turnState.Selections.Count == 0)
+            if (turn.Selections.Count == 0)
             {
                 return TurnState.Create(
                     TurnStatus.AwaitingSelection, 
-                    turnState.Selections.Add(newSelection));
+                    turn.Selections.Add(newSelection));
             }
 
-            var subject = gameState.PiecesIndexedByLocation[turnState.Selections[0].Location];
+            var subject = game.PiecesIndexedByLocation[turn.Selections[0].Location];
 
             switch (subject.Type)
             {
                 case PieceType.Assassin:
-                    return GetNextTurnStatusForAssassin(gameState, turnState, subject, newSelection);
+                    return GetNextTurnStatusForAssassin(game, turn, subject, newSelection);
                 case PieceType.Chief:
-                    return GetNextTurnStatusForAssassin(gameState, turnState, subject, newSelection);
+                    return GetNextTurnStatusForAssassin(game, turn, subject, newSelection);
                 case PieceType.Diplomat:
-                    return GetNextTurnStatusForAssassin(gameState, turnState, subject, newSelection);
+                    return GetNextTurnStatusForAssassin(game, turn, subject, newSelection);
                 case PieceType.Militant:
-                    return GetNextTurnStatusForAssassin(gameState, turnState, subject, newSelection);
+                    return GetNextTurnStatusForAssassin(game, turn, subject, newSelection);
                 case PieceType.Necromobile:
-                    return GetNextTurnStatusForAssassin(gameState, turnState, subject, newSelection);
+                    return GetNextTurnStatusForAssassin(game, turn, subject, newSelection);
                 case PieceType.Reporter:
-                    return GetNextTurnStatusForAssassin(gameState, turnState, subject, newSelection);
+                    return GetNextTurnStatusForAssassin(game, turn, subject, newSelection);
                 default:
                     throw new Exception($"Invalid {nameof(PieceType)} value ({subject.Type}).");
             }
         }
 
-        private TurnState GetNextTurnStatusForAssassin(GameState gameState, TurnState turnState, Piece subject, Selection newSelection)
+        private TurnState GetNextTurnStatusForAssassin(GameState game, TurnState turn, Piece subject, Selection newSelection)
         { 
             //A subject has already been selected, the new selection is a destination (possibly with target)
-            if (turnState.Selections.Count == 1)
+            if (turn.Selections.Count == 1)
             {
                 if (newSelection.Type == SelectionType.MoveDestinationWithTarget)
                 {
-                    var target = gameState.PiecesIndexedByLocation[newSelection.Location];
+                    var target = game.PiecesIndexedByLocation[newSelection.Location];
                     
                     if (target.Type == PieceType.Chief && newSelection.Location.IsMaze())
                     {
                         //Must move out of maze
                         return TurnState.Create(
                             TurnStatus.AwaitingSelection,
-                            turnState.Selections.Add(newSelection));
+                            turn.Selections.Add(newSelection));
                     }
                 }
             }
 
             return TurnState.Create(
                 TurnStatus.AwaitingConfirmation,
-                turnState.Selections.Add(newSelection));
+                turn.Selections.Add(newSelection));
         }
         
-        private TurnState GetNextTurnStatusForChief(GameState gameState, TurnState turnState, Piece subject, Selection newSelection)
+        private TurnState GetNextTurnStatusForChief(GameState game, TurnState turn, Piece subject, Selection newSelection)
         {
             //A subject has already been selected, the new selection is a destination (possibly with target)
-            if (turnState.Selections.Count == 1)
+            if (turn.Selections.Count == 1)
             {
                 if (newSelection.Type == SelectionType.MoveDestinationWithTarget)
                 {
                     //The new selection is a move with target, so a drop destination is required
                     return TurnState.Create(
                         TurnStatus.AwaitingSelection,
-                        turnState.Selections.Add(newSelection));
+                        turn.Selections.Add(newSelection));
                 }
             }
 
             return TurnState.Create(
                 TurnStatus.AwaitingConfirmation,
-                turnState.Selections.Add(newSelection));
+                turn.Selections.Add(newSelection));
         }
 
-        private TurnState GetNextTurnStatusForDiplomat(GameState gameState, TurnState turnState, Piece subject, Selection newSelection)
+        private TurnState GetNextTurnStatusForDiplomat(GameState game, TurnState turn, Piece subject, Selection newSelection)
         {
             //A subject has already been selected, the new selection is a destination (possibly with target)
-            if (turnState.Selections.Count == 1)
+            if (turn.Selections.Count == 1)
             {
                 if (newSelection.Type == SelectionType.MoveDestinationWithTarget)
                 {
                     //The new selection is a move with target, so a drop destination is required
                     return TurnState.Create(
                         TurnStatus.AwaitingSelection,
-                        turnState.Selections.Add(newSelection));
+                        turn.Selections.Add(newSelection));
                 }
             }
 
-            if (turnState.Selections.Count == 2)
+            if (turn.Selections.Count == 2)
             {
                 //If the last selection targeted a Chief in the Maze, the Diplomat must escape
-                if (turnState.Selections[1].Location.IsMaze())
+                if (turn.Selections[1].Location.IsMaze())
                 {
                     return TurnState.Create(
                         TurnStatus.AwaitingSelection,
-                        turnState.Selections.Add(newSelection));
+                        turn.Selections.Add(newSelection));
                 }
             }
 
             return TurnState.Create(
                 TurnStatus.AwaitingConfirmation,
-                turnState.Selections.Add(newSelection));
+                turn.Selections.Add(newSelection));
         }
         
-        private TurnState GetNextTurnStatusForMilitant(GameState gameState, TurnState turnState, Piece subject, Selection newSelection)
+        private TurnState GetNextTurnStatusForMilitant(GameState game, TurnState turn, Piece subject, Selection newSelection)
         {
             //A subject has already been selected, the new selection is a destination (possibly with target)
-            if (turnState.Selections.Count == 1)
+            if (turn.Selections.Count == 1)
             {
                 if (newSelection.Type == SelectionType.MoveDestinationWithTarget)
                 {
                     //The new selection is a move with target, so a drop destination is required
                     return TurnState.Create(
                         TurnStatus.AwaitingSelection,
-                        turnState.Selections.Add(newSelection));
+                        turn.Selections.Add(newSelection));
                 }
             }
 
             return TurnState.Create(
                 TurnStatus.AwaitingConfirmation,
-                turnState.Selections.Add(newSelection));
+                turn.Selections.Add(newSelection));
         }
         
-        private TurnState GetNextTurnStatusForNecromobile(GameState gameState, TurnState turnState, Piece subject, Selection newSelection)
+        private TurnState GetNextTurnStatusForNecromobile(GameState game, TurnState turn, Piece subject, Selection newSelection)
         {
             //A subject has already been selected, the new selection is a destination (possibly with target)
-            if (turnState.Selections.Count == 1)
+            if (turn.Selections.Count == 1)
             {
                 if (newSelection.Type == SelectionType.MoveDestinationWithTarget)
                 {
                     //The new selection is a move with target, so a drop destination is required
                     return TurnState.Create(
                         TurnStatus.AwaitingSelection,
-                        turnState.Selections.Add(newSelection));
+                        turn.Selections.Add(newSelection));
                 }
             }
 
-            if (turnState.Selections.Count == 2)
+            if (turn.Selections.Count == 2)
             {
                 //If the last selection targeted a Corpse in the Maze, the Necro must escape
-                if (turnState.Selections[1].Location.IsMaze())
+                if (turn.Selections[1].Location.IsMaze())
                 {
                     return TurnState.Create(
                         TurnStatus.AwaitingSelection,
-                        turnState.Selections.Add(newSelection));
+                        turn.Selections.Add(newSelection));
                 }
             }
 
             return TurnState.Create(
                 TurnStatus.AwaitingConfirmation,
-                turnState.Selections.Add(newSelection));
+                turn.Selections.Add(newSelection));
         }
 
-        private TurnState GetNextTurnStatusForReporter(GameState gameState, TurnState turnState, Piece subject, Selection newSelection)
+        private TurnState GetNextTurnStatusForReporter(GameState game, TurnState turn, Piece subject, Selection newSelection)
         {
             //A subject has already been selected, the new selection is a destination (possibly with target)
-            if (turnState.Selections.Count == 1)
+            if (turn.Selections.Count == 1)
             {
                 //Check for adjacent enemy pieces, if any then another selection is required
-                var targetOptions = GetTargetOptionsForReporter(gameState, subject, newSelection.Location)
+                var targetOptions = GetTargetOptionsForReporter(game, subject, newSelection.Location)
                     .ToList();
 
                 if (targetOptions.Any())
                 {
                     return TurnState.Create(
                         TurnStatus.AwaitingSelection,
-                        turnState.Selections.Add(newSelection));
+                        turn.Selections.Add(newSelection));
                 }    
             }
 
             return TurnState.Create(
                 TurnStatus.AwaitingConfirmation,
-                turnState.Selections.Add(newSelection));
+                turn.Selections.Add(newSelection));
         }
 
         #endregion
 
-        private IEnumerable<Location> GetTargetOptionsForReporter(GameState state, Piece piece, Location destination)
+        private IEnumerable<Location> GetTargetOptionsForReporter(GameState game, Piece piece, Location destination)
         {
             bool IsAdjacent(Location a, Location b)
             {
@@ -259,7 +257,7 @@ namespace Djambi.Engine.Services
                     || (a.Y == b.Y && Math.Abs(a.X - b.X) == 1);
             }
 
-            return state.Pieces
+            return game.Pieces
                 .Where(p => p.PlayerId != piece.PlayerId
                     && p.IsAlive
                     && IsAdjacent(p.Location, destination))
@@ -268,32 +266,32 @@ namespace Djambi.Engine.Services
 
         #region Select destination (2nd selection)
 
-        private Result<IEnumerable<Selection>> GetPieceDestinations(Piece piece, GameState state)
+        private Result<IEnumerable<Selection>> GetPieceDestinations(Piece piece, GameState game)
         {
             switch (piece.Type)
             {
                 case PieceType.Assassin:
-                    return GetAssassinDestinations(piece, state);
+                    return GetAssassinDestinations(piece, game);
                 case PieceType.Chief:
-                    return GetChiefDestinations(piece, state);
+                    return GetChiefDestinations(piece, game);
                 case PieceType.Diplomat:
-                    return GetDiplomatDestinations(piece, state);
+                    return GetDiplomatDestinations(piece, game);
                 case PieceType.Militant:
-                    return GetMilitantDestinations(piece, state);
+                    return GetMilitantDestinations(piece, game);
                 case PieceType.Necromobile:
-                    return GetNecromobileDestinations(piece, state);
+                    return GetNecromobileDestinations(piece, game);
                 case PieceType.Reporter:
-                    return GetReporterDestinations(piece, state);
+                    return GetReporterDestinations(piece, game);
                 default:
                     return new Exception($"Invalid {nameof(PieceType)} value ({piece.Type}).")
                         .ToErrorResult<IEnumerable<Selection>>();
             }            
         }
 
-        private Result<IEnumerable<Selection>> GetAssassinDestinations(Piece piece, GameState state)
+        private Result<IEnumerable<Selection>> GetAssassinDestinations(Piece piece, GameState game)
         {
-            return GetColinearNonBlockedLocations(piece, state)
-                .Select(loc => GetLocationWithPiece(loc, state.PiecesIndexedByLocation))
+            return GetColinearNonBlockedLocations(piece, game)
+                .Select(loc => GetLocationWithPiece(loc, game.PiecesIndexedByLocation))
                 .Where(lwp =>
                 {
                     if (lwp.Location.IsMaze())
@@ -317,10 +315,10 @@ namespace Djambi.Engine.Services
                 .ToResult();
         }
 
-        private Result<IEnumerable<Selection>> GetChiefDestinations(Piece piece, GameState state)
+        private Result<IEnumerable<Selection>> GetChiefDestinations(Piece piece, GameState game)
         {
-            return GetColinearNonBlockedLocations(piece, state)
-                .Select(loc => GetLocationWithPiece(loc, state.PiecesIndexedByLocation))
+            return GetColinearNonBlockedLocations(piece, game)
+                .Select(loc => GetLocationWithPiece(loc, game.PiecesIndexedByLocation))
                 .Where(lwp =>
                 {
                     //Cannot contain allied piece or Corpse
@@ -333,10 +331,10 @@ namespace Djambi.Engine.Services
                 .ToResult();
         }
 
-        private Result<IEnumerable<Selection>> GetDiplomatDestinations(Piece piece, GameState state)
+        private Result<IEnumerable<Selection>> GetDiplomatDestinations(Piece piece, GameState game)
         {
-            return GetColinearNonBlockedLocations(piece, state)
-                .Select(loc => GetLocationWithPiece(loc, state.PiecesIndexedByLocation))
+            return GetColinearNonBlockedLocations(piece, game)
+                .Select(loc => GetLocationWithPiece(loc, game.PiecesIndexedByLocation))
                 .Where(lwp =>
                 {
                     if (lwp.Location.IsMaze())
@@ -360,10 +358,10 @@ namespace Djambi.Engine.Services
                 .ToResult();
         }
 
-        private Result<IEnumerable<Selection>> GetMilitantDestinations(Piece piece, GameState state)
+        private Result<IEnumerable<Selection>> GetMilitantDestinations(Piece piece, GameState game)
         {
-            return GetColinearNonBlockedLocations(piece, state)
-                .Select(loc => GetLocationWithPiece(loc, state.PiecesIndexedByLocation))
+            return GetColinearNonBlockedLocations(piece, game)
+                .Select(loc => GetLocationWithPiece(loc, game.PiecesIndexedByLocation))
                 .Where(lwp =>
                 {
                     if (piece.Location.Distance(lwp.Location) > 2)
@@ -386,10 +384,10 @@ namespace Djambi.Engine.Services
                 .ToResult();
         }
 
-        private Result<IEnumerable<Selection>> GetNecromobileDestinations(Piece piece, GameState state)
+        private Result<IEnumerable<Selection>> GetNecromobileDestinations(Piece piece, GameState game)
         {
-            return GetColinearNonBlockedLocations(piece, state)
-                .Select(loc => GetLocationWithPiece(loc, state.PiecesIndexedByLocation))
+            return GetColinearNonBlockedLocations(piece, game)
+                .Select(loc => GetLocationWithPiece(loc, game.PiecesIndexedByLocation))
                 .Where(lwp =>
                 {
                     if (lwp.Location.IsMaze())
@@ -409,10 +407,10 @@ namespace Djambi.Engine.Services
                 .ToResult();
         }
 
-        private Result<IEnumerable<Selection>> GetReporterDestinations(Piece piece, GameState state)
+        private Result<IEnumerable<Selection>> GetReporterDestinations(Piece piece, GameState game)
         {
-            return GetColinearNonBlockedLocations(piece, state)
-                .Select(loc => GetLocationWithPiece(loc, state.PiecesIndexedByLocation))
+            return GetColinearNonBlockedLocations(piece, game)
+                .Select(loc => GetLocationWithPiece(loc, game.PiecesIndexedByLocation))
                 .Where(lwp => !lwp.Location.IsMaze()
                             && lwp.Piece == null)
                 .Select(CreateSelection)
@@ -421,14 +419,14 @@ namespace Djambi.Engine.Services
 
         #endregion
 
-        private Result<IEnumerable<Selection>> GetAdditionalSelections(Piece piece, GameState state, ImmutableList<Selection> selections)
+        private Result<IEnumerable<Selection>> GetAdditionalSelections(Piece piece, GameState game, ImmutableList<Selection> selections)
         {
             //Find targets or cells to place corpse in
 
             return Enumerable.Empty<Selection>().ToResult();
         }
 
-        private IEnumerable<Location> GetColinearNonBlockedLocations(Piece piece, GameState state)
+        private IEnumerable<Location> GetColinearNonBlockedLocations(Piece piece, GameState game)
         {
             foreach (var dir in EnumUtility.GetValues<Directions>())
             {
@@ -440,7 +438,7 @@ namespace Djambi.Engine.Services
                 {
                     continue;
                 }
-                if (state.Pieces.Any(p => p.Location == loc))
+                if (game.Pieces.Any(p => p.Location == loc))
                 {
                     yield return loc;
                     continue;
