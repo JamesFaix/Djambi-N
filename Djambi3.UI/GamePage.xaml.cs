@@ -28,12 +28,6 @@ namespace Djambi.UI
         public GamePage()
         {
             InitializeComponent();
-            this.Loaded += (sender, e) =>
-            { 
-                Window window = Window.GetWindow(this);
-                window.SetBinding(Window.MinHeightProperty, new Binding() { Source = this.MinHeight });
-                window.SetBinding(Window.MinWidthProperty, new Binding() { Source = this.MinWidth });
-            };
 
             _whiteBrush = new SolidColorBrush(Colors.White);
             _blackBrush = new SolidColorBrush(Colors.Black);
