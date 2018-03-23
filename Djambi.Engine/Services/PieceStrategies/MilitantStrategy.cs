@@ -8,11 +8,6 @@ namespace Djambi.Engine.Services.PieceStrategies
 {
     class MilitantStrategy : PieceStrategyBase
     {
-        public override Result<IEnumerable<Selection>> GetAdditionalSelections(GameState game, Piece piece, TurnState turn)
-        {
-            throw new NotImplementedException();
-        }
-
         public override Result<IEnumerable<Selection>> GetMoveDestinations(GameState game, Piece piece)
         {
             return GetColinearNonBlockedLocations(piece, game)
@@ -37,6 +32,22 @@ namespace Djambi.Engine.Services.PieceStrategies
                 })
                 .Select(CreateSelection)
                 .ToResult();
+        }
+        
+        public override Result<IEnumerable<Selection>> GetAdditionalSelections(GameState game, Piece piece, TurnState turn)
+        {
+            if (turn.Status == TurnStatus.AwaitingSelection
+             && turn.Selections.Count == 2)
+            {
+                //Drop target
+                var preview = _gameUpdateService.PreviewGameUpdate(game, turn);
+                var movedSubject = preview.PiecesIndexedByLocation[turn.Selections[1].Location];
+                return GetEmptyLocations(preview)
+                    .Select(Selection.Drop)
+                    .ToResult();
+            }
+
+            return Enumerable.Empty<Selection>().ToResult();
         }
 
         public override TurnState GetNextTurnState(GameState game, TurnState turn, Selection newSelection)

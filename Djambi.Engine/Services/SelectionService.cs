@@ -51,10 +51,7 @@ namespace Djambi.Engine.Services
                         var destinations = GetMoveDestinations(piece, game);
                         return destinations.HasValue && destinations.Value.Any();
                     })
-                    .Select(piece => Selection.Create(
-                        piece.Location, 
-                        SelectionType.Subject, 
-                        $"Use {piece.Type} at {piece.Location}."))
+                    .Select(Selection.Subject)
                     .ToResult();
             }
             else

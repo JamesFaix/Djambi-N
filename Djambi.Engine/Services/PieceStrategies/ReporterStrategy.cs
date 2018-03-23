@@ -8,11 +8,6 @@ namespace Djambi.Engine.Services.PieceStrategies
 {
     class ReporterStrategy : PieceStrategyBase
     {
-        public override Result<IEnumerable<Selection>> GetAdditionalSelections(GameState game, Piece piece, TurnState turn)
-        {
-            throw new NotImplementedException();
-        }
-
         public override Result<IEnumerable<Selection>> GetMoveDestinations(GameState game, Piece piece)
         {
             return GetColinearNonBlockedLocations(piece, game)
@@ -21,6 +16,24 @@ namespace Djambi.Engine.Services.PieceStrategies
                             && lwp.Piece == null)
                 .Select(CreateSelection)
                 .ToResult();
+        }
+
+        public override Result<IEnumerable<Selection>> GetAdditionalSelections(GameState game, Piece piece, TurnState turn)
+        {
+            if (turn.Status == TurnStatus.AwaitingSelection
+             && turn.Selections.Count == 2)
+            {
+                //Select target if possible
+                return GetTargetOptions(game, piece, turn.Selections[1].Location)
+                    .Select(loc =>
+                    {
+                        var target = game.PiecesIndexedByLocation[loc];
+                        return Selection.Target(loc, target);
+                    })
+                    .ToResult();
+            }
+
+            return Enumerable.Empty<Selection>().ToResult();
         }
 
         public override TurnState GetNextTurnState(GameState game, TurnState turn, Selection newSelection)

@@ -8,11 +8,6 @@ namespace Djambi.Engine.Services.PieceStrategies
 {
     class NecromobileStrategy : PieceStrategyBase
     {
-        public override Result<IEnumerable<Selection>> GetAdditionalSelections(GameState game, Piece piece, TurnState turn)
-        {
-            throw new NotImplementedException();
-        }
-
         public override Result<IEnumerable<Selection>> GetMoveDestinations(GameState game, Piece piece)
         {
             return GetColinearNonBlockedLocations(piece, game)
@@ -34,6 +29,33 @@ namespace Djambi.Engine.Services.PieceStrategies
                 })
                 .Select(CreateSelection)
                 .ToResult();
+        }
+
+        public override Result<IEnumerable<Selection>> GetAdditionalSelections(GameState game, Piece piece, TurnState turn)
+        {
+            if (turn.Status == TurnStatus.AwaitingSelection)
+            {
+                if (turn.Selections.Count == 2)
+                {
+                    //Drop target
+                    var preview = _gameUpdateService.PreviewGameUpdate(game, turn);
+                    var movedSubject = preview.PiecesIndexedByLocation[turn.Selections[1].Location];
+                    return GetEmptyLocations(preview)
+                        .Select(Selection.Drop)
+                        .ToResult();
+                }
+
+                if (turn.Selections.Count == 3
+                 && turn.Selections[1].Location.IsMaze())
+                {
+                    //Escape Maze after dropping Chief
+                    var preview = _gameUpdateService.PreviewGameUpdate(game, turn);
+                    var movedSubject = preview.PiecesIndexedByLocation[turn.Selections[2].Location];
+                    return GetMoveDestinations(preview, movedSubject);
+                }
+            }
+
+            return Enumerable.Empty<Selection>().ToResult();
         }
 
         public override TurnState GetNextTurnState(GameState game, TurnState turn, Selection newSelection)

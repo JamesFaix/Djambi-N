@@ -8,6 +8,8 @@ namespace Djambi.Engine.Services.PieceStrategies
 {
     abstract class PieceStrategyBase : IPieceStrategy
     {
+        protected readonly GameUpdateService _gameUpdateService = new GameUpdateService();
+
         public abstract Result<IEnumerable<Selection>> GetAdditionalSelections(GameState game, Piece piece, TurnState turn);
 
         public abstract Result<IEnumerable<Selection>> GetMoveDestinations(GameState game, Piece piece);
@@ -40,26 +42,21 @@ namespace Djambi.Engine.Services.PieceStrategies
             }
         }
 
+        protected IEnumerable<Location> GetEmptyLocations(GameState game)
+        {
+            return Enumerable.Range(1, Constants.BoardSize)
+                .SelectMany(x => Enumerable.Range(1, Constants.BoardSize)
+                    .Select(y => Location.Create(x, y)))
+                .Except(game.PiecesIndexedByLocation.Keys);
+        }
+
         protected LocationWithPiece GetLocationWithPiece(Location location, ImmutableDictionary<Location, Piece> index) =>
             new LocationWithPiece(location, index.TryGetValue(location, out var p) ? p : null);
 
-        protected Selection CreateSelection(LocationWithPiece lwp)
-        {
-            if (lwp.Piece == null)
-            {
-                return Selection.Create(
-                    lwp.Location,
-                    SelectionType.MoveDestination,
-                    $"Move to {lwp.Location}.");
-            }
-            else
-            {
-                return Selection.Create(
-                    lwp.Location,
-                    SelectionType.MoveDestinationWithTarget,
-                    $"Move to {lwp.Location} and target {lwp.Piece.Type}.");
-            }
-        }
+        protected Selection CreateSelection(LocationWithPiece lwp) =>
+            lwp.Piece == null
+                ? Selection.Move(lwp.Location)
+                : Selection.MoveWithTarget(lwp.Location, lwp.Piece);
 
         protected class LocationWithPiece
         {
