@@ -144,5 +144,11 @@
     <Resource Include="Images\mazeCell.png" />
     <Resource Include="Images\whiteCell.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\columnLabel.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\rowLabel.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

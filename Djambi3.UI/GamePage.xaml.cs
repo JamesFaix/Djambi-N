@@ -19,6 +19,7 @@ namespace Djambi.UI
         private readonly Dictionary<PlayerColor, Brush> _playerColorBrushes;
         private readonly Brush _selectionOptionBrush;
         private readonly Brush _selectionBrush;
+        private readonly Brush _boardLabelBrush;
 
         private const double _selectionOpacity = 0.5;
         private const string _selectionOptionRectName = "SelectionOption";
@@ -41,6 +42,7 @@ namespace Djambi.UI
             };
             _selectionOptionBrush = new SolidColorBrush(Colors.Yellow);
             _selectionBrush = new SolidColorBrush(Colors.Green);
+            _boardLabelBrush = new SolidColorBrush(Colors.White);
 
             DrawBoard();
             RedrawGameState(Controller.GameState);
@@ -53,23 +55,91 @@ namespace Djambi.UI
 
         private void DrawBoard()
         {
-            for (var i = 0; i < Constants.BoardSize; i++)
+            #region Draw labels
+
+            gridBoard.RowDefinitions.Add(new RowDefinition
+            {
+                Name = $"{nameof(gridBoard)}LabelRow",
+                Height = new GridLength(1, GridUnitType.Star)
+            });
+
+            gridBoard.ColumnDefinitions.Add(new ColumnDefinition
+            {
+                Name = $"{nameof(gridBoard)}LabelColumn",
+                Width = new GridLength(1, GridUnitType.Star)
+            });
+
+            for (var i = 1; i <= Constants.BoardSize; i++)
+            {
+                var rowBackground = new Image
+                {
+                    Source = new BitmapImage(new Uri("Images/rowLabel.png", UriKind.Relative)),
+                    Stretch = Stretch.Uniform
+                };
+
+                var rowLabel = new Label
+                {
+                    Content = $"{i}",
+                    Foreground = _boardLabelBrush,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+
+                gridBoard.Children.Add(rowBackground);
+                Grid.SetColumn(rowBackground, 0);
+                Grid.SetRow(rowBackground, i);
+
+                gridBoard.Children.Add(rowLabel);
+                Grid.SetColumn(rowLabel, 0);
+                Grid.SetRow(rowLabel, i);
+
+                var colBackground = new Image
+                {
+                    Source = new BitmapImage(new Uri("Images/columnLabel.png", UriKind.Relative)),
+                    Stretch = Stretch.Uniform
+                };
+
+                var colLabel = new Label
+                {
+                    Content = $"{i}",
+                    Foreground = _boardLabelBrush,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+
+                gridBoard.Children.Add(colBackground);
+                Grid.SetColumn(colBackground, i);
+                Grid.SetRow(colBackground, 0);
+
+                gridBoard.Children.Add(colLabel);
+                Grid.SetColumn(colLabel, i);
+                Grid.SetRow(colLabel, 0);
+            }
+
+            #endregion
+
+            #region Draw cells
+
+            for (var i = 1; i <= Constants.BoardSize; i++)
             {
                 gridBoard.RowDefinitions.Add(new RowDefinition
                 {
-                    Name = $"{nameof(gridBoard)}Row{i}"
+                    Name = $"{nameof(gridBoard)}Row{i}",
+                    Height = new GridLength(2, GridUnitType.Star)
+
                 });
                 gridBoard.ColumnDefinitions.Add(new ColumnDefinition
                 {
-                    Name = $"{nameof(gridBoard)}Column{i}"
+                    Name = $"{nameof(gridBoard)}Column{i}",
+                    Width = new GridLength(2, GridUnitType.Star)
                 });
             }
 
-            for (var r = 0; r < Constants.BoardSize; r++)
+            for (var r = 1; r <= Constants.BoardSize; r++)
             {
-                for (var c = 0; c < Constants.BoardSize; c++)
+                for (var c = 1; c <= Constants.BoardSize; c++)
                 {
-                    var loc = Location.Create(c + 1, r + 1);
+                    var loc = Location.Create(c, r);
 
                     var image = new Image
                     {
@@ -83,6 +153,8 @@ namespace Djambi.UI
                     Grid.SetRow(image, r);
                 }
             }
+
+            #endregion
         }
 
         private string GetCellImagePath(Location location)
@@ -151,8 +223,8 @@ namespace Djambi.UI
 
                 gridBoard.Children.Add(ell);
                 //-1 because grid is 0-based but game is 1-based
-                Grid.SetColumn(ell, piece.Piece.Location.X - 1);
-                Grid.SetRow(ell, piece.Piece.Location.Y - 1);
+                Grid.SetColumn(ell, piece.Piece.Location.X);
+                Grid.SetRow(ell, piece.Piece.Location.Y);
                 Grid.SetZIndex(ell, 1);
 
                 var image = new Image
@@ -165,8 +237,8 @@ namespace Djambi.UI
                 image.InputBindings.Add(clickBinding);
 
                 gridBoard.Children.Add(image);
-                Grid.SetColumn(image, piece.Piece.Location.X - 1);
-                Grid.SetRow(image, piece.Piece.Location.Y - 1);
+                Grid.SetColumn(image, piece.Piece.Location.X);
+                Grid.SetRow(image, piece.Piece.Location.Y);
                 Grid.SetZIndex(image, 2);
             }
         }
@@ -372,8 +444,8 @@ namespace Djambi.UI
                 rect.InputBindings.Add(clickBinding);
 
                 gridBoard.Children.Add(rect);
-                Grid.SetColumn(rect, s.Location.X - 1);
-                Grid.SetRow(rect, s.Location.Y - 1);
+                Grid.SetColumn(rect, s.Location.X);
+                Grid.SetRow(rect, s.Location.Y);
             }
         }
 
@@ -416,8 +488,8 @@ namespace Djambi.UI
             rect.InputBindings.Add(clickBinding);
 
             gridBoard.Children.Add(rect);
-            Grid.SetColumn(rect, selection.Location.X - 1);
-            Grid.SetRow(rect, selection.Location.Y - 1);
+            Grid.SetColumn(rect, selection.Location.X);
+            Grid.SetRow(rect, selection.Location.Y);
         }
 
         private void EnableOrDisableConfirmButtons()
