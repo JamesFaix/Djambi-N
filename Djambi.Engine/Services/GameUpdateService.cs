@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Text;
 using Djambi.Engine.Extensions;
 using Djambi.Model;
 
@@ -38,6 +39,7 @@ namespace Djambi.Engine.Services
             var pieces    = game.Pieces.ToDictionary(p => p.Id, p => p);
             var players   = game.Players.ToDictionary(p => p.Id, p => p);
             var turnCycle = game.TurnCycle.ToList();
+            var log       = game.Log.ToList();
 
             var s            = turn.Selections;
             var origin       = s[0].Location;
@@ -48,6 +50,7 @@ namespace Djambi.Engine.Services
 
             //Move subject
             pieces[subject.Id] = subject.Move(destination);
+            log.Add($"{subjectOwner.Name} moved {subject.Type} {subject.Id} to {destination}.");
 
             //Kill and/or move target
             if (s[1].Type == SelectionType.MoveWithTarget)
@@ -58,10 +61,13 @@ namespace Djambi.Engine.Services
                 {
                     case PieceType.Assassin:
                         pieces[target.Id] = target.Kill().Move(origin);
+                        log.Add($"{subject.Type} {subject.Id} killed {target.Type} {target.Id} and moved its corpse to {origin}.");
+
                         if (s[1].Location.IsMaze()
                          && (!isPreview || s.Count > 2)) //s[2] might not exist if in preview
                         { 
                             pieces[subject.Id] = subject.Move(s[2].Location);
+                            log.Add($"{subject.Type} {subject.Id} fled the maze to {s[2].Location}.");
                         }
                         break;
 
@@ -70,6 +76,7 @@ namespace Djambi.Engine.Services
                         if (!isPreview || s.Count > 2) //s[2] might not exist if in preview
                         {
                             pieces[target.Id] = target.Kill().Move(s[2].Location);
+                            log.Add($"{subject.Type} {subject.Id} killed {target.Type} {target.Id} and moved its corpse to {s[2].Location}.");
                         }
                         else
                         { 
@@ -83,10 +90,12 @@ namespace Djambi.Engine.Services
                         if (!isPreview || s.Count > 2) //s[2] might not exist if in preview
                         {
                             pieces[target.Id] = target.Move(s[2].Location);
+                            log.Add($"{subject.Type} {subject.Id} moved {(subject.Type == PieceType.Diplomat ? target.Type.ToString() : "corpse")} {target.Id} to {s[2].Location}.");
                             if (s[1].Location.IsMaze()
                              && (!isPreview || s.Count > 3)) //s[3] might not exist if in preview
                             {
                                 pieces[subject.Id] = subject.Move(s[3].Location);
+                                log.Add($"{subject.Type} {subject.Id} fled the maze to {s[2].Location}.");
                             }
                         }
                         else
@@ -104,6 +113,7 @@ namespace Djambi.Engine.Services
             {
                 target = game.PiecesIndexedByLocation[s[2].Location];
                 pieces[target.Id] = target.Kill();
+                log.Add($"{subject.Type} {subject.Id} killed {target.Type} {target.Id}.");
             }
 
             //Capture pieces if Chief killed
@@ -117,16 +127,28 @@ namespace Djambi.Engine.Services
                 players[targetOwner.Id] = targetOwner.Kill();
 
                 var capturedPieces = game.Pieces
-                    .Where(p => p.PlayerId == targetOwner.Id);
+                    .Where(p => p.PlayerId == targetOwner.Id)
+                    .ToList();
 
                 foreach (var p in capturedPieces)
                 {
                     pieces[p.Id] = p.Capture(subjectOwner.Id);
                 }
+
+                var sb = new StringBuilder();
+                sb.Append($"{subjectOwner.Name} eliminated {targetOwner.Name}");
+                if (capturedPieces.Any())
+                {
+                    sb.Append($" and captured {capturedPieces.Count} pieces (");
+                    sb.Append(string.Join(", ", capturedPieces.Select(p => $"{p.Type} {p.Id}")));
+                    sb.Append(")");
+                }
+                sb.Append(".");
+                log.Add(sb.ToString());
             }
 
             //Update turn cycle if Chief enters or leaves the Maze
-            if (destination.IsMaze())
+            if (destination.IsMaze() || origin.IsMaze())
             {
                 //If removing Chief from Maze
                 if (target?.Type == PieceType.Chief
@@ -159,6 +181,28 @@ namespace Djambi.Engine.Services
                             turnCycle.RemoveAt(t);
                         }
                     }
+                    log.Add($"{players[target.PlayerId.Value].Name} was overthrown from power.");
+                }
+
+                //If Chief voluntarily left Maze
+                if (origin.IsMaze())
+                {
+                    var subjectOwnerTurnIndexes = turnCycle
+                        .Select((playerId, index) => new
+                        {
+                            PlayerId = playerId,
+                            Index = index
+                        })
+                        .Where(x => x.PlayerId == subject.PlayerId)
+                        .Select(x => x.Index)
+                        .Reverse() //Must work down turn cycle backwards to preserve indexes
+                        .ToList();
+
+                    foreach (var t in subjectOwnerTurnIndexes.Skip(1))
+                    {
+                        turnCycle.RemoveAt(t);
+                    }
+                    log.Add($"{subjectOwner.Name} ceded power.");
                 }
 
                 //If moving Chief to Maze
@@ -179,6 +223,7 @@ namespace Djambi.Engine.Services
                             turnCycle.Insert(4, subjectOwner.Id);
                             break;
                     }
+                    log.Add($"{subjectOwner.Name} has risen to power.");
                 }
             }
 
@@ -193,7 +238,8 @@ namespace Djambi.Engine.Services
             return GameState.Create(
                 players.Values,
                 pieces.Values,
-                turnCycle);
+                turnCycle,
+                log);
         }
     }
 }

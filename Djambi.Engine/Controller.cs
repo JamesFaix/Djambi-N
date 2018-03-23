@@ -9,13 +9,15 @@ namespace Djambi.Engine
 {
     public static class Controller
     {
-        private static readonly ValidationService _validationService;
         private static readonly GameInitializationService _gameInitializationService;
         private static readonly GameUpdateService _gameUpdateService;
+        private static readonly LogService _logService;
         private static readonly SelectionService _selectionService;
-        
+        private static readonly ValidationService _validationService;
+
         static Controller()
         {
+            _logService = new LogService();
             _validationService = new ValidationService();
             _gameInitializationService = new GameInitializationService();
             _gameUpdateService = new GameUpdateService(_validationService);
@@ -23,6 +25,8 @@ namespace Djambi.Engine
 
             GameState = GameState.Empty;
             TurnState = TurnState.MainMenu;
+
+            _logService.OnWrite += (sender, msg) => OnLogWrite?.Invoke(sender, msg);
         }
 
         public static GameState GameState { get; private set; }
@@ -85,5 +89,7 @@ namespace Djambi.Engine
             TurnState = TurnState.Empty;
             return Unit.Value.ToResult();
         }
+
+        public static event EventHandler<string> OnLogWrite;
     }
 }

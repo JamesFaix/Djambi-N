@@ -53,7 +53,12 @@ namespace Djambi.Engine.Services
                 .Select(p => p.Id)
                 .Shuffle();
 
-            return GameState.Create(players, pieces, turnCycle);
+            var log = new[]
+            {
+                "Game started."
+            };
+
+            return GameState.Create(players, pieces, turnCycle, log);
         }
 
         private List<Player> CreatePlayers(List<string> nonVirtualPlayerNames)
