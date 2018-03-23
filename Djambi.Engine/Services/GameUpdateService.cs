@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using Djambi.Engine.Extensions;
 using Djambi.Model;
 
@@ -148,13 +145,17 @@ namespace Djambi.Engine.Services
 
                     //TODO: Check for stalemate
 
+                    //Advance the turn cycle
+                    turnCycle.RemoveAt(0);
+                    turnCycle.Add(subjectOwner.Id);
+
                     var newGameState = GameState.Create(
                         players.Values,
                         pieces.Values,
                         turnCycle);
 
                     return _validationService.ValidateGameState(newGameState)
-                        .Map(__ => game);
+                        .Map(__ => newGameState);
                 });           
         }
     }

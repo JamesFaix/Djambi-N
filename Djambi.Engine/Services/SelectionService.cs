@@ -43,7 +43,7 @@ namespace Djambi.Engine.Services
                     })
                     .Select(piece => Selection.Create(
                         piece.Location, 
-                        SelectionType.MoveDestination, 
+                        SelectionType.Subject, 
                         $"Use {piece.Type} at {piece.Location}."))
                     .ToResult();
             }

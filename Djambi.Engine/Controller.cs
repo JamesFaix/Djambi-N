@@ -11,12 +11,14 @@ namespace Djambi.Engine
     {
         private static readonly ValidationService _validationService;
         private static readonly GameInitializationService _gameInitializationService;
+        private static readonly GameUpdateService _gameUpdateService;
         private static readonly SelectionService _selectionService;
         
         static Controller()
         {
             _validationService = new ValidationService();
             _gameInitializationService = new GameInitializationService();
+            _gameUpdateService = new GameUpdateService();
             _selectionService = new SelectionService();
 
             GameState = GameState.Empty;
@@ -68,15 +70,14 @@ namespace Djambi.Engine
                 });            
         }
 
-        public static Result<Unit> ConfirmTurn()
+        public static Result<GameState> ConfirmTurn()
         {
-            /*
-             * Check if TurnState is valid
-             * If not, error
-             * If valid, update GameState
-             */
-
-            return Unit.Value.ToResult();
+            return _gameUpdateService.UpdateGameState(GameState, TurnState)
+                .OnValue(game => 
+                {
+                    GameState = game;
+                    TurnState = TurnState.Empty;
+                });
         }
 
         public static Result<Unit> CancelTurn()

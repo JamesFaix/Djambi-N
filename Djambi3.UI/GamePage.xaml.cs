@@ -52,7 +52,7 @@ namespace Djambi.UI
             _selectionBrush = new SolidColorBrush(Colors.Green);
 
             DrawBoard();
-            RedrawGameState();
+            RedrawGameState(Controller.GameState);
             Controller.GetValidSelections()
                 .OnValue(DrawSelectionOptions)
                 .OnError(error =>
@@ -112,12 +112,11 @@ namespace Djambi.UI
             }
         }
 
-        private void RedrawGameState()
+        private void RedrawGameState(GameState game)
         {
-            var state = Controller.GameState;
-            RedrawPieces(state);
-            RedrawTurnCycle(state);
-            RedrawPlayers(state);
+            RedrawPieces(game);
+            RedrawTurnCycle(game);
+            RedrawPlayers(game);
             Controller.GetValidSelections()
                 .OnValue(DrawSelectionOptions)
                 .OnError(error =>
@@ -471,11 +470,11 @@ namespace Djambi.UI
         private void btnConfirm_Click(object sender, RoutedEventArgs e)
         {
             Controller.ConfirmTurn()
-                .OnValue(_ =>
+                .OnValue(game =>
                 {
                     ClearSelectionOptions();
                     ClearSelections();
-                    RedrawGameState();
+                    RedrawGameState(game);
                 })
                 .OnError(error =>
                 {
