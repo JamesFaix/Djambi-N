@@ -10,6 +10,8 @@ Don't allow dropping corpse at move destination
  - Maybe split Selection type into two types, one for a selection that the user has made and one for a potential selection.
    The potential selection may only need a location, so that cells can be highlighted
    The chosen selection may need a pieceId to prevent ambiguity over Subject and Target
+
+Create error display in UI. For simple things like clicking a cell that is an invalid selection, just tell the user, don't throw.
 		
 ## Debug aides
 
