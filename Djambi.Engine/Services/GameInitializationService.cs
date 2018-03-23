@@ -99,8 +99,7 @@ namespace Djambi.Engine.Services
                     nonVirtualPlayerNames[0],
                     isAlive: true,
                     isVirtual: false,
-                    color: colors[0],
-                    conqueredPlayerIds: Enumerable.Empty<int>()));
+                    color: colors[0]));
 
                 playerIds.RemoveAt(0);
                 nonVirtualPlayerNames.RemoveAt(0);
@@ -114,8 +113,7 @@ namespace Djambi.Engine.Services
                     usableVirtualPlayerNames[0], 
                     isAlive: true, 
                     isVirtual: true,
-                    color: colors[0],
-                    conqueredPlayerIds: Enumerable.Empty<int>()));
+                    color: colors[0]));
 
                 playerIds.RemoveAt(0);
                 usableVirtualPlayerNames.RemoveAt(0);

@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Collections.Immutable;
-
-namespace Djambi.Model
+﻿namespace Djambi.Model
 {
     public class Player
 	{
@@ -15,22 +12,18 @@ namespace Djambi.Model
 
         public PlayerColor Color { get; }
 
-        public ImmutableList<int> ConqueredPlayerIds { get; }
-
         private Player(
             int id, 
             string name, 
             bool isAlive,
             bool isVirtual,
-            PlayerColor color,
-            IEnumerable<int> conqueredPlayerIds)
+            PlayerColor color)
         {
             Id = id;
             Name = name;
             IsAlive = isAlive;
             IsVirtual = isVirtual;
             Color = color;
-            ConqueredPlayerIds = conqueredPlayerIds.ToImmutableList();
         }
 
         public override string ToString() =>
@@ -44,8 +37,7 @@ namespace Djambi.Model
             string name,
             bool isAlive,
             bool isVirtual,
-            PlayerColor color,
-            IEnumerable<int> conqueredPlayerIds) =>
-            new Player(id, name, isAlive, isVirtual, color, conqueredPlayerIds);
+            PlayerColor color) =>
+            new Player(id, name, isAlive, isVirtual, color);
 	}
 }
