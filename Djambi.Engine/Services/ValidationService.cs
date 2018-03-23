@@ -187,23 +187,23 @@ namespace Djambi.Engine.Services
 
                 switch (turn.Selections[1].Type)
                 {
-                    case SelectionType.MoveDestination:
+                    case SelectionType.Move:
                         if (game.PiecesIndexedByLocation.ContainsKey(turn.Selections[1].Location))
                         {
-                            errors.Add(new Exception($"{SelectionType.MoveDestination} must have a location with no pieces."));
+                            errors.Add(new Exception($"{SelectionType.Move} must have a location with no pieces."));
                         }
                         break;
 
-                    case SelectionType.MoveDestinationWithTarget:
+                    case SelectionType.MoveWithTarget:
                         if (!game.PiecesIndexedByLocation.TryGetValue(turn.Selections[1].Location, out var target)
                             || target.PlayerId == subject.PlayerId)
                         {
-                            errors.Add(new Exception($"{SelectionType.MoveDestinationWithTarget} must have a location with an enemy piece."));
+                            errors.Add(new Exception($"{SelectionType.MoveWithTarget} must have a location with an enemy piece."));
                         }
                         break;
 
                     default:
-                        errors.Add(new Exception($"Second selection must be {SelectionType.MoveDestination} or {SelectionType.MoveDestinationWithTarget}."));
+                        errors.Add(new Exception($"Second selection must be {SelectionType.Move} or {SelectionType.MoveWithTarget}."));
                         break;
                 }
 

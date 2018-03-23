@@ -3,9 +3,9 @@
     public enum SelectionType
     {
         Subject = 1,
-        MoveDestination,
-        MoveDestinationWithTarget,
+        Move,
+        MoveWithTarget,
         Target,
-        DropDestination
+        Drop
     }
 }

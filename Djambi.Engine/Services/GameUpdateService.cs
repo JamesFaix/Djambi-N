@@ -45,7 +45,7 @@ namespace Djambi.Engine.Services
             pieces[subject.Id] = subject.Move(destination);
 
             //Kill and/or move target
-            if (s[1].Type == SelectionType.MoveDestinationWithTarget)
+            if (s[1].Type == SelectionType.MoveWithTarget)
             {
                 target = game.PiecesIndexedByLocation[destination];
 

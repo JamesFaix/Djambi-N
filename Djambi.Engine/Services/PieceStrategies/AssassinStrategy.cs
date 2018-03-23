@@ -54,7 +54,7 @@ namespace Djambi.Engine.Services.PieceStrategies
             //A subject has already been selected, the new selection is a destination (possibly with target)
             if (turn.Selections.Count == 1)
             {
-                if (newSelection.Type == SelectionType.MoveDestinationWithTarget)
+                if (newSelection.Type == SelectionType.MoveWithTarget)
                 {
                     var target = game.PiecesIndexedByLocation[newSelection.Location];
 

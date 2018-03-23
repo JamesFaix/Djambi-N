@@ -27,13 +27,13 @@
         public static Selection Move(Location location) =>
             new Selection(
                 location,
-                SelectionType.MoveDestination,
+                SelectionType.Move,
                 $"Move to {location}.");
 
         public static Selection MoveWithTarget(Location location, Piece piece) =>
             new Selection(
                 location,
-                SelectionType.MoveDestinationWithTarget,
+                SelectionType.MoveWithTarget,
                 $"Move to {location} and target {piece.Type}.");
 
         public static Selection Target(Location location, Piece piece) =>
@@ -45,7 +45,7 @@
         public static Selection Drop(Location location) =>
             new Selection(
                 location,
-                SelectionType.DropDestination,
+                SelectionType.Drop,
                  $"Drop target at {location}.");
     }
 }
