@@ -5,8 +5,8 @@
         Assassin = 1,
         Chief,
         Diplomat,
-        Militant,
-        Necromobile,
-        Reporter
+        Journalist,
+        Thug,
+        Undertaker
     }
 }

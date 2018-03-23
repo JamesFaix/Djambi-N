@@ -130,9 +130,9 @@
     <Resource Include="Images\assassin.png" />
     <Resource Include="Images\chief.png" />
     <Resource Include="Images\corpse.png" />
-    <Resource Include="Images\militant.png" />
-    <Resource Include="Images\necromobile.png" />
-    <Resource Include="Images\reporter.png" />
+    <Resource Include="Images\thug.png" />
+    <Resource Include="Images\undertaker.png" />
+    <Resource Include="Images\journalist.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\diplomat.png" />

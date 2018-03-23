@@ -135,12 +135,12 @@ namespace Djambi.Engine.Services
                 Piece.Create(NextPieceId, PieceType.Chief,       playerId, playerId, true, Location.Create(-1,-1)),
                 Piece.Create(NextPieceId, PieceType.Assassin,    playerId, playerId, true, Location.Create( 0,-1)),
                 Piece.Create(NextPieceId, PieceType.Diplomat,    playerId, playerId, true, Location.Create( 0, 0)),
-                Piece.Create(NextPieceId, PieceType.Necromobile, playerId, playerId, true, Location.Create( 1, 1)),
-                Piece.Create(NextPieceId, PieceType.Reporter,    playerId, playerId, true, Location.Create(-1, 0)),
-                Piece.Create(NextPieceId, PieceType.Militant,    playerId, playerId, true, Location.Create( 1,-1)),
-                Piece.Create(NextPieceId, PieceType.Militant,    playerId, playerId, true, Location.Create( 1, 0)),
-                Piece.Create(NextPieceId, PieceType.Militant,    playerId, playerId, true, Location.Create(-1, 1)),
-                Piece.Create(NextPieceId, PieceType.Militant,    playerId, playerId, true, Location.Create( 0, 1)),
+                Piece.Create(NextPieceId, PieceType.Undertaker, playerId, playerId, true, Location.Create( 1, 1)),
+                Piece.Create(NextPieceId, PieceType.Journalist,    playerId, playerId, true, Location.Create(-1, 0)),
+                Piece.Create(NextPieceId, PieceType.Thug,    playerId, playerId, true, Location.Create( 1,-1)),
+                Piece.Create(NextPieceId, PieceType.Thug,    playerId, playerId, true, Location.Create( 1, 0)),
+                Piece.Create(NextPieceId, PieceType.Thug,    playerId, playerId, true, Location.Create(-1, 1)),
+                Piece.Create(NextPieceId, PieceType.Thug,    playerId, playerId, true, Location.Create( 0, 1)),
             };
 
             Piece MovePiece(Piece piece, Location location) =>

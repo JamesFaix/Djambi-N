@@ -14,9 +14,9 @@ namespace Djambi.Engine.Services
             [PieceType.Assassin]    = new AssassinStrategy(),
             [PieceType.Chief]       = new ChiefStrategy(),
             [PieceType.Diplomat]    = new DiplomatStrategy(),
-            [PieceType.Militant]    = new MilitantStrategy(),
-            [PieceType.Necromobile] = new NecromobileStrategy(),
-            [PieceType.Reporter]    = new ReporterStrategy()
+            [PieceType.Thug]    = new ThugStrategy(),
+            [PieceType.Undertaker] = new UndertakerStrategy(),
+            [PieceType.Journalist]    = new JournalistStrategy()
         };
 
         public Result<IEnumerable<Selection>> GetValidSelections(GameState game, TurnState turn)

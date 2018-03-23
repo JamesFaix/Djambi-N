@@ -1,35 +1,48 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Djambi.Engine.Extensions;
 using Djambi.Model;
 
 namespace Djambi.Engine.Services.PieceStrategies
 {
-    class ReporterStrategy : PieceStrategyBase
+    class ThugStrategy : PieceStrategyBase
     {
         public override Result<IEnumerable<Selection>> GetMoveDestinations(GameState game, Piece piece)
         {
             return GetColinearNonBlockedLocations(piece, game)
                 .Select(loc => GetLocationWithPiece(loc, game.PiecesIndexedByLocation))
-                .Where(lwp => !lwp.Location.IsMaze()
-                            && lwp.Piece == null)
+                .Where(lwp =>
+                {
+                    if (piece.Location.Distance(lwp.Location) > 2)
+                    {
+                        return false;
+                    }
+
+                    if (lwp.Location.IsMaze())
+                    {
+                        return false;
+                    }
+
+                    //Cannot contain allied piece or Corpse
+                    return lwp.Piece != null
+                        ? lwp.Piece.PlayerId != piece.PlayerId
+                            && lwp.Piece.IsAlive
+                        : true;
+                })
                 .Select(CreateSelection)
                 .ToResult();
         }
-
+        
         public override Result<IEnumerable<Selection>> GetAdditionalSelections(GameState game, Piece piece, TurnState turn)
         {
             if (turn.Status == TurnStatus.AwaitingSelection
              && turn.Selections.Count == 2)
             {
-                //Select target if possible
-                return GetTargetOptions(game, piece, turn.Selections[1].Location)
-                    .Select(loc =>
-                    {
-                        var target = game.PiecesIndexedByLocation[loc];
-                        return Selection.Target(loc, target);
-                    })
+                //Drop target
+                var preview = _gameUpdateService.PreviewGameUpdate(game, turn);
+                var movedSubject = preview.PiecesIndexedByLocation[turn.Selections[1].Location];
+                return GetEmptyLocations(preview)
+                    .Select(Selection.Drop)
                     .ToResult();
             }
 
@@ -41,14 +54,9 @@ namespace Djambi.Engine.Services.PieceStrategies
             //A subject has already been selected, the new selection is a destination (possibly with target)
             if (turn.Selections.Count == 1)
             {
-                var subject = game.PiecesIndexedByLocation[turn.Selections[0].Location];
-
-                //Check for adjacent enemy pieces, if any then another selection is required
-                var targetOptions = GetTargetOptions(game, subject, newSelection.Location)
-                    .ToList();
-
-                if (targetOptions.Any())
+                if (newSelection.Type == SelectionType.MoveDestinationWithTarget)
                 {
+                    //The new selection is a move with target, so a drop destination is required
                     return TurnState.Create(
                         TurnStatus.AwaitingSelection,
                         turn.Selections.Add(newSelection));
@@ -58,21 +66,6 @@ namespace Djambi.Engine.Services.PieceStrategies
             return TurnState.Create(
                 TurnStatus.AwaitingConfirmation,
                 turn.Selections.Add(newSelection));
-        }
-
-        private IEnumerable<Location> GetTargetOptions(GameState game, Piece piece, Location destination)
-        {
-            bool IsAdjacent(Location a, Location b)
-            {
-                return (a.X == b.X && Math.Abs(a.Y - b.Y) == 1)
-                    || (a.Y == b.Y && Math.Abs(a.X - b.X) == 1);
-            }
-
-            return game.Pieces
-                .Where(p => p.PlayerId != piece.PlayerId
-                    && p.IsAlive
-                    && IsAdjacent(p.Location, destination))
-                .Select(p => p.Location);
         }
     }
 }

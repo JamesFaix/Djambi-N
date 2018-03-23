@@ -206,14 +206,14 @@ namespace Djambi.UI
                 case PieceType.Diplomat:
                     return "Images/diplomat.png";
 
-                case PieceType.Militant:
-                    return "Images/militant.png";
+                case PieceType.Journalist:
+                    return "Images/journalist.png";
 
-                case PieceType.Necromobile:
-                    return "Images/necromobile.png";
+                case PieceType.Thug:
+                    return "Images/thug.png";
 
-                case PieceType.Reporter:
-                    return "Images/reporter.png";
+                case PieceType.Undertaker:
+                    return "Images/undertaker.png";
 
                 default:
                     throw new Exception("Invalid PieceType");

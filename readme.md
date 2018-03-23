@@ -15,10 +15,10 @@ __Note:__ This readme is currently incomplete.  Please see the link to the Wikip
 - The objective is to be the last player alive, so all alliances must be broken eventually.
 
 ### The pieces
-- Each player has 9 pieces: 1 _Chief_, 1 _Assassin_, 1 _Reporter_, 1 _Diplomat_, 1 _Necromobile_, and 4 _Militants_. 
+- Each player has 9 pieces: 1 _Chief_, 1 _Assassin_, 1 _Journalist_, 1 _Diplomat_, 1 _Undertaker_, and 4 _Thugs_. 
 - All pieces can move in all 8 directions (horizontal, vertical, and diagonal).
 
-#### Militant
+#### Thug
 - Can move up to 2 cells
 - Destination can be any cell except the Maze or a cell occupied by an ally piece
 - If destination contains enemy piece, it is killed
@@ -37,7 +37,7 @@ __Note:__ This readme is currently incomplete.  Please see the link to the Wikip
 - If destination contains enemy piece, it is killed
 - Corpse is placed in the cell the Assassin started in
 
-#### Reporter
+#### Journalist
 - Can move up to 8 cells
 - Destination can be any unoccupied cell or the Maze
 - Can target a piece horizontally or vertically adjacent to destination
@@ -50,10 +50,10 @@ __Note:__ This readme is currently incomplete.  Please see the link to the Wikip
 - Does not kill target, but moves to any unoccupied cell
 - Cannot move a non-Chief piece to the Maze
 
-#### Necromobile
+#### Undertaker
 - Can move up to 8 cells
 - Destination can be any unoccupied cell except the Maze or any cell occupied by a Corpse
-- Destination can be the Maze if a Corpse is there, if so the Necromobile must move to another unoccupied cell afterward	
+- Destination can be the Maze if a Corpse is there, if so the Undertaker must move to another unoccupied cell afterward	
 - Move Corpse to any unoccupied cell, except the Maze
 
  [1]: https://en.wikipedia.org/wiki/Djambi

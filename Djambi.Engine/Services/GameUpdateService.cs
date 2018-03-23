@@ -61,7 +61,7 @@ namespace Djambi.Engine.Services
                         break;
 
                     case PieceType.Chief:
-                    case PieceType.Militant:
+                    case PieceType.Thug:
                         if (!isPreview || s.Count > 2) //s[2] might not exist if in preview
                         {
                             pieces[target.Id] = target.Kill().Move(s[2].Location);
@@ -74,7 +74,7 @@ namespace Djambi.Engine.Services
                         break;
 
                     case PieceType.Diplomat:
-                    case PieceType.Necromobile:
+                    case PieceType.Undertaker:
                         if (!isPreview || s.Count > 2) //s[2] might not exist if in preview
                         {
                             pieces[target.Id] = target.Move(s[2].Location);
@@ -93,7 +93,7 @@ namespace Djambi.Engine.Services
                 }
             }
 
-            if (subject.Type == PieceType.Reporter
+            if (subject.Type == PieceType.Journalist
              && (!isPreview || s.Count > 2) //s[2] might not exist if in preview 
              && s[2].Type == SelectionType.Target)
             {
@@ -104,7 +104,7 @@ namespace Djambi.Engine.Services
             //Capture pieces if Chief killed
             if (target?.Type == PieceType.Chief
              && subject.Type != PieceType.Diplomat
-             && subject.Type != PieceType.Necromobile)
+             && subject.Type != PieceType.Undertaker)
             {
                 //Safe to assume PlayerId.HasValue because a Chief cannot be abandoned
                 var targetOwner = players[target.PlayerId.Value];

@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Djambi.Engine.Extensions;
 using Djambi.Model;
 
 namespace Djambi.Engine.Services.PieceStrategies
 {
-    class NecromobileStrategy : PieceStrategyBase
+    class UndertakerStrategy : PieceStrategyBase
     {
         public override Result<IEnumerable<Selection>> GetMoveDestinations(GameState game, Piece piece)
         {
