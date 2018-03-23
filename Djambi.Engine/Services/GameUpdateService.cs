@@ -6,7 +6,12 @@ namespace Djambi.Engine.Services
 {
     class GameUpdateService
     {
-        private readonly ValidationService _validationService = new ValidationService();
+        private readonly ValidationService _validationService;
+
+        public GameUpdateService(ValidationService validationService)
+        {
+            _validationService = validationService;
+        }
 
         public Result<GameState> UpdateGameState(GameState game, TurnState turn)
         {

@@ -18,8 +18,8 @@ namespace Djambi.Engine
         {
             _validationService = new ValidationService();
             _gameInitializationService = new GameInitializationService();
-            _gameUpdateService = new GameUpdateService();
-            _selectionService = new SelectionService();
+            _gameUpdateService = new GameUpdateService(_validationService);
+            _selectionService = new SelectionService(_gameUpdateService);
 
             GameState = GameState.Empty;
             TurnState = TurnState.MainMenu;

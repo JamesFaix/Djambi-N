@@ -1,13 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Djambi.Engine.Extensions;
+using Djambi.Engine.Services;
 using Djambi.Model;
 
 namespace Djambi.Engine.PieceStrategies
 {
     class ChiefStrategy : PieceStrategyBase
     {
+        public ChiefStrategy(GameUpdateService gameUpdateService)
+            : base(gameUpdateService) { }
+
         public override Result<IEnumerable<Selection>> GetMoveDestinations(GameState game, Piece piece)
         {
             return GetColinearNonBlockedLocations(piece, game)

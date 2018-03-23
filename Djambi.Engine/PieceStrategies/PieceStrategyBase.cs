@@ -9,7 +9,12 @@ namespace Djambi.Engine.PieceStrategies
 {
     abstract class PieceStrategyBase : IPieceStrategy
     {
-        protected readonly GameUpdateService _gameUpdateService = new GameUpdateService();
+        protected readonly GameUpdateService _gameUpdateService;
+
+        public PieceStrategyBase(GameUpdateService gameUpdateService)
+        {
+            _gameUpdateService = gameUpdateService;
+        }
 
         public abstract Result<IEnumerable<Selection>> GetAdditionalSelections(GameState game, Piece piece, TurnState turn);
 

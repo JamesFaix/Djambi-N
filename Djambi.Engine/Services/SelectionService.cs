@@ -9,15 +9,20 @@ namespace Djambi.Engine.Services
 {
     class SelectionService
     {
-        private readonly Dictionary<PieceType, IPieceStrategy> _pieceStrategies = new Dictionary<PieceType, IPieceStrategy>
+        private readonly Dictionary<PieceType, IPieceStrategy> _pieceStrategies;
+
+        public SelectionService(GameUpdateService gameUpdateService)
         {
-            [PieceType.Assassin]    = new AssassinStrategy(),
-            [PieceType.Chief]       = new ChiefStrategy(),
-            [PieceType.Diplomat]    = new DiplomatStrategy(),
-            [PieceType.Thug]    = new ThugStrategy(),
-            [PieceType.Undertaker] = new UndertakerStrategy(),
-            [PieceType.Journalist]    = new JournalistStrategy()
-        };
+            _pieceStrategies = new Dictionary<PieceType, IPieceStrategy>
+            {
+                [PieceType.Assassin] = new AssassinStrategy(gameUpdateService),
+                [PieceType.Chief] = new ChiefStrategy(gameUpdateService),
+                [PieceType.Diplomat] = new DiplomatStrategy(gameUpdateService),
+                [PieceType.Thug] = new ThugStrategy(gameUpdateService),
+                [PieceType.Undertaker] = new UndertakerStrategy(gameUpdateService),
+                [PieceType.Journalist] = new JournalistStrategy(gameUpdateService)
+            };
+        }        
 
         public Result<IEnumerable<Selection>> GetValidSelections(GameState game, TurnState turn)
         {
