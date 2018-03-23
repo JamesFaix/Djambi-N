@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Djambi.Model;
 
-namespace Djambi.Engine.Services.PieceStrategies
+namespace Djambi.Engine.PieceStrategies
 {
     interface IPieceStrategy
     {

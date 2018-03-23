@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Djambi.Engine.Extensions;
 using Djambi.Model;
 
-namespace Djambi.Engine.Services.PieceStrategies
+namespace Djambi.Engine.PieceStrategies
 {
-    class ChiefStrategy : PieceStrategyBase
+    class ThugStrategy : PieceStrategyBase
     {
         public override Result<IEnumerable<Selection>> GetMoveDestinations(GameState game, Piece piece)
         {
@@ -14,6 +13,16 @@ namespace Djambi.Engine.Services.PieceStrategies
                 .Select(loc => GetLocationWithPiece(loc, game.PiecesIndexedByLocation))
                 .Where(lwp =>
                 {
+                    if (piece.Location.Distance(lwp.Location) > 2)
+                    {
+                        return false;
+                    }
+
+                    if (lwp.Location.IsMaze())
+                    {
+                        return false;
+                    }
+
                     //Cannot contain allied piece or Corpse
                     return lwp.Piece != null
                         ? lwp.Piece.PlayerId != piece.PlayerId
@@ -23,7 +32,7 @@ namespace Djambi.Engine.Services.PieceStrategies
                 .Select(CreateSelection)
                 .ToResult();
         }
-
+        
         public override Result<IEnumerable<Selection>> GetAdditionalSelections(GameState game, Piece piece, TurnState turn)
         {
             if (turn.Status == TurnStatus.AwaitingSelection

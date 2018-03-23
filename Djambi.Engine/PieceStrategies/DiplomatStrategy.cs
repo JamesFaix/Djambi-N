@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Djambi.Engine.Extensions;
 using Djambi.Model;
 
-namespace Djambi.Engine.Services.PieceStrategies
+namespace Djambi.Engine.PieceStrategies
 {
-    class AssassinStrategy : PieceStrategyBase
+    class DiplomatStrategy : PieceStrategyBase
     {
         public override Result<IEnumerable<Selection>> GetMoveDestinations(GameState game, Piece piece)
         {
@@ -33,17 +34,30 @@ namespace Djambi.Engine.Services.PieceStrategies
                 .Select(CreateSelection)
                 .ToResult();
         }
-        
+
+
         public override Result<IEnumerable<Selection>> GetAdditionalSelections(GameState game, Piece piece, TurnState turn)
         {
-            if (turn.Status == TurnStatus.AwaitingSelection
-             && turn.Selections.Count == 2 
-             && turn.Selections[1].Location.IsMaze())
+            if (turn.Status == TurnStatus.AwaitingSelection)
             {
-                //Escape Maze after killing Chief
-                var preview = _gameUpdateService.PreviewGameUpdate(game, turn);
-                var movedSubject = preview.PiecesIndexedByLocation[turn.Selections[1].Location];
-                return GetMoveDestinations(preview, movedSubject);
+                if (turn.Selections.Count == 2)
+                {
+                    //Drop target
+                    var preview = _gameUpdateService.PreviewGameUpdate(game, turn);
+                    var movedSubject = preview.PiecesIndexedByLocation[turn.Selections[1].Location];
+                    return GetEmptyLocations(preview)
+                        .Select(Selection.Drop)
+                        .ToResult();
+                }
+
+                if (turn.Selections.Count == 3
+                 && turn.Selections[1].Location.IsMaze())
+                {
+                    //Escape Maze after dropping Chief
+                    var preview = _gameUpdateService.PreviewGameUpdate(game, turn);
+                    var movedSubject = preview.PiecesIndexedByLocation[turn.Selections[2].Location];
+                    return GetMoveDestinations(preview, movedSubject);
+                }
             }
 
             return Enumerable.Empty<Selection>().ToResult();
@@ -56,15 +70,21 @@ namespace Djambi.Engine.Services.PieceStrategies
             {
                 if (newSelection.Type == SelectionType.MoveWithTarget)
                 {
-                    var target = game.PiecesIndexedByLocation[newSelection.Location];
+                    //The new selection is a move with target, so a drop destination is required
+                    return TurnState.Create(
+                        TurnStatus.AwaitingSelection,
+                        turn.Selections.Add(newSelection));
+                }
+            }
 
-                    if (target.Type == PieceType.Chief && newSelection.Location.IsMaze())
-                    {
-                        //Must move out of maze
-                        return TurnState.Create(
-                            TurnStatus.AwaitingSelection,
-                            turn.Selections.Add(newSelection));
-                    }
+            if (turn.Selections.Count == 2)
+            {
+                //If the last selection targeted a Chief in the Maze, the Diplomat must escape
+                if (turn.Selections[1].Location.IsMaze())
+                {
+                    return TurnState.Create(
+                        TurnStatus.AwaitingSelection,
+                        turn.Selections.Add(newSelection));
                 }
             }
 

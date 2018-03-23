@@ -2,9 +2,10 @@
 using System.Collections.Immutable;
 using System.Linq;
 using Djambi.Engine.Extensions;
+using Djambi.Engine.Services;
 using Djambi.Model;
 
-namespace Djambi.Engine.Services.PieceStrategies
+namespace Djambi.Engine.PieceStrategies
 {
     abstract class PieceStrategyBase : IPieceStrategy
     {

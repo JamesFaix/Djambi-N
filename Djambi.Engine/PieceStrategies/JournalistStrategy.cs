@@ -4,7 +4,7 @@ using System.Linq;
 using Djambi.Engine.Extensions;
 using Djambi.Model;
 
-namespace Djambi.Engine.Services.PieceStrategies
+namespace Djambi.Engine.PieceStrategies
 {
     class JournalistStrategy : PieceStrategyBase
     {
