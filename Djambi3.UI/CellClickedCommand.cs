@@ -30,11 +30,7 @@ namespace Djambi.UI
                 case TurnStatus.AwaitingSelection:
                     Controller.MakeSelection(Location)
                         .OnValue(_ => Page.OnSelectionMade())
-                        .OnError(error =>
-                        {
-                            //TODO: Display error somehow
-                            throw error;
-                        });
+                        .OnError(error => Page.ShowError(error.Message));
                     break;
 
                 case TurnStatus.AwaitingConfirmation:

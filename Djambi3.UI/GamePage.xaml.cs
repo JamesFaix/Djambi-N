@@ -34,8 +34,6 @@ namespace Djambi.UI
             _playerColorBrushes = new Dictionary<PlayerColor, Brush>
             {
                 [PlayerColor.Red] = new SolidColorBrush(Colors.Maroon),
-                //[PlayerColor.Orange] = new SolidColorBrush(Colors.Orange),
-                //[PlayerColor.Yellow] = new SolidColorBrush(Colors.Goldenrod),
                 [PlayerColor.Green] = new SolidColorBrush(Colors.ForestGreen),
                 [PlayerColor.Blue] = new SolidColorBrush(Colors.MediumBlue),
                 [PlayerColor.Purple] = new SolidColorBrush(Colors.Purple),
@@ -48,11 +46,7 @@ namespace Djambi.UI
             RedrawGameState(Controller.GameState);
             Controller.GetValidSelections()
                 .OnValue(DrawSelectionOptions)
-                .OnError(error =>
-                {
-                    //TODO: Display error somehow
-                    throw error;
-                });
+                .OnError(error => ShowError(error.Message));
         }
 
         #region Drawing
@@ -112,11 +106,7 @@ namespace Djambi.UI
             RedrawPlayers(game);
             Controller.GetValidSelections()
                 .OnValue(DrawSelectionOptions)
-                .OnError(error =>
-                {
-                    //TODO: Display error somehow
-                    throw error;
-                });
+                .OnError(error => ShowError(error.Message));
         }
 
         private void RedrawPieces(GameState state)
@@ -366,6 +356,8 @@ namespace Djambi.UI
 
         private void DrawSelectionOptions(IEnumerable<Selection> selectionOptions)
         {
+            ClearError();
+
             foreach (var s in selectionOptions)
             {
                 var rect = new Rectangle
@@ -442,6 +434,16 @@ namespace Djambi.UI
             }
         }
         
+        public void ShowError(string errorMessage)
+        {
+            lblError.Content = errorMessage;
+        }
+
+        private void ClearError()
+        {
+            lblError.Content = "";
+        }
+
         #endregion
 
         #region Event handlers
@@ -469,11 +471,7 @@ namespace Djambi.UI
                     ClearSelections();
                     RedrawGameState(game);
                 })
-                .OnError(error =>
-                {
-                    //TODO: Display error somehow
-                    throw error;
-                });
+                .OnError(error => ShowError(error.Message));
         }
 
         private void btnCancel_Click(object sender, RoutedEventArgs e)
@@ -484,11 +482,7 @@ namespace Djambi.UI
                     ClearSelectionOptions();
                     ClearSelections();
                 })
-                .OnError(error =>
-                {
-                    //TODO: Display error somehow
-                    throw error;
-                });
+                .OnError(error => ShowError(error.Message));
         }
 
         private InputBinding GetCellClickedInputBinding(Location location)
@@ -503,11 +497,7 @@ namespace Djambi.UI
             DrawSelection(Controller.TurnState.Selections.Last());
             Controller.GetValidSelections()
                 .OnValue(DrawSelectionOptions)
-                .OnError(error =>
-                {
-                    //TODO: Display error somehow
-                    throw error;
-                });
+                .OnError(error => ShowError(error.Message));
             EnableOrDisableConfirmButtons();
         }
 

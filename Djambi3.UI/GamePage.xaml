@@ -56,6 +56,15 @@
                             BorderThickness="3" 
                             Margin="10">
                         <StackPanel>
+                            <Label x:Name="lblError" 
+                                   Content="" 
+                                   Foreground="Red"/>                            
+                        </StackPanel>
+                    </Border>
+                    <Border BorderBrush="Gray" 
+                            BorderThickness="3" 
+                            Margin="10">
+                        <StackPanel>
                             <Label Content="Log" />
                             <ListBox x:Name="listGameLog" Height="100" Width="200" />
                         </StackPanel>
