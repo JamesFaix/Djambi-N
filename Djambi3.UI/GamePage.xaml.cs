@@ -42,7 +42,7 @@ namespace Djambi.UI
             };
             _selectionOptionBrush = new SolidColorBrush(Colors.Yellow);
             _selectionBrush = new SolidColorBrush(Colors.Green);
-            _boardLabelBrush = new SolidColorBrush(Colors.White);
+            _boardLabelBrush = new SolidColorBrush(Colors.Silver);
 
             DrawBoard();
             RedrawGameState(Controller.GameState);
@@ -240,6 +240,20 @@ namespace Djambi.UI
                 Grid.SetColumn(image, piece.Piece.Location.X);
                 Grid.SetRow(image, piece.Piece.Location.Y);
                 Grid.SetZIndex(image, 2);
+
+                var label = new Label
+                {
+                    Content = piece.Piece.Id.ToString(),
+                    Foreground = _boardLabelBrush,
+                    HorizontalAlignment = HorizontalAlignment.Right,
+                    Margin = new Thickness(20, 20, 0, 0)
+                };
+                label.InputBindings.Add(clickBinding);
+
+                gridBoard.Children.Add(label);
+                Grid.SetColumn(label, piece.Piece.Location.X);
+                Grid.SetRow(label, piece.Piece.Location.Y);
+                Grid.SetZIndex(label, 3);
             }
         }
 

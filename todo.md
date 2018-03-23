@@ -10,10 +10,6 @@ Confirm and Cancel buttons
 Logging
  - Implement log in engine
  - Write log to log display
-	
-Add labels to edge of board for row/column numbers
-
-Add pieceId to pieces in UI
 
 ## Architecture
 
