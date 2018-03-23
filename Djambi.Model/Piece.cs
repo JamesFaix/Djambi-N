@@ -33,7 +33,7 @@
         public override string ToString() =>
             $"Id: {Id}, " +
             $"Type: {Type}, " +
-            $"PlayerId: {(PlayerId == null ? PlayerId.ToString() : "Neutral")}, " +
+            $"PlayerId: {(PlayerId != null ? PlayerId.ToString() : "Neutral")}, " +
             $"OriginalPlayerId: {OriginalPlayerId}, " + 
             $"IsAlive: {IsAlive}, " + 
             $"Location: {Location}";
