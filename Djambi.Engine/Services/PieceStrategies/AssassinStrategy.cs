@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Djambi.Engine.Extensions;
 using Djambi.Model;
@@ -37,7 +36,8 @@ namespace Djambi.Engine.Services.PieceStrategies
         
         public override Result<IEnumerable<Selection>> GetAdditionalSelections(GameState game, Piece piece, TurnState turn)
         {
-            if (turn.Selections.Count == 2 
+            if (turn.Status == TurnStatus.AwaitingSelection
+             && turn.Selections.Count == 2 
              && turn.Selections[1].Location.IsMaze())
             {
                 //Escape Maze after killing Chief
@@ -45,11 +45,8 @@ namespace Djambi.Engine.Services.PieceStrategies
                 var movedSubject = preview.PiecesIndexedByLocation[turn.Selections[1].Location];
                 return GetMoveDestinations(preview, movedSubject);
             }
-            else
-            {
-                return new Exception($"{PieceType.Assassin} can only make an additional selection to escape the Maze after killing a {PieceType.Chief} in power.")
-                    .ToErrorResult<IEnumerable<Selection>>();
-            }
+
+            return Enumerable.Empty<Selection>().ToResult();
         }
 
         public override TurnState GetNextTurnState(GameState game, TurnState turn, Selection newSelection)

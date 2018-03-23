@@ -20,6 +20,8 @@ namespace Djambi.Model
         public static Location Create(int x, int y) =>
             new Location(x, y);
 
+        public static Location Default { get; } = new Location(0, 0);
+
         #region Equality
 
         public bool Equals(Location other)

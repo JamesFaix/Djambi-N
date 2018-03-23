@@ -13,23 +13,32 @@ namespace Djambi.Engine.Services
             return _validationService.ValidateTurnState(game, turn)
                 .Bind(_ =>
                 {
-                    var newGameState = PreviewGameUpdate(game, turn);
+                    var newGameState = UpdateGameState(game, turn, false);
                     return _validationService.ValidateGameState(newGameState)
                         .Map(__ => newGameState);
                 });           
         }
 
-        public GameState PreviewGameUpdate(GameState game, TurnState turn)
+        public GameState PreviewGameUpdate(GameState game, TurnState turn) =>
+            UpdateGameState(game, turn, true);
+
+        private GameState UpdateGameState(GameState game, TurnState turn, bool isPreview)
         {
-            var pieces = game.Pieces.ToDictionary(p => p.Id, p => p);
-            var players = game.Players.ToDictionary(p => p.Id, p => p);
+            /*
+             * Preview is used by PieceStrategies to see what the board would look like
+             * if the first few selections of a turn were applied to the game state,
+             * so additional selections can be made from that intermediate state.
+             */
+
+            var pieces    = game.Pieces.ToDictionary(p => p.Id, p => p);
+            var players   = game.Players.ToDictionary(p => p.Id, p => p);
             var turnCycle = game.TurnCycle.ToList();
 
-            var s = turn.Selections;
-            var origin = s[0].Location;
-            var destination = s[1].Location;
-            var subject = game.PiecesIndexedByLocation[origin];
-            var target = default(Piece);
+            var s            = turn.Selections;
+            var origin       = s[0].Location;
+            var destination  = s[1].Location;
+            var subject      = game.PiecesIndexedByLocation[origin];
+            var target       = default(Piece);
             var subjectOwner = players[game.TurnCycle[0]];
 
             //Move subject
@@ -44,29 +53,48 @@ namespace Djambi.Engine.Services
                 {
                     case PieceType.Assassin:
                         pieces[target.Id] = target.Kill().Move(origin);
-                        if (s[1].Location.IsMaze())
-                        {
+                        if (s[1].Location.IsMaze()
+                         && (!isPreview || s.Count > 2)) //s[2] might not exist if in preview
+                        { 
                             pieces[subject.Id] = subject.Move(s[2].Location);
                         }
                         break;
 
                     case PieceType.Chief:
                     case PieceType.Militant:
-                        pieces[target.Id] = target.Kill().Move(s[2].Location);
+                        if (!isPreview || s.Count > 2) //s[2] might not exist if in preview
+                        {
+                            pieces[target.Id] = target.Kill().Move(s[2].Location);
+                        }
+                        else
+                        { 
+                            //Temporarily put at (0, 0) for preview
+                            pieces[target.Id] = target.Kill().Move(Location.Default);
+                        }
                         break;
 
                     case PieceType.Diplomat:
                     case PieceType.Necromobile:
-                        pieces[target.Id] = target.Move(s[2].Location);
-                        if (s[1].Location.IsMaze())
+                        if (!isPreview || s.Count > 2) //s[2] might not exist if in preview
                         {
-                            pieces[subject.Id] = subject.Move(s[3].Location);
+                            pieces[target.Id] = target.Move(s[2].Location);
+                            if (s[1].Location.IsMaze()
+                             && (!isPreview || s.Count > 3)) //s[3] might not exist if in preview
+                            {
+                                pieces[subject.Id] = subject.Move(s[3].Location);
+                            }
+                        }
+                        else
+                        {
+                            //Temporarily put at (0, 0) for preview
+                            pieces[target.Id] = target.Kill().Move(Location.Default);
                         }
                         break;
                 }
             }
 
             if (subject.Type == PieceType.Reporter
+             && (!isPreview || s.Count > 2) //s[2] might not exist if in preview 
              && s[2].Type == SelectionType.Target)
             {
                 target = game.PiecesIndexedByLocation[s[2].Location];
