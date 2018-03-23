@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -17,9 +16,6 @@ namespace Djambi.UI
 {
     public partial class GamePage : Page
     {
-        private readonly Brush _whiteBrush;
-        private readonly Brush _blackBrush;
-        private readonly Brush _grayBrush;
         private readonly Dictionary<PlayerColor, Brush> _playerColorBrushes;
         private readonly Brush _selectionOptionBrush;
         private readonly Brush _selectionBrush;
@@ -35,16 +31,13 @@ namespace Djambi.UI
         {
             InitializeComponent();
 
-            _whiteBrush = new SolidColorBrush(Colors.White);
-            _blackBrush = new SolidColorBrush(Colors.Black);
-            _grayBrush = new SolidColorBrush(Colors.Gray);
             _playerColorBrushes = new Dictionary<PlayerColor, Brush>
             {
-                [PlayerColor.Red] = new SolidColorBrush(Colors.Red),
-                [PlayerColor.Orange] = new SolidColorBrush(Colors.Orange),
-                [PlayerColor.Yellow] = new SolidColorBrush(Colors.Yellow),
-                [PlayerColor.Green] = new SolidColorBrush(Colors.Green),
-                [PlayerColor.Blue] = new SolidColorBrush(Colors.Blue),
+                [PlayerColor.Red] = new SolidColorBrush(Colors.Maroon),
+                //[PlayerColor.Orange] = new SolidColorBrush(Colors.Orange),
+                //[PlayerColor.Yellow] = new SolidColorBrush(Colors.Goldenrod),
+                [PlayerColor.Green] = new SolidColorBrush(Colors.ForestGreen),
+                [PlayerColor.Blue] = new SolidColorBrush(Colors.MediumBlue),
                 [PlayerColor.Purple] = new SolidColorBrush(Colors.Purple),
                 [PlayerColor.Dead] = new SolidColorBrush(Colors.Gray)
             };
@@ -82,36 +75,36 @@ namespace Djambi.UI
             {
                 for (var c = 0; c < Constants.BoardSize; c++)
                 {
-                    var rect = new Rectangle
+                    var loc = Location.Create(c + 1, r + 1);
+
+                    var image = new Image
                     {
-                        Fill = GetCellBrush(r, c),
+                        Source = new BitmapImage(new Uri(GetCellImagePath(loc), UriKind.Relative)),
                         Stretch = Stretch.Uniform
                     };
-                    rect.InputBindings.Add(GetCellClickedInputBinding(Location.Create(c + 1, r + 1)));
+                    image.InputBindings.Add(GetCellClickedInputBinding(loc));
 
-                    gridBoard.Children.Add(rect);
-                    Grid.SetColumn(rect, c);
-                    Grid.SetRow(rect, r);
+                    gridBoard.Children.Add(image);
+                    Grid.SetColumn(image, c);
+                    Grid.SetRow(image, r);
                 }
             }
         }
 
-        private Brush GetCellBrush(int row, int column)
+        private string GetCellImagePath(Location location)
         {
-            //-1 because WPF grids are 0-based, but the game is 1-based
-            if (row == Constants.BoardCenter - 1
-            && column == Constants.BoardCenter - 1)
+            if (location.IsMaze())
             {
-                return _grayBrush;
+                return "Images/mazeCell.png";
             }
             else
             {
-                return (row + column) % 2 == 0
-                    ? _blackBrush
-                    : _whiteBrush;
+                return (location.X + location.Y) % 2 == 0
+                    ? "Images/whiteCell.png"
+                    : "Images/blackCell.png";
             }
         }
-
+        
         private void RedrawGameState(GameState game)
         {
             RedrawPieces(game);

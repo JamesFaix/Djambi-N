@@ -17,7 +17,7 @@ namespace Djambi.Engine.Extensions
             Piece.Create(
                 @this.Id,
                 @this.Type,
-                @this.PlayerId,
+                null,
                 @this.OriginalPlayerId,
                 false,
                 @this.Location);

@@ -4,18 +4,18 @@ using static System.Math;
 
 namespace Djambi.Engine.Extensions
 {
-    static class LocationExtensions
+    public static class LocationExtensions
     {
-        public static bool IsValid(this Location @this) =>
+        internal static bool IsValid(this Location @this) =>
             @this.X >= 1 &&
             @this.Y >= 1 &&
             @this.X <= Constants.BoardSize &&
             @this.Y <= Constants.BoardSize;
 
-        public static Location Offset(this Location @this, int x, int y) =>
-            Location.Create(@this.X + x, @this.Y + y);    
-        
-        public static Location Offset(this Location @this, Directions direction, int value)
+        internal static Location Offset(this Location @this, int x, int y) =>
+            Location.Create(@this.X + x, @this.Y + y);
+
+        internal static Location Offset(this Location @this, Directions direction, int value)
         {
             switch (direction)
             {
@@ -48,7 +48,7 @@ namespace Djambi.Engine.Extensions
             }
         }
 
-        public static int Distance(this Location @this, Location other) =>
+        internal static int Distance(this Location @this, Location other) =>
             Max(Abs(@this.X - other.X), Abs(@this.Y - other.Y));
 
         public static bool IsMaze(this Location @this) =>
