@@ -176,8 +176,8 @@ namespace Djambi.UI
                 {
                     Source = new BitmapImage(new Uri(GetPieceImagePath(piece.Piece), UriKind.Relative)),
                     Name = _pieceElementName,
-                    Height = 30,
-                    Width = 30
+                    Height = 45,
+                    Width = 45
                 };
                 image.InputBindings.Add(clickBinding);
 
