@@ -1,10 +1,3 @@
-## Bugs 
-
-Confirm and Cancel buttons
- - Enable cancel button if any selections have been made
- - Disable cancel button if no selections have been made
- - Don't allow confirm until turn status is awaiting confirmation
-
 ## Debug aides
 
 Logging

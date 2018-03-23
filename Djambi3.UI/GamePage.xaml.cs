@@ -508,16 +508,8 @@ namespace Djambi.UI
 
         private void EnableOrDisableConfirmButtons()
         {
-            if (Controller.TurnState.Status == TurnStatus.AwaitingConfirmation)
-            {
-                btnConfirm.IsEnabled = true;
-                btnCancel.IsEnabled = true;
-            }
-            else
-            {
-                btnConfirm.IsEnabled = false;
-                btnCancel.IsEnabled = false;
-            }
+            btnConfirm.IsEnabled = Controller.TurnState.Status == TurnStatus.AwaitingConfirmation;
+            btnCancel.IsEnabled = Controller.TurnState.Selections.Any();
         }
         
         public void ShowError(string errorMessage)
@@ -555,6 +547,7 @@ namespace Djambi.UI
                 {
                     ClearSelectionOptions();
                     ClearSelections();
+                    EnableOrDisableConfirmButtons();
                     RedrawGameState(game);
                 })
                 .OnError(error => ShowError(error.Message));
@@ -567,6 +560,10 @@ namespace Djambi.UI
                 {
                     ClearSelectionOptions();
                     ClearSelections();
+                    EnableOrDisableConfirmButtons();
+                    Controller.GetValidSelections()
+                        .OnValue(DrawSelectionOptions)
+                        .OnError(error => ShowError(error.Message));
                 })
                 .OnError(error => ShowError(error.Message));
         }
