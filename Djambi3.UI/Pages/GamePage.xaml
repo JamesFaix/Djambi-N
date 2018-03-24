@@ -20,12 +20,16 @@
                             BorderThickness="3" 
                             Height="600" 
                             Width="600"
-                            Margin="10">
+                            Margin="10,10,10,0">
                         <Grid x:Name="gridBoard"/>
                     </Border>
+                    <Label x:Name="lblError" 
+                            Content="" 
+                            Foreground="Red"
+                            Margin="10,0,10,0"/>
                     <Border BorderBrush="Gray" 
                             BorderThickness="3" 
-                            Margin="10, 5, 10, 5">
+                            Margin="10, 0, 10, 5">
                         <StackPanel>
                             <Label Content="Log" />
                             <ListBox x:Name="listGameLog" Height="100"/>
@@ -57,15 +61,6 @@
                                     <ColumnDefinition />
                                 </Grid.ColumnDefinitions>
                             </Grid>
-                        </StackPanel>
-                    </Border>
-                    <Border BorderBrush="Gray" 
-                            BorderThickness="3" 
-                            Margin="10">
-                        <StackPanel>
-                            <Label x:Name="lblError" 
-                                   Content="" 
-                                   Foreground="Red"/>
                         </StackPanel>
                     </Border>
                     <Border BorderBrush="Gray" 
