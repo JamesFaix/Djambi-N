@@ -9,6 +9,10 @@
       ShowsNavigationUI="False">
     <Border BorderBrush="Gray" BorderThickness="3">
         <StackPanel Background="LightGray">
+            <Label Content="Djambi" 
+                   HorizontalAlignment="Center" 
+                   FontSize="30" 
+                   FontFamily="Garamond"/>
             <Border BorderBrush="Black" BorderThickness="1">
                 <StackPanel Height="187">
                     <Label Content="Enter 2 to 4 player names"/>

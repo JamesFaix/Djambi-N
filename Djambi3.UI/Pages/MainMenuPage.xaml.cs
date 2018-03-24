@@ -7,7 +7,6 @@ using Djambi.Engine.Extensions;
 using Djambi.Engine.Services;
 using System.Windows.Input;
 
-
 namespace Djambi.UI.Pages
 {
     public partial class MainMenuPage : Page
