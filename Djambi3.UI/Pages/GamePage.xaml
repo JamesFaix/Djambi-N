@@ -40,7 +40,7 @@
                             BorderThickness="3" 
                             Margin="10">
                         <StackPanel>
-                            <Label Content="Turn Cycle" />
+                            <Label Content="Turns" />
                             <Grid x:Name="gridTurnCycle">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="20"/>
