@@ -67,11 +67,11 @@
                             Margin="10">
                         <StackPanel>
                             <Button x:Name="btnConfirm" 
-                                    Content="Confirm turn actions" 
+                                    Content="End turn" 
                                     Click="btnConfirm_Click"
                                     IsEnabled="False"/>
                             <Button x:Name="btnCancel" 
-                                    Content="Cancel turn actions"
+                                    Content="Cancel"
                                     Click="btnCancel_Click"
                                     IsEnabled="False"/>
                         </StackPanel>
