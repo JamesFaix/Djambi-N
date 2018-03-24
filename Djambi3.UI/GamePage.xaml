@@ -11,20 +11,30 @@
       MinHeight="400"
       MinWidth="400">
     <Border BorderBrush="Gray" BorderThickness="3">
-        <StackPanel Background="LightGray">
+        <StackPanel Background="LightGray" Margin="0,0,-489,-311">
             <StackPanel Orientation="Horizontal">
                 <Button x:Name="btnQuitToMenu"
                         Content="Quit to Menu"
                         Click="btnQuitToMenu_Click"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
-                <Border BorderBrush="Gray" 
-                        BorderThickness="3" 
-                        Height="600" 
-                        Width="600"
-                        Margin="10">
-                    <Grid x:Name="gridBoard"/>
-                </Border>
+                <StackPanel>
+                    <Border BorderBrush="Gray" 
+                            BorderThickness="3" 
+                            Height="600" 
+                            Width="600"
+                            Margin="10">
+                        <Grid x:Name="gridBoard"/>
+                    </Border>
+                    <Border BorderBrush="Gray" 
+                            BorderThickness="3" 
+                            Margin="10, 5, 10, 5">
+                        <StackPanel>
+                            <Label Content="Log" />
+                            <ListBox x:Name="listGameLog" Height="100"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
                 <StackPanel>
                     <Border BorderBrush="Gray" 
                             BorderThickness="3" 
@@ -58,15 +68,7 @@
                         <StackPanel>
                             <Label x:Name="lblError" 
                                    Content="" 
-                                   Foreground="Red"/>                            
-                        </StackPanel>
-                    </Border>
-                    <Border BorderBrush="Gray" 
-                            BorderThickness="3" 
-                            Margin="10">
-                        <StackPanel>
-                            <Label Content="Log" />
-                            <ListBox x:Name="listGameLog" Height="100" Width="200" />
+                                   Foreground="Red"/>
                         </StackPanel>
                     </Border>
                     <Border BorderBrush="Gray" 

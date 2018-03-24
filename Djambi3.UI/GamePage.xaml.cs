@@ -244,6 +244,7 @@ namespace Djambi.UI
 
                 var label = new Label
                 {
+                    Name = _pieceElementName,
                     Content = piece.Piece.Id.ToString(),
                     Foreground = _boardLabelBrush,
                     HorizontalAlignment = HorizontalAlignment.Right,
