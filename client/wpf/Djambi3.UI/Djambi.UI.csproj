@@ -37,6 +37,12 @@
     <LangVersion>7</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Djambi.Engine">
+      <HintPath>..\..\..\lib\_build\netstandard1.4\Djambi.Engine.dll</HintPath>
+    </Reference>
+    <Reference Include="Djambi.Model">
+      <HintPath>..\..\..\lib\_build\netstandard1.4\Djambi.Model.dll</HintPath>
+    </Reference>
     <Reference Include="MoreLinq, Version=2.10.21623.0, Culture=neutral, PublicKeyToken=384d532d7e88985d, processorArchitecture=MSIL">
       <HintPath>..\packages\morelinq.2.10.0\lib\net40\MoreLinq.dll</HintPath>
     </Reference>
@@ -109,16 +115,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Djambi.Engine\Djambi.Engine.csproj">
-      <Project>{801b54ba-1351-44d1-a07e-aaa2aba35494}</Project>
-      <Name>Djambi.Engine</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Djambi.Model\Djambi.Model.csproj">
-      <Project>{f66c24a5-d814-462f-95f0-4dba96f05c35}</Project>
-      <Name>Djambi.Model</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Page Include="MainWindow.xaml">

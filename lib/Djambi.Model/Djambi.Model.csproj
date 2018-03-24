@@ -5,22 +5,21 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>C:\Git\Djambi3\_build\</OutputPath>
     <LangVersion>7</LangVersion>
+    <OutputPath>C:\Git\Djambi3\lib\_build\</OutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <OutputPath>C:\Git\Djambi3\_build\</OutputPath>
+    <OutputPath>C:\Git\Djambi3\lib\_build\</OutputPath>
     <LangVersion>7</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Collections.Immutable" Version="1.4.0" />
-    <PackageReference Include="System.ValueTuple" Version="4.4.0" />
+    <None Include="Selection.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Djambi.Model\Djambi.Model.csproj" />
+    <PackageReference Include="System.Collections.Immutable" Version="1.4.0" />
   </ItemGroup>
 
 </Project>
