@@ -229,6 +229,7 @@ namespace Djambi.UI.Pages
                 Grid.SetRow(image, piece.Piece.Location.Y);
                 Grid.SetZIndex(image, 2);
 
+#if DEBUG
                 var label = new Label
                 {
                     Name = _pieceElementName,
@@ -243,6 +244,7 @@ namespace Djambi.UI.Pages
                 Grid.SetColumn(label, piece.Piece.Location.X);
                 Grid.SetRow(label, piece.Piece.Location.Y);
                 Grid.SetZIndex(label, 3);
+#endif
             }
         }
 

@@ -108,7 +108,7 @@ namespace Djambi.Engine.Services
             }
 
             if (subject.Type == PieceType.Journalist
-             && (!isPreview || s.Count > 2) //s[2] might not exist if in preview 
+             && (!isPreview && s.Count > 2) //s[2] might not exist if in preview or if no target
              && s[2].Type == SelectionType.Target)
             {
                 target = game.PiecesIndexedByLocation[s[2].Location];
