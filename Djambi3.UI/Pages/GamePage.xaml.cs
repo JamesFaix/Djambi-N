@@ -504,7 +504,8 @@ namespace Djambi.UI.Pages
 
             if (result == MessageBoxResult.Yes)
             {
-                this.NavigationService.Navigate(new Uri("MainMenuPage.xaml", UriKind.Relative));
+                var win = Window.GetWindow(this) as MainWindow;
+                win.NavigateToMainMenu();
             }
         }
 

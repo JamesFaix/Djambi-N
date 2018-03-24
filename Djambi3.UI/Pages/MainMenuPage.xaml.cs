@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Djambi.Engine;
 using Djambi.Engine.Extensions;
 using Djambi.Engine.Services;
-using Djambi.UI;
 
 namespace Djambi.UI.Pages
 {
@@ -65,9 +63,10 @@ namespace Djambi.UI.Pages
         private void btnStartGame_Click(object sender, RoutedEventArgs e)
         {
             Controller.StartGame(GetPlayerNames())
-                .OnValue(state => 
+                .OnValue(state =>
                 {
-                    this.NavigationService.Navigate(new Uri("Pages/GamePage.xaml", UriKind.Relative));
+                    var win = Window.GetWindow(this) as MainWindow;
+                    win.NavigateToGame();
                 })
                 .OnError(error =>
                 {
