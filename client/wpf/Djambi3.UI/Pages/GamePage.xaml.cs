@@ -79,8 +79,6 @@ namespace Djambi.UI.Pages
 
         private void DrawBoard()
         {
-            #region Draw labels
-
             gridBoard.RowDefinitions.Add(new RowDefinition
             {
                 Name = $"{nameof(gridBoard)}LabelRow",
@@ -95,47 +93,6 @@ namespace Djambi.UI.Pages
 
             for (var i = 1; i <= Constants.BoardSize; i++)
             {
-                var rowBackground = new Rectangle
-                {
-                    Fill = _boardLabelBackgroundBrush,
-                    Stretch = Stretch.UniformToFill
-                };
-
-                var rowLabel = new Label
-                {
-                    Content = $"{i}",
-                    Foreground = _boardLabelBrush,
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center
-                };
-
-                AddToGrid(gridBoard, rowBackground, i, 0);
-                AddToGrid(gridBoard, rowLabel, i, 0);
-
-                var colBackground = new Rectangle
-                {
-                    Fill = _boardLabelBackgroundBrush,
-                    Stretch = Stretch.UniformToFill
-                };
-
-                var colLabel = new Label
-                {
-                    Content = $"{i}",
-                    Foreground = _boardLabelBrush,
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center
-                };
-
-                AddToGrid(gridBoard, colBackground, 0, i);
-                AddToGrid(gridBoard, colLabel, 0, i);
-            }
-
-            #endregion
-
-            #region Draw cells
-
-            for (var i = 1; i <= Constants.BoardSize; i++)
-            {
                 gridBoard.RowDefinitions.Add(new RowDefinition
                 {
                     Name = $"{nameof(gridBoard)}Row{i}",
@@ -147,6 +104,12 @@ namespace Djambi.UI.Pages
                     Name = $"{nameof(gridBoard)}Column{i}",
                     Width = new GridLength(2, GridUnitType.Star)
                 });
+            }
+
+            for (var i = 1; i <= Constants.BoardSize; i++)
+            {
+                AddBoardLabel(i, 0, i);
+                AddBoardLabel(i, i, 0);
             }
 
             for (var r = 1; r <= Constants.BoardSize; r++)
@@ -164,8 +127,26 @@ namespace Djambi.UI.Pages
                     AddToGrid(gridBoard, rect, r, c);
                 }
             }
+        }
+        
+        private void AddBoardLabel(int number, int row, int column)
+        {
+            var background = new Rectangle
+            {
+                Fill = _boardLabelBackgroundBrush,
+                Stretch = Stretch.UniformToFill
+            };
 
-            #endregion
+            var label = new Label
+            {
+                Content = $"{number}",
+                Foreground = _boardLabelBrush,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            AddToGrid(gridBoard, background, row, column);
+            AddToGrid(gridBoard, label, row, column);
         }
 
         private Brush GetCellBrush(Location location)
