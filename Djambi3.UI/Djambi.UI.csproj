@@ -149,7 +149,7 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\blackCell.png" />
-    <Resource Include="Images\mazeCell.png" />
+    <Resource Include="Images\seatCell.png" />
     <Resource Include="Images\whiteCell.png" />
   </ItemGroup>
   <ItemGroup>

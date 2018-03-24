@@ -17,9 +17,9 @@ namespace Djambi.Engine.PieceStrategies
                 .Select(loc => GetLocationWithPiece(loc, game.PiecesIndexedByLocation))
                 .Where(lwp =>
                 {
-                    if (lwp.Location.IsMaze())
+                    if (lwp.Location.IsSeat())
                     {
-                        //Cannot be Maze unless enemy Chief is there
+                        //Cannot be Seat unless enemy Chief is there
                         return lwp.Piece != null
                             ? lwp.Piece.PlayerId != piece.PlayerId
                                 && lwp.Piece.Type == PieceType.Chief
@@ -42,9 +42,9 @@ namespace Djambi.Engine.PieceStrategies
         {
             if (turn.Status == TurnStatus.AwaitingSelection
              && turn.Selections.Count == 2 
-             && turn.Selections[1].Location.IsMaze())
+             && turn.Selections[1].Location.IsSeat())
             {
-                //Escape Maze after killing Chief
+                //Escape Seat after killing Chief
                 var preview = _gameUpdateService.PreviewGameUpdate(game, turn);
                 var movedSubject = preview.PiecesIndexedByLocation[turn.Selections[1].Location];
                 return GetMoveDestinations(preview, movedSubject);
@@ -62,9 +62,9 @@ namespace Djambi.Engine.PieceStrategies
                 {
                     var target = game.PiecesIndexedByLocation[newSelection.Location];
 
-                    if (target.Type == PieceType.Chief && newSelection.Location.IsMaze())
+                    if (target.Type == PieceType.Chief && newSelection.Location.IsSeat())
                     {
-                        //Must move out of maze
+                        //Must move out of the Seat
                         return TurnState.Create(
                             TurnStatus.AwaitingSelection,
                             turn.Selections.Add(newSelection));

@@ -51,7 +51,7 @@ namespace Djambi.Engine.Extensions
         internal static int Distance(this Location @this, Location other) =>
             Max(Abs(@this.X - other.X), Abs(@this.Y - other.Y));
 
-        public static bool IsMaze(this Location @this) =>
+        public static bool IsSeat(this Location @this) =>
             @this.X == Constants.BoardCenter && @this.Y == Constants.BoardCenter;
     }
 }

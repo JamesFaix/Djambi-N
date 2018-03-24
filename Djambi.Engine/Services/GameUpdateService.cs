@@ -63,11 +63,11 @@ namespace Djambi.Engine.Services
                         pieces[target.Id] = target.Kill().Move(origin);
                         log.Add($"{subject.Type} {subject.Id} killed {target.Type} {target.Id} and moved its corpse to {origin}.");
 
-                        if (s[1].Location.IsMaze()
+                        if (s[1].Location.IsSeat()
                          && (!isPreview || s.Count > 2)) //s[2] might not exist if in preview
                         { 
                             pieces[subject.Id] = subject.Move(s[2].Location);
-                            log.Add($"{subject.Type} {subject.Id} fled the maze to {s[2].Location}.");
+                            log.Add($"{subject.Type} {subject.Id} fled the Seat to {s[2].Location}.");
                         }
                         break;
 
@@ -91,11 +91,11 @@ namespace Djambi.Engine.Services
                         {
                             pieces[target.Id] = target.Move(s[2].Location);
                             log.Add($"{subject.Type} {subject.Id} moved {(subject.Type == PieceType.Diplomat ? target.Type.ToString() : "corpse")} {target.Id} to {s[2].Location}.");
-                            if (s[1].Location.IsMaze()
+                            if (s[1].Location.IsSeat()
                              && (!isPreview || s.Count > 3)) //s[3] might not exist if in preview
                             {
                                 pieces[subject.Id] = subject.Move(s[3].Location);
-                                log.Add($"{subject.Type} {subject.Id} fled the maze to {s[2].Location}.");
+                                log.Add($"{subject.Type} {subject.Id} fled the Seat to {s[2].Location}.");
                             }
                         }
                         else
@@ -147,12 +147,12 @@ namespace Djambi.Engine.Services
                 log.Add(sb.ToString());
             }
 
-            //Update turn cycle if Chief enters or leaves the Maze
-            if (destination.IsMaze() || origin.IsMaze())
+            //Update turn cycle if Chief enters or leaves the Seat
+            if (destination.IsSeat() || origin.IsSeat())
             {
-                //If removing Chief from Maze
+                //If removing Chief from Seat
                 if (target?.Type == PieceType.Chief
-                 && destination.IsMaze())
+                 && destination.IsSeat())
                 {
                     var targetOwnerTurnIndexes = turnCycle
                         .Select((playerId, index) => new
@@ -181,11 +181,11 @@ namespace Djambi.Engine.Services
                             turnCycle.RemoveAt(t);
                         }
                     }
-                    log.Add($"{players[target.PlayerId.Value].Name} was overthrown from power.");
+                    log.Add($"{players[target.PlayerId.Value].Name} was ejected from the seat of power.");
                 }
 
-                //If Chief voluntarily left Maze
-                if (origin.IsMaze())
+                //If Chief voluntarily left Seat
+                if (origin.IsSeat())
                 {
                     var subjectOwnerTurnIndexes = turnCycle
                         .Select((playerId, index) => new
@@ -202,12 +202,12 @@ namespace Djambi.Engine.Services
                     {
                         turnCycle.RemoveAt(t);
                     }
-                    log.Add($"{subjectOwner.Name} ceded power.");
+                    log.Add($"{subjectOwner.Name} ceded the seat of power.");
                 }
 
-                //If moving Chief to Maze
+                //If moving Chief to Seat
                 if (subject.Type == PieceType.Chief
-                 && destination.IsMaze())
+                 && destination.IsSeat())
                 {
                     //Insert turn for current player between each existing turn in cycle, except between 0 and 1
                     switch (turnCycle.Distinct().Count())
@@ -223,7 +223,7 @@ namespace Djambi.Engine.Services
                             turnCycle.Insert(4, subjectOwner.Id);
                             break;
                     }
-                    log.Add($"{subjectOwner.Name} has risen to power.");
+                    log.Add($"{subjectOwner.Name} acquired the seat of power.");
                 }
             }
 

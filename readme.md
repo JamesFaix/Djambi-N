@@ -7,7 +7,7 @@ __Note:__ This readme is currently incomplete.  Please see the link to the Wikip
 
 ### The board
 - The game is played on a 9x9 board with alternating black and white squares, like a chess board.
-- The center square, called _The Maze_ is a different color and has some special properties.
+- The center square, called _The Seat_ is a different color and has some special properties.
 
 ### The players
 - The game is designed for 4 players, but can be played with 2 or 3 players with some special considerations.
@@ -20,40 +20,40 @@ __Note:__ This readme is currently incomplete.  Please see the link to the Wikip
 
 #### Thug
 - Can move up to 2 cells
-- Destination can be any cell except the Maze or a cell occupied by an ally piece
+- Destination can be any cell except the Seat or a cell occupied by an ally piece
 - If destination contains enemy piece, it is killed
-- Must place Corpse in any unoccupied cell, except the Maze
+- Must place Corpse in any unoccupied cell, except the Seat
 	
 #### Chief
 - Can move up to 8 cells
 - Destination can be any cell not occupied by an ally piece
 - If destination contains enemy piece, it is killed
-- Must place Corpse in any unoccupied cell, except the Maze
+- Must place Corpse in any unoccupied cell, except the Seat
 
 #### Assassin
 - Can move up to 8 cells
-- Destination can be any cell except the Maze or a cell occupied by an ally piece
-- Destination can be the Maze if an enemy Chief is there, if so the Assassin must move to another unoccupied cell afterward
+- Destination can be any cell except the Seat or a cell occupied by an ally piece
+- Destination can be the Seat if an enemy Chief is there, if so the Assassin must move to another unoccupied cell afterward
 - If destination contains enemy piece, it is killed
 - Corpse is placed in the cell the Assassin started in
 
 #### Journalist
 - Can move up to 8 cells
-- Destination can be any unoccupied cell or the Maze
+- Destination can be any unoccupied cell or the Seat
 - Can target a piece horizontally or vertically adjacent to destination
-- Corpse stays in its cell (this is the only way to have a corpse in the Maze)
+- Corpse stays in its cell (this is the only way to have a corpse in the Seat)
 
 #### Diplomat
 - Can move up to 8 cells
-- Destination can be any cell except the Maze or a cell occupied by an ally piece
-- Destination can be the Maze if an enemy Chief is there, if so the Diplomat must move to another unoccupied cell afterward
+- Destination can be any cell except the Seat or a cell occupied by an ally piece
+- Destination can be the Seat if an enemy Chief is there, if so the Diplomat must move to another unoccupied cell afterward
 - Does not kill target, but moves to any unoccupied cell
-- Cannot move a non-Chief piece to the Maze
+- Cannot move a non-Chief piece to the Seat
 
 #### Undertaker
 - Can move up to 8 cells
-- Destination can be any unoccupied cell except the Maze or any cell occupied by a Corpse
-- Destination can be the Maze if a Corpse is there, if so the Undertaker must move to another unoccupied cell afterward	
-- Move Corpse to any unoccupied cell, except the Maze
+- Destination can be any unoccupied cell except the Seat or any cell occupied by a Corpse
+- Destination can be the Seat if a Corpse is there, if so the Undertaker must move to another unoccupied cell afterward	
+- Move Corpse to any unoccupied cell, except the Seat
 
  [1]: https://en.wikipedia.org/wiki/Djambi

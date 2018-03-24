@@ -18,13 +18,13 @@ namespace Djambi.UI
 
         public BitmapImage BlackCell { get; } = GetImage("blackCell");
 
-        public BitmapImage MazeCell { get; } = GetImage("mazeCell");
+        public BitmapImage SeatCell { get; } = GetImage("seatCell");
 
         public BitmapImage GetCellImage(Location location)
         {
-            if (location.IsMaze())
+            if (location.IsSeat())
             {
-                return MazeCell;
+                return SeatCell;
             }
             else
             {

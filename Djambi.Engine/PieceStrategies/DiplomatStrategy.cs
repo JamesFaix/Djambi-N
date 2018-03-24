@@ -17,9 +17,9 @@ namespace Djambi.Engine.PieceStrategies
                 .Select(loc => GetLocationWithPiece(loc, game.PiecesIndexedByLocation))
                 .Where(lwp =>
                 {
-                    if (lwp.Location.IsMaze())
+                    if (lwp.Location.IsSeat())
                     {
-                        //Cannot be Maze unless enemy Chief is there
+                        //Cannot be Seat unless enemy Chief is there
                         return lwp.Piece != null
                             ? lwp.Piece.PlayerId != piece.PlayerId
                                 && lwp.Piece.Type == PieceType.Chief
@@ -54,9 +54,9 @@ namespace Djambi.Engine.PieceStrategies
                 }
 
                 if (turn.Selections.Count == 3
-                 && turn.Selections[1].Location.IsMaze())
+                 && turn.Selections[1].Location.IsSeat())
                 {
-                    //Escape Maze after dropping Chief
+                    //Escape Seat after dropping Chief
                     var preview = _gameUpdateService.PreviewGameUpdate(game, turn);
                     var movedSubject = preview.PiecesIndexedByLocation[turn.Selections[2].Location];
                     return GetMoveDestinations(preview, movedSubject);
@@ -82,8 +82,8 @@ namespace Djambi.Engine.PieceStrategies
 
             if (turn.Selections.Count == 2)
             {
-                //If the last selection targeted a Chief in the Maze, the Diplomat must escape
-                if (turn.Selections[1].Location.IsMaze())
+                //If the last selection targeted a Chief in the Seat, the Diplomat must escape
+                if (turn.Selections[1].Location.IsSeat())
                 {
                     return TurnState.Create(
                         TurnStatus.AwaitingSelection,

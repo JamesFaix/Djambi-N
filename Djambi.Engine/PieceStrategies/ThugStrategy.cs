@@ -22,7 +22,7 @@ namespace Djambi.Engine.PieceStrategies
                         return false;
                     }
 
-                    if (lwp.Location.IsMaze())
+                    if (lwp.Location.IsSeat())
                     {
                         return false;
                     }

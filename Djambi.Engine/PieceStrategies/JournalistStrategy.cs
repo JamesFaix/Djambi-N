@@ -16,7 +16,7 @@ namespace Djambi.Engine.PieceStrategies
         {
             return GetColinearNonBlockedLocations(piece, game)
                 .Select(loc => GetLocationWithPiece(loc, game.PiecesIndexedByLocation))
-                .Where(lwp => !lwp.Location.IsMaze()
+                .Where(lwp => !lwp.Location.IsSeat()
                             && lwp.Piece == null)
                 .Select(CreateSelection)
                 .ToResult();
