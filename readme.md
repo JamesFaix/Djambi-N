@@ -18,7 +18,7 @@ __Note:__ This readme is currently incomplete.  Please see the link to the Wikip
 - Each player has 9 pieces: 1 _Chief_, 1 _Assassin_, 1 _Journalist_, 1 _Diplomat_, 1 _Undertaker_, and 4 _Thugs_. 
 - All pieces can move in all 8 directions (horizontal, vertical, and diagonal).
 
-#### ![alt text](https://github.com/JamesFaix/Djambi3/blob/master/client/wpf/Djambi3.UI/Images/thug.png) Thug
+#### <img src="https://github.com/JamesFaix/Djambi3/blob/master/client/wpf/Djambi3.UI/Images/thug.png" width="48"> Thug
 - Can move up to 2 cells
 - Destination can be any cell except the Seat or a cell occupied by an ally piece
 - If destination contains enemy piece, it is killed
