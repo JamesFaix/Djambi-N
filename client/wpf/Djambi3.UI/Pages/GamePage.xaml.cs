@@ -210,11 +210,6 @@ namespace Djambi.UI.Pages
                     Fill = _playerColorBrushes[piece.Color],
                     Stretch = Stretch.Uniform,
                 };
-                var clickBinding = GetCellClickedInputBinding(piece.Piece.Location);
-                ell.InputBindings.Add(clickBinding);
-                
-                AddToGrid(gridBoard, ell, piece.Piece.Location);
-                Grid.SetZIndex(ell, 1);
 
                 var image = new Image
                 {
@@ -223,11 +218,6 @@ namespace Djambi.UI.Pages
                     Height = 45,
                     Width = 45
                 };
-                image.InputBindings.Add(clickBinding);
-
-                AddToGrid(gridBoard, image, piece.Piece.Location);
-                Grid.SetZIndex(image, 2);
-
 #if DEBUG
                 var label = new Label
                 {
@@ -237,8 +227,19 @@ namespace Djambi.UI.Pages
                     HorizontalAlignment = HorizontalAlignment.Right,
                     Margin = new Thickness(20, 20, 0, 0)
                 };
+#endif
+                var clickBinding = GetCellClickedInputBinding(piece.Piece.Location);
+                ell.InputBindings.Add(clickBinding);
+                image.InputBindings.Add(clickBinding);
+#if DEBUG
                 label.InputBindings.Add(clickBinding);
+#endif
+                AddToGrid(gridBoard, ell, piece.Piece.Location);
+                Grid.SetZIndex(ell, 1);              
 
+                AddToGrid(gridBoard, image, piece.Piece.Location);
+                Grid.SetZIndex(image, 2);
+#if DEBUG
                 AddToGrid(gridBoard, label, piece.Piece.Location);
                 Grid.SetZIndex(label, 3);
 #endif
