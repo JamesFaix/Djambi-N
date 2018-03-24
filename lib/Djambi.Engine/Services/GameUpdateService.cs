@@ -1,5 +1,5 @@
-﻿using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Djambi.Engine.Extensions;
 using Djambi.Model;
 
@@ -135,16 +135,12 @@ namespace Djambi.Engine.Services
                     pieces[p.Id] = p.Capture(subjectOwner.Id);
                 }
 
-                var sb = new StringBuilder();
-                sb.Append($"{subjectOwner.Name} eliminated {targetOwner.Name}");
+                log.Add($"{subjectOwner.Name} eliminated {targetOwner.Name}.");
+                
                 if (capturedPieces.Any())
                 {
-                    sb.Append($" and captured {capturedPieces.Count} pieces (");
-                    sb.Append(string.Join(", ", capturedPieces.Select(p => $"{p.Type} {p.Id}")));
-                    sb.Append(")");
+                    log.Add($"{subjectOwner.Name} enlisted {ListPiecesForLog(capturedPieces)}.");
                 }
-                sb.Append(".");
-                log.Add(sb.ToString());
             }
 
             //Update turn cycle if Chief enters or leaves the Seat
@@ -224,10 +220,89 @@ namespace Djambi.Engine.Services
                             break;
                     }
                     log.Add($"{subjectOwner.Name} acquired the seat of power.");
+
+
+                    //Enlist abandoned pieces
+                    var abandonedPieces = pieces.Values
+                        .Where(p => p.PlayerId == null)
+                        .ToList();
+
+                    if (abandonedPieces.Any())
+                    {
+                        foreach (var p in abandonedPieces)
+                        {
+                            pieces[p.Id] = p.Capture(subjectOwner.Id);
+                        }
+                        log.Add($"{subjectOwner.Name} enlisted {ListPiecesForLog(abandonedPieces)}.");
+                    }
                 }
             }
 
-            //TODO: Check for surrounded chiefs
+            //Check for surrounded Chiefs
+            var chiefs = pieces.Values
+                .Where(p => p.Type == PieceType.Chief && p.IsAlive)
+                .ToList();
+
+            foreach (var chief in chiefs)
+            {
+                var neighbors = chief.Location
+                    .AdjacentLocations()
+                    .LeftOuterJoin(pieces.Values, 
+                        loc => loc, 
+                        p => p.Location, 
+                        (l, p) => p, 
+                        l => null);
+
+                if (neighbors.All(p => p?.IsAlive == false))
+                {
+                    var deadPlayer = players[chief.PlayerId.Value];
+
+                    var abandonedPieces = pieces.Values
+                        .Where(p => p.PlayerId == deadPlayer.Id)
+                        .ToList();
+
+                    var chiefInPower = pieces.Values
+                            .SingleOrDefault(p1 => p1.Type == PieceType.Chief
+                                && p1.IsAlive            //Don't let a dead chief enlist abanonded pieces
+                                && p1.Location.IsSeat()
+                                && p1.PlayerId != null); //Don't let a neutral chief enlist abandoned pieces
+
+                    foreach (var p in abandonedPieces)
+                    {
+                        if (chiefInPower == null)
+                        {
+                            pieces[p.Id] = p.Abandon();
+                        }
+                        else
+                        {
+                            pieces[p.Id] = p.Capture(chiefInPower.PlayerId.Value);
+                        }
+                    }
+                    pieces[chief.Id] = chief.Kill();
+                    players[deadPlayer.Id] = deadPlayer.Kill();
+                    
+                    turnCycle = turnCycle
+                        .Where(t => t != deadPlayer.Id)
+                        .ToList();
+
+                    log.Add($"{chief.Type} {chief.Id} was surrounded by corpses and died.");
+                    log.Add($"{deadPlayer.Name} was eliminated.");
+
+                    if (abandonedPieces.Any())
+                    {
+                        if (chiefInPower == null)
+                        {
+                            log.Add($"{ListPiecesForLog(abandonedPieces)} were abandoned.");
+                        }
+                        else
+                        {
+                            log.Add($"{players[chiefInPower.PlayerId.Value].Name} enlisted {ListPiecesForLog(abandonedPieces)}.");
+                        }
+                    }
+                }
+            }
+
+            //TODO: Check if next player has 0 possible moves
 
             //TODO: Check for stalemate
 
@@ -240,6 +315,19 @@ namespace Djambi.Engine.Services
                 pieces.Values,
                 turnCycle,
                 log);
+        }
+
+        private string ListPiecesForLog(List<Piece> pieces)
+        {
+            var strList = pieces
+                .Take(pieces.Count - 1)
+                .Select(p => $"{p.Type} {p.Id}, ")
+                .ToList();
+
+            var last = pieces.Last();
+            strList.Add($"and {last.Type} {last.Id}");
+
+            return string.Join("", strList);
         }
     }
 }

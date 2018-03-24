@@ -37,12 +37,6 @@
     <LangVersion>7</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Djambi.Engine">
-      <HintPath>..\..\..\lib\_build\netstandard1.4\Djambi.Engine.dll</HintPath>
-    </Reference>
-    <Reference Include="Djambi.Model">
-      <HintPath>..\..\..\lib\_build\netstandard1.4\Djambi.Model.dll</HintPath>
-    </Reference>
     <Reference Include="MoreLinq, Version=2.10.21623.0, Culture=neutral, PublicKeyToken=384d532d7e88985d, processorArchitecture=MSIL">
       <HintPath>..\packages\morelinq.2.10.0\lib\net40\MoreLinq.dll</HintPath>
     </Reference>
@@ -142,6 +136,16 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\diplomat.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\lib\Djambi.Engine\Djambi.Engine.csproj">
+      <Project>{58b3bde7-7986-41d9-99b4-9181d5c19c5b}</Project>
+      <Name>Djambi.Engine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\lib\Djambi.Model\Djambi.Model.csproj">
+      <Project>{706c6592-0a7b-4b58-8758-32eb2fcc78e4}</Project>
+      <Name>Djambi.Model</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

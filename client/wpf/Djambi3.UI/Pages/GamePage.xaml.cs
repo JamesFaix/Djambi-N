@@ -469,7 +469,11 @@ namespace Djambi.UI.Pages
             {
                 items.Add(m);
             }
+
+            //Reset to previous width so the whole window doesn't expand when long messages are added.
+            var width = listGameLog.Width;
             listGameLog.ScrollIntoView(items[items.Count - 1]);
+            listGameLog.Width = width;
         }
 
         #endregion

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Djambi.Model;
 using static System.Math;
 
@@ -53,5 +55,10 @@ namespace Djambi.Engine.Extensions
 
         public static bool IsSeat(this Location @this) =>
             @this.X == Constants.BoardCenter && @this.Y == Constants.BoardCenter;
+
+        public static IEnumerable<Location> AdjacentLocations(this Location @this) =>
+            EnumUtility.GetValues<Directions>()
+                .Select(d => @this.Offset(d, 1))
+                .Where(loc => loc.IsValid());
     }
 }
