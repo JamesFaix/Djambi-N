@@ -27,7 +27,7 @@
                             Margin="10, 0, 10, 10">
                         <StackPanel>
                             <Label Content="Log" />
-                            <ListBox x:Name="listGameLog" Height="100" />
+                            <TextBox x:Name="txtGameLog" Height="100" TextWrapping="Wrap"/>
                         </StackPanel>
                     </Border>
                 </StackPanel>

@@ -290,6 +290,7 @@ namespace Djambi.UI.Pages
                 var indexLabel = new Label
                 {
                     Name = _turnCycleElementName,
+                    Foreground = _boardLabelBrush,
                     Content = (i+1).ToString()
                 };
 
@@ -464,16 +465,11 @@ namespace Djambi.UI.Pages
 
         private void AddLogEntries(IEnumerable<string> messages)
         {
-            var items = listGameLog.Items;
-            foreach (var m in messages)
-            {
-                items.Add(m);
-            }
-
             //Reset to previous width so the whole window doesn't expand when long messages are added.
-            var width = listGameLog.Width;
-            listGameLog.ScrollIntoView(items[items.Count - 1]);
-            listGameLog.Width = width;
+            var width = txtGameLog.Width;
+            var newText = string.Join("\n", messages);            
+            txtGameLog.Text = $"{txtGameLog.Text}\n{newText}".Trim();
+            txtGameLog.Width = width;
         }
 
         #endregion
