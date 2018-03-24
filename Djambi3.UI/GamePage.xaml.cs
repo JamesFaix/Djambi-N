@@ -46,6 +46,7 @@ namespace Djambi.UI
 
             DrawBoard();
             RedrawGameState(Controller.GameState);
+            AddLogEntries(Controller.GameState.Log);
             Controller.GetValidSelections()
                 .OnValue(DrawSelectionOptions)
                 .OnError(error => ShowError(error.Message));
@@ -522,6 +523,16 @@ namespace Djambi.UI
             lblError.Content = "";
         }
 
+        private void AddLogEntries(IEnumerable<string> messages)
+        {
+            var items = listGameLog.Items;
+            foreach (var m in messages)
+            {
+                items.Add(m);
+            }
+            listGameLog.ScrollIntoView(items[items.Count - 1]);
+        }
+
         #endregion
 
         #region Event handlers
@@ -542,6 +553,8 @@ namespace Djambi.UI
 
         private void btnConfirm_Click(object sender, RoutedEventArgs e)
         {
+            var previousLogCount = Controller.GameState.Log.Count;
+
             Controller.ConfirmTurn()
                 .OnValue(game =>
                 {
@@ -549,6 +562,7 @@ namespace Djambi.UI
                     ClearSelections();
                     EnableOrDisableConfirmButtons();
                     RedrawGameState(game);
+                    AddLogEntries(game.Log.Skip(previousLogCount));
                 })
                 .OnError(error => ShowError(error.Message));
         }
