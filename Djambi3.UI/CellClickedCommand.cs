@@ -3,6 +3,7 @@ using System.Windows.Input;
 using Djambi.Engine;
 using Djambi.Engine.Extensions;
 using Djambi.Model;
+using Djambi.UI.Pages;
 
 namespace Djambi.UI
 {

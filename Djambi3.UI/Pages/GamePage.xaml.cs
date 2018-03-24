@@ -11,8 +11,9 @@ using System.Windows.Shapes;
 using Djambi.Engine;
 using Djambi.Engine.Extensions;
 using Djambi.Model;
+using Djambi.UI;
 
-namespace Djambi.UI
+namespace Djambi.UI.Pages
 {
     public partial class GamePage : Page
     {
@@ -74,7 +75,7 @@ namespace Djambi.UI
             {
                 var rowBackground = new Image
                 {
-                    Source = new BitmapImage(new Uri("Images/rowLabel.png", UriKind.Relative)),
+                    Source = new BitmapImage(new Uri("../Images/rowLabel.png", UriKind.Relative)),
                     Stretch = Stretch.Uniform
                 };
 
@@ -96,7 +97,7 @@ namespace Djambi.UI
 
                 var colBackground = new Image
                 {
-                    Source = new BitmapImage(new Uri("Images/columnLabel.png", UriKind.Relative)),
+                    Source = new BitmapImage(new Uri("../Images/columnLabel.png", UriKind.Relative)),
                     Stretch = Stretch.Uniform
                 };
 
@@ -162,13 +163,13 @@ namespace Djambi.UI
         {
             if (location.IsMaze())
             {
-                return "Images/mazeCell.png";
+                return "../Images/mazeCell.png";
             }
             else
             {
                 return (location.X + location.Y) % 2 == 0
-                    ? "Images/whiteCell.png"
-                    : "Images/blackCell.png";
+                    ? "../Images/whiteCell.png"
+                    : "../Images/blackCell.png";
             }
         }
         
@@ -263,28 +264,28 @@ namespace Djambi.UI
         {
             if (!piece.IsAlive)
             {
-                return "Images/corpse.png";
+                return "../Images/corpse.png";
             }
 
             switch (piece.Type)
             {
                 case PieceType.Assassin:
-                    return "Images/assassin.png";
+                    return "../Images/assassin.png";
 
                 case PieceType.Chief:
-                    return "Images/chief.png";
+                    return "../Images/chief.png";
 
                 case PieceType.Diplomat:
-                    return "Images/diplomat.png";
+                    return "../Images/diplomat.png";
 
                 case PieceType.Journalist:
-                    return "Images/journalist.png";
+                    return "../Images/journalist.png";
 
                 case PieceType.Thug:
-                    return "Images/thug.png";
+                    return "../Images/thug.png";
 
                 case PieceType.Undertaker:
-                    return "Images/undertaker.png";
+                    return "../Images/undertaker.png";
 
                 default:
                     throw new Exception("Invalid PieceType");

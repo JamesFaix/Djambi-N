@@ -74,10 +74,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CellClickedCommand.cs" />
-    <Compile Include="MainMenuPage.xaml.cs">
+    <Compile Include="Pages\MainMenuPage.xaml.cs">
       <DependentUpon>MainMenuPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="GamePage.xaml.cs">
+    <Compile Include="Pages\GamePage.xaml.cs">
       <DependentUpon>GamePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -117,11 +117,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="MainMenuPage.xaml">
+    <Page Include="Pages\MainMenuPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="GamePage.xaml">
+    <Page Include="Pages\GamePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

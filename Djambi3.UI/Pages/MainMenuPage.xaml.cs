@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using Djambi.Model;
 using Djambi.Engine;
 using Djambi.Engine.Extensions;
 using Djambi.Engine.Services;
+using Djambi.UI;
 
-namespace Djambi.UI
+namespace Djambi.UI.Pages
 {
     public partial class MainMenuPage : Page
     {
@@ -67,7 +67,7 @@ namespace Djambi.UI
             Controller.StartGame(GetPlayerNames())
                 .OnValue(state => 
                 {
-                    this.NavigationService.Navigate(new Uri("GamePage.xaml", UriKind.Relative));
+                    this.NavigationService.Navigate(new Uri("Pages/GamePage.xaml", UriKind.Relative));
                 })
                 .OnError(error =>
                 {
