@@ -126,7 +126,7 @@ namespace Djambi.Engine.Services
 
                 players[targetOwner.Id] = targetOwner.Kill();
 
-                var capturedPieces = game.Pieces
+                var capturedPieces = pieces.Values
                     .Where(p => p.PlayerId == targetOwner.Id)
                     .ToList();
 
