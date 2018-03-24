@@ -15,7 +15,8 @@
                     <ListBox x:Name="listPlayerNames" Height="80"/>
                     <TextBox x:Name="textPlayerName" Height="23" 
                              TextWrapping="Wrap" 
-                             Text="(Enter player name)"/>
+                             Text="(Enter player name)"
+                             PreviewMouseDown="txtEnterName_Click"/>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <Button x:Name="btnAddPlayer" 
                                 Content="Add"

@@ -5,6 +5,8 @@ using System.Windows.Controls;
 using Djambi.Engine;
 using Djambi.Engine.Extensions;
 using Djambi.Engine.Services;
+using System.Windows.Input;
+
 
 namespace Djambi.UI.Pages
 {
@@ -17,8 +19,7 @@ namespace Djambi.UI.Pages
         {
             _validationService = new ValidationService();
             _gameInitializationService = new GameInitializationService();
-            InitializeComponent();
-
+            InitializeComponent();            
 #if DEBUG
             listPlayerNames.Items.Add("Mario");
             listPlayerNames.Items.Add("Luigi");
@@ -73,6 +74,11 @@ namespace Djambi.UI.Pages
                     lblNameValidation.Content = error.Message;
                     btnStartGame.IsEnabled = false;
                 });
+        }
+
+        private void txtEnterName_Click(object sender, MouseButtonEventArgs e)
+        {
+            textPlayerName.Text = "";
         }
 
         private void OnPlayerCountChanged()
