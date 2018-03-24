@@ -71,6 +71,7 @@ __Note:__ This readme is currently incomplete.  Please see the link to the Wikip
 ### Surrounding
 - If a _Chief_ that is not in _The Seat_ is surrounded by _Corpses_, it is killed and its _Corpse_ stays in the same cell.
 - Any other pieces controlled by the same player become _abandoned_.
+- A _Chief_ can be surrounded by _Corpses_ in _The Seat_, as long as its controller still has some possible moves with other pieces.
 
 ### Out of Moves
 - Similar to _surrounding_, if a player has no possible moves, their _Chief_ dies in place and any remaining pieces are _abandoned_.
