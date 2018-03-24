@@ -10,11 +10,6 @@
     <Border BorderBrush="Gray" BorderThickness="3">
         <StackPanel Background="LightGray">
             <StackPanel Orientation="Horizontal">
-                <Button x:Name="btnQuitToMenu"
-                        Content="Quit to Menu"
-                        Click="btnQuitToMenu_Click"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
                 <StackPanel>
                     <Border BorderBrush="Gray" 
                             BorderThickness="3" 
@@ -29,7 +24,7 @@
                             Margin="10,0,10,0"/>
                     <Border BorderBrush="Gray" 
                             BorderThickness="3" 
-                            Margin="10, 0, 10, 5">
+                            Margin="10, 0, 10, 10">
                         <StackPanel>
                             <Label Content="Log" />
                             <ListBox x:Name="listGameLog" Height="100"/>
@@ -37,6 +32,10 @@
                     </Border>
                 </StackPanel>
                 <StackPanel>
+                    <Button x:Name="btnQuitToMenu"
+                        Content="Menu"
+                        Click="btnQuitToMenu_Click"
+                        Margin="10"/>
                     <Border BorderBrush="Gray" 
                             BorderThickness="3" 
                             Margin="10">
