@@ -70,24 +70,30 @@ __Note:__ This readme is currently incomplete.  Please see the link to the Wikip
 
 ### Surrounding
 - If a _Chief_ that is not in _The Seat_ is surrounded by _Corpses_, it is killed and its _Corpse_ stays in the same cell.
-- Any other pieces controlled by the same player become _Neutral Pieces_.
+- Any other pieces controlled by the same player become _abandoned_.
 
-### Neutral Pieces
-- _Neutral Pieces_ are pieces on the board that are alive, but not controlled by any player. 
+### Out of Moves
+- Similar to _surrounding_, if a player has no possible moves, their _Chief_ dies in place and any remaining pieces are _abandoned_.
+- (This can happen if all of a player's pieces are clustered together and surrounded by _Corpses_, with no _Undertaker_.)
+
+### Abandoned Pieces
+- _Abandoned_ pieces are pieces on the board that are alive, but not controlled by any player. 
 - They can be killed or moved by a _Diplomat_ like any other living piece.
 
 ### Rising to Power
-- When a _Chief_ moves to _The Seat_ if there are more than two players left, its controller _Rises to Power_. 
+- When a _Chief_ moves to _The Seat_ if there are more than two players left, its controller _rises to power_. 
 - A player in power gets to take a turn between each of the other players' turns. (If there are only two players left, this would not do anything.)
-- When a _Chief_ leaves _The Seat_ (alive), its controller _Falls from Power_, and any extra pending turns its controller had are removed from the turn list, except the last one.
-- When a player _Rises to Power_, they take control of any _Neutral_ pieces left over from _Surrounded Chiefs_, and keep control of them even if they _Fall from Power_.
+- When a _Chief_ leaves _The Seat_ (alive), its controller _falls from power_, and any extra pending turns its controller had are removed from the turn list, except the last one.
+- When a player _rises to power_, they take control of any _abandoned_ pieces, and keep control of them even after they _fall from power_.
 - **Tip:** When another player rises to power, it is a good time to form temporary alliances against them.
 
 ### Less than 4 players
-- When playing with only 2 or 3 players, _Neutral Players_ are created to fill the remaining player slots.
-- _Neutral Players_ do not take turns.
-- If a player kills a _Neutral Player_'s _Chief_, they gain control of any other pieces controlled by that _Neutral Player_.
-- When a player _Rises to Power_, they do **not** gain control of any pieces controlled by a _Neutral Player_.
+- When playing with only 2 or 3 players, _neutral_ players are created to fill the remaining player slots.
+- _Neutral_ players do not take turns.
+- Pieces controlled by a _neutral_ player can be killed or moved by a _Diplomat_ like any other living piece.
+- If a player kills a _neutral_ player's _Chief_, they gain control of any other pieces controlled by that _neutral_ player.
+- If a _neutral_ player's _Chief_ is _surrounded_, it dies and the remaining pieces controlled by that _neutral_ player are _abandoned_.
+- When a player _rises to power_, they do **not** gain control of any pieces controlled by _neutral_ players.
 
 ### Stalemate
 - It is possible to end up with multiple _Chiefs_ still alive, but separated by walls of _Corpses_, with no _Undertakers_ still alive to move them out of the way. In this case, there is no winner.
