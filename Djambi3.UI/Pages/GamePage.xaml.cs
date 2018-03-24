@@ -6,17 +6,16 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Djambi.Engine;
 using Djambi.Engine.Extensions;
 using Djambi.Model;
-using Djambi.UI;
 
 namespace Djambi.UI.Pages
 {
     public partial class GamePage : Page
     {
+        private readonly Images.ImageRepository _images;
         private readonly Dictionary<PlayerColor, Brush> _playerColorBrushes;
         private readonly Brush _selectionOptionBrush;
         private readonly Brush _selectionBrush;
@@ -32,6 +31,8 @@ namespace Djambi.UI.Pages
         public GamePage()
         {
             InitializeComponent();
+
+            _images = new Images.ImageRepository();
 
             _playerColorBrushes = new Dictionary<PlayerColor, Brush>
             {
@@ -75,7 +76,7 @@ namespace Djambi.UI.Pages
             {
                 var rowBackground = new Image
                 {
-                    Source = new BitmapImage(new Uri("../Images/rowLabel.png", UriKind.Relative)),
+                    Source = _images.RowLabel,
                     Stretch = Stretch.Uniform
                 };
 
@@ -97,7 +98,7 @@ namespace Djambi.UI.Pages
 
                 var colBackground = new Image
                 {
-                    Source = new BitmapImage(new Uri("../Images/columnLabel.png", UriKind.Relative)),
+                    Source = _images.ColumnLabel,
                     Stretch = Stretch.Uniform
                 };
 
@@ -145,7 +146,7 @@ namespace Djambi.UI.Pages
 
                     var image = new Image
                     {
-                        Source = new BitmapImage(new Uri(GetCellImagePath(loc), UriKind.Relative)),
+                        Source = _images.GetCellImage(loc),
                         Stretch = Stretch.Uniform
                     };
                     image.InputBindings.Add(GetCellClickedInputBinding(loc));
@@ -159,20 +160,6 @@ namespace Djambi.UI.Pages
             #endregion
         }
 
-        private string GetCellImagePath(Location location)
-        {
-            if (location.IsMaze())
-            {
-                return "../Images/mazeCell.png";
-            }
-            else
-            {
-                return (location.X + location.Y) % 2 == 0
-                    ? "../Images/whiteCell.png"
-                    : "../Images/blackCell.png";
-            }
-        }
-        
         private void RedrawGameState(GameState game)
         {
             RedrawPieces(game);
@@ -231,7 +218,7 @@ namespace Djambi.UI.Pages
 
                 var image = new Image
                 {
-                    Source = new BitmapImage(new Uri(GetPieceImagePath(piece.Piece), UriKind.Relative)),
+                    Source = _images.GetPieceImage(piece.Piece),
                     Name = _pieceElementName,
                     Height = 45,
                     Width = 45
@@ -257,38 +244,6 @@ namespace Djambi.UI.Pages
                 Grid.SetColumn(label, piece.Piece.Location.X);
                 Grid.SetRow(label, piece.Piece.Location.Y);
                 Grid.SetZIndex(label, 3);
-            }
-        }
-
-        private string GetPieceImagePath(Piece piece)
-        {
-            if (!piece.IsAlive)
-            {
-                return "../Images/corpse.png";
-            }
-
-            switch (piece.Type)
-            {
-                case PieceType.Assassin:
-                    return "../Images/assassin.png";
-
-                case PieceType.Chief:
-                    return "../Images/chief.png";
-
-                case PieceType.Diplomat:
-                    return "../Images/diplomat.png";
-
-                case PieceType.Journalist:
-                    return "../Images/journalist.png";
-
-                case PieceType.Thug:
-                    return "../Images/thug.png";
-
-                case PieceType.Undertaker:
-                    return "../Images/undertaker.png";
-
-                default:
-                    throw new Exception("Invalid PieceType");
             }
         }
 
