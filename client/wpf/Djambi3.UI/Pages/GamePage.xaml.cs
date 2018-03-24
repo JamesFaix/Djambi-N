@@ -204,7 +204,7 @@ namespace Djambi.UI.Pages
 
             foreach (var piece in piecesWithColors)
             {
-                var ell = new Ellipse
+                var background = new Ellipse
                 {
                     Name = _pieceElementName,
                     Fill = _playerColorBrushes[piece.Color],
@@ -229,13 +229,13 @@ namespace Djambi.UI.Pages
                 };
 #endif
                 var clickBinding = GetCellClickedInputBinding(piece.Piece.Location);
-                ell.InputBindings.Add(clickBinding);
+                background.InputBindings.Add(clickBinding);
                 image.InputBindings.Add(clickBinding);
 #if DEBUG
                 label.InputBindings.Add(clickBinding);
 #endif
-                AddToGrid(gridBoard, ell, piece.Piece.Location);
-                Grid.SetZIndex(ell, 1);              
+                AddToGrid(gridBoard, background, piece.Piece.Location);
+                Grid.SetZIndex(background, 1);              
 
                 AddToGrid(gridBoard, image, piece.Piece.Location);
                 Grid.SetZIndex(image, 2);
@@ -280,29 +280,27 @@ namespace Djambi.UI.Pages
 
                 var turn = turnDetails[i];
 
-                var rect = new Rectangle
+                var indexBackground = new Rectangle
                 {
                     Name = _turnCycleElementName,
                     Fill = _playerColorBrushes[turn.Color],
                     Stretch = Stretch.Uniform
                 };
-
-                AddToGrid(gridTurnCycle, rect, i, 0);
-
+                
                 var indexLabel = new Label
                 {
                     Name = _turnCycleElementName,
                     Content = (i+1).ToString()
                 };
 
-                AddToGrid(gridTurnCycle, indexLabel, i, 0);
-
                 var nameLabel = new Label
                 {
                     Name = _turnCycleElementName,
                     Content = turn.Name
                 };
-
+                
+                AddToGrid(gridTurnCycle, indexBackground, i, 0);
+                AddToGrid(gridTurnCycle, indexLabel, i, 0);
                 AddToGrid(gridTurnCycle, nameLabel, i, 1);
             }
         }
@@ -332,21 +330,20 @@ namespace Djambi.UI.Pages
 
                 var player = players[i];
 
-                var rect = new Rectangle
+                var colorSquare = new Rectangle
                 {
                     Name = _playerElementName,
                     Fill = _playerColorBrushes[player.Color],
                     Stretch = Stretch.Uniform
                 };
-
-                AddToGrid(gridPlayers, rect, i, 0);
-                
+                                
                 var nameLabel = new Label
                 {
                     Name = _playerElementName,
                     Content = GetPlayerLabelText(player)
                 };
 
+                AddToGrid(gridPlayers, colorSquare, i, 0);
                 AddToGrid(gridPlayers, nameLabel, i, 1);
             }
         }
