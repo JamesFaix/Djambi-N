@@ -10,6 +10,9 @@ namespace Djambi.UI
         {
             InitializeComponent();
             NavigateToMainMenu();
+
+            var images = new ImageRepository();
+            this.Icon = images.AppIcon;
         }
 
         private void NavigateToPage(string pageName)

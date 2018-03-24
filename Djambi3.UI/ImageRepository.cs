@@ -3,12 +3,14 @@ using System.Windows.Media.Imaging;
 using Djambi.Engine.Extensions;
 using Djambi.Model;
 
-namespace Djambi.UI.Images
+namespace Djambi.UI
 {
     class ImageRepository
     {
         private static BitmapImage GetImage(string imageName) =>
             new BitmapImage(new Uri($"/Djambi.UI;component/Images/{imageName}.png", UriKind.Relative));
+
+        public BitmapImage AppIcon { get; } = new BitmapImage(new Uri("pack://application:,,,/Images/chief.png", UriKind.RelativeOrAbsolute));
 
         #region Board
 

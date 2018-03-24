@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -15,7 +14,7 @@ namespace Djambi.UI.Pages
 {
     public partial class GamePage : Page
     {
-        private readonly Images.ImageRepository _images;
+        private readonly ImageRepository _images;
         private readonly Dictionary<PlayerColor, Brush> _playerColorBrushes;
         private readonly Brush _selectionOptionBrush;
         private readonly Brush _selectionBrush;
@@ -32,7 +31,7 @@ namespace Djambi.UI.Pages
         {
             InitializeComponent();
 
-            _images = new Images.ImageRepository();
+            _images = new ImageRepository();
 
             _playerColorBrushes = new Dictionary<PlayerColor, Brush>
             {

@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Djambi.UI"
         mc:Ignorable="d"
-        Title="MainWindow"
-        SizeToContent="WidthAndHeight">
+        SizeToContent="WidthAndHeight"
+        Title="Djambi">
     <Frame x:Name="frameMain" 
            NavigationUIVisibility="Hidden" />
 </Window>
