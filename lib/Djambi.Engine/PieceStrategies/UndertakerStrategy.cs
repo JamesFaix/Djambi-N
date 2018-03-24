@@ -44,6 +44,7 @@ namespace Djambi.Engine.PieceStrategies
                     var preview = _gameUpdateService.PreviewGameUpdate(game, turn);
                     var movedSubject = preview.PiecesIndexedByLocation[turn.Selections[1].Location];
                     return GetEmptyLocations(preview)
+                        .Where(loc => !loc.IsSeat())
                         .Select(Selection.Drop)
                         .ToResult();
                 }

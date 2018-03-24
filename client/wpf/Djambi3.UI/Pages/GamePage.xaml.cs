@@ -50,7 +50,7 @@ namespace Djambi.UI.Pages
             _boardLabelBrush = new SolidColorBrush(Colors.Silver);
             _whiteCellBrush = new SolidColorBrush(Colors.White);
             _blackCellBrush = new SolidColorBrush(Colors.Black);
-            _seatCellBrush = new SolidColorBrush(Colors.Goldenrod);
+            _seatCellBrush = new SolidColorBrush(Colors.Gray);
             _boardLabelBackgroundBrush = new SolidColorBrush(Color.FromRgb(102, 51, 0)); //Dark brown
 
             DrawBoard();
