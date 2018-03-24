@@ -9,7 +9,7 @@ namespace Djambi.Model
         public ImmutableList<Player> Players { get; }
 
         public ImmutableList<Piece> Pieces { get; }
-        
+
         public ImmutableList<int> TurnCycle { get; }
 
         public ImmutableList<string> Log { get; }
@@ -17,7 +17,7 @@ namespace Djambi.Model
         public ImmutableDictionary<Location, Piece> PiecesIndexedByLocation { get; }
 
         private GameState(
-            IEnumerable<Player> players, 
+            IEnumerable<Player> players,
             IEnumerable<Piece> pieces,
             IEnumerable<int> turnCycle,
             IEnumerable<string> log)
@@ -30,16 +30,16 @@ namespace Djambi.Model
         }
 
         public static GameState Create(
-            IEnumerable<Player> players, 
-            IEnumerable<Piece> pieces, 
+            IEnumerable<Player> players,
+            IEnumerable<Piece> pieces,
             IEnumerable<int> turnCycle,
             IEnumerable<string> log) =>
             new GameState(players, pieces, turnCycle, log);
 
-        public static GameState Empty { get; } = 
+        public static GameState Empty { get; } =
             new GameState(
-                Enumerable.Empty<Player>(), 
-                Enumerable.Empty<Piece>(), 
+                Enumerable.Empty<Player>(),
+                Enumerable.Empty<Piece>(),
                 Enumerable.Empty<int>(),
                 Enumerable.Empty<string>());
     }

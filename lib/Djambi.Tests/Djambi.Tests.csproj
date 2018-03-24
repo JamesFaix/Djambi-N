@@ -50,17 +50,17 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Djambi.Engine\Djambi.Engine.csproj">
-      <Project>{801b54ba-1351-44d1-a07e-aaa2aba35494}</Project>
+      <Project>{88277f2c-e27e-4719-a7f9-7b9acce20036}</Project>
       <Name>Djambi.Engine</Name>
     </ProjectReference>
     <ProjectReference Include="..\Djambi.Model\Djambi.Model.csproj">
-      <Project>{f66c24a5-d814-462f-95f0-4dba96f05c35}</Project>
+      <Project>{65c86099-ef20-49ba-b37d-f856274d1cd3}</Project>
       <Name>Djambi.Model</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
