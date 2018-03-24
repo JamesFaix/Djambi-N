@@ -19,6 +19,10 @@ namespace Djambi.UI.Pages
         private readonly Brush _selectionOptionBrush;
         private readonly Brush _selectionBrush;
         private readonly Brush _boardLabelBrush;
+        private readonly Brush _whiteCellBrush;
+        private readonly Brush _blackCellBrush;
+        private readonly Brush _seatCellBrush;
+        private readonly Brush _boardLabelBackgroundBrush;
 
         private const double _selectionOpacity = 0.5;
         private const string _selectionOptionRectName = "SelectionOption";
@@ -35,7 +39,7 @@ namespace Djambi.UI.Pages
 
             _playerColorBrushes = new Dictionary<PlayerColor, Brush>
             {
-                [PlayerColor.Red] = new SolidColorBrush(Colors.Maroon),
+                [PlayerColor.Red] = new SolidColorBrush(Colors.Firebrick),
                 [PlayerColor.Green] = new SolidColorBrush(Colors.ForestGreen),
                 [PlayerColor.Blue] = new SolidColorBrush(Colors.MediumBlue),
                 [PlayerColor.Purple] = new SolidColorBrush(Colors.Purple),
@@ -44,6 +48,10 @@ namespace Djambi.UI.Pages
             _selectionOptionBrush = new SolidColorBrush(Colors.Yellow);
             _selectionBrush = new SolidColorBrush(Colors.Green);
             _boardLabelBrush = new SolidColorBrush(Colors.Silver);
+            _whiteCellBrush = new SolidColorBrush(Colors.White);
+            _blackCellBrush = new SolidColorBrush(Colors.Black);
+            _seatCellBrush = new SolidColorBrush(Colors.Goldenrod);
+            _boardLabelBackgroundBrush = new SolidColorBrush(Color.FromRgb(102, 51, 0)); //Dark brown
 
             DrawBoard();
             RedrawGameState(Controller.GameState);
@@ -54,6 +62,20 @@ namespace Djambi.UI.Pages
         }
 
         #region Drawing
+
+        private void AddToGrid(Grid grid, UIElement element, int row, int column)
+        {
+            grid.Children.Add(element);
+            Grid.SetColumn(element, column);
+            Grid.SetRow(element, row);
+        }
+
+        private void AddToGrid(Grid grid, UIElement element, Location location)
+        {
+            grid.Children.Add(element);
+            Grid.SetColumn(element, location.X);
+            Grid.SetRow(element, location.Y);
+        }
 
         private void DrawBoard()
         {
@@ -73,10 +95,10 @@ namespace Djambi.UI.Pages
 
             for (var i = 1; i <= Constants.BoardSize; i++)
             {
-                var rowBackground = new Image
+                var rowBackground = new Rectangle
                 {
-                    Source = _images.RowLabel,
-                    Stretch = Stretch.Uniform
+                    Fill = _boardLabelBackgroundBrush,
+                    Stretch = Stretch.UniformToFill
                 };
 
                 var rowLabel = new Label
@@ -87,18 +109,13 @@ namespace Djambi.UI.Pages
                     VerticalAlignment = VerticalAlignment.Center
                 };
 
-                gridBoard.Children.Add(rowBackground);
-                Grid.SetColumn(rowBackground, 0);
-                Grid.SetRow(rowBackground, i);
+                AddToGrid(gridBoard, rowBackground, i, 0);
+                AddToGrid(gridBoard, rowLabel, i, 0);
 
-                gridBoard.Children.Add(rowLabel);
-                Grid.SetColumn(rowLabel, 0);
-                Grid.SetRow(rowLabel, i);
-
-                var colBackground = new Image
+                var colBackground = new Rectangle
                 {
-                    Source = _images.ColumnLabel,
-                    Stretch = Stretch.Uniform
+                    Fill = _boardLabelBackgroundBrush,
+                    Stretch = Stretch.UniformToFill
                 };
 
                 var colLabel = new Label
@@ -109,13 +126,8 @@ namespace Djambi.UI.Pages
                     VerticalAlignment = VerticalAlignment.Center
                 };
 
-                gridBoard.Children.Add(colBackground);
-                Grid.SetColumn(colBackground, i);
-                Grid.SetRow(colBackground, 0);
-
-                gridBoard.Children.Add(colLabel);
-                Grid.SetColumn(colLabel, i);
-                Grid.SetRow(colLabel, 0);
+                AddToGrid(gridBoard, colBackground, 0, i);
+                AddToGrid(gridBoard, colLabel, 0, i);
             }
 
             #endregion
@@ -143,20 +155,31 @@ namespace Djambi.UI.Pages
                 {
                     var loc = Location.Create(c, r);
 
-                    var image = new Image
+                    var rect = new Rectangle
                     {
-                        Source = _images.GetCellImage(loc),
-                        Stretch = Stretch.Uniform
+                        Stretch = Stretch.Uniform,
+                        Fill = GetCellBrush(loc)
                     };
-                    image.InputBindings.Add(GetCellClickedInputBinding(loc));
-
-                    gridBoard.Children.Add(image);
-                    Grid.SetColumn(image, c);
-                    Grid.SetRow(image, r);
+                    rect.InputBindings.Add(GetCellClickedInputBinding(loc));
+                    AddToGrid(gridBoard, rect, r, c);
                 }
             }
 
             #endregion
+        }
+
+        private Brush GetCellBrush(Location location)
+        {
+            if (location.IsSeat())
+            {
+                return _seatCellBrush;
+            }
+            else
+            {
+                return (location.X + location.Y) % 2 == 0
+                    ? _whiteCellBrush
+                    : _blackCellBrush;
+            }
         }
 
         private void RedrawGameState(GameState game)
@@ -208,11 +231,8 @@ namespace Djambi.UI.Pages
                 };
                 var clickBinding = GetCellClickedInputBinding(piece.Piece.Location);
                 ell.InputBindings.Add(clickBinding);
-
-                gridBoard.Children.Add(ell);
-                //-1 because grid is 0-based but game is 1-based
-                Grid.SetColumn(ell, piece.Piece.Location.X);
-                Grid.SetRow(ell, piece.Piece.Location.Y);
+                
+                AddToGrid(gridBoard, ell, piece.Piece.Location);
                 Grid.SetZIndex(ell, 1);
 
                 var image = new Image
@@ -224,9 +244,7 @@ namespace Djambi.UI.Pages
                 };
                 image.InputBindings.Add(clickBinding);
 
-                gridBoard.Children.Add(image);
-                Grid.SetColumn(image, piece.Piece.Location.X);
-                Grid.SetRow(image, piece.Piece.Location.Y);
+                AddToGrid(gridBoard, image, piece.Piece.Location);
                 Grid.SetZIndex(image, 2);
 
 #if DEBUG
@@ -240,9 +258,7 @@ namespace Djambi.UI.Pages
                 };
                 label.InputBindings.Add(clickBinding);
 
-                gridBoard.Children.Add(label);
-                Grid.SetColumn(label, piece.Piece.Location.X);
-                Grid.SetRow(label, piece.Piece.Location.Y);
+                AddToGrid(gridBoard, label, piece.Piece.Location);
                 Grid.SetZIndex(label, 3);
 #endif
             }
@@ -289,9 +305,7 @@ namespace Djambi.UI.Pages
                     Stretch = Stretch.Uniform
                 };
 
-                gridTurnCycle.Children.Add(rect);
-                Grid.SetColumn(rect, 0);
-                Grid.SetRow(rect, i);
+                AddToGrid(gridTurnCycle, rect, i, 0);
 
                 var indexLabel = new Label
                 {
@@ -299,9 +313,7 @@ namespace Djambi.UI.Pages
                     Content = (i+1).ToString()
                 };
 
-                gridTurnCycle.Children.Add(indexLabel);
-                Grid.SetColumn(indexLabel, 0);
-                Grid.SetRow(indexLabel, i);
+                AddToGrid(gridTurnCycle, indexLabel, i, 0);
 
                 var nameLabel = new Label
                 {
@@ -309,9 +321,7 @@ namespace Djambi.UI.Pages
                     Content = turn.Name
                 };
 
-                gridTurnCycle.Children.Add(nameLabel);
-                Grid.SetColumn(nameLabel, 1);
-                Grid.SetRow(nameLabel, i);
+                AddToGrid(gridTurnCycle, nameLabel, i, 1);
             }
         }
 
@@ -347,9 +357,7 @@ namespace Djambi.UI.Pages
                     Stretch = Stretch.Uniform
                 };
 
-                gridPlayers.Children.Add(rect);
-                Grid.SetColumn(rect, 0);
-                Grid.SetRow(rect, i);
+                AddToGrid(gridPlayers, rect, i, 0);
                 
                 var nameLabel = new Label
                 {
@@ -357,9 +365,7 @@ namespace Djambi.UI.Pages
                     Content = GetPlayerLabelText(player)
                 };
 
-                gridPlayers.Children.Add(nameLabel);
-                Grid.SetColumn(nameLabel, 1);
-                Grid.SetRow(nameLabel, i);
+                AddToGrid(gridPlayers, nameLabel, i, 1);
             }
         }
 
@@ -416,9 +422,7 @@ namespace Djambi.UI.Pages
                 var clickBinding = GetCellClickedInputBinding(s.Location);
                 rect.InputBindings.Add(clickBinding);
 
-                gridBoard.Children.Add(rect);
-                Grid.SetColumn(rect, s.Location.X);
-                Grid.SetRow(rect, s.Location.Y);
+                AddToGrid(gridBoard, rect, s.Location);
             }
         }
 
@@ -460,9 +464,7 @@ namespace Djambi.UI.Pages
             var clickBinding = GetCellClickedInputBinding(selection.Location);
             rect.InputBindings.Add(clickBinding);
 
-            gridBoard.Children.Add(rect);
-            Grid.SetColumn(rect, selection.Location.X);
-            Grid.SetRow(rect, selection.Location.Y);
+            AddToGrid(gridBoard, rect, selection.Location);
         }
 
         private void EnableOrDisableConfirmButtons()

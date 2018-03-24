@@ -143,16 +143,5 @@
   <ItemGroup>
     <Resource Include="Images\diplomat.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\blackCell.png" />
-    <Resource Include="Images\seatCell.png" />
-    <Resource Include="Images\whiteCell.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\columnLabel.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\rowLabel.png" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

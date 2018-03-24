@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows.Media.Imaging;
-using Djambi.Engine.Extensions;
 using Djambi.Model;
 
 namespace Djambi.UI
@@ -11,35 +10,7 @@ namespace Djambi.UI
             new BitmapImage(new Uri($"/Djambi.UI;component/Images/{imageName}.png", UriKind.Relative));
 
         public BitmapImage AppIcon { get; } = new BitmapImage(new Uri("pack://application:,,,/Images/chief.png", UriKind.RelativeOrAbsolute));
-
-        #region Board
-
-        public BitmapImage WhiteCell { get; } = GetImage("whiteCell");
-
-        public BitmapImage BlackCell { get; } = GetImage("blackCell");
-
-        public BitmapImage SeatCell { get; } = GetImage("seatCell");
-
-        public BitmapImage GetCellImage(Location location)
-        {
-            if (location.IsSeat())
-            {
-                return SeatCell;
-            }
-            else
-            {
-                return (location.X + location.Y) % 2 == 0
-                    ? BlackCell
-                    : WhiteCell;
-            }
-        }
-
-        public BitmapImage RowLabel { get; } = GetImage("rowLabel");
-
-        public BitmapImage ColumnLabel { get; } = GetImage("columnLabel");
-
-        #endregion
-
+        
         #region Pieces
 
         public BitmapImage Assassin { get; } = GetImage("assassin");
