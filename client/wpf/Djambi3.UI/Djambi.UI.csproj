@@ -139,11 +139,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\lib\Djambi.Engine\Djambi.Engine.csproj">
-      <Project>{58b3bde7-7986-41d9-99b4-9181d5c19c5b}</Project>
+      <Project>{88277f2c-e27e-4719-a7f9-7b9acce20036}</Project>
       <Name>Djambi.Engine</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\lib\Djambi.Model\Djambi.Model.csproj">
-      <Project>{706c6592-0a7b-4b58-8758-32eb2fcc78e4}</Project>
+      <Project>{65c86099-ef20-49ba-b37d-f856274d1cd3}</Project>
       <Name>Djambi.Model</Name>
     </ProjectReference>
   </ItemGroup>
