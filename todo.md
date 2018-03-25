@@ -12,7 +12,8 @@
 
 
 ## Unity
- - Draw pieces dynamically, redraw after turn
- - Implement error display
  - Implement log display
- - Fix player colors in UI
+ - Animations
+    - Flip piece on death
+    - Slide piece on move
+    - Toss piece on drop

@@ -22,7 +22,10 @@ public class GameUIController : MonoBehaviour
     private Button _confirmButton;
     private Button _cancelButton;
     private Button _quitButton;
-    
+    private Text _errorText;
+    private Text _confirmButtonText;
+    private Text _cancelButtonText;
+
     private GameObject _pieceSprite;
     private GameObject _assassinSprite;
     private GameObject _chiefSprite;
@@ -33,6 +36,8 @@ public class GameUIController : MonoBehaviour
     private GameObject _corpseSprite;
 
     private Dictionary<PlayerColor, Color> _playerColors;
+    private Color _disabledButtonTextColor;
+    private Color _enabledButtonTextColor;
 
     private const int _rowHeight = -38;
     private const int _initialRowOffset = 90;
@@ -70,10 +75,17 @@ public class GameUIController : MonoBehaviour
             [PlayerColor.Red] = new Color32(204, 0, 0, 255),
             [PlayerColor.Dead] = new Color32(102, 102, 102, 255)
         };
+        _disabledButtonTextColor = new Color32(180, 180, 180, 150);
+        _enabledButtonTextColor = new Color32(50, 50, 50, 255);
 
-        _confirmButton = GameObject.Find("ConfirmButton").GetComponent<Button>();
-        _cancelButton = GameObject.Find("CancelButton").GetComponent<Button>();
+        var confirmButtonObject = GameObject.Find("ConfirmButton");
+        var cancelButtonObject = GameObject.Find("CancelButton");
+        _confirmButton = confirmButtonObject.GetComponent<Button>();
+        _cancelButton = cancelButtonObject.GetComponent<Button>();
+        _confirmButtonText = confirmButtonObject.GetComponentInChildren<Text>();
+        _cancelButtonText = cancelButtonObject.GetComponentInChildren<Text>();
         _quitButton = GameObject.Find("QuitButton").GetComponent<Button>();
+        _errorText = GameObject.Find("ErrorText").GetComponent<Text>();
 
         _confirmButton.onClick.AddListener(ConfirmButtonClick);
         _cancelButton.onClick.AddListener(CancelButtonClick);
@@ -287,13 +299,32 @@ public class GameUIController : MonoBehaviour
 
     private void ShowError(string message)
     {
-
+        _errorText.text = message;
     }
 
     private void EnableOrDisableConfirmButtons()
     {
-        _confirmButton.interactable = Controller.TurnState.Status == TurnStatus.AwaitingConfirmation;
-        _cancelButton.interactable = Controller.TurnState.Selections.Any();
+        if (Controller.TurnState.Status == TurnStatus.AwaitingConfirmation)
+        {
+            _confirmButton.interactable = true;
+            _confirmButtonText.color = _enabledButtonTextColor;
+        }
+        else
+        {
+            _confirmButton.interactable = false;
+            _confirmButtonText.color = _disabledButtonTextColor;
+        }
+
+        if (Controller.TurnState.Selections.Any())
+        {
+            _cancelButton.interactable = true;
+            _cancelButtonText.color = _enabledButtonTextColor;
+        }
+        else
+        {
+            _cancelButton.interactable = false;
+            _cancelButtonText.color = _disabledButtonTextColor;
+        }
     }
 
     private void ConfirmButtonClick()
