@@ -22,6 +22,15 @@ public class GameUIController : MonoBehaviour
     private Button _confirmButton;
     private Button _cancelButton;
     private Button _quitButton;
+    
+    private GameObject _pieceSprite;
+    private GameObject _assassinSprite;
+    private GameObject _chiefSprite;
+    private GameObject _diplomatSprite;
+    private GameObject _journalistSprite;
+    private GameObject _thugSprite;
+    private GameObject _undertakerSprite;
+    private GameObject _corpseSprite;
 
     private const int _rowHeight = -38;
     private const int _initialRowOffset = 90;
@@ -38,9 +47,18 @@ public class GameUIController : MonoBehaviour
 
         _turnRowPrefab = Resources.Load("Prefabs/TurnRow") as GameObject;
         _playerRowPrefab = Resources.Load("Prefabs/PlayerRow") as GameObject;
-        
+
         _selectionOptionTile = Resources.Load("Tiles/yellowHighlightTile") as Tile;
         _selectionTile = Resources.Load("Tiles/greenHighlightTile") as Tile;
+        
+        _pieceSprite = Resources.Load("Prefabs/PieceSprite") as GameObject;
+        _assassinSprite = Resources.Load("Prefabs/AssassinSprite") as GameObject;
+        _chiefSprite = Resources.Load("Prefabs/ChiefSprite") as GameObject;
+        _diplomatSprite = Resources.Load("Prefabs/DiplomatSprite") as GameObject;
+        _journalistSprite = Resources.Load("Prefabs/JournalistSprite") as GameObject;
+        _thugSprite = Resources.Load("Prefabs/ThugSprite") as GameObject;
+        _undertakerSprite = Resources.Load("Prefabs/UndertakerSprite") as GameObject;
+        _corpseSprite = Resources.Load("Prefabs/Corpse") as GameObject;
 
         _confirmButton = GameObject.Find("ConfirmButton").GetComponent<Button>();
         _cancelButton = GameObject.Find("CancelButton").GetComponent<Button>();
@@ -55,15 +73,68 @@ public class GameUIController : MonoBehaviour
         AddEntriesToLog(game.Log);
         EnableOrDisableConfirmButtons();
     }
-    
+
     private void UpdateGameState(GameState game)
     {
-        //Update pieces
+        RedrawPieces(game);
         RedrawPlayersDisplay(game);
         RedrawTurnCycleDisplay(game);
         Controller.GetValidSelections()
             .OnValue(ShowSelectionsOptions)
             .OnError(error => ShowError(error.Message));
+    }
+
+    private void RedrawPieces(GameState game)
+    {
+        var pieceSprites = GameObject.FindGameObjectsWithTag("Piece");
+        foreach (var sprite in pieceSprites)
+        {
+            GameObject.Destroy(sprite);
+        }
+
+        foreach (var piece in game.Pieces)
+        {
+            var background = GameObject.Instantiate(_pieceSprite);
+            var backgroundColor = GetPieceColor(piece, game);
+            background.GetComponent<SpriteRenderer>().color = backgroundColor;
+
+            var foreground = GameObject.Instantiate(GetPieceForegroundSprite(piece));
+
+            background.transform.Translate(piece.Location.X + 0.5f, piece.Location.Y + 0.5f, 0);
+            foreground.transform.Translate(piece.Location.X + 0.5f, piece.Location.Y + 0.5f, 0);
+        }
+    }
+    
+    private GameObject GetPieceForegroundSprite(Piece piece)
+    {
+        if (!piece.IsAlive)
+        {
+            return _corpseSprite;
+        }
+
+        switch (piece.Type)
+        {
+            case PieceType.Assassin: return _assassinSprite;
+            case PieceType.Chief: return _chiefSprite;
+            case PieceType.Diplomat: return _diplomatSprite;
+            case PieceType.Journalist: return _journalistSprite;
+            case PieceType.Thug: return _thugSprite;
+            case PieceType.Undertaker: return _undertakerSprite;
+
+            default:
+                throw new Exception($"Invalid {nameof(PieceType)} value ({piece.Type})");
+        }
+    }
+
+    private Color GetPieceColor(Piece piece, GameState game)
+    {
+        if (!piece.IsAlive)
+        {
+            return Color.gray;
+        }
+
+        var owner = game.Players.Single(p => p.Id == piece.PlayerId);
+        return GetPlayerColor(owner.Color);
     }
 
     private void RedrawPlayersDisplay(GameState game)
