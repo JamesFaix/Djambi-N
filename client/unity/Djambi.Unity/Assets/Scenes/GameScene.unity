@@ -1699,7 +1699,7 @@ GameObject:
   - component: {fileID: 236361124}
   - component: {fileID: 236361126}
   m_Layer: 0
-  m_Name: InputDetector
+  m_Name: BoardClickDetector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1751,7 +1751,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 236361123}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e54e5d65231da7c43adda094fa92b0df, type: 3}
+  m_Script: {fileID: 11500000, guid: a8a3626b4c49a31469ccacc7fc8cc6f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &312093266
@@ -3782,8 +3782,8 @@ TilemapRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -1076905467
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_MaxChunkCount: 16

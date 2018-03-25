@@ -39,16 +39,16 @@ public class GameUIController : MonoBehaviour
         _selectionTile = Resources.Load("Tiles/greenHighlightTile") as Tile;
 
         SetupInitialGameState(Controller.GameState);
-        AddEntriesToLog(Controller.GameState.Log);
-        Controller.GetValidSelections()
-            .OnValue(ShowSelectionsOptions)
-            .OnError(error => ShowError(error.Message));
     }
 
     private void SetupInitialGameState(GameState game)
     {
         RedrawPlayersDisplay(game);
         RedrawTurnCycleDisplay(game);
+        AddEntriesToLog(game.Log);
+        Controller.GetValidSelections()
+            .OnValue(ShowSelectionsOptions)
+            .OnError(error => ShowError(error.Message));
     }
 
     private void RedrawPlayersDisplay(GameState game)
@@ -159,6 +159,18 @@ public class GameUIController : MonoBehaviour
     private void ClearSelections()
     {
         _selectionTilemap.ClearAllTiles();
+    }
+
+    public void OnCellClick(Location location)
+    {
+        Controller.MakeSelection(location)
+            .OnValue(_ => OnSelectionMade())
+            .OnError(error => ShowError(error.Message));
+    }
+
+    private void OnSelectionMade()
+    {
+
     }
 
     private void ShowError(string message)
