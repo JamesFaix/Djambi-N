@@ -2,15 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Djambi.Engine;
+using Djambi.Engine.Extensions;
 using Djambi.Model;
 
 public class InputController : MonoBehaviour 
 {
 	private Plane _plane;
 
-	void Start()
-	{
-		_plane = new Plane(Vector3.up, Vector3.zero);
+    void Start()
+    {
+        _plane = new Plane(Vector3.up, Vector3.zero);
+
+        Controller.StartGame(new[] { "Mario", "Luigi" })
+            .OnValue(game => { return; })
+            .OnError(err => { return; });
 	}
 
 	void OnMouseDown()
