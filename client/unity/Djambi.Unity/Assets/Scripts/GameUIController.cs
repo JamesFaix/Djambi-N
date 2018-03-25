@@ -60,15 +60,15 @@ public class GameUIController : MonoBehaviour
         _journalistSprite = Resources.Load("Prefabs/JournalistSprite") as GameObject;
         _thugSprite = Resources.Load("Prefabs/ThugSprite") as GameObject;
         _undertakerSprite = Resources.Load("Prefabs/UndertakerSprite") as GameObject;
-        _corpseSprite = Resources.Load("Prefabs/Corpse") as GameObject;
+        _corpseSprite = Resources.Load("Prefabs/CorpseSprite") as GameObject;
 
         _playerColors = new Dictionary<PlayerColor, Color>
         {
-            [PlayerColor.Blue] = new Color(0, 0, 204),
-            [PlayerColor.Green] = new Color(0, 102, 0),
-            [PlayerColor.Purple] = new Color(102, 0, 102),
-            [PlayerColor.Red] = new Color(204, 0, 0),
-            [PlayerColor.Dead] = new Color(102, 102, 102)
+            [PlayerColor.Blue] = new Color32(0, 0, 204, 255),
+            [PlayerColor.Green] = new Color32(0, 102, 0, 255),
+            [PlayerColor.Purple] = new Color32(102, 0, 102, 255),
+            [PlayerColor.Red] = new Color32(204, 0, 0, 255),
+            [PlayerColor.Dead] = new Color32(102, 102, 102, 255)
         };
 
         _confirmButton = GameObject.Find("ConfirmButton").GetComponent<Button>();
