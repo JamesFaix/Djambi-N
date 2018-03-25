@@ -50,3 +50,6 @@ TagManager:
   - name: Piece Icons
     uniqueID: 1674779259
     locked: 0
+  - name: Highlights
+    uniqueID: 3218061829
+    locked: 0
