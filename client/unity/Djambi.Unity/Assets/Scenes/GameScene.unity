@@ -3732,7 +3732,7 @@ GameObject:
   - component: {fileID: 1775640354}
   - component: {fileID: 1775640353}
   m_Layer: 0
-  m_Name: HighlightTilemap
+  m_Name: SelectionTilemap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

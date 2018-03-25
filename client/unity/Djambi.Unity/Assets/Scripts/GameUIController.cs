@@ -5,17 +5,19 @@ using Djambi.Engine;
 using Djambi.Engine.Extensions;
 using Djambi.Model;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 
 public class GameUIController : MonoBehaviour
 {
     private GameObject _turnCycleDisplay;
-
     private GameObject _playersDisplay;
-
     private GameObject _turnRowPrefab;
-
     private GameObject _playerRowPrefab;
+    private Tile _selectionOptionTile;
+    private Tile _selectionTile;
+
+    private Tilemap _selectionTilemap;
 
     private const int _rowHeight = -38;
     private const int _initialRowOffset = 90;
@@ -28,8 +30,13 @@ public class GameUIController : MonoBehaviour
 
         _turnCycleDisplay = GameObject.Find("TurnCycleDisplay");
         _playersDisplay = GameObject.Find("PlayersDisplay");
+        _selectionTilemap = GameObject.Find("SelectionTilemap").GetComponent<Tilemap>();
+
         _turnRowPrefab = Resources.Load("Prefabs/TurnRow") as GameObject;
         _playerRowPrefab = Resources.Load("Prefabs/PlayerRow") as GameObject;
+        
+        _selectionOptionTile = Resources.Load("Tiles/yellowHighlightTile") as Tile;
+        _selectionTile = Resources.Load("Tiles/greenHighlightTile") as Tile;
 
         SetupInitialGameState(Controller.GameState);
         AddEntriesToLog(Controller.GameState.Log);
@@ -142,7 +149,16 @@ public class GameUIController : MonoBehaviour
 
     private void ShowSelectionsOptions(IEnumerable<Selection> selections)
     {
+        foreach (var sel in selections)
+        {
+            var pos = new Vector3Int(sel.Location.X, sel.Location.Y, 0);
+            _selectionTilemap.SetTile(pos, _selectionOptionTile);
+        }
+    }
 
+    private void ClearSelections()
+    {
+        _selectionTilemap.ClearAllTiles();
     }
 
     private void ShowError(string message)
