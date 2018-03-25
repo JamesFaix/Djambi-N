@@ -17,7 +17,8 @@ public class GameUIController : MonoBehaviour
 
     private GameObject _playerRowPrefab;
 
-    private readonly int _rowHeight = -38;
+    private const int _rowHeight = -38;
+    private const int _initialRowOffset = 90;
 
     void Start()
     {
@@ -55,7 +56,7 @@ public class GameUIController : MonoBehaviour
             GameObject.Destroy(row);
         }
 
-        var offset = _rowHeight;
+        var offset = _rowHeight + _initialRowOffset;
 
         foreach (var p in game.Players)
         {
@@ -101,7 +102,7 @@ public class GameUIController : MonoBehaviour
             })
             .ToList();
 
-        var offset = _rowHeight;
+        var offset = _rowHeight + _initialRowOffset;
 
         foreach (var t in turns)
         {
