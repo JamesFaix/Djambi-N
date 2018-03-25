@@ -1941,7 +1941,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.6528383, g: 0.66176474, b: 0.56931233, a: 0}
+  m_BackGroundColor: {r: 0.60802704, g: 0.6016436, b: 0.78676474, a: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
@@ -1975,7 +1975,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 523893382}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 9.75, y: 5.5, z: -10}
+  m_LocalPosition: {x: 11.1, y: 5.5, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -2057,8 +2057,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 775, y: 1}
-  m_SizeDelta: {x: 1001, y: 541}
+  m_AnchoredPosition: {x: 848.88, y: 0.5}
+  m_SizeDelta: {x: 1329.4, y: 542}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &998119444
 MonoBehaviour:
