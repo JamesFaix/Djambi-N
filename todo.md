@@ -9,3 +9,10 @@
 ## Bugs
  - Kill chief if player has 0 moves and abandon remaining pieces
  - Make error message returned by Controller more user friendly
+
+
+## Unity
+ - Draw pieces dynamically, redraw after turn
+ - Implement error display
+ - Implement log display
+ - Fix player colors in UI

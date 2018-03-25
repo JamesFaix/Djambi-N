@@ -2,7 +2,7 @@
 using Djambi.Model;
 using UnityEngine;
 
-public class BoardClickDetector : MonoBehaviour 
+public class BoardClickController : MonoBehaviour 
 {
 	private Plane _plane;
 
