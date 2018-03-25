@@ -41,3 +41,12 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Board
+    uniqueID: 3822565279
+    locked: 0
+  - name: Piece Bodies
+    uniqueID: 2062722617
+    locked: 0
+  - name: Piece Icons
+    uniqueID: 1674779259
+    locked: 0
