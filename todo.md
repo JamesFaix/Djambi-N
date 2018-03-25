@@ -8,3 +8,4 @@
 
 ## Bugs
  - Kill chief if player has 0 moves and abandon remaining pieces
+ - Make error message returned by Controller more user friendly
