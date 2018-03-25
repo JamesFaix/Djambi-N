@@ -32,6 +32,8 @@ public class GameUIController : MonoBehaviour
     private GameObject _undertakerSprite;
     private GameObject _corpseSprite;
 
+    private Dictionary<PlayerColor, Color> _playerColors;
+
     private const int _rowHeight = -38;
     private const int _initialRowOffset = 90;
 
@@ -59,6 +61,15 @@ public class GameUIController : MonoBehaviour
         _thugSprite = Resources.Load("Prefabs/ThugSprite") as GameObject;
         _undertakerSprite = Resources.Load("Prefabs/UndertakerSprite") as GameObject;
         _corpseSprite = Resources.Load("Prefabs/Corpse") as GameObject;
+
+        _playerColors = new Dictionary<PlayerColor, Color>
+        {
+            [PlayerColor.Blue] = new Color(0, 0, 204),
+            [PlayerColor.Green] = new Color(0, 102, 0),
+            [PlayerColor.Purple] = new Color(102, 0, 102),
+            [PlayerColor.Red] = new Color(204, 0, 0),
+            [PlayerColor.Dead] = new Color(102, 102, 102)
+        };
 
         _confirmButton = GameObject.Find("ConfirmButton").GetComponent<Button>();
         _cancelButton = GameObject.Find("CancelButton").GetComponent<Button>();
@@ -130,11 +141,11 @@ public class GameUIController : MonoBehaviour
     {
         if (!piece.IsAlive)
         {
-            return Color.gray;
+            return _playerColors[PlayerColor.Dead];
         }
 
         var owner = game.Players.Single(p => p.Id == piece.PlayerId);
-        return GetPlayerColor(owner.Color);
+        return _playerColors[owner.Color];
     }
 
     private void RedrawPlayersDisplay(GameState game)
@@ -160,7 +171,7 @@ public class GameUIController : MonoBehaviour
             trans.GetComponent<RectTransform>().anchorMax = new Vector2(0, 1);
             trans.localScale = Vector3.one;
             trans.localPosition = new Vector3(0, offset, 0);
-            trans.GetChild(0).GetComponent<Image>().color = GetPlayerColor(p.Color);
+            trans.GetChild(0).GetComponent<Image>().color = _playerColors[p.Color];
             trans.GetChild(1).GetComponent<Text>().text = p.Name;
             offset += _rowHeight;
         }
@@ -206,25 +217,10 @@ public class GameUIController : MonoBehaviour
             trans.localPosition = new Vector3(0, offset, 0);
             //trans.GetComponent<RectTransform>().anchorMin = new Vector2(0, 1);
             //trans.GetComponent<RectTransform>().anchorMax = new Vector2(0, 1);
-            trans.GetChild(0).GetComponent<Image>().color = GetPlayerColor(t.Color);
+            trans.GetChild(0).GetComponent<Image>().color = _playerColors[t.Color];
             trans.GetChild(1).GetComponent<Text>().text = t.Index.ToString();
             trans.GetChild(2).GetComponent<Text>().text = t.Name;
             offset += _rowHeight;
-        }
-    }
-
-    private Color GetPlayerColor(PlayerColor color)
-    {
-        switch (color)
-        {
-            case PlayerColor.Blue: return Color.blue;
-            case PlayerColor.Green: return Color.green;
-            case PlayerColor.Purple: return Color.magenta;
-            case PlayerColor.Red: return Color.red;
-            case PlayerColor.Dead: return Color.gray;
-
-            default:
-                throw new Exception($"Invalid {nameof(PlayerColor)} value ({color}).");
         }
     }
 
