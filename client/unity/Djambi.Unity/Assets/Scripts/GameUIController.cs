@@ -25,6 +25,7 @@ public class GameUIController : MonoBehaviour
     private Text _errorText;
     private Text _confirmButtonText;
     private Text _cancelButtonText;
+    private Text _logText;
 
     private GameObject _pieceSprite;
     private GameObject _assassinSprite;
@@ -86,6 +87,7 @@ public class GameUIController : MonoBehaviour
         _cancelButtonText = cancelButtonObject.GetComponentInChildren<Text>();
         _quitButton = GameObject.Find("QuitButton").GetComponent<Button>();
         _errorText = GameObject.Find("ErrorText").GetComponent<Text>();
+        _logText = GameObject.Find("LogText").GetComponent<Text>();
 
         _confirmButton.onClick.AddListener(ConfirmButtonClick);
         _cancelButton.onClick.AddListener(CancelButtonClick);
@@ -179,8 +181,6 @@ public class GameUIController : MonoBehaviour
             var row = GameObject.Instantiate(_playerRowPrefab);
             var trans = row.transform;
             trans.parent = _playersDisplay.transform;
-            trans.GetComponent<RectTransform>().anchorMin = new Vector2(0, 1);
-            trans.GetComponent<RectTransform>().anchorMax = new Vector2(0, 1);
             trans.localScale = Vector3.one;
             trans.localPosition = new Vector3(0, offset, 0);
             trans.GetChild(0).GetComponent<Image>().color = _playerColors[p.Color];
@@ -227,8 +227,6 @@ public class GameUIController : MonoBehaviour
             trans.parent = _turnCycleDisplay.transform;
             trans.localScale = Vector3.one;
             trans.localPosition = new Vector3(0, offset, 0);
-            //trans.GetComponent<RectTransform>().anchorMin = new Vector2(0, 1);
-            //trans.GetComponent<RectTransform>().anchorMax = new Vector2(0, 1);
             trans.GetChild(0).GetComponent<Image>().color = _playerColors[t.Color];
             trans.GetChild(1).GetComponent<Text>().text = t.Index.ToString();
             trans.GetChild(2).GetComponent<Text>().text = t.Name;
@@ -238,7 +236,8 @@ public class GameUIController : MonoBehaviour
 
     private void AddEntriesToLog(IEnumerable<string> messages)
     {
-
+        var newText = string.Join("\n", messages) + "\n";
+        _logText.text += newText;
     }
 
     private void ShowSelectionsOptions(IEnumerable<Selection> selections)
