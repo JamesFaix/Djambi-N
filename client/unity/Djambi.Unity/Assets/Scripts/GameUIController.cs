@@ -25,7 +25,7 @@ public class GameUIController : MonoBehaviour
     private Text _errorText;
     private Text _confirmButtonText;
     private Text _cancelButtonText;
-    private Text _logText;
+    private LogDisplayController _logDisplay;
 
     private GameObject _pieceSprite;
     private GameObject _assassinSprite;
@@ -39,7 +39,7 @@ public class GameUIController : MonoBehaviour
     private Dictionary<PlayerColor, Color> _playerColors;
     private Color _disabledButtonTextColor;
     private Color _enabledButtonTextColor;
-
+    
     private const int _rowHeight = -38;
     private const int _initialRowOffset = 90;
 
@@ -87,7 +87,7 @@ public class GameUIController : MonoBehaviour
         _cancelButtonText = cancelButtonObject.GetComponentInChildren<Text>();
         _quitButton = GameObject.Find("QuitButton").GetComponent<Button>();
         _errorText = GameObject.Find("ErrorText").GetComponent<Text>();
-        _logText = GameObject.Find("LogText").GetComponent<Text>();
+        _logDisplay = GameObject.Find("LogDisplay").GetComponent<LogDisplayController>();
 
         _confirmButton.onClick.AddListener(ConfirmButtonClick);
         _cancelButton.onClick.AddListener(CancelButtonClick);
@@ -236,8 +236,8 @@ public class GameUIController : MonoBehaviour
 
     private void AddEntriesToLog(IEnumerable<string> messages)
     {
-        var newText = string.Join("\n", messages) + "\n";
-        _logText.text += newText;
+        _logDisplay.Append(messages);
+        _logDisplay.ScrollToEnd();
     }
 
     private void ShowSelectionsOptions(IEnumerable<Selection> selections)
