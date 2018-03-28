@@ -41,7 +41,6 @@ public class GameUIController : MonoBehaviour
     private Color _enabledButtonTextColor;
     
     private const int _rowHeight = -38;
-    private const int _initialRowOffset = 90;
 
     void Start()
     {
@@ -174,7 +173,7 @@ public class GameUIController : MonoBehaviour
             GameObject.Destroy(row);
         }
 
-        var offset = _rowHeight + _initialRowOffset;
+        var offset = _rowHeight;
 
         foreach (var p in game.Players)
         {
@@ -218,7 +217,7 @@ public class GameUIController : MonoBehaviour
             })
             .ToList();
 
-        var offset = _rowHeight + _initialRowOffset;
+        var offset = _rowHeight;
 
         foreach (var t in turns)
         {
