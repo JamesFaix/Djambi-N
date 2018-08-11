@@ -31,4 +31,9 @@
     <None Include="web.config" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\lib\Djambi.Engine\Djambi.Engine.csproj" />
+    <ProjectReference Include="..\..\..\..\lib\Djambi.Model\Djambi.Model.csproj" />
+  </ItemGroup>
+
 </Project>

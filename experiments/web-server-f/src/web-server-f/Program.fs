@@ -19,6 +19,7 @@ let webApp =
             (choose [
                 GET >=> choose [
                     route "/hello" >=> handleGetHello
+                    route "/startGame" >=> handleStartGame
                 ]
             ])
         setStatusCode 404 >=> text "Not Found" ]
