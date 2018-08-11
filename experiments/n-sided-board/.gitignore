@@ -1,0 +1,5 @@
+
+*.map
+scripts/*/*.js
+scripts/*/*/*.js
+node_modules/*
