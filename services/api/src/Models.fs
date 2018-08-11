@@ -1,4 +1,4 @@
-namespace web_server_f.Models
+namespace djambi.api.Models
 
 [<CLIMutable>]
 type Message =

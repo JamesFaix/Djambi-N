@@ -1,4 +1,4 @@
-module web_server_f.App
+module djambi.api.App
 
 open System
 open Microsoft.AspNetCore.Builder
@@ -7,7 +7,7 @@ open Microsoft.AspNetCore.Hosting
 open Microsoft.Extensions.Logging
 open Microsoft.Extensions.DependencyInjection
 open Giraffe
-open web_server_f.HttpHandlers
+open djambi.api.HttpHandlers
 
 // ---------------------------------
 // Web app
@@ -17,9 +17,27 @@ let webApp =
     choose [
         subRoute "/api"
             (choose [
-                GET >=> choose [
-                    route "/hello" >=> handleGetHello
-                ]
+                POST >=> route "/users" >=> handleCreateUser
+                GET >=> routef "/users/%i" handleGetUser
+                DELETE >=> routef "/users/%i" handleDeleteUser
+                PATCH >=> routef "/users/%i" handleUpdateUser
+
+                GET >=> route "/games/open" >=> handleGetOpenGames
+                POST >=> route "/games" >=> handleCreateGame
+                DELETE >=> routef "/games/%i" handleDeleteGame
+
+                POST >=> routef "/games/%i/users/%i" handleAddPlayerToGame
+                DELETE >=> routef "/games/%i/users/%i" handleDeletePlayerFromGame
+
+                POST >=> routef "/games/%i/start-request" handleStartGame
+
+                GET >=> routef "/games/%i" handleGetGameState
+
+                POST >=> routef "/games/%i/current-turn/selections" handleMakeSelection
+                POST >=> routef "/games/%i/current-turn/reset-request" handleResetTurn
+                POST >=> routef "/games/%i/current-turn/commit-request" handleCommitTurn
+
+                POST >=> routef "/games/%id/messages" handleSendMessage
             ])
         setStatusCode 404 >=> text "Not Found" ]
 
