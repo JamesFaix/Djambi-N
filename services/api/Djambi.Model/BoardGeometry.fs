@@ -55,9 +55,10 @@ module BoardGeometryExtensions =
         member this.rotate(amount : int, radialDirection : RadialDirections) : Directions =
             let value = LanguagePrimitives.EnumToValue this
             let newValue = if radialDirection = RadialDirections.Clockwise
-                           then (value - amount) % 8
-                           else (value + amount) % 8
-            enum<Directions> newValue
+                           then value - amount
+                           else value + amount
+            let normalized = newValue % 8 + 1
+            enum<Directions> normalized
 
     type Location with
         member this.next(direction : Directions) : Location =
@@ -216,10 +217,10 @@ module BoardGeometryExtensions =
                         seq {
                             while (i < this.regionSize * 2 && loc2.IsSome) do
                                 i <- i + 1
-                                yield this.cellAt(loc1)                           
                                 loc1 <- loc2.Value
                                 loc2 <- this.nextLocation(loc1, d)
-                        }                    
+                                yield this.cellAt(loc1)                           
+                            }                    
                         |> Seq.toList))
             else Utilities.GetValues<Directions>()
                  |> List.map(fun d -> 
@@ -230,7 +231,6 @@ module BoardGeometryExtensions =
                     seq {
                         while (i < this.regionSize * 2 && loc2.IsSome) do
                             i <- i + 1
-                            yield this.cellAt(loc1)                         
                             if loc2.Value.isCenter() 
                             then
                                 //This isn't really mutated, its just assigned to in one of several places
@@ -273,7 +273,7 @@ module BoardGeometryExtensions =
                                 //Direction rotates 90 degrees when crossing region boundary
                                 let regionDiff = loc1.region - loc2.Value.region
                                 let max = this.maxRegion()
-                                if (regionDiff < 0 && regionDiff > max) || regionDiff = max
+                                if (regionDiff < 0 && regionDiff > -max) || regionDiff = max
                                 then 
                                     dir <- dir.rotate(2, RadialDirections.CounterClockwise)
                                 else if (regionDiff > 0 && regionDiff < max) || regionDiff = -max
@@ -283,6 +283,7 @@ module BoardGeometryExtensions =
 
                                 loc1 <- loc2.Value
                                 loc2 <- this.nextLocation(loc1, dir)
+                                yield this.cellAt(loc1)                         
                     }
                     |> Seq.toList
                  )
