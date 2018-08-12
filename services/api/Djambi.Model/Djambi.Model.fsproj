@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <Compile Include="Utilities.fs" />
-    <Compile Include="Model.fs" />
+    <Compile Include="BoardGeometry.fs" />
   </ItemGroup>
 
 </Project>

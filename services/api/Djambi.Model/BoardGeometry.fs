@@ -1,6 +1,6 @@
 namespace Djambi.Model
 
-module Model =
+module BoardGeometry =
     
     type Directions =
         | Up = 1
@@ -35,13 +35,10 @@ module Model =
         }
         
 
-module ModelExtensions =
+module BoardGeometryExtensions =
 
-    open System
-    open System.Linq
-    open Model
-    open Utilities
-
+    open BoardGeometry
+    
     type Directions with 
         member this.rotate(amount : int, radialDirection : RadialDirections) : Directions =
             let value = LanguagePrimitives.EnumToValue this
