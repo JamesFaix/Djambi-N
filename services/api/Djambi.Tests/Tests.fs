@@ -12,18 +12,19 @@ open Djambi.Model.BoardGeometryExtensions
 [<InlineData(Directions.Up, -8, RadialDirections.Clockwise, Directions.Up)>]
 [<InlineData(Directions.Down, 2, RadialDirections.Clockwise, Directions.Left)>]
 [<InlineData(Directions.Down, 2, RadialDirections.CounterClockwise, Directions.Right)>]
+[<InlineData(Directions.DownLeft, 2, RadialDirections.Clockwise, Directions.UpLeft)>]
 let ``Directions rotate returns expected output`` 
     (oldDir : Directions, amount : int, 
      radialDir : RadialDirections, expDir : Directions) =    
     Assert.Equal(expDir, oldDir.rotate(amount, radialDir));
 
 [<Theory>]
-[<InlineData(0, 1, Directions.Up, Directions.Right)>]
-[<InlineData(0, 2, Directions.Up, Directions.Left)>]
-[<InlineData(1, 0, Directions.Up, Directions.Left)>]
-[<InlineData(1, 2, Directions.Up, Directions.Right)>]
-[<InlineData(2, 0, Directions.Up, Directions.Right)>]
-[<InlineData(2, 1, Directions.Up, Directions.Left)>]
+[<InlineData(0, 1, Directions.Left, Directions.Up)>]
+[<InlineData(0, 1, Directions.DownLeft, Directions.UpLeft)>]
+[<InlineData(0, 1, Directions.UpLeft, Directions.UpRight)>]
+[<InlineData(0, 2, Directions.Down, Directions.Right)>]
+[<InlineData(0, 2, Directions.DownLeft, Directions.DownRight)>]
+[<InlineData(0, 2, Directions.DownRight, Directions.UpRight)>]
 let ``Board adjustDirectionsForRegionBoundary returns expected output``
     (oldRegion : int, newRegion: int,
      oldDir: Directions, expDir: Directions) =

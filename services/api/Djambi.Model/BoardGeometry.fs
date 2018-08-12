@@ -55,11 +55,12 @@ module BoardGeometryExtensions =
         member this.rotate(amount : int, radialDirection : RadialDirections) : Directions =
             let directionCount = 8
             let value = LanguagePrimitives.EnumToValue this
-            let newValue = if radialDirection = RadialDirections.Clockwise
-                           then value + amount
-                           else value - amount
-            let normalized = (newValue + directionCount) % directionCount //Add 8 to get rid of negatives
-            enum<Directions> normalized
+            let mutable newValue = if radialDirection = RadialDirections.Clockwise
+                                   then value + amount
+                                   else value - amount
+            newValue <- (newValue + directionCount) % directionCount //Add 8 to get rid of negatives
+            if newValue = 0 then newValue <- 8 else () //Set 0 to 8, since the enum starts at 1
+            enum<Directions> newValue
 
     type Location with
         member this.next(direction : Directions) : Location =
@@ -207,8 +208,7 @@ module BoardGeometryExtensions =
             this.paths(this.cellAt(location))
             
         member this.adjustDirectionForRegionBoundary
-            (oldLocation : Location, 
-             newLocation : Location, 
+            (oldLocation : Location, newLocation : Location, 
              oldDirection : Directions) : Directions option =
             //Behavior is undefined when approaching or leaving center
             if oldLocation.isCenter() || newLocation.isCenter() 
@@ -290,6 +290,9 @@ module BoardGeometryExtensions =
                     let mutable i = 0
                     seq {
                         while (i < this.regionSize * 2 && loc2.IsSome) do
+                            if dir = enum<Directions> 0
+                            then ()
+                            else ()
                             i <- i + 1
                             if loc2.Value.isCenter() 
                             then
@@ -303,6 +306,9 @@ module BoardGeometryExtensions =
                                 dir <- match this.adjustDirectionForRegionBoundary(loc1, loc2.Value, dir) with
                                         | Some(x) -> x
                                         | None -> dir //If either cell is center, do nothing, next iteration will fix it
+                                if dir = enum<Directions> 0
+                                then ()
+                                else ()
                                 loc1 <- loc2.Value
                                 loc2 <- this.nextLocation(loc1, dir)
                             yield this.cellAt(loc1)                         
