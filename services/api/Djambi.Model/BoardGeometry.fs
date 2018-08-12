@@ -53,11 +53,12 @@ module BoardGeometryExtensions =
 
     type Directions with 
         member this.rotate(amount : int, radialDirection : RadialDirections) : Directions =
+            let directionCount = 8
             let value = LanguagePrimitives.EnumToValue this
             let newValue = if radialDirection = RadialDirections.Clockwise
-                           then value - amount
-                           else value + amount
-            let normalized = newValue % 8 + 1
+                           then value + amount
+                           else value - amount
+            let normalized = (newValue + directionCount) % directionCount //Add 8 to get rid of negatives
             enum<Directions> normalized
 
     type Location with
@@ -204,7 +205,25 @@ module BoardGeometryExtensions =
 
         member this.paths(location : Location) : Cell list list =
             this.paths(this.cellAt(location))
-
+            
+        member this.adjustDirectionForRegionBoundary(oldLocation : Location, 
+                                                     newLocation : Location, 
+                                                     oldDirection : Directions) : Directions option =
+            //Behavior is undefined when approaching or leaving center
+            let result = if oldLocation.isCenter() || newLocation.isCenter() 
+                            then None
+                            else  
+                                //Direction rotates 90 degrees when crossing region boundary
+                                let regionDiff = oldLocation.region - newLocation.region
+                                let max = this.maxRegion()
+                                if regionDiff = max || (regionDiff < 0 && regionDiff > -max)
+                                then Some(oldDirection.rotate(2, RadialDirections.Clockwise))
+                                else if regionDiff = -max || (regionDiff > 0 && regionDiff < max)
+                                then Some(oldDirection.rotate(2, RadialDirections.CounterClockwise))
+                                else Some oldDirection
+            printfn "adjust direction from %i to %i going %s = %s" oldLocation.region, newLocation.region, oldDirection.ToString(), result.ToString() 
+            result
+                
         member this.paths(cell : Cell) : Cell list list =
             if cell.isCenter()
             then cell.locations
@@ -271,19 +290,10 @@ module BoardGeometryExtensions =
                                 loc2 <- next;
                             else
                                 //Direction rotates 90 degrees when crossing region boundary
-                                let regionDiff = loc1.region - loc2.Value.region
-                                let max = this.maxRegion()
-                                if (regionDiff < 0 && regionDiff > -max) || regionDiff = max
-                                then 
-                                    dir <- dir.rotate(2, RadialDirections.CounterClockwise)
-                                else if (regionDiff > 0 && regionDiff < max) || regionDiff = -max
-                                then 
-                                    dir <- dir.rotate(2, RadialDirections.Clockwise)
-                                else ()
-
+                                dir <- this.adjustDirectionForRegionBoundary(loc1, loc2.Value, dir).Value
                                 loc1 <- loc2.Value
                                 loc2 <- this.nextLocation(loc1, dir)
-                                yield this.cellAt(loc1)                         
+                            yield this.cellAt(loc1)                         
                     }
                     |> Seq.toList
                  )
