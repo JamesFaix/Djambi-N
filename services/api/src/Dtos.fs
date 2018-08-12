@@ -1,4 +1,4 @@
-namespace djambi.api.Models
+namespace djambi.api.Dtos
 
 [<CLIMutable>]
 type PlaceHolderMessageDto =

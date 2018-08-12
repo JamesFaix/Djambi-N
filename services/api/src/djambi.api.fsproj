@@ -22,13 +22,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="Models.fs" />
+    <Compile Include="Dtos.fs" />
     <Compile Include="HttpHandlers.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="web.config" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Djambi.Model\Djambi.Model.fsproj" />
   </ItemGroup>
 
 </Project>

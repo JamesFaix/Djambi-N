@@ -4,7 +4,7 @@ module HttpHandlers =
 
     open Microsoft.AspNetCore.Http
     open Giraffe
-    open djambi.api.Models
+    open djambi.api.Dtos
 
 //Users
     let handleCreateUser =
