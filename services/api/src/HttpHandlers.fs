@@ -5,6 +5,10 @@ module HttpHandlers =
     open Microsoft.AspNetCore.Http
     open Giraffe
     open djambi.api.Dtos
+    open Djambi.Model
+
+    open BoardGeometry
+    open BoardGeometryExtensions
 
 //Users
     let handleCreateUser =
@@ -13,12 +17,12 @@ module HttpHandlers =
                 let! request = ctx.BindModelAsync<CreateUserRequestDto>()
 
                 let response : UserDto = {
-                    Id = 1
-                    Name = request.Name
+                    id = 1
+                    name = request.name
                 }
 
                 let placeHolderResponse = {
-                    Text = "Create user not yet implemented"
+                    text = "Create user not yet implemented"
                 }
                 return! json placeHolderResponse next ctx
             }
@@ -27,7 +31,7 @@ module HttpHandlers =
         fun (next : HttpFunc) (ctx : HttpContext) ->
             task {
                 let placeHolderResponse = {
-                    Text = sprintf "Delete user %i not yet implemented" userId
+                    text = sprintf "Delete user %i not yet implemented" userId
                 }
                 return! json placeHolderResponse next ctx
             }
@@ -36,12 +40,12 @@ module HttpHandlers =
         fun (next : HttpFunc) (ctx : HttpContext) ->
             task {
                 let response : UserDto = {
-                    Id = userId
-                    Name = "Test"
+                    id = userId
+                    name = "Test"
                 }
 
                 let placeHolderResponse = {
-                    Text = sprintf "Get user %i not yet implemented" userId
+                    text = sprintf "Get user %i not yet implemented" userId
                 }
                 return! json placeHolderResponse next ctx
             }
@@ -52,12 +56,12 @@ module HttpHandlers =
                 let! request = ctx.BindModelAsync<CreateUserRequestDto>()
 
                 let response : UserDto = {
-                    Id = userId
-                    Name = request.Name
+                    id = userId
+                    name = request.name
                 }
 
                 let placeHolderResponse = {
-                    Text = sprintf "Update user %i not yet implemented" userId
+                    text = sprintf "Update user %i not yet implemented" userId
                 }
                 return! json placeHolderResponse next ctx
             }
@@ -70,21 +74,21 @@ module HttpHandlers =
                 let response : GameMetadataDto list = 
                     [
                         {
-                            Id = 1
-                            Status = GameStatus.Open
-                            BoardRegionCount = 3
-                            Players = 
+                            id = 1
+                            status = GameStatus.Open
+                            boardRegionCount = 3
+                            players = 
                             [
                                 {
-                                    Id = 1
-                                    Name = "TestUser"
+                                    id = 1
+                                    name = "TestUser"
                                 }
                             ]
                         }
                     ]
 
                 let placeHolderResponse = {
-                    Text = "Get open games not yet implemented"
+                    text = "Get open games not yet implemented"
                 }
                 return! json placeHolderResponse next ctx
             }
@@ -95,14 +99,14 @@ module HttpHandlers =
                 let! request = ctx.BindModelAsync<CreateGameRequestDto>()
 
                 let response : GameMetadataDto = {
-                    Id = 1
-                    Status = GameStatus.Open
-                    BoardRegionCount = request.BoardRegionCount
-                    Players = List.empty
+                    id = 1
+                    status = GameStatus.Open
+                    boardRegionCount = request.boardRegionCount
+                    players = List.empty
                 }
 
                 let placeHolderResponse = {
-                    Text = "Create game not yet implemented"
+                    text = "Create game not yet implemented"
                 }
                 return! json placeHolderResponse next ctx
             }
@@ -111,7 +115,7 @@ module HttpHandlers =
         fun (next : HttpFunc) (ctx : HttpContext) ->
             task {
                 let placeHolderResponse = {
-                    Text = sprintf "Delete game %i not yet implemented" gameId
+                    text = sprintf "Delete game %i not yet implemented" gameId
                 }
                 return! json placeHolderResponse next ctx
             }
@@ -120,7 +124,7 @@ module HttpHandlers =
         fun (next : HttpFunc) (ctx : HttpContext) ->
             task {
                 let placeHolderResponse = {
-                    Text = sprintf "Add player %i to game %i not yet implemented" userId gameId
+                    text = sprintf "Add player %i to game %i not yet implemented" userId gameId
                 }
                 return! json placeHolderResponse next ctx
             }
@@ -129,7 +133,7 @@ module HttpHandlers =
         fun (next : HttpFunc) (ctx : HttpContext) ->
             task {
                 let placeHolderResponse = {
-                    Text = sprintf "Delete player %i from game %i not yet implemented" userId gameId
+                    text = sprintf "Delete player %i from game %i not yet implemented" userId gameId
                 }
                 return! json placeHolderResponse next ctx
             }
@@ -138,9 +142,30 @@ module HttpHandlers =
         fun (next : HttpFunc) (ctx : HttpContext) ->
             task {
                 let placeHolderResponse = {
-                    Text = sprintf "Start game %i not yet implemented" gameId
+                    text = sprintf "Start game %i not yet implemented" gameId
                 }
                 return! json placeHolderResponse next ctx
+            }
+
+//Board
+    let handleGetBoard(regionCount : int) =
+        fun (next : HttpFunc) (ctx : HttpContext) ->
+            task {
+                let standardRegionSize = 5
+
+                let boardMetadata = 
+                    { 
+                        regionCount = regionCount; 
+                        regionSize = standardRegionSize 
+                    }
+                let board = 
+                    {
+                        cells = boardMetadata.cells()
+                        regionCount = regionCount
+                        regionSize = standardRegionSize
+                    }
+
+                return! json board next ctx
             }
 
 //Gameplay
@@ -148,15 +173,16 @@ module HttpHandlers =
         fun (next : HttpFunc) (ctx : HttpContext) ->
             task {
                 let response : GameDetailsDto = {
-                    Id = gameId
-                    Status = GameStatus.Open
-                    BoardRegionCount = 3
-                    Players = List.empty
-                    Pieces = List.empty
+                    id = gameId
+                    status = GameStatus.Open
+                    boardRegionCount = 3
+                    players = List.empty
+                    pieces = List.empty
+                    selectionOptions = List.empty
                 }
 
                 let placeHolderResponse = {
-                    Text = sprintf "Get game state %i not yet implemented" gameId
+                    text = sprintf "Get game state %i not yet implemented" gameId
                 }
                 return! json placeHolderResponse next ctx
             }
@@ -164,35 +190,47 @@ module HttpHandlers =
     let handleMakeSelection(gameId : int) =
         fun (next : HttpFunc) (ctx : HttpContext) ->
             task {
-                let! request = ctx.BindModelAsync<CreateSelectionDto>()
+                let! request = ctx.BindJsonAsync<CreateSelectionDto>()
+
+//                let! request = ctx.BindModelAsync<CreateSelectionDto>()
+
+                let location : Location = {
+                    region = request.location.region
+                    x = request.location.x
+                    y = request.location.y
+                }
+
+                let landscape = { regionCount = 3; regionSize = 5 }
 
                 let response : GameDetailsDto = {
-                    Id = gameId
-                    Status = GameStatus.Open
-                    BoardRegionCount = 3
-                    Players = List.empty
-                    Pieces = List.empty
+                    id = gameId
+                    status = GameStatus.Open
+                    boardRegionCount = 3
+                    players = List.empty
+                    pieces = List.empty
+                    selectionOptions = landscape.paths(location) |> List.collect id
                 }
                 
-                let placeHolderResponse = {
-                    Text = sprintf "Make selection %i not yet implemented" gameId
-                }
-                return! json placeHolderResponse next ctx
+                //let placeHolderResponse = {
+                //    Text = sprintf "Make selection %i not yet implemented" gameId
+                //}
+                return! json response next ctx
             }
 
     let handleResetTurn(gameId : int) =
         fun (next : HttpFunc) (ctx : HttpContext) ->
             task {
                 let response : GameDetailsDto = {
-                    Id = gameId
-                    Status = GameStatus.Open
-                    BoardRegionCount = 3
-                    Players = List.empty
-                    Pieces = List.empty
+                    id = gameId
+                    status = GameStatus.Open
+                    boardRegionCount = 3
+                    players = List.empty
+                    pieces = List.empty
+                    selectionOptions = List.empty
                 }
 
                 let placeHolderResponse = {
-                    Text = sprintf "Reset turn %i not yet implemented" gameId
+                    text = sprintf "Reset turn %i not yet implemented" gameId
                 } 
                 return! json placeHolderResponse next ctx
             }
@@ -201,15 +239,16 @@ module HttpHandlers =
         fun (next : HttpFunc) (ctx : HttpContext) ->
             task {
                 let response : GameDetailsDto = {
-                    Id = gameId
-                    Status = GameStatus.Open
-                    BoardRegionCount = 3
-                    Players = List.empty
-                    Pieces = List.empty
+                    id = gameId
+                    status = GameStatus.Open
+                    boardRegionCount = 3
+                    players = List.empty
+                    pieces = List.empty
+                    selectionOptions = List.empty
                 }
 
                 let placeHolderResponse = {
-                    Text = sprintf "Commit turn %i not yet implemented" gameId
+                    text = sprintf "Commit turn %i not yet implemented" gameId
                 }
                 return! json placeHolderResponse next ctx
             }
@@ -220,7 +259,7 @@ module HttpHandlers =
                 let! request = ctx.BindModelAsync<CreateMessageDto>()
 
                 let response = {
-                    Text = sprintf "Send message %i not yet implemented" gameId
+                    text = sprintf "Send message %i not yet implemented" gameId
                 }
                 return! json response next ctx
             }

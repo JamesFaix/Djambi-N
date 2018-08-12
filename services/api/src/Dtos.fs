@@ -1,28 +1,32 @@
 namespace djambi.api.Dtos
 
+open Djambi.Model
+
+open BoardGeometry
+
 [<CLIMutable>]
 type PlaceHolderMessageDto =
     {
-        Text : string
+        text : string
     }
 
 //Use for POST and PATCH /users
 type CreateUserRequestDto =
     {
-        Name : string
+        name : string
     }
 
 //Use for GET /users
 type UserDto =
     {
-        Id : int
-        Name : string
+        id : int
+        name : string
     }
 
 //Use for POST /games
 type CreateGameRequestDto =
     {
-        BoardRegionCount : int    
+        boardRegionCount : int    
     }
 
 type GameStatus =
@@ -34,32 +38,41 @@ type GameStatus =
 //Use for GET /games
 type GameMetadataDto = 
     {
-        Id : int
-        Status : GameStatus
-        BoardRegionCount : int
-        Players : UserDto list
+        id : int
+        status : GameStatus
+        boardRegionCount : int
+        players : UserDto list
     }
 
 type GameDetailsDto =
     {
-        Id : int
-        Status : GameStatus
-        BoardRegionCount : int
-        Players : UserDto list 
-        Pieces: int list
+        id : int
+        status : GameStatus
+        boardRegionCount : int
+        players : UserDto list 
+        pieces: int list
         //TODO: Add details like player color, alive/dead state, etc
         //TODO: Add pieces and their positions
         //TODO: Add current turn selections
+        selectionOptions : Cell list
     }
 
+[<CLIMutable>]
+type LocationDto =
+    {
+        region : int
+        x : int
+        y : int
+    }
+
+[<CLIMutable>]
 type CreateSelectionDto =
     {
-        Description : string
-        //TODO: Add piece, location, type, etc
+        location : LocationDto
     }
 
 type CreateMessageDto = 
     {
-        Body : string
+        body : string
         //TODO: Maybe add UserId for direct messages
     }

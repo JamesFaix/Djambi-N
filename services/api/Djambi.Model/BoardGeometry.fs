@@ -25,20 +25,30 @@ module BoardGeometry =
 
     type Cell =
         {
+            id : int
             locations : Location list
         }
       
-    type Landscape =
+    type BoardMetadata =
         {
             regionCount : int
             regionSize : int
         }
-        
 
+    type Board = 
+        {
+            regionCount : int
+            regionSize : int
+            cells : Cell list
+        }
+        
 module BoardGeometryExtensions =
 
     open BoardGeometry
-    
+    open System.Collections.Generic
+    open System.Linq
+    open Utilities
+
     type Directions with 
         member this.rotate(amount : int, radialDirection : RadialDirections) : Directions =
             let value = LanguagePrimitives.EnumToValue this
@@ -75,8 +85,8 @@ module BoardGeometryExtensions =
             this.locations 
             |> Seq.exists (fun l1 -> other.locations 
                                     |> Seq.exists(fun l2 -> l1 = l2))
-
-    type Landscape with
+                                    
+    type BoardMetadata with
         member this.maxRegion() = this.regionCount - 1
 
         member this.contains(location : Location) : bool =
@@ -116,6 +126,39 @@ module BoardGeometryExtensions =
             //Just self otherwise
             else [location]
 
+        member this.cells() : Cell list =
+            let cellsInner(landscape : BoardMetadata) =
+                let locations = 
+                    [0..landscape.maxRegion()]
+                    |> Seq.collect (fun r -> 
+                        [0..(landscape.regionSize-1)]
+                        |> Seq.collect (fun x -> 
+                            [0..(landscape.regionSize-1)]
+                            |> Seq.map (fun y -> { region = r; x = x; y = y })))
+                    |> Enumerable.ToList
+            
+                let mutable cellId = 1
+                let cells = new List<Cell>()
+
+                while locations.Count > 0 do
+                    let colocations = landscape.colocations(locations.[0])
+                    cells.Add({id = cellId; locations = colocations})
+                    cellId <- cellId + 1
+                    for cl in colocations do
+                        locations.Remove(cl) |> ignore
+            
+                cells |> Seq.toList
+
+            memoize cellsInner this
+
+        member this.cellAt(location : Location) : Cell =
+            let cellAtInner(landscape : BoardMetadata)(loc : Location) =
+                landscape.cells()
+                |> Seq.find (fun c -> c.locations |> Seq.contains loc)
+
+            let memoized = memoize cellAtInner this
+            memoized location
+
         member this.nextLocation(from : Location, direction : Directions) : Location option =
             let next = from.next(direction)
             //If out of bounds, undefined
@@ -141,17 +184,23 @@ module BoardGeometryExtensions =
         member this.neighbors(cell : Cell) : Cell list =
             if cell.isCenter() 
             then [0..(this.maxRegion())] 
-                 |> List.map (fun r ->
-                    { locations = [ 
+                 |> Seq.collect (fun r -> 
+                    [
                         { region = r; x = 0; y = 1 } 
                         { region = r; x = 1; y = 1 } 
                         { region = r; x = 1; y = 0 } 
-                    ] })
+                    ])
             else Utilities.GetValues<Directions>()
                  |> Seq.map (fun d -> this.nextLocation(cell.locations.Head, d))
                  |> Seq.filter (fun o -> o.IsSome)
-                 |> Seq.map (fun o -> { locations = this.colocations(o.Value) })
-                 |> Seq.toList
+                 |> Seq.map (fun o -> o.Value)
+                 |> Seq.collect this.colocations
+            |> Seq.map this.cellAt
+            |> Seq.distinct
+            |> Seq.toList
+
+        member this.paths(location : Location) : Cell list list =
+            this.paths(this.cellAt(location))
 
         member this.paths(cell : Cell) : Cell list list =
             if cell.isCenter()
@@ -163,9 +212,9 @@ module BoardGeometryExtensions =
                         let mutable loc2 = this.nextLocation(loc1, d)
                         let mutable i = 0
                         seq {
-                            while (i < this.regionSize && loc2.IsSome) do
+                            while (i < this.regionSize * 2 && loc2.IsSome) do
                                 i <- i + 1
-                                yield { locations = this.colocations(loc1) }                            
+                                yield this.cellAt(loc1)                           
                                 loc1 <- loc2.Value
                                 loc2 <- this.nextLocation(loc1, d)
                         }                    
@@ -177,9 +226,9 @@ module BoardGeometryExtensions =
                     let mutable loc2 = this.nextLocation(loc1, dir)
                     let mutable i = 0
                     seq {
-                        while (i < this.regionSize && loc2.IsSome) do
+                        while (i < this.regionSize * 2 && loc2.IsSome) do
                             i <- i + 1
-                            yield { locations = this.colocations(loc1) }                            
+                            yield this.cellAt(loc1)                         
                             if loc2.Value.isCenter() 
                             then
                                 //This isn't really mutated, its just assigned to in one of several places

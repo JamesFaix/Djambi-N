@@ -6,7 +6,7 @@ import { VisualCell } from "./VisualCell.js";
 
 export class ClickHandler {
 
-    static logClickOnBoard(
+    static async logClickOnBoard(
         e : MouseEvent, 
         board : VisualBoard, 
         canvas : HTMLCanvasElement) {
@@ -22,7 +22,7 @@ export class ClickHandler {
             console.log("Clicked on Board" + board.regionCount + " " + point.toString() + " " + cell.toString());
         }
     
-        ClickHandler.highlightPaths(canvas, board, cell);
+        await ClickHandler.highlightPaths(canvas, board, cell);
     }
     
     private static highlightNeighbors(
@@ -41,7 +41,7 @@ export class ClickHandler {
     }
     
     
-    private static highlightPaths(
+    private static async highlightPaths(
         canvas : HTMLCanvasElement, 
         board : VisualBoard, 
         cell : VisualCell) {
@@ -50,8 +50,8 @@ export class ClickHandler {
     
         if (cell) {
             cell.state = CellState.Selected;
-            board.cellPaths(cell).forEach(path => 
-                path.forEach(c => c.state = CellState.Selectable));
+            let selectionOptions = await board.makeSelection(cell);
+            selectionOptions.forEach(c => c.state = CellState.Selectable);
         } 
     
         Renderer.drawBoard(board, canvas);

@@ -31,6 +31,8 @@ let webApp =
 
                 POST >=> routef "/games/%i/start-request" handleStartGame
 
+                GET >=> routef "/boards/%i" handleGetBoard
+
                 GET >=> routef "/games/%i/state" handleGetGameState
 
                 POST >=> routef "/games/%i/current-turn/selections" handleMakeSelection

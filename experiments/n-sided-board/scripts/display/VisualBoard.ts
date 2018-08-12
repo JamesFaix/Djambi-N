@@ -1,3 +1,5 @@
+/// <reference path ="../../node_modules/definitely-typed-jquery/jquery.d.ts"/> 
+
 import {Point} from "../geometry/Point.js";
 import {Line} from "../geometry/Line.js";
 import {Polygon} from "../geometry/Polygon.js";
@@ -7,6 +9,7 @@ import {Location} from "../rules/model/Location.js";
 import {Landscape} from "../rules/model/Landscape.js";
 import {Color} from "./Color.js";
 import {Cell} from "../rules/model/Cell.js";
+//import * as $ from "jquery";
 
 export class VisualBoard {
     readonly cells : Array<VisualCell>;
@@ -174,9 +177,25 @@ export class VisualBoard {
             .map(c => this.cells.find(vc => vc.cell.is(c)));
     }
 
-    cellPaths(cell : VisualCell) : Array<Array<VisualCell>> {
-        return this.landscape.getPaths(cell.cell)
-            .map(path => path
-                .map(c => this.cells.find(vc => vc.cell.is(c))));
+    async makeSelection(cell : VisualCell) : Promise<Array<VisualCell>> {
+        let cells : Array<Cell> = null;
+        
+        await $.ajax({
+            type: "POST",
+            url: "http://localhost:54835/api/games/1/current-turn/selections",
+            data: JSON.stringify({
+                location: cell.cell.locations[0]
+            }),
+            dataType: "json",
+            success: (data, status, xhr) => {
+                cells = data.selectionOptions;
+            },
+            error: () => {
+
+            }
+        });
+
+        return this.cells
+            .filter(vc => cells.find(c => vc.cell.is(c)) !== undefined);
     }
 }
