@@ -3,6 +3,7 @@
 import {Board} from "./model/Board.js";
 
 export class BoardClient {
+    private static readonly baseUrl : string = "http://localhost:54835/api";
     constructor() {
 
     }
@@ -12,7 +13,7 @@ export class BoardClient {
 
         await $.ajax({
             type: "GET",
-            url: "http://localhost:54835/api/boards/" + regionCount,
+            url: BoardClient.baseUrl + "/boards/" + regionCount,
             dataType: "json",
             success: (data, status, xhr) => {
                 result = data;
@@ -30,7 +31,7 @@ export class BoardClient {
         
         await $.ajax({
             type: "GET",
-            url: "http://localhost:54835/api/boards/" + regionCount + "/cells/" + cellId + "/paths",
+            url: BoardClient.baseUrl + "/boards/" + regionCount + "/cells/" + cellId + "/paths",
             dataType: "json",
             success: (data, status, xhr) => {
                 result = data;
