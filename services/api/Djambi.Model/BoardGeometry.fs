@@ -206,23 +206,64 @@ module BoardGeometryExtensions =
         member this.paths(location : Location) : Cell list list =
             this.paths(this.cellAt(location))
             
-        member this.adjustDirectionForRegionBoundary(oldLocation : Location, 
-                                                     newLocation : Location, 
-                                                     oldDirection : Directions) : Directions option =
+        member this.adjustDirectionForRegionBoundary
+            (oldLocation : Location, 
+             newLocation : Location, 
+             oldDirection : Directions) : Directions option =
             //Behavior is undefined when approaching or leaving center
-            let result = if oldLocation.isCenter() || newLocation.isCenter() 
-                            then None
-                            else  
-                                //Direction rotates 90 degrees when crossing region boundary
-                                let regionDiff = oldLocation.region - newLocation.region
-                                let max = this.maxRegion()
-                                if regionDiff = max || (regionDiff < 0 && regionDiff > -max)
-                                then Some(oldDirection.rotate(2, RadialDirections.Clockwise))
-                                else if regionDiff = -max || (regionDiff > 0 && regionDiff < max)
-                                then Some(oldDirection.rotate(2, RadialDirections.CounterClockwise))
-                                else Some oldDirection
-            printfn "adjust direction from %i to %i going %s = %s" oldLocation.region, newLocation.region, oldDirection.ToString(), result.ToString() 
-            result
+            if oldLocation.isCenter() || newLocation.isCenter() 
+            then None
+            else  
+                //Direction rotates 90 degrees when crossing region boundary
+                let regionDiff = oldLocation.region - newLocation.region
+                let max = this.maxRegion()
+                if regionDiff = max || (regionDiff < 0 && regionDiff > -max)
+                then Some(oldDirection.rotate(2, RadialDirections.Clockwise))
+                else if regionDiff = -max || (regionDiff > 0 && regionDiff < max)
+                then Some(oldDirection.rotate(2, RadialDirections.CounterClockwise))
+                else Some oldDirection
+
+        member this.adjustDirectionAndNextLocationForPassingThroughCenter
+            (oldLocation : Location) : (Directions * Location) =
+            let oldDir = match (oldLocation.x, oldLocation.y) with
+                         | (1, 1) -> Directions.DownLeft
+                         | (0, 1) -> Directions.Down
+                         | (1, 0) -> Directions.Left
+                         | _ -> failwith ("Cannot pass through center by coming from " + oldLocation.ToString())
+                        
+            //This isn't really mutated, its just assigned to in one of several places
+            let mutable next : Location option = None
+            if this.regionCount % 2 = 0
+            then           
+                (*
+                    (x, y, r) -D-> (0, 0, r) -(D+4)-> (x, y, (r + regionCount/2) % regionCount)
+                *)
+                let d = oldDir.rotate(4, RadialDirections.Clockwise)
+                let r = (oldLocation.region + (this.regionCount/2)) % this.regionCount
+                let newLocation = { region = r; x = oldLocation.x; y = oldLocation.y }
+                (d, newLocation)
+            else
+                (*
+                    (1, 1, r) -DownLeft-> (0, 0, r) -Up->      (0, 1, (r + Floor(regionCount/2)) % regionCount)
+                    (1, 0, r) -Left->     (0, 0, r) -UpRight-> (1, 1, (r + Floor(regionCount/2)) % regionCount)
+                    (0, 1, r) -Down->     (0, 0, r) -UpRight-> (1, 1, (r + Ceil(regionCount/2)) % regionCount)
+                *)
+                let almostHalf = int (floor ((float this.regionCount) / 2.0))
+
+                match oldDir with
+                    | Directions.DownLeft -> 
+                        let r = (oldLocation.region + almostHalf) % this.regionCount
+                        let newLocation = { region = r; x = 0; y = 1 }
+                        (Directions.Up, newLocation)
+                    | Directions.Left ->
+                        let r = (oldLocation.region + almostHalf) % this.regionCount
+                        let newLocation = { region = r; x = 1; y = 1 }
+                        (Directions.UpRight, newLocation)
+                    | Directions.Down -> 
+                        let r = (oldLocation.region + almostHalf + 1) % this.regionCount
+                        let newLocation = { region = r; x = 1; y = 1 }
+                        (Directions.UpRight, newLocation)
+                    | _ -> failwith ("Cannot pass through center by coming from " + oldDir.ToString())
                 
         member this.paths(cell : Cell) : Cell list list =
             if cell.isCenter()
@@ -252,45 +293,16 @@ module BoardGeometryExtensions =
                             i <- i + 1
                             if loc2.Value.isCenter() 
                             then
-                                //This isn't really mutated, its just assigned to in one of several places
-                                let mutable next : Location option = None
-                                if this.regionCount % 2 = 0
-                                then           
-                                    (*
-                                        (x, y, r) -D-> (0, 0, r) -(D+4)-> (x, y, (r + regionCount/2) % regionCount)
-                                    *)
-                                    dir <- dir.rotate(4, RadialDirections.Clockwise)
-                                    let r = (loc1.region + (this.regionCount/2)) % this.regionCount
-                                    next <- Some { region = r; x = loc1.x; y = loc1.y }
-                                else
-                                    (*
-                                        (1, 1, r) -DownLeft-> (0, 0, r) -Up->      (0, 1, (r + Floor(regionCount/2)) % regionCount)
-                                        (1, 0, r) -Left->     (0, 0, r) -UpRight-> (1, 1, (r + Floor(regionCount/2)) % regionCount)
-                                        (0, 1, r) -Down->     (0, 0, r) -UpRight-> (1, 1, (r + Ceil(regionCount/2)) % regionCount)
-                                    *)
-                                    let almostHalf = int (floor ((float this.regionCount) / 2.0))
-
-                                    match dir with
-                                        | Directions.DownLeft -> 
-                                            dir <- Directions.Up
-                                            let r = (loc1.region + almostHalf) % this.regionCount
-                                            next <- Some { region = r; x = 0; y = 1 }
-                                        | Directions.Left ->
-                                            dir <- Directions.UpRight
-                                            let r = (loc1.region + almostHalf) % this.regionCount
-                                            next <- Some { region = r; x = 1; y = 1 }
-                                        | Directions.Down -> 
-                                            dir <- Directions.UpRight
-                                            let r = (loc1.region + almostHalf + 1) % this.regionCount
-                                            next <- Some { region = r; x = 1; y = 1 }
-                                        | _ -> ()
-                                            
+                                let (newDir, next) = this.adjustDirectionAndNextLocationForPassingThroughCenter(loc1)                                                                            
                                 //Set to 0,0 in the new region so regionDiff = 0 on next iteration                    
-                                loc1 <- { region = next.Value.region; x = 0; y = 0 };
-                                loc2 <- next;
+                                loc1 <- { region = next.region; x = 0; y = 0 };
+                                loc2 <- Some next;
+                                dir <- newDir
                             else
                                 //Direction rotates 90 degrees when crossing region boundary
-                                dir <- this.adjustDirectionForRegionBoundary(loc1, loc2.Value, dir).Value
+                                dir <- match this.adjustDirectionForRegionBoundary(loc1, loc2.Value, dir) with
+                                        | Some(x) -> x
+                                        | None -> dir //If either cell is center, do nothing, next iteration will fix it
                                 loc1 <- loc2.Value
                                 loc2 <- this.nextLocation(loc1, dir)
                             yield this.cellAt(loc1)                         
