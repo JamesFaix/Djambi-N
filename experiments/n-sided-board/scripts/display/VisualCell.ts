@@ -2,14 +2,13 @@ import {Point} from "../geometry/Point.js";
 import {Polygon} from "../geometry/Polygon.js";
 import {CellState} from "./CellState.js";
 import {Color} from "./Color.js";
-import {Cell} from "../rules/model/Cell.js";
 
 export class VisualCell {
     state : CellState;
 
     constructor(
         readonly polygons : Array<Polygon>,
-        readonly cell : Cell,
+        readonly id : number,
         readonly color : Color
     ) {
         this.state = CellState.Default;
@@ -18,14 +17,14 @@ export class VisualCell {
     translate(offset : Point) : VisualCell {
         return new VisualCell(
             this.polygons.map(p => p.translate(offset)), 
-            this.cell, 
+            this.id, 
             this.color);
     }
 
     transform(matrix : Array<Array<number>>) : VisualCell {
         return new VisualCell(
             this.polygons.map(p => p.transform(matrix)),
-            this.cell, 
+            this.id, 
             this.color);
     }
 
@@ -34,6 +33,6 @@ export class VisualCell {
     }
 
     toString() : string {
-        return this.cell.toString();
+        return this.id.toString();
     }
 }

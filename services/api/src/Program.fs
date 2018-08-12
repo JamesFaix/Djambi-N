@@ -17,6 +17,10 @@ let webApp =
     choose [
         subRoute "/api"
             (choose [
+                
+                GET >=> routef "/boards/%i" handleGetBoard
+                GET >=> routef "/boards/%i/cells/%i/paths" handleGetCellPaths
+                
                 POST >=> route "/users" >=> handleCreateUser
                 GET >=> routef "/users/%i" handleGetUser
                 DELETE >=> routef "/users/%i" handleDeleteUser
@@ -30,8 +34,6 @@ let webApp =
                 DELETE >=> routef "/games/%i/users/%i" handleDeletePlayerFromGame
 
                 POST >=> routef "/games/%i/start-request" handleStartGame
-
-                GET >=> routef "/boards/%i" handleGetBoard
 
                 GET >=> routef "/games/%i/state" handleGetGameState
 

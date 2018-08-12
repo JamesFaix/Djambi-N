@@ -68,7 +68,7 @@ type LocationDto =
 [<CLIMutable>]
 type CreateSelectionDto =
     {
-        location : LocationDto
+        cellId : int
     }
 
 type CreateMessageDto = 

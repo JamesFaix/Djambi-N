@@ -9,6 +9,7 @@ module HttpHandlers =
 
     open BoardGeometry
     open BoardGeometryExtensions
+    open BoardRepository
 
 //Users
     let handleCreateUser =
@@ -151,21 +152,19 @@ module HttpHandlers =
     let handleGetBoard(regionCount : int) =
         fun (next : HttpFunc) (ctx : HttpContext) ->
             task {
-                let standardRegionSize = 5
-
-                let boardMetadata = 
-                    { 
-                        regionCount = regionCount; 
-                        regionSize = standardRegionSize 
-                    }
-                let board = 
-                    {
-                        cells = boardMetadata.cells()
-                        regionCount = regionCount
-                        regionSize = standardRegionSize
-                    }
-
+                let board = BoardRepository.getBoard(regionCount)
                 return! json board next ctx
+            }
+            
+    let handleGetCellPaths(regionCount : int, cellId : int) =
+        fun (next : HttpFunc) (ctx : HttpContext) ->
+            task {
+                let board = BoardRepository.getBoardMetadata(regionCount)
+                let cell = board.cells() |> Seq.find(fun c -> c.id = cellId)
+                let paths = board.paths(cell)
+                            |> List.map (fun path -> 
+                                path |> List.map (fun c -> c.id))
+                return! json paths next ctx
             }
 
 //Gameplay
@@ -192,29 +191,19 @@ module HttpHandlers =
             task {
                 let! request = ctx.BindJsonAsync<CreateSelectionDto>()
 
-//                let! request = ctx.BindModelAsync<CreateSelectionDto>()
-
-                let location : Location = {
-                    region = request.location.region
-                    x = request.location.x
-                    y = request.location.y
-                }
-
-                let landscape = { regionCount = 3; regionSize = 5 }
-
-                let response : GameDetailsDto = {
-                    id = gameId
-                    status = GameStatus.Open
-                    boardRegionCount = 3
-                    players = List.empty
-                    pieces = List.empty
-                    selectionOptions = landscape.paths(location) |> List.collect id
-                }
-                
-                //let placeHolderResponse = {
-                //    Text = sprintf "Make selection %i not yet implemented" gameId
+                //let response : GameDetailsDto = {
+                //    id = gameId
+                //    status = GameStatus.Open
+                //    boardRegionCount = 3
+                //    players = List.empty
+                //    pieces = List.empty
+                //    selectionOptions = landscape.paths(location) |> List.collect id
                 //}
-                return! json response next ctx
+                
+                let placeHolderResponse = {
+                    text = sprintf "Make selection %i not yet implemented" gameId
+                }
+                return! json placeHolderResponse next ctx
             }
 
     let handleResetTurn(gameId : int) =

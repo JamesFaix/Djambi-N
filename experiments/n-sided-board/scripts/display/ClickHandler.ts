@@ -3,6 +3,7 @@ import {VisualBoard} from "./VisualBoard.js";
 import {Renderer} from "./Renderer.js";
 import {CellState} from "./CellState.js";
 import { VisualCell } from "./VisualCell.js";
+import {BoardClient} from "../apiClient/BoardClient.js";
 
 export class ClickHandler {
 
@@ -24,23 +25,7 @@ export class ClickHandler {
     
         await ClickHandler.highlightPaths(canvas, board, cell);
     }
-    
-    private static highlightNeighbors(
-        canvas : HTMLCanvasElement, 
-        board : VisualBoard, 
-        cell : VisualCell) {
-    
-        board.cells.forEach(c => c.state = CellState.Default);
-    
-        if (cell) {
-            cell.state = CellState.Selected;
-            board.cellNeighbors(cell).forEach(c => c.state = CellState.Selectable);
-        } 
-    
-        Renderer.drawBoard(board, canvas);
-    }
-    
-    
+        
     private static async highlightPaths(
         canvas : HTMLCanvasElement, 
         board : VisualBoard, 
@@ -50,8 +35,10 @@ export class ClickHandler {
     
         if (cell) {
             cell.state = CellState.Selected;
-            let selectionOptions = await board.makeSelection(cell);
-            selectionOptions.forEach(c => c.state = CellState.Selectable);
+            let paths = await BoardClient.getCellPaths(board.regionCount, cell.id);
+            paths.map(path => path.map(id => board.cells.find(c => c.id === id)))
+                .reduce((p1, p2) => p1.concat(p2))
+                .forEach(c => c.state = CellState.Selectable);
         } 
     
         Renderer.drawBoard(board, canvas);
