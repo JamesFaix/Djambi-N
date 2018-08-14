@@ -8,6 +8,8 @@ module Database =
     open System.Configuration
     open System.Data
     open Djambi.Api.Dtos
+    open Giraffe
+    open System.Threading.Tasks
 
     let private getConnection() : IDbConnection =
         let cnStr = ConfigurationManager.ConnectionStrings.["Main"].ToString()
@@ -17,41 +19,38 @@ module Database =
 
     type private idParams = { id : int }
 
-    let createUser(request : CreateUserRequest) : User Async =
+    let createUser(request : CreateUserRequest) : User Task =
         let query = "INSERT INTO Users (Name) VALUES (@Name) \
                      SELECT SCOPE_IDENTITY() AS Id, @Name AS Name"
-        async {
+        task {
             use cn = getConnection()
-            let! dto = cn.QuerySingleAsync<UserDto>(query, request) 
-                      |> Async.AwaitTask
+            let! dto = cn.QuerySingleAsync<UserDto>(query, request)
             return {
                 id = dto.id
                 name = dto.name
             }
         }
 
-    let getUser(id : int) : User Async =
+    let getUser(id : int) : User Task =
         let query = "SELECT UserId AS Id, Name AS Name
                      FROM Users
                      WHERE UserId = @Id"
         let param = { id = id }
-        async {
+        task {
             use cn = getConnection()
-            let! dto = cn.QuerySingleAsync<UserDto>(query, param) 
-                      |> Async.AwaitTask
+            let! dto = cn.QuerySingleAsync<UserDto>(query, param)
             return {
                 id = dto.id
                 name = dto.name
             }
         }
 
-    let deleteUser(id : int) : Unit Async =
+    let deleteUser(id : int) : Unit Task =
         let query = "DELETE FROM Users 
                      WHERE UserId = @Id"
         let param = { id = id }
-        async {
+        task {
             use cn = getConnection()
             let! _  = cn.ExecuteAsync(query, param) 
-                      |> Async.AwaitTask
             return ()
         }

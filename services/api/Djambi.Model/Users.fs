@@ -7,7 +7,7 @@ module Users =
             id : int
             name : string
         }
-
+        
     type CreateUserRequest =
         {
             name : string

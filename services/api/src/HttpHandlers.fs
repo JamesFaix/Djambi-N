@@ -11,56 +11,40 @@ module HttpHandlers =
     open BoardGeometryExtensions
     open BoardRepository
 
+    open Djambi.Api
+    open Djambi.Model.Users
+
 //Users
     let handleCreateUser =
         fun (next : HttpFunc) (ctx : HttpContext) ->
             task {
-                let! request = ctx.BindModelAsync<CreateUserRequestDto>()
+                let! requestDto = ctx.BindJsonAsync<CreateUserRequestDto>()
+                let request : CreateUserRequest = 
+                    {
+                        name = requestDto.name
+                    }
 
-                let response : UserDto = {
-                    id = 1
-                    name = request.name
-                }
-
-                let placeHolderResponse = {
-                    text = "Create user not yet implemented"
-                }
-                return! json placeHolderResponse next ctx
+                let! response = Database.createUser(request)
+                return! json response next ctx
             }
 
     let handleDeleteUser(userId : int) =
         fun (next : HttpFunc) (ctx : HttpContext) ->
             task {
-                let placeHolderResponse = {
-                    text = sprintf "Delete user %i not yet implemented" userId
-                }
-                return! json placeHolderResponse next ctx
+                let! response = Database.deleteUser(userId)
+                return! json response next ctx
             }
 
     let handleGetUser(userId : int) =
         fun (next : HttpFunc) (ctx : HttpContext) ->
             task {
-                let response : UserDto = {
-                    id = userId
-                    name = "Test"
-                }
-
-                let placeHolderResponse = {
-                    text = sprintf "Get user %i not yet implemented" userId
-                }
-                return! json placeHolderResponse next ctx
+                let! response = Database.getUser(userId)
+                return! json response next ctx
             }
 
     let handleUpdateUser(userId : int) =
         fun (next : HttpFunc) (ctx : HttpContext) ->
             task {
-                let! request = ctx.BindModelAsync<CreateUserRequestDto>()
-
-                let response : UserDto = {
-                    id = userId
-                    name = request.name
-                }
-
                 let placeHolderResponse = {
                     text = sprintf "Update user %i not yet implemented" userId
                 }
