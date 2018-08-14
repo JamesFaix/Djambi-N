@@ -4,44 +4,46 @@ open System
 open Microsoft.AspNetCore.Builder
 open Microsoft.AspNetCore.Cors.Infrastructure
 open Microsoft.AspNetCore.Hosting
+open Microsoft.Extensions.Configuration
 open Microsoft.Extensions.Logging
 open Microsoft.Extensions.DependencyInjection
 open Giraffe
 open djambi.api.HttpHandlers
+open Djambi.Api.Persistence
 
 // ---------------------------------
 // Web app
 // ---------------------------------
 
-let webApp =
+let webApp (handler : HttpHandler) =
     choose [
         subRoute "/api"
             (choose [
                 
-                GET >=> routef "/boards/%i" handleGetBoard
-                GET >=> routef "/boards/%i/cells/%i/paths" handleGetCellPaths
+                GET >=> routef "/boards/%i" handler.getBoard
+                GET >=> routef "/boards/%i/cells/%i/paths" handler.getCellPaths
                 
-                POST >=> route "/users" >=> handleCreateUser
-                GET >=> routef "/users/%i" handleGetUser
-                DELETE >=> routef "/users/%i" handleDeleteUser
-                PATCH >=> routef "/users/%i" handleUpdateUser
+                POST >=> route "/users" >=> handler.createUser
+                GET >=> routef "/users/%i" handler.getUser
+                DELETE >=> routef "/users/%i" handler.deleteUser
+                PATCH >=> routef "/users/%i" handler.updateUser
 
-                GET >=> route "/games/open" >=> handleGetOpenGames
-                POST >=> route "/games" >=> handleCreateGame
-                DELETE >=> routef "/games/%i" handleDeleteGame
+                GET >=> route "/games/open" >=> handler.getOpenGames
+                POST >=> route "/games" >=> handler.createGame
+                DELETE >=> routef "/games/%i" handler.deleteGame
 
-                POST >=> routef "/games/%i/users/%i" handleAddPlayerToGame
-                DELETE >=> routef "/games/%i/users/%i" handleDeletePlayerFromGame
+                POST >=> routef "/games/%i/users/%i" handler.addPlayerToGame
+                DELETE >=> routef "/games/%i/users/%i" handler.removePlayerFromGame
 
-                POST >=> routef "/games/%i/start-request" handleStartGame
+                POST >=> routef "/games/%i/start-request" handler.startGame
 
-                GET >=> routef "/games/%i/state" handleGetGameState
+                GET >=> routef "/games/%i/state" handler.getGameState
 
-                POST >=> routef "/games/%i/current-turn/selections" handleMakeSelection
-                POST >=> routef "/games/%i/current-turn/reset-request" handleResetTurn
-                POST >=> routef "/games/%i/current-turn/commit-request" handleCommitTurn
+                POST >=> routef "/games/%i/current-turn/selections" handler.makeSelection
+                POST >=> routef "/games/%i/current-turn/reset-request" handler.resetTurn
+                POST >=> routef "/games/%i/current-turn/commit-request" handler.commitTurn
 
-                POST >=> routef "/games/%id/messages" handleSendMessage
+                POST >=> routef "/games/%id/messages" handler.sendMessage
             ])
         setStatusCode 404 >=> text "Not Found" ]
 
@@ -65,11 +67,15 @@ let configureCors (builder : CorsPolicyBuilder) =
 
 let configureApp (app : IApplicationBuilder) =
     let env = app.ApplicationServices.GetService<IHostingEnvironment>()
+    let settings = app.ApplicationServices.GetService<IConfiguration>()
+    let repository = new Repository(settings.GetConnectionString("Main"))
+    let handler = new HttpHandler(repository)
+
     (match env.IsDevelopment() with
     | true  -> app.UseDeveloperExceptionPage()
     | false -> app.UseGiraffeErrorHandler errorHandler)
         .UseCors(configureCors)
-        .UseGiraffe(webApp)
+        .UseGiraffe(webApp handler)
 
 let configureServices (services : IServiceCollection) =
     services.AddCors()    |> ignore
@@ -79,6 +85,9 @@ let configureLogging (builder : ILoggingBuilder) =
     let filter (l : LogLevel) = l.Equals LogLevel.Error
     builder.AddFilter(filter).AddConsole().AddDebug() |> ignore
 
+let configureAppConfiguration(context : WebHostBuilderContext)(config :IConfigurationBuilder) =
+    config.AddJsonFile("appsettings.json", false, true) |> ignore
+
 [<EntryPoint>]
 let main _ =
     WebHostBuilder()
@@ -87,6 +96,7 @@ let main _ =
         .Configure(Action<IApplicationBuilder> configureApp)
         .ConfigureServices(configureServices)
         .ConfigureLogging(configureLogging)
+        .ConfigureAppConfiguration(configureAppConfiguration)
         .Build()
         .Run()
     0
