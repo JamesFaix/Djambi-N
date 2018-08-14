@@ -4,7 +4,7 @@ module HttpHandlers =
 
     open Microsoft.AspNetCore.Http
     open Giraffe
-    open djambi.api.Dtos
+    open Djambi.Api.Dtos
     open Djambi.Model
 
     open BoardGeometry

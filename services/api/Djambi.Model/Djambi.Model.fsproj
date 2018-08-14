@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Users.fs" />
     <Compile Include="Utilities.fs" />
     <Compile Include="BoardGeometry.fs" />
   </ItemGroup>
