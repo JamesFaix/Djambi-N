@@ -1,6 +1,6 @@
 ﻿namespace Djambi.Api.Http
 
-module LobbyMappings =
+module LobbyJsonMappings =
 
     open Djambi.Api.Domain.LobbyModels
     open Djambi.Api.Http.LobbyJsonModels

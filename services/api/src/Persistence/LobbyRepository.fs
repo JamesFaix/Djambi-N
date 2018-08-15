@@ -8,6 +8,7 @@ open Giraffe
 open Djambi.Api.Persistence.LobbySqlModels
 open Djambi.Api.Domain.LobbyModels
 open Djambi.Api.Common.Enums
+open Djambi.Api.Persistence.LobbySqlMappings
     
 type LobbyRepository(connectionString : string) =
     inherit RepositoryBase(connectionString)
@@ -35,14 +36,15 @@ type LobbyRepository(connectionString : string) =
         task {
             use cn = this.getConnection()
             let! sqlModel = cn.QuerySingleAsync<UserSqlModel>(query, param)
-            return {
-                id = sqlModel.id
-                name = sqlModel.name
-            }
+            if sqlModel.id = 0 then failwith "User not found" else ()
+            return sqlModel |> mapUserResponse
         }
 
     member this.deleteUser(id : int) : Unit Task =
-        let query = "DELETE FROM Users \
+        let query = "IF NOT EXISTS(SELECT 1 FROM Users WHERE UserId = @Id) \
+                        THROW 50000, 'User not found', 1 \
+        
+                     DELETE FROM Users \
                      WHERE UserId = @Id"
         let param = new DynamicParameters()
         param.Add("Id", id)
@@ -54,7 +56,7 @@ type LobbyRepository(connectionString : string) =
 
 //Games
     member this.createGame(request : CreateGameRequest) : LobbyGameMetadata Task =
-        let query = "INSERT INTO Games (BoardRegionCount, Description, Status) \
+        let query = "INSERT INTO Games (BoardRegionCount, Description, GameStatusId) \
                      VALUES (@BoardRegionCount, @Description, @Status) \
                      SELECT SCOPE_IDENTITY()"
 
@@ -65,7 +67,7 @@ type LobbyRepository(connectionString : string) =
 
         task {
             use cn = this.getConnection()
-            let! id = cn.QuerySingleAsync<int>(query, request)
+            let! id = cn.QuerySingleAsync<int>(query, param)
             return {
                 id = id 
                 description = request.description
@@ -76,7 +78,10 @@ type LobbyRepository(connectionString : string) =
         }
         
     member this.deleteGame(id : int) : Unit Task =
-        let query = "DELETE FROM Games \
+        let query = "IF NOT EXISTS(SELECT 1 FROM Games WHERE GameId = @Id) \
+                        THROW 50000, 'Game not found', 1 \
+
+                     DELETE FROM Games \
                      WHERE GameId = @Id"
         let param = new DynamicParameters()
         param.Add("Id", id)
@@ -85,36 +90,67 @@ type LobbyRepository(connectionString : string) =
             let! _ = cn.ExecuteAsync(query, param)
             return ()
         }
+
+    member this.getGame(id : int) : LobbyGameMetadata Task =
+        let query = "SELECT g.GameId, g.GameStatusId, g.Description AS GameDescription, g.BoardRegionCount,
+                        u.UserId, u.Name as UserName \
+                    FROM Games g \
+                        LEFT OUTER JOIN Players p ON g.GameId = p.GameId \
+                        LEFT OUTER JOIN Users u ON u.UserId = p.UserId \
+                    WHERE g.GameId = @Id"
+        let param = new DynamicParameters()
+        param.Add("Id", id)
+        task {
+            use cn = this.getConnection()
+            let! sqlModels = cn.QueryAsync<LobbyGamePlayerSqlModel>(query, param)
+            return sqlModels |> Seq.toList |> mapLobbyGamesResponse |> List.head
+        }
         
     member this.getOpenGames() : LobbyGameMetadata list Task =
-        let query = "SELECT g.GameId, g.Description AS GameDescription, g.BoardRegionCount,
+        let query = "SELECT g.GameId, g.GameStatusId, g.Description AS GameDescription, g.BoardRegionCount,
                         u.UserId, u.Name as UserName \
                      FROM Games g \
-                        INNER JOIN Players p ON g.GameId = p.GameId \
-                        INNER JOIN Users u ON u.UserId = p.UserId \
-                     WHERE g.Status = 1" //1 = Open
+                        LEFT OUTER JOIN Players p ON g.GameId = p.GameId \
+                        LEFT OUTER JOIN Users u ON u.UserId = p.UserId \
+                     WHERE g.GameStatusId = 1" //1 = Open
+        task {
+            use cn = this.getConnection()
+            let! sqlModels = cn.QueryAsync<LobbyGamePlayerSqlModel>(query)
+            return sqlModels |> Seq.toList |> mapLobbyGamesResponse
+        }
 
-        let sqlModelToUser(sqlModel : OpenGamePlayerSqlModel) : User =
-            {
-                id = sqlModel.userId
-                name = sqlModel.userName
-            }
+    member this.addPlayerToGame(gameId : int, userId : int) : Unit Task =
+        let query = "IF EXISTS(SELECT 1 FROM Players WHERE GameId = @GameId AND UserId = @UserId)
+                        THROW 50000, 'Duplicate player', 1
+                        
+                     INSERT INTO Players (GameId, UserId, Name)
+                     SELECT @GameId, UserId, Name
+                     FROM Users 
+                     WHERE UserId = @UserId"
 
-        let sqlModelsToGame(sqlModels : OpenGamePlayerSqlModel list) : LobbyGameMetadata =
-            let head = sqlModels.Head
-            {
-                id = head.gameId
-                status = GameStatus.Open
-                boardRegionCount = head.boardRegionCount
-                description = if head.gameDescription = null then None else Some head.gameDescription
-                players = sqlModels |> List.map sqlModelToUser
-            }
+        let param = new DynamicParameters()
+        param.Add("GameId", gameId)
+        param.Add("UserId", userId)
 
         task {
             use cn = this.getConnection()
-            let! sqlModels = cn.QueryAsync<OpenGamePlayerSqlModel>(query)
-            return sqlModels 
-                |> Seq.groupBy (fun sql -> sql.gameId)
-                |> Seq.map (fun (_, sqls) -> sqls |> Seq.toList |> sqlModelsToGame)
-                |> Seq.toList
+            let! _ = cn.ExecuteAsync(query, param)
+            return ()
+        }
+
+    member this.removePlayerFromGame(gameId : int, userId : int) : Unit Task =
+        let query = "IF NOT EXISTS(SELECT 1 FROM Players WHERE GameId = @GameId AND UserId = @UserId)
+                        THROW 50000, 'Player not found', 1
+                        
+                     DELETE FROM Players
+                     WHERE GameId = @GameId AND UserId = @UserId"
+
+        let param = new DynamicParameters()
+        param.Add("GameId", gameId)
+        param.Add("UserId", userId)
+
+        task {
+            use cn = this.getConnection()
+            let! _ = cn.ExecuteAsync(query, param)
+            return ()
         }

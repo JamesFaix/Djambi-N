@@ -31,13 +31,14 @@
     <Compile Include="Domain\BoardModels.fs" />
     <Compile Include="Domain\BoardExtensions.fs" />
     <Compile Include="Domain\BoardUtility.fs" />
-    <Compile Include="Http\PlayJsonModels.fs" />
-    <Compile Include="Persistence\LobbySqlModels.fs" />
     <Compile Include="Persistence\RepositoryBase.fs" />
+    <Compile Include="Persistence\LobbySqlModels.fs" />
+    <Compile Include="Persistence\LobbySqlMappings.fs" />
     <Compile Include="Persistence\LobbyRepository.fs" />
     <Compile Include="Persistence\PlayRepository.fs" />
+    <Compile Include="Http\PlayJsonModels.fs" />
     <Compile Include="Http\LobbyJsonModels.fs" />
-    <Compile Include="Http\LobbyMappings.fs" />
+    <Compile Include="Http\LobbyJsonMappings.fs" />
     <Compile Include="Http\LobbyController.fs" />
     <Compile Include="Http\PlayController.fs" />
     <Compile Include="Http\ControllerRegistry.fs" />

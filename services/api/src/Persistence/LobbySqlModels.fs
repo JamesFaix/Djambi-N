@@ -2,6 +2,8 @@
 
 module LobbySqlModels =
 
+    open System
+
     [<CLIMutable>]
     type UserSqlModel = 
         {
@@ -10,20 +12,12 @@ module LobbySqlModels =
         }
 
     [<CLIMutable>]
-    type GameSqlModel =
-        {
-            id : int
-            description : string
-            status : int
-            boardRegionCount : int
-        }
-
-    [<CLIMutable>]
-    type OpenGamePlayerSqlModel =
+    type LobbyGamePlayerSqlModel =
         {
             gameId : int
             gameDescription : string
             boardRegionCount : int
-            userId : int
+            gameStatusId : int
+            userId : int Nullable
             userName : string
         }

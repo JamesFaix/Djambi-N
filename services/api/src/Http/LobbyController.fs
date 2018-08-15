@@ -5,7 +5,7 @@ open Microsoft.AspNetCore.Http
 open Giraffe
 
 open Djambi.Api.Http.LobbyJsonModels
-open Djambi.Api.Http.LobbyMappings
+open Djambi.Api.Http.LobbyJsonMappings
 open Djambi.Api.Persistence
 
 type LobbyController(repository : LobbyRepository) =
@@ -73,19 +73,15 @@ type LobbyController(repository : LobbyRepository) =
     member this.addPlayerToGame(gameId : int, userId : int) =
         fun (next : HttpFunc) (ctx : HttpContext) ->
             task {
-                let placeHolderResponse = {
-                    text = sprintf "Add player %i to game %i not yet implemented" userId gameId
-                }
-                return! json placeHolderResponse next ctx
+                let! _ = repository.addPlayerToGame(gameId, userId)
+                return! json () next ctx
             }
 
     member this.removePlayerFromGame(gameId : int, userId : int) =
         fun (next : HttpFunc) (ctx : HttpContext) ->
             task {
-                let placeHolderResponse = {
-                    text = sprintf "Delete player %i from game %i not yet implemented" userId gameId
-                }
-                return! json placeHolderResponse next ctx
+                let! _ = repository.removePlayerFromGame(gameId, userId)
+                return! json () next ctx
             }
 
     member this.startGame(gameId : int) =

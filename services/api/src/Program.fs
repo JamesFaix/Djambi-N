@@ -80,9 +80,10 @@ let configureApp (app : IApplicationBuilder) =
             play = new PlayController(playRepository)
         }
 
-    (match env.IsDevelopment() with
-    | true  -> app.UseDeveloperExceptionPage()
-    | false -> app.UseGiraffeErrorHandler errorHandler)
+    app.UseGiraffeErrorHandler(errorHandler)
+    //(match env.IsDevelopment() with
+    //| true  -> app.UseDeveloperExceptionPage()
+    //| false -> app.UseGiraffeErrorHandler errorHandler)
         .UseCors(configureCors)
         .UseGiraffe(webApp controllers)
 
