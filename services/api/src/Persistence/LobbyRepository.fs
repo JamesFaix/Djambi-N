@@ -207,3 +207,11 @@ type LobbyRepository(connectionString : string) =
             let! _ = cn.ExecuteAsync(query, param)
             return ()
         }
+
+    member this.getVirtualPlayerNames() : string list Task =
+        let query = "SELECT Name FROM VirtualPlayerNames"
+        task {            
+            use cn = this.getConnection()
+            let! names = cn.QueryAsync<string>(query)
+            return names |> Seq.toList
+        }

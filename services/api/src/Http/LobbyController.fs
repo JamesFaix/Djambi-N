@@ -4,9 +4,15 @@ open Microsoft.AspNetCore.Http
 
 open Giraffe
 
+open Djambi.Api.Domain.LobbyModels
 open Djambi.Api.Http.LobbyJsonModels
 open Djambi.Api.Http.LobbyJsonMappings
 open Djambi.Api.Persistence
+open Djambi.Api.Common.Enums
+
+open System
+open System.Linq
+open Djambi.Api.Common
 
 type LobbyController(repository : LobbyRepository) =
     //Users
@@ -87,9 +93,35 @@ type LobbyController(repository : LobbyRepository) =
     member this.startGame(gameId : int) =
         fun (next : HttpFunc) (ctx : HttpContext) ->
             task {
-                //Update game status to Started
+                let! game = repository.getGame(gameId)
 
-                //Create virtual players
+                //Update game status
+                let updateRequest : UpdateGameRequest = 
+                    {
+                        id = gameId
+                        description = game.description
+                        status = GameStatus.Started
+                    }                
+                let! _ = repository.updateGame(updateRequest)
+
+                //Create virtual players if required
+                let missingPlayerCount = game.boardRegionCount - game.players.Length
+                if missingPlayerCount > 0
+                then
+                    let! virtualPlayerNames = repository.getVirtualPlayerNames()
+                    let namesToUse = 
+                        Enumerable.Except(
+                            virtualPlayerNames, 
+                            game.players |> Seq.map (fun p -> p.name), 
+                            StringComparer.OrdinalIgnoreCase) 
+                        |> Utilities.shuffle
+                        |> Seq.take missingPlayerCount
+                        |> Seq.toList
+
+                    for name in namesToUse do
+                        let! _ = repository.addVirtualPlayerToGame(gameId, name)
+                        ()
+                else ()
 
                 //Assign players colors, corners, turn order
 
