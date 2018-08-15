@@ -8,42 +8,43 @@ open Microsoft.Extensions.Configuration
 open Microsoft.Extensions.Logging
 open Microsoft.Extensions.DependencyInjection
 open Giraffe
-open djambi.api.HttpHandlers
+
 open Djambi.Api.Persistence
+open Djambi.Api.Http
 
 // ---------------------------------
 // Web app
 // ---------------------------------
 
-let webApp (handler : HttpHandler) =
+let webApp (controllers : ControllerRegistry) =
     choose [
         subRoute "/api"
-            (choose [
+            (choose [  
+            
+                POST >=> route "/users" >=> controllers.lobby.createUser
+                GET >=> routef "/users/%i" controllers.lobby.getUser
+                DELETE >=> routef "/users/%i" controllers.lobby.deleteUser
+                PATCH >=> routef "/users/%i" controllers.lobby.updateUser
+
+                GET >=> route "/games/open" >=> controllers.lobby.getOpenGames
+                POST >=> route "/games" >=> controllers.lobby.createGame
+                DELETE >=> routef "/games/%i" controllers.lobby.deleteGame
+
+                POST >=> routef "/games/%i/users/%i" controllers.lobby.addPlayerToGame
+                DELETE >=> routef "/games/%i/users/%i" controllers.lobby.removePlayerFromGame
+
+                POST >=> routef "/games/%i/start-request" controllers.lobby.startGame
+
+                GET >=> routef "/boards/%i" controllers.play.getBoard
+                GET >=> routef "/boards/%i/cells/%i/paths" controllers.play.getCellPaths
                 
-                GET >=> routef "/boards/%i" handler.getBoard
-                GET >=> routef "/boards/%i/cells/%i/paths" handler.getCellPaths
-                
-                POST >=> route "/users" >=> handler.createUser
-                GET >=> routef "/users/%i" handler.getUser
-                DELETE >=> routef "/users/%i" handler.deleteUser
-                PATCH >=> routef "/users/%i" handler.updateUser
+                GET >=> routef "/games/%i/state" controllers.play.getGameState
 
-                GET >=> route "/games/open" >=> handler.getOpenGames
-                POST >=> route "/games" >=> handler.createGame
-                DELETE >=> routef "/games/%i" handler.deleteGame
+                POST >=> routef "/games/%i/current-turn/selections" controllers.play.makeSelection
+                POST >=> routef "/games/%i/current-turn/reset-request" controllers.play.resetTurn
+                POST >=> routef "/games/%i/current-turn/commit-request" controllers.play.commitTurn
 
-                POST >=> routef "/games/%i/users/%i" handler.addPlayerToGame
-                DELETE >=> routef "/games/%i/users/%i" handler.removePlayerFromGame
-
-                POST >=> routef "/games/%i/start-request" handler.startGame
-
-                GET >=> routef "/games/%i/state" handler.getGameState
-
-                POST >=> routef "/games/%i/current-turn/selections" handler.makeSelection
-                POST >=> routef "/games/%i/current-turn/reset-request" handler.resetTurn
-                POST >=> routef "/games/%i/current-turn/commit-request" handler.commitTurn
-
-                POST >=> routef "/games/%id/messages" handler.sendMessage
+                POST >=> routef "/games/%id/messages" controllers.play.sendMessage
             ])
         setStatusCode 404 >=> text "Not Found" ]
 
@@ -67,15 +68,23 @@ let configureCors (builder : CorsPolicyBuilder) =
 
 let configureApp (app : IApplicationBuilder) =
     let env = app.ApplicationServices.GetService<IHostingEnvironment>()
+
     let settings = app.ApplicationServices.GetService<IConfiguration>()
-    let repository = new Repository(settings.GetConnectionString("Main"))
-    let handler = new HttpHandler(repository)
+    let cnStr = settings.GetConnectionString("Main")
+    let lobbyRepository = new LobbyRepository(cnStr)
+    let playRepository = new PlayRepository(cnStr)
+
+    let controllers = 
+        {
+            lobby = new LobbyController(lobbyRepository)
+            play = new PlayController(playRepository)
+        }
 
     (match env.IsDevelopment() with
     | true  -> app.UseDeveloperExceptionPage()
     | false -> app.UseGiraffeErrorHandler errorHandler)
         .UseCors(configureCors)
-        .UseGiraffe(webApp handler)
+        .UseGiraffe(webApp controllers)
 
 let configureServices (services : IServiceCollection) =
     services.AddCors()    |> ignore

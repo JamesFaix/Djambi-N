@@ -25,16 +25,19 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="Persistence\SqlModels.fs" />
+    <Compile Include="Persistence\RepositoryBase.fs" />
+    <Compile Include="Persistence\PlayRepository.fs" />
+    <Compile Include="Persistence\LobbyRepository.fs" />
+    <Compile Include="Http\JsonModels.fs" />
+    <Compile Include="Http\LobbyController.fs" />
+    <Compile Include="Http\PlayController.fs" />
+    <Compile Include="Http\ControllerRegistry.fs" />
     <Content Include="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Compile Include="Dtos.fs" />
-    <Compile Include="Persistence.fs" />
-    <Compile Include="HttpHandlers.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
-
-  <ItemGroup />
 
   <ItemGroup>
     <None Include="web.config" CopyToOutputDirectory="PreserveNewest" />

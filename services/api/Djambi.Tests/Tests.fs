@@ -2,8 +2,8 @@ module Tests
 
 open System
 open Xunit
-open Djambi.Model.BoardGeometry
-open Djambi.Model.BoardGeometryExtensions
+open Djambi.Model.Boards
+open Djambi.Model.BoardsExtensions
 
 [<Theory>]
 [<InlineData(Directions.Up, 2, RadialDirections.Clockwise, Directions.Right)>]

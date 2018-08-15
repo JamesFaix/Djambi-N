@@ -6,8 +6,9 @@
 
   <ItemGroup>
     <Compile Include="Users.fs" />
+    <Compile Include="Games.fs" />
     <Compile Include="Utilities.fs" />
-    <Compile Include="BoardGeometry.fs" />
+    <Compile Include="Boards.fs" />
   </ItemGroup>
 
 </Project>

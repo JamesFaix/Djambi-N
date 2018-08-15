@@ -1,59 +1,53 @@
 namespace Djambi.Api
 
-module Dtos =
+module JsonModels =
 
     open Djambi.Model
-
-    open BoardGeometry
+    open Djambi.Model.Games
+    open Boards
 
     [<CLIMutable>]
-    type PlaceHolderMessageDto =
+    type PlaceHolderJsonModel =
         {
             text : string
         }
 
     //Use for POST and PATCH /users
     [<CLIMutable>]
-    type CreateUserRequestDto =
+    type CreateUserJsonModel =
         {
             name : string
         }
 
     //Use for GET /users
     [<CLIMutable>]
-    type UserDto =
+    type UserJsonModel =
         {
             id : int
             name : string
         }
 
     //Use for POST /games
-    type CreateGameRequestDto =
+    type CreateGameJsonModel =
         {
             boardRegionCount : int    
         }
 
-    type GameStatus =
-        | Open = 1
-        | Started = 2
-        | Complete = 3
-        | Cancelled = 4
-
     //Use for GET /games
-    type GameMetadataDto = 
+    type GameJsonModel = 
         {
             id : int
             status : GameStatus
             boardRegionCount : int
-            players : UserDto list
+            players : UserJsonModel list
         }
 
-    type GameDetailsDto =
+    type GameDetailsJsonModel =
         {
             id : int
             status : GameStatus
             boardRegionCount : int
-            players : UserDto list 
+            players : UserJsonModel list 
             pieces: int list
             //TODO: Add details like player color, alive/dead state, etc
             //TODO: Add pieces and their positions
@@ -62,7 +56,7 @@ module Dtos =
         }
 
     [<CLIMutable>]
-    type LocationDto =
+    type LocationJsonModel =
         {
             region : int
             x : int
@@ -70,12 +64,12 @@ module Dtos =
         }
 
     [<CLIMutable>]
-    type CreateSelectionDto =
+    type CreateSelectionJsonModel =
         {
             cellId : int
         }
 
-    type CreateMessageDto = 
+    type CreateMessageJsonModel = 
         {
             body : string
             //TODO: Maybe add UserId for direct messages

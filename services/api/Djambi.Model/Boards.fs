@@ -1,6 +1,6 @@
 namespace Djambi.Model
 
-module BoardGeometry =
+module Boards =
     
     type Directions =
         | Up = 1
@@ -41,12 +41,10 @@ module BoardGeometry =
             regionSize : int
             cells : Cell list
         }
-
-open BoardGeometry
         
-module BoardGeometryExtensions =
+module BoardsExtensions =
 
-    open BoardGeometry
+    open Boards
     open System.Collections.Generic
     open System.Linq
     open Utilities
@@ -319,8 +317,8 @@ module BoardGeometryExtensions =
             
 module BoardRepository =
 
-    open BoardGeometry
-    open BoardGeometryExtensions
+    open Boards
+    open BoardsExtensions
 
     let getBoardMetadata(regionCount : int) : BoardMetadata =
         let standardRegionSize = 5
