@@ -143,6 +143,10 @@ type LobbyRepository(connectionString : string) =
     member this.addPlayerToGame(gameId : int, userId : int) : Unit Task =
         let query = "IF EXISTS(SELECT 1 FROM Players WHERE GameId = @GameId AND UserId = @UserId)
                         THROW 50000, 'Duplicate player', 1
+
+                     IF (SELECT COUNT(1) FROM Players WHERE GameId = @GameId) 
+                      = (SELECT BoardRegionCount FROM Games WHERE GameId = @GameId)
+                        THROW 50000, 'Max player count reached', 1
                         
                      INSERT INTO Players (GameId, UserId, Name)
                      SELECT @GameId, UserId, Name
