@@ -2,6 +2,7 @@
 
 module LobbyJsonMappings =
 
+    open System
     open Djambi.Api.Domain.LobbyModels
     open Djambi.Api.Http.LobbyJsonModels
 
@@ -9,6 +10,15 @@ module LobbyJsonMappings =
         {
             id = user.id
             name = user.name
+        }
+
+    let mapPlayerResponse(player : Player) : PlayerJsonModel =
+        {
+            id = player.id
+            userId = if player.userId.IsSome 
+                     then new Nullable<int>(player.userId.Value) 
+                     else Unchecked.defaultof<int Nullable>
+            name = player.name
         }
 
     let mapCreateUserRequest(request : CreateUserJsonModel) : CreateUserRequest =
@@ -21,8 +31,10 @@ module LobbyJsonMappings =
             id = game.id
             status = game.status
             boardRegionCount = game.boardRegionCount
-            description = game.description
-            players = game.players |> List.map mapUserResponse
+            description = if game.description.IsSome 
+                          then game.description.Value 
+                          else Unchecked.defaultof<string>
+            players = game.players |> List.map mapPlayerResponse
         }
 
     let mapCreateGameRequest(request : CreateGameJsonModel) : CreateGameRequest =

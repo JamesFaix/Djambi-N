@@ -29,10 +29,11 @@ module LobbySqlMappings =
 
 
     let mapLobbyGamesResponse(players : LobbyGamePlayerSqlModel list) : LobbyGameMetadata list =
-        let sqlModelToUser(sqlModel : LobbyGamePlayerSqlModel) : User =
+        let sqlModelToUser(sqlModel : LobbyGamePlayerSqlModel) : Player =
             {
-                id = sqlModel.userId.Value
-                name = sqlModel.userName
+                id = sqlModel.playerId.Value
+                userId = if sqlModel.userId.HasValue then Some sqlModel.userId.Value else None
+                name = sqlModel.playerName
             }
 
         let sqlModelsToGame(sqlModels : LobbyGamePlayerSqlModel list) : LobbyGameMetadata =
@@ -43,7 +44,7 @@ module LobbySqlMappings =
                 boardRegionCount = head.boardRegionCount
                 description = if head.gameDescription = null then None else Some head.gameDescription
                 players = 
-                    if head.userId.HasValue
+                    if head.playerId.HasValue
                     then sqlModels |> List.map sqlModelToUser
                     else List.empty
             }

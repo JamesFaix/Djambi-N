@@ -94,10 +94,9 @@ type LobbyRepository(connectionString : string) =
 
     member this.getGame(id : int) : LobbyGameMetadata Task =
         let query = "SELECT g.GameId, g.GameStatusId, g.Description AS GameDescription, g.BoardRegionCount,
-                        u.UserId, u.Name as UserName \
+                        p.PlayerId, p.UserId, p.Name as PlayerName \
                     FROM Games g \
                         LEFT OUTER JOIN Players p ON g.GameId = p.GameId \
-                        LEFT OUTER JOIN Users u ON u.UserId = p.UserId \
                     WHERE g.GameId = @Id"
         let param = new DynamicParameters()
         param.Add("Id", id)
@@ -109,10 +108,9 @@ type LobbyRepository(connectionString : string) =
         
     member this.getOpenGames() : LobbyGameMetadata list Task =
         let query = "SELECT g.GameId, g.GameStatusId, g.Description AS GameDescription, g.BoardRegionCount,
-                        u.UserId, u.Name as UserName \
+                        p.PlayerId, p.UserId, p.Name as PlayerName \
                      FROM Games g \
                         LEFT OUTER JOIN Players p ON g.GameId = p.GameId \
-                        LEFT OUTER JOIN Users u ON u.UserId = p.UserId \
                      WHERE g.GameStatusId = 1" //1 = Open
         task {
             use cn = this.getConnection()
@@ -149,7 +147,7 @@ type LobbyRepository(connectionString : string) =
                         THROW 50000, 'Max player count reached', 1
                       
                      IF (SELECT GameStatusId FROM Games WHERE GameId = @GameId) <> 1
-                        THROW 50000, 'Game no longer open'
+                        THROW 50000, 'Game no longer open', 1
 
                      INSERT INTO Players (GameId, UserId, Name)
                      SELECT @GameId, UserId, Name
@@ -166,12 +164,36 @@ type LobbyRepository(connectionString : string) =
             return ()
         }
 
+    member this.addVirtualPlayerToGame(gameId : int, name : string) : Unit Task =
+        let query = "IF EXISTS(SELECT 1 FROM Players WHERE GameId = @GameId AND Name = @Name)
+                        THROW 50000, 'Duplicate player', 1
+
+                     IF (SELECT COUNT(1) FROM Players WHERE GameId = @GameId) 
+                      = (SELECT BoardRegionCount FROM Games WHERE GameId = @GameId)
+                        THROW 50000, 'Max player count reached', 1
+                      
+                     IF (SELECT GameStatusId FROM Games WHERE GameId = @GameId) <> 1
+                        THROW 50000, 'Game no longer open', 1
+
+                     INSERT INTO Players (GameId, UserId, Name)
+                     VALUES (@GameId, NULL, @Name)"
+
+        let param = new DynamicParameters()
+        param.Add("GameId", gameId)
+        param.Add("Name", name)
+
+        task {
+            use cn = this.getConnection()
+            let! _ = cn.ExecuteAsync(query, param)
+            return ()
+        }
+
     member this.removePlayerFromGame(gameId : int, userId : int) : Unit Task =
         let query = "IF NOT EXISTS(SELECT 1 FROM Players WHERE GameId = @GameId AND UserId = @UserId)
                         THROW 50000, 'Player not found', 1
                         
                      IF (SELECT GameStatusId FROM Games WHERE GameId = @GameId) <> 1
-                        THROW 50000, 'Game no longer open'
+                        THROW 50000, 'Game no longer open', 1
 
                      DELETE FROM Players
                      WHERE GameId = @GameId AND UserId = @UserId"

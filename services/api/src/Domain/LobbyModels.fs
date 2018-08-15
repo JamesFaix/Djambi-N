@@ -10,6 +10,13 @@ module LobbyModels =
             name : string
         }
         
+    type Player =
+        {
+            id : int
+            userId : int option
+            name : string
+        }
+
     type CreateUserRequest =
         {
             name : string
@@ -27,7 +34,7 @@ module LobbyModels =
             status : GameStatus
             boardRegionCount : int
             description : string option
-            players : User list
+            players : Player list
         }
 
     type UpdateGameRequest =

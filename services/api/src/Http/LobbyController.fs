@@ -87,6 +87,16 @@ type LobbyController(repository : LobbyRepository) =
     member this.startGame(gameId : int) =
         fun (next : HttpFunc) (ctx : HttpContext) ->
             task {
+                //Update game status to Started
+
+                //Create virtual players
+
+                //Assign players colors, corners, turn order
+
+                //Create pieces; place on board
+
+                //Validate game state
+
                 let placeHolderResponse = {
                     text = sprintf "Start game %i not yet implemented" gameId
                 }

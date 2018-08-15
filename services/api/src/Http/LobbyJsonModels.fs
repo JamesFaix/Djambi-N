@@ -2,6 +2,7 @@ namespace Djambi.Api.Http
 
 module LobbyJsonModels =
 
+    open System
     open Djambi.Api.Common.Enums
     
     [<CLIMutable>]
@@ -24,6 +25,13 @@ module LobbyJsonModels =
             id : int
             name : string
         }
+        
+    type PlayerJsonModel =
+        {
+            id : int
+            userId : int Nullable
+            name : string
+        }
 
     //Use for POST /games
     [<CLIMutable>]
@@ -39,6 +47,6 @@ module LobbyJsonModels =
             id : int
             status : GameStatus
             boardRegionCount : int
-            description : string option
-            players : UserJsonModel list
+            description : string
+            players : PlayerJsonModel list
         }

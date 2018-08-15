@@ -19,5 +19,6 @@ module LobbySqlModels =
             boardRegionCount : int
             gameStatusId : int
             userId : int Nullable
-            userName : string
+            playerName : string
+            playerId : int Nullable
         }
