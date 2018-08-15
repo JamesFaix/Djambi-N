@@ -25,6 +25,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="Common\Enums.fs" />
+    <Compile Include="Common\Utilities.fs" />
+    <Compile Include="Domain\LobbyModels.fs" />
+    <Compile Include="Domain\BoardModels.fs" />
+    <Compile Include="Domain\BoardExtensions.fs" />
+    <Compile Include="Domain\BoardUtility.fs" />
     <Compile Include="Persistence\SqlModels.fs" />
     <Compile Include="Persistence\RepositoryBase.fs" />
     <Compile Include="Persistence\PlayRepository.fs" />
@@ -41,10 +47,6 @@
 
   <ItemGroup>
     <None Include="web.config" CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Djambi.Model\Djambi.Model.fsproj" />
   </ItemGroup>
 
 </Project>

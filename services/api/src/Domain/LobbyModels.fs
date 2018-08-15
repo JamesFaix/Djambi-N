@@ -1,14 +1,19 @@
-﻿namespace Djambi.Model
+﻿namespace Djambi.Api.Domain
 
-module Games =
-    
-    open Djambi.Model.Users
+module LobbyModels =
 
-    type GameStatus =
-        | Open = 1
-        | Started = 2
-        | Complete = 3
-        | Cancelled = 4
+    open Djambi.Api.Common.Enums
+
+    type User = 
+        {
+            id : int
+            name : string
+        }
+        
+    type CreateUserRequest =
+        {
+            name : string
+        }
 
     type CreateGameRequest = 
         {

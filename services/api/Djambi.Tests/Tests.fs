@@ -1,9 +1,9 @@
 module Tests
 
-open System
 open Xunit
-open Djambi.Model.Boards
-open Djambi.Model.BoardsExtensions
+open Djambi.Api.Domain.BoardModels
+open Djambi.Api.Domain.BoardsExtensions
+open Djambi.Api.Common.Utilities
 
 [<Theory>]
 [<InlineData(Directions.Up, 2, RadialDirections.Clockwise, Directions.Right)>]
@@ -68,6 +68,6 @@ let ``Utilities GetValues Directions returns expected output``() =
             Directions.UpLeft
         ]
 
-    let actual = Utilities.GetValues<Directions>()
+    let actual = GetValues<Directions>()
 
     Assert.Equal<list<Directions>>(expected, actual)

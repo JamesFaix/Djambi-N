@@ -6,8 +6,8 @@ open Giraffe
 
 open Djambi.Api.JsonModels
 open Djambi.Api.Persistence
-open Djambi.Model.Games
-open Djambi.Model.Users
+open Djambi.Api.Domain.LobbyModels
+open Djambi.Api.Common.Enums
 
 type LobbyController(repository : LobbyRepository) =
     //Users

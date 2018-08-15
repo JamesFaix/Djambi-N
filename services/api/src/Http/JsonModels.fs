@@ -2,9 +2,8 @@ namespace Djambi.Api
 
 module JsonModels =
 
-    open Djambi.Model
-    open Djambi.Model.Games
-    open Boards
+    open Djambi.Api.Common.Enums
+    open Djambi.Api.Domain.BoardModels
 
     [<CLIMutable>]
     type PlaceHolderJsonModel =

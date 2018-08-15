@@ -6,23 +6,23 @@ open Giraffe
 
 open Djambi.Api.JsonModels
 open Djambi.Api.Persistence
-open Djambi.Model
-open Djambi.Model.BoardsExtensions
-open Djambi.Model.Games
+open Djambi.Api.Domain
+open Djambi.Api.Domain.BoardsExtensions
+open Djambi.Api.Common.Enums
 
 type PlayController(repository : PlayRepository) =
 //Board
     member this.getBoard(regionCount : int) =
         fun (next : HttpFunc) (ctx : HttpContext) ->
             task {
-                let board = BoardRepository.getBoard(regionCount)
+                let board = BoardUtility.getBoard(regionCount)
                 return! json board next ctx
             }
             
     member this.getCellPaths(regionCount : int, cellId : int) =
         fun (next : HttpFunc) (ctx : HttpContext) ->
             task {
-                let board = BoardRepository.getBoardMetadata(regionCount)
+                let board = BoardUtility.getBoardMetadata(regionCount)
                 let cell = board.cells() |> Seq.find(fun c -> c.id = cellId)
                 let paths = board.paths(cell)
                             |> List.map (fun path -> 

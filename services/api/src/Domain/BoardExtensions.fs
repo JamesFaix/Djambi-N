@@ -1,53 +1,12 @@
-namespace Djambi.Model
+﻿namespace Djambi.Api.Domain
 
-module Boards =
-    
-    type Directions =
-        | Up = 1
-        | UpRight = 2
-        | Right = 3
-        | DownRight = 4
-        | Down = 5
-        | DownLeft = 6
-        | Left = 7
-        | UpLeft = 8
-
-    type RadialDirections =
-        | Clockwise = 1
-        | CounterClockwise = 2
-
-    type Location = 
-        {
-            region : int
-            x : int
-            y : int
-        }
-
-    type Cell =
-        {
-            id : int
-            locations : Location list
-        }
-      
-    type BoardMetadata =
-        {
-            regionCount : int
-            regionSize : int
-        }
-
-    type Board = 
-        {
-            regionCount : int
-            regionSize : int
-            cells : Cell list
-        }
-        
 module BoardsExtensions =
 
-    open Boards
     open System.Collections.Generic
     open System.Linq
-    open Utilities
+
+    open BoardModels
+    open Djambi.Api.Common.Utilities
 
     type Directions with 
         member this.rotate(amount : int, radialDirection : RadialDirections) : Directions =
@@ -193,7 +152,7 @@ module BoardsExtensions =
                         { region = r; x = 1; y = 1 } 
                         { region = r; x = 1; y = 0 } 
                     ])
-            else Utilities.GetValues<Directions>()
+            else GetValues<Directions>()
                  |> Seq.map (fun d -> this.nextLocation(cell.locations.Head, d))
                  |> Seq.filter (fun o -> o.IsSome)
                  |> Seq.map (fun o -> o.Value)
@@ -280,7 +239,7 @@ module BoardsExtensions =
                                 yield this.cellAt(loc1)                           
                             }                    
                         |> Seq.toList))
-            else Utilities.GetValues<Directions>()
+            else GetValues<Directions>()
                  |> List.map(fun d -> 
                     let mutable dir = d
                     let mutable loc1 = cell.locations.Head
@@ -314,23 +273,3 @@ module BoardsExtensions =
                     |> Seq.toList
                  )
             |> List.filter (fun path -> (List.length path) > 0)
-            
-module BoardRepository =
-
-    open Boards
-    open BoardsExtensions
-
-    let getBoardMetadata(regionCount : int) : BoardMetadata =
-        let standardRegionSize = 5
-        {
-            regionCount = regionCount
-            regionSize = standardRegionSize
-        }
-
-    let getBoard(regionCount : int) : Board =
-        let metadata = getBoardMetadata(regionCount)
-        {
-            regionCount = metadata.regionCount
-            regionSize = metadata.regionSize
-            cells = metadata.cells()
-        }
