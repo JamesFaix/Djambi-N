@@ -110,6 +110,25 @@ let ``Get open games should work``() =
         Assert.All(games, fun g -> Assert.Equal(GameStatus.Open, g.status))
     }
 
+[<Fact>]
+let ``Update game should work``() =
+    let createRequest = getCreateGameRequest()
+    let repo = getRepository()
+    task {
+        let! game = repo.createGame(createRequest)
+        let updateRequest = 
+            {
+                id = game.id
+                description = Some(game.description.Value + "foo")
+                status = GameStatus.Cancelled
+            }
+        let! updated = repo.updateGame(updateRequest)
+        Assert.Equal(game.id, updated.id)
+        Assert.Equal(updateRequest.description, updated.description)
+        Assert.Equal(updateRequest.status, updated.status)
+        Assert.Equal<User list>(game.players, updated.players)
+    }
+
 //Player CRUD
 [<Fact>]
 let ``Add player should work``() =

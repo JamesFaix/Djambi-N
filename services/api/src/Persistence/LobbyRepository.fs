@@ -9,6 +9,7 @@ open Djambi.Api.Persistence.LobbySqlModels
 open Djambi.Api.Domain.LobbyModels
 open Djambi.Api.Common.Enums
 open Djambi.Api.Persistence.LobbySqlMappings
+open Djambi.Api.Persistence.DapperExtensions
     
 type LobbyRepository(connectionString : string) =
     inherit RepositoryBase(connectionString)
@@ -62,7 +63,7 @@ type LobbyRepository(connectionString : string) =
 
         let param = new DynamicParameters()
         param.Add("BoardRegionCount", request.boardRegionCount)
-        param.Add("Description", if request.description.IsSome then request.description.Value else null)
+        param.AddOptional("Description", request.description)
         param.Add("Status", 1) //1 = Open
 
         task {
@@ -119,6 +120,26 @@ type LobbyRepository(connectionString : string) =
             return sqlModels |> Seq.toList |> mapLobbyGamesResponse
         }
 
+    member this.updateGame(request : UpdateGameRequest) : LobbyGameMetadata Task =
+        let query = "IF NOT EXISTS(SELECT 1 FROM Games WHERE GameId = @Id)
+                        THROW 50000, 'Game not found', 1
+
+                     UPDATE Games
+                     SET GameStatusId = @StatusId,
+                         Description = @Description
+                     WHERE GameId = @Id"
+        let param = new DynamicParameters()
+        param.Add("Id", request.id)
+        param.AddOptional("Description", request.description)
+        param.Add("StatusId", request.status |> mapGameStatusToId)
+        task {
+            use cn = this.getConnection()
+            let! _ = cn.ExecuteAsync(query, param)
+            let! updated = this.getGame(request.id)
+            return updated
+        }
+
+//Players
     member this.addPlayerToGame(gameId : int, userId : int) : Unit Task =
         let query = "IF EXISTS(SELECT 1 FROM Players WHERE GameId = @GameId AND UserId = @UserId)
                         THROW 50000, 'Duplicate player', 1

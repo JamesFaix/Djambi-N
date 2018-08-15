@@ -19,6 +19,15 @@ module LobbySqlMappings =
         | 4 -> GameStatus.Cancelled
         | _ -> failwith ("Invalid game status: " + gameStatusId.ToString())
 
+    let mapGameStatusToId(status : GameStatus) : int =
+        match status with 
+        | GameStatus.Open -> 1
+        | GameStatus.Started -> 2
+        | GameStatus.Complete -> 3
+        | GameStatus.Cancelled -> 4
+        | _ -> failwith ("Invalid game status: " + status.ToString())
+
+
     let mapLobbyGamesResponse(players : LobbyGamePlayerSqlModel list) : LobbyGameMetadata list =
         let sqlModelToUser(sqlModel : LobbyGamePlayerSqlModel) : User =
             {
