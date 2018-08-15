@@ -20,19 +20,12 @@ module LobbyModels =
             description : string option
             boardRegionCount : int
         }
-
-    type Player =
-        {
-            id : int
-            userId : int option
-            name : string
-        }
-        
-    type GameMetadata = 
+                
+    type LobbyGameMetadata = 
         {
             id : int
             status : GameStatus
             boardRegionCount : int
             description : string option
-            players : Player list
+            players : User list
         }

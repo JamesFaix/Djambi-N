@@ -4,38 +4,35 @@ open Microsoft.AspNetCore.Http
 
 open Giraffe
 
-open Djambi.Api.JsonModels
+open Djambi.Api.Http.LobbyJsonModels
+open Djambi.Api.Http.LobbyMappings
 open Djambi.Api.Persistence
-open Djambi.Api.Domain.LobbyModels
-open Djambi.Api.Common.Enums
 
 type LobbyController(repository : LobbyRepository) =
     //Users
     member this.createUser =
         fun (next : HttpFunc)(ctx : HttpContext) ->
             task {
-                let! requestDto = ctx.BindJsonAsync<CreateUserJsonModel>()
-                let request : CreateUserRequest = 
-                    {
-                        name = requestDto.name
-                    }
-
+                let! requestJson = ctx.BindJsonAsync<CreateUserJsonModel>()
+                let request = requestJson |> mapCreateUserRequest
                 let! response = repository.createUser(request)
-                return! json response next ctx
+                let responseJson = response |> mapUserResponse
+                return! json responseJson next ctx
             }
 
     member this.deleteUser(userId : int) =
         fun (next : HttpFunc) (ctx : HttpContext) ->
         task {
-            let! response = repository.deleteUser(userId)
-            return! json response next ctx
+            let! _ = repository.deleteUser(userId)
+            return! json () next ctx
         }
 
     member this.getUser(userId : int) =
         fun (next : HttpFunc) (ctx : HttpContext) ->
             task {
                 let! response = repository.getUser(userId)
-                return! json response next ctx
+                let responseJson = response |> mapUserResponse
+                return! json responseJson next ctx
             }
 
     member this.updateUser(userId : int) =
@@ -51,54 +48,26 @@ type LobbyController(repository : LobbyRepository) =
     member this.getOpenGames =
         fun (next : HttpFunc) (ctx : HttpContext) ->
             task {
-
-                let response : GameJsonModel list = 
-                    [
-                        {
-                            id = 1
-                            status = GameStatus.Open
-                            boardRegionCount = 3
-                            players = 
-                            [
-                                {
-                                    id = 1
-                                    name = "TestUser"
-                                }
-                            ]
-                        }
-                    ]
-
-                let placeHolderResponse = {
-                    text = "Get open games not yet implemented"
-                }
-                return! json placeHolderResponse next ctx
+                let! response = repository.getOpenGames()
+                let responseJson = response |> List.map mapLobbyGameResponse
+                return! json responseJson next ctx
             }
 
     member this.createGame =
         fun (next : HttpFunc) (ctx : HttpContext) ->
             task {
-                let! request = ctx.BindModelAsync<CreateGameJsonModel>()
-
-                let response : GameJsonModel = {
-                    id = 1
-                    status = GameStatus.Open
-                    boardRegionCount = request.boardRegionCount
-                    players = List.empty
-                }
-
-                let placeHolderResponse = {
-                    text = "Create game not yet implemented"
-                }
-                return! json placeHolderResponse next ctx
+                let! requestJson = ctx.BindModelAsync<CreateGameJsonModel>()
+                let request = requestJson |> mapCreateGameRequest
+                let! response = repository.createGame(request)
+                let responseJson = response |> mapLobbyGameResponse
+                return! json responseJson next ctx
             }
 
     member this.deleteGame(gameId : int) =
         fun (next : HttpFunc) (ctx : HttpContext) ->
             task {
-                let placeHolderResponse = {
-                    text = sprintf "Delete game %i not yet implemented" gameId
-                }
-                return! json placeHolderResponse next ctx
+                let! _ = repository.deleteGame(gameId)
+                return! json () next ctx
             }
 
     member this.addPlayerToGame(gameId : int, userId : int) =

@@ -1,6 +1,6 @@
-﻿namespace Djambi.Api
+﻿namespace Djambi.Api.Persistence
 
-module SqlModels =
+module LobbySqlModels =
 
     [<CLIMutable>]
     type UserSqlModel = 

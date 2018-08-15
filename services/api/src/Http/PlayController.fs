@@ -4,7 +4,8 @@ open Microsoft.AspNetCore.Http
 
 open Giraffe
 
-open Djambi.Api.JsonModels
+open Djambi.Api.Http.LobbyJsonModels
+open Djambi.Api.Http.PlayJsonModels
 open Djambi.Api.Persistence
 open Djambi.Api.Domain
 open Djambi.Api.Domain.BoardsExtensions
@@ -34,14 +35,14 @@ type PlayController(repository : PlayRepository) =
     member this.getGameState(gameId : int) =
         fun (next : HttpFunc) (ctx : HttpContext) ->
             task {
-                let response : GameDetailsJsonModel = {
-                    id = gameId
-                    status = GameStatus.Open
-                    boardRegionCount = 3
-                    players = List.empty
-                    pieces = List.empty
-                    selectionOptions = List.empty
-                }
+                //let response : GameDetailsJsonModel = {
+                //    id = gameId
+                //    status = GameStatus.Open
+                //    boardRegionCount = 3
+                //    players = List.empty
+                //    pieces = List.empty
+                //    selectionOptions = List.empty
+                //}
 
                 let placeHolderResponse = {
                     text = sprintf "Get game state %i not yet implemented" gameId

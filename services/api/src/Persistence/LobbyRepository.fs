@@ -5,7 +5,7 @@ open System.Threading.Tasks
 open Dapper
 open Giraffe
     
-open Djambi.Api.SqlModels
+open Djambi.Api.Persistence.LobbySqlModels
 open Djambi.Api.Domain.LobbyModels
 open Djambi.Api.Common.Enums
     
@@ -53,7 +53,7 @@ type LobbyRepository(connectionString : string) =
         }
 
 //Games
-    member this.createGame(request : CreateGameRequest) : GameMetadata Task =
+    member this.createGame(request : CreateGameRequest) : LobbyGameMetadata Task =
         let query = "INSERT INTO Games (BoardRegionCount, Description, Status) \
                      VALUES (@BoardRegionCount, @Description, @Status) \
                      SELECT SCOPE_IDENTITY()"
@@ -85,25 +85,36 @@ type LobbyRepository(connectionString : string) =
             let! _ = cn.ExecuteAsync(query, param)
             return ()
         }
-
         
-    //member this.getOpenGames() : GameMetadata seq Task =
-    //    let query = "SELECT g.GameId, g.Description AS GameDescription, g.BoardRegionCount,
-    //                    u.UserId, u.Name as UserName \
-    //                 FROM Games g \
-    //                    INNER JOIN Players p ON g.GameId = p.GameId \
-    //                    INNER JOIN Users u ON u.UserId = p.UserId \
-    //                 WHERE g.Status = 1" //1 = Open
-    //    task {
-    //        use cn = this.getConnection()
-    //        let! sqlModels = cn.QueryAsync<OpenGamePlayerSqlModel>(query)
-    //        let models = sqlModels 
-    //                     |> Seq.groupBy (fun sql -> sql.gameId)
-    //                     |> Seq.map (fun grp -> 
-    //                        {
-                                    
-    //                        })
+    member this.getOpenGames() : LobbyGameMetadata list Task =
+        let query = "SELECT g.GameId, g.Description AS GameDescription, g.BoardRegionCount,
+                        u.UserId, u.Name as UserName \
+                     FROM Games g \
+                        INNER JOIN Players p ON g.GameId = p.GameId \
+                        INNER JOIN Users u ON u.UserId = p.UserId \
+                     WHERE g.Status = 1" //1 = Open
 
+        let sqlModelToUser(sqlModel : OpenGamePlayerSqlModel) : User =
+            {
+                id = sqlModel.userId
+                name = sqlModel.userName
+            }
 
-    //        return ()            
-    //    }
+        let sqlModelsToGame(sqlModels : OpenGamePlayerSqlModel list) : LobbyGameMetadata =
+            let head = sqlModels.Head
+            {
+                id = head.gameId
+                status = GameStatus.Open
+                boardRegionCount = head.boardRegionCount
+                description = if head.gameDescription = null then None else Some head.gameDescription
+                players = sqlModels |> List.map sqlModelToUser
+            }
+
+        task {
+            use cn = this.getConnection()
+            let! sqlModels = cn.QueryAsync<OpenGamePlayerSqlModel>(query)
+            return sqlModels 
+                |> Seq.groupBy (fun sql -> sql.gameId)
+                |> Seq.map (fun (_, sqls) -> sqls |> Seq.toList |> sqlModelsToGame)
+                |> Seq.toList
+        }
