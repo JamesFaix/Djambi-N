@@ -10,6 +10,7 @@ open Djambi.Api.Domain.LobbyModels
 open Djambi.Api.Common.Enums
 open Djambi.Api.Persistence.LobbySqlMappings
 open Djambi.Api.Persistence.DapperExtensions
+open Djambi.Api.Domain.PlayModels
     
 type LobbyRepository(connectionString : string) =
     inherit RepositoryBase(connectionString)
@@ -214,4 +215,21 @@ type LobbyRepository(connectionString : string) =
             use cn = this.getConnection()
             let! names = cn.QueryAsync<string>(query)
             return names |> Seq.toList
+        }
+
+    member this.updatePlayer(gameId : int, player : Player) : Unit Task =
+        let query = "UPDATE Players 
+                     SET Color = @Color,
+                         IsAlive = @IsAlive
+                     WHERE PlayerId = @PlayerId
+                        AND GameId = @GameId"
+        let param = new DynamicParameters()
+        param.Add("GameId", gameId)
+        param.Add("PlayerId", player.id)
+        param.Add("Color", player.color |> mapPlayerColorToId)
+        param.Add("IsAlive", player.isAlive)
+        task {
+            use cn = this.getConnection()
+            let! _ = cn.ExecuteAsync(query, param)
+            return ()
         }

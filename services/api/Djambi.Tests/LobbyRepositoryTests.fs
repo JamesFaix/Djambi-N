@@ -85,7 +85,7 @@ let ``Get game should work`` () =
         Assert.Equal(createdGame.description, game.description)
         Assert.Equal(createdGame.boardRegionCount, game.boardRegionCount)
         Assert.Equal(createdGame.status, game.status)
-        Assert.Equal<Player list>(createdGame.players, game.players)
+        Assert.Equal<LobbyPlayer list>(createdGame.players, game.players)
     }
 
 [<Fact>]
@@ -126,7 +126,7 @@ let ``Update game should work``() =
         Assert.Equal(game.id, updated.id)
         Assert.Equal(updateRequest.description, updated.description)
         Assert.Equal(updateRequest.status, updated.status)
-        Assert.Equal<Player list>(game.players, updated.players)
+        Assert.Equal<LobbyPlayer list>(game.players, updated.players)
     }
 
 //Player CRUD

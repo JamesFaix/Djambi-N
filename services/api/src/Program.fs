@@ -11,6 +11,7 @@ open Giraffe
 
 open Djambi.Api.Persistence
 open Djambi.Api.Http
+open Djambi.Api.Domain
 
 // ---------------------------------
 // Web app
@@ -74,9 +75,11 @@ let configureApp (app : IApplicationBuilder) =
     let lobbyRepository = new LobbyRepository(cnStr)
     let playRepository = new PlayRepository(cnStr)
 
+    let gameStartService = new GameStartService(lobbyRepository)
+
     let controllers = 
         {
-            lobby = new LobbyController(lobbyRepository)
+            lobby = new LobbyController(lobbyRepository, gameStartService)
             play = new PlayController(playRepository)
         }
 

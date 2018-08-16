@@ -12,7 +12,7 @@ module LobbyJsonMappings =
             name = user.name
         }
 
-    let mapPlayerResponse(player : Player) : PlayerJsonModel =
+    let mapPlayerResponse(player : LobbyPlayer) : PlayerJsonModel =
         {
             id = player.id
             userId = if player.userId.IsSome 
