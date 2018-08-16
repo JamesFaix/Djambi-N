@@ -1,7 +1,7 @@
 ﻿namespace Djambi.Api.Persistence
 
 open System.Threading.Tasks
-    
+
 open Dapper
 open Giraffe
     
@@ -17,12 +17,11 @@ type LobbyRepository(connectionString : string) =
 
 //Users
     member this.createUser(request : CreateUserRequest) : User Task =
-        let query = "INSERT INTO Users (Name) \
-                     VALUES (@Name) \
-                     SELECT SCOPE_IDENTITY()"
+        let cmd = this.procCommand("Insert_User", request)
+
         task {
             use cn = this.getConnection()
-            let! id = cn.ExecuteScalarAsync<int>(query, request)
+            let! id = cn.ExecuteScalarAsync<int>(cmd)
             return {
                 id = id
                 name = request.name
@@ -30,46 +29,38 @@ type LobbyRepository(connectionString : string) =
         }
 
     member this.getUser(id : int) : User Task =
-        let query = "SELECT UserId AS Id, Name AS Name \
-                     FROM Users \
-                     WHERE UserId = @Id"
         let param = new DynamicParameters()
-        param.Add("Id", id)
+        param.Add("UserId", id)
+        let cmd = this.procCommand("Get_User", param)
+
         task {
             use cn = this.getConnection()
-            let! sqlModel = cn.QuerySingleAsync<UserSqlModel>(query, param)
+            let! sqlModel = cn.QuerySingleAsync<UserSqlModel>(cmd)
             if sqlModel.id = 0 then failwith "User not found" else ()
             return sqlModel |> mapUserResponse
         }
 
     member this.deleteUser(id : int) : Unit Task =
-        let query = "IF NOT EXISTS(SELECT 1 FROM Users WHERE UserId = @Id) \
-                        THROW 50000, 'User not found', 1 \
-        
-                     DELETE FROM Users \
-                     WHERE UserId = @Id"
         let param = new DynamicParameters()
-        param.Add("Id", id)
+        param.Add("UserId", id)
+        let cmd = this.procCommand("Delete_User", param)
+
         task {
             use cn = this.getConnection()
-            let! _  = cn.ExecuteAsync(query, param) 
+            let! _  = cn.ExecuteAsync(cmd) 
             return ()
         }
 
 //Games
     member this.createGame(request : CreateGameRequest) : LobbyGameMetadata Task =
-        let query = "INSERT INTO Games (BoardRegionCount, Description, GameStatusId) \
-                     VALUES (@BoardRegionCount, @Description, @Status) \
-                     SELECT SCOPE_IDENTITY()"
-
         let param = new DynamicParameters()
         param.Add("BoardRegionCount", request.boardRegionCount)
         param.AddOptional("Description", request.description)
-        param.Add("Status", 1) //1 = Open
+        let cmd = this.procCommand("Insert_Game", param)
 
         task {
             use cn = this.getConnection()
-            let! id = cn.QuerySingleAsync<int>(query, param)
+            let! id = cn.QuerySingleAsync<int>(cmd)
             return {
                 id = id 
                 description = request.description
@@ -80,16 +71,13 @@ type LobbyRepository(connectionString : string) =
         }
         
     member this.deleteGame(id : int) : Unit Task =
-        let query = "IF NOT EXISTS(SELECT 1 FROM Games WHERE GameId = @Id) \
-                        THROW 50000, 'Game not found', 1 \
-
-                     DELETE FROM Games \
-                     WHERE GameId = @Id"
         let param = new DynamicParameters()
-        param.Add("Id", id)
+        param.Add("GameId", id)
+        let cmd = this.procCommand("Delete_Game", param)
+
         task {
             use cn = this.getConnection()
-            let! _ = cn.ExecuteAsync(query, param)
+            let! _ = cn.ExecuteAsync(cmd)
             return ()
         }
 

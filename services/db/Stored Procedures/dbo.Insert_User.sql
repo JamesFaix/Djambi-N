@@ -1,0 +1,15 @@
+
+CREATE PROCEDURE [dbo].[Insert_User]
+	@Name NVARCHAR(5)
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	INSERT INTO Users ([Name], CreatedOn)
+	VALUES (@Name, GETUTCDATE())
+
+	SELECT SCOPE_IDENTITY()
+END
+GO
+
+
