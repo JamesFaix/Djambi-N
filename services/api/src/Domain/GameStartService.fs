@@ -6,35 +6,23 @@ open System.Threading.Tasks
 open Giraffe
 
 open Djambi.Api.Common
-open Djambi.Api.Common.Enums
 open Djambi.Api.Domain.LobbyModels
 open Djambi.Api.Persistence
 open PlayModels
 open Djambi.Api.Domain.BoardModels
 open Djambi.Api.Domain.BoardsExtensions
 
-type GameStartService(repository : LobbyRepository) =
+type GameStartService(lobbyRepository : LobbyRepository, 
+                      playRepository : PlayRepository) =
         
     member this.startGame(gameId : int) : GameState Task =
         
-        let updateGameStatus(game : LobbyGameMetadata) : Unit Task =
-            task {
-                let updateRequest : UpdateGameRequest = 
-                    {
-                        id = gameId
-                        description = game.description
-                        status = GameStatus.Started
-                    }                
-                let! _ = repository.updateGame(updateRequest)
-                return ()
-            }
-
         let createVirtualPlayers(game : LobbyGameMetadata) : LobbyPlayer list Task =
             task {
                 let missingPlayerCount = game.boardRegionCount - game.players.Length
                 if missingPlayerCount > 0
                 then
-                    let! virtualPlayerNames = repository.getVirtualPlayerNames()
+                    let! virtualPlayerNames = lobbyRepository.getVirtualPlayerNames()
                     let namesToUse = 
                         Enumerable.Except(
                             virtualPlayerNames, 
@@ -45,51 +33,38 @@ type GameStartService(repository : LobbyRepository) =
                         |> Seq.toList
 
                     for name in namesToUse do
-                        let! _ = repository.addVirtualPlayerToGame(gameId, name)
+                        let! _ = lobbyRepository.addVirtualPlayerToGame(gameId, name)
                         ()
                 else ()
-                let! updated = repository.getGame(game.id)
+                let! updated = lobbyRepository.getGame(game.id)
                 return updated.players
             }
             
-        let assignTurnOrderAndColors(gameId : int, lobbyPlayers : LobbyPlayer list) : Player list Task =
-            task {
-                let shuffledPlayers = lobbyPlayers |> Utilities.shuffle |> Seq.toList
-                let colors = [A;B;C;D;E;F;G;H] |> Seq.take shuffledPlayers.Length
+        let getStartingConditions(players : LobbyPlayer list) : PlayerStartConditions list =
+            let colorIds = [0..7] |> Utilities.shuffle |> Seq.take players.Length
+            let regions = [0..(players.Length-1)] |> Utilities.shuffle
+            let turnOrder = players |> Utilities.shuffle
 
-                let players : Player list = 
-                    shuffledPlayers 
-                    |> Seq.zip colors
-                    |> Seq.map (fun (c, p) -> 
-                        { 
-                            id = p.id
-                            userId = p.userId
-                            name = p.name
-                            isAlive = true
-                            color = c
-                        })
-                    |> Seq.toList
-
-                //for p in players do
-                //    let! _ = repository.updatePlayer(gameId, p)
-                //    ()
-
-                return players
-            }
-
-        let assignRegions(players : Player list, regionCount : int) : (Player * int) list =
-            let regions = [0..(regionCount-1)] |> Utilities.shuffle 
-            regions |> Seq.zip players |> Seq.toList
-
-        let createPlayerPieces(board : BoardMetadata, player : Player, region : int, startingId : int) : Piece list =            
+            turnOrder 
+            |> Seq.zip3 colorIds regions
+            |> Seq.mapi (fun i (r, c, p) -> 
+                {
+                    playerId = p.id
+                    turnNumber = i
+                    region = r
+                    color = c
+                })
+            |> Seq.toList
+ 
+        let createPlayerPieces(board : BoardMetadata, player : PlayerStartConditions, startingId : int) : Piece list =            
             let getPiece(id : int, pieceType: PieceType, x : int, y : int) =
                 {
                     id = id
                     pieceType = pieceType
-                    playerId = Some player.id
-                    originalPlayerId = player.id
+                    playerId = Some player.playerId
+                    originalPlayerId = player.playerId
                     isAlive = true
-                    cellId = board.cellAt({ x = x; y = y; region = region}).id
+                    cellId = board.cellAt({ x = x; y = y; region = player.region}).id
                 }
             [
                 getPiece(startingId, Chief, 4,4)
@@ -103,29 +78,42 @@ type GameStartService(repository : LobbyRepository) =
                 getPiece(startingId+8, Thug, 4,2)
             ]
 
-        let createAndPlacePieces(board : BoardMetadata, playersWithRegions : (Player * int) list) : Piece list =
-            playersWithRegions
-            |> List.mapi (fun i (p, r) -> createPlayerPieces(board, p, r, i*9))
+        let createAndPlacePieces(board : BoardMetadata, startingConditions : PlayerStartConditions list) : Piece list =
+            startingConditions
+            |> List.mapi (fun i cond -> createPlayerPieces(board, cond, i*9))
             |> List.collect id
 
         task {
-            let! game = repository.getGame gameId
-            let! _ = updateGameStatus game
+            let! game = lobbyRepository.getGame gameId
             let! lobbyPlayers = createVirtualPlayers game
-            let! turnOrder = assignTurnOrderAndColors(gameId, lobbyPlayers)
-            let assignedRegions = assignRegions(turnOrder, game.boardRegionCount)
+            let startingConditions = getStartingConditions(lobbyPlayers)
             let board = BoardUtility.getBoardMetadata(game.boardRegionCount)
-            let pieces = createAndPlacePieces(board, assignedRegions)
+            let pieces = createAndPlacePieces(board, startingConditions)
             let gameState : GameState = 
                 {
-                    players = turnOrder
+                    players = lobbyPlayers 
+                              |> List.map (fun p -> 
+                                { 
+                                    id = p.id
+                                    userId = p.userId
+                                    name = p.name
+                                    isAlive = true
+                                })
                     pieces = pieces
-                    turnCycle = turnOrder |> List.map (fun p -> p.id)
+                    turnCycle = startingConditions |> List.map (fun cond -> cond.turnNumber)
                     log = List.empty
                 }
+                
+            let updateRequest : UpdateGameForStartRequest = 
+                {
+                    id = gameId
+                    startingConditions = startingConditions
+                    currentState = gameState
+                }
+
+            let! _ = playRepository.startGame(updateRequest)
 
             //Validate
-            //Persist gamestate
 
             return gameState
         }

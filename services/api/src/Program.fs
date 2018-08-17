@@ -1,4 +1,4 @@
-module djambi.api.App
+module Djambi.Api.App
 
 open System
 open Microsoft.AspNetCore.Builder
@@ -34,7 +34,7 @@ let webApp (controllers : ControllerRegistry) =
                 POST >=> routef "/games/%i/users/%i" controllers.lobby.addPlayerToGame
                 DELETE >=> routef "/games/%i/users/%i" controllers.lobby.removePlayerFromGame
 
-                POST >=> routef "/games/%i/start-request" controllers.lobby.startGame
+                POST >=> routef "/games/%i/start-request" controllers.play.startGame
 
                 GET >=> routef "/boards/%i" controllers.play.getBoard
                 GET >=> routef "/boards/%i/cells/%i/paths" controllers.play.getCellPaths
@@ -75,12 +75,12 @@ let configureApp (app : IApplicationBuilder) =
     let lobbyRepository = new LobbyRepository(cnStr)
     let playRepository = new PlayRepository(cnStr)
 
-    let gameStartService = new GameStartService(lobbyRepository)
+    let gameStartService = new GameStartService(lobbyRepository, playRepository)
 
     let controllers = 
         {
-            lobby = new LobbyController(lobbyRepository, gameStartService)
-            play = new PlayController(playRepository)
+            lobby = new LobbyController(lobbyRepository)
+            play = new PlayController(gameStartService, playRepository)
         }
 
     app.UseGiraffeErrorHandler(errorHandler)

@@ -4,7 +4,6 @@ module LobbySqlMappings =
     open LobbySqlModels
     open Djambi.Api.Domain.LobbyModels
     open Djambi.Api.Common.Enums
-    open Djambi.Api.Domain.PlayModels
 
     let mapUserResponse(user : UserSqlModel) : User =
         {
@@ -52,14 +51,3 @@ module LobbySqlMappings =
         |> Seq.groupBy (fun sql -> sql.gameId)
         |> Seq.map (fun (_, sqls) -> sqls |> Seq.toList |> sqlModelsToGame)
         |> Seq.toList
-
-    let mapPlayerColorToId(color : PlayerColor) : int =        
-        match color with
-        | A -> 1
-        | B -> 2
-        | C -> 3
-        | D -> 4
-        | E -> 5
-        | F -> 6
-        | G -> 7
-        | H -> 8

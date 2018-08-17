@@ -36,10 +36,3 @@ module LobbyModels =
             description : string option
             players : LobbyPlayer list
         }
-
-    type UpdateGameRequest =
-        {
-            id : int
-            status : GameStatus
-            description : string option
-        }

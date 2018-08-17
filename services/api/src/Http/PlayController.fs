@@ -11,7 +11,20 @@ open Djambi.Api.Domain
 open Djambi.Api.Domain.BoardsExtensions
 open Djambi.Api.Common.Enums
 
-type PlayController(repository : PlayRepository) =
+type PlayController(gameStartService : GameStartService, repository : PlayRepository) =
+
+    member this.startGame(gameId : int) =
+        fun (next : HttpFunc) (ctx : HttpContext) ->
+            task {
+                let! gameState = gameStartService.startGame(gameId)
+                
+                //Map to JsonModel
+
+                let placeHolderResponse = {
+                    text = sprintf "Start game %i not yet implemented" gameId
+                }
+                return! json placeHolderResponse next ctx
+            }
 //Board
     member this.getBoard(regionCount : int) =
         fun (next : HttpFunc) (ctx : HttpContext) ->

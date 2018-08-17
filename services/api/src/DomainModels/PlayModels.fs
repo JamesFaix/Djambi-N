@@ -1,25 +1,14 @@
 ﻿namespace Djambi.Api.Domain
 
-module PlayModels =
+open Djambi.Api.Common.Enums
 
-    //Abstract color so that different themes can use different colors,
-    //but all clients agree on who is which color
-    type PlayerColor =
-        | A
-        | B
-        | C
-        | D
-        | E
-        | F
-        | G
-        | H    
+module PlayModels =
 
     type Player =
         {
             id : int
             userId : int option
             name : string
-            color : PlayerColor
             isAlive : bool
         }
 
@@ -65,4 +54,19 @@ module PlayModels =
         {
             status : TurnStatus
             selections : Selection list
+        }
+       
+    type PlayerStartConditions =
+        {
+            playerId : int
+            region : int
+            turnNumber : int
+            color : int
+        }
+
+    type UpdateGameForStartRequest =
+        {
+            id : int
+            startingConditions : PlayerStartConditions list
+            currentState : GameState
         }

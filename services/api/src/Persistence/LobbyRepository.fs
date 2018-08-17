@@ -10,8 +10,6 @@ open Djambi.Api.Domain.LobbyModels
 open Djambi.Api.Common.Enums
 open Djambi.Api.Persistence.LobbySqlMappings
 open Djambi.Api.Persistence.DapperExtensions
-open Djambi.Api.Domain.PlayModels
-open Giraffe
     
 type LobbyRepository(connectionString : string) =
     inherit RepositoryBase(connectionString)
@@ -105,25 +103,12 @@ type LobbyRepository(connectionString : string) =
             return sqlModels |> Seq.toList |> mapLobbyGamesResponse
         }
 
-    member this.updateGame(request : UpdateGameRequest) : LobbyGameMetadata Task =
-        let param = new DynamicParameters()
-        param.Add("GameId", request.id)
-        param.AddOptional("Description", request.description)
-        param.Add("StatusId", request.status |> mapGameStatusToId)
-        let cmd = this.proc("Lobby.Update_Game", param)
-
-        task {
-            use cn = this.getConnection()
-            let! _ = cn.ExecuteAsync(cmd)
-            return! this.getGame(request.id)
-        }
-
 //Players
     member this.addPlayerToGame(gameId : int, userId : int) : Unit Task =
         let param = new DynamicParameters()
         param.Add("GameId", gameId)
         param.Add("UserId", userId)
-        let cmd = this.proc("Lobby.InsertPlayer", param)
+        let cmd = this.proc("Lobby.Insert_Player", param)
 
         task {
             use cn = this.getConnection()

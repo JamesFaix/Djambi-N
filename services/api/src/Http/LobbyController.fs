@@ -4,14 +4,13 @@ open Microsoft.AspNetCore.Http
 
 open Giraffe
 
-open Djambi.Api.Domain
 open Djambi.Api.Http.LobbyJsonModels
 open Djambi.Api.Http.LobbyJsonMappings
 open Djambi.Api.Persistence
 
-type LobbyController(repository : LobbyRepository,
-                     gameStartService : GameStartService) =
-    //Users
+type LobbyController(repository : LobbyRepository) =
+
+//Users
     member this.createUser =
         fun (next : HttpFunc)(ctx : HttpContext) ->
             task {
@@ -84,17 +83,4 @@ type LobbyController(repository : LobbyRepository,
             task {
                 let! _ = repository.removePlayerFromGame(gameId, userId)
                 return! json () next ctx
-            }
-
-    member this.startGame(gameId : int) =
-        fun (next : HttpFunc) (ctx : HttpContext) ->
-            task {
-                let! gameState = gameStartService.startGame(gameId)
-                
-                //Map to JsonModel
-
-                let placeHolderResponse = {
-                    text = sprintf "Start game %i not yet implemented" gameId
-                }
-                return! json placeHolderResponse next ctx
             }
