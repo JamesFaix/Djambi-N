@@ -11,7 +11,7 @@ type RepositoryBase(connectionString : string) =
         cn.Open()
         cn :> IDbConnection
 
-    member this.procCommand(name : string, param : obj) =
+    member this.proc(name : string, param : obj) =
         new CommandDefinition(name, 
                               param, 
                               null, 

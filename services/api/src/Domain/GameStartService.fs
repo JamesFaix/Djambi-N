@@ -70,9 +70,9 @@ type GameStartService(repository : LobbyRepository) =
                         })
                     |> Seq.toList
 
-                for p in players do
-                    let! _ = repository.updatePlayer(gameId, p)
-                    ()
+                //for p in players do
+                //    let! _ = repository.updatePlayer(gameId, p)
+                //    ()
 
                 return players
             }

@@ -1,4 +1,9 @@
-CREATE PROCEDURE [dbo].[Delete_User]
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_NULLS ON
+GO
+
+CREATE PROCEDURE [Lobby].[Delete_User]
 	@UserId INT
 AS
 BEGIN
@@ -11,5 +16,3 @@ BEGIN
     WHERE UserId = @UserId
 END
 GO
-
-

@@ -1,0 +1,13 @@
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_NULLS ON
+GO
+
+CREATE PROCEDURE [Lobby].[Get_VirtualPlayerNames] 
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT [Name] FROM VirtualPlayerNames	
+END
+GO

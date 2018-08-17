@@ -1,4 +1,9 @@
-CREATE PROCEDURE [dbo].[Insert_Game]
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_NULLS ON
+GO
+
+CREATE PROCEDURE [Lobby].[Insert_Game]
 	@BoardRegionCount INT,
 	@Description NVARCHAR(100) 
 AS
@@ -10,5 +15,3 @@ BEGIN
     SELECT SCOPE_IDENTITY()
 END
 GO
-
-
