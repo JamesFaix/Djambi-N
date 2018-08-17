@@ -126,19 +126,6 @@ let ``Add player should work``() =
     }
 
 [<Fact>]
-let ``Add virtual player should work``() =
-    let gameRequest = getCreateGameRequest()
-    let userRequest = getCreateUserRequest()
-    let repo = getRepository()
-    task {
-        let! game = repo.createGame(gameRequest)
-        let! _ = repo.addVirtualPlayerToGame(game.id, userRequest.name)
-        let! updatedGame = repo.getGame(game.id)
-        let exists = updatedGame.players |> List.exists (fun p -> p.userId = None && p.name = userRequest.name)
-        Assert.True(exists)
-    }
-
-[<Fact>]
 let ``Remove player should work``() =
     let gameRequest = getCreateGameRequest()
     let userRequest = getCreateUserRequest()

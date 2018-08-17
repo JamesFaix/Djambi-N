@@ -12,8 +12,7 @@ open PlayModels
 open Djambi.Api.Domain.BoardModels
 open Djambi.Api.Domain.BoardsExtensions
 
-type GameStartService(lobbyRepository : LobbyRepository, 
-                      playRepository : PlayRepository) =
+type GameStartService(repository : GameStartRepository) =
         
     member this.startGame(gameId : int) : GameState Task =
         
@@ -22,7 +21,7 @@ type GameStartService(lobbyRepository : LobbyRepository,
                 let missingPlayerCount = game.boardRegionCount - game.players.Length
                 if missingPlayerCount > 0
                 then
-                    let! virtualPlayerNames = lobbyRepository.getVirtualPlayerNames()
+                    let! virtualPlayerNames = repository.getVirtualPlayerNames()
                     let namesToUse = 
                         Enumerable.Except(
                             virtualPlayerNames, 
@@ -33,10 +32,10 @@ type GameStartService(lobbyRepository : LobbyRepository,
                         |> Seq.toList
 
                     for name in namesToUse do
-                        let! _ = lobbyRepository.addVirtualPlayerToGame(gameId, name)
+                        let! _ = repository.addVirtualPlayerToGame(gameId, name)
                         ()
                 else ()
-                let! updated = lobbyRepository.getGame(game.id)
+                let! updated = repository.getGame(game.id)
                 return updated.players
             }
             
@@ -84,7 +83,7 @@ type GameStartService(lobbyRepository : LobbyRepository,
             |> List.collect id
 
         task {
-            let! game = lobbyRepository.getGame gameId
+            let! game = repository.getGame gameId
             let! lobbyPlayers = createVirtualPlayers game
             let startingConditions = getStartingConditions(lobbyPlayers)
             let board = BoardUtility.getBoardMetadata(game.boardRegionCount)
@@ -111,7 +110,7 @@ type GameStartService(lobbyRepository : LobbyRepository,
                     currentState = gameState
                 }
 
-            let! _ = playRepository.startGame(updateRequest)
+            let! _ = repository.startGame(updateRequest)
 
             //Validate
 

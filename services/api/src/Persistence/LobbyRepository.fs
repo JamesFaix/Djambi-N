@@ -11,7 +11,7 @@ open Djambi.Api.Common.Enums
 open Djambi.Api.Persistence.LobbySqlMappings
 open Djambi.Api.Persistence.DapperExtensions
     
-type LobbyRepository(connectionString : string) =
+type LobbyRepository(connectionString) =
     inherit RepositoryBase(connectionString)
 
 //Users
@@ -116,18 +116,6 @@ type LobbyRepository(connectionString : string) =
             return ()
         }
 
-    member this.addVirtualPlayerToGame(gameId : int, name : string) : Unit Task =
-        let param = new DynamicParameters()
-        param.Add("GameId", gameId)
-        param.Add("Name", name)
-        let cmd = this.proc("Lobby.Insert_VirtualPlayer", param)
-
-        task {
-            use cn = this.getConnection()
-            let! _ = cn.ExecuteAsync(cmd)
-            return ()
-        }
-
     member this.removePlayerFromGame(gameId : int, userId : int) : Unit Task =
         let param = new DynamicParameters()
         param.Add("GameId", gameId)
@@ -138,13 +126,4 @@ type LobbyRepository(connectionString : string) =
             use cn = this.getConnection()
             let! _ = cn.ExecuteAsync(cmd)
             return ()
-        }
-
-    member this.getVirtualPlayerNames() : string list Task =
-        let param = new DynamicParameters()
-        let cmd = this.proc("Lobby.Get_VirtualPlayerNames", param)
-        task {            
-            use cn = this.getConnection()
-            let! names = cn.QueryAsync<string>(cmd)
-            return names |> Seq.toList
         }

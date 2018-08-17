@@ -14,42 +14,6 @@ open Djambi.Api.Http
 open Djambi.Api.Domain
 
 // ---------------------------------
-// Web app
-// ---------------------------------
-
-let webApp (controllers : ControllerRegistry) =
-    choose [
-        subRoute "/api"
-            (choose [  
-            
-                POST >=> route "/users" >=> controllers.lobby.createUser
-                GET >=> routef "/users/%i" controllers.lobby.getUser
-                DELETE >=> routef "/users/%i" controllers.lobby.deleteUser
-                PATCH >=> routef "/users/%i" controllers.lobby.updateUser
-
-                GET >=> route "/games/open" >=> controllers.lobby.getOpenGames
-                POST >=> route "/games" >=> controllers.lobby.createGame
-                DELETE >=> routef "/games/%i" controllers.lobby.deleteGame
-
-                POST >=> routef "/games/%i/users/%i" controllers.lobby.addPlayerToGame
-                DELETE >=> routef "/games/%i/users/%i" controllers.lobby.removePlayerFromGame
-
-                POST >=> routef "/games/%i/start-request" controllers.play.startGame
-
-                GET >=> routef "/boards/%i" controllers.play.getBoard
-                GET >=> routef "/boards/%i/cells/%i/paths" controllers.play.getCellPaths
-                
-                GET >=> routef "/games/%i/state" controllers.play.getGameState
-
-                POST >=> routef "/games/%i/current-turn/selections" controllers.play.makeSelection
-                POST >=> routef "/games/%i/current-turn/reset-request" controllers.play.resetTurn
-                POST >=> routef "/games/%i/current-turn/commit-request" controllers.play.commitTurn
-
-                POST >=> routef "/games/%id/messages" controllers.play.sendMessage
-            ])
-        setStatusCode 404 >=> text "Not Found" ]
-
-// ---------------------------------
 // Error handler
 // ---------------------------------
 
@@ -67,20 +31,25 @@ let configureCors (builder : CorsPolicyBuilder) =
            .AllowAnyHeader()
            |> ignore
 
-let configureApp (app : IApplicationBuilder) =
-    let env = app.ApplicationServices.GetService<IHostingEnvironment>()
-
-    let settings = app.ApplicationServices.GetService<IConfiguration>()
+let getRepositories(settings : IConfiguration) = 
     let cnStr = settings.GetConnectionString("Main")
     let lobbyRepository = new LobbyRepository(cnStr)
-    let playRepository = new PlayRepository(cnStr)
+    {
+        lobby = lobbyRepository
+        gameStart = new GameStartRepository(cnStr, lobbyRepository)
+        play = new PlayRepository(cnStr)
+    }
 
-    let gameStartService = new GameStartService(lobbyRepository, playRepository)
+let configureApp (app : IApplicationBuilder) =
+//    let env = app.ApplicationServices.GetService<IHostingEnvironment>()
+    let settings = app.ApplicationServices.GetService<IConfiguration>()
 
-    let controllers = 
+    let repositories = getRepositories(settings)
+    let gameStartService = new GameStartService(repositories.gameStart)
+    let controllers : ControllerRegistry = 
         {
-            lobby = new LobbyController(lobbyRepository)
-            play = new PlayController(gameStartService, playRepository)
+            lobby = new LobbyController(repositories.lobby)
+            play = new PlayController(gameStartService, repositories.play)
         }
 
     app.UseGiraffeErrorHandler(errorHandler)
@@ -88,7 +57,7 @@ let configureApp (app : IApplicationBuilder) =
     //| true  -> app.UseDeveloperExceptionPage()
     //| false -> app.UseGiraffeErrorHandler errorHandler)
         .UseCors(configureCors)
-        .UseGiraffe(webApp controllers)
+        .UseGiraffe(Routing.getRoutingTable controllers)
 
 let configureServices (services : IServiceCollection) =
     services.AddCors()    |> ignore

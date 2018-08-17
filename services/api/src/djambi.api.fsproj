@@ -37,6 +37,8 @@
     <Compile Include="Persistence\LobbySqlMappings.fs" />
     <Compile Include="Persistence\LobbyRepository.fs" />
     <Compile Include="Persistence\PlayRepository.fs" />
+    <Compile Include="Persistence\GameStartRepository.fs" />
+    <Compile Include="Persistence\RepositoryRegistry.fs" />
     <Compile Include="Domain\BoardExtensions.fs" />
     <Compile Include="Domain\BoardUtility.fs" />
     <Compile Include="Domain\GameStartService.fs" />
@@ -46,6 +48,7 @@
     <Compile Include="Http\PlayJsonModels.fs" />
     <Compile Include="Http\PlayController.fs" />
     <Compile Include="Http\ControllerRegistry.fs" />
+    <Compile Include="Http\Routing.fs" />
     <Content Include="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
