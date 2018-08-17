@@ -10,10 +10,10 @@ export class LobbyPlayer {
 }
 
 export enum GameStatus {
-    Open,
-    Started,
-    Complete,
-    Canceled
+    Open = "Open",
+    Started = "Started",
+    Complete = "Complete",
+    Canceled = "Canceled"
 }
 
 export class LobbyGame {

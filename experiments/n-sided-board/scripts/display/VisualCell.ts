@@ -35,4 +35,18 @@ export class VisualCell {
     toString() : string {
         return this.id.toString();
     }
+
+    centroid() : Point {
+        let sumX = 0;
+        let sumY = 0;
+        let n = this.polygons.length;
+
+        for (var i = 0; i < n; i++){
+            let c = this.polygons[i].centroid();
+            sumX += c.x;
+            sumY += c.y;
+        }
+
+        return new Point(sumX/n, sumY/n);
+    }
 }

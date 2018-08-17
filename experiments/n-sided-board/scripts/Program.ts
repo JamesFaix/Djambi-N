@@ -2,6 +2,7 @@ import {Renderer} from "./display/Renderer.js";
 import {ClickHandler} from "./display/ClickHandler.js";
 import {VisualBoardFactory} from "./display/VisualBoardFactory.js";
 import {LobbyClient} from "./apiClient/LobbyClient.js";
+import { Board } from "./apiClient/BoardModel.js";
 
 export class Program {
     static async main() : Promise<void> {
@@ -15,9 +16,10 @@ export class Program {
             canvas.onclick = function(e) {
                 ClickHandler.logClickOnBoard(e, board, canvas);
             };
-        }
 
-        let lobbyGame = await LobbyClient.createGame(3);
-        let currentState = await LobbyClient.startGame(lobbyGame.id);
+            let lobbyGame = await LobbyClient.createGame(i);
+            let currentState = await LobbyClient.startGame(lobbyGame.id);
+            Renderer.drawPieces(board, canvas, currentState);    
+        }
     }
 }

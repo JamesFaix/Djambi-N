@@ -21,9 +21,10 @@ export class Program {
                 canvas.onclick = function (e) {
                     ClickHandler.logClickOnBoard(e, board, canvas);
                 };
+                let lobbyGame = yield LobbyClient.createGame(i);
+                let currentState = yield LobbyClient.startGame(lobbyGame.id);
+                Renderer.drawPieces(board, canvas, currentState);
             }
-            let lobbyGame = yield LobbyClient.createGame(3);
-            let currenState = yield LobbyClient.startGame(lobbyGame.id);
         });
     }
 }

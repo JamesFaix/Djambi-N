@@ -6,12 +6,12 @@ export class Player {
 }
 
 export enum PieceType {
-    Chief,
-    Assassin,
-    Diplomat,
-    Reporter,
-    Thug,
-    Gravedigger
+    Chief = "Chief",
+    Assassin = "Assassin",
+    Diplomat = "Diplomat",
+    Reporter = "Reporter",
+    Thug = "Thug",
+    Gravedigger = "Gravedigger"
 }
 
 export class Piece {
