@@ -26,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="Common\Constants.fs" />
     <Compile Include="Common\Enums.fs" />
     <Compile Include="Common\Utilities.fs" />
     <Compile Include="DomainModels\LobbyModels.fs" />

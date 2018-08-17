@@ -13,48 +13,47 @@ open Djambi.Api.Domain.BoardModels
 open Djambi.Api.Domain.BoardsExtensions
 
 type GameStartService(repository : GameStartRepository) =
-        
-    member this.startGame(gameId : int) : GameState Task =
-        
-        let createVirtualPlayers(game : LobbyGameMetadata) : LobbyPlayer list Task =
-            task {
-                let missingPlayerCount = game.boardRegionCount - game.players.Length
-                if missingPlayerCount > 0
-                then
-                    let! virtualPlayerNames = repository.getVirtualPlayerNames()
-                    let namesToUse = 
-                        Enumerable.Except(
-                            virtualPlayerNames, 
-                            game.players |> Seq.map (fun p -> p.name), 
-                            StringComparer.OrdinalIgnoreCase) 
-                        |> Utilities.shuffle
-                        |> Seq.take missingPlayerCount
-                        |> Seq.toList
+                
+    member this.addVirtualPlayers(game : LobbyGameMetadata) : LobbyPlayer list Task =
+        task {
+            let missingPlayerCount = game.boardRegionCount - game.players.Length
+            if missingPlayerCount > 0
+            then
+                let! virtualPlayerNames = repository.getVirtualPlayerNames()
+                let namesToUse = 
+                    Enumerable.Except(
+                        virtualPlayerNames, 
+                        game.players |> Seq.map (fun p -> p.name), 
+                        StringComparer.OrdinalIgnoreCase) 
+                    |> Utilities.shuffle
+                    |> Seq.take missingPlayerCount
+                    |> Seq.toList
 
-                    for name in namesToUse do
-                        let! _ = repository.addVirtualPlayerToGame(gameId, name)
-                        ()
-                else ()
-                let! updated = repository.getGame(game.id)
-                return updated.players
-            }
-            
-        let getStartingConditions(players : LobbyPlayer list) : PlayerStartConditions list =
-            let colorIds = [0..7] |> Utilities.shuffle |> Seq.take players.Length
-            let regions = [0..(players.Length-1)] |> Utilities.shuffle
-            let turnOrder = players |> Utilities.shuffle
+                for name in namesToUse do
+                    let! _ = repository.addVirtualPlayerToGame(game.id, name)
+                    ()
+            else ()
+            let! updated = repository.getGame(game.id)
+            return updated.players
+        }
 
-            turnOrder 
-            |> Seq.zip3 colorIds regions
-            |> Seq.mapi (fun i (r, c, p) -> 
-                {
-                    playerId = p.id
-                    turnNumber = i
-                    region = r
-                    color = c
-                })
-            |> Seq.toList
+    member this.getStartingConditions(players : LobbyPlayer list) : PlayerStartConditions list =
+        let colorIds = [0..(Constants.maxRegions-1)] |> Utilities.shuffle |> Seq.take players.Length
+        let regions = [0..(players.Length-1)] |> Utilities.shuffle
+        let turnOrder = players |> Utilities.shuffle
+
+        turnOrder 
+        |> Seq.zip3 colorIds regions
+        |> Seq.mapi (fun i (c, r, p) -> 
+            {
+                playerId = p.id
+                turnNumber = i
+                region = r
+                color = c
+            })
+        |> Seq.toList
  
+    member this.createPieces(board : BoardMetadata, startingConditions : PlayerStartConditions list) : Piece list =
         let createPlayerPieces(board : BoardMetadata, player : PlayerStartConditions, startingId : int) : Piece list =            
             let getPiece(id : int, pieceType: PieceType, x : int, y : int) =
                 {
@@ -65,29 +64,30 @@ type GameStartService(repository : GameStartRepository) =
                     isAlive = true
                     cellId = board.cellAt({ x = x; y = y; region = player.region}).id
                 }
+            let n = Constants.regionSize - 1
             [
-                getPiece(startingId, Chief, 4,4)
-                getPiece(startingId+1, Reporter, 4,3)
-                getPiece(startingId+2, Assassin, 3,4)
-                getPiece(startingId+3, Diplomat, 3,3)
-                getPiece(startingId+4, Gravedigger, 2,2)
-                getPiece(startingId+5, Thug, 2,3)
-                getPiece(startingId+6, Thug, 2,4)
-                getPiece(startingId+7, Thug, 3,2)
-                getPiece(startingId+8, Thug, 4,2)
+                getPiece(startingId, Chief, n,n)
+                getPiece(startingId+1, Reporter, n,n-1)
+                getPiece(startingId+2, Assassin, n-1,n)
+                getPiece(startingId+3, Diplomat, n-1,n-1)
+                getPiece(startingId+4, Gravedigger, n-2,n-2)
+                getPiece(startingId+5, Thug, n-2,n-1)
+                getPiece(startingId+6, Thug, n-2,n)
+                getPiece(startingId+7, Thug, n-1,n-2)
+                getPiece(startingId+8, Thug, n,n-2)
             ]
+        
+        startingConditions
+        |> List.mapi (fun i cond -> createPlayerPieces(board, cond, i*Constants.piecesPerPlayer))
+        |> List.collect id
 
-        let createAndPlacePieces(board : BoardMetadata, startingConditions : PlayerStartConditions list) : Piece list =
-            startingConditions
-            |> List.mapi (fun i cond -> createPlayerPieces(board, cond, i*9))
-            |> List.collect id
-
+    member this.startGame(gameId : int) : GameState Task =
         task {
             let! game = repository.getGame gameId
-            let! lobbyPlayers = createVirtualPlayers game
-            let startingConditions = getStartingConditions(lobbyPlayers)
+            let! lobbyPlayers = this.addVirtualPlayers game
+            let startingConditions = this.getStartingConditions(lobbyPlayers)
             let board = BoardUtility.getBoardMetadata(game.boardRegionCount)
-            let pieces = createAndPlacePieces(board, startingConditions)
+            let pieces = this.createPieces(board, startingConditions)
             let gameState : GameState = 
                 {
                     players = lobbyPlayers 
