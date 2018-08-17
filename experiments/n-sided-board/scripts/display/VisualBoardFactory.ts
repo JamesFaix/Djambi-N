@@ -5,7 +5,7 @@ import {Line} from "../geometry/Line.js";
 import {Polygon} from "../geometry/Polygon.js";
 import {Transforms} from "../geometry/Transforms.js";
 import {VisualCell} from "./VisualCell.js";
-import {Location} from "../apiClient/model/Location.js";
+import {Location} from "../apiClient/BoardModel.js";
 import {BoardClient} from "../apiClient/BoardClient.js";
 import {Color} from "./Color.js";
 import {VisualBoard} from "./VisualBoard.js";

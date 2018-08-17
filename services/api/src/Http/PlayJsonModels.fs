@@ -3,6 +3,7 @@
 module PlayJsonModels =
 
     open Djambi.Api.Common.Enums
+    open System
 
     [<CLIMutable>]
     type LocationJsonModel =
@@ -28,8 +29,9 @@ module PlayJsonModels =
     type PlayerJsonModel =
         {
             id : int
-            userId : int option
+            userId : Nullable<int>
             name : string
+            isAlive : bool
         }
 
     type CellJsonModel =
@@ -38,15 +40,19 @@ module PlayJsonModels =
             locations : LocationJsonModel list
         }
 
-    type GameDetailsJsonModel =
+    type PieceJsonModel =
         {
             id : int
-            status : GameStatus
-            boardRegionCount : int
+            ``type`` : string
+            playerId : Nullable<int>
+            originalPlayerId : int
+            isAlive : bool
+            cellId : int
+        }
+
+    type GameStateJsonModel =
+        {
             players : PlayerJsonModel list 
-            pieces: int list
-            //TODO: Add details like player color, alive/dead state, etc
-            //TODO: Add pieces and their positions
-            //TODO: Add current turn selections
-            selectionOptions : CellJsonModel list
+            pieces : PieceJsonModel list
+            turnCycle : int list
         }

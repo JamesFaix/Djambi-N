@@ -6,6 +6,7 @@ open System.Threading.Tasks
 open Giraffe
 
 open Djambi.Api.Common
+open Djambi.Api.Common.Enums
 open Djambi.Api.Domain.LobbyModels
 open Djambi.Api.Persistence
 open PlayModels
@@ -100,7 +101,6 @@ type GameStartService(repository : GameStartRepository) =
                                 })
                     pieces = pieces
                     turnCycle = startingConditions |> List.map (fun cond -> cond.turnNumber)
-                    log = List.empty
                 }
                 
             let updateRequest : UpdateGameForStartRequest = 

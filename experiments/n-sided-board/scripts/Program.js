@@ -9,10 +9,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { Renderer } from "./display/Renderer.js";
 import { ClickHandler } from "./display/ClickHandler.js";
 import { VisualBoardFactory } from "./display/VisualBoardFactory.js";
+import { LobbyClient } from "./apiClient/LobbyClient.js";
 export class Program {
     static main() {
         return __awaiter(this, void 0, void 0, function* () {
-            for (var i = 3; i <= 8; i++) {
+            for (var i = 3; i <= 3; i++) {
                 const cellSize = Math.floor(160 * Math.pow(Math.E, (-0.2 * i)));
                 const canvas = document.getElementById("canvas" + i);
                 const board = yield VisualBoardFactory.createBoard(i, cellSize);
@@ -21,6 +22,7 @@ export class Program {
                     ClickHandler.logClickOnBoard(e, board, canvas);
                 };
             }
+            yield LobbyClient.createGame(3);
         });
     }
 }

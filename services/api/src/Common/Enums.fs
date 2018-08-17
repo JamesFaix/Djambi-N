@@ -7,5 +7,16 @@ module Enums =
         | Started
         | Complete
         | Cancelled
+        
+    type TurnStatus =
+        | AwaitingSelection
+        | AwaitingConfirmation
 
-
+    type PieceType =
+        | Chief
+        | Thug
+        | Reporter
+        | Assassin
+        | Diplomat
+        | Gravedigger
+        //Corpse is not a piecetype; Piece.isAlive = false makes a Corpse

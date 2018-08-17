@@ -9,7 +9,7 @@ open Djambi.Api.Http.PlayJsonModels
 open Djambi.Api.Persistence
 open Djambi.Api.Domain
 open Djambi.Api.Domain.BoardsExtensions
-open Djambi.Api.Common.Enums
+open Djambi.Api.Http.PlayJsonMappings
 
 type PlayController(gameStartService : GameStartService, repository : PlayRepository) =
 
@@ -17,13 +17,8 @@ type PlayController(gameStartService : GameStartService, repository : PlayReposi
         fun (next : HttpFunc) (ctx : HttpContext) ->
             task {
                 let! gameState = gameStartService.startGame(gameId)
-                
-                //Map to JsonModel
-
-                let placeHolderResponse = {
-                    text = sprintf "Start game %i not yet implemented" gameId
-                }
-                return! json placeHolderResponse next ctx
+                let response = gameState |> mapGameStateToJson
+                return! json response next ctx
             }
 //Board
     member this.getBoard(regionCount : int) =
@@ -48,19 +43,9 @@ type PlayController(gameStartService : GameStartService, repository : PlayReposi
     member this.getGameState(gameId : int) =
         fun (next : HttpFunc) (ctx : HttpContext) ->
             task {
-                //let response : GameDetailsJsonModel = {
-                //    id = gameId
-                //    status = GameStatus.Open
-                //    boardRegionCount = 3
-                //    players = List.empty
-                //    pieces = List.empty
-                //    selectionOptions = List.empty
-                //}
-
-                let placeHolderResponse = {
-                    text = sprintf "Get game state %i not yet implemented" gameId
-                }
-                return! json placeHolderResponse next ctx
+                let! gameState = repository.getGameState(gameId)
+                let response = gameState |> mapGameStateToJson
+                return! json response next ctx
             }
 
     member this.makeSelection(gameId : int) =
@@ -86,14 +71,14 @@ type PlayController(gameStartService : GameStartService, repository : PlayReposi
     member this.resetTurn(gameId : int) =
         fun (next : HttpFunc) (ctx : HttpContext) ->
             task {
-                let response : GameDetailsJsonModel = {
-                    id = gameId
-                    status = GameStatus.Open
-                    boardRegionCount = 3
-                    players = List.empty
-                    pieces = List.empty
-                    selectionOptions = List.empty
-                }
+                //let response : GameDetailsJsonModel = {
+                //    id = gameId
+                //    status = GameStatus.Open
+                //    boardRegionCount = 3
+                //    players = List.empty
+                //    pieces = List.empty
+                //    selectionOptions = List.empty
+                //}
 
                 let placeHolderResponse = {
                     text = sprintf "Reset turn %i not yet implemented" gameId
@@ -104,14 +89,14 @@ type PlayController(gameStartService : GameStartService, repository : PlayReposi
     member this.commitTurn(gameId : int) =
         fun (next : HttpFunc) (ctx : HttpContext) ->
             task {
-                let response : GameDetailsJsonModel = {
-                    id = gameId
-                    status = GameStatus.Open
-                    boardRegionCount = 3
-                    players = List.empty
-                    pieces = List.empty
-                    selectionOptions = List.empty
-                }
+                //let response : GameDetailsJsonModel = {
+                //    id = gameId
+                //    status = GameStatus.Open
+                //    boardRegionCount = 3
+                //    players = List.empty
+                //    pieces = List.empty
+                //    selectionOptions = List.empty
+                //}
 
                 let placeHolderResponse = {
                     text = sprintf "Commit turn %i not yet implemented" gameId

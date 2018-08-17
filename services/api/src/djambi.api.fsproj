@@ -47,6 +47,7 @@
     <Compile Include="Http\LobbyJsonMappings.fs" />
     <Compile Include="Http\LobbyController.fs" />
     <Compile Include="Http\PlayJsonModels.fs" />
+    <Compile Include="Http\PlayJsonMappings.fs" />
     <Compile Include="Http\PlayController.fs" />
     <Compile Include="Http\ControllerRegistry.fs" />
     <Compile Include="Http\Routing.fs" />

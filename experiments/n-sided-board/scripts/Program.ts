@@ -1,10 +1,11 @@
 import {Renderer} from "./display/Renderer.js";
 import {ClickHandler} from "./display/ClickHandler.js";
 import {VisualBoardFactory} from "./display/VisualBoardFactory.js";
+import {LobbyClient} from "./apiClient/LobbyClient.js";
 
 export class Program {
     static async main() : Promise<void> {
-        for (var i = 3; i <= 8; i++) {
+        for (var i = 3; i <= 3; i++) {
             const cellSize = Math.floor(160 * Math.pow(Math.E, (-0.2 * i)));
     
             const canvas = <HTMLCanvasElement>document.getElementById("canvas" + i);
@@ -15,5 +16,7 @@ export class Program {
                 ClickHandler.logClickOnBoard(e, board, canvas);
             };
         }
+
+        await LobbyClient.createGame(3);
     }
 }

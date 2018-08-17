@@ -29,7 +29,7 @@ module LobbyJsonMappings =
     let mapLobbyGameResponse(game : LobbyGameMetadata) : LobbyGameJsonModel =
         {
             id = game.id
-            status = game.status
+            status = game.status.ToString()
             boardRegionCount = game.boardRegionCount
             description = if game.description.IsSome 
                           then game.description.Value 

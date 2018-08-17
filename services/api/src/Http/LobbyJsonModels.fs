@@ -45,7 +45,7 @@ module LobbyJsonModels =
     type LobbyGameJsonModel = 
         {
             id : int
-            status : GameStatus
+            status : string
             boardRegionCount : int
             description : string
             players : PlayerJsonModel list

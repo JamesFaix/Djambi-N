@@ -12,15 +12,6 @@ module PlayModels =
             isAlive : bool
         }
 
-    type PieceType =
-        | Chief
-        | Thug
-        | Reporter
-        | Assassin
-        | Diplomat
-        | Gravedigger
-        //Corpse is not a piecetype; Piece.isAlive = false makes a Corpse
-
     type Piece = 
         {
             id : int
@@ -36,7 +27,6 @@ module PlayModels =
             players : Player list
             pieces : Piece list
             turnCycle : int list
-            log : string list
         }
 
     type Selection = 
@@ -45,10 +35,6 @@ module PlayModels =
         | MoveWithTarget of cellId : int * pieceId : int
         | Target of pieceId : int
         | Drop of cellId : int
-
-    type TurnStatus =
-        | AwaitingSelection
-        | AwaitingConfirmation
 
     type TurnState =
         {
