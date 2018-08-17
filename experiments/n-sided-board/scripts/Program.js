@@ -22,7 +22,8 @@ export class Program {
                     ClickHandler.logClickOnBoard(e, board, canvas);
                 };
             }
-            yield LobbyClient.createGame(3);
+            let lobbyGame = yield LobbyClient.createGame(3);
+            let currenState = yield LobbyClient.startGame(lobbyGame.id);
         });
     }
 }

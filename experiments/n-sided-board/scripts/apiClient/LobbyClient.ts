@@ -1,6 +1,7 @@
 /// <reference path ="../../node_modules/definitely-typed-jquery/jquery.d.ts"/> 
 
 import {GameStatus, LobbyGame, LobbyPlayer, User} from "./LobbyModel.js";
+import {GameState} from "./PlayModel.js";
 
 export class LobbyClient {
     private static readonly baseUrl : string = "http://localhost:54835/api";
@@ -17,6 +18,24 @@ export class LobbyClient {
             data: {
                 boardRegionCount : regionCount
             },
+            dataType: "json",
+            success: (data, status, xhr) => {
+                result = data;
+            },
+            error: () => {
+
+            }
+        });
+
+        return result;
+    }
+
+    static async startGame(gameId : number) : Promise<GameState> {
+        let result : GameState;
+
+        await $.ajax({
+            type: "POST",
+            url: this.baseUrl + "/games/" + gameId + "/start-request" ,
             dataType: "json",
             success: (data, status, xhr) => {
                 result = data;

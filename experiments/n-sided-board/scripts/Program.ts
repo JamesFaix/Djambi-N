@@ -17,6 +17,7 @@ export class Program {
             };
         }
 
-        await LobbyClient.createGame(3);
+        let lobbyGame = await LobbyClient.createGame(3);
+        let currentState = await LobbyClient.startGame(lobbyGame.id);
     }
 }
