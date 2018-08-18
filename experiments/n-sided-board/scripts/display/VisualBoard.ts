@@ -9,7 +9,11 @@ export class VisualBoard {
     ) {
     }
 
-    cellAtLocation(point: Point) : VisualCell {
+    cellAtPoint(point: Point) : VisualCell {
         return this.cells.find(vc => vc.contains(point));
+    }
+
+    cellById(id : number) : VisualCell {
+        return this.cells.find(vc => vc.id === id);
     }
 }

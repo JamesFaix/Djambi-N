@@ -13,9 +13,6 @@ export class Program {
             const board = await VisualBoardFactory.createBoard(i, cellSize);
             
             Renderer.drawBoard(board, canvas);
-            canvas.onclick = function(e) {
-                ClickHandler.logClickOnBoard(e, board, canvas);
-            };
 
             let lobbyGame = await LobbyClient.createGame(i);
             let startResponse = await LobbyClient.startGame(lobbyGame.id);

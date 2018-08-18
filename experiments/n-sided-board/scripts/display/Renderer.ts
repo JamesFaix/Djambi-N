@@ -4,6 +4,7 @@ import {CellState} from "./CellState.js";
 import {Color} from "./Color.js";
 import { Piece, PieceType, GameState, GameStartResponse } from "../apiClient/PlayModel.js";
 import { Point } from "../geometry/Point.js";
+import {ClickHandler} from "./ClickHandler.js";
 
 export class Renderer {
     constructor(){
@@ -50,6 +51,9 @@ export class Renderer {
 
     static drawBoard(board: VisualBoard, canvas : HTMLCanvasElement) : void {
         board.cells.forEach(c => Renderer.drawCell(c, canvas));
+        canvas.onclick = function(e) {
+            ClickHandler.clickOnBoard(e, board, canvas);
+        };
     }
 
     static drawPieces(board : VisualBoard, canvas : HTMLCanvasElement, startResponse : GameStartResponse) : void {
@@ -98,6 +102,9 @@ export class Renderer {
                 playerColorsHighlightStyles.get(piece.playerId));
 
             div.innerHTML = this.getPieceEmoji(piece);
+            div.onclick = function(e) { 
+                ClickHandler.clickOnPiece(piece, board, canvas); 
+            };
 
             boardDiv.appendChild(div);
         }

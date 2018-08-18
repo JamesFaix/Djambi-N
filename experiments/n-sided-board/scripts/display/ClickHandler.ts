@@ -4,10 +4,11 @@ import {Renderer} from "./Renderer.js";
 import {CellState} from "./CellState.js";
 import { VisualCell } from "./VisualCell.js";
 import {BoardClient} from "../apiClient/BoardClient.js";
+import { Piece } from "../apiClient/PlayModel.js";
 
 export class ClickHandler {
 
-    static async logClickOnBoard(
+    static async clickOnBoard(
         e : MouseEvent, 
         board : VisualBoard, 
         canvas : HTMLCanvasElement) {
@@ -17,11 +18,25 @@ export class ClickHandler {
             e.pageY - canvas.offsetTop
         );
     
-        const cell = board.cellAtLocation(point);
+        const cell = board.cellAtPoint(point);
     
-        if (cell) {
-            console.log("Clicked on Board" + board.regionCount + " " + point.toString() + " " + cell.toString());
-        }
+        // if (cell) {
+        //     console.log("Clicked on Board" + board.regionCount + " " + point.toString() + " " + cell.toString());
+        // }
+    
+        await ClickHandler.highlightPaths(canvas, board, cell);
+    }
+
+    static async clickOnPiece(
+        piece : Piece,
+        board : VisualBoard, 
+        canvas : HTMLCanvasElement) {    
+
+        const cell = board.cellById(piece.cellId);
+    
+        // if (cell) {
+        //     console.log("Clicked on Board" + board.regionCount + " " + point.toString() + " " + cell.toString());
+        // }
     
         await ClickHandler.highlightPaths(canvas, board, cell);
     }
