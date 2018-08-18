@@ -45,11 +45,14 @@ let configureApp (app : IApplicationBuilder) =
     let settings = app.ApplicationServices.GetService<IConfiguration>()
 
     let repositories = getRepositories(settings)
+
     let gameStartService = new GameStartService(repositories.gameStart)
+    let playService = new PlayService(repositories.play)
+
     let controllers : ControllerRegistry = 
         {
             lobby = new LobbyController(repositories.lobby)
-            play = new PlayController(gameStartService, repositories.play)
+            play = new PlayController(gameStartService, playService)
         }
 
     app.UseGiraffeErrorHandler(errorHandler)

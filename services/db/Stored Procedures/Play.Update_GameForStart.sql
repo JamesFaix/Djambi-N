@@ -3,10 +3,11 @@ GO
 SET ANSI_NULLS ON
 GO
 
+
 CREATE PROCEDURE [Play].[Update_GameForStart] 
 	@GameId INT,
 	@StartingConditionsJson NVARCHAR(MAX),
-	@CurrentStateJson NVARCHAR(MAX)
+	@CurrentGameStateJson NVARCHAR(MAX)
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -17,7 +18,7 @@ BEGIN
 	UPDATE Games
 	SET GameStatusId = 2, --Started
 		StartingConditionsJson = @StartingConditionsJson,
-		CurrentStateJson = @CurrentStateJson
+		CurrentGameStateJson = @CurrentGameStateJson
 	WHERE GameId = @GameId
 END
 GO

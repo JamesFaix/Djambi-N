@@ -1,0 +1,15 @@
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_NULLS ON
+GO
+
+
+CREATE PROCEDURE [Play].[Get_CurrentGameState]
+	@GameId INT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT CurrentGameStateJson FROM Games WHERE GameId = @GameId
+END
+GO

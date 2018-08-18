@@ -44,7 +44,7 @@ type GameStartRepository(connectionString, lobbyRepository : LobbyRepository) =
         let param = new DynamicParameters()
         param.Add("GameId", request.id)
         param.Add("StartingConditionsJson", startingConditionsJson)
-        param.Add("CurrentStateJson", currentStateJson)
+        param.Add("CurrentGameStateJson", currentStateJson)
         let cmd = this.proc("Play.Update_GameForStart", param)
 
         task {

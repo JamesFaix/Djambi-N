@@ -71,3 +71,9 @@ module PlayJsonModels =
             currentState : GameStateJsonModel
             startingConditions : PlayerStartConditionsJsonModel list
         }
+
+    
+    type SelectableCellsResponseJsonModel =
+        {
+            cellIds : int list
+        }

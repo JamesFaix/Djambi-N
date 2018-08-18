@@ -6,12 +6,12 @@ open Giraffe
 
 open Djambi.Api.Http.LobbyJsonModels
 open Djambi.Api.Http.PlayJsonModels
-open Djambi.Api.Persistence
 open Djambi.Api.Domain
 open Djambi.Api.Domain.BoardsExtensions
 open Djambi.Api.Http.PlayJsonMappings
 
-type PlayController(gameStartService : GameStartService, repository : PlayRepository) =
+type PlayController(gameStartService : GameStartService, 
+                    playService : PlayService) =
 
     member this.startGame(gameId : int) =
         fun (next : HttpFunc) (ctx : HttpContext) ->
@@ -43,8 +43,19 @@ type PlayController(gameStartService : GameStartService, repository : PlayReposi
     member this.getGameState(gameId : int) =
         fun (next : HttpFunc) (ctx : HttpContext) ->
             task {
-                let! gameState = repository.getGameState(gameId)
+                let! gameState = playService.getGameState(gameId)
                 let response = gameState |> mapGameStateToJson
+                return! json response next ctx
+            }
+
+    member this.getSelectableCells(gameId : int, playerId : int) =
+        fun (next : HttpFunc) (ctx : HttpContext) ->
+            task {
+                let! cellIds = playService.getSelectableCells(gameId, playerId)
+                let response : SelectableCellsResponseJsonModel = 
+                    { 
+                        cellIds = cellIds 
+                    }
                 return! json response next ctx
             }
 

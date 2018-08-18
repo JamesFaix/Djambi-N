@@ -43,6 +43,7 @@
     <Compile Include="Domain\BoardExtensions.fs" />
     <Compile Include="Domain\BoardUtility.fs" />
     <Compile Include="Domain\GameStartService.fs" />
+    <Compile Include="Domain\PlayService.fs" />
     <Compile Include="Http\LobbyJsonModels.fs" />
     <Compile Include="Http\LobbyJsonMappings.fs" />
     <Compile Include="Http\LobbyController.fs" />
