@@ -28,3 +28,15 @@ export class GameState {
     readonly pieces : Array<Piece>
     readonly turnCycle : Array<number>
 }
+
+export class PlayerStartConditions {
+    readonly playerId : number
+    readonly color : number
+    readonly region : number
+    readonly turnNumber : number
+}
+
+export class GameStartResponse {
+    readonly currentState : GameState
+    readonly startingConditions : Array<PlayerStartConditions>
+}

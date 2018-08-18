@@ -18,8 +18,8 @@ export class Program {
             };
 
             let lobbyGame = await LobbyClient.createGame(i);
-            let currentState = await LobbyClient.startGame(lobbyGame.id);
-            Renderer.drawPieces(board, canvas, currentState);    
+            let startResponse = await LobbyClient.startGame(lobbyGame.id);
+            Renderer.drawPieces(board, canvas, startResponse);    
         }
     }
 }

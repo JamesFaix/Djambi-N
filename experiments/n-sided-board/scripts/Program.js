@@ -13,7 +13,7 @@ import { LobbyClient } from "./apiClient/LobbyClient.js";
 export class Program {
     static main() {
         return __awaiter(this, void 0, void 0, function* () {
-            for (var i = 3; i <= 3; i++) {
+            for (var i = 3; i <= 8; i++) {
                 const cellSize = Math.floor(160 * Math.pow(Math.E, (-0.2 * i)));
                 const canvas = document.getElementById("canvas" + i);
                 const board = yield VisualBoardFactory.createBoard(i, cellSize);
@@ -22,8 +22,8 @@ export class Program {
                     ClickHandler.logClickOnBoard(e, board, canvas);
                 };
                 let lobbyGame = yield LobbyClient.createGame(i);
-                let currentState = yield LobbyClient.startGame(lobbyGame.id);
-                Renderer.drawPieces(board, canvas, currentState);
+                let startResponse = yield LobbyClient.startGame(lobbyGame.id);
+                Renderer.drawPieces(board, canvas, startResponse);
             }
         });
     }

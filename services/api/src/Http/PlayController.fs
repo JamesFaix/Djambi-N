@@ -16,9 +16,9 @@ type PlayController(gameStartService : GameStartService, repository : PlayReposi
     member this.startGame(gameId : int) =
         fun (next : HttpFunc) (ctx : HttpContext) ->
             task {
-                let! gameState = gameStartService.startGame(gameId)
-                let response = gameState |> mapGameStateToJson
-                return! json response next ctx
+                let! response = gameStartService.startGame(gameId)
+                let responseJson = response |> mapGameStartResponseToJson
+                return! json responseJson next ctx
             }
 //Board
     member this.getBoard(regionCount : int) =

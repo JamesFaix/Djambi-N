@@ -4,6 +4,7 @@ module PlayJsonModels =
 
     open Djambi.Api.Common.Enums
     open System
+    open Djambi.Api.Domain.PlayModels
 
     [<CLIMutable>]
     type LocationJsonModel =
@@ -55,4 +56,18 @@ module PlayJsonModels =
             players : PlayerJsonModel list 
             pieces : PieceJsonModel list
             turnCycle : int list
+        }
+
+    type PlayerStartConditionsJsonModel =
+        {
+            playerId : int
+            turnNumber : int
+            region : int
+            color : int
+        }
+
+    type GameStartResponseJsonModel =
+        {
+            currentState : GameStateJsonModel
+            startingConditions : PlayerStartConditionsJsonModel list
         }

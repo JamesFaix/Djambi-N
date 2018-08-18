@@ -82,7 +82,7 @@ type GameStartService(repository : GameStartRepository) =
         |> List.mapi (fun i cond -> createPlayerPieces(board, cond, i*Constants.piecesPerPlayer))
         |> List.collect id
 
-    member this.startGame(gameId : int) : GameState Task =
+    member this.startGame(gameId : int) : GameStartResponse Task =
         task {
             let! game = repository.getGame gameId
             let! lobbyPlayers = this.addVirtualPlayers game
@@ -114,6 +114,10 @@ type GameStartService(repository : GameStartRepository) =
 
             //Validate
 
-            return gameState
+            return 
+                {
+                    currentState = gameState
+                    startingConditions = startingConditions
+                }
         }
 

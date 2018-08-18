@@ -1,7 +1,7 @@
 /// <reference path ="../../node_modules/definitely-typed-jquery/jquery.d.ts"/> 
 
 import {GameStatus, LobbyGame, LobbyPlayer, User} from "./LobbyModel.js";
-import {GameState} from "./PlayModel.js";
+import {GameState, GameStartResponse} from "./PlayModel.js";
 
 export class LobbyClient {
     private static readonly baseUrl : string = "http://localhost:54835/api";
@@ -30,8 +30,8 @@ export class LobbyClient {
         return result;
     }
 
-    static async startGame(gameId : number) : Promise<GameState> {
-        let result : GameState;
+    static async startGame(gameId : number) : Promise<GameStartResponse> {
+        let result : GameStartResponse;
 
         await $.ajax({
             type: "POST",

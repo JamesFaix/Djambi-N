@@ -35,3 +35,16 @@ module PlayJsonMappings =
             turnCycle = gameState.turnCycle
         }
 
+    let mapPlayerStartConditionsToJson(conditions : PlayerStartConditions) : PlayerStartConditionsJsonModel = 
+        {
+            playerId = conditions.playerId
+            color = conditions.color
+            region = conditions.region
+            turnNumber = conditions.turnNumber
+        }
+
+    let mapGameStartResponseToJson(response : GameStartResponse) : GameStartResponseJsonModel = 
+        {
+            currentState = response.currentState |> mapGameStateToJson
+            startingConditions = response.startingConditions |> List.map mapPlayerStartConditionsToJson
+        }

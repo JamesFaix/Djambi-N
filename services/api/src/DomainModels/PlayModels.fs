@@ -56,3 +56,9 @@ module PlayModels =
             startingConditions : PlayerStartConditions list
             currentState : GameState
         }
+
+    type GameStartResponse = 
+        {
+            startingConditions : PlayerStartConditions list
+            currentState : GameState
+        }
