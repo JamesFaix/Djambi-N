@@ -1,3 +1,7 @@
+INSERT INTO [dbo].[VirtualPlayerNames] ([Name]) VALUES (N'Derp')
+INSERT INTO [dbo].[VirtualPlayerNames] ([Name]) VALUES (N'Dwyde Schrude')
+INSERT INTO [dbo].[VirtualPlayerNames] ([Name]) VALUES (N'Hambrosia')
+INSERT INTO [dbo].[VirtualPlayerNames] ([Name]) VALUES (N'Kerfuffle')
 INSERT INTO [dbo].[VirtualPlayerNames] ([Name]) VALUES (N'Oozlefinch')
 INSERT INTO [dbo].[VirtualPlayerNames] ([Name]) VALUES (N'Quinotaur')
 INSERT INTO [dbo].[VirtualPlayerNames] ([Name]) VALUES (N'Squonk')

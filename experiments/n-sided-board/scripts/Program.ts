@@ -6,7 +6,7 @@ import { Board } from "./apiClient/BoardModel.js";
 
 export class Program {
     static async main() : Promise<void> {
-        for (var i = 3; i <= 3; i++) {
+        for (var i = 3; i <= 8; i++) {
             const cellSize = Math.floor(160 * Math.pow(Math.E, (-0.2 * i)));
     
             const canvas = <HTMLCanvasElement>document.getElementById("canvas" + i);
