@@ -8,24 +8,6 @@ export class PlayClient {
 
     }
 
-    static async getSelectableCellIds(gameId : number) : Promise<Array<number>> {
-        let result: Array<number>;
-        
-        await $.ajax({
-            type: "GET",
-            url: this.baseUrl + "/games/" + gameId + "/current-turn/selection-options",
-            dataType: "json",
-            success: (data, status, xhr) => {
-                result = data.cellIds;
-            },
-            error: () => {
-
-            }
-        });
-
-        return result;
-    }
-
     static async selectCell(gameId : number, cellId : number) : Promise<TurnState> {
         let result : TurnState;
 

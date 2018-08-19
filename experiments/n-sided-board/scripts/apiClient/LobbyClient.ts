@@ -1,7 +1,7 @@
 /// <reference path ="../../node_modules/definitely-typed-jquery/jquery.d.ts"/> 
 
-import {GameStatus, LobbyGame, LobbyPlayer, User} from "./LobbyModel.js";
-import {GameState, GameStartResponse} from "./PlayModel.js";
+import { LobbyGame } from "./LobbyModel.js";
+import { GameStartResponse} from "./PlayModel.js";
 
 export class LobbyClient {
     private static readonly baseUrl : string = "http://localhost:54835/api";
@@ -26,7 +26,6 @@ export class LobbyClient {
 
             }
         });
-
         return result;
     }
 
