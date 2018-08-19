@@ -7,19 +7,23 @@ open Giraffe
 open Newtonsoft.Json
 
 open Djambi.Api.Domain.PlayModels
+open Djambi.Api.Persistence.PlaySqlModels
+open Djambi.Api.Persistence
+
+open Djambi.Api.Persistence.PlaySqlModelMappings
 
 type PlayRepository(connectionString) =
     inherit RepositoryBase(connectionString)
     
-    member this.getCurrentGameState(gameId : int) : GameState Task =
+    member this.getGame(gameId : int) : Game Task =
         let param = new DynamicParameters()
         param.Add("GameId", gameId)
-        let cmd = this.proc("Play.Get_CurrentGameState", param)
+        let cmd = this.proc("Play.Get_Game", param)
 
         task {            
             use cn = this.getConnection()
-            let! json = cn.QuerySingleAsync<string>(cmd)
-            return JsonConvert.DeserializeObject<GameState>(json)
+            let! sqlModel = cn.QuerySingleAsync<GameSqlModel>(cmd)
+            return sqlModel |> mapGameSqlModelResponse
         }
 
     member this.updateCurrentGameState(gameId : int, state : GameState) : Unit Task =
@@ -33,17 +37,6 @@ type PlayRepository(connectionString) =
             use cn = this.getConnection()
             let! _ = cn.ExecuteAsync(cmd)
             return ()
-        }
-
-    member this.getCurrentTurnState(gameId : int) : TurnState Task =
-        let param = new DynamicParameters()
-        param.Add("GameId", gameId)
-        let cmd = this.proc("Play.Get_CurrentTurnState", param)
-
-        task {            
-            use cn = this.getConnection()
-            let! json = cn.QuerySingleAsync<string>(cmd)
-            return JsonConvert.DeserializeObject<TurnState>(json)
         }
 
     member this.updateCurrentTurnState(gameId: int, state : TurnState) : Unit Task =

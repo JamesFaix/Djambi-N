@@ -143,7 +143,11 @@ module BoardsExtensions =
             //Otherwise, just next in that region
             else Some next
 
-        member this.neighbors(cell : Cell) : Cell list =
+        member this.neighborsFromCellId(cellId : int) : Cell list =
+            let cell = this.cells() |> Seq.find (fun c -> c.id = cellId)
+            this.neighborsFromCell cell
+
+        member this.neighborsFromCell(cell : Cell) : Cell list =
             if cell.isCenter() 
             then [0..(this.maxRegion())] 
                  |> Seq.collect (fun r -> 
@@ -160,10 +164,7 @@ module BoardsExtensions =
             |> Seq.map this.cellAt
             |> Seq.distinct
             |> Seq.toList
-
-        member this.paths(location : Location) : Cell list list =
-            this.paths(this.cellAt(location))
-            
+                        
         member this.adjustDirectionForRegionBoundary
             (oldLocation : Location, newLocation : Location, 
              oldDirection : Directions) : Directions option =
@@ -222,7 +223,11 @@ module BoardsExtensions =
                         (Directions.UpRight, newLocation)
                     | _ -> failwith ("Cannot pass through center by coming from " + oldDir.ToString())
                 
-        member this.paths(cell : Cell) : Cell list list =
+        member this.pathsFromCellId(cellId : int) : Cell list list = 
+            let cell = this.cells() |> Seq.find (fun c -> c.id = cellId)
+            this.pathsFromCell cell
+
+        member this.pathsFromCell(cell : Cell) : Cell list list =
             if cell.isCenter()
             then cell.locations
                  |> List.collect (fun l -> 

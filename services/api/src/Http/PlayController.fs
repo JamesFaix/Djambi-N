@@ -33,7 +33,7 @@ type PlayController(gameStartService : GameStartService,
             task {
                 let board = BoardUtility.getBoardMetadata(regionCount)
                 let cell = board.cells() |> Seq.find(fun c -> c.id = cellId)
-                let paths = board.paths(cell)
+                let paths = board.pathsFromCell(cell)
                             |> List.map (fun path -> 
                                 path |> List.map (fun c -> c.id))
                 return! json paths next ctx

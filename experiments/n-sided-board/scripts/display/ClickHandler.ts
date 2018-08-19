@@ -19,11 +19,6 @@ export class ClickHandler {
         );
     
         const cell = board.cellAtPoint(point);
-    
-        // if (cell) {
-        //     console.log("Clicked on Board" + board.regionCount + " " + point.toString() + " " + cell.toString());
-        // }
-    
         await ClickHandler.highlightPaths(canvas, board, cell);
     }
 
@@ -32,12 +27,7 @@ export class ClickHandler {
         board : VisualBoard, 
         canvas : HTMLCanvasElement) {    
 
-        const cell = board.cellById(piece.cellId);
-    
-        // if (cell) {
-        //     console.log("Clicked on Board" + board.regionCount + " " + point.toString() + " " + cell.toString());
-        // }
-    
+        const cell = board.cellById(piece.cellId);    
         await ClickHandler.highlightPaths(canvas, board, cell);
     }
         

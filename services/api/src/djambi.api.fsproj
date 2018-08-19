@@ -37,12 +37,15 @@
     <Compile Include="Persistence\LobbySqlModels.fs" />
     <Compile Include="Persistence\LobbySqlMappings.fs" />
     <Compile Include="Persistence\LobbyRepository.fs" />
+    <Compile Include="Persistence\PlaySqlModels.fs" />
+    <Compile Include="Persistence\PlaySqlModelMappings.fs" />
     <Compile Include="Persistence\PlayRepository.fs" />
     <Compile Include="Persistence\GameStartRepository.fs" />
     <Compile Include="Persistence\RepositoryRegistry.fs" />
     <Compile Include="Domain\BoardExtensions.fs" />
     <Compile Include="Domain\BoardUtility.fs" />
     <Compile Include="Domain\GameStartService.fs" />
+    <Compile Include="Domain\PlayModelExtensions.fs" />
     <Compile Include="Domain\PlayService.fs" />
     <Compile Include="Http\LobbyJsonModels.fs" />
     <Compile Include="Http\LobbyJsonMappings.fs" />

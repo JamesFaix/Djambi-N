@@ -62,3 +62,10 @@ module PlayModels =
             startingConditions : PlayerStartConditions list
             currentState : GameState
         }
+
+    type Game =
+        {
+            boardRegionCount : int
+            currentGameState : GameState
+            currentTurnState : TurnState
+        }
