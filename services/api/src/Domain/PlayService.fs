@@ -67,14 +67,14 @@ type PlayService(repository : PlayRepository) =
         | Thug ->  paths 
                    |> Seq.collect 
                         (fun path -> path 
-                                     |> Seq.mapi (fun i cell -> (i, cell))
+                                     |> Seq.take (min 2 path.Length)
                                      |> Seq.takeWhile 
-                                         (fun (i, cell) -> 
-                                         match (i, pieceIndex.TryFind cell.id) with
-                                         | _, None -> true
-                                         | i, Some occupant -> i < 2 && occupant.isAlive && occupant.playerId <> piece.playerId))
-                   |> Seq.filter (fun (i, cell) -> cell.isCenter() |> not)
-                   |> Seq.map (fun (i, cell) -> cell.id)
+                                         (fun cell -> 
+                                         match pieceIndex.TryFind cell.id with
+                                         | None -> true
+                                         | Some occupant -> occupant.isAlive && occupant.playerId <> piece.playerId))
+                   |> Seq.filter (fun cell -> cell.isCenter() |> not)
+                   |> Seq.map (fun cell -> cell.id)
                    |> Seq.toList
         | Assassin -> paths 
                        |> Seq.collect 
