@@ -48,10 +48,10 @@ type PlayController(gameStartService : GameStartService,
                 return! json response next ctx
             }
 
-    member this.getSelectableCells(gameId : int, playerId : int) =
+    member this.getSelectableCells(gameId : int) =
         fun (next : HttpFunc) (ctx : HttpContext) ->
             task {
-                let! cellIds = playService.getSelectableCells(gameId, playerId)
+                let! cellIds = playService.getSelectableCells(gameId)
                 let response : SelectableCellsResponseJsonModel = 
                     { 
                         cellIds = cellIds 

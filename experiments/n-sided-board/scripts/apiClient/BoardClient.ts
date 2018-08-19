@@ -13,7 +13,7 @@ export class BoardClient {
 
         await $.ajax({
             type: "GET",
-            url: BoardClient.baseUrl + "/boards/" + regionCount,
+            url: this.baseUrl + "/boards/" + regionCount,
             dataType: "json",
             success: (data, status, xhr) => {
                 result = data;
@@ -31,7 +31,7 @@ export class BoardClient {
         
         await $.ajax({
             type: "GET",
-            url: BoardClient.baseUrl + "/boards/" + regionCount + "/cells/" + cellId + "/paths",
+            url: this.baseUrl + "/boards/" + regionCount + "/cells/" + cellId + "/paths",
             dataType: "json",
             success: (data, status, xhr) => {
                 result = data;

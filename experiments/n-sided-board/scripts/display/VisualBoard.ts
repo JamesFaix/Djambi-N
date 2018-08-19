@@ -5,7 +5,8 @@ export class VisualBoard {
     constructor (
         readonly regionCount : number,
         readonly cellSize : number,
-        readonly cells : Array<VisualCell>
+        readonly cells : Array<VisualCell>,
+        readonly gameId : number
     ) {
     }
 

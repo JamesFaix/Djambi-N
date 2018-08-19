@@ -15,7 +15,7 @@ export class VisualBoardFactory {
 
     }
 
-    static async createBoard(regionCount : number, cellSize : number): Promise<VisualBoard> {
+    static async createBoard(regionCount : number, cellSize : number, gameId : number): Promise<VisualBoard> {
         let board = await BoardClient.getBoard(regionCount);
 
         const cellCountPerSide = (board.regionSize * 2) - 1;
@@ -104,7 +104,7 @@ export class VisualBoardFactory {
         const offset = new Point(radius, radius);
         visualCells = visualCells.map(c => c.translate(offset));
 
-        return new VisualBoard(regionCount, cellSize, visualCells);
+        return new VisualBoard(regionCount, cellSize, visualCells, gameId);
     }
 
     private static locationEquals(a : Location, b : Location) : boolean {

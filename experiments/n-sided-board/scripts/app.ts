@@ -8,12 +8,11 @@ class App {
             const cellSize = Math.floor(160 * Math.pow(Math.E, (-0.2 * i)));
     
             const canvas = <HTMLCanvasElement>document.getElementById("canvas" + i);
-            const board = await VisualBoardFactory.createBoard(i, cellSize);
+            const lobbyGame = await LobbyClient.createGame(i);
+            const startResponse = await LobbyClient.startGame(lobbyGame.id);
+            const board = await VisualBoardFactory.createBoard(i, cellSize, lobbyGame.id);
             
             Renderer.drawBoard(board, canvas);
-
-            let lobbyGame = await LobbyClient.createGame(i);
-            let startResponse = await LobbyClient.startGame(lobbyGame.id);
             Renderer.drawPieces(board, canvas, startResponse);    
         }
     }

@@ -9,6 +9,7 @@ module Routing =
             subRoute "/api"
                 (choose [  
             
+                //Lobby
                     POST >=> route "/users" >=> controllers.lobby.createUser
                     GET >=> routef "/users/%i" controllers.lobby.getUser
                     DELETE >=> routef "/users/%i" controllers.lobby.deleteUser
@@ -23,8 +24,11 @@ module Routing =
 
                     POST >=> routef "/games/%i/start-request" controllers.play.startGame
 
+                //Play
                     GET >=> routef "/boards/%i" controllers.play.getBoard
                     GET >=> routef "/boards/%i/cells/%i/paths" controllers.play.getCellPaths
+
+                    GET >=> routef "/games/%i/current-turn/selection-options" controllers.play.getSelectableCells
                 
                     GET >=> routef "/games/%i/state" controllers.play.getGameState
 

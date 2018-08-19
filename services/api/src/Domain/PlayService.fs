@@ -16,39 +16,35 @@ type PlayService(repository : PlayRepository) =
             return game.currentGameState
         }
 
-    member this.getSelectableCells(gameId : int, playerId : int) : int list Task =
+    member this.getSelectableCells(gameId : int) : int list Task =
         task {
             let! game = repository.getGame gameId
             let gameState = game.currentGameState
             let currentPlayerId = gameState.currentPlayerId
-
-            return if currentPlayerId <> playerId
-                   then List.empty
-                   else 
-                        let turn = game.currentTurnState
-                        match turn.selections.Length with
-                        | 0 -> gameState.piecesControlledBy currentPlayerId
-                               |> Seq.map (fun piece -> (piece, this.getMoveSelectionOptions(game, piece)))
-                               |> Seq.filter (fun (_, cells) -> cells.IsEmpty |> not)
-                               |> Seq.map (fun (piece, _) -> piece.cellId)
-                               |> Seq.toList
-                        | 1 -> let subject = turn.getSubjectPiece(gameState).Value
-                               this.getMoveSelectionOptions(game, subject)
-                        | 2 -> let subject = turn.getSubjectPiece(gameState).Value
-                               match (subject.pieceType, turn.selections.[1]) with 
-                               | Reporter, Move _ -> this.getTargetSelectionOptions game
-                               | Thug, MoveWithTarget (_,_) 
-                               | Chief, MoveWithTarget (_,_) 
-                               | Diplomat, MoveWithTarget (_,_)
-                               | Gravedigger, MoveWithTarget (_,_) -> this.getDropSelectionOptions game
-                               | Assassin, MoveWithTarget (_,_) -> this.getVacateSelectionOptions game
-                               | _ -> List.empty
-                        | 3 -> let subject = turn.getSubjectPiece(gameState).Value
-                               match (subject.pieceType, turn.selections.[1]) with 
-                               | Diplomat, MoveWithTarget (_,_)
-                               | Gravedigger, MoveWithTarget (_,_) -> this.getVacateSelectionOptions game
-                               | _ -> List.empty
-                        | _ -> List.empty
+            let turn = game.currentTurnState
+            return match turn.selections.Length with
+                    | 0 -> gameState.piecesControlledBy currentPlayerId
+                            |> Seq.map (fun piece -> (piece, this.getMoveSelectionOptions(game, piece)))
+                            |> Seq.filter (fun (_, cells) -> cells.IsEmpty |> not)
+                            |> Seq.map (fun (piece, _) -> piece.cellId)
+                            |> Seq.toList
+                    | 1 -> let subject = turn.getSubjectPiece(gameState).Value
+                           this.getMoveSelectionOptions(game, subject)
+                    | 2 -> let subject = turn.getSubjectPiece(gameState).Value
+                           match (subject.pieceType, turn.selections.[1]) with 
+                            | Reporter, Move _ -> this.getTargetSelectionOptions game
+                            | Thug, MoveWithTarget (_,_) 
+                            | Chief, MoveWithTarget (_,_) 
+                            | Diplomat, MoveWithTarget (_,_)
+                            | Gravedigger, MoveWithTarget (_,_) -> this.getDropSelectionOptions game
+                            | Assassin, MoveWithTarget (_,_) -> this.getVacateSelectionOptions game
+                            | _ -> List.empty
+                    | 3 -> let subject = turn.getSubjectPiece(gameState).Value
+                           match (subject.pieceType, turn.selections.[1]) with 
+                            | Diplomat, MoveWithTarget (_,_)
+                            | Gravedigger, MoveWithTarget (_,_) -> this.getVacateSelectionOptions game
+                            | _ -> List.empty
+                    | _ -> List.empty
         }
 
     member private this.getMoveSelectionOptions(game : Game, piece : Piece) : int list =

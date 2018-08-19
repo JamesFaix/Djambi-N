@@ -100,7 +100,9 @@ type GameStartService(repository : GameStartRepository) =
                                     isAlive = true
                                 })
                     pieces = pieces
-                    turnCycle = startingConditions |> List.map (fun cond -> cond.turnNumber)
+                    turnCycle = startingConditions 
+                                |> List.sortBy (fun cond -> cond.turnNumber)
+                                |> List.map (fun cond -> cond.playerId)
                 }
                 
             let updateRequest : UpdateGameForStartRequest = 
