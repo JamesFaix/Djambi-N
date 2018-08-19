@@ -46,8 +46,8 @@ let configureApp (app : IApplicationBuilder) =
 
     let repositories = getRepositories(settings)
 
-    let gameStartService = new GameStartService(repositories.gameStart)
     let playService = new PlayService(repositories.play)
+    let gameStartService = new GameStartService(repositories.gameStart, playService)
 
     let controllers : ControllerRegistry = 
         {

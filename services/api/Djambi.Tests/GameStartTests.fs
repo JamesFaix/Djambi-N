@@ -23,7 +23,8 @@ let private getRepository() =
 
 let private getService() =
     let repo = getRepository()
-    new GameStartService(repo)
+    let playService = new PlayService(new PlayRepository(getConnectionString()))
+    new GameStartService(repo, playService)
     
 let private getCreateGameRequest() : CreateGameRequest =
     {

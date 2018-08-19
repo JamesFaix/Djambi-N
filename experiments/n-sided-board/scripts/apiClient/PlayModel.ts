@@ -36,7 +36,33 @@ export class PlayerStartConditions {
     readonly turnNumber : number
 }
 
+export enum TurnStatus {
+    AwaitingSelection = "AwaitingSelection",
+    AwaitingConfirmation = "AwaitingConfirmation"
+}
+
+export enum SelectionType {
+    Subject = "Subject",
+    Move = "Move",
+    MoveWithTarget = "MoveWithTarget",
+    Target = "Target",
+    Drop = "Drop"
+}
+
+export class Selection {
+    readonly type : SelectionType
+    readonly cellId : number
+    readonly pieceId : number
+}
+
+export class TurnState {
+    readonly status : TurnStatus
+    readonly selections : Array<Selection>
+    readonly selectionOptions : Array<number>
+}
+
 export class GameStartResponse {
-    readonly currentState : GameState
+    readonly gameState : GameState
     readonly startingConditions : Array<PlayerStartConditions>
+    readonly turnState : TurnState
 }

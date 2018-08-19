@@ -40,6 +40,7 @@ module PlayModels =
         {
             status : TurnStatus
             selections : Selection list
+            selectionOptions : int list
         }
        
     type PlayerStartConditions =
@@ -60,7 +61,8 @@ module PlayModels =
     type GameStartResponse = 
         {
             startingConditions : PlayerStartConditions list
-            currentState : GameState
+            gameState : GameState
+            turnState : TurnState
         }
 
     type Game =

@@ -44,39 +44,21 @@ type PlayController(gameStartService : GameStartService,
         fun (next : HttpFunc) (ctx : HttpContext) ->
             task {
                 let! gameState = playService.getGameState(gameId)
-                let response = gameState |> mapGameStateToJson
+                let response = gameState |> mapGameStateToJsonModel
                 return! json response next ctx
             }
 
-    member this.getSelectableCells(gameId : int) =
+    member this.selectCell(gameId : int, cellId : int) =
         fun (next : HttpFunc) (ctx : HttpContext) ->
             task {
-                let! cellIds = playService.getSelectableCells(gameId)
-                let response : SelectableCellsResponseJsonModel = 
-                    { 
-                        cellIds = cellIds 
-                    }
-                return! json response next ctx
-            }
-
-    member this.makeSelection(gameId : int) =
-        fun (next : HttpFunc) (ctx : HttpContext) ->
-            task {
-                let! request = ctx.BindJsonAsync<CreateSelectionJsonModel>()
-
-                //let response : GameDetailsDto = {
-                //    id = gameId
-                //    status = GameStatus.Open
-                //    boardRegionCount = 3
-                //    players = List.empty
-                //    pieces = List.empty
-                //    selectionOptions = landscape.paths(location) |> List.collect id
-                //}
-                
-                let placeHolderResponse = {
-                    text = sprintf "Make selection %i not yet implemented" gameId
-                }
-                return! json placeHolderResponse next ctx
+                let! result = playService.selectCell(gameId, cellId)
+                match result with 
+                | Error httpError -> 
+                    ctx.SetStatusCode httpError.statusCode
+                    return! json httpError.message next ctx
+                | Ok response ->
+                    let responseJson = response |> mapTurnStateToJsonModel
+                    return! json responseJson next ctx
             }
 
     member this.resetTurn(gameId : int) =

@@ -88,7 +88,7 @@ export class Renderer {
         }
 
         //Add new piece divs
-        const pieces = startResponse.currentState.pieces;
+        const pieces = startResponse.gameState.pieces;
         for (var i = 0; i < pieces.length; i++){
             let piece = pieces[i];
             
@@ -138,5 +138,5 @@ export class Renderer {
             case 7: return "#996A0C"; //Brown
             default: throw "Invalid player colorId: " + colorId;
         }
-    }
+    }    
 }

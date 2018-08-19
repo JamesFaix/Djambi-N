@@ -14,8 +14,9 @@ module PlaySqlModelMappings =
             currentTurnState = 
                 match sqlModel.currentTurnStateJson with
                 | null -> { 
-                            selections = List.empty 
                             status = TurnStatus.AwaitingSelection
+                            selections = List.empty 
+                            selectionOptions = List.empty
                           }
                 | _ -> JsonConvert.DeserializeObject<TurnState>(sqlModel.currentTurnStateJson)
         }

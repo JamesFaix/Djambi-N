@@ -12,8 +12,10 @@ open Djambi.Api.Persistence
 open PlayModels
 open Djambi.Api.Domain.BoardModels
 open Djambi.Api.Domain.BoardsExtensions
+open Djambi.Api.Domain
 
-type GameStartService(repository : GameStartRepository) =
+type GameStartService(repository : GameStartRepository, 
+                      playService : PlayService) =
                 
     member this.addVirtualPlayers(game : LobbyGameMetadata) : LobbyPlayer list Task =
         task {
@@ -114,12 +116,18 @@ type GameStartService(repository : GameStartRepository) =
 
             let! _ = repository.startGame(updateRequest)
 
-            //Validate
-
+            let! selectionOptions = playService.getSelectableCells gameId
+            
             return 
                 {
-                    currentState = gameState
                     startingConditions = startingConditions
+                    gameState = gameState
+                    turnState = 
+                        {
+                            status = AwaitingSelection
+                            selections = List.empty
+                            selectionOptions = selectionOptions
+                        }
                 }
         }
 

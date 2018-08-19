@@ -28,6 +28,7 @@
   <ItemGroup>
     <Compile Include="Common\Constants.fs" />
     <Compile Include="Common\Enums.fs" />
+    <Compile Include="Common\HttpError.fs" />
     <Compile Include="Common\Utilities.fs" />
     <Compile Include="DomainModels\LobbyModels.fs" />
     <Compile Include="DomainModels\BoardModels.fs" />
@@ -44,9 +45,9 @@
     <Compile Include="Persistence\RepositoryRegistry.fs" />
     <Compile Include="Domain\BoardExtensions.fs" />
     <Compile Include="Domain\BoardUtility.fs" />
-    <Compile Include="Domain\GameStartService.fs" />
     <Compile Include="Domain\PlayModelExtensions.fs" />
     <Compile Include="Domain\PlayService.fs" />
+    <Compile Include="Domain\GameStartService.fs" />
     <Compile Include="Http\LobbyJsonModels.fs" />
     <Compile Include="Http\LobbyJsonMappings.fs" />
     <Compile Include="Http\LobbyController.fs" />

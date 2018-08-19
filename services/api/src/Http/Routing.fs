@@ -27,12 +27,10 @@ module Routing =
                 //Play
                     GET >=> routef "/boards/%i" controllers.play.getBoard
                     GET >=> routef "/boards/%i/cells/%i/paths" controllers.play.getCellPaths
-
-                    GET >=> routef "/games/%i/current-turn/selection-options" controllers.play.getSelectableCells
-                
+                                    
                     GET >=> routef "/games/%i/state" controllers.play.getGameState
 
-                    POST >=> routef "/games/%i/current-turn/selections" controllers.play.makeSelection
+                    POST >=> routef "/games/%i/current-turn/selection-request/%i" controllers.play.selectCell
                     POST >=> routef "/games/%i/current-turn/reset-request" controllers.play.resetTurn
                     POST >=> routef "/games/%i/current-turn/commit-request" controllers.play.commitTurn
 
