@@ -2,25 +2,51 @@ import {VisualBoardFactory} from "./display/VisualBoardFactory.js";
 import {LobbyClient} from "./apiClient/LobbyClient.js";
 import {Renderer} from "./display/Renderer.js";
 import {ClickHandler} from "./display/ClickHandler.js";
+import {GameCreationRequest} from "./apiClient/LobbyModel.js";
+import { VisualBoard } from "./display/VisualBoard.js";
+import { GameStartResponse } from "./apiClient/PlayModel.js";
 
 class App {
-    static async main() : Promise<void> {
-        for (var i = 3; i <= 3; i++) {
-            const cellSize = Math.floor(160 * Math.pow(Math.E, (-0.2 * i)));
-    
-            const canvas = <HTMLCanvasElement>document.getElementById("canvas" + i);
+    private static renderer : Renderer;
 
-            const lobbyGame = await LobbyClient.createGame(i);
-            const board = await VisualBoardFactory.createBoard(i, cellSize, lobbyGame.id);
-            const startResponse = await LobbyClient.startGame(lobbyGame.id);
-            const renderer = new Renderer(canvas, board, startResponse.startingConditions);
-            const clickHandler = new ClickHandler(renderer, canvas, board);    
+    static async createGame() : Promise<void> {
+        const canvas = <HTMLCanvasElement>document.getElementById("canvas");
+        const request = this.getFormData();
+        const lobbyGame = await LobbyClient.createGame(request);
+        const board = await this.createBoard(request.boardRegionCount, lobbyGame.id);                
+        const startResponse = await LobbyClient.startGame(lobbyGame.id);
+        this.displayGame(canvas, board, startResponse);
+    }
 
-            canvas.onclick = (e) => clickHandler.clickOnBoard(e);
-            renderer.onPieceClicked = (gameId, cellId) => clickHandler.clickOnCell(gameId, cellId);
-            renderer.updateGame(startResponse.gameState, startResponse.turnState);
+    private static getFormData() : GameCreationRequest {
+        const regionCount = <number><any>((<HTMLInputElement>document.getElementById("input_regionCount")).value);
+        const description = (<HTMLInputElement>document.getElementById("input_description")).value;
+        return new GameCreationRequest(regionCount, description);
+    }
+
+    private static async createBoard(regionCount : number, gameId : number) : Promise<VisualBoard> {
+        const cellSize = Math.floor(160 * Math.pow(Math.E, (-0.2 * regionCount)));
+        return await VisualBoardFactory.createBoard(regionCount, cellSize, gameId);
+    }
+
+    private static displayGame(
+        canvas : HTMLCanvasElement, 
+        board : VisualBoard, 
+        startResponse : GameStartResponse) : void {
+        
+        canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
+        if (this.renderer) {
+            this.renderer.clearPieces();
         }
+
+        this.renderer = new Renderer(canvas, board, startResponse.startingConditions);
+        const clickHandler = new ClickHandler(this.renderer, canvas, board);    
+
+        canvas.onclick = (e) => clickHandler.clickOnBoard(e);
+        this.renderer.onPieceClicked = (gameId, cellId) => clickHandler.clickOnCell(gameId, cellId);
+        this.renderer.updateGame(startResponse.gameState, startResponse.turnState);
     }
 }
 
-window.onload = App.main;
+document.getElementById("btn_createGame").onclick = 
+    (e) => App.createGame();

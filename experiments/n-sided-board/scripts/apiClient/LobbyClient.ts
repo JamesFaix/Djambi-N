@@ -1,6 +1,6 @@
 /// <reference path ="../../node_modules/definitely-typed-jquery/jquery.d.ts"/> 
 
-import { LobbyGame } from "./LobbyModel.js";
+import { LobbyGame, GameCreationRequest } from "./LobbyModel.js";
 import { GameStartResponse} from "./PlayModel.js";
 
 export class LobbyClient {
@@ -9,15 +9,13 @@ export class LobbyClient {
 
     }
 
-    static async createGame(regionCount : number) : Promise<LobbyGame> {
+    static async createGame(request : GameCreationRequest) : Promise<LobbyGame> {
         let result : LobbyGame;
 
         await $.ajax({
             type: "POST",
             url: this.baseUrl + "/games",
-            data: {
-                boardRegionCount : regionCount
-            },
+            data: request,
             dataType: "json",
             success: (data, status, xhr) => {
                 result = data;

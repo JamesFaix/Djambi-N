@@ -36,6 +36,11 @@ export class Renderer {
         this.drawPieces(gameState);
     }
 
+    clearPieces() : void {
+        document.querySelectorAll("[id^='div_board_piece']")
+            .forEach(div => div.parentElement.removeChild(div));
+    }
+
     private drawCell(cell : VisualCell) : void {
         var ctx = this.canvas.getContext("2d");
 
@@ -75,33 +80,30 @@ export class Renderer {
     }
 
     private drawPieces(gameState : GameState) {
+        this.clearPieces();
         let boardDiv = document.getElementById("div_board");
+        let size = 2;
+        let fontsize = 36;
 
-        //Remove old piece divs
-        let children = boardDiv.children;
-        for (var i = 0; i < children.length; i++){
-            let ch = children.item(i);
-            if (ch.id.startsWith("div_" + this.canvas.id + "_piece")){
-                boardDiv.removeChild(ch)
-            }
-        }
-
-        let size = this.board.cellSize / 2;
-        let fontSize = 36;
         let pieceStyle = "position: absolute; z-index: 1; " + 
             "width: " + size + "px; height: " + size + "px; " +
             "text-align: center; " +
-            "font-size: " + fontSize + "px; " + 
-            "font-family: 'Segoe UI Emoji';"
+            "font-size: " + fontsize + "px; " + 
+            "font-family: 'Segoe UI Emoji'; " +
+            "border: 1px solid red; "
 
-        let offset = new Point(-fontSize/2, -fontSize/2);
+        const emojiStyle = "position: absolute; top: -24px; left: -24px;";
+
+        let offset = new Point(-size/2, -size/2);
         offset = offset.translate(new Point(this.canvas.offsetLeft, this.canvas.offsetTop));
 
         const playerColorsHighlightStyles = new Map();
         for(var i = 0; i < this.startingConditions.length; i++) {
             const player = this.startingConditions[i];
             const hexColor = this.getPlayerColor(player.color);
-            const style = "text-shadow: 0px 0px 20px " + hexColor + ", 0px 0px 20px " + hexColor + ", 0px 0px 20px " + hexColor + ";"; //triple shadow to make it wide and dark
+            const style = "text-shadow: 0px 0px 20px " + hexColor + 
+                                     ", 0px 0px 20px " + hexColor + 
+                                     ", 0px 0px 20px " + hexColor + ";"; //triple shadow to make it wide and dark
             playerColorsHighlightStyles.set(player.playerId, style);
         }
 
@@ -116,16 +118,20 @@ export class Renderer {
             let centroid = cell.centroid().translate(offset);
 
             let div = document.createElement("div");
-            div.id = "div_" + this.canvas.id + "_piece" + piece.id
+            div.id = "div_board_piece" + piece.id
             div.setAttribute("style", pieceStyle + 
                 "left: " + centroid.x + "px; top: " + centroid.y + "px; " +
                 playerColorsHighlightStyles.get(piece.playerId));
 
-            div.innerHTML = this.getPieceEmoji(piece);      
-            
             if (_this.onPieceClicked) {
                 div.onclick = () => _this.onPieceClicked(_this.board.gameId, cell.id);
             }
+
+            let innerDiv = document.createElement("div");
+            innerDiv.setAttribute("style", emojiStyle);
+            innerDiv.innerHTML = this.getPieceEmoji(piece);      
+            
+            div.appendChild(innerDiv);
             boardDiv.appendChild(div);
         }
     }

@@ -1,16 +1,44 @@
 <html>
     <meta charset="UTF-8">
+    <head>
+        <style>
+        body {
+            font-family: 'Segoe UI';
+            font-size: 16px
+        }
+        input {
+            font-family: 'Segoe UI';
+            font-size: 16px
+        }
+        </style>
+    </head>
     <body>
-    <div id="div_board">
-        <div id="div_canvas" style="position: absolute; z-index: 0">
-            <canvas id="canvas3" height="1000", width="1000"></canvas>
-            <canvas id="canvas4" height="1000", width="1000"></canvas>
-            <canvas id="canvas5" height="1000", width="1000"></canvas>
-            <canvas id="canvas6" height="1000", width="1000"></canvas>
-            <canvas id="canvas7" height="1000", width="1000"></canvas>
-            <canvas id="canvas8" height="1000", width="1000"></canvas>
+        <h2>Create game</h2>
+
+        <p>
+            Region count: 
+            <input id="input_regionCount" type="number" 
+                style="width: 40px; text-align: center" 
+                value="3" 
+            />
+        </p>
+        <p>
+            Description: 
+            <input id="input_description" type="text" 
+                style="width: 200px" 
+            />
+        </p>
+        <p>
+            <input id="btn_createGame" type="button"
+                value="Create game"
+                style="width: 150px"
+            />
+        </p>
+
+        <h2>Board</h2>
+        <div id="div_board">
+            <canvas id="canvas" width="1000" height="1000"></canvas>
         </div>
-    </div>
     </body>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="scripts/app.js" type="module"></script>

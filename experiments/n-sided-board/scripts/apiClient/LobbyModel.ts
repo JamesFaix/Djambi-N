@@ -23,3 +23,11 @@ export class LobbyGame {
     readonly description : string
     readonly players : Array<LobbyPlayer>
 }
+
+export class GameCreationRequest {
+    constructor(
+        readonly boardRegionCount : number,
+        readonly descriptoin : string
+    ){        
+    }
+}
