@@ -365,7 +365,7 @@ type PlayService(repository : PlayRepository) =
         turns <- this.removeSequentialDuplicates turns
 
         //Cycle turn queue      
-        turns <- turns.Tail |> List.append [turns.Head]
+        turns <- List.append turns.Tail [turns.Head]
 
         turns
 
@@ -392,45 +392,57 @@ type PlayService(repository : PlayRepository) =
             let gameState = game.currentGameState
             let turnState = game.currentTurnState
             let turnCycle = this.applyTurnStateToTurnCycle(game)
-            return this.applyTurnStateToPieces(game)
-                   |> Result.map(fun pieces -> 
+            let result = this.applyTurnStateToPieces(game)
+                           |> Result.map(fun pieces -> 
                                         
-                        let mutable players = game.currentGameState.players
+                                let mutable players = game.currentGameState.players
 
-                        //Kill player if chief killed
-                        match (turnState.subjectPiece gameState, turnState.targetPiece gameState) with
-                        | (Some subject, Some target) 
-                            when subject.isKiller && target.pieceType = Chief ->
-                            players <- players |> List.map (fun p -> if p.id = target.playerId.Value then p.kill else p)
-                        | _ -> ()
+                                //Kill player if chief killed
+                                match (turnState.subjectPiece gameState, turnState.targetPiece gameState) with
+                                | (Some subject, Some target) 
+                                    when subject.isKiller && target.pieceType = Chief ->
+                                    players <- players |> List.map (fun p -> if p.id = target.playerId.Value then p.kill else p)
+                                | _ -> ()
 
-                        let mutable updatedGame : Game = 
-                            {
-                                currentGameState = 
+                                let mutable updatedGame : Game = 
                                     {
-                                        pieces = pieces
-                                        players = players
-                                        turnCycle = turnCycle
+                                        currentGameState = 
+                                            {
+                                                pieces = pieces
+                                                players = players
+                                                turnCycle = turnCycle
+                                            }
+                                        currentTurnState = this.emptyTurn
+                                        boardRegionCount = game.boardRegionCount
                                     }
-                                currentTurnState = this.emptyTurn
-                                boardRegionCount = game.boardRegionCount
-                            }
 
-                        //While next player has no moves, kill chief and abandon all pieces
-                        let mutable selectionOptions = this.getSelectableCellsFromState updatedGame
-                        while selectionOptions.IsEmpty && updatedGame.currentGameState.turnCycle.Length > 1 do
-                            updatedGame <- 
-                                {
-                                    currentGameState = this.killCurrentPlayer(updatedGame.currentGameState)
-                                    currentTurnState = this.emptyTurn
-                                    boardRegionCount = game.boardRegionCount
-                                }
-                            selectionOptions <- this.getSelectableCellsFromState updatedGame
+                                //While next player has no moves, kill chief and abandon all pieces
+                                let mutable selectionOptions = this.getSelectableCellsFromState updatedGame
+                                while selectionOptions.IsEmpty && updatedGame.currentGameState.turnCycle.Length > 1 do
+                                    updatedGame <- 
+                                        {
+                                            currentGameState = this.killCurrentPlayer(updatedGame.currentGameState)
+                                            currentTurnState = this.emptyTurn
+                                            boardRegionCount = game.boardRegionCount
+                                        }
+                                    selectionOptions <- this.getSelectableCellsFromState updatedGame
 
-                        //TODO: If only 1 player, game over
+                                //TODO: If only 1 player, game over
   
-                        {
-                            gameState = updatedGame.currentGameState
-                            turnState =  { this.emptyTurn with selectionOptions = selectionOptions }
-                        })
+                                let response =
+                                    {
+                                        gameState = updatedGame.currentGameState
+                                        turnState =  { this.emptyTurn with selectionOptions = selectionOptions }
+                                    }
+                            
+                                response)
+
+            match result with 
+            | Ok(response) ->
+                let! _ = repository.updateCurrentGameState(gameId, response.gameState)
+                let! _ = repository.updateCurrentTurnState(gameId, response.turnState)
+                ()
+            | _ -> ()
+
+            return result
         }
