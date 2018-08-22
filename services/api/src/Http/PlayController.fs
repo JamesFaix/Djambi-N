@@ -64,37 +64,23 @@ type PlayController(gameStartService : GameStartService,
     member this.resetTurn(gameId : int) =
         fun (next : HttpFunc) (ctx : HttpContext) ->
             task {
-                //let response : GameDetailsJsonModel = {
-                //    id = gameId
-                //    status = GameStatus.Open
-                //    boardRegionCount = 3
-                //    players = List.empty
-                //    pieces = List.empty
-                //    selectionOptions = List.empty
-                //}
-
-                let placeHolderResponse = {
-                    text = sprintf "Reset turn %i not yet implemented" gameId
-                } 
-                return! json placeHolderResponse next ctx
+                let! response = playService.resetTurn gameId
+                let responseJson = response |> mapTurnStateToJsonModel
+                return! json responseJson next ctx
             }
 
     member this.commitTurn(gameId : int) =
         fun (next : HttpFunc) (ctx : HttpContext) ->
             task {
-                //let response : GameDetailsJsonModel = {
-                //    id = gameId
-                //    status = GameStatus.Open
-                //    boardRegionCount = 3
-                //    players = List.empty
-                //    pieces = List.empty
-                //    selectionOptions = List.empty
-                //}
+                let! result = playService.commitTurn gameId
 
-                let placeHolderResponse = {
-                    text = sprintf "Commit turn %i not yet implemented" gameId
-                }
-                return! json placeHolderResponse next ctx
+                match result with
+                | Error httpError ->
+                    ctx.SetStatusCode httpError.statusCode
+                    return! json httpError.message next ctx
+                | Ok response ->
+                    let responseJson = response.currentGameState |> mapGameStateToJsonModel
+                    return! json responseJson next ctx
             }
 
     member this.sendMessage(gameId : int) =

@@ -39,7 +39,7 @@ module BoardsExtensions =
             this.x = 0 || this.y = 0
 
     type Cell with 
-        member this.isCenter() : bool =
+        member this.isCenter : bool =
             this.locations 
             |> Seq.exists (fun l -> l.isCenter())
 
@@ -150,7 +150,7 @@ module BoardsExtensions =
             this.neighborsFromCell(this.cell cellId)
 
         member this.neighborsFromCell(cell : Cell) : Cell list =
-            if cell.isCenter() 
+            if cell.isCenter 
             then [0..(this.maxRegion())] 
                  |> Seq.collect (fun r -> 
                     [
@@ -229,7 +229,7 @@ module BoardsExtensions =
             this.pathsFromCell(this.cell cellId)
 
         member this.pathsFromCell(cell : Cell) : Cell list list =
-            if cell.isCenter()
+            if cell.isCenter
             then cell.locations
                  |> List.collect (fun l -> 
                     [Directions.Up; Directions.UpRight] 

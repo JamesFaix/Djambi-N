@@ -29,10 +29,10 @@ module PlayModels =
         }
 
     type Selection = 
-        | Subject of pieceId : int 
+        | Subject of cellId : int * pieceId : int 
         | Move of cellId : int
         | MoveWithTarget of cellId : int * pieceId : int
-        | Target of pieceId : int
+        | Target of cellId : int * pieceId : int
         | Drop of cellId : int
 
     type TurnState =

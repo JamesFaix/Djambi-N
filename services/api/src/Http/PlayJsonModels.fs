@@ -66,7 +66,7 @@ module PlayJsonModels =
     type SelectionJsonModel =
         {
             ``type`` : string
-            cellId : Nullable<int>
+            cellId : int
             pieceId : Nullable<int>
         }
 

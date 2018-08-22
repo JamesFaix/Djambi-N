@@ -1,6 +1,8 @@
 ﻿namespace Djambi.Api.Domain
 
 open Giraffe
+open System.Collections.Generic
+open System.Linq
 open System.Threading.Tasks
 open Djambi.Api.Persistence
 open Djambi.Api.Domain.PlayModels
@@ -21,10 +23,13 @@ type PlayService(repository : PlayRepository) =
     member this.getSelectableCells(gameId : int) : int list Task =
         task {
             let! game = repository.getGame gameId
-            return this.getSelectableCellsFromState(game.currentGameState, game.currentTurnState, game.boardRegionCount)
+            return this.getSelectableCellsFromState game
         }
 
-    member private this.getSelectableCellsFromState(gameState : GameState, turnState : TurnState, regionCount : int) : int list =
+    member private this.getSelectableCellsFromState(game : Game) : int list =
+        let gameState = game.currentGameState
+        let turnState = game.currentTurnState
+        let regionCount = game.boardRegionCount
         let currentPlayerId = gameState.currentPlayerId
         match turnState.selections.Length with
         | 0 -> gameState.piecesControlledBy currentPlayerId
@@ -32,9 +37,9 @@ type PlayService(repository : PlayRepository) =
                 |> Seq.filter (fun (_, cells) -> cells.IsEmpty |> not)
                 |> Seq.map (fun (piece, _) -> piece.cellId)
                 |> Seq.toList
-        | 1 -> let subject = turnState.getSubjectPiece(gameState).Value
+        | 1 -> let subject = turnState.subjectPiece(gameState).Value
                this.getMoveSelectionOptions(gameState, subject, regionCount)
-        | 2 -> let subject = turnState.getSubjectPiece(gameState).Value
+        | 2 -> let subject = turnState.subjectPiece(gameState).Value
                match (subject.pieceType, turnState.selections.[1]) with 
                 | Reporter, Move _ -> this.getTargetSelectionOptions(gameState, turnState, regionCount)
                 | Thug, MoveWithTarget (_,_) 
@@ -43,7 +48,7 @@ type PlayService(repository : PlayRepository) =
                 | Gravedigger, MoveWithTarget (_,_) -> this.getDropSelectionOptions(gameState, turnState, regionCount)
                 | Assassin, MoveWithTarget (_,_) -> this.getVacateSelectionOptions(gameState, turnState, regionCount)
                 | _ -> List.empty
-        | 3 -> let subject = turnState.getSubjectPiece(gameState).Value
+        | 3 -> let subject = turnState.subjectPiece(gameState).Value
                match (subject.pieceType, turnState.selections.[1]) with 
                 | Diplomat, MoveWithTarget (_,_)
                 | Gravedigger, MoveWithTarget (_,_) -> this.getVacateSelectionOptions(gameState, turnState, regionCount)
@@ -61,7 +66,7 @@ type PlayService(repository : PlayRepository) =
             | Some occupant -> occupant.isAlive && occupant.playerId <> piece.playerId
 
         let cellIsNotCenterOrIsCenterWithChief(cell : Cell) =
-             if cell.isCenter() |> not
+             if not cell.isCenter
              then true
              else match pieceIndex.TryFind cell.id with
                   | None -> false
@@ -77,7 +82,7 @@ type PlayService(repository : PlayRepository) =
                         (fun path -> path 
                                      |> Seq.take (min 2 path.Length)
                                      |> Seq.takeWhile cellIsEmptyOrContainsEnemy)
-                   |> Seq.filter (fun cell -> cell.isCenter() |> not)
+                   |> Seq.filter (fun cell -> not cell.isCenter)
                    |> Seq.map (fun cell -> cell.id)
                    |> Seq.toList
         | Assassin -> paths 
@@ -87,7 +92,7 @@ type PlayService(repository : PlayRepository) =
                        |> Seq.toList
         | Reporter -> paths 
                        |> Seq.collect (fun path -> path |> Seq.takeWhile cellIsEmptyOrContainsEnemy)
-                       |> Seq.filter (fun cell -> cell.isCenter() |> not)
+                       |> Seq.filter (fun cell -> not cell.isCenter)
                        |> Seq.map (fun cell -> cell.id)
                        |> Seq.toList
         | Diplomat -> paths 
@@ -103,19 +108,20 @@ type PlayService(repository : PlayRepository) =
                                              match pieceIndex.TryFind cell.id with
                                              | None -> true
                                              | Some occupant -> occupant.isAlive |> not))
-                       |> Seq.filter (fun cell -> if cell.isCenter() |> not
+                       |> Seq.filter (fun cell -> if not cell.isCenter
                                                   then true
                                                   else match pieceIndex.TryFind cell.id with
                                                        | None -> false
                                                        | Some occupant -> occupant.isAlive |> not)
                        |> Seq.map (fun cell -> cell.id)
                        |> Seq.toList
-        
+        | _ -> List.empty
+
     member private this.getTargetSelectionOptions(game : GameState, turn : TurnState, regionCount : int) : int list =
-        match turn.getDestinationCellId with
+        match turn.destinationCellId with
         | None -> List.empty
         | Some destinationCellId -> 
-            match turn.getSubjectPiece game with
+            match turn.subjectPiece game with
             | None -> list.Empty
             | Some subject ->
                 match subject.pieceType with
@@ -131,10 +137,10 @@ type PlayService(repository : PlayRepository) =
                 | _ -> List.Empty
 
     member private this.getDropSelectionOptions(game : GameState, turn : TurnState, regionCount : int) : int list =
-        match turn.getSubjectPiece game with
+        match turn.subjectPiece game with
         | None -> List.empty
         | Some subject -> 
-            match turn.getDestinationCellId with
+            match turn.destinationCellId with
             | None -> List.empty
             | Some _ -> 
                 let pieceIndex = game.piecesIndexedByCell
@@ -147,13 +153,13 @@ type PlayService(repository : PlayRepository) =
                 |> Seq.toList
 
     member private this.getVacateSelectionOptions(game : GameState, turn : TurnState, regionCount : int) : int list =
-        match turn.getSubjectPiece game with
+        match turn.subjectPiece game with
         | None -> List.empty
         | Some subject -> 
-            match turn.getDestinationCell regionCount with
+            match turn.destinationCell regionCount with
             | None -> List.empty
             | Some destination -> 
-                if destination.isCenter() |> not
+                if not destination.isCenter
                 then List.empty
                 else match subject.pieceType with
                      | Assassin
@@ -162,7 +168,7 @@ type PlayService(repository : PlayRepository) =
                                    let pieceIndex = game.piecesIndexedByCell       
                                    board.pathsFromCell destination
                                    |> Seq.collect (fun path -> path |> Seq.takeWhile (fun cell -> (pieceIndex.TryFind cell.id).IsNone))
-                                   |> Seq.filter (fun cell -> cell.isCenter() |> not)
+                                   |> Seq.filter (fun cell -> not cell.isCenter)
                                    |> Seq.map (fun cell -> cell.id)
                                    |> Seq.toList
                      | _ -> List.empty
@@ -181,8 +187,8 @@ type PlayService(repository : PlayRepository) =
                       
                       let result : Result<(Selection * TurnStatus), HttpError> = 
                         match turn.selections.Length with
-                        | 0 -> Ok(Subject(pieceIndex.Item(cellId).id), AwaitingSelection)
-                        | 1 -> let subject = turn.getSubjectPiece(game.currentGameState).Value
+                        | 0 -> Ok(Subject(cellId, pieceIndex.Item(cellId).id), AwaitingSelection)
+                        | 1 -> let subject = turn.subjectPiece(game.currentGameState).Value
                                match pieceIndex.TryFind(cellId) with
                                 | None -> match subject.pieceType with
                                           | Reporter -> if board.neighborsFromCellId cellId
@@ -195,18 +201,19 @@ type PlayService(repository : PlayRepository) =
                                                         else Ok(Move(cellId), AwaitingSelection) //Awaiting target
                                           | _ -> Ok(Move(cellId), AwaitingConfirmation)
                                 | Some target when subject.pieceType = Assassin ->
-                                    if board.cell(cellId).isCenter()
+                                    if board.cell(cellId).isCenter
                                     then Ok(MoveWithTarget(cellId, target.id), AwaitingSelection) //Awaiting vacate                                
                                     else Ok(MoveWithTarget(cellId, target.id), AwaitingConfirmation)
                                 | Some piece -> Ok(MoveWithTarget(cellId, piece.id), AwaitingSelection) //Awaiting drop
-                        | 2 -> match (turn.getSubjectPiece game.currentGameState).Value.pieceType with
+                        | 2 -> match (turn.subjectPiece game.currentGameState).Value.pieceType with
                                 | Thug
                                 | Chief
                                 | Diplomat
                                 | Gravedigger -> Ok(Drop(cellId), AwaitingConfirmation)
                                 | Assassin -> Ok(Move(cellId), AwaitingConfirmation) //Vacate
-                                | Reporter -> Ok(Target(pieceIndex.Item(cellId).id), AwaitingConfirmation) 
-                        | 3 -> match (turn.getSubjectPiece game.currentGameState).Value.pieceType with
+                                | Reporter -> Ok(Target(cellId, pieceIndex.Item(cellId).id), AwaitingConfirmation)
+                                | Corpse -> Error({ statusCode = 400; message = "Subject cannot be corpse" })
+                        | 3 -> match (turn.subjectPiece game.currentGameState).Value.pieceType with
                                 | Diplomat
                                 | Gravedigger -> Ok(Move(cellId), AwaitingConfirmation) //Vacate
                                 | _ -> Error({ statusCode = 400; message = "Cannot make fourth selection unless vacating center" })
@@ -215,19 +222,24 @@ type PlayService(repository : PlayRepository) =
                       match result with
                       | Error msg -> return Error(msg)
                       | Ok (selection, status) -> 
-                              let stateWithNewSelection =
+                            let stateWithNewSelection =
                                 {
                                     status = status
                                     selections = turn.selections |> List.append [selection]
                                     selectionOptions = List.empty
                                 }
-                              let stateWithSelectionOptions = 
+                            let updatedGame = 
                                 {
-                                    stateWithNewSelection with 
-                                        selectionOptions = this.getSelectableCellsFromState(game.currentGameState, stateWithNewSelection, game.boardRegionCount)
+                                    currentGameState = game.currentGameState
+                                    currentTurnState = stateWithNewSelection
+                                    boardRegionCount = game.boardRegionCount
                                 }
-                              let! _ = repository.updateCurrentTurnState(gameId, stateWithSelectionOptions)
-                              return Ok stateWithSelectionOptions
+                            let stateWithSelectionOptions = 
+                                {
+                                    stateWithNewSelection with selectionOptions = this.getSelectableCellsFromState updatedGame
+                                }
+                            let! _ = repository.updateCurrentTurnState(gameId, stateWithSelectionOptions)
+                            return Ok stateWithSelectionOptions
         }
 
     member private this.emptyTurn : TurnState =
@@ -241,23 +253,181 @@ type PlayService(repository : PlayRepository) =
         task {            
             let! game = repository.getGame gameId
             
-            let emptyTurn = this.emptyTurn
-
-            let selectionOptions = this.getSelectableCellsFromState(game.currentGameState, emptyTurn, game.boardRegionCount)
-
+            let updatedGame = 
+                {
+                    currentGameState = game.currentGameState
+                    currentTurnState = this.emptyTurn
+                    boardRegionCount = game.boardRegionCount
+                }
+                
             let turnWithSelectionOptions = 
-                { emptyTurn with selectionOptions = selectionOptions }
+                { updatedGame.currentTurnState with selectionOptions =  this.getSelectableCellsFromState updatedGame }
 
             let! _ = repository.updateCurrentTurnState(gameId, turnWithSelectionOptions)
 
             return turnWithSelectionOptions
         }
+    
+    member private this.applyTurnStateToPieces(game : Game) : Result<Piece list, HttpError> =
+        let gameState = game.currentGameState
+        let turn = game.currentTurnState
+        let regionCount = game.boardRegionCount        
+        let pieces = gameState.pieces.ToDictionary(fun p -> p.id)
+        
+        match (turn.subjectPiece gameState, turn.destinationCell regionCount) with
+        | (None, _) 
+        | (_, None) -> Error({ statusCode = 500; message = "Cannot commit turn without subject selected." })
+        | (Some subject, Some destination) -> 
+            let origin = subject.cellId
+                    
+            //Move subject to destination or vacate cell
+            match turn.vacateCellId with
+            | None ->        pieces.[subject.id] <- subject.moveTo destination.id
+            | Some vacate -> pieces.[subject.id] <- subject.moveTo vacate
+                    
+            match turn.targetPiece gameState with 
+            | None -> ()
+            | Some target -> 
+                //Kill target 
+                if subject.isKiller 
+                then pieces.[target.id] <- target.kill
 
-    //member this.commitTurn(gameId : int) : Game Task =
-    //    task {
-    //        let! game = repository.getGame gameId
+                //Enlist players pieces if killing chief
+                if subject.isKiller && target.pieceType = Chief
+                then for p in gameState.piecesControlledBy target.playerId.Value do
+                        pieces.[p.id] <- p.enlistBy subject.playerId.Value
+                        
+                //Drop target if drop cell exists                        
+                match turn.dropCellId with
+                | Some drop ->  pieces.[target.id] <- target.moveTo drop
+                | None -> ()
+                        
+                //Move target back to origin if subject is assassin
+                if subject.pieceType = Assassin
+                then pieces.[target.id] <- subject.moveTo origin
+            Ok()
+        |> Result.map(fun _ -> pieces.Values |> Seq.toList )
 
+    member private this.removeSequentialDuplicates(turnCycle : int list) : int list =
+        let list = turnCycle.ToList()
+        for i in [(list.Count-1)..1] do 
+            if list.[i] = list.[i-1]
+            then list.RemoveAt(i)
+        list |> Seq.toList
+
+    member private this.applyTurnStateToTurnCycle(game : Game) : int list =
+        let gameState = game.currentGameState
+        let turn = game.currentTurnState
+        let regionCount = game.boardRegionCount        
+        let mutable turns = gameState.turnCycle
+
+        let removeBonusTurnsForPlayer playerId = 
+            //Copy only the last turn of the given player, plus all other turns
+            let stack = new Stack<int>()
+            let mutable hasAddedTargetPlayer = false
+            for t in turns |> Seq.rev do
+                if t = playerId && not hasAddedTargetPlayer
+                then hasAddedTargetPlayer <- true
+                     stack.Push t
+                else stack.Push t
+            turns <- stack |> Seq.toList
+
+        let addBonusTurnsForPlayer playerId =
+            //Insert a turn for the given player before every turn, except the current one
+            let stack = new Stack<int>()
+            for t in turns |> Seq.skip(1) |> Seq.rev do
+                stack.Push t
+                stack.Push playerId
+            turns <- stack |> Seq.toList
+
+        match (turn.subjectPiece gameState, turn.targetPiece gameState, turn.dropCell regionCount) with            
+        //If chief being killed, remove all its turns
+        | (Some subject, Some target, _) 
+            when subject.isKiller && target.pieceType = Chief -> 
+            turns <- turns |> Seq.filter(fun playerId -> playerId <> target.playerId.Value) |> Seq.toList
+        //If chief being forced out of power, remove its bonus turns only
+        | (Some subject, Some target, Some drop) 
+            when subject.pieceType = Diplomat && target.pieceType = Chief && not drop.isCenter ->
+            removeBonusTurnsForPlayer target.playerId.Value
+        | _ -> ()
+
+        match (turn.subjectPiece gameState, turn.subjectCell regionCount, turn.destinationCell regionCount) with
+        //If subject is chief in center and destination is not center, remove extra turns
+        | (Some subject, Some origin, Some destination) 
+            when subject.pieceType = Chief && origin.isCenter && not destination.isCenter ->
+            removeBonusTurnsForPlayer subject.playerId.Value
+        //If subject is chief and destination is center, add extra turns to queue
+        | (Some subject, _, Some destination)
+            when subject.pieceType = Chief && destination.isCenter ->
+            addBonusTurnsForPlayer subject.playerId.Value
+        | _ -> ()
             
+        turns <- this.removeSequentialDuplicates turns
 
-            
-    //    }
+        //Cycle turn queue      
+        turns <- turns.Tail |> List.append [turns.Head]
+
+        turns
+
+    member private this.killCurrentPlayer(gameState : GameState) : GameState =
+        let playerId = gameState.turnCycle.Head
+
+        let pieces = gameState.pieces
+                     |> List.map (fun p -> if p.playerId = Some(playerId) then p.abandon else p)
+        let players = gameState.players
+                      |> List.map (fun p -> if p.id = playerId then p.kill else p)
+
+        let turns = gameState.turnCycle
+                    |> List.filter (fun t -> t <> playerId)
+                    |> this.removeSequentialDuplicates
+        {
+            pieces = pieces
+            players = players
+            turnCycle = turns
+        }
+
+    member this.commitTurn(gameId : int) : Result<Game, HttpError> Task =
+        task {
+            let! game = repository.getGame gameId
+            let gameState = game.currentGameState
+            let turnState = game.currentTurnState
+            let turnCycle = this.applyTurnStateToTurnCycle(game)
+            return this.applyTurnStateToPieces(game)
+                   |> Result.map(fun pieces -> 
+                                        
+                        let mutable players = game.currentGameState.players
+
+                        //Kill player if chief killed
+                        match (turnState.subjectPiece gameState, turnState.targetPiece gameState) with
+                        | (Some subject, Some target) 
+                            when subject.isKiller && target.pieceType = Chief ->
+                            players <- players |> List.map (fun p -> if p.id = target.playerId.Value then p.kill else p)
+                        | _ -> ()
+
+                        let mutable updatedGame : Game = 
+                            {
+                                currentGameState = 
+                                    {
+                                        pieces = pieces
+                                        players = players
+                                        turnCycle = turnCycle
+                                    }
+                                currentTurnState = this.emptyTurn
+                                boardRegionCount = game.boardRegionCount
+                            }
+
+                        //While next player has no moves, kill chief and abandon all pieces
+                        let mutable selectionOptions = this.getSelectableCellsFromState updatedGame
+                        while selectionOptions.IsEmpty && updatedGame.currentGameState.turnCycle.Length > 1 do
+                            updatedGame <- 
+                                {
+                                    currentGameState = this.killCurrentPlayer(updatedGame.currentGameState)
+                                    currentTurnState = this.emptyTurn
+                                    boardRegionCount = game.boardRegionCount
+                                }
+                            selectionOptions <- this.getSelectableCellsFromState updatedGame
+
+                        //TODO: If only 1 player, game over
+                                        
+                        updatedGame)
+        }

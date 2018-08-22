@@ -45,35 +45,35 @@ module PlayJsonMappings =
     
     let mapSelectionToJsonModel(selection : Selection) : SelectionJsonModel =
         match selection with 
-        | Subject pieceId ->
+        | Subject (cellId, pieceId) ->
             {
                 ``type`` = "Subject"
                 pieceId = new Nullable<int>(pieceId) 
-                cellId = new Nullable<int>() 
+                cellId = cellId 
             }                              
         | Move cellId -> 
             {
                 ``type`` = "Move"
                 pieceId = new Nullable<int>() 
-                cellId = new Nullable<int>(cellId) 
+                cellId = cellId  
             }
         | MoveWithTarget (cellId, pieceId) -> 
             {
                 ``type`` = "MoveWithTarget"
                 pieceId = new Nullable<int>(pieceId) 
-                cellId = new Nullable<int>(cellId) 
+                cellId = cellId 
             }
-        | Target pieceId -> 
+        | Target (cellId, pieceId) -> 
             {
                 ``type`` = "Target"
                 pieceId = new Nullable<int>(pieceId) 
-                cellId = new Nullable<int>() 
+                cellId = cellId 
             }
         | Drop cellId -> 
             {
                 ``type`` = "Drop"
-                pieceId = new Nullable<int>() 
-                cellId = new Nullable<int>(cellId) 
+                pieceId = new Nullable<int>()
+                cellId = cellId  
             }
 
     let mapTurnStateToJsonModel(turnState : TurnState) : TurnStateJsonModel =
