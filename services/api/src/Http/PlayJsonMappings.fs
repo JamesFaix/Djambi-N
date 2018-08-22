@@ -44,43 +44,18 @@ module PlayJsonMappings =
         }
     
     let mapSelectionToJsonModel(selection : Selection) : SelectionJsonModel =
-        match selection with 
-        | Subject (cellId, pieceId) ->
-            {
-                ``type`` = "Subject"
-                pieceId = new Nullable<int>(pieceId) 
-                cellId = cellId 
-            }                              
-        | Move cellId -> 
-            {
-                ``type`` = "Move"
-                pieceId = new Nullable<int>() 
-                cellId = cellId  
-            }
-        | MoveWithTarget (cellId, pieceId) -> 
-            {
-                ``type`` = "MoveWithTarget"
-                pieceId = new Nullable<int>(pieceId) 
-                cellId = cellId 
-            }
-        | Target (cellId, pieceId) -> 
-            {
-                ``type`` = "Target"
-                pieceId = new Nullable<int>(pieceId) 
-                cellId = cellId 
-            }
-        | Drop cellId -> 
-            {
-                ``type`` = "Drop"
-                pieceId = new Nullable<int>()
-                cellId = cellId  
-            }
+        {
+            ``type`` = selection.selectionType.ToString()
+            pieceId = if selection.pieceId.IsNone then new Nullable<int>() else new Nullable<int>(selection.pieceId.Value)
+            cellId = selection.cellId
+        }
 
     let mapTurnStateToJsonModel(turnState : TurnState) : TurnStateJsonModel =
         {
             status = turnState.status.ToString()
             selections = turnState.selections |> List.map mapSelectionToJsonModel
             selectionOptions = turnState.selectionOptions
+            requiredSelectionType = turnState.requiredSelectionType.ToString()
         }
 
     let mapGameStartResponseToJson(response : GameStartResponse) : GameStartResponseJsonModel = 

@@ -126,6 +126,7 @@ type GameStartService(repository : GameStartRepository,
                             status = AwaitingSelection
                             selections = List.empty
                             selectionOptions = selectionOptions
+                            requiredSelectionType = Some Subject
                         }
                 }
         }

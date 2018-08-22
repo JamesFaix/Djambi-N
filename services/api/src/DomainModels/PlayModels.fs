@@ -28,18 +28,69 @@ module PlayModels =
             turnCycle : int list
         }
 
+    type SelectionType =
+        | Subject
+        | Move
+        | Target
+        | Drop
+        | Vacate
+
     type Selection = 
-        | Subject of cellId : int * pieceId : int 
-        | Move of cellId : int
-        | MoveWithTarget of cellId : int * pieceId : int
-        | Target of cellId : int * pieceId : int
-        | Drop of cellId : int
+        {
+            selectionType : SelectionType
+            cellId : int
+            pieceId : int option
+        }
+
+    module Selection =
+        let subject(cellId, pieceId) = 
+            {   
+                selectionType = Subject
+                cellId = cellId
+                pieceId = Some pieceId
+            }
+
+        let move(cellId) =
+            {
+                selectionType = Move
+                cellId = cellId
+                pieceId = None
+            }
+
+        let moveWithTarget(cellId, pieceId) =
+            {
+                selectionType = Move
+                cellId = cellId
+                pieceId = Some pieceId
+            }
+
+        let target(cellId, pieceId) =
+            {
+                selectionType = Target
+                cellId = cellId
+                pieceId = Some pieceId
+            }
+
+        let drop(cellId) =
+            {
+                selectionType = Drop
+                cellId = cellId
+                pieceId = None
+            }
+
+        let vacate(cellId) =
+            {
+                selectionType = Vacate
+                cellId = cellId
+                pieceId = None
+            }
 
     type TurnState =
         {
             status : TurnStatus
             selections : Selection list
             selectionOptions : int list
+            requiredSelectionType : SelectionType option
         }
        
     type PlayerStartConditions =

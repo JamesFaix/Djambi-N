@@ -75,6 +75,7 @@ module PlayJsonModels =
             status : string
             selections : SelectionJsonModel list
             selectionOptions : int list
+            requiredSelectionType : string
         }
         
     type GameStartResponseJsonModel =

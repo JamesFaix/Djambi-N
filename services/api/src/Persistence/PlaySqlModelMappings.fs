@@ -17,6 +17,7 @@ module PlaySqlModelMappings =
                             status = TurnStatus.AwaitingSelection
                             selections = List.empty 
                             selectionOptions = List.empty
+                            requiredSelectionType = Some Subject
                           }
                 | _ -> JsonConvert.DeserializeObject<TurnState>(sqlModel.currentTurnStateJson)
         }

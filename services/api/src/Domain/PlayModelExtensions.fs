@@ -32,45 +32,6 @@ module PlayModelExtensions =
             | Corpse -> false
             | _ -> true
 
-    type Selection with
-        member this.isSubject =
-            match this with
-            | Subject _ -> true
-            | _ -> false
-
-        member this.isMove =
-            match this with
-            | Move _
-            | MoveWithTarget (_,_) -> true
-            | _ -> false
-
-        member this.isTarget =
-            match this with 
-            | Target _
-            | MoveWithTarget (_,_) -> true
-            | _ -> false
-
-        member this.isDrop =
-            match this with
-            | Drop _ -> true
-            | _ -> false
-
-        member this.maybePieceId =
-            match this with
-            | Subject (_,id)
-            | Target (_,id)
-            | MoveWithTarget (_,id) -> Some id
-            | Move _
-            | Drop _ -> None
-    
-        member this.cellId =
-            match this with
-            | Move id 
-            | Drop id
-            | MoveWithTarget (id,_)
-            | Subject (id,_) 
-            | Target (id,_) -> id
-
     type Player with
         member this.kill : Player =
             { this with isAlive = false }
@@ -79,11 +40,11 @@ module PlayModelExtensions =
 
         member this.subject : Selection option =
             this.selections 
-            |> List.tryFind (fun s -> s.isSubject)
+            |> List.tryFind (fun s -> s.selectionType = Subject)
                         
         member this.subjectPieceId : int option = 
             this.subject
-            |> Option.map (fun s -> s.maybePieceId.Value)
+            |> Option.map (fun s -> s.pieceId.Value)
                         
         member this.subjectCellId : int option =
             this.subject
@@ -91,21 +52,21 @@ module PlayModelExtensions =
 
         member this.destinationCellId : int option =
             this.selections
-            |> List.tryFind (fun s -> s.isMove)
+            |> List.tryFind (fun s -> s.selectionType = Move)
             |> Option.map (fun s -> s.cellId)
         
         member this.targetPieceId : int option =
             this.selections
-            |> List.tryFind (fun s -> s.isTarget)
-            |> Option.map (fun s -> s.maybePieceId.Value)
+            |> List.tryFind (fun s -> s.selectionType = Target)
+            |> Option.map (fun s -> s.pieceId.Value)
 
         member this.dropCellId : int option =
             this.selections
-            |> List.tryFind (fun s -> s.isDrop)
+            |> List.tryFind (fun s -> s.selectionType = Drop)
             |> Option.map (fun s -> s.cellId)
 
         member this.vacateCellId : int option =
-            let moves = this.selections |> List.filter (fun s -> s.isMove)
+            let moves = this.selections |> List.filter (fun s -> s.selectionType = Move)
             match moves.Length with 
             | 2 -> Some(moves.[1].cellId)
             | _ -> None
