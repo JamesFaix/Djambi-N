@@ -70,3 +70,9 @@ module PlayModels =
             currentGameState : GameState
             currentTurnState : TurnState
         }
+
+    type CommitTurnResponse =
+        {
+            gameState : GameState
+            turnState : TurnState
+        }

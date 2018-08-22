@@ -79,7 +79,7 @@ type PlayController(gameStartService : GameStartService,
                     ctx.SetStatusCode httpError.statusCode
                     return! json httpError.message next ctx
                 | Ok response ->
-                    let responseJson = response.currentGameState |> mapGameStateToJsonModel
+                    let responseJson = response |> mapCommitTurnResponseToJsonModel
                     return! json responseJson next ctx
             }
 

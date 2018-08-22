@@ -137,17 +137,14 @@ export class Renderer {
     }
 
     private getPieceEmoji(piece : Piece) : string {
-        if (!piece.isAlive){
-            return "&#x1F480";
-        }
-
         switch (piece.type) {
-            case PieceType.Chief : return "&#x1F451"
-            case PieceType.Assassin : return "&#x1F5E1"
-            case PieceType.Diplomat : return "&#x1F54A"
-            case PieceType.Reporter : return "&#x1F4F0"
-            case PieceType.Gravedigger : return "&#x26CF"
-            case PieceType.Thug : return "&#x270A"
+            case PieceType.Chief : return "&#x1F451";
+            case PieceType.Assassin : return "&#x1F5E1";
+            case PieceType.Diplomat : return "&#x1F54A";
+            case PieceType.Reporter : return "&#x1F4F0";
+            case PieceType.Gravedigger : return "&#x26CF";
+            case PieceType.Thug : return "&#x270A";
+            case PieceType.Corpse : return "&#x1F480";
             default: throw "Invalid piece type '" +  piece.type + "'";
         }
     }

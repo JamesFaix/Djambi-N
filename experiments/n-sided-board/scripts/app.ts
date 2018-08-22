@@ -4,17 +4,22 @@ import {Renderer} from "./display/Renderer.js";
 import {ClickHandler} from "./display/ClickHandler.js";
 import {GameCreationRequest} from "./apiClient/LobbyModel.js";
 import { VisualBoard } from "./display/VisualBoard.js";
-import { GameStartResponse } from "./apiClient/PlayModel.js";
+import { GameStartResponse, TurnState } from "./apiClient/PlayModel.js";
+import {PlayClient} from "./apiClient/PlayClient.js";
 
 class App {
     private static renderer : Renderer;
+    private static gameId : number;
 
     static async createGame() : Promise<void> {
         const canvas = <HTMLCanvasElement>document.getElementById("canvas");
         const request = this.getFormData();
         const lobbyGame = await LobbyClient.createGame(request);
-        const board = await this.createBoard(request.boardRegionCount, lobbyGame.id);                
-        const startResponse = await LobbyClient.startGame(lobbyGame.id);
+        
+        this.gameId = lobbyGame.id;
+        
+        const board = await this.createBoard(request.boardRegionCount, this.gameId);                
+        const startResponse = await LobbyClient.startGame(this.gameId);
         this.displayGame(canvas, board, startResponse);
     }
 
@@ -46,7 +51,27 @@ class App {
         this.renderer.onPieceClicked = (gameId, cellId) => clickHandler.clickOnCell(gameId, cellId);
         this.renderer.updateGame(startResponse.gameState, startResponse.turnState);
     }
+
+    static async resetTurn() {
+        if (this.gameId) {
+            const turn = await PlayClient.resetTurn(this.gameId);
+            this.renderer.updateTurn(turn);
+        }
+    }
+
+    static async commitTurn() {
+        if (this.gameId) {
+            const response = await PlayClient.commitTurn(this.gameId);
+            this.renderer.updateGame(response.gameState, response.turnState);
+        }
+    }
 }
 
 document.getElementById("btn_createGame").onclick = 
     (e) => App.createGame();
+
+document.getElementById("btn_turnReset").onclick =
+    (e) => App.resetTurn();
+
+document.getElementById("btn_turnConfirm").onclick =
+    (e) => App.commitTurn();

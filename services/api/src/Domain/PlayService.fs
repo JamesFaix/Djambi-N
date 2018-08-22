@@ -386,7 +386,7 @@ type PlayService(repository : PlayRepository) =
             turnCycle = turns
         }
 
-    member this.commitTurn(gameId : int) : Result<Game, HttpError> Task =
+    member this.commitTurn(gameId : int) : Result<CommitTurnResponse, HttpError> Task =
         task {
             let! game = repository.getGame gameId
             let gameState = game.currentGameState
@@ -428,6 +428,9 @@ type PlayService(repository : PlayRepository) =
                             selectionOptions <- this.getSelectableCellsFromState updatedGame
 
                         //TODO: If only 1 player, game over
-                                        
-                        updatedGame)
+  
+                        {
+                            gameState = updatedGame.currentGameState
+                            turnState =  { this.emptyTurn with selectionOptions = selectionOptions }
+                        })
         }

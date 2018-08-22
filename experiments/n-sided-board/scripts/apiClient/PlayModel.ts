@@ -11,7 +11,8 @@ export enum PieceType {
     Diplomat = "Diplomat",
     Reporter = "Reporter",
     Thug = "Thug",
-    Gravedigger = "Gravedigger"
+    Gravedigger = "Gravedigger",
+    Corpse = "Corpse"
 }
 
 export class Piece {
@@ -19,7 +20,6 @@ export class Piece {
     readonly type : PieceType
     readonly playerId : number
     readonly originalPlayerId : number
-    readonly isAlive : boolean
     readonly cellId : number
 }
 
@@ -64,5 +64,10 @@ export class TurnState {
 export class GameStartResponse {
     readonly gameState : GameState
     readonly startingConditions : Array<PlayerStartConditions>
+    readonly turnState : TurnState
+}
+
+export class CommitTurnResponse {
+    readonly gameState : GameState
     readonly turnState : TurnState
 }

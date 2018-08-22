@@ -83,3 +83,9 @@ module PlayJsonModels =
             startingConditions : PlayerStartConditionsJsonModel list
             turnState : TurnStateJsonModel
         }
+
+    type CommitTurnResponseJsonModel =
+        {
+            gameState : GameStateJsonModel
+            turnState : TurnStateJsonModel
+        }

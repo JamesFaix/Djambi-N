@@ -89,3 +89,9 @@ module PlayJsonMappings =
             turnState = response.turnState |> mapTurnStateToJsonModel
             startingConditions = response.startingConditions |> List.map mapPlayerStartConditionsToJson
         }
+
+    let mapCommitTurnResponseToJsonModel(response : CommitTurnResponse) : CommitTurnResponseJsonModel = 
+        {
+            gameState = response.gameState |> mapGameStateToJsonModel
+            turnState = response.turnState |> mapTurnStateToJsonModel
+        }
