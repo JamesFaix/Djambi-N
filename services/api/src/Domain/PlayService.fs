@@ -8,6 +8,7 @@ open Djambi.Api.Domain.PlayModelExtensions
 open Djambi.Api.Domain.BoardsExtensions
 open Djambi.Api.Common.Enums
 open Djambi.Api.Common
+open Djambi.Api.Domain.BoardModels
 
 type PlayService(repository : PlayRepository) =
 
@@ -53,68 +54,45 @@ type PlayService(repository : PlayRepository) =
         let board = BoardUtility.getBoardMetadata regionCount
         let paths = board.pathsFromCellId piece.cellId
         let pieceIndex = game.piecesIndexedByCell
+
+        let cellIsEmptyOrContainsEnemy(cell : Cell) =
+            match pieceIndex.TryFind cell.id with
+            | None -> true
+            | Some occupant -> occupant.isAlive && occupant.playerId <> piece.playerId
+
+        let cellIsNotCenterOrIsCenterWithChief(cell : Cell) =
+             if cell.isCenter() |> not
+             then true
+             else match pieceIndex.TryFind cell.id with
+                  | None -> false
+                  | Some occupant -> occupant.pieceType = Chief
+
         match piece.pieceType with
         | Chief -> paths 
-                   |> Seq.collect 
-                        (fun path -> path 
-                                     |> Seq.takeWhile 
-                                         (fun cell -> 
-                                         match pieceIndex.TryFind cell.id with
-                                         | None -> true
-                                         | Some occupant -> occupant.isAlive && occupant.playerId <> piece.playerId))
+                   |> Seq.collect (fun path -> path |> Seq.takeWhile cellIsEmptyOrContainsEnemy)
                    |> Seq.map (fun cell -> cell.id)
                    |> Seq.toList
         | Thug ->  paths 
                    |> Seq.collect 
                         (fun path -> path 
                                      |> Seq.take (min 2 path.Length)
-                                     |> Seq.takeWhile 
-                                         (fun cell -> 
-                                         match pieceIndex.TryFind cell.id with
-                                         | None -> true
-                                         | Some occupant -> occupant.isAlive && occupant.playerId <> piece.playerId))
+                                     |> Seq.takeWhile cellIsEmptyOrContainsEnemy)
                    |> Seq.filter (fun cell -> cell.isCenter() |> not)
                    |> Seq.map (fun cell -> cell.id)
                    |> Seq.toList
         | Assassin -> paths 
-                       |> Seq.collect 
-                            (fun path -> path 
-                                         |> Seq.takeWhile 
-                                             (fun cell -> 
-                                             match pieceIndex.TryFind cell.id with
-                                             | None -> true
-                                             | Some occupant -> occupant.isAlive && occupant.playerId <> piece.playerId))
-                       |> Seq.filter (fun cell -> if cell.isCenter() |> not
-                                                  then true
-                                                  else match pieceIndex.TryFind cell.id with
-                                                       | None -> false
-                                                       | Some occupant -> match occupant.pieceType with | Chief -> true | _ -> false)
+                       |> Seq.collect (fun path -> path |> Seq.takeWhile cellIsEmptyOrContainsEnemy)
+                       |> Seq.filter cellIsNotCenterOrIsCenterWithChief
                        |> Seq.map (fun cell -> cell.id)
                        |> Seq.toList
         | Reporter -> paths 
-                       |> Seq.collect 
-                            (fun path -> path 
-                                         |> Seq.takeWhile 
-                                             (fun cell -> 
-                                             match pieceIndex.TryFind cell.id with
-                                             | None -> true
-                                             | Some occupant -> occupant.isAlive && occupant.playerId <> piece.playerId))
+                       |> Seq.collect (fun path -> path |> Seq.takeWhile cellIsEmptyOrContainsEnemy)
                        |> Seq.filter (fun cell -> cell.isCenter() |> not)
                        |> Seq.map (fun cell -> cell.id)
                        |> Seq.toList
         | Diplomat -> paths 
-                       |> Seq.collect 
-                            (fun path -> path 
-                                         |> Seq.takeWhile 
-                                             (fun cell -> 
-                                             match pieceIndex.TryFind cell.id with
-                                             | None -> true
-                                             | Some occupant -> occupant.isAlive && occupant.playerId <> piece.playerId))
-                       |> Seq.filter (fun cell -> if cell.isCenter() |> not
-                                                  then true
-                                                  else match pieceIndex.TryFind cell.id with
-                                                       | None -> false
-                                                       | Some occupant -> match occupant.pieceType with | Chief -> true | _ -> false)
+                       |> Seq.collect (fun path -> path |> Seq.takeWhile cellIsEmptyOrContainsEnemy)
+                       |> Seq.filter cellIsNotCenterOrIsCenterWithChief
                        |> Seq.map (fun cell -> cell.id)
                        |> Seq.toList
         | Gravedigger -> paths 
@@ -251,3 +229,35 @@ type PlayService(repository : PlayRepository) =
                               let! _ = repository.updateCurrentTurnState(gameId, stateWithSelectionOptions)
                               return Ok stateWithSelectionOptions
         }
+
+    member private this.emptyTurn : TurnState =
+        {
+            status = TurnStatus.AwaitingSelection
+            selections = List.empty
+            selectionOptions = List.empty
+        }
+
+    member this.resetTurn(gameId : int) : TurnState Task =
+        task {            
+            let! game = repository.getGame gameId
+            
+            let emptyTurn = this.emptyTurn
+
+            let selectionOptions = this.getSelectableCellsFromState(game.currentGameState, emptyTurn, game.boardRegionCount)
+
+            let turnWithSelectionOptions = 
+                { emptyTurn with selectionOptions = selectionOptions }
+
+            let! _ = repository.updateCurrentTurnState(gameId, turnWithSelectionOptions)
+
+            return turnWithSelectionOptions
+        }
+
+    //member this.commitTurn(gameId : int) : Game Task =
+    //    task {
+    //        let! game = repository.getGame gameId
+
+            
+
+            
+    //    }

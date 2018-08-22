@@ -45,7 +45,6 @@ module PlayJsonModels =
             ``type`` : string
             playerId : Nullable<int>
             originalPlayerId : int
-            isAlive : bool
             cellId : int
         }
 

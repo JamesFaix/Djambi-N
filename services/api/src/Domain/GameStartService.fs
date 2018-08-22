@@ -64,7 +64,6 @@ type GameStartService(repository : GameStartRepository,
                     pieceType = pieceType
                     playerId = Some player.playerId
                     originalPlayerId = player.playerId
-                    isAlive = true
                     cellId = board.cellAt({ x = x; y = y; region = player.region}).id
                 }
             let n = Constants.regionSize - 1

@@ -19,4 +19,4 @@ module Enums =
         | Assassin
         | Diplomat
         | Gravedigger
-        //Corpse is not a piecetype; Piece.isAlive = false makes a Corpse
+        | Corpse

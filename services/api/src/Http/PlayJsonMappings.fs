@@ -25,7 +25,6 @@ module PlayJsonMappings =
                        then new Nullable<int>()
                        else new Nullable<int>(piece.playerId.Value)
             originalPlayerId = piece.originalPlayerId
-            isAlive = piece.isAlive
             cellId = piece.cellId
         }
 

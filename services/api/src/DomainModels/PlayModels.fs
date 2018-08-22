@@ -18,7 +18,6 @@ module PlayModels =
             pieceType : PieceType
             playerId : int option
             originalPlayerId : int
-            isAlive : bool           
             cellId : int
         }
 
