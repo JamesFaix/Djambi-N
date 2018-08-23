@@ -6,10 +6,12 @@ import {GameCreationRequest} from "./apiClient/LobbyModel.js";
 import { VisualBoard } from "./display/VisualBoard.js";
 import { GameStartResponse, TurnState } from "./apiClient/PlayModel.js";
 import {PlayClient} from "./apiClient/PlayClient.js";
+import { ITheme, ThemeFactory } from "./display/Theme.js";
 
 class App {
     private static renderer : Renderer;
     private static gameId : number;
+    private static theme : ITheme = ThemeFactory.default;
 
     static async createGame() : Promise<void> {
         const canvas = <HTMLCanvasElement>document.getElementById("canvas");
@@ -45,6 +47,7 @@ class App {
         }
 
         this.renderer = new Renderer(canvas, board, startResponse.startingConditions);
+        this.renderer.theme = this.theme;
         const clickHandler = new ClickHandler(this.renderer, canvas, board);    
 
         canvas.onclick = (e) => clickHandler.clickOnBoard(e);

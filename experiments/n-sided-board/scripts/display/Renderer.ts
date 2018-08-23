@@ -1,12 +1,14 @@
 import { VisualBoard } from "./VisualBoard.js";
-import {TurnState, GameState, PieceType, Piece, PlayerStartConditions, SelectionType, Selection} from "../apiClient/PlayModel.js";
+import {TurnState, GameState, PlayerStartConditions, SelectionType} from "../apiClient/PlayModel.js";
 import {CellState} from "./CellState.js";
 import {VisualCell} from "./VisualCell.js";
 import {Color} from "./Color.js";
 import {Point} from "../geometry/Point.js";
+import {ITheme} from "./Theme.js";
 
 export class Renderer {
     private lastGameState : GameState;
+    theme : ITheme;
     constructor(
         readonly canvas : HTMLCanvasElement,
         readonly board : VisualBoard,
@@ -106,7 +108,7 @@ export class Renderer {
         const playerColorsHighlightStyles = new Map();
         for(var i = 0; i < this.startingConditions.length; i++) {
             const player = this.startingConditions[i];
-            const hexColor = this.getPlayerColor(player.color);
+            const hexColor = this.theme.getPlayerColor(player.color);
             const style = "text-shadow: 0px 0px 20px " + hexColor + 
                                      ", 0px 0px 20px " + hexColor + 
                                      ", 0px 0px 20px " + hexColor + ";"; //triple shadow to make it wide and dark
@@ -135,112 +137,24 @@ export class Renderer {
 
             let innerDiv = document.createElement("div");
             innerDiv.setAttribute("style", emojiStyle);
-            innerDiv.innerHTML = this.getPieceEmoji(piece);      
+            innerDiv.innerHTML = this.theme.getPieceEmoji(piece);      
             
             div.appendChild(innerDiv);
             boardDiv.appendChild(div);
         }
     }
 
-    private getPieceEmoji(piece : Piece) : string {
-        switch (piece.type) {
-            case PieceType.Chief : return "&#x1F451";
-            case PieceType.Assassin : return "&#x1F5E1";
-            case PieceType.Diplomat : return "&#x1F54A";
-            case PieceType.Reporter : return "&#x1F4F0";
-            case PieceType.Gravedigger : return "&#x26CF";
-            case PieceType.Thug : return "&#x270A";
-            case PieceType.Corpse : return "&#x1F480";
-            default: throw "Invalid piece type '" +  piece.type + "'";
-        }
-    }
-
-    private getPlayerColor(colorId : number) : string {
-        switch (colorId){
-            case 0: return "#CC2B08"; //Red
-            case 1: return "#47CC08"; //Green
-            case 2: return "#08A9CC"; //Blue
-            case 3: return "#8D08CC"; //Purple
-            case 4: return "#CC8708"; //Orange
-            case 5: return "#CC0884"; //Pink
-            case 6: return "#08CC8B"; //Teal
-            case 7: return "#996A0C"; //Brown
-            default: throw "Invalid player colorId: " + colorId;
-        }
-    }   
-
     private updateRequiredSelectionPrompt(requiredSelectionType : SelectionType) : void {
         const div = document.getElementById("div_turnPrompt");
-        const prompt = this.getRequiredSelectionPrompt(requiredSelectionType);
+        const prompt = this.theme.getRequiredSelectionPrompt(requiredSelectionType);
         div.innerHTML = prompt;
-    }
-
-    private getRequiredSelectionPrompt(requiredSelectionType : SelectionType) : string {
-        switch (requiredSelectionType){
-            case null: return "(Click Done or Reset)";
-            case SelectionType.Subject: return "Select a piece to move";
-            case SelectionType.Move: return "Select a cell to move to";
-            case SelectionType.Target: return "Select a piece to target";
-            case SelectionType.Drop: return "Select a cell to drop the target piece in";
-            case SelectionType.Vacate: return "Select a cell to vacate to";
-            default: throw "Invalid selection type";
-        }
-    }
-
-    private getPieceTypeName(pieceType : PieceType) : string {
-        switch (pieceType) {
-            case PieceType.Assassin: return "Assassin";
-            case PieceType.Chief: return "Chief";
-            case PieceType.Corpse: return "Corpse";
-            case PieceType.Diplomat: return "Diplomat";
-            case PieceType.Gravedigger: return "Gravedigger";
-            case PieceType.Reporter: return "Reporter";
-            case PieceType.Thug: return "Thug";
-            default: throw "Invalid piece type";
-        }
-    }
-
-    private getCenterName() : string {
-        return "The Seat";
-    }
-
-    private getSelectionDescription(selection: Selection, gameState: GameState) : string {
-        const piece = selection.pieceId === null
-            ? null
-            : gameState.pieces.find(p => p.id === selection.pieceId);
-
-        const cell = this.board.cellById(selection.cellId);
-
-        //TODO: Add support for printing cell coordinates, not IDs
-
-        switch (selection.type) {
-            case SelectionType.Subject:
-                return "Move " + this.getPieceTypeName(piece.type);
-
-            case SelectionType.Move:
-                return piece === null  
-                    ? " to cell " + cell.id
-                    : " to cell " + cell.id + " and target " + this.getPieceTypeName(piece.type);
-
-            case SelectionType.Target:
-                return " and target " + this.getPieceTypeName(piece.type) + " at cell " + cell.id;
-
-            case SelectionType.Drop:
-                return ", then drop target piece at cell " + cell.id;
-
-            case SelectionType.Vacate:
-                return ", finally vacate " + this.getCenterName() + " to cell " + cell.id;
-
-            default:
-                throw "Invalid selection type";
-        }            
     }
 
     private updateTurnDescription(gameState: GameState, turnState: TurnState) : void {
         const div = document.getElementById("div_turnDescription");
 
         const text = turnState.selections
-            .map(s => this.getSelectionDescription(s, gameState))
+            .map(s => this.theme.getSelectionDescription(s, gameState, this.board))
             .join("");
 
         div.innerHTML = text;
