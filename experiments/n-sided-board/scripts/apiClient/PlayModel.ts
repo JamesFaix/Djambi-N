@@ -44,7 +44,6 @@ export enum TurnStatus {
 export enum SelectionType {
     Subject = "Subject",
     Move = "Move",
-    MoveWithTarget = "MoveWithTarget",
     Target = "Target",
     Drop = "Drop",
     Vacate = "Vacate"

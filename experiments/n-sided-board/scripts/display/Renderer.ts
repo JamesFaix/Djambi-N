@@ -1,5 +1,5 @@
 import { VisualBoard } from "./VisualBoard.js";
-import {TurnState, GameState, PieceType, Piece, PlayerStartConditions} from "../apiClient/PlayModel.js";
+import {TurnState, GameState, PieceType, Piece, PlayerStartConditions, SelectionType} from "../apiClient/PlayModel.js";
 import {CellState} from "./CellState.js";
 import {VisualCell} from "./VisualCell.js";
 import {Color} from "./Color.js";
@@ -29,6 +29,8 @@ export class Renderer {
             .forEach(c => c.state = CellState.Selected)
 
         this.board.cells.forEach(c => this.drawCell(c));
+
+        this.updateRequiredSelectionPrompt(turnState.requiredSelectionType);
     }
 
     updateGame(gameState : GameState, turnState : TurnState){
@@ -161,5 +163,23 @@ export class Renderer {
             case 7: return "#996A0C"; //Brown
             default: throw "Invalid player colorId: " + colorId;
         }
-    }    
+    }   
+
+    private updateRequiredSelectionPrompt(requiredSelectionType : SelectionType) : void {
+        const div = document.getElementById("div_turnPrompt");
+        const prompt = this.getRequiredSelectionPrompt(requiredSelectionType);
+        div.innerHTML = prompt;
+    }
+
+    private getRequiredSelectionPrompt(requiredSelectionType : SelectionType) : string {
+        switch (requiredSelectionType){
+            case null: return "Click the button to end your turn";
+            case SelectionType.Subject: return "Select a piece to move";
+            case SelectionType.Move: return "Select a cell to move to";
+            case SelectionType.Target: return "Select a piece to target";
+            case SelectionType.Drop: return "Select a cell to drop the target piece in";
+            case SelectionType.Vacate: return "Select a cell to vacate to";
+            default: throw "Invalid selection type";
+        }
+    }
 }
