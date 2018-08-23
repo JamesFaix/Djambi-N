@@ -1,16 +1,16 @@
 import { VisualBoard } from "./VisualBoard.js";
-import {TurnState, GameState, PieceType, Piece, PlayerStartConditions, SelectionType} from "../apiClient/PlayModel.js";
+import {TurnState, GameState, PieceType, Piece, PlayerStartConditions, SelectionType, Selection} from "../apiClient/PlayModel.js";
 import {CellState} from "./CellState.js";
 import {VisualCell} from "./VisualCell.js";
 import {Color} from "./Color.js";
 import {Point} from "../geometry/Point.js";
 
 export class Renderer {
+    private lastGameState : GameState;
     constructor(
         readonly canvas : HTMLCanvasElement,
         readonly board : VisualBoard,
         readonly startingConditions : Array<PlayerStartConditions>){
-
     }
     
     onPieceClicked : (gameId : number, cellId : number) => any;
@@ -31,9 +31,13 @@ export class Renderer {
         this.board.cells.forEach(c => this.drawCell(c));
 
         this.updateRequiredSelectionPrompt(turnState.requiredSelectionType);
+        this.updateTurnDescription(this.lastGameState, turnState);
+        this.enableOrDisableTurnButtons(turnState);
     }
 
     updateGame(gameState : GameState, turnState : TurnState){
+        this.lastGameState = gameState;
+
         this.updateTurn(turnState);
         this.drawPieces(gameState);
     }
@@ -180,6 +184,84 @@ export class Renderer {
             case SelectionType.Drop: return "Select a cell to drop the target piece in";
             case SelectionType.Vacate: return "Select a cell to vacate to";
             default: throw "Invalid selection type";
+        }
+    }
+
+    private getPieceTypeName(pieceType : PieceType) : string {
+        switch (pieceType) {
+            case PieceType.Assassin: return "Assassin";
+            case PieceType.Chief: return "Chief";
+            case PieceType.Corpse: return "Corpse";
+            case PieceType.Diplomat: return "Diplomat";
+            case PieceType.Gravedigger: return "Gravedigger";
+            case PieceType.Reporter: return "Reporter";
+            case PieceType.Thug: return "Thug";
+            default: throw "Invalid piece type";
+        }
+    }
+
+    private getCenterName() : string {
+        return "The Seat";
+    }
+
+    private getSelectionDescription(selection: Selection, gameState: GameState) : string {
+        const piece = selection.pieceId === null
+            ? null
+            : gameState.pieces.find(p => p.id === selection.pieceId);
+
+        const cell = this.board.cellById(selection.cellId);
+
+        //TODO: Add support for printing cell coordinates, not IDs
+
+        switch (selection.type) {
+            case SelectionType.Subject:
+                return "Move " + this.getPieceTypeName(piece.type);
+
+            case SelectionType.Move:
+                return piece === null  
+                    ? " to cell " + cell.id
+                    : " to cell " + cell.id + " and target " + this.getPieceTypeName(piece.type);
+
+            case SelectionType.Target:
+                return " and target " + this.getPieceTypeName(piece.type) + " at cell " + cell.id;
+
+            case SelectionType.Drop:
+                return ", then drop target piece at cell " + cell.id;
+
+            case SelectionType.Vacate:
+                return ", finally vacate " + this.getCenterName() + " to cell " + cell.id;
+
+            default:
+                throw "Invalid selection type";
+        }            
+    }
+
+    private updateTurnDescription(gameState: GameState, turnState: TurnState) : void {
+        const div = document.getElementById("div_turnDescription");
+
+        const text = turnState.selections
+            .map(s => this.getSelectionDescription(s, gameState))
+            .join("");
+
+        div.innerHTML = text;
+    }
+
+    private enableOrDisableTurnButtons(turnState : TurnState) : void {
+        const commitButton = document.getElementById("btn_turnConfirm");
+        const resetButton = document.getElementById("btn_turnReset");
+
+        if (turnState.requiredSelectionType === null) {
+            commitButton.removeAttribute("disabled");
+        }
+        else {
+            commitButton.setAttribute("disabled", null);
+        }
+
+        if (turnState.selections.length > 0) {
+            resetButton.removeAttribute("disabled");
+        }
+        else {
+            resetButton.setAttribute("disabled", null);
         }
     }
 }
