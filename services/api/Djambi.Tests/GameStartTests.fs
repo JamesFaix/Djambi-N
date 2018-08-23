@@ -83,7 +83,7 @@ let ``Service = Get starting conditions should work``() =
         Assert.Equal<int list>([0..(game.boardRegionCount-1)], regions)
 
         let colors = startingConditions |> List.map (fun cond -> cond.color)
-        Assert.All(colors, fun c -> Assert.True(c >= 1 && c <= Constants.maxRegions))
+        Assert.All(colors, fun c -> Assert.True(c >= 0 && c < Constants.maxRegions))
     }
 
 [<Fact>]
