@@ -55,7 +55,7 @@ module PlayJsonMappings =
             status = turnState.status.ToString()
             selections = turnState.selections |> List.map mapSelectionToJsonModel
             selectionOptions = turnState.selectionOptions
-            requiredSelectionType = turnState.requiredSelectionType.ToString()
+            requiredSelectionType = string turnState.requiredSelectionType
         }
 
     let mapGameStartResponseToJson(response : GameStartResponse) : GameStartResponseJsonModel = 

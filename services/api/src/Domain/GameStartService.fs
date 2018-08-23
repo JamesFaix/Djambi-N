@@ -104,30 +104,40 @@ type GameStartService(repository : GameStartRepository,
                     turnCycle = startingConditions 
                                 |> List.sortBy (fun cond -> cond.turnNumber)
                                 |> List.map (fun cond -> cond.playerId)
+                }                
+
+            let gameWithoutSelectionOptions : Game = 
+                {
+                    boardRegionCount = game.boardRegionCount
+                    currentGameState = gameState
+                    currentTurnState = 
+                        {
+                            status = AwaitingSelection
+                            selections = List.empty
+                            selectionOptions = List.empty
+                            requiredSelectionType = Some Subject
+                        }
                 }
-                
+
+            let (selectionOptions, requiredSelectionType) = playService.getSelectableCellsFromState gameWithoutSelectionOptions
+            
+            let turnState = { gameWithoutSelectionOptions.currentTurnState with selectionOptions = selectionOptions }
+
             let updateRequest : UpdateGameForStartRequest = 
                 {
                     id = gameId
                     startingConditions = startingConditions
-                    currentState = gameState
+                    currentGameState = gameState
+                    currentTurnState = turnState
                 }
 
             let! _ = repository.startGame(updateRequest)
 
-            let! selectionOptions = playService.getSelectableCells gameId
-            
             return 
                 {
                     startingConditions = startingConditions
                     gameState = gameState
-                    turnState = 
-                        {
-                            status = AwaitingSelection
-                            selections = List.empty
-                            selectionOptions = selectionOptions
-                            requiredSelectionType = Some Subject
-                        }
+                    turnState = turnState
                 }
         }
 

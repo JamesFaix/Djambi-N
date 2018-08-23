@@ -105,7 +105,8 @@ module PlayModels =
         {
             id : int
             startingConditions : PlayerStartConditions list
-            currentState : GameState
+            currentGameState : GameState
+            currentTurnState : TurnState
         }
 
     type GameStartResponse = 

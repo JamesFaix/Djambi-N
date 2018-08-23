@@ -46,7 +46,8 @@ export enum SelectionType {
     Move = "Move",
     MoveWithTarget = "MoveWithTarget",
     Target = "Target",
-    Drop = "Drop"
+    Drop = "Drop",
+    Vacate = "Vacate"
 }
 
 export class Selection {
@@ -59,6 +60,7 @@ export class TurnState {
     readonly status : TurnStatus
     readonly selections : Array<Selection>
     readonly selectionOptions : Array<number>
+    readonly requiredSelectionType : SelectionType
 }
 
 export class GameStartResponse {

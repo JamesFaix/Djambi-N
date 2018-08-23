@@ -19,15 +19,8 @@ type PlayService(repository : PlayRepository) =
             let! game = repository.getGame gameId
             return game.currentGameState
         }
-
-    member this.getSelectableCells(gameId : int) : int list Task =
-        task {
-            let! game = repository.getGame gameId
-            let (cellIds, _) = this.getSelectableCellsFromState game
-            return cellIds
-        }
-
-    member private this.getSelectableCellsFromState(game : Game) : (int list * SelectionType option) =
+        
+    member this.getSelectableCellsFromState(game : Game) : (int list * SelectionType option) =
         let gameState = game.currentGameState
         let turnState = game.currentTurnState
         let regionCount = game.boardRegionCount
@@ -44,9 +37,11 @@ type PlayService(repository : PlayRepository) =
                (cellIds, Some Move)
         | 2 -> let subject = turnState.subjectPiece(gameState).Value
                match (subject.pieceType, turnState.selections.[1]) with 
-                | Reporter, sel -> 
+                | Reporter, _ -> 
                     let cellIds = this.getTargetSelectionOptions(gameState, turnState, regionCount)
-                    (cellIds, Some Target)
+                    if cellIds.IsEmpty
+                    then (List.empty, None)
+                    else (cellIds, Some Target)
                 | Thug, sel 
                 | Chief, sel
                 | Diplomat, sel
@@ -187,8 +182,7 @@ type PlayService(repository : PlayRepository) =
     member this.selectCell(gameId : int, cellId : int) : Result<TurnState, HttpError> Task = 
         task {
             let! game = repository.getGame gameId
-            let (selectableCells, _) = this.getSelectableCellsFromState game
-            if selectableCells |> List.contains cellId |> not
+            if game.currentTurnState.selectionOptions |> List.contains cellId |> not
             then return Error({ statusCode = 400; message = sprintf "Cell %i is not currently selectable" cellId })
             else let! game = repository.getGame gameId 
                  let turn = game.currentTurnState
@@ -237,7 +231,7 @@ type PlayService(repository : PlayRepository) =
                             let stateWithNewSelection =
                                 {
                                     status = status
-                                    selections = turn.selections |> List.append [selection]
+                                    selections = List.append turn.selections [selection]
                                     selectionOptions = List.empty
                                     requiredSelectionType = None
                                 }
@@ -439,7 +433,10 @@ type PlayService(repository : PlayRepository) =
                                     }
 
                                 //While next player has no moves, kill chief and abandon all pieces
-                                let mutable (selectionOptions, requiredSelectionType) = this.getSelectableCellsFromState updatedGame
+                                let (options, reqSelType) = this.getSelectableCellsFromState updatedGame
+                                let mutable selectionOptions = options
+                                let mutable requiredSelectionType = reqSelType
+                                
                                 while selectionOptions.IsEmpty && updatedGame.currentGameState.turnCycle.Length > 1 do
                                     updatedGame <- 
                                         {
@@ -447,7 +444,9 @@ type PlayService(repository : PlayRepository) =
                                             currentTurnState = this.emptyTurn
                                             boardRegionCount = game.boardRegionCount
                                         }
-                                    (selectionOptions, requiredSelectionType) <- this.getSelectableCellsFromState updatedGame
+                                    let (opt, rst) = this.getSelectableCellsFromState updatedGame
+                                    selectionOptions <- opt
+                                    requiredSelectionType <- rst
 
                                 //TODO: If only 1 player, game over
   

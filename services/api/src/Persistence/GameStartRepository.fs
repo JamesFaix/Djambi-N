@@ -39,12 +39,14 @@ type GameStartRepository(connectionString, lobbyRepository : LobbyRepository) =
 
     member this.startGame(request : UpdateGameForStartRequest) : Unit Task =
         let startingConditionsJson = request.startingConditions |> JsonConvert.SerializeObject
-        let currentStateJson = request.currentState |> JsonConvert.SerializeObject
+        let currentGameStateJson = request.currentGameState |> JsonConvert.SerializeObject
+        let currentTurnStateJson = request.currentTurnState |> JsonConvert.SerializeObject
 
         let param = new DynamicParameters()
         param.Add("GameId", request.id)
         param.Add("StartingConditionsJson", startingConditionsJson)
-        param.Add("CurrentGameStateJson", currentStateJson)
+        param.Add("CurrentGameStateJson", currentGameStateJson)
+        param.Add("CurrentTurnStateJson", currentTurnStateJson)
         let cmd = this.proc("Play.Update_GameForStart", param)
 
         task {
