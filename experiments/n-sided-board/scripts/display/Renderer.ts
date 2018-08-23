@@ -173,7 +173,7 @@ export class Renderer {
 
     private getRequiredSelectionPrompt(requiredSelectionType : SelectionType) : string {
         switch (requiredSelectionType){
-            case null: return "Click the button to end your turn";
+            case null: return "(Click Done or Reset)";
             case SelectionType.Subject: return "Select a piece to move";
             case SelectionType.Move: return "Select a cell to move to";
             case SelectionType.Target: return "Select a piece to target";

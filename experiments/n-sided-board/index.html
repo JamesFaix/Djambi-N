@@ -1,7 +1,7 @@
 <html>
     <meta charset="UTF-8">
     <head>
-        <style>
+        <style>        
         body {
             font-family: 'Segoe UI';
             font-size: 16px
@@ -10,23 +10,29 @@
             font-family: 'Segoe UI';
             font-size: 16px
         }
+        .heading {
+            font-size: 24px;
+            margin: 5px 0px 10px 0px
+        }
         .section {
             border: solid 2px silver;
-            padding: 0px 0px 0px 10px
+            padding: 0px 0px 0px 10px;
+            background-color: whitesmoke;
         }
         </style>
     </head>
     <body>
         <div style="display: flex">
-            <div class="section" style="width: 400px; float: left">
-                <h2>Create game</h2>
-                <p>
-                    Region count: 
-                    <input id="input_regionCount" type="number" 
-                        style="width: 40px; text-align: center" 
-                        value="3" 
-                    />
-                </p>
+            <div class="section" style="width: 400px; height: 175px; float: left; position: relative">
+                <div class="heading">Create game</div>
+                <div style="display: flex">
+                    Regions:                
+                    <input id="input_regionCount" type="range" 
+                        min="3" max="8" value="4" 
+                        style="margin: 0px 10px 0px 10px; width: 60px"
+                        oninput="document.getElementById('div_regionCountDisplay').innerHTML = this.value;"/>
+                    <div id="div_regionCountDisplay">4</div>
+                </div>
                 <p>
                     Description: 
                     <input id="input_description" type="text" 
@@ -35,38 +41,33 @@
                 </p>
                 <p>
                     <input id="btn_createGame" type="button"
-                        value="Create game"
-                        style="width: 150px"
+                        value="Go!"
+                        style="width: 50px; position: absolute; bottom: 10px"
                     />
                 </p>
             </div>
             &nbsp &nbsp &nbsp
-            <div class="section" style="width: 400px; float: right">
-                <h2>Turn</h2>
-                <div style="display: flex">
-                    <div>
-                        <p>
-                            <input id="btn_turnConfirm" type="button"
-                                value="End turn"
-                                style="width: 150px"
-                            />
-                        </p>
-                        <p>
-                            <input id="btn_turnReset" type="button"
-                                value="Reset turn"
-                                style="width: 150px"
-                            />
-                        </p>
-                    </div>
+            <div class="section" style="width: 400px; float: right; position: relative">
+                <div class="heading">Turn</div>
+                <div id="div_turnPrompt">
+                </div>
+                <br/>
+                <div style="display: flex; position: absolute; bottom: 10px">
+                    <input id="btn_turnConfirm" type="button"
+                        value="Done"
+                        style="width: 75px"
+                    />
                     &nbsp &nbsp &nbsp
-                    <div id="div_turnPrompt">
-                    </div>
+                    <input id="btn_turnReset" type="button"
+                        value="Reset"
+                        style="width: 75px"
+                    />
                 </div>
             </div>
         </div>
         <br/>
         <div class="section" style="height: 1000px; width: 1000px">
-            <h2>Board</h2>
+            <div class="heading">Board</div>
             <div id="div_board">
                 <canvas id="canvas" width="1000" height="1000"></canvas>
             </div>
