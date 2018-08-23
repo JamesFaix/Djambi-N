@@ -50,14 +50,18 @@ type PlayService(repository : PlayRepository) =
                     (cellIds, Some Drop)
                 | Assassin, sel when sel.pieceId.IsSome -> 
                     let cellIds = this.getVacateSelectionOptions(gameState, turnState, regionCount)
-                    (cellIds, Some Vacate)
+                    if cellIds.IsEmpty
+                    then (List.empty, None)
+                    else (cellIds, Some Vacate)
                 | _ -> (List.empty, None)
         | 3 -> let subject = turnState.subjectPiece(gameState).Value
                match (subject.pieceType, turnState.selections.[1]) with 
                 | Diplomat, sel
                 | Gravedigger, sel when sel.pieceId.IsSome -> 
                     let cellIds = this.getVacateSelectionOptions(gameState, turnState, regionCount)
-                    (cellIds, Some Vacate)
+                    if cellIds.IsEmpty
+                    then (List.empty, None)
+                    else (cellIds, Some Vacate)
                 | _ -> (List.empty, None)
         | _ -> (List.empty, None)
 

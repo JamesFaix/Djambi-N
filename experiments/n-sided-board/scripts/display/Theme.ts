@@ -15,7 +15,7 @@ export interface ITheme {
     getSelectionDescription(selection: Selection, gameState: GameState, board : VisualBoard) : string;
 }
 
-export class DefaultTheme {
+class DefaultTheme {
     constructor() {}
 
     getPieceEmoji(piece : Piece) : string {
@@ -107,8 +107,82 @@ export class DefaultTheme {
     }
 }
 
+class HotDogTownTheme {
+    private readonly baseTheme = new DefaultTheme();
+    constructor() {}
 
+    getPieceEmoji(piece : Piece) : string {
+        switch (piece.type) {
+            case PieceType.Chief : return "&#x1F96B";
+            case PieceType.Assassin : return "&#x1F374";
+            case PieceType.Diplomat : return "&#x1F917";
+            case PieceType.Reporter : return "&#x1F4A8";
+            case PieceType.Gravedigger : return "&#x1F924";
+            case PieceType.Thug : return "&#x1F35F";
+            case PieceType.Corpse : return "&#x1F32D";
+            default: throw "Invalid piece type '" +  piece.type + "'";
+        }
+    }
+
+    getPlayerColor(colorId : number) : string {
+        return this.baseTheme.getPlayerColor(colorId);
+    }   
+
+    getRequiredSelectionPrompt(requiredSelectionType : SelectionType) : string {
+        return this.baseTheme.getRequiredSelectionPrompt(requiredSelectionType);
+    }
+
+    getPieceTypeName(pieceType : PieceType) : string {
+        switch (pieceType) {
+            case PieceType.Assassin: return "Fork";
+            case PieceType.Chief: return "Sauce";
+            case PieceType.Corpse: return "Hotdog";
+            case PieceType.Diplomat: return "Hugger";
+            case PieceType.Gravedigger: return "Eater";
+            case PieceType.Reporter: return "Fart";
+            case PieceType.Thug: return "Fries";
+            default: throw "Invalid piece type";
+        }
+    }
+
+    getCenterName() : string {
+        return "The Booth";
+    }
+
+    getSelectionDescription(selection: Selection, gameState: GameState, board: VisualBoard) : string {
+        const piece = selection.pieceId === null
+            ? null
+            : gameState.pieces.find(p => p.id === selection.pieceId);
+
+        const cell = board.cellById(selection.cellId);
+
+        //TODO: Add support for printing cell coordinates, not IDs
+
+        switch (selection.type) {
+            case SelectionType.Subject:
+                return "Move " + this.getPieceTypeName(piece.type);
+
+            case SelectionType.Move:
+                return piece === null  
+                    ? " to cell " + cell.id
+                    : " to cell " + cell.id + " and target " + this.getPieceTypeName(piece.type);
+
+            case SelectionType.Target:
+                return " and target " + this.getPieceTypeName(piece.type) + " at cell " + cell.id;
+
+            case SelectionType.Drop:
+                return ", then drop target piece at cell " + cell.id;
+
+            case SelectionType.Vacate:
+                return ", finally vacate " + this.getCenterName() + " to cell " + cell.id;
+
+            default:
+                throw "Invalid selection type";
+        }            
+    }
+}
 
 export class ThemeFactory {
     static readonly default : ITheme = new DefaultTheme();
+    static readonly hotdogTown : ITheme = new HotDogTownTheme();
 }

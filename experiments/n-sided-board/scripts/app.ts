@@ -11,7 +11,7 @@ import { ITheme, ThemeFactory } from "./display/Theme.js";
 class App {
     private static renderer : Renderer;
     private static gameId : number;
-    private static theme : ITheme = ThemeFactory.default;
+    private static theme : ITheme = ThemeFactory.hotdogTown;
 
     static async createGame() : Promise<void> {
         const canvas = <HTMLCanvasElement>document.getElementById("canvas");
