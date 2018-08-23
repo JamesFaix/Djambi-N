@@ -185,4 +185,16 @@ class HotDogTownTheme {
 export class ThemeFactory {
     static readonly default : ITheme = new DefaultTheme();
     static readonly hotdogTown : ITheme = new HotDogTownTheme();
+
+    static getThemeNames() : Array<string> {
+        return ["default", "hotdogTown"];
+    }
+
+    static getTheme(name : string) : ITheme {
+        switch (name) {
+            case "default": return this.default;
+            case "hotdogTown": return this.hotdogTown;
+            default: throw "Invalid theme";
+        }
+    }
 }

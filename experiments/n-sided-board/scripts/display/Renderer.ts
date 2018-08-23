@@ -8,6 +8,7 @@ import {ITheme} from "./Theme.js";
 
 export class Renderer {
     private lastGameState : GameState;
+    private lastTurnState : TurnState;
     theme : ITheme;
     constructor(
         readonly canvas : HTMLCanvasElement,
@@ -17,7 +18,13 @@ export class Renderer {
     
     onPieceClicked : (gameId : number, cellId : number) => any;
 
+    refresh(){
+        this.updateGame(this.lastGameState, this.lastTurnState);
+    }
+
     updateTurn(turnState : TurnState) {
+        this.lastTurnState = turnState;
+
         this.board.cells.forEach(c => c.state = CellState.Default);
 
         turnState.selectionOptions

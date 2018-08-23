@@ -11,7 +11,6 @@ import { ITheme, ThemeFactory } from "./display/Theme.js";
 class App {
     private static renderer : Renderer;
     private static gameId : number;
-    private static theme : ITheme = ThemeFactory.hotdogTown;
 
     static async createGame() : Promise<void> {
         const canvas = <HTMLCanvasElement>document.getElementById("canvas");
@@ -47,7 +46,7 @@ class App {
         }
 
         this.renderer = new Renderer(canvas, board, startResponse.startingConditions);
-        this.renderer.theme = this.theme;
+        this.renderer.theme = this.getSelectedTheme();
         const clickHandler = new ClickHandler(this.renderer, canvas, board);    
 
         canvas.onclick = (e) => clickHandler.clickOnBoard(e);
@@ -68,6 +67,27 @@ class App {
             this.renderer.updateGame(response.gameState, response.turnState);
         }
     }
+
+    static initializeThemeDropDown() {
+        const dropDown = <HTMLSelectElement>document.getElementById("select_theme");
+        ThemeFactory.getThemeNames()
+            .forEach(name => {
+                const option = <HTMLOptionElement>document.createElement("option");
+                option.text = name;
+                dropDown.add(option);
+            });
+
+        dropDown.onchange = (e) => {            
+            this.renderer.theme = this.getSelectedTheme();
+            this.renderer.refresh();
+        }
+    }
+
+    static getSelectedTheme() : ITheme {
+        const dropDown = <HTMLSelectElement>document.getElementById("select_theme");
+        const value = dropDown.options[dropDown.selectedIndex].value;
+        return ThemeFactory.getTheme(value);  
+    }
 }
 
 document.getElementById("btn_createGame").onclick = 
@@ -78,3 +98,5 @@ document.getElementById("btn_turnReset").onclick =
 
 document.getElementById("btn_turnConfirm").onclick =
     (e) => App.commitTurn();
+
+App.initializeThemeDropDown();
