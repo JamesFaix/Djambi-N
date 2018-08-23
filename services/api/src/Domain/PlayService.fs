@@ -65,62 +65,67 @@ type PlayService(repository : PlayRepository) =
         let board = BoardUtility.getBoardMetadata regionCount
         let paths = board.pathsFromCellId piece.cellId
         let pieceIndex = game.piecesIndexedByCell
+        
+        let takeCellsUntilAndIncluding(condition : Piece -> bool)(path : Cell list) : Cell seq =
+            seq {                
+                let mutable stop = false
+                let mutable i = 0
+                while (stop = false && i < path.Length) do
+                    let c = path.[i]
+                    i <- i + 1
 
-        let cellIsEmptyOrContainsEnemy(cell : Cell) =
-            match pieceIndex.TryFind cell.id with
-            | None -> true
-            | Some occupant -> occupant.isAlive && occupant.playerId <> piece.playerId
+                    match pieceIndex.TryFind c.id with
+                    | None -> yield c
+                    | Some occupant ->
+                        stop <- true
+                        if condition occupant
+                        then yield c
+            }
 
-        let cellIsNotCenterOrIsCenterWithChief(cell : Cell) =
-             if not cell.isCenter
-             then true
-             else match pieceIndex.TryFind cell.id with
-                  | None -> false
-                  | Some occupant -> occupant.pieceType = Chief
+        let excludeCenterUnless(condition : Piece -> bool)(cell : Cell) : bool =
+            if cell.isCenter 
+            then match pieceIndex.TryFind cell.id with
+                | None -> false
+                | Some p -> condition p
+            else true
 
         match piece.pieceType with
-        | Chief -> paths 
-                   |> Seq.collect (fun path -> path |> Seq.takeWhile cellIsEmptyOrContainsEnemy)
-                   |> Seq.map (fun cell -> cell.id)
-                   |> Seq.toList
-        | Thug ->  paths 
-                   |> Seq.collect 
-                        (fun path -> path 
-                                     |> Seq.take (min 2 path.Length)
-                                     |> Seq.takeWhile cellIsEmptyOrContainsEnemy)
-                   |> Seq.filter (fun cell -> not cell.isCenter)
-                   |> Seq.map (fun cell -> cell.id)
-                   |> Seq.toList
-        | Assassin -> paths 
-                       |> Seq.collect (fun path -> path |> Seq.takeWhile cellIsEmptyOrContainsEnemy)
-                       |> Seq.filter cellIsNotCenterOrIsCenterWithChief
-                       |> Seq.map (fun cell -> cell.id)
-                       |> Seq.toList
-        | Reporter -> paths 
-                       |> Seq.collect (fun path -> path |> Seq.takeWhile cellIsEmptyOrContainsEnemy)
-                       |> Seq.filter (fun cell -> not cell.isCenter)
-                       |> Seq.map (fun cell -> cell.id)
-                       |> Seq.toList
-        | Diplomat -> paths 
-                       |> Seq.collect (fun path -> path |> Seq.takeWhile cellIsEmptyOrContainsEnemy)
-                       |> Seq.filter cellIsNotCenterOrIsCenterWithChief
-                       |> Seq.map (fun cell -> cell.id)
-                       |> Seq.toList
-        | Gravedigger -> paths 
-                       |> Seq.collect 
-                            (fun path -> path 
-                                         |> Seq.takeWhile 
-                                             (fun cell -> 
-                                             match pieceIndex.TryFind cell.id with
-                                             | None -> true
-                                             | Some occupant -> occupant.isAlive |> not))
-                       |> Seq.filter (fun cell -> if not cell.isCenter
-                                                  then true
-                                                  else match pieceIndex.TryFind cell.id with
-                                                       | None -> false
-                                                       | Some occupant -> occupant.isAlive |> not)
-                       |> Seq.map (fun cell -> cell.id)
-                       |> Seq.toList
+        | Chief -> 
+            paths 
+            |> Seq.collect (takeCellsUntilAndIncluding (fun p -> p.isAlive && p.playerId <> piece.playerId))
+            |> Seq.map (fun cell -> cell.id)
+            |> Seq.toList
+        | Thug ->  
+            paths 
+            |> Seq.map (fun path -> path |> List.take (min 2 path.Length))
+            |> Seq.collect (takeCellsUntilAndIncluding (fun p -> p.isAlive && p.playerId <> piece.playerId))
+            |> Seq.filter (excludeCenterUnless (fun _ -> false))
+            |> Seq.map (fun cell -> cell.id)
+            |> Seq.toList
+        | Assassin -> 
+            paths 
+            |> Seq.collect (takeCellsUntilAndIncluding (fun p -> p.isAlive && p.playerId <> piece.playerId))
+            |> Seq.filter (excludeCenterUnless (fun p -> p.pieceType = Chief))
+            |> Seq.map (fun cell -> cell.id)
+            |> Seq.toList
+        | Reporter -> 
+            paths 
+            |> Seq.collect (takeCellsUntilAndIncluding (fun _ -> false))
+            |> Seq.filter (excludeCenterUnless (fun _ -> false))
+            |> Seq.map (fun cell -> cell.id)
+            |> Seq.toList
+        | Diplomat -> 
+            paths 
+            |> Seq.collect (takeCellsUntilAndIncluding (fun p -> p.isAlive && p.playerId <> piece.playerId))
+            |> Seq.filter (excludeCenterUnless (fun p -> p.pieceType = Chief))
+            |> Seq.map (fun cell -> cell.id)
+            |> Seq.toList
+        | Gravedigger -> 
+            paths 
+            |> Seq.collect (takeCellsUntilAndIncluding (fun p -> not p.isAlive))
+            |> Seq.filter (excludeCenterUnless (fun p -> p.pieceType = Corpse))
+            |> Seq.map (fun cell -> cell.id)
+            |> Seq.toList
         | _ -> List.empty
 
     member private this.getTargetSelectionOptions(game : GameState, turn : TurnState, regionCount : int) : int list =
