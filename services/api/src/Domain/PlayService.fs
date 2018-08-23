@@ -292,7 +292,7 @@ type PlayService(repository : PlayRepository) =
         
         match (turn.subjectPiece gameState, turn.destinationCell regionCount) with
         | (None, _) 
-        | (_, None) -> Error({ statusCode = 500; message = "Cannot commit turn without subject selected." })
+        | (_, None) -> Error({ statusCode = 500; message = "Cannot commit turn without subject and destination selected." })
         | (Some subject, Some destination) -> 
             let origin = subject.cellId
                     
@@ -311,16 +311,16 @@ type PlayService(repository : PlayRepository) =
                 //Enlist players pieces if killing chief
                 if subject.isKiller && target.pieceType = Chief
                 then for p in gameState.piecesControlledBy target.playerId.Value do
-                        pieces.[p.id] <- p.enlistBy subject.playerId.Value
+                        pieces.[p.id] <- pieces.[p.id].enlistBy subject.playerId.Value
                         
                 //Drop target if drop cell exists                        
                 match turn.dropCellId with
-                | Some drop ->  pieces.[target.id] <- target.moveTo drop
+                | Some drop ->  pieces.[target.id] <- pieces.[target.id].moveTo drop
                 | None -> ()
                         
                 //Move target back to origin if subject is assassin
                 if subject.pieceType = Assassin
-                then pieces.[target.id] <- subject.moveTo origin
+                then pieces.[target.id] <- pieces.[target.id].moveTo origin
             Ok()
         |> Result.map(fun _ -> pieces.Values |> Seq.toList )
 

@@ -57,7 +57,7 @@ module PlayModelExtensions =
         
         member this.targetPieceId : int option =
             this.selections
-            |> List.tryFind (fun s -> s.selectionType = Target)
+            |> List.tryFind (fun s -> s.selectionType = Target || (s.selectionType = Move && s.pieceId.IsSome))
             |> Option.map (fun s -> s.pieceId.Value)
 
         member this.dropCellId : int option =
