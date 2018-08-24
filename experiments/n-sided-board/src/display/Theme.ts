@@ -1,5 +1,5 @@
-import { GameState, PieceType, Piece, SelectionType, Selection} from "../apiClient/PlayModel.js";
-import { VisualBoard } from "./VisualBoard.js";
+import { GameState, PieceType, Piece, SelectionType, Selection} from "../apiClient/PlayModel";
+import { VisualBoard } from "./VisualBoard";
 
 export interface ITheme {
     getPieceEmoji(piece : Piece) : string;

@@ -1,7 +1,6 @@
-/// <reference path ="../../node_modules/definitely-typed-jquery/jquery.d.ts"/> 
-
-import { LobbyGame, GameCreationRequest } from "./LobbyModel.js";
-import { GameStartResponse} from "./PlayModel.js";
+import * as $ from 'jquery';
+import { LobbyGame, GameCreationRequest } from "./LobbyModel";
+import { GameStartResponse} from "./PlayModel";
 
 export class LobbyClient {
     private static readonly baseUrl : string = "http://localhost:54835/api";

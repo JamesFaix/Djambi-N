@@ -1,5 +1,5 @@
-import {Point} from "../geometry/Point.js";
-import {VisualCell} from "./VisualCell.js";
+import {Point} from "../geometry/Point";
+import {VisualCell} from "./VisualCell";
 
 export class VisualBoard {
     constructor (

@@ -1,10 +1,10 @@
-import { VisualBoard } from "./VisualBoard.js";
-import {TurnState, GameState, PlayerStartConditions, SelectionType} from "../apiClient/PlayModel.js";
-import {CellState} from "./CellState.js";
-import {VisualCell} from "./VisualCell.js";
-import {Color} from "./Color.js";
-import {Point} from "../geometry/Point.js";
-import {ITheme} from "./Theme.js";
+import { VisualBoard } from "./VisualBoard";
+import {TurnState, GameState, PlayerStartConditions, SelectionType} from "../apiClient/PlayModel";
+import {CellState} from "./CellState";
+import {VisualCell} from "./VisualCell";
+import {Color} from "./Color";
+import {Point} from "../geometry/Point";
+import {ITheme} from "./Theme";
 
 export class Renderer {
     private lastGameState : GameState;

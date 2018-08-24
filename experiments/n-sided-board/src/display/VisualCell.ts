@@ -1,7 +1,7 @@
-import {Point} from "../geometry/Point.js";
-import {Polygon} from "../geometry/Polygon.js";
-import {CellState} from "./CellState.js";
-import {Color} from "./Color.js";
+import {Point} from "../geometry/Point";
+import {Polygon} from "../geometry/Polygon";
+import {CellState} from "./CellState";
+import {Color} from "./Color";
 
 export class VisualCell {
     state : CellState;

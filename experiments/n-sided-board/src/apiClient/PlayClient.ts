@@ -1,6 +1,5 @@
-/// <reference path ="../../node_modules/definitely-typed-jquery/jquery.d.ts"/> 
-
-import {CommitTurnResponse, TurnState} from "./PlayModel.js";
+import * as $ from 'jquery';
+import {CommitTurnResponse, TurnState} from "./PlayModel";
 
 export class PlayClient {
     private static readonly baseUrl : string = "http://localhost:54835/api";

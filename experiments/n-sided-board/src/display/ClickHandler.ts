@@ -1,7 +1,7 @@
-import {Point} from "../geometry/Point.js";
-import {VisualBoard} from "./VisualBoard.js";
-import {PlayClient} from "../apiClient/PlayClient.js";
-import {Renderer} from "./Renderer.js";
+import {Point} from "../geometry/Point";
+import {VisualBoard} from "./VisualBoard";
+import {PlayClient} from "../apiClient/PlayClient";
+import {Renderer} from "./Renderer";
 
 export class ClickHandler {
     constructor(

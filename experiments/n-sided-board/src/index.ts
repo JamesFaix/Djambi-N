@@ -1,12 +1,12 @@
-import {VisualBoardFactory} from "./display/VisualBoardFactory.js";
-import {LobbyClient} from "./apiClient/LobbyClient.js";
-import {Renderer} from "./display/Renderer.js";
-import {ClickHandler} from "./display/ClickHandler.js";
-import {GameCreationRequest} from "./apiClient/LobbyModel.js";
-import { VisualBoard } from "./display/VisualBoard.js";
-import { GameStartResponse, TurnState } from "./apiClient/PlayModel.js";
-import {PlayClient} from "./apiClient/PlayClient.js";
-import { ITheme, ThemeFactory } from "./display/Theme.js";
+import {VisualBoardFactory} from "./display/VisualBoardFactory";
+import {LobbyClient} from "./apiClient/LobbyClient";
+import {Renderer} from "./display/Renderer";
+import {ClickHandler} from "./display/ClickHandler";
+import {GameCreationRequest} from "./apiClient/LobbyModel";
+import { VisualBoard } from "./display/VisualBoard";
+import { GameStartResponse, TurnState } from "./apiClient/PlayModel";
+import {PlayClient} from "./apiClient/PlayClient";
+import { ITheme, ThemeFactory } from "./display/Theme";
 
 class App {
     private static renderer : Renderer;

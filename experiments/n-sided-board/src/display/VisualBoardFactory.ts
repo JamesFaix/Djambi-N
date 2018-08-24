@@ -1,14 +1,13 @@
-/// <reference path ="../../node_modules/definitely-typed-jquery/jquery.d.ts"/> 
-
-import {Point} from "../geometry/Point.js";
-import {Line} from "../geometry/Line.js";
-import {Polygon} from "../geometry/Polygon.js";
-import {Transforms} from "../geometry/Transforms.js";
-import {VisualCell} from "./VisualCell.js";
-import {Location} from "../apiClient/BoardModel.js";
-import {BoardClient} from "../apiClient/BoardClient.js";
-import {Color} from "./Color.js";
-import {VisualBoard} from "./VisualBoard.js";
+import * as $ from 'jquery';
+import {Point} from "../geometry/Point";
+import {Line} from "../geometry/Line";
+import {Polygon} from "../geometry/Polygon";
+import {Transforms} from "../geometry/Transforms";
+import {VisualCell} from "./VisualCell";
+import {Location} from "../apiClient/BoardModel";
+import {BoardClient} from "../apiClient/BoardClient";
+import {Color} from "./Color";
+import {VisualBoard} from "./VisualBoard";
 
 export class VisualBoardFactory {
     constructor(){

@@ -1,5 +1,5 @@
-import {Point} from "./Point.js";
-import {Line} from "./Line.js";
+import {Point} from "./Point";
+import {Line} from "./Line";
 
 export class Polygon {
     constructor (readonly vertices: Array<Point>) {        

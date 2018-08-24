@@ -1,6 +1,5 @@
-/// <reference path ="../../node_modules/definitely-typed-jquery/jquery.d.ts"/> 
-
-import {Location, Cell, Board} from "./BoardModel.js";
+import * as $ from 'jquery';
+import {Location, Cell, Board} from "./BoardModel";
 
 export class BoardClient {
     private static readonly baseUrl : string = "http://localhost:54835/api";
