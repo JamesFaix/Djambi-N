@@ -1,5 +1,5 @@
 import * as $ from 'jquery';
-import {Location, Cell, Board} from "./BoardModel";
+import {Board} from "./BoardModel";
 
 export class BoardClient {
     private static readonly baseUrl : string = "http://localhost:54835/api";

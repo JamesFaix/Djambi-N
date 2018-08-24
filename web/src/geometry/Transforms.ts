@@ -1,29 +1,7 @@
-//import {Arrangement} from "../display/model/Arrangement.js";
-
 export class Transforms {
     constructor() {
 
     }
-
-    // static translateArrangement(source : Arrangement, offset : Point) : Arrangement {
-    //     const polygons = [];
-    //     for (var i=0; i<source.polygons.length; i++) {
-    //         const p = source.polygons[i];
-    //         const pt = Transforms.translatePolygon(p, offset);
-    //         polygons.push(pt);
-    //     }    
-    //     return new Arrangement(source.id, polygons);
-    // }
-
-    // static transformArrangement(source : Arrangement, matrix : Array<Array<number>>) : Arrangement {
-    //     const polygons = [];
-    //     for (var i = 0; i < source.polygons.length; i++) {
-    //         const p = source.polygons[i];
-    //         const pt = Transforms.transformPolygon(p, matrix);
-    //         polygons.push(pt);
-    //     }    
-    //     return new Arrangement(source.id, polygons);
-    // }
 
     static identity() {
         return [

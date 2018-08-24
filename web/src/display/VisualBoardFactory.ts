@@ -1,4 +1,3 @@
-import * as $ from 'jquery';
 import {Point} from "../geometry/Point";
 import {Line} from "../geometry/Line";
 import {Polygon} from "../geometry/Polygon";
