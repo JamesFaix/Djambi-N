@@ -5,6 +5,7 @@ GO
 
 
 CREATE PROCEDURE [Lobby].[Get_GamesWithPlayers] 
+	@GameId INT
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -15,9 +16,9 @@ BEGIN
 		g.BoardRegionCount,
 		p.PlayerId, 
 		p.UserId, 
-p.[Name] as PlayerName
+		p.[Name] as PlayerName
     FROM Games g
         LEFT OUTER JOIN Players p ON g.GameId = p.GameId
-					
+	WHERE @GameId IS NULL OR @GameId = g.GameId
 END
 GO

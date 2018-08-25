@@ -35,6 +35,7 @@ let private getCreateGameRequest() : CreateGameRequest =
 let private getCreateUserRequest() : CreateUserRequest = 
     {
         name = "Test_" + Guid.NewGuid().ToString()
+        isGuest = false
     }
 
 [<Fact>]

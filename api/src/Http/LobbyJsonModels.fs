@@ -16,6 +16,7 @@ module LobbyJsonModels =
     type CreateUserJsonModel =
         {
             name : string
+            isGuest : bool
         }
 
     //Use for GET /users
@@ -24,6 +25,8 @@ module LobbyJsonModels =
         {
             id : int
             name : string
+            isAdmin : bool
+            isGuest : bool
         }
         
     type PlayerJsonModel =

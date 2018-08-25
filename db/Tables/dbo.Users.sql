@@ -2,6 +2,8 @@ CREATE TABLE [dbo].[Users](
 	[UserId] [int] IDENTITY(1,1) NOT NULL,
 	[Name] [nvarchar](50) NOT NULL,
 	[CreatedOn] [datetime2](7) NOT NULL,
+	[IsGuest] [bit] NOT NULL,
+	[IsAdmin] [bit] NOT NULL
  CONSTRAINT [PK_Users] PRIMARY KEY CLUSTERED 
 (
 	[UserId] ASC

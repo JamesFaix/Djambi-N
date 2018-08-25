@@ -10,6 +10,8 @@ module LobbyJsonMappings =
         {
             id = user.id
             name = user.name
+            isGuest = user.isGuest
+            isAdmin = user.isAdmin
         }
 
     let mapPlayerResponse(player : LobbyPlayer) : PlayerJsonModel =
@@ -24,6 +26,7 @@ module LobbyJsonMappings =
     let mapCreateUserRequest(request : CreateUserJsonModel) : CreateUserRequest =
         {
             name = request.name
+            isGuest = request.isGuest
         }
 
     let mapLobbyGameResponse(game : LobbyGameMetadata) : LobbyGameJsonModel =

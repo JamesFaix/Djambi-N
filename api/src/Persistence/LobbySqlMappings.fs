@@ -9,6 +9,8 @@ module LobbySqlMappings =
         {
             id = user.id
             name = user.name
+            isAdmin = user.isAdmin
+            isGuest = user.isGuest
         }
 
     let mapGameStatusFromId(gameStatusId : int) : GameStatus =

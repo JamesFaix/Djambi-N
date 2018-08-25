@@ -1,6 +1,8 @@
 export class User {
     readonly id : number
     readonly name : string
+    readonly isGuest : boolean
+    readonly isAdmin : boolean
 }
 
 export class LobbyPlayer {

@@ -30,12 +30,18 @@ class App {
         const row = <HTMLTableRowElement>document.createElement("tr");
         const idCell = <HTMLTableDataCellElement>document.createElement("td");
         const nameCell = <HTMLTableDataCellElement>document.createElement("td");
+        const isGuestCell = <HTMLTableDataCellElement>document.createElement("td");
+        const isAdminCell = <HTMLTableDataCellElement>document.createElement("td");
 
         idCell.innerHTML = user.id + "";
         nameCell.innerHTML = user.name;
+        isGuestCell.innerHTML = user.isGuest + "";
+        isAdminCell.innerHTML = user.isAdmin + "";
 
         row.appendChild(idCell);
         row.appendChild(nameCell);
+        row.appendChild(isGuestCell);
+        row.appendChild(isAdminCell);
 
         table.appendChild(row);
     }

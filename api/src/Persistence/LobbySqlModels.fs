@@ -9,6 +9,8 @@ module LobbySqlModels =
         {
             id : int
             name : string
+            isGuest : bool
+            isAdmin : bool
         }
 
     [<CLIMutable>]

@@ -6,13 +6,15 @@ GO
 
 
 CREATE PROCEDURE [Lobby].[Insert_User]
-	@Name NVARCHAR(50)
+	@Name NVARCHAR(50),
+	@IsGuest BIT,
+	@IsAdmin BIT
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	INSERT INTO Users ([Name], CreatedOn)
-	VALUES (@Name, GETUTCDATE())
+	INSERT INTO Users ([Name], CreatedOn, IsGuest, IsAdmin)
+	VALUES (@Name, GETUTCDATE(), @IsGuest, @IsAdmin)
 
 	SELECT SCOPE_IDENTITY()
 END

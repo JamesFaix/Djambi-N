@@ -17,6 +17,7 @@ let private getRepository() =
 let private getCreateUserRequest() : CreateUserRequest = 
     {
         name = "Test_" + Guid.NewGuid().ToString()
+        isGuest = false
     }
 
 let private getCreateGameRequest() : CreateGameRequest =

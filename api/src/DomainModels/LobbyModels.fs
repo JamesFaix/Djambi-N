@@ -8,6 +8,8 @@ module LobbyModels =
         {
             id : int
             name : string
+            isGuest : bool
+            isAdmin : bool
         }
         
     type LobbyPlayer =
@@ -20,6 +22,7 @@ module LobbyModels =
     type CreateUserRequest =
         {
             name : string
+            isGuest : bool
         }
 
     type CreateGameRequest = 

@@ -18,21 +18,20 @@ type LobbyRepository(connectionString) =
     member this.createUser(request : CreateUserRequest) : User Task =
         let param = new DynamicParameters()
         param.Add("Name", request.name)
+        param.Add("IsGuest", request.isGuest)
+        param.Add("IsAdmin", false)
         let cmd = this.proc("Lobby.Insert_User", param)
 
         task {
             use cn = this.getConnection()
             let! id = cn.ExecuteScalarAsync<int>(cmd)
-            return {
-                id = id
-                name = request.name
-            }
+            return! this.getUser id
         }
 
     member this.getUser(id : int) : User Task =
         let param = new DynamicParameters()
         param.Add("UserId", id)
-        let cmd = this.proc("Lobby.Get_User", param)
+        let cmd = this.proc("Lobby.Get_Users", param)
 
         task {
             use cn = this.getConnection()
@@ -43,6 +42,7 @@ type LobbyRepository(connectionString) =
 
     member this.getUsers() : User seq Task =
         let param = new DynamicParameters()
+        param.Add("UserId", null)
         let cmd = this.proc("Lobby.Get_Users", param)
 
         task {
@@ -97,7 +97,7 @@ type LobbyRepository(connectionString) =
     member this.getGame(id : int) : LobbyGameMetadata Task =
         let param = new DynamicParameters()
         param.Add("GameId", id)
-        let cmd = this.proc("Lobby.Get_GameWithPlayers", param)
+        let cmd = this.proc("Lobby.Get_GamesWithPlayers", param)
 
         task {
             use cn = this.getConnection()
@@ -107,6 +107,7 @@ type LobbyRepository(connectionString) =
         
     member this.getGames() : LobbyGameMetadata list Task =
         let param = new DynamicParameters()
+        param.Add("GameId", null)
         let cmd = this.proc("Lobby.Get_GamesWithPlayers", param)
 
         task {
