@@ -1,5 +1,5 @@
 import * as $ from 'jquery';
-import { LobbyGame, GameCreationRequest, User } from "./LobbyModel";
+import { LobbyGame, GameCreationRequest, User, CreateUserRequest } from "./LobbyModel";
 import { GameStartResponse} from "./PlayModel";
 
 export class LobbyClient {
@@ -78,5 +78,24 @@ export class LobbyClient {
         });
 
         return result;
+    }
+
+    static async createUser(request : CreateUserRequest) : Promise<User> {
+        let result : User;
+
+        await $.ajax({
+            type: "POST",
+            url: this.baseUrl + "/users" ,
+            dataType: "json",
+            data: request,
+            success: (data, status, xhr) => {
+                result = data;
+            },
+            error: (xhr, status, error) => {
+
+            }
+        });
+
+        return result;        
     }
 }

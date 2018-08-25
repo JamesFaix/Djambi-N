@@ -1,6 +1,6 @@
-import {LobbyClient} from "./apiClient/LobbyClient";
-import {LobbyGame, User} from "./apiClient/LobbyModel";
-import './styles/global.css';
+import {LobbyClient} from "./../apiClient/LobbyClient";
+import {LobbyGame, User} from "./../apiClient/LobbyModel";
+import '../../css/global.css';
 
 class App {
 

@@ -33,3 +33,12 @@ export class GameCreationRequest {
     ){        
     }
 }
+
+export class CreateUserRequest {
+    constructor(
+        readonly name : string,
+        readonly isGuest : boolean
+    ){
+        
+    }
+}

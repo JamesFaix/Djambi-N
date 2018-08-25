@@ -1,19 +1,33 @@
-import {VisualBoardFactory} from "./display/VisualBoardFactory";
-import {LobbyClient} from "./apiClient/LobbyClient";
-import {Renderer} from "./display/Renderer";
-import {ClickHandler} from "./display/ClickHandler";
-import {GameCreationRequest} from "./apiClient/LobbyModel";
-import { VisualBoard } from "./display/VisualBoard";
-import { GameStartResponse, TurnState } from "./apiClient/PlayModel";
-import {PlayClient} from "./apiClient/PlayClient";
-import { ITheme, ThemeFactory } from "./display/Theme";
-import './styles/global.css';
+import {VisualBoardFactory} from "./../display/VisualBoardFactory";
+import {LobbyClient} from "./../apiClient/LobbyClient";
+import {Renderer} from "./../display/Renderer";
+import {ClickHandler} from "./../display/ClickHandler";
+import {GameCreationRequest} from "./../apiClient/LobbyModel";
+import { VisualBoard } from "./../display/VisualBoard";
+import { GameStartResponse, TurnState } from "./../apiClient/PlayModel";
+import {PlayClient} from "./../apiClient/PlayClient";
+import { ITheme, ThemeFactory } from "./../display/Theme";
+import '../../css/global.css';
 
 class App {
     private static renderer : Renderer;
     private static gameId : number;
 
-    static async createGame() : Promise<void> {
+    static async init() {
+        
+        document.getElementById("btn_createGame").onclick = 
+            (e) => App.createGame();
+
+        document.getElementById("btn_turnReset").onclick =
+            (e) => App.resetTurn();
+
+        document.getElementById("btn_turnConfirm").onclick =
+            (e) => App.commitTurn();
+        
+        this.initializeThemeDropDown();
+    }
+
+    private static async createGame() : Promise<void> {
         const canvas = <HTMLCanvasElement>document.getElementById("canvas");
         const request = this.getFormData();
         const lobbyGame = await LobbyClient.createGame(request);
@@ -55,21 +69,21 @@ class App {
         this.renderer.updateGame(startResponse.gameState, startResponse.turnState);
     }
 
-    static async resetTurn() {
+    private static async resetTurn() {
         if (this.gameId) {
             const turn = await PlayClient.resetTurn(this.gameId);
             this.renderer.updateTurn(turn);
         }
     }
 
-    static async commitTurn() {
+    private static async commitTurn() {
         if (this.gameId) {
             const response = await PlayClient.commitTurn(this.gameId);
             this.renderer.updateGame(response.gameState, response.turnState);
         }
     }
 
-    static initializeThemeDropDown() {
+    private static initializeThemeDropDown() {
         const dropDown = <HTMLSelectElement>document.getElementById("select_theme");
         ThemeFactory.getThemeNames()
             .forEach(name => {
@@ -84,20 +98,11 @@ class App {
         }
     }
 
-    static getSelectedTheme() : ITheme {
+    private static getSelectedTheme() : ITheme {
         const dropDown = <HTMLSelectElement>document.getElementById("select_theme");
         const value = dropDown.options[dropDown.selectedIndex].value;
         return ThemeFactory.getTheme(value);  
     }
 }
 
-document.getElementById("btn_createGame").onclick = 
-    (e) => App.createGame();
-
-document.getElementById("btn_turnReset").onclick =
-    (e) => App.resetTurn();
-
-document.getElementById("btn_turnConfirm").onclick =
-    (e) => App.commitTurn();
-
-App.initializeThemeDropDown();
+App.init();
