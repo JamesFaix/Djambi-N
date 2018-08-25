@@ -10,9 +10,9 @@ open Djambi.Api.Common.Enums
 
 open TestUtilities
 
-let private getRepository() = 
-    let cnStr = getConnectionString()
-    new LobbyRepository(cnStr)
+let private repo =
+    SqlUtility.connectionString <- getConnectionString()
+    new LobbyRepository()
 
 let private getCreateUserRequest() : CreateUserRequest = 
     {
@@ -31,7 +31,6 @@ let private getCreateGameRequest() : CreateGameRequest =
 [<Fact>]
 let ``Create user should work``() =
     let request = getCreateUserRequest()
-    let repo = getRepository()
     task {
         let! user = repo.createUser(request)
         Assert.NotEqual(0, user.id)
@@ -41,7 +40,6 @@ let ``Create user should work``() =
 [<Fact>]
 let ``Get user should work``() =
     let request = getCreateUserRequest()
-    let repo = getRepository()
     task {
         let! createdUser = repo.createUser(request)
         let! user = repo.getUser(createdUser.id)        
@@ -52,7 +50,6 @@ let ``Get user should work``() =
 [<Fact>]
 let ``Delete user should work``() =
     let request = getCreateUserRequest()
-    let repo = getRepository()
     task {
         let! user = repo.createUser(request)
         let! _ = repo.deleteUser(user.id) 
@@ -65,7 +62,6 @@ let ``Delete user should work``() =
 [<Fact>] 
 let ``Create game should work``() =
     let request = getCreateGameRequest()
-    let repo = getRepository()
     task {
         let! game = repo.createGame(request)
         Assert.NotEqual(0, game.id)
@@ -78,7 +74,6 @@ let ``Create game should work``() =
 [<Fact>]
 let ``Get game should work`` () =
     let request = getCreateGameRequest()
-    let repo = getRepository()
     task {
         let! createdGame = repo.createGame(request)
         let! game = repo.getGame(createdGame.id)
@@ -92,7 +87,6 @@ let ``Get game should work`` () =
 [<Fact>]
 let ``Delete game should work``() =
     let request = getCreateGameRequest()
-    let repo = getRepository()
     task {
         let! game = repo.createGame(request)
         let! _ = repo.deleteGame(game.id)
@@ -103,7 +97,6 @@ let ``Delete game should work``() =
 [<Fact>]
 let ``Get open games should work``() =
     let request = getCreateGameRequest()
-    let repo = getRepository()
     task {
         let! createdGame = repo.createGame(request)
         let! games = repo.getOpenGames()
@@ -116,7 +109,6 @@ let ``Get open games should work``() =
 let ``Add player should work``() =
     let gameRequest = getCreateGameRequest()
     let userRequest = getCreateUserRequest()
-    let repo = getRepository()
     task {
         let! game = repo.createGame(gameRequest)
         let! user = repo.createUser(userRequest)
@@ -130,7 +122,6 @@ let ``Add player should work``() =
 let ``Remove player should work``() =
     let gameRequest = getCreateGameRequest()
     let userRequest = getCreateUserRequest()
-    let repo = getRepository()
     task {
         let! game = repo.createGame(gameRequest)
         let! user = repo.createUser(userRequest)

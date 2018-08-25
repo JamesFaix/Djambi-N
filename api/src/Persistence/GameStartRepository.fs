@@ -8,19 +8,18 @@ open Newtonsoft.Json
 
 open Djambi.Api.Domain.PlayModels
 open Djambi.Api.Domain.LobbyModels
+open Djambi.Api.Persistence.SqlUtility
 
-
-type GameStartRepository(connectionString, lobbyRepository : LobbyRepository) =
-    inherit RepositoryBase(connectionString)
+type GameStartRepository(lobbyRepository : LobbyRepository) =
 
     member this.getGame(gameId : int) : LobbyGameMetadata Task =
         lobbyRepository.getGame gameId
 
     member this.getVirtualPlayerNames() : string list Task =
         let param = new DynamicParameters()
-        let cmd = this.proc("Lobby.Get_VirtualPlayerNames", param)
+        let cmd = proc("Lobby.Get_VirtualPlayerNames", param)
         task {            
-            use cn = this.getConnection()
+            use cn = getConnection()
             let! names = cn.QueryAsync<string>(cmd)
             return names |> Seq.toList
         }
@@ -29,10 +28,10 @@ type GameStartRepository(connectionString, lobbyRepository : LobbyRepository) =
         let param = new DynamicParameters()
         param.Add("GameId", gameId)
         param.Add("Name", name)
-        let cmd = this.proc("Lobby.Insert_VirtualPlayer", param)
+        let cmd = proc("Lobby.Insert_VirtualPlayer", param)
 
         task {
-            use cn = this.getConnection()
+            use cn = getConnection()
             let! _ = cn.ExecuteAsync(cmd)
             return ()
         }
@@ -47,10 +46,10 @@ type GameStartRepository(connectionString, lobbyRepository : LobbyRepository) =
         param.Add("StartingConditionsJson", startingConditionsJson)
         param.Add("CurrentGameStateJson", currentGameStateJson)
         param.Add("CurrentTurnStateJson", currentTurnStateJson)
-        let cmd = this.proc("Play.Update_GameForStart", param)
+        let cmd = proc("Play.Update_GameForStart", param)
 
         task {
-            use cn = this.getConnection()
+            use cn = getConnection()
             let! _ = cn.ExecuteAsync(cmd)
             return ()
         }

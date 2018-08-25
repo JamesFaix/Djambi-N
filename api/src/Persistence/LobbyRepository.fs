@@ -10,9 +10,9 @@ open Djambi.Api.Domain.LobbyModels
 open Djambi.Api.Common.Enums
 open Djambi.Api.Persistence.LobbySqlMappings
 open Djambi.Api.Persistence.DapperExtensions
+open Djambi.Api.Persistence.SqlUtility
     
-type LobbyRepository(connectionString) =
-    inherit RepositoryBase(connectionString)
+type LobbyRepository() =
 
 //Users
     member this.createUser(request : CreateUserRequest) : User Task =
@@ -20,10 +20,10 @@ type LobbyRepository(connectionString) =
         param.Add("Name", request.name)
         param.Add("IsGuest", request.isGuest)
         param.Add("IsAdmin", false)
-        let cmd = this.proc("Lobby.Insert_User", param)
+        let cmd = proc("Lobby.Insert_User", param)
 
         task {
-            use cn = this.getConnection()
+            use cn = getConnection()
             let! id = cn.ExecuteScalarAsync<int>(cmd)
             return! this.getUser id
         }
@@ -31,10 +31,10 @@ type LobbyRepository(connectionString) =
     member this.getUser(id : int) : User Task =
         let param = new DynamicParameters()
         param.Add("UserId", id)
-        let cmd = this.proc("Lobby.Get_Users", param)
+        let cmd = proc("Lobby.Get_Users", param)
 
         task {
-            use cn = this.getConnection()
+            use cn = getConnection()
             let! sqlModel = cn.QuerySingleAsync<UserSqlModel>(cmd)
             if sqlModel.id = 0 then failwith "User not found" else ()
             return sqlModel |> mapUserResponse
@@ -43,10 +43,10 @@ type LobbyRepository(connectionString) =
     member this.getUsers() : User seq Task =
         let param = new DynamicParameters()
         param.Add("UserId", null)
-        let cmd = this.proc("Lobby.Get_Users", param)
+        let cmd = proc("Lobby.Get_Users", param)
 
         task {
-            use cn = this.getConnection()
+            use cn = getConnection()
             let! sqlModels = cn.QueryAsync<UserSqlModel>(cmd)
             return sqlModels 
                     |> Seq.map mapUserResponse
@@ -56,10 +56,10 @@ type LobbyRepository(connectionString) =
     member this.deleteUser(id : int) : Unit Task =
         let param = new DynamicParameters()
         param.Add("UserId", id)
-        let cmd = this.proc("Lobby.Delete_User", param)
+        let cmd = proc("Lobby.Delete_User", param)
 
         task {
-            use cn = this.getConnection()
+            use cn = getConnection()
             let! _  = cn.ExecuteAsync(cmd) 
             return ()
         }
@@ -69,10 +69,10 @@ type LobbyRepository(connectionString) =
         let param = new DynamicParameters()
         param.Add("BoardRegionCount", request.boardRegionCount)
         param.AddOptional("Description", request.description)
-        let cmd = this.proc("Lobby.Insert_Game", param)
+        let cmd = proc("Lobby.Insert_Game", param)
 
         task {
-            use cn = this.getConnection()
+            use cn = getConnection()
             let! id = cn.QuerySingleAsync<int>(cmd)
             return {
                 id = id 
@@ -86,10 +86,10 @@ type LobbyRepository(connectionString) =
     member this.deleteGame(id : int) : Unit Task =
         let param = new DynamicParameters()
         param.Add("GameId", id)
-        let cmd = this.proc("Lobby.Delete_Game", param)
+        let cmd = proc("Lobby.Delete_Game", param)
 
         task {
-            use cn = this.getConnection()
+            use cn = getConnection()
             let! _ = cn.ExecuteAsync(cmd)
             return ()
         }
@@ -97,10 +97,10 @@ type LobbyRepository(connectionString) =
     member this.getGame(id : int) : LobbyGameMetadata Task =
         let param = new DynamicParameters()
         param.Add("GameId", id)
-        let cmd = this.proc("Lobby.Get_GamesWithPlayers", param)
+        let cmd = proc("Lobby.Get_GamesWithPlayers", param)
 
         task {
-            use cn = this.getConnection()
+            use cn = getConnection()
             let! sqlModels = cn.QueryAsync<LobbyGamePlayerSqlModel>(cmd)
             return sqlModels |> Seq.toList |> mapLobbyGamesResponse |> List.head
         }
@@ -108,20 +108,20 @@ type LobbyRepository(connectionString) =
     member this.getGames() : LobbyGameMetadata list Task =
         let param = new DynamicParameters()
         param.Add("GameId", null)
-        let cmd = this.proc("Lobby.Get_GamesWithPlayers", param)
+        let cmd = proc("Lobby.Get_GamesWithPlayers", param)
 
         task {
-            use cn = this.getConnection()
+            use cn = getConnection()
             let! sqlModels = cn.QueryAsync<LobbyGamePlayerSqlModel>(cmd)
             return sqlModels |> Seq.toList |> mapLobbyGamesResponse
         }
 
     member this.getOpenGames() : LobbyGameMetadata list Task =
         let param = new DynamicParameters()
-        let cmd = this.proc("Lobby.Get_OpenGamesWithPlayers", param)
+        let cmd = proc("Lobby.Get_OpenGamesWithPlayers", param)
 
         task {
-            use cn = this.getConnection()
+            use cn = getConnection()
             let! sqlModels = cn.QueryAsync<LobbyGamePlayerSqlModel>(cmd)
             return sqlModels |> Seq.toList |> mapLobbyGamesResponse
         }
@@ -131,10 +131,10 @@ type LobbyRepository(connectionString) =
         let param = new DynamicParameters()
         param.Add("GameId", gameId)
         param.Add("UserId", userId)
-        let cmd = this.proc("Lobby.Insert_Player", param)
+        let cmd = proc("Lobby.Insert_Player", param)
 
         task {
-            use cn = this.getConnection()
+            use cn = getConnection()
             let! _ = cn.ExecuteAsync(cmd)
             return ()
         }
@@ -143,10 +143,10 @@ type LobbyRepository(connectionString) =
         let param = new DynamicParameters()
         param.Add("GameId", gameId)
         param.Add("UserId", userId)
-        let cmd = this.proc("Lobby.Delete_Player", param)
+        let cmd = proc("Lobby.Delete_Player", param)
 
         task {
-            use cn = this.getConnection()
+            use cn = getConnection()
             let! _ = cn.ExecuteAsync(cmd)
             return ()
         }

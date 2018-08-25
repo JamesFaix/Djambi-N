@@ -33,8 +33,8 @@
     <Compile Include="DomainModels\LobbyModels.fs" />
     <Compile Include="DomainModels\BoardModels.fs" />
     <Compile Include="DomainModels\PlayModels.fs" />
+    <Compile Include="Persistence\SqlUtility.fs" />
     <Compile Include="Persistence\DapperExtensions.fs" />
-    <Compile Include="Persistence\RepositoryBase.fs" />
     <Compile Include="Persistence\LobbySqlModels.fs" />
     <Compile Include="Persistence\LobbySqlMappings.fs" />
     <Compile Include="Persistence\LobbyRepository.fs" />

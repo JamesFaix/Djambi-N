@@ -32,12 +32,13 @@ let configureCors (builder : CorsPolicyBuilder) =
            |> ignore
 
 let getRepositories(settings : IConfiguration) = 
-    let cnStr = settings.GetConnectionString("Main")
-    let lobbyRepository = new LobbyRepository(cnStr)
+    SqlUtility.connectionString <- settings.GetConnectionString("Main")
+
+    let lobbyRepository = new LobbyRepository()
     {
         lobby = lobbyRepository
-        gameStart = new GameStartRepository(cnStr, lobbyRepository)
-        play = new PlayRepository(cnStr)
+        gameStart = new GameStartRepository(lobbyRepository)
+        play = new PlayRepository()
     }
 
 let configureApp (app : IApplicationBuilder) =

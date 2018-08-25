@@ -12,18 +12,20 @@ open TestUtilities
 open Djambi.Api.Domain
 open Djambi.Api.Common
 
-let private getLobbyRepo() =
-    let cnStr = getConnectionString()
-    new LobbyRepository(cnStr)
+let private lobbyRepo =
+    SqlUtility.connectionString <- getConnectionString()
+    new LobbyRepository()
 
-let private getRepository() = 
-    let cnStr = getConnectionString()
-    let lobbyRepo = new LobbyRepository(cnStr)
-    new GameStartRepository(cnStr, lobbyRepo)
+let private repo = 
+    SqlUtility.connectionString <- getConnectionString()
+    new GameStartRepository(lobbyRepo)
 
-let private getService() =
-    let repo = getRepository()
-    let playService = new PlayService(new PlayRepository(getConnectionString()))
+let private playRepo = 
+    SqlUtility.connectionString <- getConnectionString()
+    new PlayRepository()
+
+let private service =
+    let playService = new PlayService(playRepo)
     new GameStartService(repo, playService)
     
 let private getCreateGameRequest() : CreateGameRequest =
@@ -42,8 +44,6 @@ let private getCreateUserRequest() : CreateUserRequest =
 let ``Repository - Add virtual player should work``() =
     let gameRequest = getCreateGameRequest()
     let userRequest = getCreateUserRequest()
-    let lobbyRepo = getLobbyRepo()
-    let repo = getRepository()
     task {
         let! game = lobbyRepo.createGame(gameRequest)
         let! _ = repo.addVirtualPlayerToGame(game.id, userRequest.name)
@@ -55,8 +55,6 @@ let ``Repository - Add virtual player should work``() =
 [<Fact>]
 let ``Service - Add virtual players should work``() =
     let gameRequest = getCreateGameRequest()
-    let lobbyRepo = getLobbyRepo()
-    let service = getService()
     task {
         let! game = lobbyRepo.createGame gameRequest
         let! players = service.addVirtualPlayers game
@@ -68,8 +66,6 @@ let ``Service - Add virtual players should work``() =
 [<Fact>]
 let ``Service = Get starting conditions should work``() =
     let gameRequest = getCreateGameRequest()
-    let lobbyRepo = getLobbyRepo()
-    let service = getService()
     task {
         let! game = lobbyRepo.createGame gameRequest
         let! players = service.addVirtualPlayers game
@@ -90,8 +86,6 @@ let ``Service = Get starting conditions should work``() =
 [<Fact>]
 let ``Service - Create pieces should work``() =    
     let gameRequest = getCreateGameRequest()
-    let lobbyRepo = getLobbyRepo()
-    let service = getService()
     task {
         let! game = lobbyRepo.createGame gameRequest
         let! players = service.addVirtualPlayers game
@@ -116,8 +110,6 @@ let ``Service - Create pieces should work``() =
 [<Fact>]
 let ``Service - Start game should work``() =
     let gameRequest = getCreateGameRequest()
-    let lobbyRepo = getLobbyRepo()
-    let service = getService()
     task {
         let! game = lobbyRepo.createGame gameRequest
         let! gameState = service.startGame game.id
