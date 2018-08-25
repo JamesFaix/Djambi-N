@@ -7,6 +7,7 @@ import { VisualBoard } from "./display/VisualBoard";
 import { GameStartResponse, TurnState } from "./apiClient/PlayModel";
 import {PlayClient} from "./apiClient/PlayClient";
 import { ITheme, ThemeFactory } from "./display/Theme";
+import './styles/global.css';
 
 class App {
     private static renderer : Renderer;

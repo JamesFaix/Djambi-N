@@ -1,5 +1,6 @@
 import {LobbyClient} from "./apiClient/LobbyClient";
 import {LobbyGame, User} from "./apiClient/LobbyModel";
+import './styles/global.css';
 
 class App {
 
