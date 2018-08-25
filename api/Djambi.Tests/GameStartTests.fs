@@ -1,4 +1,4 @@
-﻿module PlayRepositoryTests
+﻿namespace Djambi.Tests
 
 open System
 open Giraffe

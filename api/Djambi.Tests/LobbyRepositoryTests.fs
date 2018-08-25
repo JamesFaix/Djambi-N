@@ -1,5 +1,5 @@
-﻿module LobbyRepositoryTests
-    
+﻿namespace Djambi.Tests
+
 open System
 open Giraffe
 open Xunit
@@ -22,37 +22,6 @@ type LobbyRepositoryTests() =
         {
             boardRegionCount = 3
             description = Some "Test"
-        }
-
-    //User CRUD
-
-    [<Fact>]
-    let ``Create user should work``() =
-        let request = getCreateUserRequest()
-        task {
-            let! user = LobbyRepository.createUser(request)
-            Assert.NotEqual(0, user.id)
-            Assert.Equal(request.name, user.name)
-        }
-
-    [<Fact>]
-    let ``Get user should work``() =
-        let request = getCreateUserRequest()
-        task {
-            let! createdUser = LobbyRepository.createUser(request)
-            let! user = LobbyRepository.getUser(createdUser.id)        
-            Assert.Equal(createdUser.id, user.id)
-            Assert.Equal(createdUser.name, user.name)
-        }
-
-    [<Fact>]
-    let ``Delete user should work``() =
-        let request = getCreateUserRequest()
-        task {
-            let! user = LobbyRepository.createUser(request)
-            let! _ = LobbyRepository.deleteUser(user.id) 
-            let getUser = fun () -> LobbyRepository.getUser(user.id).Result |> ignore
-            Assert.Throws<AggregateException>(getUser) |> ignore
         }
 
     //Game CRUD
@@ -109,7 +78,7 @@ type LobbyRepositoryTests() =
         let userRequest = getCreateUserRequest()
         task {
             let! game = LobbyRepository.createGame(gameRequest)
-            let! user = LobbyRepository.createUser(userRequest)
+            let! user = UserRepository.createUser(userRequest)
             let! _ = LobbyRepository.addPlayerToGame(game.id, user.id)
             let! updatedGame = LobbyRepository.getGame(game.id)
             let exists = updatedGame.players |> List.exists (fun p -> p.userId = Some user.id && p.name = user.name)
@@ -122,7 +91,7 @@ type LobbyRepositoryTests() =
         let userRequest = getCreateUserRequest()
         task {
             let! game = LobbyRepository.createGame(gameRequest)
-            let! user = LobbyRepository.createUser(userRequest)
+            let! user = UserRepository.createUser(userRequest)
             let! _ = LobbyRepository.addPlayerToGame(game.id, user.id)
             let! _ = LobbyRepository.removePlayerFromGame(game.id, user.id)
             let! updatedGame = LobbyRepository.getGame(game.id)

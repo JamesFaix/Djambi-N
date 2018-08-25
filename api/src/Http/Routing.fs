@@ -11,11 +11,11 @@ module Routing =
                 (choose [  
             
                 //Lobby
-                    POST >=> route "/users" >=> LobbyController.createUser
-                    GET >=> routef "/users/%i" LobbyController.getUser
-                    GET >=> route "/users" >=> LobbyController.getUsers
-                    DELETE >=> routef "/users/%i" LobbyController.deleteUser
-                    PATCH >=> routef "/users/%i" LobbyController.updateUser
+                    POST >=> route "/users" >=> UserController.createUser
+                    GET >=> routef "/users/%i" UserController.getUser
+                    GET >=> route "/users" >=> UserController.getUsers
+                    DELETE >=> routef "/users/%i" UserController.deleteUser
+                    PATCH >=> routef "/users/%i" UserController.updateUser
 
                     GET >=> route "/games/open" >=> LobbyController.getOpenGames
                     GET >=> route "/games" >=> LobbyController.getGames
