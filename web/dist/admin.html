@@ -1,0 +1,64 @@
+<html>
+    <meta charset="UTF-8">
+    <head>
+        <style>        
+        body {
+            font-family: 'Segoe UI';
+            font-size: 16px
+        }
+        input {
+            font-family: 'Segoe UI';
+            font-size: 16px
+        }
+        table {
+            border-spacing: 0px
+        }
+        tr {
+            margin: 0px
+        }
+        td {
+            border: 1px dotted silver;
+            padding: 3px 5px 3px 5px
+        }
+        .heading {
+            font-size: 24px;
+            margin: 5px 0px 10px 0px
+        }
+        .section {
+            border: solid 2px silver;
+            padding: 0px 0px 0px 10px;
+            background-color: whitesmoke;
+        }        
+        </style>
+    </head>
+    <body>
+        <div style="display: flex">
+            <div class="section" style="float: left; position: relative">
+                <div class="heading">Users</div>
+                <table id="table_users">
+                    <tbody id="tableBody_users">
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Name</th>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            &nbsp &nbsp &nbsp
+            <div class="section" style="width: 400px; float: right; position: relative">
+                <div class="heading">Games</div>
+                <table id="table_games">
+                        <tbody id="tableBody_games">
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Description</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Player count</th>
+                            </tr>
+                        </tbody>
+                    </table>
+            </div>
+        </div>
+    </body>
+    <script src="admin.js" type="module"></script>
+</html>

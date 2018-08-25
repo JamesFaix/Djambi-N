@@ -41,6 +41,18 @@ type LobbyRepository(connectionString) =
             return sqlModel |> mapUserResponse
         }
 
+    member this.getUsers() : User seq Task =
+        let param = new DynamicParameters()
+        let cmd = this.proc("Lobby.Get_Users", param)
+
+        task {
+            use cn = this.getConnection()
+            let! sqlModels = cn.QueryAsync<UserSqlModel>(cmd)
+            return sqlModels 
+                    |> Seq.map mapUserResponse
+                    |> Seq.sortBy (fun u -> u.id)
+        }
+
     member this.deleteUser(id : int) : Unit Task =
         let param = new DynamicParameters()
         param.Add("UserId", id)
@@ -93,6 +105,16 @@ type LobbyRepository(connectionString) =
             return sqlModels |> Seq.toList |> mapLobbyGamesResponse |> List.head
         }
         
+    member this.getGames() : LobbyGameMetadata list Task =
+        let param = new DynamicParameters()
+        let cmd = this.proc("Lobby.Get_GamesWithPlayers", param)
+
+        task {
+            use cn = this.getConnection()
+            let! sqlModels = cn.QueryAsync<LobbyGamePlayerSqlModel>(cmd)
+            return sqlModels |> Seq.toList |> mapLobbyGamesResponse
+        }
+
     member this.getOpenGames() : LobbyGameMetadata list Task =
         let param = new DynamicParameters()
         let cmd = this.proc("Lobby.Get_OpenGamesWithPlayers", param)

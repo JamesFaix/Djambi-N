@@ -36,6 +36,14 @@ type LobbyController(repository : LobbyRepository) =
                 return! json responseJson next ctx
             }
 
+    member this.getUsers =
+        fun (next : HttpFunc) (ctx : HttpContext) ->
+            task {
+                let! response = repository.getUsers()
+                let responseJson = response |> Seq.map mapUserResponse
+                return! json responseJson next ctx
+            }
+
     member this.updateUser(userId : int) =
         fun (next : HttpFunc) (ctx : HttpContext) ->
             task {
@@ -50,6 +58,14 @@ type LobbyController(repository : LobbyRepository) =
         fun (next : HttpFunc) (ctx : HttpContext) ->
             task {
                 let! response = repository.getOpenGames()
+                let responseJson = response |> List.map mapLobbyGameResponse
+                return! json responseJson next ctx
+            }
+            
+    member this.getGames =
+        fun (next : HttpFunc) (ctx : HttpContext) ->
+            task {
+                let! response = repository.getGames()
                 let responseJson = response |> List.map mapLobbyGameResponse
                 return! json responseJson next ctx
             }

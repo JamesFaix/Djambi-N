@@ -12,10 +12,12 @@ module Routing =
                 //Lobby
                     POST >=> route "/users" >=> controllers.lobby.createUser
                     GET >=> routef "/users/%i" controllers.lobby.getUser
+                    GET >=> route "/users" >=> controllers.lobby.getUsers
                     DELETE >=> routef "/users/%i" controllers.lobby.deleteUser
                     PATCH >=> routef "/users/%i" controllers.lobby.updateUser
 
                     GET >=> route "/games/open" >=> controllers.lobby.getOpenGames
+                    GET >=> route "/games" >=> controllers.lobby.getGames
                     POST >=> route "/games" >=> controllers.lobby.createGame
                     DELETE >=> routef "/games/%i" controllers.lobby.deleteGame
 
