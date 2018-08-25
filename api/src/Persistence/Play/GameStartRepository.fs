@@ -7,15 +7,11 @@ open Giraffe
 open Newtonsoft.Json
 
 open Djambi.Api.Domain.PlayModels
-open Djambi.Api.Domain.LobbyModels
 open Djambi.Api.Persistence.SqlUtility
 
-type GameStartRepository(lobbyRepository : LobbyRepository) =
+module GameStartRepository =
 
-    member this.getGame(gameId : int) : LobbyGameMetadata Task =
-        lobbyRepository.getGame gameId
-
-    member this.getVirtualPlayerNames() : string list Task =
+    let getVirtualPlayerNames() : string list Task =
         let param = new DynamicParameters()
         let cmd = proc("Lobby.Get_VirtualPlayerNames", param)
         task {            
@@ -24,7 +20,7 @@ type GameStartRepository(lobbyRepository : LobbyRepository) =
             return names |> Seq.toList
         }
         
-    member this.addVirtualPlayerToGame(gameId : int, name : string) : Unit Task =
+    let addVirtualPlayerToGame(gameId : int, name : string) : Unit Task =
         let param = new DynamicParameters()
         param.Add("GameId", gameId)
         param.Add("Name", name)
@@ -36,7 +32,7 @@ type GameStartRepository(lobbyRepository : LobbyRepository) =
             return ()
         }
 
-    member this.startGame(request : UpdateGameForStartRequest) : Unit Task =
+    let startGame(request : UpdateGameForStartRequest) : Unit Task =
         let startingConditionsJson = request.startingConditions |> JsonConvert.SerializeObject
         let currentGameStateJson = request.currentGameState |> JsonConvert.SerializeObject
         let currentTurnStateJson = request.currentTurnState |> JsonConvert.SerializeObject

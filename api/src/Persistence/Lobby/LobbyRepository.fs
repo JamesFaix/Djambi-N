@@ -12,23 +12,11 @@ open Djambi.Api.Persistence.LobbySqlMappings
 open Djambi.Api.Persistence.DapperExtensions
 open Djambi.Api.Persistence.SqlUtility
     
-type LobbyRepository() =
+module LobbyRepository =
 
 //Users
-    member this.createUser(request : CreateUserRequest) : User Task =
-        let param = new DynamicParameters()
-        param.Add("Name", request.name)
-        param.Add("IsGuest", request.isGuest)
-        param.Add("IsAdmin", false)
-        let cmd = proc("Lobby.Insert_User", param)
 
-        task {
-            use cn = getConnection()
-            let! id = cn.ExecuteScalarAsync<int>(cmd)
-            return! this.getUser id
-        }
-
-    member this.getUser(id : int) : User Task =
+    let getUser(id : int) : User Task =
         let param = new DynamicParameters()
         param.Add("UserId", id)
         let cmd = proc("Lobby.Get_Users", param)
@@ -40,7 +28,7 @@ type LobbyRepository() =
             return sqlModel |> mapUserResponse
         }
 
-    member this.getUsers() : User seq Task =
+    let getUsers() : User seq Task =
         let param = new DynamicParameters()
         param.Add("UserId", null)
         let cmd = proc("Lobby.Get_Users", param)
@@ -52,8 +40,21 @@ type LobbyRepository() =
                     |> Seq.map mapUserResponse
                     |> Seq.sortBy (fun u -> u.id)
         }
+        
+    let createUser(request : CreateUserRequest) : User Task =
+        let param = new DynamicParameters()
+        param.Add("Name", request.name)
+        param.Add("IsGuest", request.isGuest)
+        param.Add("IsAdmin", false)
+        let cmd = proc("Lobby.Insert_User", param)
 
-    member this.deleteUser(id : int) : Unit Task =
+        task {
+            use cn = getConnection()
+            let! id = cn.ExecuteScalarAsync<int>(cmd)
+            return! getUser id
+        }
+
+    let deleteUser(id : int) : Unit Task =
         let param = new DynamicParameters()
         param.Add("UserId", id)
         let cmd = proc("Lobby.Delete_User", param)
@@ -65,7 +66,7 @@ type LobbyRepository() =
         }
 
 //Games
-    member this.createGame(request : CreateGameRequest) : LobbyGameMetadata Task =
+    let createGame(request : CreateGameRequest) : LobbyGameMetadata Task =
         let param = new DynamicParameters()
         param.Add("BoardRegionCount", request.boardRegionCount)
         param.AddOptional("Description", request.description)
@@ -83,7 +84,7 @@ type LobbyRepository() =
             }
         }
         
-    member this.deleteGame(id : int) : Unit Task =
+    let deleteGame(id : int) : Unit Task =
         let param = new DynamicParameters()
         param.Add("GameId", id)
         let cmd = proc("Lobby.Delete_Game", param)
@@ -94,7 +95,7 @@ type LobbyRepository() =
             return ()
         }
 
-    member this.getGame(id : int) : LobbyGameMetadata Task =
+    let getGame(id : int) : LobbyGameMetadata Task =
         let param = new DynamicParameters()
         param.Add("GameId", id)
         let cmd = proc("Lobby.Get_GamesWithPlayers", param)
@@ -105,7 +106,7 @@ type LobbyRepository() =
             return sqlModels |> Seq.toList |> mapLobbyGamesResponse |> List.head
         }
         
-    member this.getGames() : LobbyGameMetadata list Task =
+    let getGames() : LobbyGameMetadata list Task =
         let param = new DynamicParameters()
         param.Add("GameId", null)
         let cmd = proc("Lobby.Get_GamesWithPlayers", param)
@@ -116,7 +117,7 @@ type LobbyRepository() =
             return sqlModels |> Seq.toList |> mapLobbyGamesResponse
         }
 
-    member this.getOpenGames() : LobbyGameMetadata list Task =
+    let getOpenGames() : LobbyGameMetadata list Task =
         let param = new DynamicParameters()
         let cmd = proc("Lobby.Get_OpenGamesWithPlayers", param)
 
@@ -127,7 +128,7 @@ type LobbyRepository() =
         }
 
 //Players
-    member this.addPlayerToGame(gameId : int, userId : int) : Unit Task =
+    let addPlayerToGame(gameId : int, userId : int) : Unit Task =
         let param = new DynamicParameters()
         param.Add("GameId", gameId)
         param.Add("UserId", userId)
@@ -139,7 +140,7 @@ type LobbyRepository() =
             return ()
         }
 
-    member this.removePlayerFromGame(gameId : int, userId : int) : Unit Task =
+    let removePlayerFromGame(gameId : int, userId : int) : Unit Task =
         let param = new DynamicParameters()
         param.Add("GameId", gameId)
         param.Add("UserId", userId)

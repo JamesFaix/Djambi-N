@@ -12,9 +12,9 @@ open Djambi.Api.Persistence.SqlUtility
 
 open Djambi.Api.Persistence.PlaySqlModelMappings
 
-type PlayRepository() =
+module PlayRepository =
     
-    member this.getGame(gameId : int) : Game Task =
+    let getGame(gameId : int) : Game Task =
         let param = new DynamicParameters()
         param.Add("GameId", gameId)
         let cmd = proc("Play.Get_Game", param)
@@ -25,7 +25,7 @@ type PlayRepository() =
             return sqlModel |> mapGameSqlModelResponse
         }
 
-    member this.updateCurrentGameState(gameId : int, state : GameState) : Unit Task =
+    let updateCurrentGameState(gameId : int, state : GameState) : Unit Task =
         let json = state |> JsonConvert.SerializeObject
         let param = new DynamicParameters()
         param.Add("GameId", gameId)
@@ -38,7 +38,7 @@ type PlayRepository() =
             return ()
         }
 
-    member this.updateCurrentTurnState(gameId: int, state : TurnState) : Unit Task =
+    let updateCurrentTurnState(gameId: int, state : TurnState) : Unit Task =
         let json = state |> JsonConvert.SerializeObject
         let param = new DynamicParameters()
         param.Add("GameId", gameId)

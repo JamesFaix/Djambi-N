@@ -11,7 +11,6 @@ open Giraffe
 
 open Djambi.Api.Persistence
 open Djambi.Api.Http
-open Djambi.Api.Domain
 
 // ---------------------------------
 // Error handler
@@ -30,38 +29,18 @@ let configureCors (builder : CorsPolicyBuilder) =
            .AllowAnyMethod()
            .AllowAnyHeader()
            |> ignore
-
-let getRepositories(settings : IConfiguration) = 
-    SqlUtility.connectionString <- settings.GetConnectionString("Main")
-
-    let lobbyRepository = new LobbyRepository()
-    {
-        lobby = lobbyRepository
-        gameStart = new GameStartRepository(lobbyRepository)
-        play = new PlayRepository()
-    }
-
+           
 let configureApp (app : IApplicationBuilder) =
 //    let env = app.ApplicationServices.GetService<IHostingEnvironment>()
     let settings = app.ApplicationServices.GetService<IConfiguration>()
-
-    let repositories = getRepositories(settings)
-
-    let playService = new PlayService(repositories.play)
-    let gameStartService = new GameStartService(repositories.gameStart, playService)
-
-    let controllers : ControllerRegistry = 
-        {
-            lobby = new LobbyController(repositories.lobby)
-            play = new PlayController(gameStartService, playService)
-        }
+    SqlUtility.connectionString <- settings.GetConnectionString("Main")
 
     app.UseGiraffeErrorHandler(errorHandler)
     //(match env.IsDevelopment() with
     //| true  -> app.UseDeveloperExceptionPage()
     //| false -> app.UseGiraffeErrorHandler errorHandler)
         .UseCors(configureCors)
-        .UseGiraffe(Routing.getRoutingTable controllers)
+        .UseGiraffe(Routing.getRoutingTable)
 
 let configureServices (services : IServiceCollection) =
     services.AddCors()    |> ignore

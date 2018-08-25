@@ -92,6 +92,15 @@ module PlayModels =
             selectionOptions : int list
             requiredSelectionType : SelectionType option
         }
+
+    module TurnState =
+        let empty = 
+            {
+                status = AwaitingSelection
+                selections = List.empty
+                selectionOptions = List.empty
+                requiredSelectionType = Some Subject
+            }
        
     type PlayerStartConditions =
         {

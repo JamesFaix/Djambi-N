@@ -14,15 +14,14 @@ open Djambi.Api.Domain.BoardModels
 open Djambi.Api.Domain.BoardsExtensions
 open Djambi.Api.Domain
 
-type GameStartService(repository : GameStartRepository, 
-                      playService : PlayService) =
+module GameStartService =
                 
-    member this.addVirtualPlayers(game : LobbyGameMetadata) : LobbyPlayer list Task =
+    let addVirtualPlayers(game : LobbyGameMetadata) : LobbyPlayer list Task =
         task {
             let missingPlayerCount = game.boardRegionCount - game.players.Length
             if missingPlayerCount > 0
             then
-                let! virtualPlayerNames = repository.getVirtualPlayerNames()
+                let! virtualPlayerNames = GameStartRepository.getVirtualPlayerNames()
                 let namesToUse = 
                     Enumerable.Except(
                         virtualPlayerNames, 
@@ -33,14 +32,14 @@ type GameStartService(repository : GameStartRepository,
                     |> Seq.toList
 
                 for name in namesToUse do
-                    let! _ = repository.addVirtualPlayerToGame(game.id, name)
+                    let! _ = GameStartRepository.addVirtualPlayerToGame(game.id, name)
                     ()
             else ()
-            let! updated = repository.getGame(game.id)
+            let! updated = LobbyRepository.getGame(game.id)
             return updated.players
         }
 
-    member this.getStartingConditions(players : LobbyPlayer list) : PlayerStartConditions list =
+    let getStartingConditions(players : LobbyPlayer list) : PlayerStartConditions list =
         let colorIds = [0..(Constants.maxRegions-1)] |> Utilities.shuffle |> Seq.take players.Length
         let regions = [0..(players.Length-1)] |> Utilities.shuffle
         let turnOrder = players |> Utilities.shuffle
@@ -56,7 +55,7 @@ type GameStartService(repository : GameStartRepository,
             })
         |> Seq.toList
  
-    member this.createPieces(board : BoardMetadata, startingConditions : PlayerStartConditions list) : Piece list =
+    let createPieces(board : BoardMetadata, startingConditions : PlayerStartConditions list) : Piece list =
         let createPlayerPieces(board : BoardMetadata, player : PlayerStartConditions, startingId : int) : Piece list =            
             let getPiece(id : int, pieceType: PieceType, x : int, y : int) =
                 {
@@ -83,13 +82,13 @@ type GameStartService(repository : GameStartRepository,
         |> List.mapi (fun i cond -> createPlayerPieces(board, cond, i*Constants.piecesPerPlayer))
         |> List.collect id
 
-    member this.startGame(gameId : int) : GameStartResponse Task =
+    let startGame(gameId : int) : GameStartResponse Task =
         task {
-            let! game = repository.getGame gameId
-            let! lobbyPlayers = this.addVirtualPlayers game
-            let startingConditions = this.getStartingConditions(lobbyPlayers)
+            let! game = LobbyRepository.getGame gameId
+            let! lobbyPlayers = addVirtualPlayers game
+            let startingConditions = getStartingConditions(lobbyPlayers)
             let board = BoardUtility.getBoardMetadata(game.boardRegionCount)
-            let pieces = this.createPieces(board, startingConditions)
+            let pieces = createPieces(board, startingConditions)
             let gameState : GameState = 
                 {
                     players = lobbyPlayers 
@@ -119,7 +118,7 @@ type GameStartService(repository : GameStartRepository,
                         }
                 }
 
-            let (selectionOptions, requiredSelectionType) = playService.getSelectableCellsFromState gameWithoutSelectionOptions
+            let (selectionOptions, requiredSelectionType) = PlayService.getSelectableCellsFromState gameWithoutSelectionOptions
             
             let turnState = { gameWithoutSelectionOptions.currentTurnState with selectionOptions = selectionOptions }
 
@@ -131,7 +130,7 @@ type GameStartService(repository : GameStartRepository,
                     currentTurnState = turnState
                 }
 
-            let! _ = repository.startGame(updateRequest)
+            let! _ = GameStartRepository.startGame(updateRequest)
 
             return 
                 {

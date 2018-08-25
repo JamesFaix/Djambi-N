@@ -8,113 +8,100 @@ open Djambi.Api.Persistence
 open Djambi.Api.Domain.LobbyModels
 open Djambi.Api.Common.Enums
 open Djambi.Api.Domain.PlayModels
-open TestUtilities
 open Djambi.Api.Domain
 open Djambi.Api.Common
 
-let private lobbyRepo =
-    SqlUtility.connectionString <- getConnectionString()
-    new LobbyRepository()
+type GameStartTests() =
+    do 
+        SqlUtility.connectionString <- TestUtilities.connectionString
 
-let private repo = 
-    SqlUtility.connectionString <- getConnectionString()
-    new GameStartRepository(lobbyRepo)
+    let getCreateGameRequest() : CreateGameRequest =
+        {
+            boardRegionCount = 3
+            description = Some "Test"
+        }
 
-let private playRepo = 
-    SqlUtility.connectionString <- getConnectionString()
-    new PlayRepository()
+    let getCreateUserRequest() : CreateUserRequest = 
+        {
+            name = "Test_" + Guid.NewGuid().ToString()
+            isGuest = false
+        }
 
-let private service =
-    let playService = new PlayService(playRepo)
-    new GameStartService(repo, playService)
-    
-let private getCreateGameRequest() : CreateGameRequest =
-    {
-        boardRegionCount = 3
-        description = Some "Test"
-    }
+    [<Fact>]
+    let ``Repository - Add virtual player should work``() =
+        let gameRequest = getCreateGameRequest()
+        let userRequest = getCreateUserRequest()
+        task {
+            let! game = LobbyRepository.createGame(gameRequest)
+            let! _ = GameStartRepository.addVirtualPlayerToGame(game.id, userRequest.name)
+            let! updatedGame = LobbyRepository.getGame(game.id)
+            let exists = updatedGame.players |> List.exists (fun p -> p.userId = None && p.name = userRequest.name)
+            Assert.True(exists)
+        }
 
-let private getCreateUserRequest() : CreateUserRequest = 
-    {
-        name = "Test_" + Guid.NewGuid().ToString()
-        isGuest = false
-    }
+    [<Fact>]
+    let ``Service - Add virtual players should work``() =
+        let gameRequest = getCreateGameRequest()
+        task {
+            let! game = LobbyRepository.createGame gameRequest
+            let! players = GameStartService.addVirtualPlayers game
+            let! updatedGame = LobbyRepository.getGame game.id
+            Assert.Equal(gameRequest.boardRegionCount, updatedGame.players.Length)
+            Assert.Equal<LobbyPlayer list>(players, updatedGame.players)
+        }
 
-[<Fact>]
-let ``Repository - Add virtual player should work``() =
-    let gameRequest = getCreateGameRequest()
-    let userRequest = getCreateUserRequest()
-    task {
-        let! game = lobbyRepo.createGame(gameRequest)
-        let! _ = repo.addVirtualPlayerToGame(game.id, userRequest.name)
-        let! updatedGame = repo.getGame(game.id)
-        let exists = updatedGame.players |> List.exists (fun p -> p.userId = None && p.name = userRequest.name)
-        Assert.True(exists)
-    }
+    [<Fact>]
+    let ``Service = Get starting conditions should work``() =
+        let gameRequest = getCreateGameRequest()
+        task {
+            let! game = LobbyRepository.createGame gameRequest
+            let! players = GameStartService.addVirtualPlayers game
+            let startingConditions = GameStartService.getStartingConditions players
 
-[<Fact>]
-let ``Service - Add virtual players should work``() =
-    let gameRequest = getCreateGameRequest()
-    task {
-        let! game = lobbyRepo.createGame gameRequest
-        let! players = service.addVirtualPlayers game
-        let! updatedGame = lobbyRepo.getGame game.id
-        Assert.Equal(gameRequest.boardRegionCount, updatedGame.players.Length)
-        Assert.Equal<LobbyPlayer list>(players, updatedGame.players)
-    }
+            Assert.Equal(game.boardRegionCount, startingConditions.Length)
 
-[<Fact>]
-let ``Service = Get starting conditions should work``() =
-    let gameRequest = getCreateGameRequest()
-    task {
-        let! game = lobbyRepo.createGame gameRequest
-        let! players = service.addVirtualPlayers game
-        let startingConditions = service.getStartingConditions players
+            let turnNumbers = startingConditions |> List.map (fun cond -> cond.turnNumber) |> List.sort
+            Assert.Equal<int list>([0..(game.boardRegionCount-1)], turnNumbers)
 
-        Assert.Equal(game.boardRegionCount, startingConditions.Length)
+            let regions = startingConditions |> List.map (fun cond -> cond.region) |> List.sort
+            Assert.Equal<int list>([0..(game.boardRegionCount-1)], regions)
 
-        let turnNumbers = startingConditions |> List.map (fun cond -> cond.turnNumber) |> List.sort
-        Assert.Equal<int list>([0..(game.boardRegionCount-1)], turnNumbers)
+            let colors = startingConditions |> List.map (fun cond -> cond.color)
+            Assert.All(colors, fun c -> Assert.True(c >= 0 && c < Constants.maxRegions))
+        }
 
-        let regions = startingConditions |> List.map (fun cond -> cond.region) |> List.sort
-        Assert.Equal<int list>([0..(game.boardRegionCount-1)], regions)
+    [<Fact>]
+    let ``Service - Create pieces should work``() =    
+        let gameRequest = getCreateGameRequest()
+        task {
+            let! game = LobbyRepository.createGame gameRequest
+            let! players = GameStartService.addVirtualPlayers game
+            let startingConditions = GameStartService.getStartingConditions players
+            let board = BoardUtility.getBoardMetadata(game.boardRegionCount)
+            let pieces = GameStartService.createPieces(board, startingConditions)
 
-        let colors = startingConditions |> List.map (fun cond -> cond.color)
-        Assert.All(colors, fun c -> Assert.True(c >= 0 && c < Constants.maxRegions))
-    }
+            Assert.Equal(players.Length * Constants.piecesPerPlayer, pieces.Length)
 
-[<Fact>]
-let ``Service - Create pieces should work``() =    
-    let gameRequest = getCreateGameRequest()
-    task {
-        let! game = lobbyRepo.createGame gameRequest
-        let! players = service.addVirtualPlayers game
-        let startingConditions = service.getStartingConditions players
-        let board = BoardUtility.getBoardMetadata(game.boardRegionCount)
-        let pieces = service.createPieces(board, startingConditions)
+            let groupByPlayer = pieces |> List.groupBy (fun p -> p.originalPlayerId)
+            Assert.Equal(players.Length, groupByPlayer.Length)
 
-        Assert.Equal(players.Length * Constants.piecesPerPlayer, pieces.Length)
+            for (_, grp) in groupByPlayer do
+                Assert.Single<Piece>(grp, (fun p -> p.pieceType = Chief)) |> ignore
+                Assert.Single<Piece>(grp, (fun p -> p.pieceType = Diplomat)) |> ignore
+                Assert.Single<Piece>(grp, (fun p -> p.pieceType = Reporter)) |> ignore
+                Assert.Single<Piece>(grp, (fun p -> p.pieceType = Gravedigger)) |> ignore
+                Assert.Single<Piece>(grp, (fun p -> p.pieceType = Assassin)) |> ignore
+                Assert.Equal(4, grp |> List.filter (fun p -> p.pieceType = Thug) |> List.length)
+        }
 
-        let groupByPlayer = pieces |> List.groupBy (fun p -> p.originalPlayerId)
-        Assert.Equal(players.Length, groupByPlayer.Length)
+    [<Fact>]
+    let ``Service - Start game should work``() =
+        let gameRequest = getCreateGameRequest()
+        task {
+            let! game = LobbyRepository.createGame gameRequest
+            let! gameState = GameStartService.startGame game.id
 
-        for (_, grp) in groupByPlayer do
-            Assert.Single<Piece>(grp, (fun p -> p.pieceType = Chief)) |> ignore
-            Assert.Single<Piece>(grp, (fun p -> p.pieceType = Diplomat)) |> ignore
-            Assert.Single<Piece>(grp, (fun p -> p.pieceType = Reporter)) |> ignore
-            Assert.Single<Piece>(grp, (fun p -> p.pieceType = Gravedigger)) |> ignore
-            Assert.Single<Piece>(grp, (fun p -> p.pieceType = Assassin)) |> ignore
-            Assert.Equal(4, grp |> List.filter (fun p -> p.pieceType = Thug) |> List.length)
-    }
+            let! updated = LobbyRepository.getGame game.id
 
-[<Fact>]
-let ``Service - Start game should work``() =
-    let gameRequest = getCreateGameRequest()
-    task {
-        let! game = lobbyRepo.createGame gameRequest
-        let! gameState = service.startGame game.id
-
-        let! updated = lobbyRepo.getGame game.id
-
-        Assert.Equal(GameStatus.Started, updated.status)
-    }
+            Assert.Equal(GameStatus.Started, updated.status)
+        }
