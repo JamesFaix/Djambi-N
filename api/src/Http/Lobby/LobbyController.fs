@@ -17,7 +17,7 @@ module LobbyController =
 //Users
     let createUser : HttpHandler =
         let func (ctx : HttpContext) =            
-            ctx.BindJsonAsync<CreateUserJsonModel>()
+            ctx.BindModelAsync<CreateUserJsonModel>()
             |> Task.map mapCreateUserRequest
             |> Task.bind LobbyRepository.createUser
             |> Task.map mapUserResponse
