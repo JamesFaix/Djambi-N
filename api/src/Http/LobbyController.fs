@@ -7,96 +7,91 @@ open Giraffe
 open Djambi.Api.Http.LobbyJsonModels
 open Djambi.Api.Http.LobbyJsonMappings
 open Djambi.Api.Persistence
+open Djambi.Api.Common
+open System.Threading.Tasks
+open System
 
 type LobbyController(repository : LobbyRepository) =
+    
+    member private this.handle<'a> (func : HttpContext -> 'a Task) :
+        HttpFunc -> HttpContext -> HttpContext option Task =
 
+        fun (next : HttpFunc) (ctx : HttpContext) ->
+            task {
+                try 
+                    let! result = func ctx
+                    return! json result next ctx
+                with
+                | :? HttpException as ex -> 
+                    ctx.SetStatusCode ex.statusCode
+                    return! json ex.Message next ctx
+                | _ as ex -> 
+                    ctx.SetStatusCode 500
+                    return! json ex.Message next ctx
+            }
 //Users
     member this.createUser =
-        fun (next : HttpFunc)(ctx : HttpContext) ->
-            task {
-                let! requestJson = ctx.BindJsonAsync<CreateUserJsonModel>()
-                let request = requestJson |> mapCreateUserRequest
-                let! response = repository.createUser(request)
-                let responseJson = response |> mapUserResponse
-                return! json responseJson next ctx
-            }
+        let func (ctx : HttpContext) =            
+            ctx.BindJsonAsync<CreateUserJsonModel>()
+            |> Task.map mapCreateUserRequest
+            |> Task.bind repository.createUser
+            |> Task.map mapUserResponse
+        this.handle func
 
     member this.deleteUser(userId : int) =
-        fun (next : HttpFunc) (ctx : HttpContext) ->
-        task {
-            let! _ = repository.deleteUser(userId)
-            return! json () next ctx
-        }
+        let func ctx =
+            repository.deleteUser(userId)
+        this.handle func
 
     member this.getUser(userId : int) =
-        fun (next : HttpFunc) (ctx : HttpContext) ->
-            task {
-                let! response = repository.getUser(userId)
-                let responseJson = response |> mapUserResponse
-                return! json responseJson next ctx
-            }
+        let func ctx =
+            repository.getUser userId
+            |> Task.map mapUserResponse
+        this.handle func
 
     member this.getUsers =
-        fun (next : HttpFunc) (ctx : HttpContext) ->
-            task {
-                let! response = repository.getUsers()
-                let responseJson = response |> Seq.map mapUserResponse
-                return! json responseJson next ctx
-            }
+        let func ctx =
+            repository.getUsers()
+            |> Task.map (Seq.map mapUserResponse)
+        this.handle func
 
     member this.updateUser(userId : int) =
-        fun (next : HttpFunc) (ctx : HttpContext) ->
-            task {
-                let placeHolderResponse = {
-                    text = sprintf "Update user %i not yet implemented" userId
-                }
-                return! json placeHolderResponse next ctx
-            }
+        let func ctx = 
+            raise (NotImplementedException "")
+        this.handle func
 
 //Game lobby
     member this.getOpenGames =
-        fun (next : HttpFunc) (ctx : HttpContext) ->
-            task {
-                let! response = repository.getOpenGames()
-                let responseJson = response |> List.map mapLobbyGameResponse
-                return! json responseJson next ctx
-            }
+        let func ctx =
+            repository.getOpenGames()
+            |> Task.map (List.map mapLobbyGameResponse)
+        this.handle func
             
     member this.getGames =
-        fun (next : HttpFunc) (ctx : HttpContext) ->
-            task {
-                let! response = repository.getGames()
-                let responseJson = response |> List.map mapLobbyGameResponse
-                return! json responseJson next ctx
-            }
+        let func ctx =
+            repository.getGames()
+            |> Task.map (List.map mapLobbyGameResponse)
+        this.handle func
 
     member this.createGame =
-        fun (next : HttpFunc) (ctx : HttpContext) ->
-            task {
-                let! requestJson = ctx.BindModelAsync<CreateGameJsonModel>()
-                let request = requestJson |> mapCreateGameRequest
-                let! response = repository.createGame(request)
-                let responseJson = response |> mapLobbyGameResponse
-                return! json responseJson next ctx
-            }
-
+        let func (ctx : HttpContext) =
+            ctx.BindModelAsync<CreateGameJsonModel>()
+            |> Task.map mapCreateGameRequest
+            |> Task.bind repository.createGame
+            |> Task.map mapLobbyGameResponse
+        this.handle func        
+    
     member this.deleteGame(gameId : int) =
-        fun (next : HttpFunc) (ctx : HttpContext) ->
-            task {
-                let! _ = repository.deleteGame(gameId)
-                return! json () next ctx
-            }
-
+        let func ctx = 
+            repository.deleteGame gameId
+        this.handle func
+ 
     member this.addPlayerToGame(gameId : int, userId : int) =
-        fun (next : HttpFunc) (ctx : HttpContext) ->
-            task {
-                let! _ = repository.addPlayerToGame(gameId, userId)
-                return! json () next ctx
-            }
+        let func ctx =
+            repository.addPlayerToGame(gameId, userId)
+        this.handle func
 
     member this.removePlayerFromGame(gameId : int, userId : int) =
-        fun (next : HttpFunc) (ctx : HttpContext) ->
-            task {
-                let! _ = repository.removePlayerFromGame(gameId, userId)
-                return! json () next ctx
-            }
+        let func ctx =
+            repository.removePlayerFromGame(gameId, userId)
+        this.handle func

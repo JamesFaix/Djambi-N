@@ -188,77 +188,74 @@ type PlayService(repository : PlayRepository) =
                                    |> Seq.toList
                      | _ -> List.empty
 
-    member this.selectCell(gameId : int, cellId : int) : Result<TurnState, HttpError> Task = 
+    member this.selectCell(gameId : int, cellId : int) : TurnState Task = 
         task {
             let! game = repository.getGame gameId
             if game.currentTurnState.selectionOptions |> List.contains cellId |> not
-            then return Error({ statusCode = 400; message = sprintf "Cell %i is not currently selectable" cellId })
+            then return! Task.FromException<TurnState> (HttpException(400, (sprintf "Cell %i is not currently selectable" cellId)))
             else let! game = repository.getGame gameId 
                  let turn = game.currentTurnState
                  if turn.status = AwaitingConfirmation
-                 then return Error({statusCode = 400; message = "Cannot make seletion when awaiting turn confirmation"})
+                 then return! Task.FromException<TurnState> (HttpException(400, "Cannot make seletion when awaiting turn confirmation"))
                  else let pieceIndex = game.currentGameState.piecesIndexedByCell
                       let board = BoardUtility.getBoardMetadata game.boardRegionCount
                       
-                      let result : Result<(Selection * TurnStatus), HttpError> = 
-                        match turn.selections.Length with
-                        | 0 -> Ok(Selection.subject(cellId, pieceIndex.Item(cellId).id), AwaitingSelection)
-                        | 1 -> let subject = turn.subjectPiece(game.currentGameState).Value
-                               match pieceIndex.TryFind(cellId) with
-                                | None -> match subject.pieceType with
-                                          | Reporter -> if board.neighborsFromCellId cellId
-                                                            |> Seq.map (fun c -> pieceIndex.TryFind c.id)
-                                                            |> Seq.filter (fun o -> o.IsSome)
-                                                            |> Seq.map (fun o -> o.Value)
-                                                            |> Seq.filter (fun p -> p.isAlive && p.playerId <> subject.playerId)
-                                                            |> Seq.isEmpty
-                                                        then Ok(Selection.move(cellId), AwaitingConfirmation)
-                                                        else Ok(Selection.move(cellId), AwaitingSelection) //Awaiting target
-                                          | _ -> Ok(Selection.move(cellId), AwaitingConfirmation)
-                                | Some target when subject.pieceType = Assassin ->
-                                    if board.cell(cellId).isCenter
-                                    then Ok(Selection.moveWithTarget(cellId, target.id), AwaitingSelection) //Awaiting vacate                                
-                                    else Ok(Selection.moveWithTarget(cellId, target.id), AwaitingConfirmation)
-                                | Some piece -> Ok(Selection.moveWithTarget(cellId, piece.id), AwaitingSelection) //Awaiting drop
-                        | 2 -> match (turn.subjectPiece game.currentGameState).Value.pieceType with
-                                | Thug
-                                | Chief
-                                | Diplomat
-                                | Gravedigger -> Ok(Selection.drop(cellId), AwaitingConfirmation)
-                                | Assassin -> Ok(Selection.move(cellId), AwaitingConfirmation) //Vacate
-                                | Reporter -> Ok(Selection.target(cellId, pieceIndex.Item(cellId).id), AwaitingConfirmation)
-                                | Corpse -> Error({ statusCode = 400; message = "Subject cannot be corpse" })
-                        | 3 -> match (turn.subjectPiece game.currentGameState).Value.pieceType with
-                                | Diplomat
-                                | Gravedigger -> Ok(Selection.move(cellId), AwaitingConfirmation) //Vacate
-                                | _ -> Error({ statusCode = 400; message = "Cannot make fourth selection unless vacating center" })
-                        | _ -> Error({ statusCode = 400; message = "Cannot make more than 4 selections" })
+                      let (selection, status) : (Selection * TurnStatus) = 
+                            match turn.selections.Length with
+                            | 0 -> (Selection.subject(cellId, pieceIndex.Item(cellId).id), AwaitingSelection)
+                            | 1 -> let subject = turn.subjectPiece(game.currentGameState).Value
+                                   match pieceIndex.TryFind(cellId) with
+                                    | None -> match subject.pieceType with
+                                              | Reporter -> if board.neighborsFromCellId cellId
+                                                                |> Seq.map (fun c -> pieceIndex.TryFind c.id)
+                                                                |> Seq.filter (fun o -> o.IsSome)
+                                                                |> Seq.map (fun o -> o.Value)
+                                                                |> Seq.filter (fun p -> p.isAlive && p.playerId <> subject.playerId)
+                                                                |> Seq.isEmpty
+                                                            then (Selection.move(cellId), AwaitingConfirmation)
+                                                            else (Selection.move(cellId), AwaitingSelection) //Awaiting target
+                                              | _ -> (Selection.move(cellId), AwaitingConfirmation)
+                                    | Some target when subject.pieceType = Assassin ->
+                                        if board.cell(cellId).isCenter
+                                        then (Selection.moveWithTarget(cellId, target.id), AwaitingSelection) //Awaiting vacate                                
+                                        else (Selection.moveWithTarget(cellId, target.id), AwaitingConfirmation)
+                                    | Some piece -> (Selection.moveWithTarget(cellId, piece.id), AwaitingSelection) //Awaiting drop
+                            | 2 -> match (turn.subjectPiece game.currentGameState).Value.pieceType with
+                                    | Thug
+                                    | Chief
+                                    | Diplomat
+                                    | Gravedigger -> (Selection.drop(cellId), AwaitingConfirmation)
+                                    | Assassin -> (Selection.move(cellId), AwaitingConfirmation) //Vacate
+                                    | Reporter -> (Selection.target(cellId, pieceIndex.Item(cellId).id), AwaitingConfirmation)
+                                    | Corpse -> raise (HttpException(400, "Subject cannot be corpse"))
+                            | 3 -> match (turn.subjectPiece game.currentGameState).Value.pieceType with
+                                    | Diplomat
+                                    | Gravedigger -> (Selection.move(cellId), AwaitingConfirmation) //Vacate
+                                    | _ -> raise (HttpException(400, "Cannot make fourth selection unless vacating center"))
+                            | _ -> raise (HttpException(400, "Cannot make more than 4 selections"))
                       
-                      match result with
-                      | Error msg -> return Error(msg)
-                      | Ok (selection, status) -> 
-                            let stateWithNewSelection =
-                                {
-                                    status = status
-                                    selections = List.append turn.selections [selection]
-                                    selectionOptions = List.empty
-                                    requiredSelectionType = None
-                                }
-                            let updatedGame = 
-                                {
-                                    currentGameState = game.currentGameState
-                                    currentTurnState = stateWithNewSelection
-                                    boardRegionCount = game.boardRegionCount
-                                }
-                            let (selectionOptions, requiredSelectionType) = this.getSelectableCellsFromState updatedGame
-                            let updatedState =
-                                {
-                                    stateWithNewSelection with 
-                                        selectionOptions = selectionOptions
-                                        requiredSelectionType = requiredSelectionType
-                                }
-                            let! _ = repository.updateCurrentTurnState(gameId, updatedState)
-                            return Ok updatedState
+                      let stateWithNewSelection =
+                            {
+                                status = status
+                                selections = List.append turn.selections [selection]
+                                selectionOptions = List.empty
+                                requiredSelectionType = None
+                            }
+                      let updatedGame = 
+                            {
+                                currentGameState = game.currentGameState
+                                currentTurnState = stateWithNewSelection
+                                boardRegionCount = game.boardRegionCount
+                            }
+                      let (selectionOptions, requiredSelectionType) = this.getSelectableCellsFromState updatedGame
+                      let updatedState =
+                            {
+                                stateWithNewSelection with 
+                                    selectionOptions = selectionOptions
+                                    requiredSelectionType = requiredSelectionType
+                            }
+                      let! _ = repository.updateCurrentTurnState(gameId, updatedState)
+                      return updatedState
         }
 
     member private this.emptyTurn : TurnState =
@@ -293,7 +290,7 @@ type PlayService(repository : PlayRepository) =
             return updatedState
         }
     
-    member private this.applyTurnStateToPieces(game : Game) : Result<Piece list, HttpError> =
+    member private this.applyTurnStateToPieces(game : Game) : Piece list =
         let gameState = game.currentGameState
         let turn = game.currentTurnState
         let regionCount = game.boardRegionCount        
@@ -301,7 +298,7 @@ type PlayService(repository : PlayRepository) =
         
         match (turn.subjectPiece gameState, turn.destinationCell regionCount) with
         | (None, _) 
-        | (_, None) -> Error({ statusCode = 500; message = "Cannot commit turn without subject and destination selected." })
+        | (_, None) -> raise (HttpException(500, "Cannot commit turn without subject and destination selected."))
         | (Some subject, Some destination) -> 
             let origin = subject.cellId
                     
@@ -330,8 +327,7 @@ type PlayService(repository : PlayRepository) =
                 //Move target back to origin if subject is assassin
                 if subject.pieceType = Assassin
                 then pieces.[target.id] <- pieces.[target.id].moveTo origin
-            Ok()
-        |> Result.map(fun _ -> pieces.Values |> Seq.toList )
+            pieces.Values |> Seq.toList
 
     member private this.removeSequentialDuplicates(turnCycle : int list) : int list =
         let list = turnCycle.ToList()
@@ -411,73 +407,66 @@ type PlayService(repository : PlayRepository) =
             turnCycle = turns
         }
 
-    member this.commitTurn(gameId : int) : Result<CommitTurnResponse, HttpError> Task =
+    member this.commitTurn(gameId : int) : CommitTurnResponse Task =
         task {
             let! game = repository.getGame gameId
             let gameState = game.currentGameState
             let turnState = game.currentTurnState
             let turnCycle = this.applyTurnStateToTurnCycle(game)
-            let result = this.applyTurnStateToPieces(game)
-                           |> Result.map(fun pieces -> 
+            let pieces = this.applyTurnStateToPieces(game)
                                         
-                                let mutable players = game.currentGameState.players
+            let mutable players = game.currentGameState.players
 
-                                //Kill player if chief killed
-                                match (turnState.subjectPiece gameState, turnState.targetPiece gameState) with
-                                | (Some subject, Some target) 
-                                    when subject.isKiller && target.pieceType = Chief ->
-                                    players <- players |> List.map (fun p -> if p.id = target.playerId.Value then p.kill else p)
-                                | _ -> ()
-
-                                let mutable updatedGame : Game = 
-                                    {
-                                        currentGameState = 
-                                            {
-                                                pieces = pieces
-                                                players = players
-                                                turnCycle = turnCycle
-                                            }
-                                        currentTurnState = this.emptyTurn
-                                        boardRegionCount = game.boardRegionCount
-                                    }
-
-                                //While next player has no moves, kill chief and abandon all pieces
-                                let (options, reqSelType) = this.getSelectableCellsFromState updatedGame
-                                let mutable selectionOptions = options
-                                let mutable requiredSelectionType = reqSelType
-                                
-                                while selectionOptions.IsEmpty && updatedGame.currentGameState.turnCycle.Length > 1 do
-                                    updatedGame <- 
-                                        {
-                                            currentGameState = this.killCurrentPlayer(updatedGame.currentGameState)
-                                            currentTurnState = this.emptyTurn
-                                            boardRegionCount = game.boardRegionCount
-                                        }
-                                    let (opt, rst) = this.getSelectableCellsFromState updatedGame
-                                    selectionOptions <- opt
-                                    requiredSelectionType <- rst
-
-                                //TODO: If only 1 player, game over
-  
-                                let response =
-                                    {
-                                        gameState = updatedGame.currentGameState
-                                        turnState =  
-                                        { 
-                                            this.emptyTurn with 
-                                                selectionOptions = selectionOptions 
-                                                requiredSelectionType = requiredSelectionType
-                                        }
-                                    }
-                            
-                                response)
-
-            match result with 
-            | Ok(response) ->
-                let! _ = repository.updateCurrentGameState(gameId, response.gameState)
-                let! _ = repository.updateCurrentTurnState(gameId, response.turnState)
-                ()
+            //Kill player if chief killed
+            match (turnState.subjectPiece gameState, turnState.targetPiece gameState) with
+            | (Some subject, Some target) 
+                when subject.isKiller && target.pieceType = Chief ->
+                players <- players |> List.map (fun p -> if p.id = target.playerId.Value then p.kill else p)
             | _ -> ()
 
-            return result
+            let mutable updatedGame : Game = 
+                {
+                    currentGameState = 
+                        {
+                            pieces = pieces
+                            players = players
+                            turnCycle = turnCycle
+                        }
+                    currentTurnState = this.emptyTurn
+                    boardRegionCount = game.boardRegionCount
+                }
+
+            //While next player has no moves, kill chief and abandon all pieces
+            let (options, reqSelType) = this.getSelectableCellsFromState updatedGame
+            let mutable selectionOptions = options
+            let mutable requiredSelectionType = reqSelType
+                                
+            while selectionOptions.IsEmpty && updatedGame.currentGameState.turnCycle.Length > 1 do
+                updatedGame <- 
+                    {
+                        currentGameState = this.killCurrentPlayer(updatedGame.currentGameState)
+                        currentTurnState = this.emptyTurn
+                        boardRegionCount = game.boardRegionCount
+                    }
+                let (opt, rst) = this.getSelectableCellsFromState updatedGame
+                selectionOptions <- opt
+                requiredSelectionType <- rst
+
+            //TODO: If only 1 player, game over
+  
+            let response =
+                {
+                    gameState = updatedGame.currentGameState
+                    turnState =  
+                    { 
+                        this.emptyTurn with 
+                            selectionOptions = selectionOptions 
+                            requiredSelectionType = requiredSelectionType
+                    }
+                }
+
+            let! _ = repository.updateCurrentGameState(gameId, response.gameState)
+            let! _ = repository.updateCurrentTurnState(gameId, response.turnState)
+
+            return response
         }

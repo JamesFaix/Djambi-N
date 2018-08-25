@@ -4,92 +4,81 @@ open Microsoft.AspNetCore.Http
 
 open Giraffe
 
-open Djambi.Api.Http.LobbyJsonModels
-open Djambi.Api.Http.PlayJsonModels
 open Djambi.Api.Domain
 open Djambi.Api.Domain.BoardsExtensions
 open Djambi.Api.Http.PlayJsonMappings
+open Djambi.Api.Common
+open System
+open System.Threading.Tasks
 
 type PlayController(gameStartService : GameStartService, 
                     playService : PlayService) =
 
-    member this.startGame(gameId : int) =
+    member private this.handle<'a> (func : HttpContext -> 'a Task) :
+        HttpFunc -> HttpContext -> HttpContext option Task =
+
         fun (next : HttpFunc) (ctx : HttpContext) ->
             task {
-                let! response = gameStartService.startGame(gameId)
-                let responseJson = response |> mapGameStartResponseToJson
-                return! json responseJson next ctx
+                try 
+                    let! result = func ctx
+                    return! json result next ctx
+                with
+                | :? HttpException as ex -> 
+                    ctx.SetStatusCode ex.statusCode
+                    return! json ex.Message next ctx
+                | _ as ex -> 
+                    ctx.SetStatusCode 500
+                    return! json ex.Message next ctx
             }
+
+    member this.startGame(gameId: int) =
+        let func ctx = 
+            gameStartService.startGame gameId
+            |> Task.map mapGameStartResponseToJson
+        this.handle func
+
 //Board
     member this.getBoard(regionCount : int) =
-        fun (next : HttpFunc) (ctx : HttpContext) ->
-            task {
-                let board = BoardUtility.getBoard(regionCount)
-                return! json board next ctx
-            }
+        let func ctx =
+            BoardUtility.getBoard regionCount
+            |> Task.FromResult
+        this.handle func
             
     member this.getCellPaths(regionCount : int, cellId : int) =
-        fun (next : HttpFunc) (ctx : HttpContext) ->
-            task {
-                let board = BoardUtility.getBoardMetadata(regionCount)
-                let cell = board.cells() |> Seq.find(fun c -> c.id = cellId)
-                let paths = board.pathsFromCell(cell)
-                            |> List.map (fun path -> 
-                                path |> List.map (fun c -> c.id))
-                return! json paths next ctx
-            }
+        let func ctx = 
+            let board = BoardUtility.getBoardMetadata(regionCount)
+            let cell = board.cells() |> Seq.find(fun c -> c.id = cellId)
+            board.pathsFromCell(cell)
+            |> List.map (List.map (fun c -> c.id))
+            |> Task.FromResult
+        this.handle func
 
 //Gameplay
     member this.getGameState(gameId : int) =
-        fun (next : HttpFunc) (ctx : HttpContext) ->
-            task {
-                let! gameState = playService.getGameState(gameId)
-                let response = gameState |> mapGameStateToJsonModel
-                return! json response next ctx
-            }
+        let func ctx =
+            playService.getGameState(gameId)
+            |> Task.map mapGameStateToJsonModel
+        this.handle func
 
     member this.selectCell(gameId : int, cellId : int) =
-        fun (next : HttpFunc) (ctx : HttpContext) ->
-            task {
-                let! result = playService.selectCell(gameId, cellId)
-                match result with 
-                | Error httpError -> 
-                    ctx.SetStatusCode httpError.statusCode
-                    return! json httpError.message next ctx
-                | Ok response ->
-                    let responseJson = response |> mapTurnStateToJsonModel
-                    return! json responseJson next ctx
-            }
+        let func ctx = 
+            playService.selectCell(gameId, cellId)
+            |> Task.map mapTurnStateToJsonModel
+        this.handle func
 
     member this.resetTurn(gameId : int) =
-        fun (next : HttpFunc) (ctx : HttpContext) ->
-            task {
-                let! response = playService.resetTurn gameId
-                let responseJson = response |> mapTurnStateToJsonModel
-                return! json responseJson next ctx
-            }
+        let func ctx =
+            playService.resetTurn gameId
+            |> Task.map mapTurnStateToJsonModel
+        this.handle func
 
     member this.commitTurn(gameId : int) =
-        fun (next : HttpFunc) (ctx : HttpContext) ->
-            task {
-                let! result = playService.commitTurn gameId
-
-                match result with
-                | Error httpError ->
-                    ctx.SetStatusCode httpError.statusCode
-                    return! json httpError.message next ctx
-                | Ok response ->
-                    let responseJson = response |> mapCommitTurnResponseToJsonModel
-                    return! json responseJson next ctx
-            }
+        let func ctx =
+            playService.commitTurn gameId
+            |> Task.map  mapCommitTurnResponseToJsonModel
+        this.handle func
 
     member this.sendMessage(gameId : int) =
-        fun (next : HttpFunc) (ctx : HttpContext) ->
-            task {
-                let! request = ctx.BindModelAsync<CreateMessageJsonModel>()
-
-                let response = {
-                    text = sprintf "Send message %i not yet implemented" gameId
-                }
-                return! json response next ctx
-            }            
+        let func ctx = 
+            raise (NotImplementedException "")
+        this.handle func
