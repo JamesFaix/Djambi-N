@@ -11,6 +11,7 @@ open Djambi.Api.Common.Enums
 open Djambi.Api.Persistence.LobbySqlMappings
 open Djambi.Api.Persistence.DapperExtensions
 open Djambi.Api.Persistence.SqlUtility
+open Djambi.Api.Common
     
 module LobbyRepository =
 
@@ -33,9 +34,9 @@ module LobbyRepository =
             }
         }
         
-    let deleteGame(id : int) : Unit Task =
+    let deleteGame(gameId : int) : Unit Task =
         let param = new DynamicParameters()
-        param.Add("GameId", id)
+        param.Add("GameId", gameId)
         let cmd = proc("Lobby.Delete_Game", param)
 
         task {
@@ -44,37 +45,31 @@ module LobbyRepository =
             return ()
         }
 
-    let getGame(id : int) : LobbyGameMetadata Task =
+    let private getGamesInner(gameId : int option, userId : int option, status : GameStatus option) : LobbyGameMetadata list Task =
         let param = new DynamicParameters()
-        param.Add("GameId", id)
+        param.AddOptional("GameId", gameId)
+        param.AddOptional("UserId", userId)
+        param.AddOptional("StatusId", status |> Option.map mapGameStatusToId)
         let cmd = proc("Lobby.Get_GamesWithPlayers", param)
 
         task {
             use cn = getConnection()
             let! sqlModels = cn.QueryAsync<LobbyGamePlayerSqlModel>(cmd)
-            return sqlModels |> Seq.toList |> mapLobbyGamesResponse |> List.head
+            return sqlModels |> mapLobbyGamesResponse
         }
         
-    let getGames() : LobbyGameMetadata list Task =
-        let param = new DynamicParameters()
-        param.Add("GameId", null)
-        let cmd = proc("Lobby.Get_GamesWithPlayers", param)
+    let getGame(gameId : int) : LobbyGameMetadata Task =
+        getGamesInner(Some gameId, None, None)
+        |> Task.map List.head
 
-        task {
-            use cn = getConnection()
-            let! sqlModels = cn.QueryAsync<LobbyGamePlayerSqlModel>(cmd)
-            return sqlModels |> Seq.toList |> mapLobbyGamesResponse
-        }
+    let getGames() : LobbyGameMetadata list Task =
+        getGamesInner(None, None, None)
 
     let getOpenGames() : LobbyGameMetadata list Task =
-        let param = new DynamicParameters()
-        let cmd = proc("Lobby.Get_OpenGamesWithPlayers", param)
+        getGamesInner(None, None, Some Open)
 
-        task {
-            use cn = getConnection()
-            let! sqlModels = cn.QueryAsync<LobbyGamePlayerSqlModel>(cmd)
-            return sqlModels |> Seq.toList |> mapLobbyGamesResponse
-        }
+    let getUserGames(userId : int) : LobbyGameMetadata list Task =
+        getGamesInner(None, Some userId, None)
 
 //Players
     let addPlayerToGame(gameId : int, userId : int) : Unit Task =

@@ -18,6 +18,7 @@ module Routing =
                     PATCH >=> routef "/users/%i" UserController.updateUser
 
                     GET >=> route "/games/open" >=> LobbyController.getOpenGames
+                    GET >=> routef "/users/%i/games" LobbyController.getUserGames
                     GET >=> route "/games" >=> LobbyController.getGames
                     POST >=> route "/games" >=> LobbyController.createGame
                     DELETE >=> routef "/games/%i" LobbyController.deleteGame

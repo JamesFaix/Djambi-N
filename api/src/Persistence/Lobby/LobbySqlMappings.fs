@@ -28,7 +28,7 @@ module LobbySqlMappings =
         | GameStatus.Complete -> 3
         | GameStatus.Cancelled -> 4
 
-    let mapLobbyGamesResponse(players : LobbyGamePlayerSqlModel list) : LobbyGameMetadata list =
+    let mapLobbyGamesResponse(players : LobbyGamePlayerSqlModel seq) : LobbyGameMetadata list =
         let sqlModelToUser(sqlModel : LobbyGamePlayerSqlModel) : LobbyPlayer =
             {
                 id = sqlModel.playerId.Value

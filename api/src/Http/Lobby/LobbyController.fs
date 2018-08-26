@@ -24,6 +24,12 @@ module LobbyController =
             |> Task.map (List.map mapLobbyGameResponse)
         handle func
 
+    let getUserGames (userId : int) =
+        let func ctx =
+            LobbyRepository.getUserGames userId
+            |> Task.map (List.map mapLobbyGameResponse)
+        handle func
+
     let createGame : HttpHandler =
         let func (ctx : HttpContext) =
             ctx.BindModelAsync<CreateGameJsonModel>()
