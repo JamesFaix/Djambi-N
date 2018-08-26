@@ -6,12 +6,18 @@ module LobbyJsonMappings =
     open Djambi.Api.Domain.LobbyModels
     open Djambi.Api.Http.LobbyJsonModels
 
+    let mapRoleFromString(roleName : string) : Role =
+        match roleName.ToUpperInvariant() with
+        | "ADMIN" -> Admin
+        | "NORMAL" -> Normal
+        | "GUEST" -> Guest
+        | _ -> failwith ("Invalid role name: " + roleName)
+
     let mapUserResponse(user : User) : UserJsonModel =
         {
             id = user.id
             name = user.name
-            isGuest = user.isGuest
-            isAdmin = user.isAdmin
+            role = user.role.ToString()
         }
 
     let mapPlayerResponse(player : LobbyPlayer) : PlayerJsonModel =
@@ -26,7 +32,7 @@ module LobbyJsonMappings =
     let mapCreateUserRequest(request : CreateUserJsonModel) : CreateUserRequest =
         {
             name = request.name
-            isGuest = request.isGuest
+            role = request.role |> mapRoleFromString
         }
 
     let mapLobbyGameResponse(game : LobbyGameMetadata) : LobbyGameJsonModel =
@@ -44,4 +50,10 @@ module LobbyJsonMappings =
         {
             boardRegionCount = request.boardRegionCount
             description = if request.description = null then None else Some request.description
+        }
+
+    let mapLoginRequestFromJson(request : LoginRequestJsonModel) : LoginRequest =
+        {
+            userName = request.userName
+            password = request.password
         }

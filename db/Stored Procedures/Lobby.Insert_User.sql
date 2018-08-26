@@ -7,14 +7,13 @@ GO
 
 CREATE PROCEDURE [Lobby].[Insert_User]
 	@Name NVARCHAR(50),
-	@IsGuest BIT,
-	@IsAdmin BIT
+	@RoleId TINYINT
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	INSERT INTO Users ([Name], CreatedOn, IsGuest, IsAdmin)
-	VALUES (@Name, GETUTCDATE(), @IsGuest, @IsAdmin)
+	INSERT INTO Users ([Name], CreatedOn, RoleId)
+	VALUES (@Name, GETUTCDATE(), @RoleId)
 
 	SELECT SCOPE_IDENTITY()
 END

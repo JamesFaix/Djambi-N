@@ -3,7 +3,6 @@ namespace Djambi.Api.Http
 module LobbyJsonModels =
 
     open System
-    open Djambi.Api.Common.Enums
     
     [<CLIMutable>]
     type PlaceHolderJsonModel =
@@ -16,7 +15,7 @@ module LobbyJsonModels =
     type CreateUserJsonModel =
         {
             name : string
-            isGuest : bool
+            role : string
         }
 
     //Use for GET /users
@@ -25,8 +24,7 @@ module LobbyJsonModels =
         {
             id : int
             name : string
-            isAdmin : bool
-            isGuest : bool
+            role : string
         }
         
     type PlayerJsonModel =
@@ -52,4 +50,11 @@ module LobbyJsonModels =
             boardRegionCount : int
             description : string
             players : PlayerJsonModel list
+        }
+
+    [<CLIMutable>]
+    type LoginRequestJsonModel =
+        {
+            userName : string
+            password : string
         }

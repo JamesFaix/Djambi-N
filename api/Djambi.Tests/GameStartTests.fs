@@ -1,6 +1,5 @@
 ﻿namespace Djambi.Tests
 
-open System
 open Giraffe
 open Xunit
 
@@ -10,22 +9,11 @@ open Djambi.Api.Common.Enums
 open Djambi.Api.Domain.PlayModels
 open Djambi.Api.Domain
 open Djambi.Api.Common
+open Djambi.Tests.TestUtilities
 
 type GameStartTests() =
     do 
-        SqlUtility.connectionString <- TestUtilities.connectionString
-
-    let getCreateGameRequest() : CreateGameRequest =
-        {
-            boardRegionCount = 3
-            description = Some "Test"
-        }
-
-    let getCreateUserRequest() : CreateUserRequest = 
-        {
-            name = "Test_" + Guid.NewGuid().ToString()
-            isGuest = false
-        }
+        SqlUtility.connectionString <- connectionString
 
     [<Fact>]
     let ``Repository - Add virtual player should work``() =

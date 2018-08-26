@@ -5,13 +5,15 @@ GO
 
 
 
+
+
 CREATE PROCEDURE [Lobby].[Get_Users]
 	@UserId INT
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT UserId AS Id, [Name], IsGuest, IsAdmin
+	SELECT UserId AS Id, [Name], RoleId
 	FROM Users
 	WHERE @UserId IS NULL OR @UserId = UserId
 END

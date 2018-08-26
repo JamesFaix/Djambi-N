@@ -40,8 +40,7 @@ module UserRepository =
     let createUser(request : CreateUserRequest) : User Task =
         let param = new DynamicParameters()
         param.Add("Name", request.name)
-        param.Add("IsGuest", request.isGuest)
-        param.Add("IsAdmin", false)
+        param.Add("RoleId", request.role |> mapRoleToId)
         let cmd = proc("Lobby.Insert_User", param)
 
         task {

@@ -9,8 +9,7 @@ module LobbySqlModels =
         {
             id : int
             name : string
-            isGuest : bool
-            isAdmin : bool
+            roleId : byte
         }
 
     [<CLIMutable>]
@@ -19,7 +18,7 @@ module LobbySqlModels =
             gameId : int
             gameDescription : string
             boardRegionCount : int
-            gameStatusId : int
+            gameStatusId : byte
             userId : int Nullable
             playerName : string
             playerId : int Nullable
