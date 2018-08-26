@@ -33,14 +33,15 @@ module LobbySqlMappings =
         | Normal -> 2uy
         | Guest -> 3uy
 
-    let mapUserResponse(user : UserSqlModel) : User =
+    let mapUserResponse(sqlModel : UserSqlModel) : User =
         {
-            id = user.id
-            name = user.name
-            role = user.roleId |> mapRoleFromId
+            id = sqlModel.id
+            name = sqlModel.name
+            role = sqlModel.roleId |> mapRoleFromId
+            password = sqlModel.password
         }
 
-    let mapLobbyGamesResponse(players : LobbyGamePlayerSqlModel seq) : LobbyGameMetadata list =
+    let mapLobbyGamesResponse(sqlModels : LobbyGamePlayerSqlModel seq) : LobbyGameMetadata list =
         let sqlModelToUser(sqlModel : LobbyGamePlayerSqlModel) : LobbyPlayer =
             {
                 id = sqlModel.playerId.Value
@@ -61,7 +62,7 @@ module LobbySqlMappings =
                     else List.empty
             }
 
-        players 
+        sqlModels 
         |> Seq.groupBy (fun sql -> sql.gameId)
         |> Seq.map (fun (_, sqls) -> sqls |> Seq.toList |> sqlModelsToGame)
         |> Seq.toList

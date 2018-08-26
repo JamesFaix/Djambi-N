@@ -3,17 +3,13 @@ GO
 SET ANSI_NULLS ON
 GO
 
-
-
-
-
 CREATE PROCEDURE [Lobby].[Get_Users]
 	@UserId INT
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT UserId AS Id, [Name], RoleId
+	SELECT UserId AS Id, [Name], RoleId, [Password]
 	FROM Users
 	WHERE @UserId IS NULL OR @UserId = UserId
 END

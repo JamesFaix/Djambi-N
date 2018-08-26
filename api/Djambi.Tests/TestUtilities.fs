@@ -12,6 +12,7 @@ module TestUtilities =
         {
             name = "Test_" + Guid.NewGuid().ToString()
             role = Normal
+            password = Guid.NewGuid().ToString()
         }
 
     let getCreateGameRequest() : CreateGameRequest =

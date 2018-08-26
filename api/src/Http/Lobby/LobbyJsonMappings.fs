@@ -29,10 +29,11 @@ module LobbyJsonMappings =
             name = player.name
         }
 
-    let mapCreateUserRequest(request : CreateUserJsonModel) : CreateUserRequest =
+    let mapCreateUserRequest(jsonModel : CreateUserJsonModel) : CreateUserRequest =
         {
-            name = request.name
-            role = request.role |> mapRoleFromString
+            name = jsonModel.name
+            role = jsonModel.role |> mapRoleFromString
+            password = jsonModel.password
         }
 
     let mapLobbyGameResponse(game : LobbyGameMetadata) : LobbyGameJsonModel =
@@ -46,14 +47,14 @@ module LobbyJsonMappings =
             players = game.players |> List.map mapPlayerResponse
         }
 
-    let mapCreateGameRequest(request : CreateGameJsonModel) : CreateGameRequest =
+    let mapCreateGameRequest(jsonModel : CreateGameJsonModel) : CreateGameRequest =
         {
-            boardRegionCount = request.boardRegionCount
-            description = if request.description = null then None else Some request.description
+            boardRegionCount = jsonModel.boardRegionCount
+            description = if jsonModel.description = null then None else Some jsonModel.description
         }
 
-    let mapLoginRequestFromJson(request : LoginRequestJsonModel) : LoginRequest =
+    let mapLoginRequestFromJson(jsonModel : LoginRequestJsonModel) : LoginRequest =
         {
-            userName = request.userName
-            password = request.password
+            userName = jsonModel.userName
+            password = jsonModel.password
         }

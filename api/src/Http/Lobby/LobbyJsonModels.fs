@@ -16,6 +16,7 @@ module LobbyJsonModels =
         {
             name : string
             role : string
+            password : string
         }
 
     //Use for GET /users
@@ -25,6 +26,7 @@ module LobbyJsonModels =
             id : int
             name : string
             role : string
+            //Don't return password here
         }
         
     type PlayerJsonModel =

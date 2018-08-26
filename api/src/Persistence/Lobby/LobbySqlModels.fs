@@ -10,6 +10,7 @@ module LobbySqlModels =
             id : int
             name : string
             roleId : byte
+            password : string
         }
 
     [<CLIMutable>]

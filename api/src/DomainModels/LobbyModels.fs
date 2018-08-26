@@ -14,6 +14,7 @@ module LobbyModels =
             id : int
             name : string
             role : Role
+            password : string
         }
         
     type LobbyPlayer =
@@ -27,6 +28,7 @@ module LobbyModels =
         {
             name : string
             role : Role
+            password : string
         }
 
     type CreateGameRequest = 
