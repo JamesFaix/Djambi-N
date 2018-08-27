@@ -1,5 +1,6 @@
 ﻿namespace Djambi.Api.Persistence
 
+open System
 open System.Threading.Tasks
 
 open Dapper
@@ -62,3 +63,19 @@ module UserRepository =
             return ()
         }
 
+    let updateUserLoginData (id : int,
+                             failedLoginAttempts : int, 
+                             lastFailedLoginAttemptOn : DateTime option,
+                             activeSessionToken : string option) = 
+        let param = new DynamicParameters()
+        param.Add("UserId", id)
+        param.Add("FailedLoginAttempts", failedLoginAttempts)
+        param.AddOption("LastFailedLoginAttemptOn", lastFailedLoginAttemptOn)
+        param.AddOption("ActiveSessionToken", activeSessionToken)
+        let cmd = proc("Lobby.Update_UserLoginData", param)
+
+        task {
+            use cn = getConnection()
+            let! _ = cn.ExecuteAsync(cmd)
+            return ()
+        }
