@@ -20,3 +20,10 @@ module SqlUtility =
                               null, 
                               new Nullable<int>(), 
                               new Nullable<CommandType>(CommandType.StoredProcedure))
+
+    type DynamicParameters with
+        
+        member this.AddOption<'a> (name : string, opt : 'a option) =
+            match opt with
+            | Some x -> this.Add(name, x)
+            | None -> this.Add(name, null)

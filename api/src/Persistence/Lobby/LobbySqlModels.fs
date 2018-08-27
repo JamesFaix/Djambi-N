@@ -11,6 +11,9 @@ module LobbySqlModels =
             name : string
             roleId : byte
             password : string
+            failedLoginAttempts : byte
+            lastFailedLoginAttemptOn : Nullable<DateTime>
+            activeSessionToken : string
         }
 
     [<CLIMutable>]

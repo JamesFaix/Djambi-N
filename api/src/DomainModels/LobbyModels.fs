@@ -2,6 +2,7 @@
 
 module LobbyModels =
 
+    open System
     open Djambi.Api.Common.Enums
 
     type Role = 
@@ -15,6 +16,9 @@ module LobbyModels =
             name : string
             role : Role
             password : string
+            failedLoginAttempts : int
+            lastFailedLoginAttemptOn : DateTime option
+            activeSessionToken : string option
         }
         
     type LobbyPlayer =

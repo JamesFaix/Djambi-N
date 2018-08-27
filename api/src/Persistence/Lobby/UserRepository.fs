@@ -9,24 +9,14 @@ open Djambi.Api.Persistence.LobbySqlModels
 open Djambi.Api.Domain.LobbyModels
 open Djambi.Api.Persistence.LobbySqlMappings
 open Djambi.Api.Persistence.SqlUtility
+open Djambi.Api.Common
 
 module UserRepository =
 
-    let getUser(id : int) : User Task =
+    let private getUsersInner(id : int option, name : string option) : User seq Task =
         let param = new DynamicParameters()
-        param.Add("UserId", id)
-        let cmd = proc("Lobby.Get_Users", param)
-
-        task {
-            use cn = getConnection()
-            let! sqlModel = cn.QuerySingleAsync<UserSqlModel>(cmd)
-            if sqlModel.id = 0 then failwith "User not found" else ()
-            return sqlModel |> mapUserResponse
-        }
-
-    let getUsers() : User seq Task =
-        let param = new DynamicParameters()
-        param.Add("UserId", null)
+        param.AddOption("UserId", id)
+        param.AddOption("Name", name)        
         let cmd = proc("Lobby.Get_Users", param)
 
         task {
@@ -36,11 +26,23 @@ module UserRepository =
                     |> Seq.map mapUserResponse
                     |> Seq.sortBy (fun u -> u.id)
         }
+
+    let getUser(id : int) : User Task =
+        getUsersInner(Some id, None)
+        |> Task.map Seq.head
+    
+    let getUserByName(name : string) : User Task =
+        getUsersInner(None, Some name)
+        |> Task.map Seq.head
+
+    let getUsers() : User seq Task =
+        getUsersInner(None, None)
         
     let createUser(request : CreateUserRequest) : User Task =
         let param = new DynamicParameters()
         param.Add("Name", request.name)
         param.Add("RoleId", request.role |> mapRoleToId)
+        param.Add("Password", request.password)
         let cmd = proc("Lobby.Insert_User", param)
 
         task {

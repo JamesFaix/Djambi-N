@@ -4,6 +4,9 @@ CREATE TABLE [dbo].[Users](
 	[Password] [nvarchar](50) NULL,
 	[CreatedOn] [datetime2](7) NOT NULL,
 	[RoleId] [tinyint] NOT NULL,
+	[FailedLoginAttempts] [tinyint] NOT NULL,
+	[LastFailedLoginAttemptOn] [datetime2] NULL,
+	[ActiveSessionToken] [nvarchar](max) NULL
  CONSTRAINT [PK_Users] PRIMARY KEY CLUSTERED 
 (
 	[UserId] ASC
@@ -17,3 +20,8 @@ GO
 
 ALTER TABLE [dbo].[Users]  WITH CHECK ADD  CONSTRAINT [FK_Users_RoleId] FOREIGN KEY([RoleId])
 REFERENCES [dbo].[Roles] ([RoleId])
+GO
+
+ALTER TABLE [dbo].[Users] CHECK CONSTRAINT [FK_Users_RoleId]
+GO
+

@@ -4,6 +4,7 @@ module LobbySqlMappings =
     open LobbySqlModels
     open Djambi.Api.Domain.LobbyModels
     open Djambi.Api.Common.Enums
+    open Djambi.Api.Common.Utilities
 
     let mapGameStatusFromId(gameStatusId : byte) : GameStatus =
         match gameStatusId with 
@@ -39,6 +40,9 @@ module LobbySqlMappings =
             name = sqlModel.name
             role = sqlModel.roleId |> mapRoleFromId
             password = sqlModel.password
+            failedLoginAttempts = int sqlModel.failedLoginAttempts
+            lastFailedLoginAttemptOn = sqlModel.lastFailedLoginAttemptOn |> nullableToOption
+            activeSessionToken = sqlModel.activeSessionToken |> referenceToOption
         }
 
     let mapLobbyGamesResponse(sqlModels : LobbyGamePlayerSqlModel seq) : LobbyGameMetadata list =

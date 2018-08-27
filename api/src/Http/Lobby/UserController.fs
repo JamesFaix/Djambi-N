@@ -14,6 +14,23 @@ open Djambi.Api.Http.HttpUtility
 
 module UserController =
 
+    //let login : HttpHandler =
+    //    let func (ctx : HttpContext) =
+    //        task {
+    //            let! request = ctx.BindModelAsync<LoginRequestJsonModel>()
+    //                          |> Task.map mapLoginRequestFromJson
+
+    //            let! user = UserRepository.getUserByName request.userName
+
+    //            if user.password <> request.password
+    //            then raise (HttpException(401, "Login failed"))
+    //            else 
+
+    //                //start session
+    //                //return cookie
+    //        }
+    //    handle func
+
     let createUser : HttpHandler =
         let func (ctx : HttpContext) =            
             ctx.BindModelAsync<CreateUserJsonModel>()
