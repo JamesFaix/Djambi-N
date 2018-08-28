@@ -14,10 +14,14 @@ open Djambi.Api.Common
 
 module UserRepository =
 
-    let private getUsersInner(id : int option, name : string option) : User seq Task =
+    let private getUsersInner(id : int option, 
+                              name : string option, 
+                              activeSessionToken : string option) 
+                              : User list Task =
         let param = new DynamicParameters()
         param.AddOption("UserId", id)
         param.AddOption("Name", name)        
+        param.AddOption("ActiveSessionToken", activeSessionToken)
         let cmd = proc("Lobby.Get_Users", param)
 
         task {
@@ -26,18 +30,23 @@ module UserRepository =
             return sqlModels 
                     |> Seq.map mapUserResponse
                     |> Seq.sortBy (fun u -> u.id)
+                    |> Seq.toList
         }
 
     let getUser(id : int) : User Task =
-        getUsersInner(Some id, None)
-        |> Task.map Seq.head
+        getUsersInner(Some id, None, None)
+        |> Task.map (getSingle "User")
     
     let getUserByName(name : string) : User Task =
-        getUsersInner(None, Some name)
-        |> Task.map Seq.head
+        getUsersInner(None, Some name, None)
+        |> Task.map (getSingle "User")
 
-    let getUsers() : User seq Task =
-        getUsersInner(None, None)
+    let getUsers() : User list Task =
+        getUsersInner(None, None, None)
+
+    let getUserBySession(activeSessionToken : string) : User Task =
+        getUsersInner(None, None, Some activeSessionToken)
+        |> Task.map (getSingle "User")
         
     let createUser(request : CreateUserRequest) : User Task =
         let param = new DynamicParameters()

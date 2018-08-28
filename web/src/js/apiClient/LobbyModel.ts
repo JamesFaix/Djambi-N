@@ -1,8 +1,13 @@
+export enum Role {
+    Admin = "Admin",
+    Guest = "Guest",
+    Normal = "Normal"
+}
+
 export class User {
     readonly id : number
     readonly name : string
-    readonly isGuest : boolean
-    readonly isAdmin : boolean
+    readonly role : Role
 }
 
 export class LobbyPlayer {
@@ -37,8 +42,18 @@ export class GameCreationRequest {
 export class CreateUserRequest {
     constructor(
         readonly name : string,
-        readonly isGuest : boolean
+        readonly password : string,
+        readonly role : Role
     ){
         
+    }
+}
+
+export class SigninRequest {
+    constructor(
+        readonly username : string,
+        readonly password : string
+    ) {
+
     }
 }

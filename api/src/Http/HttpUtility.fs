@@ -4,6 +4,7 @@ open Giraffe
 open System.Threading.Tasks
 open Microsoft.AspNetCore.Http
 open Djambi.Api.Common
+open Microsoft.Extensions.Primitives
 
 type HttpHandler = HttpFunc -> HttpContext -> HttpContext option Task 
 
@@ -15,6 +16,7 @@ module HttpUtility =
             task {
                 try 
                     let! result = func ctx
+                    ctx.Response.Headers.Add("Access-Control-Allow-Credentials", StringValues("true"))
                     return! json result next ctx
                 with
                 | :? HttpException as ex -> 

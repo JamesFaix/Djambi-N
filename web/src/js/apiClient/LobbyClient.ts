@@ -1,5 +1,5 @@
 import * as $ from 'jquery';
-import { LobbyGame, GameCreationRequest, User, CreateUserRequest } from "./LobbyModel";
+import { LobbyGame, GameCreationRequest, User, CreateUserRequest, SigninRequest } from "./LobbyModel";
 import { GameStartResponse} from "./PlayModel";
 
 export class LobbyClient {
@@ -97,5 +97,42 @@ export class LobbyClient {
         });
 
         return result;        
+    }
+
+    static async signin(request : SigninRequest) : Promise<void> {
+        $.ajaxSetup({
+            crossDomain: true,
+            xhrFields: {
+                withCredentials: true
+            }
+        });
+        
+        await $.ajax({
+            type: "POST",
+            url: this.baseUrl + "/signin" ,
+            dataType: "json",
+            data: request,
+            success: (data, status, xhr) => {
+                console.log(data);
+            },
+            error: (xhr, status, error) => {
+
+            }
+        });      
+    }
+
+    static async signout() : Promise<void> {
+        
+        await $.ajax({
+            type: "POST",
+            url: this.baseUrl + "/signout" ,
+            dataType: "json",
+            success: (data, status, xhr) => {
+                console.log(data);
+            },
+            error: (xhr, status, error) => {
+
+            }
+        });
     }
 }

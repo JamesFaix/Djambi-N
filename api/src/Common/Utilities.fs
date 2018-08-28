@@ -57,3 +57,9 @@ module Utilities =
         match x with
         | None -> null
         | Some value -> value
+
+    let toNullable<'a when 'a : struct
+                and 'a :> ValueType
+                and 'a : (new: Unit -> 'a)>
+                (x : 'a) : 'a Nullable =
+        new Nullable<'a>(x)

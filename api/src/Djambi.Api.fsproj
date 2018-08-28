@@ -55,6 +55,7 @@
     <Compile Include="Http\Lobby\LobbyJsonMappings.fs" />
     <Compile Include="Http\Lobby\LobbyController.fs" />
     <Compile Include="Http\Lobby\UserController.fs" />
+    <Compile Include="Http\Lobby\SessionController.fs" />
     <Compile Include="Http\Routing.fs" />
     <Content Include="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
