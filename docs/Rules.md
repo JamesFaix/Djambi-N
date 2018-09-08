@@ -13,7 +13,7 @@ Djambi is a _kind of_ like Chess, but with two major differences. Each of these 
 2. In Djambi, pieces never leave the board. 
     - In Chess your piece can "capture" your opponent's piece, which removes it from the board. In Djambi most pieces can "kill" opponent pieces, which turns the killed piece into a Corpse piece which is not controlled by any player. Corpses can act like obstacles or fortifications.
 
-<img src="djambi4.png">
+<img src="djambi.png">
 
 ### The board
 - Djambi is played on a 9x9 board, like a chess board but one bigger.
@@ -157,8 +157,24 @@ It would be possible to have Djambi-9 or higher, but there are a few problems th
 - The pace of the game slows down because there will be __N-1__ turns before you go again.
 - More players are in the regions of the board that are curved away from you, so out-flanking other players becomes harder. In any curvature, it is easy to attack the two players next to you, and you can move through the center to attack the player opposite you. In negative curvature you can move pieces diagonally to attack a player next to the player next to you, but players that are 3 or more away from you require more than one move to attack.
 
+### What counts as a "straight" line?
+- If a piece is moving horizontally or vertically, it moves into a cell by crossing one side and out by crossing the opposite side. You can never move into a cell from one side and out through the next side over.
+
+<img src="orthogonal.png" width="500">
+
+- If a piece is moving diagonally, it moves into a cell by crossing one corner and out by crossing the opposite corner. You can never move into a cell from one corner and out through the next corner over.
+
+<img src="diagonal.png" width="500">
+
+- You cannot move into a cell by crossing a side and out by crossing a corner, or vice versa.
+
+- On boards where __N__ is odd, _The Seat_ is an exception to these rules. This is the only exception. If __N__ is odd and you move into _The Seat_ by crossing a side then you must move out by crossing the opposite corner, and vice versa.
+
+<img src="moveThroughSeat.png" width="500">
+
 ### Other changes from Djambi
 - In Djambi, when a _Reporter_ moves, it can kill a piece that is horiztonally or vertically adjacent to the cell it lands in. For simplicity, in Djambi-N this is changed to allow diagonal kills as well.
+- In Djambi, each _Assassin_ starts facing another player's _Assassin_, and each _Reporter_ faces another player's _Reporter_. In Djambi-N, each player's _Reporter_ faces the _Assassin_ of the next player clockwise. This change allows consistent symmetry for any number of players.
 
 [1]: https://en.wikipedia.org/wiki/Djambi
 [2]: https://en.wikipedia.org/wiki/Euclidean_geometry
