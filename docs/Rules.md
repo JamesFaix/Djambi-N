@@ -13,7 +13,7 @@ Djambi is a _kind of_ like Chess, but with two major differences. Each of these 
 2. In Djambi, pieces never leave the board. 
     - In Chess your piece can "capture" your opponent's piece, which removes it from the board. In Djambi most pieces can "kill" opponent pieces, which turns the killed piece into a Corpse piece which is not controlled by any player. Corpses can act like obstacles or fortifications.
 
-<img src="djambi.png">
+<img src="djambi4.png">
 
 ### The board
 - Djambi is played on a 9x9 board, like a chess board but one bigger.
@@ -142,15 +142,18 @@ The main difference between Djambi and Djambi-N is that Djambi-N gives you the o
 
 #### Positively-curved Djambi-3:
 
-<img src="djambi3.png" width="250">
+<img src="djambi3.png" width="500">
 
 #### Un-curved Djambi-4: _(original flavor)_
 
-<img src="djambi4.png" width="250">
+<img src="djambi4.png" width="500">
 
 #### Negatively-curved Djambi-5 to Djambi-8: 
 
-<img src="djambi5.png" width="250"> <img src="djambi6.png" width="250"> <img src="djambi7.png" width="250"> <img src="djambi8.png" width="250">
+<img src="djambi5.png" width="500"> <br/>
+<img src="djambi6.png" width="500"> <br/>
+<img src="djambi7.png" width="500"> <br/>
+<img src="djambi8.png" width="500">
 
 It would be possible to have Djambi-9 or higher, but there are a few problems that get worse as __N__ gets larger:
 - It gets more difficult to visually recognize "straight" lines on the grid.
