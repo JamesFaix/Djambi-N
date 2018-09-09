@@ -1,10 +1,13 @@
 ﻿namespace Djambi.Api.Http
 
-open Giraffe
+open System
 open System.Threading.Tasks
 open Microsoft.AspNetCore.Http
-open Djambi.Api.Common
 open Microsoft.Extensions.Primitives
+open Giraffe
+
+open Djambi.Api.Common
+open Djambi.Api.Persistence
 
 type HttpHandler = HttpFunc -> HttpContext -> HttpContext option Task 
 
@@ -26,3 +29,15 @@ module HttpUtility =
                     ctx.SetStatusCode 500
                     return! json ex.Message next ctx
             }
+            
+    let cookieName = "DjambiSession"
+
+    let getUserFromContext (ctx : HttpContext) =
+        let cookie = ctx.Request.Cookies.Item(cookieName)
+
+        if cookie |> String.IsNullOrEmpty
+        then raise (HttpException(401, "Not currently logged in"))
+        
+        task {
+            return! UserRepository.getUserBySession cookie
+        }

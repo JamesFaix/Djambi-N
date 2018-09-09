@@ -42,6 +42,7 @@
     <Compile Include="Persistence\Play\PlaySqlModelMappings.fs" />
     <Compile Include="Persistence\Play\PlayRepository.fs" />
     <Compile Include="Persistence\Play\GameStartRepository.fs" />
+    <Compile Include="Domain\SessionService.fs" />
     <Compile Include="Domain\BoardExtensions.fs" />
     <Compile Include="Domain\BoardUtility.fs" />
     <Compile Include="Domain\PlayModelExtensions.fs" />
