@@ -18,7 +18,8 @@ module SessionService =
         task {
             let! user = UserRepository.getUserByName request.userName
 
-            if user.activeSessionToken.IsSome
+            let! hasSession = UserRepository.userHasSession user.id
+            if hasSession
             then raise (HttpException(401, "User already logged in somewhere else."))
 
             let isWithinLockTimeoutPeriod (u : User) =
@@ -36,24 +37,19 @@ module SessionService =
                     then user.failedLoginAttempts + 1
                     else 1
 
-                let! _ = UserRepository.updateUserLoginData(user.id, 
-                                                            failedLoginAttempts, 
-                                                            Some DateTime.UtcNow, 
-                                                            None)
+                let! _ = UserRepository.updateFailedLoginAttempts(user.id, 
+                                                                  failedLoginAttempts, 
+                                                                  Some DateTime.UtcNow)
                 raise (HttpException(401, "Incorrect password"))
 
             let sessionToken = Guid.NewGuid().ToString()
                 
-            let! _ = UserRepository.updateUserLoginData(user.id,
-                                                        0,
-                                                        None,
-                                                        Some sessionToken)
+            let! _ = UserRepository.createSession(user.id, 
+                                                  sessionToken, 
+                                                  DateTime.UtcNow.Add(sessionTimeout))
 
             return (sessionToken, DateTimeOffset.UtcNow.Add(sessionTimeout))
         }
 
     let signOut (user : User) =
-        task {
-            return! UserRepository.updateUserLoginData(user.id, 0, None, None)
-        }
-        
+        UserRepository.deleteSession user.id        

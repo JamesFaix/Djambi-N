@@ -3,11 +3,13 @@ GO
 SET ANSI_NULLS ON
 GO
 
-CREATE PROCEDURE [Lobby].[Update_UserLoginData]
+
+
+
+CREATE PROCEDURE [Lobby].[Update_FailedLoginAttempts]
 	@UserId INT,
-	@FailedLoginAttempts TINYINT,
-	@LastFailedLoginAttemptOn DATETIME2,
-	@ActiveSessionToken NVARCHAR(MAX)
+	@FailedLoginAttempts INT,
+	@LastFailedLoginAttemptOn DATETIME2
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -17,8 +19,7 @@ BEGIN
 
 	UPDATE Users
 	SET FailedLoginAttempts = @FailedLoginAttempts,
-		LastFailedLoginAttemptOn = @LastFailedLoginAttemptOn,
-		ActiveSessionToken = @ActiveSessionToken
+		LastFailedLoginAttemptOn = @LastFailedLoginAttemptOn
 	WHERE UserId = @UserId
 END
 GO

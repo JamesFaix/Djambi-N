@@ -6,8 +6,7 @@ GO
 
 CREATE PROCEDURE [Lobby].[Get_Users]
 	@UserId INT,
-	@Name NVARCHAR(50),
-	@ActiveSessionToken NVARCHAR(MAX)
+	@Name NVARCHAR(50)
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -17,11 +16,9 @@ BEGIN
 		RoleId, 
 		[Password], 
 		FailedLoginAttempts, 
-		LastFailedLoginAttemptOn, 
-		ActiveSessionToken
+		LastFailedLoginAttemptOn
 	FROM Users
 	WHERE (@UserId IS NULL OR @UserId = UserId)
 		AND (@Name IS NULL OR @Name = [Name])
-		AND (@ActiveSessionToken IS NULL OR @ActiveSessionToken = ActiveSessionToken)
 END
 GO

@@ -19,15 +19,13 @@ BEGIN
 		RoleId, 
 		[Password], 
 		FailedLoginAttempts, 
-		LastFailedLoginAttemptOn, 
-		ActiveSessionToken)
+		LastFailedLoginAttemptOn)
 	VALUES (
 		@Name, 
 		GETUTCDATE(), 
 		@RoleId, 
 		@Password,
 		0,
-		NULL,
 		NULL)
 
 	SELECT SCOPE_IDENTITY()

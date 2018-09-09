@@ -5,8 +5,7 @@ CREATE TABLE [dbo].[Users](
 	[CreatedOn] [datetime2](7) NOT NULL,
 	[RoleId] [tinyint] NOT NULL,
 	[FailedLoginAttempts] [tinyint] NOT NULL,
-	[LastFailedLoginAttemptOn] [datetime2] NULL,
-	[ActiveSessionToken] [nvarchar](max) NULL
+	[LastFailedLoginAttemptOn] [datetime2] NULL
  CONSTRAINT [PK_Users] PRIMARY KEY CLUSTERED 
 (
 	[UserId] ASC

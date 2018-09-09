@@ -13,7 +13,6 @@ module LobbySqlModels =
             password : string
             failedLoginAttempts : byte
             lastFailedLoginAttemptOn : Nullable<DateTime>
-            activeSessionToken : string
         }
 
     [<CLIMutable>]
@@ -26,4 +25,14 @@ module LobbySqlModels =
             userId : int Nullable
             playerName : string
             playerId : int Nullable
+        }
+
+    [<CLIMutable>]
+    type SessionSqlModel =
+        {
+            sessionId : int
+            userId : int
+            token : string
+            createdOn : DateTime
+            expiresOn : DateTime        
         }

@@ -44,11 +44,15 @@ let getFilesInOrder : string seq =
     seq {
         //Order is very important for foreign keys
         let tables = [
+
+            //Static data first
             "Roles"
             "GameStatuses"
             "VirtualPlayerNames"
 
+            //Then entities
             "Users"
+            "Sessions"
             "Games"
             "Players"
             "Turns"

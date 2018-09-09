@@ -8,6 +8,7 @@ open Giraffe
 
 open Djambi.Api.Common
 open Djambi.Api.Persistence
+open Djambi.Api.Domain.LobbyModels
 
 type HttpHandler = HttpFunc -> HttpContext -> HttpContext option Task 
 
@@ -32,12 +33,13 @@ module HttpUtility =
             
     let cookieName = "DjambiSession"
 
-    let getUserFromContext (ctx : HttpContext) =
+    let getUserFromContext (ctx : HttpContext) : User Task =
         let cookie = ctx.Request.Cookies.Item(cookieName)
 
         if cookie |> String.IsNullOrEmpty
         then raise (HttpException(401, "Not currently logged in"))
         
         task {
-            return! UserRepository.getUserBySession cookie
+            let! session = UserRepository.getSessionFromToken cookie
+            return! UserRepository.getUser session.userId
         }

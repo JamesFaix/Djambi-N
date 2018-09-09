@@ -18,7 +18,6 @@ module LobbyModels =
             password : string
             failedLoginAttempts : int
             lastFailedLoginAttemptOn : DateTime option
-            activeSessionToken : string option
         }
         
     type LobbyPlayer =
@@ -54,4 +53,13 @@ module LobbyModels =
         {
             userName : string
             password : string
+        }
+
+    type Session =
+        {
+            id : int
+            userId : int
+            token : string
+            createdOn : DateTime
+            expiresOn : DateTime
         }

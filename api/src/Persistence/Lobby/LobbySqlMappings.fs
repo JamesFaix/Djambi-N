@@ -42,7 +42,6 @@ module LobbySqlMappings =
             password = sqlModel.password
             failedLoginAttempts = int sqlModel.failedLoginAttempts
             lastFailedLoginAttemptOn = sqlModel.lastFailedLoginAttemptOn |> nullableToOption
-            activeSessionToken = sqlModel.activeSessionToken |> referenceToOption
         }
 
     let mapLobbyGamesResponse(sqlModels : LobbyGamePlayerSqlModel seq) : LobbyGameMetadata list =
@@ -70,3 +69,12 @@ module LobbySqlMappings =
         |> Seq.groupBy (fun sql -> sql.gameId)
         |> Seq.map (fun (_, sqls) -> sqls |> Seq.toList |> sqlModelsToGame)
         |> Seq.toList
+
+    let mapSession (sqlModel : SessionSqlModel) : Session =
+        {
+            id = sqlModel.sessionId
+            userId = sqlModel.userId
+            token = sqlModel.token
+            createdOn = sqlModel.createdOn
+            expiresOn = sqlModel.expiresOn
+        }
