@@ -25,10 +25,6 @@ The current implementation is being developed as a web application to support on
 - Menus/lobby
 - Player messaging
 
-### Development setup
-- .NET Core 2.1 SDK
-- SQL Server
-
 ## Archive/V3
 A working desktop version of Djambi, implemented in Windows Presentation Foundation can be found in `/_archive/v3/client/wpf/`. This version is stable and can be played with multiple players sitting around the same Windows computer. 
 

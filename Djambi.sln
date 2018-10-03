@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2042
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Djambi.Utilities.DatabaseReset", "utils\Djambi.Utilities.DatabaseReset\Djambi.Utilities.DatabaseReset.fsproj", "{0B3DE3BC-4AFF-4F24-B86A-AC902F0F70F1}"
+EndProject
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Djambi.Api", "api\src\Djambi.Api.fsproj", "{3664C02D-2B0E-4C1B-AE20-CCDEC13105F8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0B3DE3BC-4AFF-4F24-B86A-AC902F0F70F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B3DE3BC-4AFF-4F24-B86A-AC902F0F70F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B3DE3BC-4AFF-4F24-B86A-AC902F0F70F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B3DE3BC-4AFF-4F24-B86A-AC902F0F70F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3664C02D-2B0E-4C1B-AE20-CCDEC13105F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3664C02D-2B0E-4C1B-AE20-CCDEC13105F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3664C02D-2B0E-4C1B-AE20-CCDEC13105F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3664C02D-2B0E-4C1B-AE20-CCDEC13105F8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5C5837E5-44E0-4D02-8AD3-DCFB9460E497}
+	EndGlobalSection
+EndGlobal
