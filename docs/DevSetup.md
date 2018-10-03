@@ -14,10 +14,11 @@
 
 ```
 {
-    "sqlAddress": "localhost"
+  "sqlAddress": "localhost",              //Address of SQL instance
+  "apiAddress": "http://localhost:5100",  //Address used for API
+  "webAddress": "http://localhost:8080"   //Address used for web server
 }
 ```
-`sqlAddress` should be the address or alias for your SQL Server instance. Possibly `localhost` or `localhost\\SQLExpress` 
 
 ## Start up
 - Build .NET solution `Djambi.sln`

@@ -24,17 +24,22 @@ let errorHandler (ex : Exception) (logger : ILogger) =
 // Config and Main
 // ---------------------------------
 
+let config = (new ConfigurationBuilder() :> IConfigurationBuilder)
+                 .AddJsonFile("appsettings.json", false, true)
+                 .AddJsonFile("environment.json", false, true)
+                 .Build()
+
+SqlUtility.connectionString <- config.GetConnectionString("Main")
+                                     .Replace("{sqlAddress}", config.["sqlAddress"])
+
 let configureCors (builder : CorsPolicyBuilder) =
-    builder.WithOrigins("http://localhost:8080")
+    builder.WithOrigins(config.["webAddress"])
            .AllowAnyMethod()
            .AllowAnyHeader()
            |> ignore
            
 let configureApp (app : IApplicationBuilder) =
 //    let env = app.ApplicationServices.GetService<IHostingEnvironment>()
-    let config = app.ApplicationServices.GetService<IConfiguration>()
-    SqlUtility.connectionString <- config.GetConnectionString("Main")
-                                         .Replace("{sqlAddress}", config.["sqlAddress"])
 
     app.UseGiraffeErrorHandler(errorHandler)
     //(match env.IsDevelopment() with
@@ -51,21 +56,22 @@ let configureLogging (builder : ILoggingBuilder) =
     let filter (l : LogLevel) = l.Equals LogLevel.Error
     builder.AddFilter(filter).AddConsole().AddDebug() |> ignore
 
-let configureAppConfiguration(context : WebHostBuilderContext)(config :IConfigurationBuilder) =
-    config
-        .AddJsonFile("appsettings.json", false, true)
-        .AddJsonFile("environment.json", false, true) 
-        |> ignore
+//let configureAppConfiguration(context : WebHostBuilderContext)(config :IConfigurationBuilder) =
+//    config
+//        .AddJsonFile("appsettings.json", false, true)
+//        .AddJsonFile("environment.json", false, true) 
+//        |> ignore
 
 [<EntryPoint>]
 let main _ =
     WebHostBuilder()
+        .UseConfiguration(config)
+        .UseUrls(config.["apiAddress"])
         .UseKestrel()
         .UseIISIntegration()
         .Configure(Action<IApplicationBuilder> configureApp)
         .ConfigureServices(configureServices)
-        .ConfigureLogging(configureLogging)
-        .ConfigureAppConfiguration(configureAppConfiguration)
+        .ConfigureLogging(configureLogging)        
         .Build()
         .Run()
     0
