@@ -1,6 +1,7 @@
 module Djambi.Api.App
 
 open System
+open System.IO;
 open Microsoft.AspNetCore.Builder
 open Microsoft.AspNetCore.Cors.Infrastructure
 open Microsoft.AspNetCore.Hosting
@@ -26,7 +27,7 @@ let errorHandler (ex : Exception) (logger : ILogger) =
 
 let config = (new ConfigurationBuilder() :> IConfigurationBuilder)
                  .AddJsonFile("appsettings.json", false, true)
-                 .AddJsonFile("environment.json", false, true)
+                 .AddJsonFile(Path.GetFullPath("..\\..\\environment.json"), false, true) //Working directory is project directory
                  .Build()
 
 SqlUtility.connectionString <- config.GetConnectionString("Main")
@@ -55,12 +56,6 @@ let configureServices (services : IServiceCollection) =
 let configureLogging (builder : ILoggingBuilder) =
     let filter (l : LogLevel) = l.Equals LogLevel.Error
     builder.AddFilter(filter).AddConsole().AddDebug() |> ignore
-
-//let configureAppConfiguration(context : WebHostBuilderContext)(config :IConfigurationBuilder) =
-//    config
-//        .AddJsonFile("appsettings.json", false, true)
-//        .AddJsonFile("environment.json", false, true) 
-//        |> ignore
 
 [<EntryPoint>]
 let main _ =

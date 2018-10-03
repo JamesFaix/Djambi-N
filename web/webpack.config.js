@@ -1,4 +1,9 @@
+const fs = require('fs');
 const path = require('path');
+const webpack = require('webpack');
+
+var configJson = fs.readFileSync("./../environment.json", "utf8");
+var environmentConfig = JSON.parse(configJson);
 
 module.exports = {
   entry: {
@@ -27,4 +32,11 @@ module.exports = {
   resolve: {
     extensions: [ '.ts', '.js' ]
   },
+  plugins: [
+    new webpack.DefinePlugin({
+      'process.env':{
+        'API_URL': JSON.stringify(environmentConfig.apiAddress)
+      }
+    })
+  ]
 };

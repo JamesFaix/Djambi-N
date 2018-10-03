@@ -30,4 +30,5 @@
     - This is the default build task in VS Code
 - Start web server
     - From root `cd web/dist & http-server`
+    - Port `8080` is the default for `http-server`, but it can be changed with the argument `-p 1234`
 - View `localhost:8080` in browser

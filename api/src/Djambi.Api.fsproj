@@ -58,9 +58,6 @@
     <Compile Include="Http\Lobby\UserController.fs" />
     <Compile Include="Http\Routing.fs" />
     <Content Include="launchSettings.json" />
-    <Content Include="environment.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

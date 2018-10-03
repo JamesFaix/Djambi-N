@@ -20,6 +20,8 @@
     "webpack-cli": "^3.1.0"
   },
   "dependencies": {
+    "@types/node": "^10.11.3",
+    "fs": "0.0.1-security",
     "jquery": "^3.3.1"
   }
 }
