@@ -7,8 +7,6 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Djambi.Api", "src\Djambi.Ap
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Djambi.Tests", "Djambi.Tests\Djambi.Tests.fsproj", "{2E56D79F-0F2D-4477-B369-720F244E3E97}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Djambi.Utilities.DatabaseReset", "Djambi.Utilities.DatabaseReset\Djambi.Utilities.DatabaseReset.fsproj", "{9CE529A9-836A-4409-8146-E6BA986716E2}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{2E56D79F-0F2D-4477-B369-720F244E3E97}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2E56D79F-0F2D-4477-B369-720F244E3E97}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2E56D79F-0F2D-4477-B369-720F244E3E97}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9CE529A9-836A-4409-8146-E6BA986716E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9CE529A9-836A-4409-8146-E6BA986716E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9CE529A9-836A-4409-8146-E6BA986716E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9CE529A9-836A-4409-8146-E6BA986716E2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
