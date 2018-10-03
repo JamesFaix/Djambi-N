@@ -32,8 +32,9 @@ let configureCors (builder : CorsPolicyBuilder) =
            
 let configureApp (app : IApplicationBuilder) =
 //    let env = app.ApplicationServices.GetService<IHostingEnvironment>()
-    let settings = app.ApplicationServices.GetService<IConfiguration>()
-    SqlUtility.connectionString <- settings.GetConnectionString("Main")
+    let config = app.ApplicationServices.GetService<IConfiguration>()
+    SqlUtility.connectionString <- config.GetConnectionString("Main")
+                                         .Replace("{sqlAddress}", config.["sqlAddress"])
 
     app.UseGiraffeErrorHandler(errorHandler)
     //(match env.IsDevelopment() with
@@ -51,7 +52,10 @@ let configureLogging (builder : ILoggingBuilder) =
     builder.AddFilter(filter).AddConsole().AddDebug() |> ignore
 
 let configureAppConfiguration(context : WebHostBuilderContext)(config :IConfigurationBuilder) =
-    config.AddJsonFile("appsettings.json", false, true) |> ignore
+    config
+        .AddJsonFile("appsettings.json", false, true)
+        .AddJsonFile("environment.json", false, true) 
+        |> ignore
 
 [<EntryPoint>]
 let main _ =
