@@ -1,4 +1,14 @@
 ﻿module TestUtilities
 
+open System.IO
+open Microsoft.Extensions.Configuration
+
+let private config = 
+    (new ConfigurationBuilder() :> IConfigurationBuilder)
+        .AddJsonFile("appsettings.json", false)
+        .AddJsonFile(Path.GetFullPath("..\\..\\..\\..\\..\\environment.json"), false)
+        .Build()
+
 let connectionString =
-    "Data Source=localhost;Initial Catalog=Djambi;Persist Security Info=True;Integrated Security=True;MultiSubnetFailover=True;Application Name=Djambi.API"
+    config.GetConnectionString("Main")
+          .Replace("{sqlAddress}", config.["sqlAddress"])

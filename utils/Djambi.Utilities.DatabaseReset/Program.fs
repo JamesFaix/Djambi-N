@@ -11,7 +11,7 @@ open Microsoft.Extensions.Configuration
 let private config = 
     (new ConfigurationBuilder() :> IConfigurationBuilder)
         .AddJsonFile("appsettings.json", false)
-        .AddJsonFile("environment.json", false)
+        .AddJsonFile(Path.GetFullPath("..\\..\\..\\..\\..\\environment.json"), false)
         .Build()
 
 let private getSqlDirectory =

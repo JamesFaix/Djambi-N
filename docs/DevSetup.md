@@ -1,6 +1,7 @@
 ## Required Tools
 - .NET Core 2.1 SDK
-- SQL Server
+- XUnit test runner
+- SQL Server Express or Developer Edition
 - NPM
 - Webpack + plugins
     `npm install --save-dev webpack`
@@ -8,6 +9,15 @@
     `npm install --save-dev style-loader`
 - Web server
     `npm install http-server -g`    
+
+## SQL Server configuration
+- See https://blogs.msdn.microsoft.com/walzenbach/2010/04/14/how-to-enable-remote-connections-in-sql-server-2008/
+- In SSMS, right click server in Object Explorer, select _Properties_ > _Connections_, make sure _Allow remote connections to this server_ is checked.
+- In Sql Server Configuration Manager 
+    - In _SQL Server Network Configuration_ > _Protocols for SQLSERVER_, make sure _TCP/IP_ is enabled.
+    - Right click _TCP/IP_ > Select _Properties_, make sure _TCP Port_ is set to _1433_.
+- Add inbound Windows Firewall rule to allow TCP on port 1433 within the Domain.
+- Restart SQL service.
 
 ## Environment configuration
 - At the repository root, create an `environment.json` file for some global configuration. This file is not checked into source control, but is required.
