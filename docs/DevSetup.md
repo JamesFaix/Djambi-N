@@ -42,3 +42,8 @@
     - From root `cd web/dist & http-server`
     - Port `8080` is the default for `http-server`, but it can be changed with the argument `-p 1234`
 - View `localhost:8080` in browser
+
+## Cake build
+- Allow running Powershell scripts
+    - Run Powershell as admin
+    - `set-executionpolicy unrestricted`

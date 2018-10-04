@@ -8,10 +8,12 @@ open Dapper
 
 open Microsoft.Extensions.Configuration
 
+open Djambi.Utilities
+
 let private config = 
-    (new ConfigurationBuilder() :> IConfigurationBuilder)
+    ConfigurationBuilder()
         .AddJsonFile("appsettings.json", false)
-        .AddJsonFile(Path.GetFullPath("..\\..\\..\\..\\..\\environment.json"), false)
+        .AddJsonFile(Environment.environmentConfigPath(5), false)
         .Build()
 
 let private getSqlDirectory =
@@ -83,5 +85,4 @@ let main argv =
         loadFile f
     
     printfn "Done"
-    Console.Read() |> ignore
     0

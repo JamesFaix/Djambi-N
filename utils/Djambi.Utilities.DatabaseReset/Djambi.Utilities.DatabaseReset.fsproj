@@ -17,4 +17,8 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.1.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Djambi.Utilities.Environment\Djambi.Utilities.Environment.fsproj" />
+  </ItemGroup>
+
 </Project>

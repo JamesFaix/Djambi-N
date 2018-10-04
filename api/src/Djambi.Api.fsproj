@@ -68,4 +68,8 @@
     <None Include="web.config" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\utils\Djambi.Utilities.Environment\Djambi.Utilities.Environment.fsproj" />
+  </ItemGroup>
+
 </Project>

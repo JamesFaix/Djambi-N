@@ -1,7 +1,6 @@
 module Djambi.Api.App
 
 open System
-open System.IO;
 open Microsoft.AspNetCore.Builder
 open Microsoft.AspNetCore.Cors.Infrastructure
 open Microsoft.AspNetCore.Hosting
@@ -12,6 +11,7 @@ open Giraffe
 
 open Djambi.Api.Persistence
 open Djambi.Api.Http
+open Djambi.Utilities
 
 // ---------------------------------
 // Error handler
@@ -25,9 +25,9 @@ let errorHandler (ex : Exception) (logger : ILogger) =
 // Config and Main
 // ---------------------------------
 
-let config = (new ConfigurationBuilder() :> IConfigurationBuilder)
+let config = ConfigurationBuilder()
                  .AddJsonFile("appsettings.json", false, true)
-                 .AddJsonFile(Path.GetFullPath("..\\..\\environment.json"), false, true) //Working directory is project directory
+                 .AddJsonFile(Environment.environmentConfigPath(2), false, true) //Working directory is project directory
                  .Build()
 
 SqlUtility.connectionString <- config.GetConnectionString("Main")
