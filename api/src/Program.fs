@@ -27,7 +27,7 @@ let errorHandler (ex : Exception) (logger : ILogger) =
 
 let config = ConfigurationBuilder()
                  .AddJsonFile("appsettings.json", false, true)
-                 .AddJsonFile(Environment.environmentConfigPath(2), false, true) //Working directory is project directory
+                 .AddJsonFile(Environment.environmentConfigPath(5), false, true) //Working directory is project directory
                  .Build()
 
 SqlUtility.connectionString <- config.GetConnectionString("Main")
