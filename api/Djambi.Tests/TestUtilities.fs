@@ -1,12 +1,24 @@
 ﻿namespace Djambi.Tests
 
-open System
-open Djambi.Api.Domain.LobbyModels
-
 module TestUtilities =
 
+open System
+
+open Microsoft.Extensions.Configuration
+
+open Djambi.Utilities
+open Djambi.Api.Domain.LobbyModels
+
+
+    let private config = 
+        ConfigurationBuilder()
+            .AddJsonFile("appsettings.json", false)
+            .AddJsonFile(Environment.environmentConfigPath(5), false)
+            .Build()
+
     let connectionString =
-        "Data Source=localhost;Initial Catalog=Djambi;Persist Security Info=True;Integrated Security=True;MultiSubnetFailover=True;Application Name=Djambi.API"
+        config.GetConnectionString("Main")
+              .Replace("{sqlAddress}", config.["sqlAddress"])
 
     let getCreateUserRequest() : CreateUserRequest = 
         {

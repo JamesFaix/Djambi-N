@@ -1,5 +1,4 @@
 ﻿open System
-open System.Configuration
 open System.Data.SqlClient
 open System.IO
 open System.Reflection
@@ -7,18 +6,28 @@ open System.Text.RegularExpressions
 
 open Dapper
 
+open Microsoft.Extensions.Configuration
+
+open Djambi.Utilities
+
+let private config = 
+    ConfigurationBuilder()
+        .AddJsonFile("appsettings.json", false)
+        .AddJsonFile(Environment.environmentConfigPath(5), false)
+        .Build()
+
 let private getSqlDirectory =
     let asm = Assembly.GetExecutingAssembly()
     let uri = new Uri(asm.CodeBase)
     let asmDir = uri.LocalPath |> Path.GetDirectoryName
-    let relativeDir = ConfigurationManager.AppSettings.["sqlDirectoryRelativePath"]
+    let relativeDir = config.["sqlDirectoryRelativePath"]
     Path.Combine(asmDir, relativeDir)
 
-let private masterConnectionString = 
-    ConfigurationManager.ConnectionStrings.["master"].ConnectionString
-        
-let private djambiConnectionString = 
-    ConfigurationManager.ConnectionStrings.["djambi"].ConnectionString
+let private getConnectionString name =
+    config.GetConnectionString(name).Replace("{sqlAddress}", config.["sqlAddress"])
+   
+let private masterConnectionString = getConnectionString "master"        
+let private djambiConnectionString = getConnectionString "djambi"
 
 let private executeCommand (cnStr : string)(command : string) : unit =
     use cn = new SqlConnection(cnStr)
@@ -82,5 +91,4 @@ let main argv =
         loadFile f
     
     printfn "Done"
-    Console.Read() |> ignore
     0

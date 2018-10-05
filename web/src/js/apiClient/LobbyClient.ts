@@ -1,9 +1,9 @@
 import * as $ from 'jquery';
 import { LobbyGame, GameCreationRequest, User, CreateUserRequest, SigninRequest } from "./LobbyModel";
 import { GameStartResponse} from "./PlayModel";
+import {Environment} from "./../Environment";
 
 export class LobbyClient {
-    private static readonly baseUrl : string = "http://localhost:54835/api";
     constructor() {
 
     }
@@ -13,7 +13,7 @@ export class LobbyClient {
 
         await $.ajax({
             type: "POST",
-            url: this.baseUrl + "/games",
+            url: Environment.apiAddress() + "/games",
             data: request,
             dataType: "json",
             success: (data, status, xhr) => {
@@ -31,7 +31,7 @@ export class LobbyClient {
 
         await $.ajax({
             type: "POST",
-            url: this.baseUrl + "/games/" + gameId + "/start-request" ,
+            url: Environment.apiAddress() + "/games/" + gameId + "/start-request" ,
             dataType: "json",
             success: (data, status, xhr) => {
                 result = data;
@@ -49,7 +49,7 @@ export class LobbyClient {
 
         await $.ajax({
             type: "GET",
-            url: this.baseUrl + "/games" ,
+            url: Environment.apiAddress() + "/games" ,
             dataType: "json",
             success: (data, status, xhr) => {
                 result = data;
@@ -67,7 +67,7 @@ export class LobbyClient {
 
         await $.ajax({
             type: "GET",
-            url: this.baseUrl + "/users" ,
+            url: Environment.apiAddress + "/users" ,
             dataType: "json",
             success: (data, status, xhr) => {
                 result = data;
@@ -85,7 +85,7 @@ export class LobbyClient {
 
         await $.ajax({
             type: "POST",
-            url: this.baseUrl + "/users" ,
+            url: Environment.apiAddress + "/users" ,
             dataType: "json",
             data: request,
             success: (data, status, xhr) => {
@@ -109,7 +109,7 @@ export class LobbyClient {
         
         await $.ajax({
             type: "POST",
-            url: this.baseUrl + "/signin" ,
+            url: Environment.apiAddress + "/signin" ,
             dataType: "json",
             data: request,
             success: (data, status, xhr) => {
@@ -125,7 +125,7 @@ export class LobbyClient {
         
         await $.ajax({
             type: "POST",
-            url: this.baseUrl + "/signout" ,
+            url: Environment.apiAddress + "/signout" ,
             dataType: "json",
             success: (data, status, xhr) => {
                 console.log(data);

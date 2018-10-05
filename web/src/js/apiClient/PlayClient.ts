@@ -1,8 +1,8 @@
 import * as $ from 'jquery';
 import {CommitTurnResponse, TurnState} from "./PlayModel";
+import {Environment} from "./../Environment";
 
 export class PlayClient {
-    private static readonly baseUrl : string = "http://localhost:54835/api";
     constructor() {
 
     }
@@ -12,7 +12,7 @@ export class PlayClient {
 
         await $.ajax({
             type: "POST",
-            url: this.baseUrl + "/games/" + gameId + "/current-turn/selection-request/" + cellId,
+            url: Environment.apiAddress() + "/games/" + gameId + "/current-turn/selection-request/" + cellId,
             dataType: "json",
             success: (data, status, xhr) => {
                 result = data;
@@ -30,7 +30,7 @@ export class PlayClient {
 
         await $.ajax({
             type: "POST",
-            url: this.baseUrl + "/games/" + gameId + "/current-turn/commit-request",
+            url: Environment.apiAddress() + "/games/" + gameId + "/current-turn/commit-request",
             dataType: "json",
             success: (data, status, xhr) => {
                 result = data;
@@ -48,7 +48,7 @@ export class PlayClient {
 
         await $.ajax({
             type: "POST",
-            url: this.baseUrl + "/games/" + gameId + "/current-turn/reset-request",
+            url: Environment.apiAddress() + "/games/" + gameId + "/current-turn/reset-request",
             dataType: "json",
             success: (data, status, xhr) => {
                 result = data;
