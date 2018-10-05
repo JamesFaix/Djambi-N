@@ -33,13 +33,18 @@ Task(task_buildDotNet)
 Task(task_buildWeb)
     .Does(() => 
     {
-        var settings = new NpmRunScriptSettings 
+        var dir = root + Directory("web\\");
+
+        NpmInstall(new NpmInstallSettings 
+        {
+            WorkingDirectory = dir
+        });
+
+        NpmRunScript(new NpmRunScriptSettings 
         {
             ScriptName = "build",
-            WorkingDirectory = root + Directory("web\\")
-        };
-
-        NpmRunScript(settings);
+            WorkingDirectory = dir
+        });
     });
 
 Task(task_cleanSql)
