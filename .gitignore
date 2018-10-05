@@ -1,2 +1,5 @@
-
 client/unity/Djambi.Unity/.vscode/settings.json
+environment.json
+.vs/
+bin/
+obj/

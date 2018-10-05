@@ -1,0 +1,53 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2042
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Djambi.Utilities.DatabaseReset", "utils\Djambi.Utilities.DatabaseReset\Djambi.Utilities.DatabaseReset.fsproj", "{0B3DE3BC-4AFF-4F24-B86A-AC902F0F70F1}"
+EndProject
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Djambi.Api", "api\src\Djambi.Api.fsproj", "{3664C02D-2B0E-4C1B-AE20-CCDEC13105F8}"
+EndProject
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Djambi.Tests", "api\Djambi.Tests\Djambi.Tests.fsproj", "{96C2C2A6-C0BE-4690-8FD2-AA884C65DBAE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Api", "Api", "{2FAF11B4-A2BA-48CF-8E4D-766CB7B26A3A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utils", "Utils", "{12EE890F-7CFC-4DA3-A880-F94AF30F5F34}"
+EndProject
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Djambi.Utilities.Environment", "utils\Djambi.Utilities.Environment\Djambi.Utilities.Environment.fsproj", "{89FD8898-FDD6-4BFE-8049-7AA6305D145A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0B3DE3BC-4AFF-4F24-B86A-AC902F0F70F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B3DE3BC-4AFF-4F24-B86A-AC902F0F70F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B3DE3BC-4AFF-4F24-B86A-AC902F0F70F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B3DE3BC-4AFF-4F24-B86A-AC902F0F70F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3664C02D-2B0E-4C1B-AE20-CCDEC13105F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3664C02D-2B0E-4C1B-AE20-CCDEC13105F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3664C02D-2B0E-4C1B-AE20-CCDEC13105F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3664C02D-2B0E-4C1B-AE20-CCDEC13105F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{96C2C2A6-C0BE-4690-8FD2-AA884C65DBAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{96C2C2A6-C0BE-4690-8FD2-AA884C65DBAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{96C2C2A6-C0BE-4690-8FD2-AA884C65DBAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{96C2C2A6-C0BE-4690-8FD2-AA884C65DBAE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89FD8898-FDD6-4BFE-8049-7AA6305D145A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89FD8898-FDD6-4BFE-8049-7AA6305D145A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89FD8898-FDD6-4BFE-8049-7AA6305D145A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89FD8898-FDD6-4BFE-8049-7AA6305D145A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0B3DE3BC-4AFF-4F24-B86A-AC902F0F70F1} = {12EE890F-7CFC-4DA3-A880-F94AF30F5F34}
+		{3664C02D-2B0E-4C1B-AE20-CCDEC13105F8} = {2FAF11B4-A2BA-48CF-8E4D-766CB7B26A3A}
+		{96C2C2A6-C0BE-4690-8FD2-AA884C65DBAE} = {2FAF11B4-A2BA-48CF-8E4D-766CB7B26A3A}
+		{89FD8898-FDD6-4BFE-8049-7AA6305D145A} = {12EE890F-7CFC-4DA3-A880-F94AF30F5F34}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5C5837E5-44E0-4D02-8AD3-DCFB9460E497}
+	EndGlobalSection
+EndGlobal

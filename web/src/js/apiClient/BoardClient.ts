@@ -1,8 +1,8 @@
 import * as $ from 'jquery';
 import {Board} from "./BoardModel";
+import {Environment} from "./../Environment";
 
 export class BoardClient {
-    private static readonly baseUrl : string = "http://localhost:54835/api";
     constructor() {
 
     }
@@ -12,7 +12,7 @@ export class BoardClient {
 
         await $.ajax({
             type: "GET",
-            url: this.baseUrl + "/boards/" + regionCount,
+            url: Environment.apiAddress() + "/boards/" + regionCount,
             dataType: "json",
             success: (data, status, xhr) => {
                 result = data;
@@ -30,7 +30,7 @@ export class BoardClient {
         
         await $.ajax({
             type: "GET",
-            url: this.baseUrl + "/boards/" + regionCount + "/cells/" + cellId + "/paths",
+            url: Environment.apiAddress() + "/boards/" + regionCount + "/cells/" + cellId + "/paths",
             dataType: "json",
             success: (data, status, xhr) => {
                 result = data;

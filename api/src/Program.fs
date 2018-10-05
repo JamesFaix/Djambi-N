@@ -11,6 +11,7 @@ open Giraffe
 
 open Djambi.Api.Persistence
 open Djambi.Api.Http
+open Djambi.Utilities
 
 // ---------------------------------
 // Error handler
@@ -24,16 +25,22 @@ let errorHandler (ex : Exception) (logger : ILogger) =
 // Config and Main
 // ---------------------------------
 
+let config = ConfigurationBuilder()
+                 .AddJsonFile("appsettings.json", false, true)
+                 .AddJsonFile(Environment.environmentConfigPath(5), false, true) //Working directory is project directory
+                 .Build()
+
+SqlUtility.connectionString <- config.GetConnectionString("Main")
+                                     .Replace("{sqlAddress}", config.["sqlAddress"])
+
 let configureCors (builder : CorsPolicyBuilder) =
-    builder.WithOrigins("http://localhost:8080")
+    builder.WithOrigins(config.["webAddress"])
            .AllowAnyMethod()
            .AllowAnyHeader()
            |> ignore
            
 let configureApp (app : IApplicationBuilder) =
 //    let env = app.ApplicationServices.GetService<IHostingEnvironment>()
-    let settings = app.ApplicationServices.GetService<IConfiguration>()
-    SqlUtility.connectionString <- settings.GetConnectionString("Main")
 
     app.UseGiraffeErrorHandler(errorHandler)
     //(match env.IsDevelopment() with
@@ -50,18 +57,16 @@ let configureLogging (builder : ILoggingBuilder) =
     let filter (l : LogLevel) = l.Equals LogLevel.Error
     builder.AddFilter(filter).AddConsole().AddDebug() |> ignore
 
-let configureAppConfiguration(context : WebHostBuilderContext)(config :IConfigurationBuilder) =
-    config.AddJsonFile("appsettings.json", false, true) |> ignore
-
 [<EntryPoint>]
 let main _ =
     WebHostBuilder()
+        .UseConfiguration(config)
+        .UseUrls(config.["apiAddress"])
         .UseKestrel()
         .UseIISIntegration()
         .Configure(Action<IApplicationBuilder> configureApp)
         .ConfigureServices(configureServices)
-        .ConfigureLogging(configureLogging)
-        .ConfigureAppConfiguration(configureAppConfiguration)
+        .ConfigureLogging(configureLogging)        
         .Build()
         .Run()
     0

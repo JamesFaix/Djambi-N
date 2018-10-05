@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <DebugType>portable</DebugType>
-    <AssemblyName>web_server_f</AssemblyName>
+    <AssemblyName>Djambi.Api</AssemblyName>
     <OutputType>Exe</OutputType>
     <RuntimeFrameworkVersion>2.0.0</RuntimeFrameworkVersion>
     <EnableDefaultContentItems>false</EnableDefaultContentItems>
@@ -57,6 +57,7 @@
     <Compile Include="Http\Lobby\LobbyController.fs" />
     <Compile Include="Http\Lobby\UserController.fs" />
     <Compile Include="Http\Routing.fs" />
+    <Content Include="launchSettings.json" />
     <Content Include="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -65,6 +66,10 @@
 
   <ItemGroup>
     <None Include="web.config" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\utils\Djambi.Utilities.Environment\Djambi.Utilities.Environment.fsproj" />
   </ItemGroup>
 
 </Project>

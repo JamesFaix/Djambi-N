@@ -11,6 +11,9 @@ Complete rules for Djambi and Djambi-N can be found [here][2]. Basically Djambi-
 
 Current progress on Djambi-N can be found [here][3].
 
+Developer setup instructions can be found [here][4].
+
 [1]: https://en.wikipedia.org/wiki/Djambi
 [2]: docs/Rules.md
 [3]: docs/Progress.md
+[4]: docs/DevSetup.md
