@@ -3,3 +3,4 @@ environment.json
 .vs/
 bin/
 obj/
+tools/

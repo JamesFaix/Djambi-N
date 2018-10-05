@@ -5,7 +5,7 @@ using System.Diagnostics;
 var target = Argument("target", task_help);
 
 var env = new CakeEnvironment(new CakePlatform(), new CakeRuntime(), null);
-var root = Directory(System.IO.Path.GetFullPath(env.WorkingDirectory + @"..\..\..\"));
+var root = Directory(env.WorkingDirectory + "\\");
 
 var task_buildDotNet = "build-dotnet";
 var task_buildWeb = "build-web";
