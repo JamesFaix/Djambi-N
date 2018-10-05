@@ -26,38 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="Common\Constants.fs" />
-    <Compile Include="Common\Enums.fs" />
-    <Compile Include="Common\HttpError.fs" />
-    <Compile Include="Common\Utilities.fs" />
-    <Compile Include="DomainModels\LobbyModels.fs" />
-    <Compile Include="DomainModels\BoardModels.fs" />
-    <Compile Include="DomainModels\PlayModels.fs" />
-    <Compile Include="Persistence\SqlUtility.fs" />
-    <Compile Include="Persistence\Lobby\LobbySqlModels.fs" />
-    <Compile Include="Persistence\Lobby\LobbySqlMappings.fs" />
-    <Compile Include="Persistence\Lobby\UserRepository.fs" />
-    <Compile Include="Persistence\Lobby\LobbyRepository.fs" />
-    <Compile Include="Persistence\Play\PlaySqlModels.fs" />
-    <Compile Include="Persistence\Play\PlaySqlModelMappings.fs" />
-    <Compile Include="Persistence\Play\PlayRepository.fs" />
-    <Compile Include="Persistence\Play\GameStartRepository.fs" />
-    <Compile Include="Domain\SessionService.fs" />
-    <Compile Include="Domain\BoardExtensions.fs" />
-    <Compile Include="Domain\BoardUtility.fs" />
-    <Compile Include="Domain\PlayModelExtensions.fs" />
-    <Compile Include="Domain\PlayService.fs" />
-    <Compile Include="Domain\GameStartService.fs" />
-    <Compile Include="Http\HttpUtility.fs" />
-    <Compile Include="Http\Play\PlayJsonModels.fs" />
-    <Compile Include="Http\Play\PlayJsonMappings.fs" />
-    <Compile Include="Http\Play\PlayController.fs" />
-    <Compile Include="Http\Lobby\LobbyJsonModels.fs" />
-    <Compile Include="Http\Lobby\LobbyJsonMappings.fs" />
-    <Compile Include="Http\Lobby\LobbyController.fs" />
-    <Compile Include="Http\Lobby\UserController.fs" />
-    <Compile Include="Http\Lobby\SessionController.fs" />
-    <Compile Include="Http\Routing.fs" />
+    <Compile Include="Routing.fs" />
     <Content Include="launchSettings.json" />
     <Content Include="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -70,6 +39,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\api.common\api.common.fsproj" />
+    <ProjectReference Include="..\api.db\api.db.fsproj" />
+    <ProjectReference Include="..\api.logic\api.logic.fsproj" />
+    <ProjectReference Include="..\api.model\api.model.fsproj" />
+    <ProjectReference Include="..\api.web\api.web.fsproj" />
     <ProjectReference Include="..\..\utils\environment\environment.fsproj" />
   </ItemGroup>
 

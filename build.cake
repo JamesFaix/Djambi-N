@@ -100,7 +100,7 @@ Task(task_runWeb)
 Task(task_testApi)
     .Does(() => 
     {
-        var path = root + File("api\\tests\\api-tests.fsproj");
+        var path = root + File("api\\api-tests\\api-tests.fsproj");
 
         var settings = new DotNetCoreTestSettings 
         {

@@ -2,12 +2,12 @@
 
 module TestUtilities =
 
-open System
+    open System
 
-open Microsoft.Extensions.Configuration
+    open Microsoft.Extensions.Configuration
 
-open Djambi.Utilities
-open Djambi.Api.Domain.LobbyModels
+    open Djambi.Utilities
+    open Djambi.Api.Domain.LobbyModels
 
 
     let private config = 

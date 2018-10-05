@@ -3,7 +3,7 @@
 open System.Threading.Tasks
 
 open Dapper
-open Giraffe
+open FSharp.Control.Tasks
 open Newtonsoft.Json
 
 open Djambi.Api.Domain.PlayModels

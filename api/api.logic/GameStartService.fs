@@ -3,7 +3,7 @@
 open System
 open System.Linq
 open System.Threading.Tasks
-open Giraffe
+open FSharp.Control.Tasks
 
 open Djambi.Api.Common
 open Djambi.Api.Common.Enums

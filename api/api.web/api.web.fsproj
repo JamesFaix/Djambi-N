@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="HttpUtility.fs" />
+    <Compile Include="Lobby\LobbyJsonModels.fs" />
+    <Compile Include="Lobby\LobbyJsonMappings.fs" />
+    <Compile Include="Lobby\LobbyController.fs" />
+    <Compile Include="Lobby\SessionController.fs" />
+    <Compile Include="Lobby\UserController.fs" />
+    <Compile Include="Play\PlayJsonModels.fs" />
+    <Compile Include="Play\PlayJsonMappings.fs" />
+    <Compile Include="Play\PlayController.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Giraffe" Version="1.1.0" />
+    <PackageReference Include="TaskBuilder.fs" Version="2.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\api.common\api.common.fsproj" />
+    <ProjectReference Include="..\api.logic\api.logic.fsproj" />
+    <ProjectReference Include="..\api.model\api.model.fsproj" />
+  </ItemGroup>
+
+</Project>

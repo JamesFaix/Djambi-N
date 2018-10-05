@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="SqlUtility.fs" />
+    <Compile Include="Lobby\LobbySqlModels.fs" />
+    <Compile Include="Lobby\LobbySqlMappings.fs" />
+    <Compile Include="Lobby\LobbyRepository.fs" />
+    <Compile Include="Lobby\UserRepository.fs" />
+    <Compile Include="Play\PlaySqlModels.fs" />
+    <Compile Include="Play\PlaySqlModelMappings.fs" />
+    <Compile Include="Play\GameStartRepository.fs" />
+    <Compile Include="Play\PlayRepository.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="1.50.5" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="TaskBuilder.fs" Version="2.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\api.common\api.common.fsproj" />
+    <ProjectReference Include="..\api.model\api.model.fsproj" />
+  </ItemGroup>
+
+</Project>

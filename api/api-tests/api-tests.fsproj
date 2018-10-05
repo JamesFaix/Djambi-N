@@ -28,7 +28,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\utils\environment\environment.fsproj" />
-    <ProjectReference Include="..\src\api.fsproj" />
+    <ProjectReference Include="..\api.host\api.host.fsproj" />
   </ItemGroup>
 
 </Project>

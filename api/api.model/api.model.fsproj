@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="BoardModels.fs" />
+    <Compile Include="LobbyModels.fs" />
+    <Compile Include="PlayModels.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="TaskBuilder.fs" Version="2.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\api.common\api.common.fsproj" />
+  </ItemGroup>
+
+</Project>

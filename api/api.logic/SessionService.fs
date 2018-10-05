@@ -2,7 +2,7 @@
 
 open System
 open System.Threading.Tasks
-open Giraffe
+open FSharp.Control.Tasks
 
 open Djambi.Api.Common
 open Djambi.Api.Domain.LobbyModels

@@ -3,7 +3,7 @@
 open System.Threading.Tasks
 
 open Dapper
-open Giraffe
+open FSharp.Control.Tasks
     
 open Djambi.Api.Persistence.LobbySqlModels
 open Djambi.Api.Domain.LobbyModels

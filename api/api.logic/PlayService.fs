@@ -1,6 +1,6 @@
 ﻿namespace Djambi.Api.Domain
 
-open Giraffe
+open FSharp.Control.Tasks
 open System.Collections.Generic
 open System.Linq
 open System.Threading.Tasks
