@@ -2,7 +2,7 @@
 
 module BoardUtility =
 
-    open BoardModels
+    open Djambi.Api.Model.Board
     open BoardsExtensions
 
     let getBoardMetadata(regionCount : int) : BoardMetadata =

@@ -1,6 +1,6 @@
-﻿namespace Djambi.Api.Domain
+﻿namespace Djambi.Api.Model
 
-module LobbyModels =
+module Lobby =
 
     open System
     open Djambi.Api.Common.Enums

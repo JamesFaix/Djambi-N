@@ -1,12 +1,10 @@
 ﻿namespace Djambi.Api.Domain
 
-open Djambi.Api.Domain.PlayModels
-open Djambi.Api.Domain.BoardModels
 open Djambi.Api.Domain.BoardsExtensions
-open Djambi.Api.Common
 open Djambi.Api.Common.Enums
+open Djambi.Api.Model.Board
+open Djambi.Api.Model.Play
 
-open System.Collections.Generic
 module PlayModelExtensions =
 
     type Piece with

@@ -3,7 +3,7 @@
 module LobbyJsonMappings =
 
     open System
-    open Djambi.Api.Domain.LobbyModels
+    open Djambi.Api.Model.Lobby
     open Djambi.Api.Http.LobbyJsonModels
 
     let mapRoleFromString(roleName : string) : Role =

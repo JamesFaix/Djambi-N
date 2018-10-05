@@ -7,10 +7,10 @@ open FSharp.Control.Tasks
 
 open Djambi.Api.Common
 open Djambi.Api.Common.Enums
-open Djambi.Api.Domain.LobbyModels
+open Djambi.Api.Model.Board
+open Djambi.Api.Model.Lobby
+open Djambi.Api.Model.Play
 open Djambi.Api.Persistence
-open PlayModels
-open Djambi.Api.Domain.BoardModels
 open Djambi.Api.Domain.BoardsExtensions
 open Djambi.Api.Domain
 

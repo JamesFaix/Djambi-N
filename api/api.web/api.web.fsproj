@@ -5,15 +5,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Model\Play.fs" />
+    <Compile Include="Model\Lobby.fs" />
+    <Compile Include="Mappings\Lobby.fs" />
+    <Compile Include="Mappings\Play.fs" />
     <Compile Include="HttpUtility.fs" />
-    <Compile Include="Lobby\LobbyJsonModels.fs" />
-    <Compile Include="Lobby\LobbyJsonMappings.fs" />
-    <Compile Include="Lobby\LobbyController.fs" />
-    <Compile Include="Lobby\SessionController.fs" />
-    <Compile Include="Lobby\UserController.fs" />
-    <Compile Include="Play\PlayJsonModels.fs" />
-    <Compile Include="Play\PlayJsonMappings.fs" />
-    <Compile Include="Play\PlayController.fs" />
+    <Compile Include="Controllers\Play.fs" />
+    <Compile Include="Controllers\Lobby.fs" />
+    <Compile Include="Controllers\Session.fs" />
+    <Compile Include="Controllers\User.fs" />
   </ItemGroup>
 
   <ItemGroup>

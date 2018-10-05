@@ -1,6 +1,6 @@
-namespace Djambi.Api.Domain
+namespace Djambi.Api.Model
 
-module BoardModels =
+module Board =
     
     type Directions =
         | Up = 1

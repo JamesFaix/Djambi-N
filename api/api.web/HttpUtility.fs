@@ -8,7 +8,7 @@ open Giraffe
 
 open Djambi.Api.Common
 open Djambi.Api.Persistence
-open Djambi.Api.Domain.LobbyModels
+open Djambi.Api.Model.Lobby
 
 type HttpHandler = HttpFunc -> HttpContext -> HttpContext option Task 
 

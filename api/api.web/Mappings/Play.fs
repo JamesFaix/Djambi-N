@@ -1,6 +1,6 @@
 ﻿namespace Djambi.Api.Http
 
-open Djambi.Api.Domain.PlayModels
+open Djambi.Api.Model.Play
 open Djambi.Api.Http.PlayJsonModels
 open System
 

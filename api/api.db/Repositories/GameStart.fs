@@ -6,7 +6,7 @@ open Dapper
 open FSharp.Control.Tasks
 open Newtonsoft.Json
 
-open Djambi.Api.Domain.PlayModels
+open Djambi.Api.Model.Play
 open Djambi.Api.Persistence.SqlUtility
 
 module GameStartRepository =

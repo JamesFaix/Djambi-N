@@ -7,7 +7,7 @@ module TestUtilities =
     open Microsoft.Extensions.Configuration
 
     open Djambi.Utilities
-    open Djambi.Api.Domain.LobbyModels
+    open Djambi.Api.Model.Lobby
 
 
     let private config = 

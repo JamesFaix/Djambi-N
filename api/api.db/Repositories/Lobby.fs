@@ -6,7 +6,8 @@ open Dapper
 open FSharp.Control.Tasks
     
 open Djambi.Api.Persistence.LobbySqlModels
-open Djambi.Api.Domain.LobbyModels
+open Djambi.Api.Model.Lobby
+open Djambi.Api.Model.Play
 open Djambi.Api.Common.Enums
 open Djambi.Api.Persistence.LobbySqlMappings
 open Djambi.Api.Persistence.SqlUtility

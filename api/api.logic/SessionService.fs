@@ -5,7 +5,7 @@ open System.Threading.Tasks
 open FSharp.Control.Tasks
 
 open Djambi.Api.Common
-open Djambi.Api.Domain.LobbyModels
+open Djambi.Api.Model.Lobby
 open Djambi.Api.Persistence
 
 module SessionService =

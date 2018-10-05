@@ -5,7 +5,7 @@ open Giraffe
 open Xunit
 
 open Djambi.Api.Persistence
-open Djambi.Api.Domain.LobbyModels
+open Djambi.Api.Model.Lobby
 open Djambi.Api.Common.Enums
 open Djambi.Tests.TestUtilities
 

@@ -1,8 +1,8 @@
-﻿namespace Djambi.Api.Domain
+﻿namespace Djambi.Api.Model
 
 open Djambi.Api.Common.Enums
 
-module PlayModels =
+module Play =
 
     type Player =
         {

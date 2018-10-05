@@ -5,15 +5,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Model\Play.fs" />
+    <Compile Include="Model\Lobby.fs" />
+    <Compile Include="Mappings\Play.fs" />
+    <Compile Include="Mappings\Lobby.fs" />
     <Compile Include="SqlUtility.fs" />
-    <Compile Include="Lobby\LobbySqlModels.fs" />
-    <Compile Include="Lobby\LobbySqlMappings.fs" />
-    <Compile Include="Lobby\LobbyRepository.fs" />
-    <Compile Include="Lobby\UserRepository.fs" />
-    <Compile Include="Play\PlaySqlModels.fs" />
-    <Compile Include="Play\PlaySqlModelMappings.fs" />
-    <Compile Include="Play\GameStartRepository.fs" />
-    <Compile Include="Play\PlayRepository.fs" />
+    <Compile Include="Repositories\Lobby.fs" />
+    <Compile Include="Repositories\User.fs" />
+    <Compile Include="Repositories\GameStart.fs" />
+    <Compile Include="Repositories\Play.fs" />
   </ItemGroup>
 
   <ItemGroup>

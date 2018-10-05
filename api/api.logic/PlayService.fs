@@ -4,13 +4,14 @@ open FSharp.Control.Tasks
 open System.Collections.Generic
 open System.Linq
 open System.Threading.Tasks
+
 open Djambi.Api.Persistence
-open Djambi.Api.Domain.PlayModels
 open Djambi.Api.Domain.PlayModelExtensions
 open Djambi.Api.Domain.BoardsExtensions
 open Djambi.Api.Common.Enums
 open Djambi.Api.Common
-open Djambi.Api.Domain.BoardModels
+open Djambi.Api.Model.Board
+open Djambi.Api.Model.Play
 
 module PlayService =
 

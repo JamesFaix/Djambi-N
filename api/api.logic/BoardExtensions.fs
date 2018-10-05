@@ -5,7 +5,7 @@ module BoardsExtensions =
     open System.Collections.Generic
     open System.Linq
 
-    open BoardModels
+    open Djambi.Api.Model.Board
     open Djambi.Api.Common.Utilities
 
     type Directions with 
