@@ -57,8 +57,9 @@
     <DataWriteAllFilesInOneDirectory>True</DataWriteAllFilesInOneDirectory>
   </WriteToFileOptions>
   <DataFileSet>
-    <Count>2</Count>
+    <Count>3</Count>
     <DataFile>dbo.GameStatuses_Data.sql</DataFile>
     <DataFile>dbo.VirtualPlayerNames_Data.sql</DataFile>
+    <DataFile>dbo.Roles_Data.sql</DataFile>
   </DataFileSet>
 </DatabaseInformation>

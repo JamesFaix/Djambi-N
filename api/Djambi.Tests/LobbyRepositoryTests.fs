@@ -7,22 +7,11 @@ open Xunit
 open Djambi.Api.Persistence
 open Djambi.Api.Domain.LobbyModels
 open Djambi.Api.Common.Enums
+open Djambi.Tests.TestUtilities
 
 type LobbyRepositoryTests() =
     do 
-        SqlUtility.connectionString <- TestUtilities.connectionString
-
-    let getCreateUserRequest() : CreateUserRequest = 
-        {
-            name = "Test_" + Guid.NewGuid().ToString()
-            isGuest = false
-        }
-
-    let getCreateGameRequest() : CreateGameRequest =
-        {
-            boardRegionCount = 3
-            description = Some "Test"
-        }
+        SqlUtility.connectionString <- connectionString
 
     //Game CRUD
 

@@ -5,17 +5,11 @@ open Giraffe
 open Xunit
 
 open Djambi.Api.Persistence
-open Djambi.Api.Domain.LobbyModels
+open Djambi.Tests.TestUtilities
 
 type UserRepositoryTests() =
     do 
-        SqlUtility.connectionString <- TestUtilities.connectionString
-
-    let getCreateUserRequest() : CreateUserRequest = 
-        {
-            name = "Test_" + Guid.NewGuid().ToString()
-            isGuest = false
-        }
+        SqlUtility.connectionString <- connectionString
 
     [<Fact>]
     let ``Create user should work``() =

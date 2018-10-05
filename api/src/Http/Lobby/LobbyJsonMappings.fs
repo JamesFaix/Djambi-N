@@ -6,12 +6,18 @@ module LobbyJsonMappings =
     open Djambi.Api.Domain.LobbyModels
     open Djambi.Api.Http.LobbyJsonModels
 
+    let mapRoleFromString(roleName : string) : Role =
+        match roleName.ToUpperInvariant() with
+        | "ADMIN" -> Admin
+        | "NORMAL" -> Normal
+        | "GUEST" -> Guest
+        | _ -> failwith ("Invalid role name: " + roleName)
+
     let mapUserResponse(user : User) : UserJsonModel =
         {
             id = user.id
             name = user.name
-            isGuest = user.isGuest
-            isAdmin = user.isAdmin
+            role = user.role.ToString()
         }
 
     let mapPlayerResponse(player : LobbyPlayer) : PlayerJsonModel =
@@ -23,10 +29,11 @@ module LobbyJsonMappings =
             name = player.name
         }
 
-    let mapCreateUserRequest(request : CreateUserJsonModel) : CreateUserRequest =
+    let mapCreateUserRequest(jsonModel : CreateUserJsonModel) : CreateUserRequest =
         {
-            name = request.name
-            isGuest = request.isGuest
+            name = jsonModel.name
+            role = jsonModel.role |> mapRoleFromString
+            password = jsonModel.password
         }
 
     let mapLobbyGameResponse(game : LobbyGameMetadata) : LobbyGameJsonModel =
@@ -40,8 +47,14 @@ module LobbyJsonMappings =
             players = game.players |> List.map mapPlayerResponse
         }
 
-    let mapCreateGameRequest(request : CreateGameJsonModel) : CreateGameRequest =
+    let mapCreateGameRequest(jsonModel : CreateGameJsonModel) : CreateGameRequest =
         {
-            boardRegionCount = request.boardRegionCount
-            description = if request.description = null then None else Some request.description
+            boardRegionCount = jsonModel.boardRegionCount
+            description = if jsonModel.description = null then None else Some jsonModel.description
+        }
+
+    let mapLoginRequestFromJson(jsonModel : LoginRequestJsonModel) : LoginRequest =
+        {
+            userName = jsonModel.userName
+            password = jsonModel.password
         }

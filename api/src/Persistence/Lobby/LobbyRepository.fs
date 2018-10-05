@@ -9,7 +9,6 @@ open Djambi.Api.Persistence.LobbySqlModels
 open Djambi.Api.Domain.LobbyModels
 open Djambi.Api.Common.Enums
 open Djambi.Api.Persistence.LobbySqlMappings
-open Djambi.Api.Persistence.DapperExtensions
 open Djambi.Api.Persistence.SqlUtility
 open Djambi.Api.Common
     
@@ -19,7 +18,7 @@ module LobbyRepository =
     let createGame(request : CreateGameRequest) : LobbyGameMetadata Task =
         let param = new DynamicParameters()
         param.Add("BoardRegionCount", request.boardRegionCount)
-        param.AddOptional("Description", request.description)
+        param.AddOption("Description", request.description)
         let cmd = proc("Lobby.Insert_Game", param)
 
         task {
@@ -47,9 +46,9 @@ module LobbyRepository =
 
     let private getGamesInner(gameId : int option, userId : int option, status : GameStatus option) : LobbyGameMetadata list Task =
         let param = new DynamicParameters()
-        param.AddOptional("GameId", gameId)
-        param.AddOptional("UserId", userId)
-        param.AddOptional("StatusId", status |> Option.map mapGameStatusToId)
+        param.AddOption("GameId", gameId)
+        param.AddOption("UserId", userId)
+        param.AddOption("StatusId", status |> Option.map mapGameStatusToId)
         let cmd = proc("Lobby.Get_GamesWithPlayers", param)
 
         task {

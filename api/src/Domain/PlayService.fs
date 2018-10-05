@@ -44,8 +44,8 @@ module PlayService =
         let excludeCenterUnless(condition : Piece -> bool)(cell : Cell) : bool =
             if cell.isCenter 
             then match pieceIndex.TryFind cell.id with
-                | None -> false
-                | Some p -> condition p
+                 | None -> false
+                 | Some p -> condition p
             else true
 
         match piece.pieceType with
