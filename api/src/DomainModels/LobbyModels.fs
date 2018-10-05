@@ -2,14 +2,22 @@
 
 module LobbyModels =
 
+    open System
     open Djambi.Api.Common.Enums
+
+    type Role = 
+        | Admin
+        | Normal
+        | Guest
 
     type User = 
         {
             id : int
             name : string
-            isGuest : bool
-            isAdmin : bool
+            role : Role
+            password : string
+            failedLoginAttempts : int
+            lastFailedLoginAttemptOn : DateTime option
         }
         
     type LobbyPlayer =
@@ -22,7 +30,8 @@ module LobbyModels =
     type CreateUserRequest =
         {
             name : string
-            isGuest : bool
+            role : Role
+            password : string
         }
 
     type CreateGameRequest = 
@@ -38,4 +47,19 @@ module LobbyModels =
             boardRegionCount : int
             description : string option
             players : LobbyPlayer list
+        }
+
+    type LoginRequest = 
+        {
+            userName : string
+            password : string
+        }
+
+    type Session =
+        {
+            id : int
+            userId : int
+            token : string
+            createdOn : DateTime
+            expiresOn : DateTime
         }

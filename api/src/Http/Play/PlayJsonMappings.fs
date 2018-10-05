@@ -5,7 +5,6 @@ open Djambi.Api.Http.PlayJsonModels
 open System
 
 module PlayJsonMappings =
-    open Djambi.Api.Domain.BoardModels
 
     let mapPlayerToJson(player : Player) : PlayerJsonModel =
         {

@@ -5,20 +5,56 @@
     </head>
     <body>
         <div style="display: flex">
-            <div class="section" style="width: 300px; height: 175px; float: left; position: relative">
-                <div class="heading">Create user</div>
+            <div class="section" style="width: 300px; height: 250px; float: left; position: relative">
+                <div class="heading">Sign up</div>
                 <p>
                     Name: 
-                    <input id="input_name" type="text" 
+                    <input id="input_signupName" type="text" 
+                        style="width: 200px" 
+                    />
+                </p>
+                <p>
+                    Password: 
+                    <input id="input_signupPassword" type="text" 
                         style="width: 200px" 
                     />
                 </p>
                 <p>
                     Guest: 
-                    <input id="input_isGuest" type="checkbox" />
+                    <input id="input_signupIsGuest" type="checkbox" />
                 </p>
                 <p>
                     <input id="btn_createUser" type="button"
+                        value="Go!"
+                        style="width: 50px; position: absolute; bottom: 10px"
+                    />
+                </p>
+            </div>
+            <div class="section" style="width: 300px; height: 250px; float: left; position: relative">
+                <div class="heading">Sign in</div>
+                <p>
+                    Name: 
+                    <input id="input_signinName" type="text" 
+                        style="width: 200px" 
+                    />
+                </p>
+                <p>
+                    Password: 
+                    <input id="input_signinPassword" type="text" 
+                        style="width: 200px" 
+                    />
+                </p>
+                <p>
+                    <input id="btn_signin" type="button"
+                        value="Go!"
+                        style="width: 50px; position: absolute; bottom: 10px"
+                    />
+                </p>
+            </div>
+            <div class="section" style="width: 300px; height: 250px; float: left; position: relative">
+                <div class="heading">Sign out</div>
+                <p>
+                    <input id="btn_signout" type="button"
                         value="Go!"
                         style="width: 50px; position: absolute; bottom: 10px"
                     />

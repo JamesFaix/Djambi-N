@@ -4,31 +4,47 @@ module LobbySqlMappings =
     open LobbySqlModels
     open Djambi.Api.Domain.LobbyModels
     open Djambi.Api.Common.Enums
+    open Djambi.Api.Common.Utilities
 
-    let mapUserResponse(user : UserSqlModel) : User =
+    let mapGameStatusFromId(gameStatusId : byte) : GameStatus =
+        match gameStatusId with 
+        | 1uy -> Open
+        | 2uy -> Started
+        | 3uy -> Complete
+        | 4uy -> Cancelled
+        | _ -> failwith ("Invalid game status id: " + gameStatusId.ToString())
+
+    let mapGameStatusToId(status : GameStatus) : byte =
+        match status with 
+        | Open -> 1uy
+        | Started -> 2uy
+        | Complete -> 3uy
+        | Cancelled -> 4uy
+
+    let mapRoleFromId(roleId : byte) : Role =
+        match roleId with
+        | 1uy -> Admin
+        | 2uy -> Normal
+        | 3uy -> Guest
+        | _ -> failwith ("Invalid role id: " + roleId.ToString())
+
+    let mapRoleToId(role : Role) : byte =
+        match role with
+        | Admin -> 1uy
+        | Normal -> 2uy
+        | Guest -> 3uy
+
+    let mapUserResponse(sqlModel : UserSqlModel) : User =
         {
-            id = user.id
-            name = user.name
-            isAdmin = user.isAdmin
-            isGuest = user.isGuest
+            id = sqlModel.id
+            name = sqlModel.name
+            role = sqlModel.roleId |> mapRoleFromId
+            password = sqlModel.password
+            failedLoginAttempts = int sqlModel.failedLoginAttempts
+            lastFailedLoginAttemptOn = sqlModel.lastFailedLoginAttemptOn |> nullableToOption
         }
 
-    let mapGameStatusFromId(gameStatusId : int) : GameStatus =
-        match gameStatusId with 
-        | 1 -> GameStatus.Open
-        | 2 -> GameStatus.Started
-        | 3 -> GameStatus.Complete
-        | 4 -> GameStatus.Cancelled
-        | _ -> failwith ("Invalid game status: " + gameStatusId.ToString())
-
-    let mapGameStatusToId(status : GameStatus) : int =
-        match status with 
-        | GameStatus.Open -> 1
-        | GameStatus.Started -> 2
-        | GameStatus.Complete -> 3
-        | GameStatus.Cancelled -> 4
-
-    let mapLobbyGamesResponse(players : LobbyGamePlayerSqlModel seq) : LobbyGameMetadata list =
+    let mapLobbyGamesResponse(sqlModels : LobbyGamePlayerSqlModel seq) : LobbyGameMetadata list =
         let sqlModelToUser(sqlModel : LobbyGamePlayerSqlModel) : LobbyPlayer =
             {
                 id = sqlModel.playerId.Value
@@ -49,7 +65,16 @@ module LobbySqlMappings =
                     else List.empty
             }
 
-        players 
+        sqlModels 
         |> Seq.groupBy (fun sql -> sql.gameId)
         |> Seq.map (fun (_, sqls) -> sqls |> Seq.toList |> sqlModelsToGame)
         |> Seq.toList
+
+    let mapSession (sqlModel : SessionSqlModel) : Session =
+        {
+            id = sqlModel.sessionId
+            userId = sqlModel.userId
+            token = sqlModel.token
+            createdOn = sqlModel.createdOn
+            expiresOn = sqlModel.expiresOn
+        }

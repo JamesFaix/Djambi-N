@@ -1,0 +1,21 @@
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_NULLS ON
+GO
+
+CREATE PROCEDURE [Lobby].[Delete_Session]
+	@UserId INT = NULL,
+	@Token NVARCHAR(50) = NULL
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	IF @UserId IS NOT NULL
+		DELETE FROM [Sessions]
+		WHERE UserId = @UserId
+
+	IF @Token IS NOT NULL
+		DELETE FROM [Sessions]
+		WHERE Token = @Token
+END
+GO

@@ -11,6 +11,9 @@ module Routing =
                 (choose [  
             
                 //Lobby
+                    POST >=> route "/signin" >=> SessionController.signIn
+                    POST >=> route "/signout" >=> SessionController.signOut
+
                     POST >=> route "/users" >=> UserController.createUser
                     GET >=> routef "/users/%i" UserController.getUser
                     GET >=> route "/users" >=> UserController.getUsers

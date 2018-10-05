@@ -9,8 +9,10 @@ module LobbySqlModels =
         {
             id : int
             name : string
-            isGuest : bool
-            isAdmin : bool
+            roleId : byte
+            password : string
+            failedLoginAttempts : byte
+            lastFailedLoginAttemptOn : Nullable<DateTime>
         }
 
     [<CLIMutable>]
@@ -19,8 +21,18 @@ module LobbySqlModels =
             gameId : int
             gameDescription : string
             boardRegionCount : int
-            gameStatusId : int
+            gameStatusId : byte
             userId : int Nullable
             playerName : string
             playerId : int Nullable
+        }
+
+    [<CLIMutable>]
+    type SessionSqlModel =
+        {
+            sessionId : int
+            userId : int
+            token : string
+            createdOn : DateTime
+            expiresOn : DateTime        
         }
