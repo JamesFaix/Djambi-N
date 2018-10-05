@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Djambi.Utilities.Environment\Djambi.Utilities.Environment.fsproj" />
+    <ProjectReference Include="..\environment\environment.fsproj" />
   </ItemGroup>
 
 </Project>

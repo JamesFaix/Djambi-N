@@ -51,7 +51,7 @@ Task(task_cleanSql)
     .IsDependentOn(task_buildDotNet)
     .Does(() => 
     {
-        var path = root + File(@"utils\Djambi.Utilities.DatabaseReset\Djambi.Utilities.DatabaseReset.fsproj");
+        var path = root + File(@"utils\db-reset\db-reset.fsproj");
         DotNetCoreRun(path);
     });
 
@@ -77,7 +77,7 @@ Task(task_runApi)
         var info = new ProcessStartInfo
         {
             FileName = "dotnet",
-            Arguments = "run Djambi.Api.fsproj",
+            Arguments = "run api.fsproj",
             WorkingDirectory = (root + File("api\\src\\")).ToString()
         };
 

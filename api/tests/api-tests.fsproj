@@ -27,8 +27,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\utils\Djambi.Utilities.Environment\Djambi.Utilities.Environment.fsproj" />
-    <ProjectReference Include="..\src\Djambi.Api.fsproj" />
+    <ProjectReference Include="..\..\utils\environment\environment.fsproj" />
+    <ProjectReference Include="..\src\api.fsproj" />
   </ItemGroup>
 
 </Project>
