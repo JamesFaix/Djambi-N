@@ -3,10 +3,6 @@
 - XUnit test runner
 - SQL Server Express or Developer Edition
 - NPM
-- Webpack + plugins
-    `npm install --save-dev webpack`
-    `npm install --save-dev typescript ts-loader`
-    `npm install --save-dev style-loader`
 - Web server
     `npm install http-server -g`    
 
@@ -30,20 +26,10 @@
 }
 ```
 
-## Start up
-- Build .NET solution `Djambi.sln`
-- Run `Djambi.Utilities.DatabaseReset.exe`, this will build the SQL schema
-- Start `Djambi.Api`
-    - Currently the web client expects it should be on port `54835`. When running from Visual Studio through IIS Express, this is the default.
-- Build web client 
-    - `cd web & npm run build`
-    - This is the default build task in VS Code
-- Start web server
-    - From root `cd web/dist & http-server`
-    - Port `8080` is the default for `http-server`, but it can be changed with the argument `-p 1234`
-- View `localhost:8080` in browser
-
-## Cake build
-- Allow running Powershell scripts
+## Build script
+- Cake requires allowing Powershell to run scripts
     - Run Powershell as admin
     - `set-executionpolicy unrestricted`
+- Run script in `utils/Djambi.Utilities.Cake/`
+    - Initial setup is `./build.ps1 -target full`
+    - See `build.cake` for other targets
