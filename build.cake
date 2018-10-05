@@ -15,7 +15,7 @@ var task_help = "help";
 var task_runAll = "run-all";
 var task_runApi = "run-api";
 var task_runWeb = "run-web";
-
+var task_testApi = "test-api";
 
 Task(task_buildDotNet)
     .Does(() => 
@@ -59,7 +59,8 @@ Task(task_full)
     .IsDependentOn(task_buildDotNet)
     .IsDependentOn(task_buildWeb)
     .IsDependentOn(task_cleanSql)
-    .IsDependentOn(task_runAll);
+    .IsDependentOn(task_runAll)
+    .IsDependentOn(task_testApi);
 
 Task(task_help)
     .Does(() => 
@@ -94,6 +95,19 @@ Task(task_runWeb)
         };
 
         Process.Start(info);
+    });
+
+Task(task_testApi)
+    .Does(() => 
+    {
+        var path = root + File("api\\tests\\api-tests.fsproj");
+
+        var settings = new DotNetCoreTestSettings 
+        {
+            
+        };
+
+        DotNetCoreTest(path, settings);
     });
 
 RunTarget(target);
