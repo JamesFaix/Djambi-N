@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="ModelExtensions\BoardModelExtensions.fs" />
+    <Compile Include="ModelExtensions\BoardModelUtility.fs" />
+    <Compile Include="ModelExtensions\PlayModelExtensions.fs" />
+    <Compile Include="Services\PlayService.fs" />
+    <Compile Include="Services\GameStartService.fs" />
+    <Compile Include="Services\SessionService.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="TaskBuilder.fs" Version="2.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\api.common\api.common.fsproj" />
+    <ProjectReference Include="..\api.db\api.db.fsproj" />
+    <ProjectReference Include="..\api.model\api.model.fsproj" />
+  </ItemGroup>
+
+</Project>

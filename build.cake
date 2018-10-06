@@ -78,8 +78,8 @@ Task(task_runApi)
         var info = new ProcessStartInfo
         {
             FileName = "dotnet",
-            Arguments = "run api.fsproj",
-            WorkingDirectory = (root + File("api\\src\\")).ToString()
+            Arguments = "run api.host.fsproj",
+            WorkingDirectory = (root + File("api\\api.host\\")).ToString()
         };
 
         Process.Start(info);
@@ -100,7 +100,7 @@ Task(task_runWeb)
 Task(task_testApi)
     .Does(() => 
     {
-        var path = root + File("api\\tests\\api-tests.fsproj");
+        var path = root + File("api\\api-tests\\api-tests.fsproj");
 
         var settings = new DotNetCoreTestSettings 
         {
