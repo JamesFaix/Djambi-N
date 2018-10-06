@@ -62,6 +62,7 @@ let getFilesInOrder : string seq =
             //Then entities
             "Users"
             "Sessions"
+            "SessionUsers"
             "Games"
             "Players"
             "Turns"
