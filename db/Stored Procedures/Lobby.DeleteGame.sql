@@ -1,9 +1,4 @@
-SET QUOTED_IDENTIFIER ON
-GO
-SET ANSI_NULLS ON
-GO
-
-CREATE PROCEDURE [Lobby].[Delete_Game]
+CREATE PROCEDURE [Lobby].[DeleteGame]
 	@GameId INT
 AS
 BEGIN
@@ -17,4 +12,3 @@ BEGIN
 	DELETE FROM Players WHERE GameId = @GameId
     DELETE FROM Games WHERE GameId = @GameId
 END
-GO

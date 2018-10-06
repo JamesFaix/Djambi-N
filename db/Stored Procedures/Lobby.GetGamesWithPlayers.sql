@@ -1,12 +1,4 @@
-SET QUOTED_IDENTIFIER ON
-GO
-SET ANSI_NULLS ON
-GO
-
-
-
-
-CREATE PROCEDURE [Lobby].[Get_GamesWithPlayers] 
+CREATE PROCEDURE [Lobby].[GetGamesWithPlayers] 
 	@GameId INT,
 	@UserId INT,
 	@StatusId INT
@@ -27,4 +19,3 @@ BEGIN
 		AND @StatusId IS NULL OR @StatusId = g.GameStatusId
 		AND @UserId IS NULL OR EXISTS(SELECT 1 FROM Players WHERE GameId = g.GameId AND UserId = @UserId)
 END
-GO

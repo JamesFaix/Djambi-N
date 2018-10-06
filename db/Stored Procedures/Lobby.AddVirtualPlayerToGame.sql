@@ -1,11 +1,7 @@
-SET QUOTED_IDENTIFIER ON
-GO
-SET ANSI_NULLS ON
-GO
-
-CREATE PROCEDURE [Lobby].[Insert_VirtualPlayer] 
+CREATE PROCEDURE [Lobby].[AddVirtualPlayerToGame] 
 	@GameId INT,
-	@Name NVARCHAR(50)
+	@Name NVARCHAR(50),
+	@PlayerId INT OUTPUT
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -20,8 +16,15 @@ BEGIN
     IF (SELECT GameStatusId FROM Games WHERE GameId = @GameId) <> 1
 	    THROW 50000, 'Game no longer open', 1
 
-    INSERT INTO Players (GameId, UserId, Name)
-    VALUES (@GameId, NULL, @Name)
+    INSERT INTO Players (
+		GameId, 
+		UserId, 
+		[Name])
+    VALUES (
+		@GameId, 
+		NULL, 
+		@Name)
+
+	SET @PlayerId = SCOPE_IDENTITY()
 	
 END
-GO
