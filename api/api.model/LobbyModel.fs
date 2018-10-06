@@ -58,8 +58,9 @@ module LobbyModel =
     type Session =
         {
             id : int
-            userId : int
+            userIds : int list
             token : string
             createdOn : DateTime
             expiresOn : DateTime
+            isShared : bool
         }

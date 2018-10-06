@@ -1,5 +1,6 @@
 ﻿namespace Djambi.Api.Db.Repositories
 
+open System.Data
 open System.Threading.Tasks
 open Dapper
 open FSharp.Control.Tasks
@@ -17,13 +18,16 @@ module LobbyRepository =
         let param = new DynamicParameters()
         param.Add("BoardRegionCount", request.boardRegionCount)
         param.AddOption("Description", request.description)
-        let cmd = proc("Lobby.Insert_Game", param)
+        param.AddOutput("GameId", DbType.Int32)
+
+        let cmd = proc("Lobby.CreateGame", param)
 
         task {
             use cn = getConnection()
-            let! id = cn.QuerySingleAsync<int>(cmd)
+            let! _ = cn.ExecuteAsync(cmd)
+            let gameId = param.Get<int>("GameId")
             return {
-                id = id 
+                id = gameId 
                 description = request.description
                 status = GameStatus.Open
                 boardRegionCount = request.boardRegionCount
@@ -34,7 +38,7 @@ module LobbyRepository =
     let deleteGame(gameId : int) : Unit Task =
         let param = new DynamicParameters()
         param.Add("GameId", gameId)
-        let cmd = proc("Lobby.Delete_Game", param)
+        let cmd = proc("Lobby.DeleteGame", param)
 
         task {
             use cn = getConnection()
@@ -47,7 +51,7 @@ module LobbyRepository =
         param.AddOption("GameId", gameId)
         param.AddOption("UserId", userId)
         param.AddOption("StatusId", status |> Option.map mapGameStatusToId)
-        let cmd = proc("Lobby.Get_GamesWithPlayers", param)
+        let cmd = proc("Lobby.GetGamesWithPlayers", param)
 
         task {
             use cn = getConnection()
@@ -73,7 +77,23 @@ module LobbyRepository =
         let param = new DynamicParameters()
         param.Add("GameId", gameId)
         param.Add("UserId", userId)
-        let cmd = proc("Lobby.Insert_Player", param)
+        param.AddOutput("PlayerId", DbType.Int32) //Not used
+
+        let cmd = proc("Lobby.AddPlayerToGame", param)
+
+        task {
+            use cn = getConnection()
+            let! _ = cn.ExecuteAsync(cmd)
+            return ()
+        }
+
+    let addVirtualPlayerToGame(gameId : int, name : string) : Unit Task =
+        let param = new DynamicParameters()
+        param.Add("GameId", gameId)
+        param.Add("Name", name)
+        param.AddOutput("PlayerId", DbType.Int32) //Not used
+
+        let cmd = proc("Lobby.AddVirtualPlayerToGame", param)
 
         task {
             use cn = getConnection()
@@ -85,10 +105,21 @@ module LobbyRepository =
         let param = new DynamicParameters()
         param.Add("GameId", gameId)
         param.Add("UserId", userId)
-        let cmd = proc("Lobby.Delete_Player", param)
+        let cmd = proc("Lobby.RemovePlayerFromGame", param)
 
         task {
             use cn = getConnection()
             let! _ = cn.ExecuteAsync(cmd)
             return ()
         }
+
+    let getVirtualPlayerNames() : string list Task =
+        let param = new DynamicParameters()
+
+        let cmd = proc("Lobby.GetVirtualPlayerNames", param)
+
+        task {
+            use cn = getConnection()
+            return! cn.QueryAsync<string>(cmd)
+                    |> Task.map Seq.toList
+        } 

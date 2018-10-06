@@ -1,7 +1,7 @@
 ﻿namespace Djambi.Api.Db.Repositories
 
 open System
-open System.Linq
+open System.Data
 open System.Threading.Tasks
 open Dapper
 open FSharp.Control.Tasks
@@ -17,7 +17,7 @@ module UserRepository =
         let param = new DynamicParameters()
         param.AddOption("UserId", id)
         param.AddOption("Name", name)        
-        let cmd = proc("Lobby.Get_Users", param)
+        let cmd = proc("Lobby.GetUsers", param)
 
         task {
             use cn = getConnection()
@@ -44,86 +44,25 @@ module UserRepository =
         param.Add("Name", request.name)
         param.Add("RoleId", request.role |> mapRoleToId)
         param.Add("Password", request.password)
-        let cmd = proc("Lobby.Insert_User", param)
+        param.AddOutput("UserId", DbType.Int32)
+
+        let cmd = proc("Lobby.CreateUser", param)
 
         task {
             use cn = getConnection()
-            let! id = cn.ExecuteScalarAsync<int>(cmd)
-            return! getUser id
+            let _ = cn.ExecuteAsync(cmd)
+            let userId = param.Get<int>("UserId")
+            return! getUser userId
         }
 
     let deleteUser(id : int) : Unit Task =
         let param = new DynamicParameters()
         param.Add("UserId", id)
-        let cmd = proc("Lobby.Delete_User", param)
+        let cmd = proc("Lobby.DeleteUser", param)
 
         task {
             use cn = getConnection()
             let! _  = cn.ExecuteAsync(cmd) 
-            return ()
-        }
-
-    let createSession(userId : int, token : string, expiresOn : DateTime) : Unit Task =
-        let param = new DynamicParameters()
-        param.Add("UserId", userId)
-        param.Add("Token", token)
-        param.Add("ExpiresOn", expiresOn)
-
-        let cmd = proc("Lobby.Insert_Session", param)
-
-        task {
-            use cn = getConnection()
-            let! _ = cn.ExecuteAsync(cmd)
-            return ()
-        }
-    
-    let deleteSession(userId : int) : Unit Task =
-        let param = new DynamicParameters()
-        param.Add("UserId", userId)
-        param.Add("Token", null)
-
-        let cmd = proc("Lobby.Delete_Session", param)
-
-        task {
-            use cn = getConnection()
-            let! _ = cn.ExecuteAsync(cmd)
-            return ()
-        }
-        
-    let getSessionInner (userId : int option) (token : string option) =
-        let param = new DynamicParameters()
-        param.AddOption("UserId", userId)
-        param.AddOption("Token", token)
-
-        let cmd = proc("Lobby.Get_Session", param)
-        
-        task {
-            use cn = getConnection()
-            return! cn.QueryAsync<SessionSqlModel>(cmd)
-        }
-
-    let getSession(userId : int) : Session Task =
-        getSessionInner (Some userId) None
-        |> Task.map (Enumerable.Single >> mapSession)
-
-    let getSessionFromToken(token : string) : Session Task =
-        getSessionInner None (Some token)
-        |> Task.map (Enumerable.Single >> mapSession)
-
-    let userHasSession(userId : int) : bool Task =
-        getSessionInner (Some userId) None
-        |> Task.map Enumerable.Any
-
-    let renewSession(userId : int, expiresOn : DateTime) : Unit Task =
-        let param = new DynamicParameters()
-        param.Add("UserId", userId)
-        param.Add("ExpiresOn", expiresOn)
-
-        let cmd = proc("Lobby.Update_Session", param)
-
-        task {
-            use cn = getConnection()
-            let! _ = cn.ExecuteAsync(cmd)
             return ()
         }
 
@@ -136,7 +75,7 @@ module UserRepository =
         param.Add("FailedLoginAttempts", failedLoginAttempts)
         param.AddOption("LastFailedLoginAttemptOn", lastFailedLoginAttemptOn)
 
-        let cmd = proc("Lobby.Update_FailedLoginAttempts", param)
+        let cmd = proc("Lobby.UpdateUserFailedLoginAttempts", param)
 
         task {
             use cn = getConnection()

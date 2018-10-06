@@ -28,11 +28,12 @@ module LobbyDbModel =
         }
 
     [<CLIMutable>]
-    type SessionSqlModel =
+    type SessionUserSqlModel =
         {
             sessionId : int
-            userId : int
+            userId : Nullable<int>
             token : string
             createdOn : DateTime
-            expiresOn : DateTime        
+            expiresOn : DateTime
+            isShared : bool   
         }

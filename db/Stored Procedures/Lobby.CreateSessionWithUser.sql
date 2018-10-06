@@ -2,7 +2,7 @@
 	@UserId INT,
 	@Token NVARCHAR(50),
 	@ExpiresOn DATETIME2,
-	@SessionId INT OUTPUT	
+	@SessionId INT OUTPUT
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -19,7 +19,7 @@ BEGIN
 			0, 
 			@Token, 
 			GETUTCDATE(),
-			 @ExpiresOn)
+      	    @ExpiresOn)
 
 		SET @SessionId = SCOPE_IDENTITY()
 
