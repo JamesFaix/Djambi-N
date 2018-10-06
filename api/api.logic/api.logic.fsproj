@@ -5,12 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="BoardExtensions.fs" />
-    <Compile Include="BoardUtility.fs" />
-    <Compile Include="PlayModelExtensions.fs" />
-    <Compile Include="PlayService.fs" />
-    <Compile Include="GameStartService.fs" />
-    <Compile Include="SessionService.fs" />
+    <Compile Include="ModelExtensions\BoardModelExtensions.fs" />
+    <Compile Include="ModelExtensions\BoardModelUtility.fs" />
+    <Compile Include="ModelExtensions\PlayModelExtensions.fs" />
+    <Compile Include="Services\PlayService.fs" />
+    <Compile Include="Services\GameStartService.fs" />
+    <Compile Include="Services\SessionService.fs" />
   </ItemGroup>
 
   <ItemGroup>

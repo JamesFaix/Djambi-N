@@ -1,12 +1,11 @@
-﻿namespace Djambi.Api.Domain
+﻿namespace Djambi.Api.Logic.ModelExtensions
 
-module BoardsExtensions =
+open System.Collections.Generic
+open System.Linq
+open Djambi.Api.Common.Utilities
+open Djambi.Api.Model.BoardModel
 
-    open System.Collections.Generic
-    open System.Linq
-
-    open Djambi.Api.Model.Board
-    open Djambi.Api.Common.Utilities
+module BoardModelExtensions =
 
     type Directions with 
         member this.rotate(amount : int, radialDirection : RadialDirections) : Directions =

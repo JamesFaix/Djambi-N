@@ -1,16 +1,15 @@
-﻿namespace Djambi.Api.Http
+﻿namespace Djambi.Api.Web.Controllers
 
 open System
-open Microsoft.AspNetCore.Http
 open Giraffe
-
-open Djambi.Api.Http.LobbyJsonModels
-open Djambi.Api.Http.LobbyJsonMappings
+open Microsoft.AspNetCore.Http
 open Djambi.Api.Common
-open Djambi.Api.Http.HttpUtility
 open Djambi.Api.Common.Utilities
-open Djambi.Api.Domain
-
+open Djambi.Api.Logic.Services
+open Djambi.Api.Web
+open Djambi.Api.Web.HttpUtility
+open Djambi.Api.Web.Mappings.LobbyWebMapping
+open Djambi.Api.Web.Model.LobbyWebModel
 
 module SessionController =
 

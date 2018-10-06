@@ -1,9 +1,10 @@
 ﻿namespace Djambi.Api.Http
 
 open Giraffe
+open Microsoft.AspNetCore.Http
+open Djambi.Api.Web.Controllers
 
 module Routing = 
-    open Microsoft.AspNetCore.Http
 
     let getRoutingTable : HttpFunc -> HttpContext -> HttpFuncResult =
         choose [

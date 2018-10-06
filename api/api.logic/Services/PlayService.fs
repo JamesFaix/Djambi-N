@@ -1,17 +1,17 @@
-﻿namespace Djambi.Api.Domain
+﻿namespace Djambi.Api.Logic.Services
 
-open FSharp.Control.Tasks
 open System.Collections.Generic
 open System.Linq
 open System.Threading.Tasks
-
-open Djambi.Api.Persistence
-open Djambi.Api.Domain.PlayModelExtensions
-open Djambi.Api.Domain.BoardsExtensions
-open Djambi.Api.Common.Enums
+open FSharp.Control.Tasks
 open Djambi.Api.Common
-open Djambi.Api.Model.Board
-open Djambi.Api.Model.Play
+open Djambi.Api.Common.Enums
+open Djambi.Api.Db.Repositories
+open Djambi.Api.Logic.ModelExtensions
+open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
+open Djambi.Api.Logic.ModelExtensions.PlayModelExtensions
+open Djambi.Api.Model.BoardModel
+open Djambi.Api.Model.PlayModel
 
 module PlayService =
 
@@ -22,7 +22,7 @@ module PlayService =
         }
         
     let private getMoveSelectionOptions(game : GameState, piece : Piece, regionCount : int) : int list =
-        let board = BoardUtility.getBoardMetadata regionCount
+        let board = BoardModelUtility.getBoardMetadata regionCount
         let paths = board.pathsFromCellId piece.cellId
         let pieceIndex = game.piecesIndexedByCell
         
@@ -97,7 +97,7 @@ module PlayService =
             | Some subject ->
                 match subject.pieceType with
                 | Reporter -> 
-                    let board = BoardUtility.getBoardMetadata regionCount
+                    let board = BoardModelUtility.getBoardMetadata regionCount
                     let neighbors = board.neighborsFromCellId destinationCellId
                     let pieceIndex = game.piecesIndexedByCell
                     neighbors |> Seq.filter (fun cell -> match pieceIndex.TryFind cell.id with
@@ -115,7 +115,7 @@ module PlayService =
             | None -> List.empty
             | Some _ -> 
                 let pieceIndex = game.piecesIndexedByCell
-                let board = BoardUtility.getBoardMetadata regionCount
+                let board = BoardModelUtility.getBoardMetadata regionCount
                 board.cells()
                 |> Seq.filter (fun c -> match pieceIndex.TryFind c.id with
                                         | None -> true
@@ -135,7 +135,7 @@ module PlayService =
                 else match subject.pieceType with
                      | Assassin
                      | Gravedigger 
-                     | Diplomat -> let board = BoardUtility.getBoardMetadata regionCount
+                     | Diplomat -> let board = BoardModelUtility.getBoardMetadata regionCount
                                    let pieceIndex = game.piecesIndexedByCell       
                                    board.pathsFromCell destination
                                    |> Seq.collect (fun path -> path |> Seq.takeWhile (fun cell -> (pieceIndex.TryFind cell.id).IsNone))
@@ -199,7 +199,7 @@ module PlayService =
                  if turn.status = AwaitingConfirmation
                  then return! Task.FromException<TurnState> (HttpException(400, "Cannot make seletion when awaiting turn confirmation"))
                  else let pieceIndex = game.currentGameState.piecesIndexedByCell
-                      let board = BoardUtility.getBoardMetadata game.boardRegionCount
+                      let board = BoardModelUtility.getBoardMetadata game.boardRegionCount
                       
                       let (selection, status) : (Selection * TurnStatus) = 
                             match turn.selections.Length with

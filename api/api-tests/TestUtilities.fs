@@ -1,14 +1,11 @@
 ﻿namespace Djambi.Tests
 
+open System
+open Microsoft.Extensions.Configuration
+open Djambi.Api.Model.LobbyModel
+open Djambi.Utilities
+
 module TestUtilities =
-
-    open System
-
-    open Microsoft.Extensions.Configuration
-
-    open Djambi.Utilities
-    open Djambi.Api.Model.Lobby
-
 
     let private config = 
         ConfigurationBuilder()

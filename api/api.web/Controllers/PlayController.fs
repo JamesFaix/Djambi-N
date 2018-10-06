@@ -1,12 +1,13 @@
-﻿namespace Djambi.Api.Http
+﻿namespace Djambi.Api.Web.Controllers
 
-open Djambi.Api.Domain
-open Djambi.Api.Domain.BoardsExtensions
-open Djambi.Api.Http.PlayJsonMappings
-open Djambi.Api.Common
 open System
 open System.Threading.Tasks
-open Djambi.Api.Http.HttpUtility
+open Djambi.Api.Common
+open Djambi.Api.Logic.ModelExtensions
+open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
+open Djambi.Api.Logic.Services
+open Djambi.Api.Web.HttpUtility
+open Djambi.Api.Web.Mappings.PlayWebMapping
 
 module PlayController =
 
@@ -19,13 +20,13 @@ module PlayController =
 //Board
     let getBoard(regionCount : int) =
         let func ctx =
-            BoardUtility.getBoard regionCount
+            BoardModelUtility.getBoard regionCount
             |> Task.FromResult
         handle func
             
     let getCellPaths(regionCount : int, cellId : int) =
         let func ctx = 
-            let board = BoardUtility.getBoardMetadata(regionCount)
+            let board = BoardModelUtility.getBoardMetadata(regionCount)
             let cell = board.cells() |> Seq.find(fun c -> c.id = cellId)
             board.pathsFromCell(cell)
             |> List.map (List.map (fun c -> c.id))

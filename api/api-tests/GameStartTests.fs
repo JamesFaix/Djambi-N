@@ -2,13 +2,14 @@
 
 open Giraffe
 open Xunit
-
-open Djambi.Api.Persistence
-open Djambi.Api.Model.Play
-open Djambi.Api.Common.Enums
-open Djambi.Api.Model.Lobby
-open Djambi.Api.Domain
 open Djambi.Api.Common
+open Djambi.Api.Common.Enums
+open Djambi.Api.Db
+open Djambi.Api.Db.Repositories
+open Djambi.Api.Logic.ModelExtensions
+open Djambi.Api.Logic.Services
+open Djambi.Api.Model.LobbyModel
+open Djambi.Api.Model.PlayModel
 open Djambi.Tests.TestUtilities
 
 type GameStartTests() =
@@ -65,7 +66,7 @@ type GameStartTests() =
             let! game = LobbyRepository.createGame gameRequest
             let! players = GameStartService.addVirtualPlayers game
             let startingConditions = GameStartService.getStartingConditions players
-            let board = BoardUtility.getBoardMetadata(game.boardRegionCount)
+            let board = BoardModelUtility.getBoardMetadata(game.boardRegionCount)
             let pieces = GameStartService.createPieces(board, startingConditions)
 
             Assert.Equal(players.Length * Constants.piecesPerPlayer, pieces.Length)

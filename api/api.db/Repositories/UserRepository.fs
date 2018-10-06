@@ -1,17 +1,15 @@
-﻿namespace Djambi.Api.Persistence
+﻿namespace Djambi.Api.Db.Repositories
 
 open System
 open System.Linq
 open System.Threading.Tasks
-
 open Dapper
 open FSharp.Control.Tasks
-    
-open Djambi.Api.Persistence.LobbySqlModels
-open Djambi.Api.Model.Lobby
-open Djambi.Api.Persistence.LobbySqlMappings
-open Djambi.Api.Persistence.SqlUtility
 open Djambi.Api.Common
+open Djambi.Api.Db.Mappings.LobbyDbMapping
+open Djambi.Api.Db.Model.LobbyDbModel
+open Djambi.Api.Db.SqlUtility
+open Djambi.Api.Model.LobbyModel
 
 module UserRepository =
 

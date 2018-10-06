@@ -1,14 +1,13 @@
-﻿namespace Djambi.Api.Http
+﻿namespace Djambi.Api.Web
 
 open System
 open System.Threading.Tasks
+open Giraffe
 open Microsoft.AspNetCore.Http
 open Microsoft.Extensions.Primitives
-open Giraffe
-
 open Djambi.Api.Common
-open Djambi.Api.Persistence
-open Djambi.Api.Model.Lobby
+open Djambi.Api.Db.Repositories
+open Djambi.Api.Model.LobbyModel
 
 type HttpHandler = HttpFunc -> HttpContext -> HttpContext option Task 
 

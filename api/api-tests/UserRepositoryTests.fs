@@ -3,8 +3,8 @@
 open System
 open Giraffe
 open Xunit
-
-open Djambi.Api.Persistence
+open Djambi.Api.Db
+open Djambi.Api.Db.Repositories
 open Djambi.Tests.TestUtilities
 
 type UserRepositoryTests() =

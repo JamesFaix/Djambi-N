@@ -1,9 +1,9 @@
-﻿namespace Djambi.Api.Domain
+﻿namespace Djambi.Api.Logic.ModelExtensions
 
-module BoardUtility =
+open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
+open Djambi.Api.Model.BoardModel
 
-    open Djambi.Api.Model.Board
-    open BoardsExtensions
+module BoardModelUtility =
 
     let getBoardMetadata(regionCount : int) : BoardMetadata =
         let standardRegionSize = 5

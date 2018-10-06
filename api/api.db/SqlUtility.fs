@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.Persistence
+﻿namespace Djambi.Api.Db
 
 open System
 open System.Data

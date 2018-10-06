@@ -1,9 +1,9 @@
-﻿namespace Djambi.Api.Domain
+﻿namespace Djambi.Api.Logic.ModelExtensions
 
-open Djambi.Api.Domain.BoardsExtensions
 open Djambi.Api.Common.Enums
-open Djambi.Api.Model.Board
-open Djambi.Api.Model.Play
+open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
+open Djambi.Api.Model.BoardModel
+open Djambi.Api.Model.PlayModel
 
 module PlayModelExtensions =
 
@@ -73,7 +73,7 @@ module PlayModelExtensions =
             gameState.pieces |> List.find (fun p -> p.id = id)
             
         member private this.getCellFromId(regionCount : int)(id : int) : Cell =
-            let board = BoardUtility.getBoardMetadata regionCount
+            let board = BoardModelUtility.getBoardMetadata regionCount
             board.cell id
 
         member this.subjectPiece(gameState : GameState) : Piece option =

@@ -1,16 +1,13 @@
-﻿namespace Djambi.Api.Persistence
+﻿namespace Djambi.Api.Db.Repositories
 
 open System.Threading.Tasks
-
 open Dapper
 open FSharp.Control.Tasks
 open Newtonsoft.Json
-
-open Djambi.Api.Model.Play
-open Djambi.Api.Persistence.PlaySqlModels
-open Djambi.Api.Persistence.SqlUtility
-
-open Djambi.Api.Persistence.PlaySqlModelMappings
+open Djambi.Api.Db.Mappings.PlayDbMapping
+open Djambi.Api.Db.Model.PlayDbModel
+open Djambi.Api.Db.SqlUtility
+open Djambi.Api.Model.PlayModel
 
 module PlayRepository =
     

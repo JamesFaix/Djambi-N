@@ -1,18 +1,17 @@
-﻿namespace Djambi.Api.Domain
+﻿namespace Djambi.Api.Logic.Services
 
 open System
 open System.Linq
 open System.Threading.Tasks
 open FSharp.Control.Tasks
-
 open Djambi.Api.Common
 open Djambi.Api.Common.Enums
-open Djambi.Api.Model.Board
-open Djambi.Api.Model.Lobby
-open Djambi.Api.Model.Play
-open Djambi.Api.Persistence
-open Djambi.Api.Domain.BoardsExtensions
-open Djambi.Api.Domain
+open Djambi.Api.Db.Repositories
+open Djambi.Api.Logic.ModelExtensions
+open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
+open Djambi.Api.Model.BoardModel
+open Djambi.Api.Model.LobbyModel
+open Djambi.Api.Model.PlayModel
 
 module GameStartService =
                 
@@ -87,7 +86,7 @@ module GameStartService =
             let! game = LobbyRepository.getGame gameId
             let! lobbyPlayers = addVirtualPlayers game
             let startingConditions = getStartingConditions(lobbyPlayers)
-            let board = BoardUtility.getBoardMetadata(game.boardRegionCount)
+            let board = BoardModelUtility.getBoardMetadata(game.boardRegionCount)
             let pieces = createPieces(board, startingConditions)
             let gameState : GameState = 
                 {

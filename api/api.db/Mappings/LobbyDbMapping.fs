@@ -1,11 +1,11 @@
-﻿namespace Djambi.Api.Persistence
+﻿namespace Djambi.Api.Db.Mappings
 
-open LobbySqlModels
-open Djambi.Api.Model.Lobby
 open Djambi.Api.Common.Enums
 open Djambi.Api.Common.Utilities
+open Djambi.Api.Db.Model.LobbyDbModel
+open Djambi.Api.Model.LobbyModel
 
-module LobbySqlMappings =
+module LobbyDbMapping =
 
     let mapGameStatusFromId(gameStatusId : byte) : GameStatus =
         match gameStatusId with 

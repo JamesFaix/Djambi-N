@@ -1,11 +1,11 @@
-﻿namespace Djambi.Api.Persistence
+﻿namespace Djambi.Api.Db.Mappings
 
-open Djambi.Api.Persistence.PlaySqlModels
-open Djambi.Api.Model.Play
 open Newtonsoft.Json
 open Djambi.Api.Common.Enums
+open Djambi.Api.Db.Model.PlayDbModel
+open Djambi.Api.Model.PlayModel
 
-module PlaySqlModelMappings =
+module PlayDbMapping =
 
     let mapGameSqlModelResponse(sqlModel : GameSqlModel) : Game =
         {

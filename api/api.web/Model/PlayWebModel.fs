@@ -1,8 +1,8 @@
-﻿namespace Djambi.Api.Http
+﻿namespace Djambi.Api.Web.Model
 
-module PlayJsonModels =
+open System
 
-    open System
+module PlayWebModel =
 
     [<CLIMutable>]
     type LocationJsonModel =

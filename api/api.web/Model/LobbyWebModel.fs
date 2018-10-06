@@ -1,8 +1,8 @@
-namespace Djambi.Api.Http
+namespace Djambi.Api.Web.Model
 
-module LobbyJsonModels =
+open System
 
-    open System
+module LobbyWebModel =
     
     [<CLIMutable>]
     type PlaceHolderJsonModel =

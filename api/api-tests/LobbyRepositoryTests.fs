@@ -3,10 +3,10 @@
 open System
 open Giraffe
 open Xunit
-
-open Djambi.Api.Persistence
-open Djambi.Api.Model.Lobby
 open Djambi.Api.Common.Enums
+open Djambi.Api.Db
+open Djambi.Api.Db.Repositories
+open Djambi.Api.Model.LobbyModel
 open Djambi.Tests.TestUtilities
 
 type LobbyRepositoryTests() =

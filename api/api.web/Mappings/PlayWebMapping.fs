@@ -1,10 +1,10 @@
-﻿namespace Djambi.Api.Http
+﻿namespace Djambi.Api.Web.Mappings
 
-open Djambi.Api.Model.Play
-open Djambi.Api.Http.PlayJsonModels
 open System
+open Djambi.Api.Model.PlayModel
+open Djambi.Api.Web.Model.PlayWebModel
 
-module PlayJsonMappings =
+module PlayWebMapping =
 
     let mapPlayerToJson(player : Player) : PlayerJsonModel =
         {

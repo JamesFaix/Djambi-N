@@ -2,7 +2,7 @@
 
 open Djambi.Api.Common.Enums
 
-module Play =
+module PlayModel =
 
     type Player =
         {

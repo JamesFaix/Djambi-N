@@ -1,10 +1,10 @@
-﻿namespace Djambi.Api.Http
+﻿namespace Djambi.Api.Web.Mappings
 
-module LobbyJsonMappings =
+open System
+open Djambi.Api.Model.LobbyModel
+open Djambi.Api.Web.Model.LobbyWebModel
 
-    open System
-    open Djambi.Api.Model.Lobby
-    open Djambi.Api.Http.LobbyJsonModels
+module LobbyWebMapping =
 
     let mapRoleFromString(roleName : string) : Role =
         match roleName.ToUpperInvariant() with

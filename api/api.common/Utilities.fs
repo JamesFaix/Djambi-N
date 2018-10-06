@@ -1,10 +1,10 @@
 ﻿namespace Djambi.Api.Common
 
-module Utilities =
+open System
+open System.Collections.Generic
+open System.Linq
 
-    open System
-    open System.Collections.Generic
-    open System.Linq
+module Utilities =
 
     let private random = new Random()
 

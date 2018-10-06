@@ -1,12 +1,11 @@
-﻿namespace Djambi.Api.Domain
+﻿namespace Djambi.Api.Logic.Services
 
 open System
 open System.Threading.Tasks
 open FSharp.Control.Tasks
-
 open Djambi.Api.Common
-open Djambi.Api.Model.Lobby
-open Djambi.Api.Persistence
+open Djambi.Api.Db.Repositories
+open Djambi.Api.Model.LobbyModel
 
 module SessionService =
 

@@ -1,15 +1,14 @@
 module Djambi.Api.App
 
 open System
+open Giraffe
 open Microsoft.AspNetCore.Builder
 open Microsoft.AspNetCore.Cors.Infrastructure
 open Microsoft.AspNetCore.Hosting
 open Microsoft.Extensions.Configuration
 open Microsoft.Extensions.Logging
 open Microsoft.Extensions.DependencyInjection
-open Giraffe
-
-open Djambi.Api.Persistence
+open Djambi.Api.Db
 open Djambi.Api.Http
 open Djambi.Utilities
 

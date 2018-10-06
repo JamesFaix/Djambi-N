@@ -1,9 +1,9 @@
 ﻿namespace Djambi.Api.Model
 
-module Lobby =
+open System
+open Djambi.Api.Common.Enums
 
-    open System
-    open Djambi.Api.Common.Enums
+module LobbyModel =
 
     type Role = 
         | Admin

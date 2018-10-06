@@ -1,16 +1,14 @@
-﻿namespace Djambi.Api.Http
+﻿namespace Djambi.Api.Web.Controllers
 
-open Microsoft.AspNetCore.Http
-
-open Giraffe
-
-open Djambi.Api.Http.LobbyJsonModels
-open Djambi.Api.Http.LobbyJsonMappings
-open Djambi.Api.Persistence
-open Djambi.Api.Common
-open System.Threading.Tasks
 open System
-open Djambi.Api.Http.HttpUtility
+open System.Threading.Tasks
+open Giraffe
+open Microsoft.AspNetCore.Http
+open Djambi.Api.Common
+open Djambi.Api.Db.Repositories
+open Djambi.Api.Web.HttpUtility
+open Djambi.Api.Web.Mappings.LobbyWebMapping
+open Djambi.Api.Web.Model.LobbyWebModel
 
 module UserController =
 

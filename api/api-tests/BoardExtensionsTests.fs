@@ -1,10 +1,9 @@
 module BoardExtensionsTests
 
 open Xunit
-
-open Djambi.Api.Model.Board
-open Djambi.Api.Domain.BoardsExtensions
 open Djambi.Api.Common.Utilities
+open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
+open Djambi.Api.Model.BoardModel
 
 [<Theory>]
 [<InlineData(Directions.Up, 2, RadialDirections.Clockwise, Directions.Right)>]

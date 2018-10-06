@@ -1,6 +1,6 @@
-﻿namespace Djambi.Api.Persistence
+﻿namespace Djambi.Api.Db.Model
 
-module PlaySqlModels =
+module PlayDbModel =
     
     [<CLIMutable>]
     type GameSqlModel =
