@@ -1,6 +1,7 @@
 import {LobbyClient} from "../apiClient/LobbyClient";
-import {LobbyGame, User, CreateUserRequest, SigninRequest, Role} from "../apiClient/LobbyModel";
+import {CreateUserRequest, SigninRequest, Role} from "../apiClient/LobbyModel";
 import '../../css/global.css';
+import {SessionClient} from "../apiClient/SessionClient";
 
 class App {
 
@@ -40,14 +41,14 @@ class App {
         const pass = passwordField.value;
 
         const request = new SigninRequest(name, pass);
-        await LobbyClient.signin(request);
+        await SessionClient.createSessionWithUser(request);
 
         nameField.value = "";
         passwordField.value = "";
     }
 
     static async submitSignout() {
-        await LobbyClient.signout();
+        await SessionClient.closeSession();
     }
 }
 
