@@ -84,7 +84,7 @@ module SessionService =
             | _ -> return! createNewSessionWithUser(user.id, expiresOn)
         } 
 
-    let signOut(userId : int, token : string) : Session option Task =
+    let removeUserFromSession(userId : int, token : string) : Session option Task =
         task {
             let! userSession = SessionRepository.getSession(None, None, Some userId)
             
@@ -101,7 +101,6 @@ module SessionService =
 
     let renewSession(token : string) : Session Task =
         task {
-
             let! session = SessionRepository.getSession(None, Some token, None)
             if session.IsNone
             then raise <| HttpException(404, "Session not found")
@@ -125,3 +124,8 @@ module SessionService =
             return! SessionRepository.getSession(None, Some token, None)
                     |> Task.map (Option.bind someIfNotExpired)
         }
+
+    let closeSession(token : string) : Unit Task =
+        task {            
+            return! SessionRepository.deleteSession(None, Some token)        
+        } 

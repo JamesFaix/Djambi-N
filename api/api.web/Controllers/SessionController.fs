@@ -64,7 +64,7 @@ module SessionController =
                 if token |> String.IsNullOrEmpty
                 then raise <| HttpException(401, "Not signed in")
                 
-                let! session = SessionService.signOut(userId, token)
+                let! session = SessionService.removeUserFromSession(userId, token)
                 
                 match session with
                 | Some s -> appendCookie ctx (s.token, s.expiresOn)
@@ -72,20 +72,20 @@ module SessionController =
             }
         handle func
 
-    //let closeSession : HttpHandler =
-    //    let func (ctx : HttpContext) =
-    //        task {
-    //            try
-    //                let token = ctx.Request.Cookies.Item(HttpUtility.cookieName)
-    //
-    //                if token |> String.IsNullOrEmpty
-    //                then raise <| HttpException(401, "Not signed in")
-    //                
-    //                let! _ = SessionService.closeSession token
-    //                ()
-    //            finally
-    //                //Always clear the cookie, even if the DB does not have a session matching it
-    //                appendCookie ctx ("", DateTimeOffset.MinValue)
-    //        }
-    //    handle func
+    let closeSession : HttpHandler =
+        let func (ctx : HttpContext) =
+            task {
+                try
+                    let token = ctx.Request.Cookies.Item(HttpUtility.cookieName)
+    
+                    if token |> String.IsNullOrEmpty
+                    then raise <| HttpException(401, "Not signed in")
+                    
+                    let! _ = SessionService.closeSession token
+                    ()
+                finally
+                    //Always clear the cookie, even if the DB does not have a session matching it
+                    appendCookie ctx ("", DateTime.MinValue)
+            }
+        handle func
         

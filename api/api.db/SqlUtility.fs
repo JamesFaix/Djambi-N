@@ -28,11 +28,6 @@ module SqlUtility =
             match opt with
             | Some x -> this.Add(name, x)
             | None -> this.Add(name, null)
-
-        member this.AddOutput(name : string, dbType : DbType) =
-            this.Add(name, null, 
-                new Nullable<DbType>(dbType), 
-                new Nullable<ParameterDirection>(ParameterDirection.Output))
                         
     let getSingle<'a> (entityName : string) (list : 'a list) : 'a =
         match list.Length with

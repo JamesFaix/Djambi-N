@@ -13,7 +13,7 @@ module Routing =
             
                 //Session                    
                     POST >=> route "/sessions" >=> SessionController.createSessionWithUser
-//                    DELETE >=> route "/sessions" >=> SessionController.closeSession
+                    DELETE >=> route "/sessions" >=> SessionController.closeSession
                     POST >=> route "/sessions/users" >=> SessionController.addUserToSession
                     DELETE >=> routef "/sessions/users/%i" SessionController.removeUserFromSession
 

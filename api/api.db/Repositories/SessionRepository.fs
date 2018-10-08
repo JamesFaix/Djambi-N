@@ -1,7 +1,6 @@
 ﻿namespace Djambi.Api.Db.Repositories
 
 open System
-open System.Data
 open System.Threading.Tasks
 open Dapper
 open FSharp.Control.Tasks
@@ -85,4 +84,17 @@ module SessionRepository =
             use cn = getConnection()
             let! _ = cn.ExecuteAsync(cmd)
             return! getSession(Some sessionId, None, None)
+        }
+
+    let deleteSession(sessionId : int option, token : string option) : Unit Task =
+        let param = new DynamicParameters()
+        param.AddOption("SessionId", sessionId)
+        param.AddOption("Token", token)
+
+        let cmd = proc("Lobby.DeleteSession", param)
+
+        task {
+            use cn = getConnection()
+            let! _ = cn.ExecuteAsync(cmd)
+            return ()
         }
