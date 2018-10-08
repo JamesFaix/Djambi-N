@@ -13,17 +13,24 @@ open Djambi.Api.Model.LobbyModel
 
 module SessionRepository =
 
-    let getSession(sessionId : int option, token : string option) : Session Task =
+    let getSession(sessionId : int option, 
+                   token : string option,
+                   userId : int option) : Session option Task =
+
         let param = new DynamicParameters()
         param.AddOption("SessionId", sessionId)
         param.AddOption("Token", token)
-        
+        param.AddOption("UserId", userId)
+
         let cmd = proc("Lobby.GetSessionWithUsers", param)
 
         task {
             use cn = getConnection()
-            return! cn.QueryAsync<SessionUserSqlModel>(cmd)
-                    |> Task.map mapSessionUsers
+            let! sqlModels = cn.QueryAsync<SessionUserSqlModel>(cmd) 
+            let sqlModelList = sqlModels |> Seq.toList
+            return match sqlModelList.Length with
+                    | 0 -> None
+                    | _ -> mapSessionUsers sqlModelList |> Some
         }
 
     let createSessionWithUser(userId : int, token : string, expiresOn : DateTime) : Session Task =
@@ -39,10 +46,11 @@ module SessionRepository =
             use cn = getConnection()
             let _ = cn.ExecuteAsync(cmd)
             let sessionId = param.Get<int>("SessionId")
-            return! getSession(Some sessionId, None)
+            return! getSession(Some sessionId, None, None)
+                    |> Task.map (fun o -> o.Value)
         }
         
-    let addUserToSession(sessionId : int, userId : int) : Session Task =
+    let addUserToSession(sessionId : int, userId : int) : Session option Task =
         let param = new DynamicParameters()
         param.Add("UserId", userId)
         param.Add("SessionId", sessionId)
@@ -52,10 +60,10 @@ module SessionRepository =
         task {
             use cn = getConnection()
             let! _ = cn.ExecuteAsync(cmd)
-            return! getSession(Some sessionId, None)
+            return! getSession(Some sessionId, None, None)
         }
 
-    let removeUserFromSession(sessionId : int, userId : int) : Session Task =
+    let removeUserFromSession(sessionId : int, userId : int) : Session option Task =
         let param = new DynamicParameters()
         param.Add("UserId", userId)
         param.Add("SessionId", sessionId)
@@ -65,10 +73,10 @@ module SessionRepository =
         task {
             use cn = getConnection()
             let! _ = cn.ExecuteAsync(cmd)
-            return! getSession(Some sessionId, None)
+            return! getSession(Some sessionId, None, None)
         }
 
-    let renewSessionExpiration(sessionId : int, expiresOn : DateTime) : Unit Task =
+    let renewSessionExpiration(sessionId : int, expiresOn : DateTime) : Session option Task =
         let param = new DynamicParameters()
         param.Add("SessionId", sessionId)
         param.Add("ExpiresOn", expiresOn)
@@ -78,5 +86,5 @@ module SessionRepository =
         task {
             use cn = getConnection()
             let! _ = cn.ExecuteAsync(cmd)
-            return ()
+            return! getSession(Some sessionId, None, None)
         }

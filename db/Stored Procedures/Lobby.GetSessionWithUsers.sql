@@ -1,6 +1,7 @@
 ﻿CREATE PROCEDURE [Lobby].[GetSessionWithUsers]
 	@SessionId INT = NULL,
-	@Token NVARCHAR(50) = NULL
+	@Token NVARCHAR(50) = NULL,
+	@UserId INT = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -20,4 +21,5 @@ BEGIN
 			ON s.SessionId = su.SessionId
 	WHERE s.SessionId = @SessionId
 		OR s.Token = @Token
+		AND (@UserId IS NULL OR UserId = @UserId)
 END

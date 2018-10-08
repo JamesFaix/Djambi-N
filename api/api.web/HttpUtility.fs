@@ -6,7 +6,7 @@ open Giraffe
 open Microsoft.AspNetCore.Http
 open Microsoft.Extensions.Primitives
 open Djambi.Api.Common
-open Djambi.Api.Db.Repositories
+open Djambi.Api.Logic.Services
 open Djambi.Api.Model.LobbyModel
 
 type HttpHandler = HttpFunc -> HttpContext -> HttpContext option Task 
@@ -32,13 +32,17 @@ module HttpUtility =
             
     let cookieName = "DjambiSession"
 
-    let getUserFromContext (ctx : HttpContext) : User Task =
-        let cookie = ctx.Request.Cookies.Item(cookieName)
+    let getSessionFromContext (ctx : HttpContext) : Session Task =
+        let token = ctx.Request.Cookies.Item(cookieName)
 
-        if cookie |> String.IsNullOrEmpty
+        if token |> String.IsNullOrEmpty
         then raise (HttpException(401, "Not currently logged in"))
         
         task {
-            let! session = UserRepository.getSessionFromToken cookie
-            return! UserRepository.getUser session.userId
+            let! session = SessionService.getSession token
+
+            if session.IsNone
+            then raise <| HttpException(401, "Session expired")
+
+            return session.Value
         }

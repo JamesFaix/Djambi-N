@@ -20,7 +20,7 @@ module GameStartService =
             let missingPlayerCount = game.boardRegionCount - game.players.Length
             if missingPlayerCount > 0
             then
-                let! virtualPlayerNames = GameStartRepository.getVirtualPlayerNames()
+                let! virtualPlayerNames = LobbyRepository.getVirtualPlayerNames()
                 let namesToUse = 
                     Enumerable.Except(
                         virtualPlayerNames, 
@@ -31,7 +31,7 @@ module GameStartService =
                     |> Seq.toList
 
                 for name in namesToUse do
-                    let! _ = GameStartRepository.addVirtualPlayerToGame(game.id, name)
+                    let! _ = LobbyRepository.addVirtualPlayerToGame(game.id, name)
                     ()
             else ()
             let! updated = LobbyRepository.getGame(game.id)
@@ -129,7 +129,7 @@ module GameStartService =
                     currentTurnState = turnState
                 }
 
-            let! _ = GameStartRepository.startGame(updateRequest)
+            let! _ = PlayRepository.startGame(updateRequest)
 
             return 
                 {

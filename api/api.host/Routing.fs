@@ -11,10 +11,13 @@ module Routing =
             subRoute "/api"
                 (choose [  
             
-                //Lobby
-                    POST >=> route "/signin" >=> SessionController.signIn
-                    POST >=> route "/signout" >=> SessionController.signOut
+                //Session                    
+                    POST >=> route "/sessions" >=> SessionController.createSessionWithUser
+//                    DELETE >=> route "/sessions" >=> SessionController.closeSession
+                    POST >=> route "/sessions/users" >=> SessionController.addUserToSession
+                    DELETE >=> routef "/sessions/users/%i" SessionController.removeUserFromSession
 
+                //Lobby
                     POST >=> route "/users" >=> UserController.createUser
                     GET >=> routef "/users/%i" UserController.getUser
                     GET >=> route "/users" >=> UserController.getUsers

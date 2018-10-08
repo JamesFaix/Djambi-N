@@ -26,11 +26,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="Routing.fs" />
     <Content Include="launchSettings.json" />
     <Content Include="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Compile Include="Routing.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
