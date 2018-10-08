@@ -100,14 +100,24 @@ Task(task_runWeb)
 Task(task_testApi)
     .Does(() => 
     {
-        var path = root + File("api\\api-tests\\api-tests.fsproj");
+        var dir = root + Directory("api\\tests\\");
+        var files = new []
+        {
+            "\\api.unitTests\\api.unitTests.fsproj",
+            "\\api.integrationTests\\api.integrationTests.fsproj",
+            "\\api.contractTests\\api.contractTests.fsproj",
+        }
+        .Select(f => dir.ToString() + f);
 
         var settings = new DotNetCoreTestSettings 
         {
             
         };
 
-        DotNetCoreTest(path, settings);
+        foreach (var f in files) 
+        {
+            DotNetCoreTest(f, settings);
+        }
     });
 
 RunTarget(target);

@@ -1,7 +1,7 @@
 ﻿namespace Djambi.Tests
 
 open System
-open Giraffe
+open FSharp.Control.Tasks
 open Xunit
 open Djambi.Api.Common.Enums
 open Djambi.Api.Db

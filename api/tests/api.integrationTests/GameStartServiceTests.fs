@@ -1,6 +1,6 @@
 ﻿namespace Djambi.Tests
 
-open Giraffe
+open FSharp.Control.Tasks
 open Xunit
 open Djambi.Api.Common
 open Djambi.Api.Common.Enums
@@ -15,18 +15,6 @@ open Djambi.Tests.TestUtilities
 type GameStartTests() =
     do 
         SqlUtility.connectionString <- connectionString
-
-    [<Fact>]
-    let ``Repository - Add virtual player should work``() =
-        let gameRequest = getCreateGameRequest()
-        let userRequest = getCreateUserRequest()
-        task {
-            let! game = LobbyRepository.createGame(gameRequest)
-            let! _ = LobbyRepository.addVirtualPlayerToGame(game.id, userRequest.name)
-            let! updatedGame = LobbyRepository.getGame(game.id)
-            let exists = updatedGame.players |> List.exists (fun p -> p.userId = None && p.name = userRequest.name)
-            Assert.True(exists)
-        }
 
     [<Fact>]
     let ``Service - Add virtual players should work``() =
