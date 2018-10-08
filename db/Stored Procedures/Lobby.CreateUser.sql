@@ -1,8 +1,7 @@
 CREATE PROCEDURE [Lobby].[CreateUser]
 	@Name NVARCHAR(50),
 	@RoleId TINYINT,
-	@Password NVARCHAR(50),
-	@UserId INT OUTPUT
+	@Password NVARCHAR(50)
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -22,6 +21,6 @@ BEGIN
 		0,
 		NULL)
 
-	SET @UserId = SCOPE_IDENTITY()
+	SELECT SCOPE_IDENTITY()
 END
 GO

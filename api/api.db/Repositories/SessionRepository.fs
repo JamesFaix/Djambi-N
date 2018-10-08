@@ -38,14 +38,12 @@ module SessionRepository =
         param.Add("UserId", userId)
         param.Add("Token", token)
         param.Add("ExpiresOn", expiresOn)
-        param.AddOutput("SessionId", DbType.Int32)
 
         let cmd = proc("Lobby.CreateSessionWithUser", param)
 
         task {
             use cn = getConnection()
-            let _ = cn.ExecuteAsync(cmd)
-            let sessionId = param.Get<int>("SessionId")
+            let! sessionId = cn.QuerySingleAsync<int>(cmd)
             return! getSession(Some sessionId, None, None)
                     |> Task.map (fun o -> o.Value)
         }

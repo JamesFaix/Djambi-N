@@ -44,14 +44,12 @@ module UserRepository =
         param.Add("Name", request.name)
         param.Add("RoleId", request.role |> mapRoleToId)
         param.Add("Password", request.password)
-        param.AddOutput("UserId", DbType.Int32)
 
         let cmd = proc("Lobby.CreateUser", param)
 
         task {
             use cn = getConnection()
-            let _ = cn.ExecuteAsync(cmd)
-            let userId = param.Get<int>("UserId")
+            let! userId = cn.QuerySingleAsync<int>(cmd)
             return! getUser userId
         }
 

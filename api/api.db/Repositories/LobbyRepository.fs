@@ -18,14 +18,12 @@ module LobbyRepository =
         let param = new DynamicParameters()
         param.Add("BoardRegionCount", request.boardRegionCount)
         param.AddOption("Description", request.description)
-        param.AddOutput("GameId", DbType.Int32)
 
         let cmd = proc("Lobby.CreateGame", param)
 
         task {
             use cn = getConnection()
-            let! _ = cn.ExecuteAsync(cmd)
-            let gameId = param.Get<int>("GameId")
+            let! gameId = cn.QuerySingleAsync<int>(cmd)
             return {
                 id = gameId 
                 description = request.description
@@ -77,13 +75,12 @@ module LobbyRepository =
         let param = new DynamicParameters()
         param.Add("GameId", gameId)
         param.Add("UserId", userId)
-        param.AddOutput("PlayerId", DbType.Int32) //Not used
-
+        
         let cmd = proc("Lobby.AddPlayerToGame", param)
 
         task {
             use cn = getConnection()
-            let! _ = cn.ExecuteAsync(cmd)
+            let! playerId = cn.QuerySingleAsync<int>(cmd) //Id not currently used
             return ()
         }
 
@@ -91,13 +88,12 @@ module LobbyRepository =
         let param = new DynamicParameters()
         param.Add("GameId", gameId)
         param.Add("Name", name)
-        param.AddOutput("PlayerId", DbType.Int32) //Not used
 
         let cmd = proc("Lobby.AddVirtualPlayerToGame", param)
 
         task {
             use cn = getConnection()
-            let! _ = cn.ExecuteAsync(cmd)
+            let! playerId = cn.QuerySingleAsync<int>(cmd) //Id not currently used
             return ()
         }
 

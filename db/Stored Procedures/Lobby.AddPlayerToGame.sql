@@ -1,7 +1,6 @@
 CREATE PROCEDURE [Lobby].[AddPlayerToGame] 
 	@GameId INT,
-	@UserId INT,
-	@PlayerId INT OUTPUT
+	@UserId INT
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -27,5 +26,5 @@ BEGIN
 	FROM Users 
 	WHERE UserId = @UserId
 	
-	SET @PlayerId = SCOPE_IDENTITY()
+	SELECT SCOPE_IDENTITY()
 END

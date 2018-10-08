@@ -1,8 +1,7 @@
 ﻿CREATE PROCEDURE [Lobby].[CreateSessionWithUser]
 	@UserId INT,
 	@Token NVARCHAR(50),
-	@ExpiresOn DATETIME2,
-	@SessionId INT OUTPUT
+	@ExpiresOn DATETIME2
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -21,11 +20,13 @@ BEGIN
 			GETUTCDATE(),
       	    @ExpiresOn)
 
-		SET @SessionId = SCOPE_IDENTITY()
+		DECLARE @SessionId INT = SCOPE_IDENTITY()
 
 		EXEC Lobby.AddUserToSession 
 			@SessionId = @SessionId, 
 			@UserId = @UserId
+
+		SELECT @SessionId
 
 	COMMIT
 END

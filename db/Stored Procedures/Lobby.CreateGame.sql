@@ -1,7 +1,6 @@
 CREATE PROCEDURE [Lobby].[CreateGame]
 	@BoardRegionCount INT,
-	@Description NVARCHAR(100),
-	@GameId INT OUTPUT
+	@Description NVARCHAR(100)
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -17,5 +16,5 @@ BEGIN
 		1, 
 		GETUTCDATE())
 
-    SET @GameId = SCOPE_IDENTITY()
+    SELECT SCOPE_IDENTITY()
 END
