@@ -22,7 +22,7 @@ type GameStartTests() =
         let userRequest = getCreateUserRequest()
         task {
             let! game = LobbyRepository.createGame(gameRequest)
-            let! _ = GameStartRepository.addVirtualPlayerToGame(game.id, userRequest.name)
+            let! _ = LobbyRepository.addVirtualPlayerToGame(game.id, userRequest.name)
             let! updatedGame = LobbyRepository.getGame(game.id)
             let exists = updatedGame.players |> List.exists (fun p -> p.userId = None && p.name = userRequest.name)
             Assert.True(exists)

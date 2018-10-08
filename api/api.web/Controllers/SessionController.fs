@@ -13,42 +13,79 @@ open Djambi.Api.Web.Model.LobbyWebModel
 
 module SessionController =
 
-    let appendCookie (ctx : HttpContext) (sessionToken : string, expiration : DateTimeOffset) =
+    let appendCookie (ctx : HttpContext) (sessionToken : string, expiration : DateTime) =
         let cookieOptions = new CookieOptions()
         cookieOptions.Domain <- "localhost" //TODO: Move this to a config file
         cookieOptions.Path <- "/"
         cookieOptions.Secure <- false
         cookieOptions.HttpOnly <- true
-        cookieOptions.Expires <- expiration |> toNullable
+        cookieOptions.Expires <-  DateTimeOffset(expiration) |> toNullable
         ctx.Response.Cookies.Append(cookieName, sessionToken, cookieOptions);
     
-    let signIn : HttpHandler =
+    let createSessionWithUser : HttpHandler =
         let func (ctx : HttpContext) =
             task {
-                //Can't login if you already have a session.
-                let cookie = ctx.Request.Cookies.Item(HttpUtility.cookieName)
-                if cookie |> String.IsNullOrEmpty |> not
-                then  raise (HttpException(401, "You are already logged in. To change users, log out and log in again."))
+                let token = ctx.Request.Cookies.Item(HttpUtility.cookieName)
+
+                if token |> String.IsNullOrEmpty |> not
+                then raise <| HttpException(401, "Session already exists")
 
                 let! request = ctx.BindModelAsync<LoginRequestJsonModel>()
-                              |> Task.map mapLoginRequestFromJson
+                               |> Task.map mapLoginRequestFromJson
 
-                let! (sessionToken, expiration) = SessionService.signIn request
-
-                appendCookie ctx (sessionToken, expiration)
+                let! session = SessionService.signIn(request.userName, request.password, None)
+                
+                appendCookie ctx (session.token, session.expiresOn)
             }
         handle func
 
-    let signOut : HttpHandler =
+    let addUserToSession : HttpHandler =
+        let func (ctx : HttpContext) =
+            task {
+                let token = ctx.Request.Cookies.Item(HttpUtility.cookieName)
+
+                if token |> String.IsNullOrEmpty
+                then raise <| HttpException(401, "Not signed in")
+
+                let! request = ctx.BindModelAsync<LoginRequestJsonModel>()
+                               |> Task.map mapLoginRequestFromJson
+
+                let! session = SessionService.signIn(request.userName, request.password, Some token)
+                
+                appendCookie ctx (session.token, session.expiresOn)
+            }
+        handle func
+
+    let removeUserFromSession (userId : int) : HttpHandler =
+        let func (ctx : HttpContext) =
+            task {
+                let token = ctx.Request.Cookies.Item(HttpUtility.cookieName)
+
+                if token |> String.IsNullOrEmpty
+                then raise <| HttpException(401, "Not signed in")
+                
+                let! session = SessionService.removeUserFromSession(userId, token)
+                
+                match session with
+                | Some s -> appendCookie ctx (s.token, s.expiresOn)
+                | None -> appendCookie ctx ("", DateTime.MinValue)
+            }
+        handle func
+
+    let closeSession : HttpHandler =
         let func (ctx : HttpContext) =
             task {
                 try
-                    let! user = HttpUtility.getUserFromContext ctx
-                    let! _ = SessionService.signOut user
+                    let token = ctx.Request.Cookies.Item(HttpUtility.cookieName)
+    
+                    if token |> String.IsNullOrEmpty
+                    then raise <| HttpException(401, "Not signed in")
+                    
+                    let! _ = SessionService.closeSession token
                     ()
                 finally
                     //Always clear the cookie, even if the DB does not have a session matching it
-                    appendCookie ctx ("", DateTimeOffset.MinValue)
+                    appendCookie ctx ("", DateTime.MinValue)
             }
         handle func
         

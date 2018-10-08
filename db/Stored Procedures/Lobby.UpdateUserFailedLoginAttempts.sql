@@ -1,12 +1,4 @@
-SET QUOTED_IDENTIFIER ON
-GO
-SET ANSI_NULLS ON
-GO
-
-
-
-
-CREATE PROCEDURE [Lobby].[Update_FailedLoginAttempts]
+CREATE PROCEDURE [Lobby].[UpdateUserFailedLoginAttempts]
 	@UserId INT,
 	@FailedLoginAttempts INT,
 	@LastFailedLoginAttemptOn DATETIME2

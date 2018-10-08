@@ -1,9 +1,4 @@
-SET QUOTED_IDENTIFIER ON
-GO
-SET ANSI_NULLS ON
-GO
-
-CREATE PROCEDURE [Lobby].[Delete_User]
+CREATE PROCEDURE [Lobby].[DeleteUser]
 	@UserId INT
 AS
 BEGIN
@@ -12,7 +7,14 @@ BEGIN
 	IF NOT EXISTS(SELECT 1 FROM Users WHERE UserId = @UserId)
 		THROW 50000, 'User not found', 1
         
-    DELETE FROM Users
-    WHERE UserId = @UserId
+	BEGIN TRAN
+
+		--Delete Players
+		--Delete Session
+
+		DELETE FROM Users
+		WHERE UserId = @UserId
+
+	COMMIT
 END
 GO

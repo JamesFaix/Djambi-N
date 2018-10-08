@@ -1,11 +1,4 @@
-SET QUOTED_IDENTIFIER ON
-GO
-SET ANSI_NULLS ON
-GO
-
-
-
-CREATE PROCEDURE [Play].[Get_Game]
+CREATE PROCEDURE [Play].[GetGame]
 	@GameId INT
 AS
 BEGIN
@@ -18,4 +11,3 @@ BEGIN
 	FROM Games 
 	WHERE GameId = @GameId
 END
-GO

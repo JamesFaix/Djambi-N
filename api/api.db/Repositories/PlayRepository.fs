@@ -11,10 +11,28 @@ open Djambi.Api.Model.PlayModel
 
 module PlayRepository =
     
+    let startGame(request : UpdateGameForStartRequest) : Unit Task =
+        let startingConditionsJson = request.startingConditions |> JsonConvert.SerializeObject
+        let currentGameStateJson = request.currentGameState |> JsonConvert.SerializeObject
+        let currentTurnStateJson = request.currentTurnState |> JsonConvert.SerializeObject
+
+        let param = new DynamicParameters()
+        param.Add("GameId", request.id)
+        param.Add("StartingConditionsJson", startingConditionsJson)
+        param.Add("CurrentGameStateJson", currentGameStateJson)
+        param.Add("CurrentTurnStateJson", currentTurnStateJson)
+        let cmd = proc("Play.UpdateGameForStart", param)
+
+        task {
+            use cn = getConnection()
+            let! _ = cn.ExecuteAsync(cmd)
+            return ()
+        }
+
     let getGame(gameId : int) : Game Task =
         let param = new DynamicParameters()
         param.Add("GameId", gameId)
-        let cmd = proc("Play.Get_Game", param)
+        let cmd = proc("Play.GetGame", param)
 
         task {            
             use cn = getConnection()
@@ -27,7 +45,7 @@ module PlayRepository =
         let param = new DynamicParameters()
         param.Add("GameId", gameId)
         param.Add("CurrentGameStateJson", json)
-        let cmd = proc("Play.Update_CurrentGameState", param)
+        let cmd = proc("Play.UpdateCurrentGameState", param)
           
         task {            
             use cn = getConnection()
@@ -40,7 +58,7 @@ module PlayRepository =
         let param = new DynamicParameters()
         param.Add("GameId", gameId)
         param.Add("CurrentTurnStateJson", json)
-        let cmd = proc("Play.Update_CurrentTurnState", param)
+        let cmd = proc("Play.UpdateCurrentTurnState", param)
 
         task {
             use cn = getConnection()

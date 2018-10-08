@@ -1,11 +1,4 @@
-SET QUOTED_IDENTIFIER ON
-GO
-SET ANSI_NULLS ON
-GO
-
-
-
-CREATE PROCEDURE [Play].[Update_GameForStart] 
+CREATE PROCEDURE [Play].[UpdateGameForStart] 
 	@GameId INT,
 	@StartingConditionsJson NVARCHAR(MAX),
 	@CurrentGameStateJson NVARCHAR(MAX),
@@ -24,4 +17,3 @@ BEGIN
 		CurrentTurnStateJson = @CurrentTurnStateJson
 	WHERE GameId = @GameId
 END
-GO

@@ -71,11 +71,16 @@ module LobbyDbMapping =
         |> Seq.map (fun (_, sqls) -> sqls |> Seq.toList |> sqlModelsToGame)
         |> Seq.toList
 
-    let mapSession (sqlModel : SessionSqlModel) : Session =
+    let mapSessionUsers (sqlModels : SessionUserSqlModel seq) : Session =
+        let sqlList = sqlModels |> Seq.toList
+        let head = sqlList.[0]
         {
-            id = sqlModel.sessionId
-            userId = sqlModel.userId
-            token = sqlModel.token
-            createdOn = sqlModel.createdOn
-            expiresOn = sqlModel.expiresOn
+            id = head.sessionId
+            userIds = sqlList 
+                        |> List.filter (fun x -> x.userId.HasValue) 
+                        |> List.map (fun x -> x.userId.Value)
+            token = head.token
+            createdOn = head.createdOn
+            expiresOn = head.expiresOn
+            isShared = head.isShared
         }

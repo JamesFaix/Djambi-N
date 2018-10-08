@@ -1,10 +1,7 @@
 CREATE TABLE [dbo].[Roles]
 (
-[RoleId] [tinyint] NOT NULL,
-[Name] [nchar] (10) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL
-) ON [PRIMARY]
-GO
-ALTER TABLE [dbo].[Roles] ADD CONSTRAINT [PK_Roles] PRIMARY KEY CLUSTERED  ([RoleId]) ON [PRIMARY]
-GO
-ALTER TABLE [dbo].[Roles] ADD CONSTRAINT [UQ_Roles_Name] UNIQUE NONCLUSTERED  ([Name]) ON [PRIMARY]
-GO
+    [RoleId] [tinyint] NOT NULL,
+    [Name]   [nchar] (10) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+    CONSTRAINT [PK_Roles] PRIMARY KEY CLUSTERED ([RoleId]),
+    CONSTRAINT [UQ_Roles_Name] UNIQUE   ([Name])
+)

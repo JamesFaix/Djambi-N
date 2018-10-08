@@ -1,9 +1,4 @@
-SET QUOTED_IDENTIFIER ON
-GO
-SET ANSI_NULLS ON
-GO
-
-CREATE PROCEDURE [Lobby].[Insert_Player] 
+CREATE PROCEDURE [Lobby].[AddPlayerToGame] 
 	@GameId INT,
 	@UserId INT
 AS
@@ -20,10 +15,16 @@ BEGIN
 	IF (SELECT GameStatusId FROM Games WHERE GameId = @GameId) <> 1
 		THROW 50000, 'Game no longer open', 1
 
-	INSERT INTO Players (GameId, UserId, Name)
-	SELECT @GameId, UserId, Name
+	INSERT INTO Players (
+		GameId, 
+		UserId, 
+		[Name])
+	SELECT 
+		@GameId, 
+		UserId, 
+		[Name]
 	FROM Users 
 	WHERE UserId = @UserId
 	
+	SELECT SCOPE_IDENTITY()
 END
-GO

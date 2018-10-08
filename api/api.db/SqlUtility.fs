@@ -28,8 +28,7 @@ module SqlUtility =
             match opt with
             | Some x -> this.Add(name, x)
             | None -> this.Add(name, null)
-
-        
+                        
     let getSingle<'a> (entityName : string) (list : 'a list) : 'a =
         match list.Length with
         | 0 -> raise (HttpException(404, entityName + " not found"))

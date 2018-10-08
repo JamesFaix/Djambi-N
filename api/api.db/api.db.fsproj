@@ -10,9 +10,9 @@
     <Compile Include="Mappings\PlayDbMapping.fs" />
     <Compile Include="Mappings\LobbyDbMapping.fs" />
     <Compile Include="SqlUtility.fs" />
-    <Compile Include="Repositories\LobbyRepository.fs" />
     <Compile Include="Repositories\UserRepository.fs" />
-    <Compile Include="Repositories\GameStartRepository.fs" />
+    <Compile Include="Repositories\SessionRepository.fs" />
+    <Compile Include="Repositories\LobbyRepository.fs" />
     <Compile Include="Repositories\PlayRepository.fs" />
   </ItemGroup>
 
