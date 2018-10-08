@@ -16,6 +16,9 @@ var task_runAll = "run-all";
 var task_runApi = "run-api";
 var task_runWeb = "run-web";
 var task_testApi = "test-api";
+var task_testApiContract = "test-api-contract";
+var task_testApiIntegration = "test-api-integration";
+var task_testApiUnit = "test-api-unit";
 
 Task(task_buildDotNet)
     .Does(() => 
@@ -97,27 +100,45 @@ Task(task_runWeb)
         Process.Start(info);
     });
 
-Task(task_testApi)
+Task(task_testApiUnit)
     .Does(() => 
     {
-        var dir = root + Directory("api\\tests\\");
-        var files = new []
-        {
-            "\\api.unitTests\\api.unitTests.fsproj",
-            "\\api.integrationTests\\api.integrationTests.fsproj",
-            "\\api.contractTests\\api.contractTests.fsproj",
-        }
-        .Select(f => dir.ToString() + f);
-
+        var path = root + File("api\\tests\\api.unitTests\\api.unitTests.fsproj");
         var settings = new DotNetCoreTestSettings 
         {
             
         };
 
-        foreach (var f in files) 
-        {
-            DotNetCoreTest(f, settings);
-        }
+        DotNetCoreTest(path, settings);
     });
+
+Task(task_testApiIntegration)
+    .Does(() => 
+    {
+        var path = root + File("api\\tests\\api.integrationTests\\api.integrationTests.fsproj");
+        var settings = new DotNetCoreTestSettings 
+        {
+            
+        };
+
+        DotNetCoreTest(path, settings);
+    });
+
+Task(task_testApiContract)
+    .Does(() => 
+    {
+        var path = root + File("api\\tests\\api.contractTests\\api.contractTests.fsproj");
+        var settings = new DotNetCoreTestSettings 
+        {
+            
+        };
+
+        DotNetCoreTest(path, settings);
+    });
+
+Task(task_testApi)
+    .IsDependentOn(task_testApiUnit)
+    .IsDependentOn(task_testApiIntegration)
+    .IsDependentOn(task_testApiContract);
 
 RunTarget(target);
