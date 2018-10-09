@@ -1,6 +1,8 @@
 ﻿module Djambi.Api.ContractTests.WebUtility
 
+open System
 open System.IO
+open System.Linq
 open System.Net
 open System.Net.Http
 open System.Threading.Tasks
@@ -16,8 +18,14 @@ let private config =
         
 let apiAddress = config.["apiAddress"]
 
-let sendRequest<'a, 'b> (route : string, verb : HttpMethod, body : 'a) 
-    : (HttpStatusCode * 'b) Task =
+type Response<'a> =
+    {
+        value : 'a
+        statusCode : HttpStatusCode
+        headers : Map<string, string>            
+    }
+
+let sendRequest<'a, 'b> (route : string, verb : HttpMethod, body : 'a) : 'b Response Task =
     
     let request = WebRequest.Create(apiAddress + "/api" + route) :?> HttpWebRequest
     request.ContentType <- "application/json"
@@ -36,6 +44,12 @@ let sendRequest<'a, 'b> (route : string, verb : HttpMethod, body : 'a)
         use responseStream = webResponse.GetResponseStream()
         use reader = new StreamReader(responseStream)
         let responseText = reader.ReadToEnd()
-        let responseValue = JsonConvert.DeserializeObject<'b>(responseText)
-        return (webResponse.StatusCode, responseValue)
+        return {
+                    value = JsonConvert.DeserializeObject<'b>(responseText)
+                    statusCode = webResponse.StatusCode
+                    headers = webResponse.Headers.Keys
+                              |> Enumerable.OfType<string>
+                              |> Seq.map (fun key -> (key, webResponse.Headers.[key]))
+                              |> Map.ofSeq
+               }
     }

@@ -60,3 +60,10 @@ module LobbyWebModel =
             userName : string
             password : string
         }
+
+    [<CLIMutable>]
+    type SessionResponseJsonModel =
+        {
+            id : int
+            userIds : int list
+        }

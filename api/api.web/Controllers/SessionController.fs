@@ -36,6 +36,8 @@ module SessionController =
                 let! session = SessionService.signIn(request.userName, request.password, None)
                 
                 appendCookie ctx (session.token, session.expiresOn)
+
+                return session |> mapSessionResponse
             }
         handle func
 
@@ -53,6 +55,8 @@ module SessionController =
                 let! session = SessionService.signIn(request.userName, request.password, Some token)
                 
                 appendCookie ctx (session.token, session.expiresOn)
+                                
+                return session |> mapSessionResponse
             }
         handle func
 
@@ -67,8 +71,12 @@ module SessionController =
                 let! session = SessionService.removeUserFromSession(userId, token)
                 
                 match session with
-                | Some s -> appendCookie ctx (s.token, s.expiresOn)
-                | None -> appendCookie ctx ("", DateTime.MinValue)
+                | Some s -> 
+                    appendCookie ctx (s.token, s.expiresOn)                
+                    return s |> mapSessionResponse
+                | None -> 
+                    appendCookie ctx ("", DateTime.MinValue)
+                    return Unchecked.defaultof<SessionResponseJsonModel>            
             }
         handle func
 

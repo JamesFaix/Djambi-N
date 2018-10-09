@@ -3,9 +3,16 @@
 open System
 open System.Net
 open System.Net.Http
+open System.Text.RegularExpressions
 open FSharp.Control.Tasks
 open Xunit
 open Djambi.Api.Web.Model.LobbyWebModel
+
+let getToken (cookie : string) : string option =
+    let m = Regex.Match(cookie, "^DjambiSession=(.*?);");
+    match m.Groups.Count with
+    | 0 -> None
+    | _ -> Some m.Groups.[1].Value
 
 [<Fact>]
 let ``POST sessions should work``() =
@@ -18,7 +25,7 @@ let ``POST sessions should work``() =
                 role = "Normal"
             }
     
-        let! (_, _ : unit) = WebUtility.sendRequest("/users", HttpMethod.Post, createUserRequest)
+        let! _ = WebUtility.sendRequest("/users", HttpMethod.Post, createUserRequest)
 
         //Act
         let request = 
@@ -27,14 +34,24 @@ let ``POST sessions should work``() =
                 password = createUserRequest.password
             }
     
-        let! (statusCode, _ : unit) = WebUtility.sendRequest("/sessions", HttpMethod.Post, request)
+        let! response = WebUtility.sendRequest<LoginRequestJsonModel, SessionResponseJsonModel>(
+                            "/sessions", HttpMethod.Post, request)
         
-        Assert.Equal(HttpStatusCode.OK, statusCode)
+        //Assert
+        Assert.Equal(HttpStatusCode.OK, response.statusCode)
+
+        Assert.True(response.headers.ContainsKey("Set-Cookie"))
+        let token = getToken response.headers.["Set-Cookie"]
+        Assert.True(token.IsSome)
+
+        Assert.NotEqual(0, response.value.id)
+        Assert.Equal(1, response.value.userIds.Length)
     }
 
 [<Fact>]
 let ``POST user should work`` () =
     task {
+        //Arrange
         let request = 
             {
                 name = Guid.NewGuid().ToString()
@@ -42,7 +59,14 @@ let ``POST user should work`` () =
                 role = "Normal"
             }
     
-        let! (statusCode, _ : unit) = WebUtility.sendRequest("/users", HttpMethod.Post, request)
+        //Act
+        let! response = WebUtility.sendRequest<CreateUserJsonModel, UserJsonModel>(
+                            "/users", HttpMethod.Post, request)
         
-        Assert.Equal(HttpStatusCode.OK, statusCode)
+        //Assert
+        Assert.Equal(HttpStatusCode.OK, response.statusCode)
+                
+        Assert.NotEqual(0, response.value.id)
+        Assert.Equal(request.name, response.value.name)
+        Assert.Equal(request.role, response.value.role)
     }
