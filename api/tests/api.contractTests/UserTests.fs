@@ -24,7 +24,7 @@ let ``POST user should work`` () =
         //Assert
         Assert.Equal(HttpStatusCode.OK, response.statusCode)
                 
-        Assert.NotEqual(0, response.value.id)
-        Assert.Equal(request.name, response.value.name)
-        Assert.Equal(request.role, response.value.role)
+        let user = response.result.Value()
+        Assert.Equal(request.name, user.name)
+        Assert.Equal(request.role, user.role)
     }

@@ -50,12 +50,23 @@ let sendRequest<'a, 'b> (httpVerb : string,
         use responseStream = webResponse.GetResponseStream()
         use reader = new StreamReader(responseStream)
         let responseText = reader.ReadToEnd()
+
+        let result = 
+            match webResponse.StatusCode with
+            | n when n < HttpStatusCode.BadRequest ->  
+                let value = JsonConvert.DeserializeObject<'b>(responseText)
+                Ok(value)
+            | _ -> Error(responseText)
+
+        let headers = 
+            webResponse.Headers.Keys
+            |> Enumerable.OfType<string>
+            |> Seq.map (fun key -> (key, webResponse.Headers.[key]))
+            |> Map.ofSeq
+
         return {
-                    value = JsonConvert.DeserializeObject<'b>(responseText)
+                    result = result
                     statusCode = webResponse.StatusCode
-                    headers = webResponse.Headers.Keys
-                              |> Enumerable.OfType<string>
-                              |> Seq.map (fun key -> (key, webResponse.Headers.[key]))
-                              |> Map.ofSeq
+                    headers = headers
                }
     }
