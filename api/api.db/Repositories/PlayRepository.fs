@@ -22,12 +22,7 @@ module PlayRepository =
         param.Add("CurrentGameStateJson", currentGameStateJson)
         param.Add("CurrentTurnStateJson", currentTurnStateJson)
         let cmd = proc("Play.UpdateGameForStart", param)
-
-        task {
-            use cn = getConnection()
-            let! _ = cn.ExecuteAsync(cmd)
-            return ()
-        }
+        queryUnit(cmd, "Game")
 
     let getGame(gameId : int) : Game Task =
         let param = new DynamicParameters()
@@ -35,8 +30,7 @@ module PlayRepository =
         let cmd = proc("Play.GetGame", param)
 
         task {            
-            use cn = getConnection()
-            let! sqlModel = cn.QuerySingleAsync<GameSqlModel>(cmd)
+            let! sqlModel = querySingle<GameSqlModel>(cmd, "Game")
             return sqlModel |> mapGameSqlModelResponse
         }
 
@@ -46,12 +40,7 @@ module PlayRepository =
         param.Add("GameId", gameId)
         param.Add("CurrentGameStateJson", json)
         let cmd = proc("Play.UpdateCurrentGameState", param)
-          
-        task {            
-            use cn = getConnection()
-            let! _ = cn.ExecuteAsync(cmd)
-            return ()
-        }
+        queryUnit(cmd, "Game")
 
     let updateCurrentTurnState(gameId: int, state : TurnState) : Unit Task =
         let json = state |> JsonConvert.SerializeObject
@@ -59,9 +48,4 @@ module PlayRepository =
         param.Add("GameId", gameId)
         param.Add("CurrentTurnStateJson", json)
         let cmd = proc("Play.UpdateCurrentTurnState", param)
-
-        task {
-            use cn = getConnection()
-            let! _ = cn.ExecuteAsync(cmd)
-            return ()
-        }
+        queryUnit(cmd, "Game")
