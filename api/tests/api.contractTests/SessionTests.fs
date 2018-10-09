@@ -7,6 +7,7 @@ open System.Text.RegularExpressions
 open FSharp.Control.Tasks
 open Xunit
 open Djambi.Api.Web.Model.LobbyWebModel
+open Djambi.Api.WebClient
 
 let getToken (cookie : string) : string option =
     let m = Regex.Match(cookie, "^DjambiSession=(.*?);");

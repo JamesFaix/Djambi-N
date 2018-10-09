@@ -1,4 +1,4 @@
-﻿module Djambi.Api.ContractTests.WebUtility
+﻿module Djambi.Api.WebClient.WebUtility
 
 open System
 open System.IO

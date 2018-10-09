@@ -5,8 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Model\PlayWebModel.fs" />
-    <Compile Include="Model\LobbyWebModel.fs" />
     <Compile Include="Mappings\LobbyWebMapping.fs" />
     <Compile Include="Mappings\PlayWebMapping.fs" />
     <Compile Include="HttpUtility.fs" />
@@ -25,6 +23,7 @@
     <ProjectReference Include="..\api.common\api.common.fsproj" />
     <ProjectReference Include="..\api.logic\api.logic.fsproj" />
     <ProjectReference Include="..\api.model\api.model.fsproj" />
+    <ProjectReference Include="..\api.web.model\api.web.model.fsproj" />
   </ItemGroup>
 
 </Project>
