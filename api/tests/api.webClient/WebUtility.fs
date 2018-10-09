@@ -1,14 +1,13 @@
 ﻿module Djambi.Api.WebClient.WebUtility
 
-open System
 open System.IO
 open System.Linq
 open System.Net
-open System.Net.Http
 open System.Threading.Tasks
 open FSharp.Control.Tasks
 open Microsoft.Extensions.Configuration
 open Newtonsoft.Json
+open Djambi.Api.WebClient.Model
 open Djambi.Utilities
 
 let private config = 
@@ -18,25 +17,32 @@ let private config =
         
 let apiAddress = config.["apiAddress"]
 
-type Response<'a> =
-    {
-        value : 'a
-        statusCode : HttpStatusCode
-        headers : Map<string, string>            
-    }
+let DELETE = "DELETE";
+let GET = "GET";
+let PATCH = "PATCH";
+let POST = "POST";
 
-let sendRequest<'a, 'b> (route : string, verb : HttpMethod, body : 'a) : 'b Response Task =
+let sendRequest<'a, 'b> (httpVerb : string,
+                         route : string,                           
+                         body : 'a option,
+                         token : string option) 
+                         : 'b Response Task =
     
     let request = WebRequest.Create(apiAddress + "/api" + route) :?> HttpWebRequest
     request.ContentType <- "application/json"
-    request.Method <- verb.ToString()
+    request.Method <- httpVerb
 
-    let bodyText = JsonConvert.SerializeObject(body)
+    if token.IsSome
+    then
+        request.Headers.Add("Cookie", "DjambiSession=" + token.Value)
 
-    use writer = new StreamWriter(request.GetRequestStream())
-    writer.Write(bodyText)
-    writer.Flush()
-    writer.Close()
+    if body.IsSome
+    then
+        let bodyText = JsonConvert.SerializeObject(body.Value)
+        use writer = new StreamWriter(request.GetRequestStream())
+        writer.Write(bodyText)
+        writer.Flush()
+        writer.Close()
 
     task {
         let! response = request.GetResponseAsync() 
