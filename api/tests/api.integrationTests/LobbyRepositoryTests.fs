@@ -1,4 +1,4 @@
-﻿namespace Djambi.Tests
+﻿namespace Djambi.Api.IntegrationTests
 
 open System
 open FSharp.Control.Tasks

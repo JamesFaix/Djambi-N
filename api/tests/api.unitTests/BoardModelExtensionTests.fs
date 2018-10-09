@@ -1,4 +1,4 @@
-module BoardExtensionsTests
+module Djambi.Api.UnitTests.BoardModelExtensionTests
 
 open Xunit
 open Djambi.Api.Common.Utilities

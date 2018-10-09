@@ -1,4 +1,4 @@
-﻿namespace Djambi.Tests
+﻿namespace Djambi.Api.IntegrationTests
 
 open FSharp.Control.Tasks
 open Xunit
@@ -12,7 +12,7 @@ open Djambi.Api.Model.LobbyModel
 open Djambi.Api.Model.PlayModel
 open Djambi.Tests.TestUtilities
 
-type GameStartTests() =
+type GameStartServiceTests() =
     do 
         SqlUtility.connectionString <- connectionString
 

@@ -1,4 +1,4 @@
-﻿namespace Djambi.Tests
+﻿namespace Djambi.Api.IntegrationTests
 
 open System
 open FSharp.Control.Tasks
@@ -6,7 +6,6 @@ open Xunit
 open Djambi.Api.Db
 open Djambi.Api.Db.Repositories
 open Djambi.Tests.TestUtilities
-open Djambi.Api.Common
 
 type UserRepositoryTests() =
     do 
