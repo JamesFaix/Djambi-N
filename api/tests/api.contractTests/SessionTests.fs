@@ -69,5 +69,5 @@ let ``Create session should fail if user has another session``() =
 
         Assert.True(response2.getToken().IsNone)
         let message = response2.result.ErrStr()
-        Assert.Equal("User already logged in.", message)
+        Assert.Equal("Already signed in", message)
     }

@@ -17,7 +17,7 @@ type GameStartServiceTests() =
         SqlUtility.connectionString <- connectionString
 
     [<Fact>]
-    let ``Service - Add virtual players should work``() =
+    let ``Add virtual players should work``() =
         let gameRequest = getCreateGameRequest()
         task {
             let! game = LobbyRepository.createGame gameRequest
@@ -28,7 +28,7 @@ type GameStartServiceTests() =
         }
 
     [<Fact>]
-    let ``Service = Get starting conditions should work``() =
+    let ``Get starting conditions should work``() =
         let gameRequest = getCreateGameRequest()
         task {
             let! game = LobbyRepository.createGame gameRequest
@@ -48,7 +48,7 @@ type GameStartServiceTests() =
         }
 
     [<Fact>]
-    let ``Service - Create pieces should work``() =    
+    let ``Create pieces should work``() =    
         let gameRequest = getCreateGameRequest()
         task {
             let! game = LobbyRepository.createGame gameRequest
@@ -72,7 +72,7 @@ type GameStartServiceTests() =
         }
 
     [<Fact>]
-    let ``Service - Start game should work``() =
+    let ``Start game should work``() =
         let gameRequest = getCreateGameRequest()
         task {
             let! game = LobbyRepository.createGame gameRequest

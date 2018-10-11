@@ -44,29 +44,39 @@ let sendRequest<'a, 'b> (httpVerb : string,
         writer.Flush()
         writer.Close()
 
+    let getWebResponse (req : HttpWebRequest) : HttpWebResponse Task =
+        task {
+            try 
+                let! response = req.GetResponseAsync() 
+                return response :?> HttpWebResponse
+            with        
+            | :? WebException as ex -> 
+                return ex.Response :?> HttpWebResponse
+        }
+
     task {
-        let! response = request.GetResponseAsync() 
-        let webResponse = response :?> HttpWebResponse
+        let! webResponse = getWebResponse request
         use responseStream = webResponse.GetResponseStream()
         use reader = new StreamReader(responseStream)
         let responseText = reader.ReadToEnd()
 
         let result = 
             match webResponse.StatusCode with
-            | n when n < HttpStatusCode.BadRequest ->  
-                let value = JsonConvert.DeserializeObject<'b>(responseText)
-                Ok(value)
-            | _ -> Error(responseText)
-
+            | x when x >= HttpStatusCode.BadRequest -> 
+                Error <| responseText.Substring(1, responseText.Length-2) //It will return in quotes, fix this later
+            | _ -> 
+                Ok <| JsonConvert.DeserializeObject<'b>(responseText)
+           
         let headers = 
             webResponse.Headers.Keys
             |> Enumerable.OfType<string>
             |> Seq.map (fun key -> (key, webResponse.Headers.[key]))
             |> Map.ofSeq
 
-        return {
-                    result = result
-                    statusCode = webResponse.StatusCode
-                    headers = headers
-               }
-    }
+        return 
+            {
+                result = result
+                statusCode = webResponse.StatusCode
+                headers = headers
+            }
+    }   
