@@ -3,6 +3,8 @@
 - XUnit test runner
 - SQL Server Express or Developer Edition
 - NPM
+- TypeScript Compiler
+- F# Compiler
 - Web server
     `npm install http-server -g`    
 
@@ -27,9 +29,10 @@
 ```
 
 ## Build script
-- Cake requires allowing Powershell to run scripts
+- Build script written in Cake
+- Powershell requires allowing scripts
     - Run Powershell as admin
     - `set-executionpolicy unrestricted`
-- Run script in `utils/Djambi.Utilities.Cake/`
+- Run the `build.ps1` or `build.sh` file from the repository root
     - Initial setup is `./build.ps1 -target full`
     - See `build.cake` for other targets

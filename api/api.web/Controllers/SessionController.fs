@@ -28,14 +28,21 @@ module SessionController =
                 let token = ctx.Request.Cookies.Item(HttpUtility.cookieName)
 
                 if token |> String.IsNullOrEmpty |> not
-                then raise <| HttpException(401, "Session already exists")
+                then raise <| HttpException(409, "Already signed in")
 
                 let! request = ctx.BindModelAsync<LoginRequestJsonModel>()
                                |> Task.map mapLoginRequestFromJson
 
-                let! session = SessionService.signIn(request.userName, request.password, None)
+                try 
+                    let! session = SessionService.signIn(request.userName, request.password, None)
                 
-                appendCookie ctx (session.token, session.expiresOn)
+                    appendCookie ctx (session.token, session.expiresOn)
+
+                    return session |> mapSessionResponse
+                with
+                | :? HttpException as ex when ex.statusCode = 409 ->
+                    raise <| HttpException(409, "Already signed in")
+                    return Unchecked.defaultof<SessionResponseJsonModel>
             }
         handle func
 
@@ -53,6 +60,8 @@ module SessionController =
                 let! session = SessionService.signIn(request.userName, request.password, Some token)
                 
                 appendCookie ctx (session.token, session.expiresOn)
+                                
+                return session |> mapSessionResponse
             }
         handle func
 
@@ -67,8 +76,12 @@ module SessionController =
                 let! session = SessionService.removeUserFromSession(userId, token)
                 
                 match session with
-                | Some s -> appendCookie ctx (s.token, s.expiresOn)
-                | None -> appendCookie ctx ("", DateTime.MinValue)
+                | Some s -> 
+                    appendCookie ctx (s.token, s.expiresOn)                
+                    return s |> mapSessionResponse
+                | None -> 
+                    appendCookie ctx ("", DateTime.MinValue)
+                    return Unchecked.defaultof<SessionResponseJsonModel>            
             }
         handle func
 

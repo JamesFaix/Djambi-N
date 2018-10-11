@@ -24,8 +24,7 @@ module SessionRepository =
         let cmd = proc("Lobby.GetSessionWithUsers", param)
 
         task {
-            use cn = getConnection()
-            let! sqlModels = cn.QueryAsync<SessionUserSqlModel>(cmd) 
+            let! sqlModels = queryMany<SessionUserSqlModel>(cmd, "Session") 
             let sqlModelList = sqlModels |> Seq.toList
             return match sqlModelList.Length with
                     | 0 -> None
@@ -41,8 +40,7 @@ module SessionRepository =
         let cmd = proc("Lobby.CreateSessionWithUser", param)
 
         task {
-            use cn = getConnection()
-            let! sessionId = cn.QuerySingleAsync<int>(cmd)
+            let! sessionId = querySingle<int>(cmd, "Session")
             return! getSession(Some sessionId, None, None)
                     |> Task.map (fun o -> o.Value)
         }
@@ -55,8 +53,7 @@ module SessionRepository =
         let cmd = proc("Lobby.AddUserToSession", param)
 
         task {
-            use cn = getConnection()
-            let! _ = cn.ExecuteAsync(cmd)
+            let! _ = queryUnit(cmd, "Session")
             return! getSession(Some sessionId, None, None)
         }
 
@@ -68,8 +65,7 @@ module SessionRepository =
         let cmd = proc("Lobby.RemoveUserFromSession", param)
 
         task {
-            use cn = getConnection()
-            let! _ = cn.ExecuteAsync(cmd)
+            let! _ = queryUnit(cmd, "Session")
             return! getSession(Some sessionId, None, None)
         }
 
@@ -81,8 +77,7 @@ module SessionRepository =
         let cmd = proc("Lobby.RenewSessionExpiration", param)
 
         task {
-            use cn = getConnection()
-            let! _ = cn.ExecuteAsync(cmd)
+            let! _ = queryUnit(cmd, "Session")
             return! getSession(Some sessionId, None, None)
         }
 
@@ -92,9 +87,6 @@ module SessionRepository =
         param.AddOption("Token", token)
 
         let cmd = proc("Lobby.DeleteSession", param)
-
-        task {
-            use cn = getConnection()
-            let! _ = cn.ExecuteAsync(cmd)
-            return ()
-        }
+        
+        queryUnit(cmd, "Session")
+        

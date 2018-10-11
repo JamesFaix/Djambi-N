@@ -1,7 +1,7 @@
-﻿namespace Djambi.Tests
+﻿namespace Djambi.Api.IntegrationTests
 
 open System
-open Giraffe
+open FSharp.Control.Tasks
 open Xunit
 open Djambi.Api.Common.Enums
 open Djambi.Api.Db
@@ -71,6 +71,18 @@ type LobbyRepositoryTests() =
             let! _ = LobbyRepository.addPlayerToGame(game.id, user.id)
             let! updatedGame = LobbyRepository.getGame(game.id)
             let exists = updatedGame.players |> List.exists (fun p -> p.userId = Some user.id && p.name = user.name)
+            Assert.True(exists)
+        }
+
+    [<Fact>]
+    let ``Repository - Add virtual player should work``() =
+        let gameRequest = getCreateGameRequest()
+        let userRequest = getCreateUserRequest()
+        task {
+            let! game = LobbyRepository.createGame(gameRequest)
+            let! _ = LobbyRepository.addVirtualPlayerToGame(game.id, userRequest.name)
+            let! updatedGame = LobbyRepository.getGame(game.id)
+            let exists = updatedGame.players |> List.exists (fun p -> p.userId = None && p.name = userRequest.name)
             Assert.True(exists)
         }
 

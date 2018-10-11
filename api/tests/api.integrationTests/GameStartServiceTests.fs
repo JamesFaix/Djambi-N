@@ -1,6 +1,6 @@
-﻿namespace Djambi.Tests
+﻿namespace Djambi.Api.IntegrationTests
 
-open Giraffe
+open FSharp.Control.Tasks
 open Xunit
 open Djambi.Api.Common
 open Djambi.Api.Common.Enums
@@ -12,24 +12,12 @@ open Djambi.Api.Model.LobbyModel
 open Djambi.Api.Model.PlayModel
 open Djambi.Tests.TestUtilities
 
-type GameStartTests() =
+type GameStartServiceTests() =
     do 
         SqlUtility.connectionString <- connectionString
 
     [<Fact>]
-    let ``Repository - Add virtual player should work``() =
-        let gameRequest = getCreateGameRequest()
-        let userRequest = getCreateUserRequest()
-        task {
-            let! game = LobbyRepository.createGame(gameRequest)
-            let! _ = LobbyRepository.addVirtualPlayerToGame(game.id, userRequest.name)
-            let! updatedGame = LobbyRepository.getGame(game.id)
-            let exists = updatedGame.players |> List.exists (fun p -> p.userId = None && p.name = userRequest.name)
-            Assert.True(exists)
-        }
-
-    [<Fact>]
-    let ``Service - Add virtual players should work``() =
+    let ``Add virtual players should work``() =
         let gameRequest = getCreateGameRequest()
         task {
             let! game = LobbyRepository.createGame gameRequest
@@ -40,7 +28,7 @@ type GameStartTests() =
         }
 
     [<Fact>]
-    let ``Service = Get starting conditions should work``() =
+    let ``Get starting conditions should work``() =
         let gameRequest = getCreateGameRequest()
         task {
             let! game = LobbyRepository.createGame gameRequest
@@ -60,7 +48,7 @@ type GameStartTests() =
         }
 
     [<Fact>]
-    let ``Service - Create pieces should work``() =    
+    let ``Create pieces should work``() =    
         let gameRequest = getCreateGameRequest()
         task {
             let! game = LobbyRepository.createGame gameRequest
@@ -84,7 +72,7 @@ type GameStartTests() =
         }
 
     [<Fact>]
-    let ``Service - Start game should work``() =
+    let ``Start game should work``() =
         let gameRequest = getCreateGameRequest()
         task {
             let! game = LobbyRepository.createGame gameRequest

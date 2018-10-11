@@ -1,7 +1,7 @@
-﻿namespace Djambi.Tests
+﻿namespace Djambi.Api.IntegrationTests
 
 open System
-open Giraffe
+open FSharp.Control.Tasks
 open Xunit
 open Djambi.Api.Db
 open Djambi.Api.Db.Repositories

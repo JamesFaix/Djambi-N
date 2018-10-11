@@ -58,3 +58,9 @@ module LobbyWebMapping =
             userName = jsonModel.userName
             password = jsonModel.password
         }
+
+    let mapSessionResponse(session : Session) : SessionResponseJsonModel =
+        {
+            id = session.id
+            userIds = session.userIds
+        }

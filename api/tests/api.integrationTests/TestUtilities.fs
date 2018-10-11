@@ -10,7 +10,7 @@ module TestUtilities =
     let private config = 
         ConfigurationBuilder()
             .AddJsonFile("appsettings.json", false)
-            .AddJsonFile(Environment.environmentConfigPath(5), false)
+            .AddJsonFile(Environment.environmentConfigPath(6), false)
             .Build()
 
     let connectionString =

@@ -1,11 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
 
     <IsPackable>false</IsPackable>
-
-    <OutputType>Library</OutputType>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,23 +11,25 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Compile Include="TestUtilities.fs" />
-    <Compile Include="BoardExtensionsTests.fs" />
-    <Compile Include="UserRepositoryTests.fs" />
+    <Compile Include="GameStartServiceTests.fs" />
     <Compile Include="LobbyRepositoryTests.fs" />
-    <Compile Include="GameStartTests.fs" />
+    <Compile Include="UserRepositoryTests.fs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.1.1" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.7.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.8.0" />
+    <PackageReference Include="TaskBuilder.fs" Version="2.1.0" />
     <PackageReference Include="xunit" Version="2.3.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
-    <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\utils\environment\environment.fsproj" />
-    <ProjectReference Include="..\api.host\api.host.fsproj" />
+    <ProjectReference Include="..\..\..\utils\environment\environment.fsproj" />
+    <ProjectReference Include="..\..\api.common\api.common.fsproj" />
+    <ProjectReference Include="..\..\api.db\api.db.fsproj" />
+    <ProjectReference Include="..\..\api.logic\api.logic.fsproj" />
+    <ProjectReference Include="..\..\api.model\api.model.fsproj" />
   </ItemGroup>
 
 </Project>

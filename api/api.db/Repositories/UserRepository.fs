@@ -1,11 +1,9 @@
 ﻿namespace Djambi.Api.Db.Repositories
 
 open System
-open System.Data
 open System.Threading.Tasks
 open Dapper
 open FSharp.Control.Tasks
-open Djambi.Api.Common
 open Djambi.Api.Db.Mappings.LobbyDbMapping
 open Djambi.Api.Db.Model.LobbyDbModel
 open Djambi.Api.Db.SqlUtility
@@ -13,31 +11,41 @@ open Djambi.Api.Model.LobbyModel
 
 module UserRepository =
 
-    let private getUsersInner(id : int option, name : string option) : User list Task =
+    let getUser(id : int) : User Task =
         let param = new DynamicParameters()
-        param.AddOption("UserId", id)
-        param.AddOption("Name", name)        
+        param.Add("UserId", id)
+        param.Add("Name", null)        
         let cmd = proc("Lobby.GetUsers", param)
 
         task {
-            use cn = getConnection()
-            let! sqlModels = cn.QueryAsync<UserSqlModel>(cmd)
+            let! sqlModel = querySingle<UserSqlModel>(cmd, "User")
+            return sqlModel |> mapUserResponse
+        }
+    
+    let getUserByName(name : string) : User Task =
+        let param = new DynamicParameters()
+        param.Add("UserId", null)
+        param.Add("Name", name)        
+        let cmd = proc("Lobby.GetUsers", param)
+
+        task {
+            let! sqlModel = querySingle<UserSqlModel>(cmd, "User")
+            return sqlModel |> mapUserResponse
+        }
+
+    let getUsers() : User list Task =
+        let param = new DynamicParameters()
+        param.Add("UserId", null)
+        param.Add("Name", null)        
+        let cmd = proc("Lobby.GetUsers", param)
+
+        task {
+            let! sqlModels = queryMany<UserSqlModel>(cmd, "User")
             return sqlModels 
                     |> Seq.map mapUserResponse
                     |> Seq.sortBy (fun u -> u.id)
                     |> Seq.toList
         }
-
-    let getUser(id : int) : User Task =
-        getUsersInner(Some id, None)
-        |> Task.map (getSingle "User")
-    
-    let getUserByName(name : string) : User Task =
-        getUsersInner(None, Some name)
-        |> Task.map (getSingle "User")
-
-    let getUsers() : User list Task =
-        getUsersInner(None, None)
 
     let createUser(request : CreateUserRequest) : User Task =
         let param = new DynamicParameters()
@@ -48,8 +56,7 @@ module UserRepository =
         let cmd = proc("Lobby.CreateUser", param)
 
         task {
-            use cn = getConnection()
-            let! userId = cn.QuerySingleAsync<int>(cmd)
+            let! userId = querySingle<int>(cmd, "User")
             return! getUser userId
         }
 
@@ -57,12 +64,7 @@ module UserRepository =
         let param = new DynamicParameters()
         param.Add("UserId", id)
         let cmd = proc("Lobby.DeleteUser", param)
-
-        task {
-            use cn = getConnection()
-            let! _  = cn.ExecuteAsync(cmd) 
-            return ()
-        }
+        queryUnit(cmd, "User")
 
     let updateFailedLoginAttempts(userId : int, 
                                   failedLoginAttempts : int, 
@@ -74,9 +76,4 @@ module UserRepository =
         param.AddOption("LastFailedLoginAttemptOn", lastFailedLoginAttemptOn)
 
         let cmd = proc("Lobby.UpdateUserFailedLoginAttempts", param)
-
-        task {
-            use cn = getConnection()
-            let! _ = cn.ExecuteAsync(cmd)
-            return ()
-        }
+        queryUnit(cmd, "User")
