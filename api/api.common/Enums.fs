@@ -1,22 +1,20 @@
-﻿namespace Djambi.Api.Common 
+﻿module Djambi.Api.Common.Enums
 
-module Enums =
-
-    type GameStatus =
-        | Open
-        | Started
-        | Complete
-        | Cancelled
+type GameStatus =
+    | Open
+    | Started
+    | Complete
+    | Cancelled
         
-    type TurnStatus =
-        | AwaitingSelection
-        | AwaitingConfirmation
+type TurnStatus =
+    | AwaitingSelection
+    | AwaitingConfirmation
 
-    type PieceType =
-        | Chief
-        | Thug
-        | Reporter
-        | Assassin
-        | Diplomat
-        | Gravedigger
-        | Corpse
+type PieceType =
+    | Chief
+    | Thug
+    | Reporter
+    | Assassin
+    | Diplomat
+    | Gravedigger
+    | Corpse

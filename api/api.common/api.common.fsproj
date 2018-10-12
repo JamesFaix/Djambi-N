@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="ResultExtensions.fs" />
     <Compile Include="Constants.fs" />
     <Compile Include="Enums.fs" />
     <Compile Include="HttpException.fs" />
