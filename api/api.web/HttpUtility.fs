@@ -13,14 +13,19 @@ type HttpHandler = HttpFunc -> HttpContext -> HttpContext option Task
 
 module HttpUtility = 
 
-    let handle<'a> (func : HttpContext -> 'a Task) : HttpHandler =
+    let handle<'a> (func : HttpContext -> 'a AsyncHttpResult) : HttpHandler =
 
         fun (next : HttpFunc) (ctx : HttpContext) ->
             task {
                 try 
                     let! result = func ctx
-                    ctx.Response.Headers.Add("Access-Control-Allow-Credentials", StringValues("true"))
-                    return! json result next ctx
+                    match result with
+                    | Ok value -> 
+                        ctx.Response.Headers.Add("Access-Control-Allow-Credentials", StringValues("true"))
+                        return! json value next ctx
+                    | Error ex -> 
+                        ctx.SetStatusCode ex.statusCode
+                        return! json ex.Message next ctx                    
                 with
                 | :? HttpException as ex -> 
                     ctx.SetStatusCode ex.statusCode
@@ -32,17 +37,11 @@ module HttpUtility =
             
     let cookieName = "DjambiSession"
 
-    let getSessionFromContext (ctx : HttpContext) : Session Task =
+    let getSessionFromContext (ctx : HttpContext) : Session AsyncHttpResult =
         let token = ctx.Request.Cookies.Item(cookieName)
 
         if token |> String.IsNullOrEmpty
-        then raise (HttpException(401, "Not currently logged in"))
-        
-        task {
-            let! session = SessionService.getSession token
-
-            if session.IsNone
-            then raise <| HttpException(401, "Session expired")
-
-            return session.Value
-        }
+        then HttpException(401, "Not currently logged in") |> Error |> Task.FromResult
+        else 
+            SessionService.getSession token
+            |> Task.thenReplaceError 404 (HttpException(401, "Session expired"))

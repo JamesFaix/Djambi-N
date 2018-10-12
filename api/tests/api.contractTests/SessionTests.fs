@@ -4,6 +4,7 @@ open System
 open System.Net
 open FSharp.Control.Tasks
 open Xunit
+open Djambi.Api.Common
 open Djambi.Api.Web.Model.LobbyWebModel
 open Djambi.Api.WebClient
 
@@ -34,7 +35,7 @@ let ``Create session should work``() =
 
         Assert.True(response.getToken().IsSome)
 
-        let session = response.result.Value()
+        let session = response.result |> Result.value
         Assert.NotEqual(0, session.id)
         Assert.Equal(1, session.userIds.Length)
     }
@@ -68,6 +69,6 @@ let ``Create session should fail if user has another session``() =
         Assert.Equal(HttpStatusCode.Conflict, response2.statusCode)
 
         Assert.True(response2.getToken().IsNone)
-        let message = response2.result.ErrStr()
+        let message = response2.result  |> Result.error
         Assert.Equal("Already signed in", message)
     }
