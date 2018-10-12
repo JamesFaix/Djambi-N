@@ -6,6 +6,7 @@ open Giraffe
 open Microsoft.AspNetCore.Http
 open Microsoft.Extensions.Primitives
 open Djambi.Api.Common
+open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Logic.Services
 open Djambi.Api.Model.LobbyModel
 
@@ -44,4 +45,4 @@ module HttpUtility =
         then HttpException(401, "Not currently logged in") |> Error |> Task.FromResult
         else 
             SessionService.getSession token
-            |> Task.thenReplaceError 404 (HttpException(401, "Session expired"))
+            |> thenReplaceError 404 (HttpException(401, "Session expired"))

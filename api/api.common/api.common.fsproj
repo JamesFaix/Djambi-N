@@ -10,6 +10,7 @@
     <Compile Include="Enums.fs" />
     <Compile Include="HttpException.fs" />
     <Compile Include="Task.fs" />
+    <Compile Include="AsyncHttpResult.fs" />
     <Compile Include="Utilities.fs" />
   </ItemGroup>
 

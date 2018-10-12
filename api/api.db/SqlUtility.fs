@@ -7,6 +7,7 @@ open System.Text.RegularExpressions
 open Dapper
 open FSharp.Control.Tasks
 open Djambi.Api.Common
+open Djambi.Api.Common.AsyncHttpResult
 
 let mutable connectionString = null
 
@@ -42,11 +43,11 @@ let querySingle<'a>(command : CommandDefinition, entityType : string) : 'a Async
         | _ -> Error <| HttpException(500, sprintf "An unknown error occurred when manipulating %s." entityType)
         
     queryMany<'a>(command, entityType)
-    |> Task.thenBind singleOrError
+    |> thenBind singleOrError
 
 let queryUnit(command : CommandDefinition, entityType : string) : Unit AsyncHttpResult =
     queryMany<Unit>(command, entityType) 
-    |> Task.thenMap ignore
+    |> thenMap ignore
 
 type DynamicParameters with
     member this.add<'a>(name : string, value : 'a) : DynamicParameters =

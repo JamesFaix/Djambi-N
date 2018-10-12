@@ -5,6 +5,7 @@ open System.Threading.Tasks
 open Giraffe
 open Microsoft.AspNetCore.Http
 open Djambi.Api.Common
+open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Db.Repositories
 open Djambi.Api.Web.HttpUtility
 open Djambi.Api.Web.Mappings.LobbyWebMapping
@@ -15,7 +16,7 @@ let createUser : HttpHandler =
         ctx.BindModelAsync<CreateUserJsonModel>()
         |> Task.map mapCreateUserRequest
         |> Task.bind UserRepository.createUser
-        |> Task.thenMap mapUserResponse
+        |> thenMap mapUserResponse
     handle func
 
 let deleteUser(userId : int) =
@@ -26,13 +27,13 @@ let deleteUser(userId : int) =
 let getUser(userId : int) =
     let func ctx =
         UserRepository.getUser userId
-        |> Task.thenMap mapUserResponse
+        |> thenMap mapUserResponse
     handle func
 
 let getUsers : HttpFunc -> HttpContext -> HttpContext option Task =
     let func ctx =
         UserRepository.getUsers()
-        |> Task.thenMap (Seq.map mapUserResponse)
+        |> thenMap (Seq.map mapUserResponse)
     handle func
 
 let updateUser(userId : int) =

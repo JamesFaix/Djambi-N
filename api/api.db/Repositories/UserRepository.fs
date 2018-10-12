@@ -3,6 +3,7 @@
 open System
 open Dapper
 open Djambi.Api.Common
+open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Db.Mappings.LobbyDbMapping
 open Djambi.Api.Db.Model.LobbyDbModel
 open Djambi.Api.Db.SqlUtility
@@ -17,7 +18,7 @@ module UserRepository =
         let cmd = proc("Lobby.GetUsers", param)
 
         querySingle<UserSqlModel>(cmd, "User")
-        |> Task.thenMap mapUserResponse
+        |> thenMap mapUserResponse
     
     let getUserByName(name : string) : User AsyncHttpResult =
         let param = DynamicParameters()
@@ -26,7 +27,7 @@ module UserRepository =
         let cmd = proc("Lobby.GetUsers", param)
 
         querySingle<UserSqlModel>(cmd, "User")
-        |> Task.thenMap mapUserResponse
+        |> thenMap mapUserResponse
 
     let getUsers() : User list AsyncHttpResult =
         let param = DynamicParameters()
@@ -41,7 +42,7 @@ module UserRepository =
 
 
         queryMany<UserSqlModel>(cmd, "User")
-        |> Task.thenMap mapUsers
+        |> thenMap mapUsers
 
     let createUser(request : CreateUserRequest) : User AsyncHttpResult =
         let param = DynamicParameters()
@@ -52,7 +53,7 @@ module UserRepository =
         let cmd = proc("Lobby.CreateUser", param)
 
         querySingle<int>(cmd, "User")
-        |> Task.thenBindAsync getUser
+        |> thenBindAsync getUser
 
     let deleteUser(id : int) : Unit AsyncHttpResult =
         let param = DynamicParameters()

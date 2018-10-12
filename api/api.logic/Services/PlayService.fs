@@ -3,6 +3,7 @@
 open System.Collections.Generic
 open System.Linq
 open Djambi.Api.Common
+open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Common.Enums
 open Djambi.Api.Db.Repositories
 open Djambi.Api.Logic.ModelExtensions
@@ -15,7 +16,7 @@ module PlayService =
 
     let getGameState(gameId : int) : GameState AsyncHttpResult =
         PlayRepository.getGame gameId
-        |> Task.thenMap (fun g -> g.currentGameState)
+        |> thenMap (fun g -> g.currentGameState)
         
     let private getMoveSelectionOptions(game : GameState, piece : Piece, regionCount : int) : int list =
         let board = BoardModelUtility.getBoardMetadata regionCount
@@ -187,7 +188,7 @@ module PlayService =
 
     let selectCell(gameId : int, cellId : int) : TurnState AsyncHttpResult = 
         PlayRepository.getGame gameId
-        |> Task.thenBind (fun game -> 
+        |> thenBind (fun game -> 
             if game.currentTurnState.selectionOptions |> List.contains cellId |> not
             then Error <| HttpException(400, (sprintf "Cell %i is not currently selectable" cellId))
             else let turn = game.currentTurnState
@@ -251,11 +252,11 @@ module PlayService =
                                 selectionOptions = selectionOptions
                                 requiredSelectionType = requiredSelectionType
                           }))
-        |> Task.thenDoAsync (fun turnState -> PlayRepository.updateCurrentTurnState(gameId, turnState))            
+        |> thenDoAsync (fun turnState -> PlayRepository.updateCurrentTurnState(gameId, turnState))            
 
     let resetTurn(gameId : int) : TurnState AsyncHttpResult =
         PlayRepository.getGame gameId
-        |> Task.thenMap (fun game -> 
+        |> thenMap (fun game -> 
             let updatedGame = 
                 {
                     currentGameState = game.currentGameState
@@ -270,7 +271,7 @@ module PlayService =
                     selectionOptions = selectionOptions
                     requiredSelectionType = requiredSelectionType
             })
-        |> Task.thenDoAsync (fun turnState -> PlayRepository.updateCurrentTurnState(gameId, turnState))
+        |> thenDoAsync (fun turnState -> PlayRepository.updateCurrentTurnState(gameId, turnState))
     
     let private applyTurnStateToPieces(game : Game) : Piece list =
         let gameState = game.currentGameState
@@ -391,7 +392,7 @@ module PlayService =
 
     let commitTurn(gameId : int) : CommitTurnResponse AsyncHttpResult =
         PlayRepository.getGame gameId
-        |> Task.thenMap (fun game -> 
+        |> thenMap (fun game -> 
             let gameState = game.currentGameState
             let turnState = game.currentTurnState
             let turnCycle = applyTurnStateToTurnCycle game
@@ -446,5 +447,5 @@ module PlayService =
                 }
             })
 
-        |> Task.thenDoAsync (fun response -> PlayRepository.updateCurrentGameState(gameId, response.gameState))
-        |> Task.thenDoAsync (fun response -> PlayRepository.updateCurrentTurnState(gameId, response.turnState))
+        |> thenDoAsync (fun response -> PlayRepository.updateCurrentGameState(gameId, response.gameState))
+        |> thenDoAsync (fun response -> PlayRepository.updateCurrentTurnState(gameId, response.turnState))

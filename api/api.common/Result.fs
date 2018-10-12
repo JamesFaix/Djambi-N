@@ -18,4 +18,4 @@ let value (r : Result<'a, 'b>) =
 let error (r : Result<'a, 'b>) =
     match r with
     | Error x -> x
-    | _ -> raise <| invalidOp "Cannot get error string of ok result."
+    | _ -> raise <| invalidOp "Cannot get error of ok result."

@@ -3,6 +3,7 @@
 open System
 open System.Linq
 open Djambi.Api.Common
+open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Common.Enums
 open Djambi.Api.Db.Repositories
 open Djambi.Api.Logic.ModelExtensions
@@ -26,13 +27,13 @@ module GameStartService =
 
         if missingPlayerCount = 0
         then LobbyRepository.getGame(game.id)
-             |> Task.thenMap (fun g -> g.players)
+             |> thenMap (fun g -> g.players)
         else
             LobbyRepository.getVirtualPlayerNames()
-            |> Task.thenMap getVirtualNamesToUse
-            |> Task.thenDoEachAsync (fun name -> LobbyRepository.addVirtualPlayerToGame(game.id, name))
-            |> Task.thenBindAsync (fun _ -> LobbyRepository.getGame(game.id))
-            |> Task.thenMap (fun g -> g.players)
+            |> thenMap getVirtualNamesToUse
+            |> thenDoEachAsync (fun name -> LobbyRepository.addVirtualPlayerToGame(game.id, name))
+            |> thenBindAsync (fun _ -> LobbyRepository.getGame(game.id))
+            |> thenMap (fun g -> g.players)
 
     let getStartingConditions(players : LobbyPlayer list) : PlayerStartConditions list =
         let colorIds = [0..(Constants.maxRegions-1)] |> Utilities.shuffle |> Seq.take players.Length
@@ -79,11 +80,11 @@ module GameStartService =
 
     let startGame(gameId : int) : GameStartResponse AsyncHttpResult =
         LobbyRepository.getGame gameId
-        |> Task.thenBindAsync (fun game -> 
+        |> thenBindAsync (fun game -> 
             addVirtualPlayers game
-            |> Task.thenMap (fun lobbyPlayers -> (game, lobbyPlayers)))
+            |> thenMap (fun lobbyPlayers -> (game, lobbyPlayers)))
 
-        |> Task.thenMap (fun (game, lobbyPlayers) -> 
+        |> thenMap (fun (game, lobbyPlayers) -> 
             let startingConditions = getStartingConditions(lobbyPlayers)
             let board = BoardModelUtility.getBoardMetadata(game.boardRegionCount)
             let pieces = createPieces(board, startingConditions)
@@ -123,8 +124,8 @@ module GameStartService =
                 currentGameState = gameState
                 currentTurnState = { gameWithoutSelectionOptions.currentTurnState with selectionOptions = selectionOptions }
             })
-        |> Task.thenDoAsync (fun updateRequest -> PlayRepository.startGame(updateRequest))
-        |> Task.thenMap (fun updateRequest -> 
+        |> thenDoAsync (fun updateRequest -> PlayRepository.startGame(updateRequest))
+        |> thenMap (fun updateRequest -> 
             {
                 startingConditions = updateRequest.startingConditions
                 gameState = updateRequest.currentGameState

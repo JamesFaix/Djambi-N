@@ -3,6 +3,7 @@
 open Dapper
 open Newtonsoft.Json
 open Djambi.Api.Common
+open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Db.Mappings.PlayDbMapping
 open Djambi.Api.Db.Model.PlayDbModel
 open Djambi.Api.Db.SqlUtility
@@ -30,7 +31,7 @@ module PlayRepository =
         let cmd = proc("Play.GetGame", param)
 
         querySingle<GameSqlModel>(cmd, "Game")
-        |> Task.thenMap mapGameSqlModelResponse
+        |> thenMap mapGameSqlModelResponse
 
     let updateCurrentGameState(gameId : int, state : GameState) : Unit AsyncHttpResult =
         let json = state |> JsonConvert.SerializeObject

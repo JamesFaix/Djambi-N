@@ -2,6 +2,7 @@
 
 open Dapper
 open Djambi.Api.Common
+open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Common.Enums
 open Djambi.Api.Db.Mappings.LobbyDbMapping
 open Djambi.Api.Db.Model.LobbyDbModel
@@ -28,7 +29,7 @@ module LobbyRepository =
             }
 
         querySingle<int>(cmd, "Game")
-        |> Task.thenMap mapGame
+        |> thenMap mapGame
         
     let deleteGame(gameId : int) : Unit AsyncHttpResult =
         let param = DynamicParameters()
@@ -44,11 +45,11 @@ module LobbyRepository =
         let cmd = proc("Lobby.GetGamesWithPlayers", param)
 
         queryMany<LobbyGamePlayerSqlModel>(cmd, "Game")
-        |> Task.thenMap mapLobbyGamesResponse
+        |> thenMap mapLobbyGamesResponse
         
     let getGame(gameId : int) : LobbyGameMetadata AsyncHttpResult =
         getGamesInner(Some gameId, None, None)
-        |> Task.thenMap List.head
+        |> thenMap List.head
 
     let getGames() : LobbyGameMetadata list AsyncHttpResult =
         getGamesInner(None, None, None)
@@ -68,7 +69,7 @@ module LobbyRepository =
         let cmd = proc("Lobby.AddPlayerToGame", param)
 
         querySingle<int>(cmd, "Player")
-        |> Task.thenMap ignore  //Id not currently used
+        |> thenMap ignore  //Id not currently used
 
     let addVirtualPlayerToGame(gameId : int, name : string) : Unit AsyncHttpResult =
         let param = DynamicParameters()
@@ -78,7 +79,7 @@ module LobbyRepository =
         let cmd = proc("Lobby.AddVirtualPlayerToGame", param)
                 
         querySingle<int>(cmd, "Player")
-        |> Task.thenMap ignore  //Id not currently used
+        |> thenMap ignore  //Id not currently used
 
     let removePlayerFromGame(gameId : int, userId : int) : Unit AsyncHttpResult =
         let param = DynamicParameters()

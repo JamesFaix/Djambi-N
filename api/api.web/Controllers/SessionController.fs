@@ -5,6 +5,7 @@ open System.Threading.Tasks
 open Giraffe
 open Microsoft.AspNetCore.Http
 open Djambi.Api.Common
+open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Common.Utilities
 open Djambi.Api.Logic.Services
 open Djambi.Api.Web
@@ -32,11 +33,11 @@ let createSessionWithUser : HttpHandler =
             |> Task.map mapLoginRequestFromJson
             |> Task.bind (fun request -> 
                 SessionService.signIn(request.userName, request.password, None)
-                |> Task.thenMap (fun session -> 
+                |> thenMap (fun session -> 
                     appendCookie ctx (session.token, session.expiresOn)
                     session |> mapSessionResponse)
                 )
-            |> Task.thenReplaceError 409 (HttpException(409, "Already signed in"))
+            |> thenReplaceError 409 (HttpException(409, "Already signed in"))
             
     handle func
 
@@ -51,7 +52,7 @@ let addUserToSession : HttpHandler =
             |> Task.map mapLoginRequestFromJson
             |> Task.bind (fun request -> 
                 SessionService.signIn(request.userName, request.password, Some token)
-                |> Task.thenMap (fun session -> 
+                |> thenMap (fun session -> 
                     appendCookie ctx (session.token, session.expiresOn)
                     session |> mapSessionResponse)
                 )
@@ -88,7 +89,7 @@ let closeSession : HttpHandler =
         then HttpException(401, "Not signed in") |> Error |> Task.FromResult
         else 
             SessionService.closeSession token
-            |> Task.thenMap ignore        
+            |> thenMap ignore        
 
     handle func
         
