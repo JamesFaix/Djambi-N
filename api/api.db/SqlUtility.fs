@@ -4,10 +4,10 @@ open System
 open System.Data
 open System.Data.SqlClient
 open System.Text.RegularExpressions
-open System.Threading.Tasks
 open Dapper
 open FSharp.Control.Tasks
 open Djambi.Api.Common
+open Djambi.Api.Common.AsyncHttpResult
 
 let mutable connectionString = null
 
@@ -18,45 +18,44 @@ let getConnection() =
 
 let proc(name : string, param : obj) =
     new CommandDefinition(name, 
-                            param, 
-                            null, 
-                            new Nullable<int>(), 
-                            new Nullable<CommandType>(CommandType.StoredProcedure))
-
-type DynamicParameters with
-        
-    member this.AddOption<'a> (name : string, opt : 'a option) =
-        match opt with
-        | Some x -> this.Add(name, x)
-        | None -> this.Add(name, null)
+                          param, 
+                          null, 
+                          new Nullable<int>(), 
+                          new Nullable<CommandType>(CommandType.StoredProcedure))
                         
-let queryMany<'a>(command : CommandDefinition, entityType : string) : 'a list Task =
+let queryMany<'a>(command : CommandDefinition, entityType : string) : 'a list AsyncHttpResult =
     task {
         let connection = getConnection()
 
         try 
-            let! items = SqlMapper.QueryAsync<'a>(connection, command)
-            return items |> Seq.toList
+            return! SqlMapper.QueryAsync<'a>(connection, command)
+                    |> Task.map (Seq.toList >> Ok)
         with
         | :? SqlException as ex when Regex.IsMatch(ex.Message, "Violation of.*constraint.*") -> 
-            raise <| HttpException(409, sprintf "Conflict when attempting to write %s." entityType)
-            return List.empty
+            return Error <| HttpException(409, sprintf "Conflict when attempting to write %s." entityType)
     }
 
-let querySingle<'a>(command : CommandDefinition, entityType : string) : 'a Task =
-    task {
-        let! results = queryMany<'a>(command, entityType)
+let querySingle<'a>(command : CommandDefinition, entityType : string) : 'a AsyncHttpResult =
+    let singleOrError (xs : 'a list) =
+        match xs.Length with
+        | 1 -> Ok <| xs.[0]
+        | 0 -> Error <| HttpException(404, sprintf "%s not found." entityType)
+        | _ -> Error <| HttpException(500, sprintf "An unknown error occurred when manipulating %s." entityType)
+        
+    queryMany<'a>(command, entityType)
+    |> thenBind singleOrError
 
-        match results.Length with
-        | 1 -> return results.[0]
-        | 0 -> raise <| HttpException(404, sprintf "%s not found." entityType)
-               return Unchecked.defaultof<'a>
-        | _ -> raise <| HttpException(500, sprintf "An unknown error occurred when manipulating %s." entityType)
-               return Unchecked.defaultof<'a>
-    }
+let queryUnit(command : CommandDefinition, entityType : string) : Unit AsyncHttpResult =
+    queryMany<Unit>(command, entityType) 
+    |> thenMap ignore
 
-let queryUnit(command : CommandDefinition, entityType : string) : Unit Task =
-    task {
-        let! _ = queryMany<Unit>(command, entityType)
-        return ()
-    }
+type DynamicParameters with
+    member this.add<'a>(name : string, value : 'a) : DynamicParameters =
+        this.Add(name, value)
+        this
+        
+    member this.addOption<'a> (name : string, opt : 'a option) : DynamicParameters =
+        match opt with
+        | Some x -> this.Add(name, x)
+        | None -> this.Add(name, null)
+        this

@@ -1,11 +1,9 @@
-﻿namespace Djambi.Api.Common
+﻿module Djambi.Api.Common.Constants
 
-module Constants =
+let minRegions = 3
 
-    let minRegions = 3
+let maxRegions = 8
 
-    let maxRegions = 8
+let piecesPerPlayer = 9
 
-    let piecesPerPlayer = 9
-
-    let regionSize = 5
+let regionSize = 5

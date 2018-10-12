@@ -1,8 +1,9 @@
 ﻿namespace Djambi.Api.IntegrationTests
 
-open System
 open FSharp.Control.Tasks
 open Xunit
+open Djambi.Api.Common
+open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Db
 open Djambi.Api.Db.Repositories
 open Djambi.Tests.TestUtilities
@@ -15,7 +16,7 @@ type UserRepositoryTests() =
     let ``Create user should work``() =
         let request = getCreateUserRequest()
         task {
-            let! user = UserRepository.createUser(request)
+            let! user = UserRepository.createUser(request) |> thenValue
             Assert.NotEqual(0, user.id)
             Assert.Equal(request.name, user.name)
         }
@@ -24,8 +25,8 @@ type UserRepositoryTests() =
     let ``Get user should work``() =
         let request = getCreateUserRequest()
         task {
-            let! createdUser = UserRepository.createUser(request)
-            let! user = UserRepository.getUser(createdUser.id)        
+            let! createdUser = UserRepository.createUser(request) |> thenValue
+            let! user = UserRepository.getUser(createdUser.id) |> thenValue  
             Assert.Equal(createdUser.id, user.id)
             Assert.Equal(createdUser.name, user.name)
         }
@@ -34,8 +35,9 @@ type UserRepositoryTests() =
     let ``Delete user should work``() =
         let request = getCreateUserRequest()
         task {
-            let! user = UserRepository.createUser(request)
-            let! _ = UserRepository.deleteUser(user.id) 
-            let getUser = fun () -> UserRepository.getUser(user.id).Result |> ignore
-            Assert.Throws<AggregateException>(getUser) |> ignore
+            let! user = UserRepository.createUser(request) |> thenValue
+            let! _ = UserRepository.deleteUser(user.id) |> thenValue
+            let! result = UserRepository.getUser(user.id)
+            Assert.True(result |> Result.isError)
+            Assert.Equal(404, Result.error(result).statusCode)
         }

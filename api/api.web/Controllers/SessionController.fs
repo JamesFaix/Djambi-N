@@ -1,9 +1,10 @@
-﻿namespace Djambi.Api.Web.Controllers
+﻿module Djambi.Api.Web.Controllers.SessionController
 
 open System
 open Giraffe
 open Microsoft.AspNetCore.Http
 open Djambi.Api.Common
+open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Common.Utilities
 open Djambi.Api.Logic.Services
 open Djambi.Api.Web
@@ -11,94 +12,83 @@ open Djambi.Api.Web.HttpUtility
 open Djambi.Api.Web.Mappings.LobbyWebMapping
 open Djambi.Api.Web.Model.LobbyWebModel
 
-module SessionController =
-
-    let appendCookie (ctx : HttpContext) (sessionToken : string, expiration : DateTime) =
-        let cookieOptions = new CookieOptions()
-        cookieOptions.Domain <- "localhost" //TODO: Move this to a config file
-        cookieOptions.Path <- "/"
-        cookieOptions.Secure <- false
-        cookieOptions.HttpOnly <- true
-        cookieOptions.Expires <-  DateTimeOffset(expiration) |> toNullable
-        ctx.Response.Cookies.Append(cookieName, sessionToken, cookieOptions);
+let appendCookie (ctx : HttpContext) (sessionToken : string, expiration : DateTime) =
+    let cookieOptions = new CookieOptions()
+    cookieOptions.Domain <- "localhost" //TODO: Move this to a config file
+    cookieOptions.Path <- "/"
+    cookieOptions.Secure <- false
+    cookieOptions.HttpOnly <- true
+    cookieOptions.Expires <-  DateTimeOffset(expiration) |> toNullable
+    ctx.Response.Cookies.Append(cookieName, sessionToken, cookieOptions);
     
-    let createSessionWithUser : HttpHandler =
-        let func (ctx : HttpContext) =
-            task {
-                let token = ctx.Request.Cookies.Item(HttpUtility.cookieName)
+let createSessionWithUser : HttpHandler =
+    let func (ctx : HttpContext) =
+        let token = ctx.Request.Cookies.Item(HttpUtility.cookieName)
 
-                if token |> String.IsNullOrEmpty |> not
-                then raise <| HttpException(409, "Already signed in")
-
-                let! request = ctx.BindModelAsync<LoginRequestJsonModel>()
-                               |> Task.map mapLoginRequestFromJson
-
-                try 
-                    let! session = SessionService.signIn(request.userName, request.password, None)
-                
+        if token |> String.IsNullOrEmpty |> not
+        then errorTask <| HttpException(409, "Already signed in")
+        else 
+            ctx.BindModelAsync<LoginRequestJsonModel>()
+            |> Task.map mapLoginRequestFromJson
+            |> Task.bind (fun request -> 
+                SessionService.signIn(request.userName, request.password, None)
+                |> thenMap (fun session -> 
                     appendCookie ctx (session.token, session.expiresOn)
+                    session |> mapSessionResponse)
+                )
+            |> thenReplaceError 409 (HttpException(409, "Already signed in"))
+            
+    handle func
 
-                    return session |> mapSessionResponse
-                with
-                | :? HttpException as ex when ex.statusCode = 409 ->
-                    raise <| HttpException(409, "Already signed in")
-                    return Unchecked.defaultof<SessionResponseJsonModel>
-            }
-        handle func
+let addUserToSession : HttpHandler =
+    let func (ctx : HttpContext) =
+        let token = ctx.Request.Cookies.Item(HttpUtility.cookieName)
 
-    let addUserToSession : HttpHandler =
-        let func (ctx : HttpContext) =
-            task {
-                let token = ctx.Request.Cookies.Item(HttpUtility.cookieName)
+        if token |> String.IsNullOrEmpty
+        then errorTask <| HttpException(401, "Not signed in")
+        else 
+            ctx.BindModelAsync<LoginRequestJsonModel>()
+            |> Task.map mapLoginRequestFromJson
+            |> Task.bind (fun request -> 
+                SessionService.signIn(request.userName, request.password, Some token)
+                |> thenMap (fun session -> 
+                    appendCookie ctx (session.token, session.expiresOn)
+                    session |> mapSessionResponse)
+                )
+    handle func
 
-                if token |> String.IsNullOrEmpty
-                then raise <| HttpException(401, "Not signed in")
+let removeUserFromSession (userId : int) : HttpHandler =
+    let func (ctx : HttpContext) =
+        let token = ctx.Request.Cookies.Item(HttpUtility.cookieName)
 
-                let! request = ctx.BindModelAsync<LoginRequestJsonModel>()
-                               |> Task.map mapLoginRequestFromJson
-
-                let! session = SessionService.signIn(request.userName, request.password, Some token)
-                
-                appendCookie ctx (session.token, session.expiresOn)
-                                
-                return session |> mapSessionResponse
-            }
-        handle func
-
-    let removeUserFromSession (userId : int) : HttpHandler =
-        let func (ctx : HttpContext) =
-            task {
-                let token = ctx.Request.Cookies.Item(HttpUtility.cookieName)
-
-                if token |> String.IsNullOrEmpty
-                then raise <| HttpException(401, "Not signed in")
-                
-                let! session = SessionService.removeUserFromSession(userId, token)
-                
-                match session with
-                | Some s -> 
+        if token |> String.IsNullOrEmpty
+        then errorTask <| HttpException(401, "Not signed in")
+        else 
+            SessionService.removeUserFromSession(userId, token)
+            |> Task.map (fun result ->     
+                match result with
+                | Ok s -> 
                     appendCookie ctx (s.token, s.expiresOn)                
-                    return s |> mapSessionResponse
-                | None -> 
+                    s |> mapSessionResponse |> Ok
+                | Error ex when ex.statusCode = 404 -> 
                     appendCookie ctx ("", DateTime.MinValue)
-                    return Unchecked.defaultof<SessionResponseJsonModel>            
-            }
-        handle func
+                    Unchecked.defaultof<SessionResponseJsonModel> |> Ok
+                | Error ex -> Error ex
+                )
+    handle func
 
-    let closeSession : HttpHandler =
-        let func (ctx : HttpContext) =
-            task {
-                try
-                    let token = ctx.Request.Cookies.Item(HttpUtility.cookieName)
+let closeSession : HttpHandler =
+    let func (ctx : HttpContext) =
+        //Always clear the cookie, even if the DB does not have a session matching it
+        appendCookie ctx ("", DateTime.MinValue)
     
-                    if token |> String.IsNullOrEmpty
-                    then raise <| HttpException(401, "Not signed in")
-                    
-                    let! _ = SessionService.closeSession token
-                    ()
-                finally
-                    //Always clear the cookie, even if the DB does not have a session matching it
-                    appendCookie ctx ("", DateTime.MinValue)
-            }
-        handle func
+        let token = ctx.Request.Cookies.Item(HttpUtility.cookieName)
+    
+        if token |> String.IsNullOrEmpty
+        then errorTask <| HttpException(401, "Not signed in")
+        else 
+            SessionService.closeSession token
+            |> thenMap ignore        
+
+    handle func
         

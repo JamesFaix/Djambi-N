@@ -1,10 +1,9 @@
 ﻿namespace Djambi.Api.Db.Repositories
 
 open System
-open System.Threading.Tasks
 open Dapper
-open FSharp.Control.Tasks
 open Djambi.Api.Common
+open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Db.Mappings.LobbyDbMapping
 open Djambi.Api.Db.Model.LobbyDbModel
 open Djambi.Api.Db.SqlUtility
@@ -14,77 +13,68 @@ module SessionRepository =
 
     let getSession(sessionId : int option, 
                    token : string option,
-                   userId : int option) : Session option Task =
+                   userId : int option) : Session AsyncHttpResult =
 
-        let param = new DynamicParameters()
-        param.AddOption("SessionId", sessionId)
-        param.AddOption("Token", token)
-        param.AddOption("UserId", userId)
+        let param = DynamicParameters()
+                        .addOption("SessionId", sessionId)
+                        .addOption("Token", token)
+                        .addOption("UserId", userId)
 
         let cmd = proc("Lobby.GetSessionWithUsers", param)
 
-        task {
-            let! sqlModels = queryMany<SessionUserSqlModel>(cmd, "Session") 
-            let sqlModelList = sqlModels |> Seq.toList
-            return match sqlModelList.Length with
-                    | 0 -> None
-                    | _ -> mapSessionUsers sqlModelList |> Some
-        }
+        let sessionOrError (xs : SessionUserSqlModel list) = 
+            match xs.Length with
+            | 0 -> Error <| HttpException(404, "Session not found")
+            | _ -> Ok <| (mapSessionUsers xs)
+                    
+        queryMany<SessionUserSqlModel>(cmd, "Session") 
+        |> thenBind sessionOrError
 
-    let createSessionWithUser(userId : int, token : string, expiresOn : DateTime) : Session Task =
-        let param = new DynamicParameters()
-        param.Add("UserId", userId)
-        param.Add("Token", token)
-        param.Add("ExpiresOn", expiresOn)
+    let createSessionWithUser(userId : int, token : string, expiresOn : DateTime) : Session AsyncHttpResult =
+        let param = DynamicParameters()
+                        .add("UserId", userId)
+                        .add("Token", token)
+                        .add("ExpiresOn", expiresOn)
 
         let cmd = proc("Lobby.CreateSessionWithUser", param)
 
-        task {
-            let! sessionId = querySingle<int>(cmd, "Session")
-            return! getSession(Some sessionId, None, None)
-                    |> Task.map (fun o -> o.Value)
-        }
+        querySingle<int>(cmd, "Session")
+        |> thenBindAsync(fun sessionId -> getSession(Some sessionId, None, None))
         
-    let addUserToSession(sessionId : int, userId : int) : Session option Task =
-        let param = new DynamicParameters()
-        param.Add("UserId", userId)
-        param.Add("SessionId", sessionId)
+    let addUserToSession(sessionId : int, userId : int) : Session AsyncHttpResult =
+        let param = DynamicParameters()
+                        .add("UserId", userId)
+                        .add("SessionId", sessionId)
         
         let cmd = proc("Lobby.AddUserToSession", param)
 
-        task {
-            let! _ = queryUnit(cmd, "Session")
-            return! getSession(Some sessionId, None, None)
-        }
+        queryUnit(cmd, "Session")
+        |> thenBindAsync (fun _ -> getSession(Some sessionId, None, None))
 
-    let removeUserFromSession(sessionId : int, userId : int) : Session option Task =
-        let param = new DynamicParameters()
-        param.Add("UserId", userId)
-        param.Add("SessionId", sessionId)
+    let removeUserFromSession(sessionId : int, userId : int) : Session AsyncHttpResult =
+        let param = DynamicParameters()
+                        .add("UserId", userId)
+                        .add("SessionId", sessionId)
         
         let cmd = proc("Lobby.RemoveUserFromSession", param)
+        
+        queryUnit(cmd, "Session")
+        |> thenBindAsync (fun _ -> getSession(Some sessionId, None, None))
 
-        task {
-            let! _ = queryUnit(cmd, "Session")
-            return! getSession(Some sessionId, None, None)
-        }
-
-    let renewSessionExpiration(sessionId : int, expiresOn : DateTime) : Session option Task =
-        let param = new DynamicParameters()
-        param.Add("SessionId", sessionId)
-        param.Add("ExpiresOn", expiresOn)
+    let renewSessionExpiration(sessionId : int, expiresOn : DateTime) : Session AsyncHttpResult =
+        let param = DynamicParameters()
+                        .add("SessionId", sessionId)
+                        .add("ExpiresOn", expiresOn)
         
         let cmd = proc("Lobby.RenewSessionExpiration", param)
 
-        task {
-            let! _ = queryUnit(cmd, "Session")
-            return! getSession(Some sessionId, None, None)
-        }
+        queryUnit(cmd, "Session")
+        |> thenBindAsync (fun _ -> getSession(Some sessionId, None, None))
 
-    let deleteSession(sessionId : int option, token : string option) : Unit Task =
-        let param = new DynamicParameters()
-        param.AddOption("SessionId", sessionId)
-        param.AddOption("Token", token)
+    let deleteSession(sessionId : int option, token : string option) : Unit AsyncHttpResult =
+        let param = DynamicParameters()
+                        .addOption("SessionId", sessionId)
+                        .addOption("Token", token)
 
         let cmd = proc("Lobby.DeleteSession", param)
         

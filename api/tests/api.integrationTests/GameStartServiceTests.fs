@@ -3,6 +3,7 @@
 open FSharp.Control.Tasks
 open Xunit
 open Djambi.Api.Common
+open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Common.Enums
 open Djambi.Api.Db
 open Djambi.Api.Db.Repositories
@@ -20,9 +21,9 @@ type GameStartServiceTests() =
     let ``Add virtual players should work``() =
         let gameRequest = getCreateGameRequest()
         task {
-            let! game = LobbyRepository.createGame gameRequest
-            let! players = GameStartService.addVirtualPlayers game
-            let! updatedGame = LobbyRepository.getGame game.id
+            let! game = LobbyRepository.createGame gameRequest |> thenValue
+            let! players = GameStartService.addVirtualPlayers game |> thenValue
+            let! updatedGame = LobbyRepository.getGame game.id |> thenValue
             Assert.Equal(gameRequest.boardRegionCount, updatedGame.players.Length)
             Assert.Equal<LobbyPlayer list>(players, updatedGame.players)
         }
@@ -31,8 +32,8 @@ type GameStartServiceTests() =
     let ``Get starting conditions should work``() =
         let gameRequest = getCreateGameRequest()
         task {
-            let! game = LobbyRepository.createGame gameRequest
-            let! players = GameStartService.addVirtualPlayers game
+            let! game = LobbyRepository.createGame gameRequest |> thenValue
+            let! players = GameStartService.addVirtualPlayers game |> thenValue
             let startingConditions = GameStartService.getStartingConditions players
 
             Assert.Equal(game.boardRegionCount, startingConditions.Length)
@@ -51,8 +52,8 @@ type GameStartServiceTests() =
     let ``Create pieces should work``() =    
         let gameRequest = getCreateGameRequest()
         task {
-            let! game = LobbyRepository.createGame gameRequest
-            let! players = GameStartService.addVirtualPlayers game
+            let! game = LobbyRepository.createGame gameRequest |> thenValue
+            let! players = GameStartService.addVirtualPlayers game |> thenValue
             let startingConditions = GameStartService.getStartingConditions players
             let board = BoardModelUtility.getBoardMetadata(game.boardRegionCount)
             let pieces = GameStartService.createPieces(board, startingConditions)
@@ -75,10 +76,10 @@ type GameStartServiceTests() =
     let ``Start game should work``() =
         let gameRequest = getCreateGameRequest()
         task {
-            let! game = LobbyRepository.createGame gameRequest
-            let! gameState = GameStartService.startGame game.id
+            let! game = LobbyRepository.createGame gameRequest |> thenValue
+            let! _ = GameStartService.startGame game.id |> thenValue
 
-            let! updated = LobbyRepository.getGame game.id
+            let! updated = LobbyRepository.getGame game.id |> thenValue
 
             Assert.Equal(GameStatus.Started, updated.status)
         }
