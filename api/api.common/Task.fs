@@ -42,6 +42,25 @@ module Task =
                 | Ok _ -> return Ok x
                 | Error y -> return Error y                    
         }
+
+    let thenDoEachAsync (action : 'a -> Unit HttpResult Task) (t : 'a seq HttpResult Task) : Unit HttpResult Task =
+        let doEachAsync (items : 'a seq) : Unit HttpResult Task =
+            task {
+                let mutable result = Ok ()
+                let mutable stop = false
+
+                use e = items.GetEnumerator()
+                while not stop && e.MoveNext() do
+                    let! res = action e.Current
+                    match res with
+                    | Error _ -> result <- res
+                                 stop <- true
+                    | _ -> ()
+
+                return result
+            }
+
+        t |> thenBindAsync doEachAsync
     
     let thenReplaceError (statusCode : int) (newException : HttpException) (t : 'a HttpResult Task) : 'a HttpResult Task =
         let mapIfMatch (oldException : HttpException) =

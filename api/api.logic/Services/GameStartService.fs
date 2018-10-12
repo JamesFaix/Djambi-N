@@ -2,8 +2,6 @@
 
 open System
 open System.Linq
-open System.Threading.Tasks
-open FSharp.Control.Tasks
 open Djambi.Api.Common
 open Djambi.Api.Common.Enums
 open Djambi.Api.Db.Repositories
@@ -15,28 +13,26 @@ open Djambi.Api.Model.PlayModel
 
 module GameStartService =
                 
-    let addVirtualPlayers(game : LobbyGameMetadata) : LobbyPlayer list Task =
-        task {
-            let missingPlayerCount = game.boardRegionCount - game.players.Length
-            if missingPlayerCount > 0
-            then
-                let! virtualPlayerNames = LobbyRepository.getVirtualPlayerNames()
-                let namesToUse = 
-                    Enumerable.Except(
-                        virtualPlayerNames, 
-                        game.players |> Seq.map (fun p -> p.name), 
-                        StringComparer.OrdinalIgnoreCase) 
-                    |> Utilities.shuffle
-                    |> Seq.take missingPlayerCount
-                    |> Seq.toList
+    let addVirtualPlayers(game : LobbyGameMetadata) : LobbyPlayer list AsyncHttpResult =
+        let missingPlayerCount = game.boardRegionCount - game.players.Length
 
-                for name in namesToUse do
-                    let! _ = LobbyRepository.addVirtualPlayerToGame(game.id, name)
-                    ()
-            else ()
-            let! updated = LobbyRepository.getGame(game.id)
-            return updated.players
-        }
+        let getVirtualNamesToUse (possibleNames : string list) = 
+            Enumerable.Except(
+                possibleNames, 
+                game.players |> Seq.map (fun p -> p.name), 
+                StringComparer.OrdinalIgnoreCase) 
+            |> Utilities.shuffle
+            |> Seq.take missingPlayerCount
+
+        if missingPlayerCount = 0
+        then LobbyRepository.getGame(game.id)
+             |> Task.thenMap (fun g -> g.players)
+        else
+            LobbyRepository.getVirtualPlayerNames()
+            |> Task.thenMap getVirtualNamesToUse
+            |> Task.thenDoEachAsync (fun name -> LobbyRepository.addVirtualPlayerToGame(game.id, name))
+            |> Task.thenBindAsync (fun _ -> LobbyRepository.getGame(game.id))
+            |> Task.thenMap (fun g -> g.players)
 
     let getStartingConditions(players : LobbyPlayer list) : PlayerStartConditions list =
         let colorIds = [0..(Constants.maxRegions-1)] |> Utilities.shuffle |> Seq.take players.Length
@@ -81,10 +77,13 @@ module GameStartService =
         |> List.mapi (fun i cond -> createPlayerPieces(board, cond, i*Constants.piecesPerPlayer))
         |> List.collect id
 
-    let startGame(gameId : int) : GameStartResponse Task =
-        task {
-            let! game = LobbyRepository.getGame gameId
-            let! lobbyPlayers = addVirtualPlayers game
+    let startGame(gameId : int) : GameStartResponse AsyncHttpResult =
+        LobbyRepository.getGame gameId
+        |> Task.thenBindAsync (fun game -> 
+            addVirtualPlayers game
+            |> Task.thenMap (fun lobbyPlayers -> (game, lobbyPlayers)))
+
+        |> Task.thenMap (fun (game, lobbyPlayers) -> 
             let startingConditions = getStartingConditions(lobbyPlayers)
             let board = BoardModelUtility.getBoardMetadata(game.boardRegionCount)
             let pieces = createPieces(board, startingConditions)
@@ -117,25 +116,17 @@ module GameStartService =
                         }
                 }
 
-            let (selectionOptions, requiredSelectionType) = PlayService.getSelectableCellsFromState gameWithoutSelectionOptions
-            
-            let turnState = { gameWithoutSelectionOptions.currentTurnState with selectionOptions = selectionOptions }
-
-            let updateRequest : UpdateGameForStartRequest = 
-                {
-                    id = gameId
-                    startingConditions = startingConditions
-                    currentGameState = gameState
-                    currentTurnState = turnState
-                }
-
-            let! _ = PlayRepository.startGame(updateRequest)
-
-            return 
-                {
-                    startingConditions = startingConditions
-                    gameState = gameState
-                    turnState = turnState
-                }
-        }
-
+            let (selectionOptions, _) = PlayService.getSelectableCellsFromState gameWithoutSelectionOptions
+            {
+                id = gameId
+                startingConditions = startingConditions
+                currentGameState = gameState
+                currentTurnState = { gameWithoutSelectionOptions.currentTurnState with selectionOptions = selectionOptions }
+            })
+        |> Task.thenDoAsync (fun updateRequest -> PlayRepository.startGame(updateRequest))
+        |> Task.thenMap (fun updateRequest -> 
+            {
+                startingConditions = updateRequest.startingConditions
+                gameState = updateRequest.currentGameState
+                turnState = updateRequest.currentTurnState
+            })
