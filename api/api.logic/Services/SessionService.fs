@@ -1,7 +1,6 @@
 ﻿namespace Djambi.Api.Logic.Services
 
 open System
-open System.Threading.Tasks
 open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Db.Repositories
@@ -46,7 +45,7 @@ module SessionService =
 
         let errorIfInvalidPassword (user : User) =
             if password = user.password
-            then Task.FromResult(Ok user)
+            then okTask user
             else 
                 let failedLoginAttempts = 
                     if isWithinLockTimeoutPeriod user

@@ -42,7 +42,7 @@ module HttpUtility =
         let token = ctx.Request.Cookies.Item(cookieName)
 
         if token |> String.IsNullOrEmpty
-        then HttpException(401, "Not currently logged in") |> Error |> Task.FromResult
+        then errorTask <| HttpException(401, "Not currently logged in")
         else 
             SessionService.getSession token
             |> thenReplaceError 404 (HttpException(401, "Session expired"))

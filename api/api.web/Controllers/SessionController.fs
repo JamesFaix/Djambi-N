@@ -1,7 +1,6 @@
 ﻿module Djambi.Api.Web.Controllers.SessionController
 
 open System
-open System.Threading.Tasks
 open Giraffe
 open Microsoft.AspNetCore.Http
 open Djambi.Api.Common
@@ -27,7 +26,7 @@ let createSessionWithUser : HttpHandler =
         let token = ctx.Request.Cookies.Item(HttpUtility.cookieName)
 
         if token |> String.IsNullOrEmpty |> not
-        then HttpException(409, "Already signed in") |> Error |> Task.FromResult
+        then errorTask <| HttpException(409, "Already signed in")
         else 
             ctx.BindModelAsync<LoginRequestJsonModel>()
             |> Task.map mapLoginRequestFromJson
@@ -46,7 +45,7 @@ let addUserToSession : HttpHandler =
         let token = ctx.Request.Cookies.Item(HttpUtility.cookieName)
 
         if token |> String.IsNullOrEmpty
-        then HttpException(401, "Not signed in") |> Error |> Task.FromResult
+        then errorTask <| HttpException(401, "Not signed in")
         else 
             ctx.BindModelAsync<LoginRequestJsonModel>()
             |> Task.map mapLoginRequestFromJson
@@ -63,7 +62,7 @@ let removeUserFromSession (userId : int) : HttpHandler =
         let token = ctx.Request.Cookies.Item(HttpUtility.cookieName)
 
         if token |> String.IsNullOrEmpty
-        then HttpException(401, "Not signed in") |> Error |> Task.FromResult
+        then errorTask <| HttpException(401, "Not signed in")
         else 
             SessionService.removeUserFromSession(userId, token)
             |> Task.map (fun result ->     
@@ -86,7 +85,7 @@ let closeSession : HttpHandler =
         let token = ctx.Request.Cookies.Item(HttpUtility.cookieName)
     
         if token |> String.IsNullOrEmpty
-        then HttpException(401, "Not signed in") |> Error |> Task.FromResult
+        then errorTask <| HttpException(401, "Not signed in")
         else 
             SessionService.closeSession token
             |> thenMap ignore        

@@ -1,8 +1,6 @@
 ﻿module Djambi.Api.Web.Controllers.PlayController
 
 open System
-open System.Threading.Tasks
-open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Logic.ModelExtensions
 open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
@@ -20,8 +18,7 @@ let startGame(gameId: int) =
 let getBoard(regionCount : int) =
     let func ctx =
         BoardModelUtility.getBoard regionCount
-        |> Ok 
-        |> Task.FromResult
+        |> okTask
     handle func
             
 let getCellPaths(regionCount : int, cellId : int) =
@@ -30,8 +27,7 @@ let getCellPaths(regionCount : int, cellId : int) =
         let cell = board.cells() |> Seq.find(fun c -> c.id = cellId)
         board.pathsFromCell(cell)
         |> List.map (List.map (fun c -> c.id))
-        |> Ok 
-        |> Task.FromResult
+        |> okTask
     handle func
 
 //Gameplay

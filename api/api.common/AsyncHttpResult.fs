@@ -101,3 +101,9 @@ let thenValue (t : 'a AsyncHttpResult) : 'a Task =
     
 let thenError (t : 'a AsyncHttpResult) : HttpException Task =
     t |> map Result.error
+
+let okTask (value : 'a): 'a AsyncHttpResult =
+    value |> Ok |> Task.FromResult
+    
+let errorTask (ex : HttpException) : 'a AsyncHttpResult =
+    ex |> Error |> Task.FromResult
