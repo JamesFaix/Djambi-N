@@ -35,22 +35,18 @@ let queryMany<'a>(command : CommandDefinition, entityType : string) : 'a list As
     }
 
 let querySingle<'a>(command : CommandDefinition, entityType : string) : 'a AsyncHttpResult =
-    task {
-        let singleOrError (xs : 'a list) =
-            match xs.Length with
-            | 1 -> Ok <| xs.[0]
-            | 0 -> Error <| HttpException(404, sprintf "%s not found." entityType)
-            | _ -> Error <| HttpException(500, sprintf "An unknown error occurred when manipulating %s." entityType)
+    let singleOrError (xs : 'a list) =
+        match xs.Length with
+        | 1 -> Ok <| xs.[0]
+        | 0 -> Error <| HttpException(404, sprintf "%s not found." entityType)
+        | _ -> Error <| HttpException(500, sprintf "An unknown error occurred when manipulating %s." entityType)
         
-        return! queryMany<'a>(command, entityType)
-                |> Task.thenBind singleOrError
-    }
+    queryMany<'a>(command, entityType)
+    |> Task.thenBind singleOrError
 
 let queryUnit(command : CommandDefinition, entityType : string) : Unit AsyncHttpResult =
-    task {
-        return! queryMany<Unit>(command, entityType) 
-                |> Task.thenMap List.head
-    }
+    queryMany<Unit>(command, entityType) 
+    |> Task.thenMap ignore
 
 type DynamicParameters with
     member this.add<'a>(name : string, value : 'a) : DynamicParameters =

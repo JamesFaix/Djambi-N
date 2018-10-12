@@ -52,7 +52,7 @@ let thenDoEachAsync (action : 'a -> Unit HttpResult Task) (t : 'a seq HttpResult
                 let! res = action e.Current
                 match res with
                 | Error _ -> result <- res
-                                stop <- true
+                             stop <- true
                 | _ -> ()
 
             return result
