@@ -7,7 +7,5 @@ type HttpException(statusCode : int, message: string) =
     inherit Exception(message)
 
     member this.statusCode = statusCode
-
-type HttpResult<'a> = Result<'a, HttpException>
-
-type AsyncHttpResult<'a> = Task<HttpResult<'a>>
+    
+type AsyncHttpResult<'a> = Task<Result<'a, HttpException>>

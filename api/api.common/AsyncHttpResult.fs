@@ -12,7 +12,7 @@ let thenMap
     t |> map (Result.map projection)
 
 let thenBind 
-    (projection : 'a -> 'b HttpResult) 
+    (projection : 'a -> Result<'b, HttpException>) 
     (t : 'a AsyncHttpResult) 
     : 'b AsyncHttpResult =
 
@@ -23,7 +23,7 @@ let thenBindAsync
     (t : 'a AsyncHttpResult) 
     : 'b AsyncHttpResult =
 
-    let projectIfValue (result : 'a HttpResult) =
+    let projectIfValue (result : Result<'a, HttpException>) =
         match result with
         | Ok x -> projection x
         | Error x -> Task.FromResult(Error x)
@@ -84,7 +84,7 @@ let thenReplaceError
        
 let thenBindError 
     (statusCode : int) 
-    (projection : HttpException -> 'a HttpResult) 
+    (projection : HttpException -> Result<'a, HttpException>) 
     (t : 'a AsyncHttpResult) 
     : 'a AsyncHttpResult =
 
