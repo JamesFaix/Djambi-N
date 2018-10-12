@@ -16,3 +16,19 @@ module Task =
             let! result = t
             return! projection result
         }
+
+    let thenMap (projection : 'a -> 'b) (t : 'a HttpResult Task) : 'b HttpResult Task =
+        t |> map (Result.map projection)
+
+    let thenBind (projection : 'a -> 'b HttpResult) (t : 'a HttpResult Task) : 'b HttpResult Task =
+        t |> map (Result.bind projection)
+
+    let thenBindAsync (projection : 'a -> 'b HttpResult Task) (t : 'a HttpResult Task) : 'b HttpResult Task =
+        task {
+            let! result = t
+            match result with
+            | Ok x -> 
+                return! projection x
+            | Error x -> 
+                return Error x                
+        }

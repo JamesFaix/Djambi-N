@@ -1,8 +1,6 @@
 ﻿namespace Djambi.Api.Db.Repositories
 
-open System.Threading.Tasks
 open Dapper
-open FSharp.Control.Tasks
 open Djambi.Api.Common
 open Djambi.Api.Common.Enums
 open Djambi.Api.Db.Mappings.LobbyDbMapping
@@ -13,93 +11,83 @@ open Djambi.Api.Model.LobbyModel
 module LobbyRepository =
 
 //Games
-    let createGame(request : CreateGameRequest) : LobbyGameMetadata Task =
-        let param = new DynamicParameters()
-        param.Add("BoardRegionCount", request.boardRegionCount)
-        param.AddOption("Description", request.description)
+    let createGame(request : CreateGameRequest) : LobbyGameMetadata AsyncHttpResult =
+        let param = DynamicParameters()
+                        .add("BoardRegionCount", request.boardRegionCount)
+                        .addOption("Description", request.description)
 
         let cmd = proc("Lobby.CreateGame", param)
 
-        task {
-            let! gameId = querySingle<int>(cmd, "Game")
-            return {
+        let mapGame (gameId : int) =
+            {
                 id = gameId 
                 description = request.description
                 status = GameStatus.Open
                 boardRegionCount = request.boardRegionCount
                 players = List.empty
             }
-        }
+
+        querySingle<int>(cmd, "Game")
+        |> Task.thenMap mapGame
         
-    let deleteGame(gameId : int) : Unit Task =
-        let param = new DynamicParameters()
-        param.Add("GameId", gameId)
+    let deleteGame(gameId : int) : Unit AsyncHttpResult =
+        let param = DynamicParameters()
+                        .add("GameId", gameId)
         let cmd = proc("Lobby.DeleteGame", param)
         queryUnit(cmd, "Game")
 
-    let private getGamesInner(gameId : int option, userId : int option, status : GameStatus option) : LobbyGameMetadata list Task =
-        let param = new DynamicParameters()
-        param.AddOption("GameId", gameId)
-        param.AddOption("UserId", userId)
-        param.AddOption("StatusId", status |> Option.map mapGameStatusToId)
+    let private getGamesInner(gameId : int option, userId : int option, status : GameStatus option) : LobbyGameMetadata list AsyncHttpResult =
+        let param = DynamicParameters()
+                        .addOption("GameId", gameId)
+                        .addOption("UserId", userId)
+                        .addOption("StatusId", status |> Option.map mapGameStatusToId)
         let cmd = proc("Lobby.GetGamesWithPlayers", param)
 
-        task {
-            let! sqlModels = queryMany<LobbyGamePlayerSqlModel>(cmd, "Game")
-            return sqlModels |> mapLobbyGamesResponse
-        }
+        queryMany<LobbyGamePlayerSqlModel>(cmd, "Game")
+        |> Task.thenMap mapLobbyGamesResponse
         
-    let getGame(gameId : int) : LobbyGameMetadata Task =
+    let getGame(gameId : int) : LobbyGameMetadata AsyncHttpResult =
         getGamesInner(Some gameId, None, None)
-        |> Task.map List.head
+        |> Task.thenMap List.head
 
-    let getGames() : LobbyGameMetadata list Task =
+    let getGames() : LobbyGameMetadata list AsyncHttpResult =
         getGamesInner(None, None, None)
 
-    let getOpenGames() : LobbyGameMetadata list Task =
+    let getOpenGames() : LobbyGameMetadata list AsyncHttpResult =
         getGamesInner(None, None, Some Open)
 
-    let getUserGames(userId : int) : LobbyGameMetadata list Task =
+    let getUserGames(userId : int) : LobbyGameMetadata list AsyncHttpResult =
         getGamesInner(None, Some userId, None)
 
 //Players
-    let addPlayerToGame(gameId : int, userId : int) : Unit Task =
-        let param = new DynamicParameters()
-        param.Add("GameId", gameId)
-        param.Add("UserId", userId)
+    let addPlayerToGame(gameId : int, userId : int) : Unit AsyncHttpResult =
+        let param = DynamicParameters()
+                        .add("GameId", gameId)
+                        .add("UserId", userId)
         
         let cmd = proc("Lobby.AddPlayerToGame", param)
 
-        task {
-            let! playerId = querySingle<int>(cmd, "Player") //Id not currently used
-            return ()
-        }
+        querySingle<int>(cmd, "Player")
+        |> Task.thenMap ignore  //Id not currently used
 
-    let addVirtualPlayerToGame(gameId : int, name : string) : Unit Task =
-        let param = new DynamicParameters()
-        param.Add("GameId", gameId)
-        param.Add("Name", name)
+    let addVirtualPlayerToGame(gameId : int, name : string) : Unit AsyncHttpResult =
+        let param = DynamicParameters()
+                        .add("GameId", gameId)
+                        .add("Name", name)
 
         let cmd = proc("Lobby.AddVirtualPlayerToGame", param)
+                
+        querySingle<int>(cmd, "Player")
+        |> Task.thenMap ignore  //Id not currently used
 
-        task {
-            let! playerId = querySingle<int>(cmd, "Player") //Id not currently used
-            return ()
-        }
-
-    let removePlayerFromGame(gameId : int, userId : int) : Unit Task =
-        let param = new DynamicParameters()
-        param.Add("GameId", gameId)
-        param.Add("UserId", userId)
+    let removePlayerFromGame(gameId : int, userId : int) : Unit AsyncHttpResult =
+        let param = DynamicParameters()
+                        .add("GameId", gameId)
+                        .add("UserId", userId)
         let cmd = proc("Lobby.RemovePlayerFromGame", param)
         queryUnit(cmd, "Player")
 
-    let getVirtualPlayerNames() : string list Task =
+    let getVirtualPlayerNames() : string list AsyncHttpResult =
         let param = new DynamicParameters()
-
         let cmd = proc("Lobby.GetVirtualPlayerNames", param)
-
-        task {
-            return! queryMany<string>(cmd, "Virtual player names")
-                    |> Task.map Seq.toList
-        } 
+        queryMany<string>(cmd, "Virtual player names")
