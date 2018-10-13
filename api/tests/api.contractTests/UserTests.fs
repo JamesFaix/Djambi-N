@@ -5,19 +5,13 @@ open System.Net
 open FSharp.Control.Tasks
 open Xunit
 open Djambi.Api.Common
-open Djambi.Api.Web.Model.LobbyWebModel
 open Djambi.Api.WebClient
 
 [<Fact>]
 let ``POST user should work`` () =
     task {
         //Arrange
-        let request = 
-            {
-                name = Guid.NewGuid().ToString()
-                password = "test"
-                role = "Normal"
-            }
+        let request = RequestFactory.createUserRequest()
     
         //Act
         let! response = UserRepository.createUser request
@@ -34,13 +28,7 @@ let ``POST user should work`` () =
 let ``POST user should fail if name conflict`` () =
     task {
         //Arrange
-        let request = 
-            {
-                name = Guid.NewGuid().ToString()
-                password = "test"
-                role = "Normal"
-            }
-
+        let request = RequestFactory.createUserRequest()
         let! _ = UserRepository.createUser request
     
         //Act
@@ -54,13 +42,7 @@ let ``POST user should fail if name conflict`` () =
 let ``GET user should work`` () =
     task {
         //Arrange
-        let request = 
-            {
-                name = Guid.NewGuid().ToString()
-                password = "test"
-                role = "Normal"
-            }
-
+        let request = RequestFactory.createUserRequest()
         let! user = UserRepository.createUser request
                     |> Task.map (fun resp -> resp.result |> Result.value)
     
@@ -92,13 +74,7 @@ let ``GET user should fail if user doesnt exist`` () =
 let ``DELETE user should work`` () =
     task {
         //Arrange
-        let request = 
-            {
-                name = Guid.NewGuid().ToString()
-                password = "test"
-                role = "Normal"
-            }
-    
+        let request = RequestFactory.createUserRequest()    
         let! user = UserRepository.createUser request
                     |> Task.map (fun resp -> resp.result |> Result.value)
 
@@ -115,13 +91,7 @@ let ``DELETE user should work`` () =
 let ``DELETE user should fail if already deleted`` () =
     task {
         //Arrange
-        let request = 
-            {
-                name = Guid.NewGuid().ToString()
-                password = "test"
-                role = "Normal"
-            }
-    
+        let request = RequestFactory.createUserRequest()    
         let! user = UserRepository.createUser request
                     |> Task.map (fun resp -> resp.result |> Result.value)
 
@@ -132,4 +102,29 @@ let ``DELETE user should fail if already deleted`` () =
         
         //Assert
         response |> shouldBeError HttpStatusCode.NotFound "User not found."
+    }
+
+[<Fact>]
+let ``GET users should return multiple users`` () =
+    task {
+        //Arrange
+        let request1 = RequestFactory.createUserRequest()
+        let request2 = RequestFactory.createUserRequest()
+
+        let! user1 = UserRepository.createUser request1
+                     |> Task.map (fun resp -> resp.result |> Result.value)
+                     
+        let! user2 = UserRepository.createUser request2
+                     |> Task.map (fun resp -> resp.result |> Result.value)
+    
+        //Act
+        let! response = UserRepository.getUsers ()
+        
+        //Assert
+        response |> shouldHaveStatus HttpStatusCode.OK
+                
+        let responseUsers = response.result |> Result.value
+        responseUsers.Length |> shouldBeAtLeast 2
+        responseUsers |> shouldExist (fun u -> u.id = user1.id)
+        responseUsers |> shouldExist (fun u -> u.id = user2.id)
     }

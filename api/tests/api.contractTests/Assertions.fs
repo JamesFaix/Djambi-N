@@ -24,6 +24,12 @@ let shouldBeSome<'a> (o : 'a option) =
 let shouldBeNone<'a> (o : 'a option) =
     Assert.True(o.IsNone)
 
+let shouldBeAtLeast<'a when 'a : comparison> (minimum : 'a) (actual : 'a) =
+    Assert.True(actual >= minimum)
+
+let shouldBeAtMost<'a when 'a : comparison> (maximum : 'a) (actual : 'a) =
+    Assert.True(actual <= maximum)
+
 let shouldHaveStatus<'a> (statusCode : HttpStatusCode) (response : Response<'a>) =
     Assert.Equal(statusCode, response.statusCode)
 
@@ -31,3 +37,7 @@ let shouldBeError<'a> (statusCode : HttpStatusCode) (message : string) (response
     Assert.Equal(statusCode, response.statusCode)
     Assert.True(response.result |> Result.isError)
     Assert.Equal(message, response.result |> Result.error)
+
+let shouldExist<'a> (predicate: 'a -> bool) (xs: 'a seq) =
+    xs |> Seq.exists predicate
+       |> shouldBeTrue
