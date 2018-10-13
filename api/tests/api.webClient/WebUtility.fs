@@ -75,7 +75,7 @@ let sendRequest<'a, 'b> (httpVerb : string,
 
         return 
             {
-                result = result
+                body = result
                 statusCode = webResponse.StatusCode
                 headers = headers
             }

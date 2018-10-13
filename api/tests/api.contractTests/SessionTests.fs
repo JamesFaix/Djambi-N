@@ -22,7 +22,7 @@ let ``Create session should work``() =
 
         response.getToken() |> shouldBeSome
 
-        let session = response.result |> Result.value
+        let session = response.body |> Result.value
         session.id |> shouldNotBe 0
         session.userIds.Length |> shouldBe 1
     }
@@ -44,4 +44,20 @@ let ``Create session should fail if user has another session``() =
         //Assert
         response2 |> shouldBeError HttpStatusCode.Conflict "Already signed in."
         response2.getToken() |> shouldBeNone
+    }
+
+[<Fact>]
+let ``Create session should fail if request has a token``() =
+    task {
+        //Arrange
+        let createUserRequest = RequestFactory.createUserRequest()    
+        let! _ = UserRepository.createUser createUserRequest
+        let request = RequestFactory.loginRequest createUserRequest
+    
+        //Act
+        let! response = SessionRepository.tryToCreateSessionWithToken(request, "someToken")
+
+        //Assert
+        response |> shouldBeError HttpStatusCode.Conflict "Already signed in."
+        response.getToken() |> shouldBeNone
     }

@@ -35,8 +35,8 @@ let shouldHaveStatus<'a> (statusCode : HttpStatusCode) (response : Response<'a>)
 
 let shouldBeError<'a> (statusCode : HttpStatusCode) (message : string) (response : Response<'a>) =
     Assert.Equal(statusCode, response.statusCode)
-    Assert.True(response.result |> Result.isError)
-    Assert.Equal(message, response.result |> Result.error)
+    Assert.True(response.body |> Result.isError)
+    Assert.Equal(message, response.body |> Result.error)
 
 let shouldExist<'a> (predicate: 'a -> bool) (xs: 'a seq) =
     xs |> Seq.exists predicate

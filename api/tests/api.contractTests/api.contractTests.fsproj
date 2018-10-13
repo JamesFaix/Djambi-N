@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="RequestFactory.fs" />
     <Compile Include="Assertions.fs" />
     <Compile Include="UserTests.fs" />
     <Compile Include="SessionTests.fs" />

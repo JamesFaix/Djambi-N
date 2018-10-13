@@ -19,7 +19,7 @@ let ``POST user should work`` () =
         //Assert
         response |> shouldHaveStatus HttpStatusCode.OK
                 
-        let user = response.result |> Result.value
+        let user = response.bodyValue
         user.name |> shouldBe request.name
         user.role |> shouldBe request.role
     }
@@ -44,7 +44,7 @@ let ``GET user should work`` () =
         //Arrange
         let request = RequestFactory.createUserRequest()
         let! user = UserRepository.createUser request
-                    |> Task.map (fun resp -> resp.result |> Result.value)
+                    |> AsyncResponse.bodyValue
     
         //Act
         let! response = UserRepository.getUser user.id
@@ -52,7 +52,7 @@ let ``GET user should work`` () =
         //Assert
         response |> shouldHaveStatus HttpStatusCode.OK
                 
-        let responseUser = response.result |> Result.value
+        let responseUser = response.bodyValue
         responseUser.name |> shouldBe request.name
         responseUser.role |> shouldBe request.role
     }
@@ -76,7 +76,7 @@ let ``DELETE user should work`` () =
         //Arrange
         let request = RequestFactory.createUserRequest()    
         let! user = UserRepository.createUser request
-                    |> Task.map (fun resp -> resp.result |> Result.value)
+                    |> AsyncResponse.bodyValue
 
         //Act
         let! deleteResponse = UserRepository.deleteUser user.id
@@ -93,7 +93,7 @@ let ``DELETE user should fail if already deleted`` () =
         //Arrange
         let request = RequestFactory.createUserRequest()    
         let! user = UserRepository.createUser request
-                    |> Task.map (fun resp -> resp.result |> Result.value)
+                    |> AsyncResponse.bodyValue
 
         let! _ = UserRepository.deleteUser user.id
 
@@ -112,10 +112,10 @@ let ``GET users should return multiple users`` () =
         let request2 = RequestFactory.createUserRequest()
 
         let! user1 = UserRepository.createUser request1
-                     |> Task.map (fun resp -> resp.result |> Result.value)
+                     |> AsyncResponse.bodyValue
                      
         let! user2 = UserRepository.createUser request2
-                     |> Task.map (fun resp -> resp.result |> Result.value)
+                     |> AsyncResponse.bodyValue
     
         //Act
         let! response = UserRepository.getUsers ()
@@ -123,7 +123,7 @@ let ``GET users should return multiple users`` () =
         //Assert
         response |> shouldHaveStatus HttpStatusCode.OK
                 
-        let responseUsers = response.result |> Result.value
+        let responseUsers = response.bodyValue
         responseUsers.Length |> shouldBeAtLeast 2
         responseUsers |> shouldExist (fun u -> u.id = user1.id)
         responseUsers |> shouldExist (fun u -> u.id = user2.id)
