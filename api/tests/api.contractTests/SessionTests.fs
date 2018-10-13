@@ -31,13 +31,13 @@ let ``Create session should work``() =
         let! response = SessionRepository.createSession request
         
         //Assert
-        Assert.Equal(HttpStatusCode.OK, response.statusCode)
+        response |> shouldHaveStatus HttpStatusCode.OK
 
-        Assert.True(response.getToken().IsSome)
+        response.getToken() |> shouldBeSome
 
         let session = response.result |> Result.value
-        Assert.NotEqual(0, session.id)
-        Assert.Equal(1, session.userIds.Length)
+        session.id |> shouldNotBe 0
+        session.userIds.Length |> shouldBe 1
     }
 
 [<Fact>]
@@ -60,15 +60,12 @@ let ``Create session should fail if user has another session``() =
             }
     
         let! response1 = SessionRepository.createSession request
-        Assert.Equal(HttpStatusCode.OK, response1.statusCode)
+        response1 |> shouldHaveStatus HttpStatusCode.OK
 
         //Act
         let! response2 = SessionRepository.createSession request
         
         //Assert
-        Assert.Equal(HttpStatusCode.Conflict, response2.statusCode)
-
-        Assert.True(response2.getToken().IsNone)
-        let message = response2.result  |> Result.error
-        Assert.Equal("Already signed in", message)
+        response2 |> shouldBeError HttpStatusCode.Conflict "Already signed in."
+        response2.getToken() |> shouldBeNone
     }
