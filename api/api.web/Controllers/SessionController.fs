@@ -54,7 +54,8 @@ let addUserToSession : HttpHandler =
                 |> thenMap (fun session -> 
                     appendCookie ctx (session.token, session.expiresOn)
                     session |> mapSessionResponse)
-                )
+                )            
+            |> thenReplaceError 409 (HttpException(409, "Already signed in."))
     handle func
 
 let removeUserFromSession (userId : int) : HttpHandler =

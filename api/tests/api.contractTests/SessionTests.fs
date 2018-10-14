@@ -275,7 +275,7 @@ let ``Add user to session should fail if user already has session``() =
         let! lockedResponse = SessionRepository.addUserToSession(loginRequest3, token2)
 
         //Assert
-        lockedResponse |> shouldBeError HttpStatusCode.Unauthorized "Already signed in."
+        lockedResponse |> shouldBeError HttpStatusCode.Conflict "Already signed in."
     } :> Task
 
 [<Test>]
@@ -292,5 +292,5 @@ let ``Add user to session should fail if user is already in current session``() 
         let! lockedResponse = SessionRepository.addUserToSession(loginRequest, token)
 
         //Assert
-        lockedResponse |> shouldBeError HttpStatusCode.Unauthorized "Already signed in."
+        lockedResponse |> shouldBeError HttpStatusCode.Conflict "Already signed in."
     } :> Task

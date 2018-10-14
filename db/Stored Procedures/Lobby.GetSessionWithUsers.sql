@@ -8,7 +8,7 @@ BEGIN
 
 	IF (@SessionId IS NOT NULL)
 	AND (@Token IS NOT NULL)
-		THROW 50000, 'Cannot get session using both Id and Token, must use one or the other.', 1
+		THROW 50500, 'Cannot get session using both Id and Token, must use one or the other.', 1
 		
 	SELECT s.SessionId,
 		s.Token,

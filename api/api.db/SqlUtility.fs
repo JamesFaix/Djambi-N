@@ -31,6 +31,8 @@ let queryMany<'a>(command : CommandDefinition, entityType : string) : 'a list As
             return! SqlMapper.QueryAsync<'a>(connection, command)
                     |> Task.map (Seq.toList >> Ok)
         with
+        | :? SqlException as ex when ex.Number >= 50400 && ex.Number <= 50599 ->
+            return Error <| HttpException(ex.Number % 50000, ex.Message)
         | :? SqlException as ex when Regex.IsMatch(ex.Message, "Violation of.*constraint.*") -> 
             return Error <| HttpException(409, sprintf "Conflict when attempting to write %s." entityType)
     }
