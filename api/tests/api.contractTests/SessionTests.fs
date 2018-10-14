@@ -4,7 +4,6 @@ open System.Net
 open System.Threading.Tasks
 open FSharp.Control.Tasks
 open NUnit.Framework
-open Djambi.Api.Common
 open Djambi.Api.Web.Model.LobbyWebModel
 open Djambi.Api.WebClient
 
@@ -112,22 +111,20 @@ let ``Create session should fail with locked message on 6th incorrect password a
 let ``Add user to session should work``() =
     task {
         //Arrange
-        let createUserRequest1 = RequestFactory.createUserRequest()
-        let createUserRequest2 = RequestFactory.createUserRequest()
-        let! user1 = UserRepository.createUser createUserRequest1 |> AsyncResponse.bodyValue
-        let! user2 = UserRepository.createUser createUserRequest2 |> AsyncResponse.bodyValue
-        let loginRequest1 = RequestFactory.loginRequest createUserRequest1
-        let loginRequest2 = RequestFactory.loginRequest createUserRequest2
-        let! response1 = SessionRepository.createSession loginRequest1
+        let! (user1, token) = SetupUtility.createUserAndSignIn()
+        
+        let createUserRequest = RequestFactory.createUserRequest()
+        let! user2 = UserRepository.createUser createUserRequest |> AsyncResponse.bodyValue
+        let loginRequest = RequestFactory.loginRequest createUserRequest
     
         //Act
-        let! response2 = SessionRepository.addUserToSession(loginRequest2, response1.getToken().Value)
+        let! response = SessionRepository.addUserToSession(loginRequest, token)
         
         //Assert
-        response2 |> shouldHaveStatus HttpStatusCode.OK
-        response2.getToken() |> shouldBe(response1.getToken())
+        response |> shouldHaveStatus HttpStatusCode.OK
+        response.getToken().Value |> shouldBe token
 
-        let session = response2.bodyValue
+        let session = response.bodyValue
         session.id |> shouldNotBe 0
         session.userIds.Length |> shouldBe 2
         session.userIds |> shouldExist (fun id -> id = user1.id)
@@ -154,11 +151,7 @@ let ``Add user to session should fail if no current session``() =
 let ``Add user to session should fail if session has 8 users already``() =
     task {
         //Arrange
-        let createUserRequest1 = RequestFactory.createUserRequest()
-        let! _ = UserRepository.createUser createUserRequest1
-        let loginRequest1 = RequestFactory.loginRequest createUserRequest1
-        let! sessionResponse = SessionRepository.createSession loginRequest1
-        let token = sessionResponse.getToken().Value
+        let! (_, token) = SetupUtility.createUserAndSignIn()
 
         for _ in [2..8] do
             let createUserRequestN = RequestFactory.createUserRequest()
@@ -183,11 +176,7 @@ let ``Add user to session should fail if session has 8 users already``() =
 let ``Add user to session should fail if incorrect password``() =
     task {    
         //Arrange
-        let createUserRequest1 = RequestFactory.createUserRequest()
-        let! _ = UserRepository.createUser createUserRequest1
-        let loginRequest1 = RequestFactory.loginRequest createUserRequest1
-        let! sessionResponse = SessionRepository.createSession loginRequest1
-        let token = sessionResponse.getToken().Value
+        let! (_, token) = SetupUtility.createUserAndSignIn()
 
         let createUserRequest2 = RequestFactory.createUserRequest()    
         let! _ = UserRepository.createUser createUserRequest2
@@ -209,11 +198,7 @@ let ``Add user to session should fail if incorrect password``() =
 let ``Add user to session should fail with locked message on 6th incorrect password attempt``() =
     task {
         //Arrange
-        let createUserRequest1 = RequestFactory.createUserRequest()
-        let! _ = UserRepository.createUser createUserRequest1
-        let loginRequest1 = RequestFactory.loginRequest createUserRequest1
-        let! sessionResponse = SessionRepository.createSession loginRequest1
-        let token = sessionResponse.getToken().Value
+        let! (_, token) = SetupUtility.createUserAndSignIn()
 
         let createUserRequest2 = RequestFactory.createUserRequest()    
         let! _ = UserRepository.createUser createUserRequest2
@@ -253,26 +238,17 @@ let ``Add user to session should fail if invalid token``() =
 let ``Add user to session should fail if user already has session``() =
     task {
         //Arrange
-        let createUserRequest1 = RequestFactory.createUserRequest()
-        let! _ = UserRepository.createUser createUserRequest1
-        let loginRequest1 = RequestFactory.loginRequest createUserRequest1
-        let! token1 = SessionRepository.createSession loginRequest1
-                      |> Task.map (fun resp -> resp.getToken().Value)
+        let! (_, token1) = SetupUtility.createUserAndSignIn()        
+        let! (_, token2) = SetupUtility.createUserAndSignIn()
 
-        let createUserRequest2 = RequestFactory.createUserRequest()
-        let! _ = UserRepository.createUser createUserRequest2
-        let loginRequest2 = RequestFactory.loginRequest createUserRequest2
-        let! token2 = SessionRepository.createSession loginRequest2
-                      |> Task.map (fun resp -> resp.getToken().Value)
+        let createUserRequest = RequestFactory.createUserRequest()
+        let! _ = UserRepository.createUser createUserRequest
+        let loginRequest = RequestFactory.loginRequest createUserRequest
 
-        let createUserRequest3 = RequestFactory.createUserRequest()
-        let! _ = UserRepository.createUser createUserRequest3
-        let loginRequest3 = RequestFactory.loginRequest createUserRequest3
-
-        let! _ = SessionRepository.addUserToSession(loginRequest3, token1)
+        let! _ = SessionRepository.addUserToSession(loginRequest, token1)
 
         //Act
-        let! lockedResponse = SessionRepository.addUserToSession(loginRequest3, token2)
+        let! lockedResponse = SessionRepository.addUserToSession(loginRequest, token2)
 
         //Assert
         lockedResponse |> shouldBeError HttpStatusCode.Conflict "Already signed in."
@@ -360,16 +336,8 @@ let ``Remove user from session should fail if no current session``() =
 let ``Remove user from session should fail if user is in a different session``() =
     task {
         //Arrange
-        let createUserRequest1 = RequestFactory.createUserRequest()
-        let! _ = UserRepository.createUser createUserRequest1 |> AsyncResponse.bodyValue
-        let loginRequest1 = RequestFactory.loginRequest createUserRequest1
-        let! sessionResponse1 = SessionRepository.createSession loginRequest1
-        let token1 = sessionResponse1.getToken().Value
-                    
-        let createUserRequest2 = RequestFactory.createUserRequest()
-        let! user2 = UserRepository.createUser createUserRequest2 |> AsyncResponse.bodyValue
-        let loginRequest2 = RequestFactory.loginRequest createUserRequest2
-        let! _ = SessionRepository.createSession loginRequest2
+        let! (_, token1) = SetupUtility.createUserAndSignIn()
+        let! (user2, _) = SetupUtility.createUserAndSignIn()
 
         //Act
         let! response = SessionRepository.removeUserFromSession(user2.id, token1)
@@ -382,10 +350,7 @@ let ``Remove user from session should fail if user is in a different session``()
 let ``Remove user from session should fail if invalid token``() =
     task {
         //Arrange
-        let createUserRequest = RequestFactory.createUserRequest()
-        let! user = UserRepository.createUser createUserRequest |> AsyncResponse.bodyValue
-        let loginRequest = RequestFactory.loginRequest createUserRequest
-        let! _ = SessionRepository.createSession loginRequest
+        let! (user, _) = SetupUtility.createUserAndSignIn()
             
         //Act
         let! response = SessionRepository.removeUserFromSession(user.id, "invalidToken")
@@ -398,16 +363,8 @@ let ``Remove user from session should fail if invalid token``() =
 let ``Close session should work``() =
     task {
         //Arrange
-        let createUserRequest1 = RequestFactory.createUserRequest()
-        let! _ = UserRepository.createUser createUserRequest1 |> AsyncResponse.bodyValue
-        let loginRequest1 = RequestFactory.loginRequest createUserRequest1
-        let! sessionResponse = SessionRepository.createSession loginRequest1
-        let token = sessionResponse.getToken().Value
-
-        let createUserRequest2 = RequestFactory.createUserRequest()
-        let! _ = UserRepository.createUser createUserRequest2 |> AsyncResponse.bodyValue
-        let loginRequest2 = RequestFactory.loginRequest createUserRequest2
-        let! _ = SessionRepository.addUserToSession(loginRequest2, token)
+        let! (_, token) = SetupUtility.createUserAndSignIn()
+        let! _ = SetupUtility.createUserAndAddToSession token
     
         //Act
         let! response = SessionRepository.closeSession token

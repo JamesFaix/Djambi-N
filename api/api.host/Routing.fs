@@ -17,13 +17,14 @@ module Routing =
                     POST >=> route "/sessions/users" >=> SessionController.addUserToSession
                     DELETE >=> routef "/sessions/users/%i" SessionController.removeUserFromSession
 
-                //Lobby
+                //Users
                     POST >=> route "/users" >=> UserController.createUser
                     GET >=> routef "/users/%i" UserController.getUser
                     GET >=> route "/users" >=> UserController.getUsers
                     DELETE >=> routef "/users/%i" UserController.deleteUser
                     PATCH >=> routef "/users/%i" UserController.updateUser
 
+                //Lobby
                     GET >=> route "/games/open" >=> LobbyController.getOpenGames
                     GET >=> routef "/users/%i/games" LobbyController.getUserGames
                     GET >=> route "/games" >=> LobbyController.getGames

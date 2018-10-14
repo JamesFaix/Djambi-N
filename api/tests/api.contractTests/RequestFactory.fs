@@ -16,3 +16,9 @@ let loginRequest (createUserRequest : CreateUserJsonModel) : LoginRequestJsonMod
         userName = createUserRequest.name
         password = createUserRequest.password
     }
+
+let createGameRequest () : CreateGameJsonModel =
+    {
+        boardRegionCount = 3
+        description = "test"
+    }

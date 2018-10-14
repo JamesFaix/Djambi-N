@@ -9,9 +9,11 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="RequestFactory.fs" />
+    <Compile Include="SetupUtility.fs" />
     <Compile Include="Assertions.fs" />
     <Compile Include="UserTests.fs" />
     <Compile Include="SessionTests.fs" />
+    <Compile Include="LobbyTests.fs" />
   </ItemGroup>
 
   <ItemGroup>
