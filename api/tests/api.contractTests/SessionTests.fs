@@ -1,13 +1,14 @@
 ﻿module Djambi.Api.ContractTests.SessionTests
 
 open System.Net
+open System.Threading.Tasks
 open FSharp.Control.Tasks
-open Xunit
+open NUnit.Framework
 open Djambi.Api.Common
 open Djambi.Api.Web.Model.LobbyWebModel
 open Djambi.Api.WebClient
 
-[<Fact>]
+[<Test>]
 let ``Create session should work``() =
     task {
         //Arrange
@@ -27,9 +28,9 @@ let ``Create session should work``() =
         session.id |> shouldNotBe 0
         session.userIds.Length |> shouldBe 1
         session.userIds |> shouldExist (fun id -> id = user.id)
-    }
+    } :> Task
 
-[<Fact>]
+[<Test>]
 let ``Create session should fail if user has another session``() =
     task {
         //Arrange
@@ -46,9 +47,9 @@ let ``Create session should fail if user has another session``() =
         //Assert
         response2 |> shouldBeError HttpStatusCode.Conflict "Already signed in."
         response2.getToken() |> shouldBeNone
-    }
+    } :> Task
 
-[<Fact>]
+[<Test>]
 let ``Create session should fail if request has a token``() =
     task {
         //Arrange
@@ -62,9 +63,9 @@ let ``Create session should fail if request has a token``() =
         //Assert
         response |> shouldBeError HttpStatusCode.Conflict "Already signed in."
         response.getToken() |> shouldBeNone
-    }
+    } :> Task
 
-[<Fact>]
+[<Test>]
 let ``Create session should fail if incorrect password``() =
     task {
         //Arrange
@@ -82,9 +83,9 @@ let ``Create session should fail if incorrect password``() =
         //Assert
         response |> shouldBeError HttpStatusCode.Unauthorized "Incorrect password."
         response.getToken() |> shouldBeNone
-    }
+    } :> Task
 
-[<Fact>]
+[<Test>]
 let ``Create session should fail with locked message on 6th incorrect password attempt``() =
     task {
         //Arrange
@@ -105,9 +106,9 @@ let ``Create session should fail with locked message on 6th incorrect password a
 
         //Assert
         lockedResponse |> shouldBeError HttpStatusCode.Unauthorized "Account locked."
-    }
+    } :> Task
 
-[<Fact>]
+[<Test>]
 let ``Add user to session should work``() =
     task {
         //Arrange
@@ -131,9 +132,9 @@ let ``Add user to session should work``() =
         session.userIds.Length |> shouldBe 2
         session.userIds |> shouldExist (fun id -> id = user1.id)
         session.userIds |> shouldExist (fun id -> id = user2.id)
-    }
+    } :> Task
 
-[<Fact>]
+[<Test>]
 let ``Add user to session should fail if no current session``() =
     task {
         //Arrange
@@ -147,9 +148,9 @@ let ``Add user to session should fail if no current session``() =
         //Assert
         response |> shouldBeError HttpStatusCode.Unauthorized "Not signed in."
         response.getToken() |> shouldBeNone
-    }
+    } :> Task
 
-[<Fact>]
+[<Test>]
 let ``Add user to session should fail if session has 8 users already``() =
     task {
         //Arrange
@@ -176,9 +177,9 @@ let ``Add user to session should fail if session has 8 users already``() =
         //Assert
         response |> shouldBeError HttpStatusCode.BadRequest "Session already has maximum number of users."
         response.getToken() |> shouldBeNone
-    }
+    } :> Task
 
-[<Fact>]
+[<Test>]
 let ``Add user to session should fail if incorrect password``() =
     task {    
         //Arrange
@@ -202,9 +203,9 @@ let ``Add user to session should fail if incorrect password``() =
         //Assert
         response |> shouldBeError HttpStatusCode.Unauthorized "Incorrect password."
         response.getToken() |> shouldBeNone
-    }
+    } :> Task
 
-[<Fact>]
+[<Test>]
 let ``Add user to session should fail with locked message on 6th incorrect password attempt``() =
     task {
         //Arrange
@@ -231,9 +232,9 @@ let ``Add user to session should fail with locked message on 6th incorrect passw
 
         //Assert
         lockedResponse |> shouldBeError HttpStatusCode.Unauthorized "Account locked."
-    }
+    } :> Task
 
-[<Fact>]
+[<Test>]
 let ``Add user to session should fail if invalid token``() =
     task {
         //Arrange
@@ -246,9 +247,9 @@ let ``Add user to session should fail if invalid token``() =
 
         //Assert
         lockedResponse |> shouldBeError HttpStatusCode.NotFound "Session not found."
-    }
+    } :> Task
 
-[<Fact>]
+[<Test>]
 let ``Add user to session should fail if user already has session``() =
     task {
         //Arrange
@@ -275,9 +276,9 @@ let ``Add user to session should fail if user already has session``() =
 
         //Assert
         lockedResponse |> shouldBeError HttpStatusCode.Unauthorized "Already signed in."
-    }
+    } :> Task
 
-[<Fact>]
+[<Test>]
 let ``Add user to session should fail if user is already in current session``() =
     task {
         //Arrange
@@ -292,4 +293,4 @@ let ``Add user to session should fail if user is already in current session``() 
 
         //Assert
         lockedResponse |> shouldBeError HttpStatusCode.Unauthorized "Already signed in."
-    }
+    } :> Task

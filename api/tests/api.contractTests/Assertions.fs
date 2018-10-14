@@ -2,15 +2,15 @@
 module Djambi.Api.ContractTests.Assertions
 
 open System.Net
-open Xunit
+open NUnit.Framework
 open Djambi.Api.Common
 open Djambi.Api.WebClient
 
 let shouldBe<'a> (expected : 'a) (actual : 'a) =
-    Assert.Equal(expected, actual)
+    Assert.AreEqual(expected, actual)
 
 let shouldNotBe<'a> (notExpected : 'a) (actual : 'a) =
-    Assert.NotEqual(notExpected, actual)
+    Assert.AreNotEqual(notExpected, actual)
 
 let shouldBeTrue (value : bool) =
     Assert.True(value)
@@ -31,12 +31,12 @@ let shouldBeAtMost<'a when 'a : comparison> (maximum : 'a) (actual : 'a) =
     Assert.True(actual <= maximum)
 
 let shouldHaveStatus<'a> (statusCode : HttpStatusCode) (response : Response<'a>) =
-    Assert.Equal(statusCode, response.statusCode)
+    Assert.AreEqual(statusCode, response.statusCode)
 
 let shouldBeError<'a> (statusCode : HttpStatusCode) (message : string) (response : Response<'a>) =
-    Assert.Equal(statusCode, response.statusCode)
+    Assert.AreEqual(statusCode, response.statusCode)
     Assert.True(response.body |> Result.isError)
-    Assert.Equal(message, response.body |> Result.error)
+    Assert.AreEqual(message, response.body |> Result.error)
 
 let shouldExist<'a> (predicate: 'a -> bool) (xs: 'a seq) =
     xs |> Seq.exists predicate

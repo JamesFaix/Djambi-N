@@ -2,12 +2,12 @@
 
 open System
 open System.Net
+open System.Threading.Tasks
 open FSharp.Control.Tasks
-open Xunit
-open Djambi.Api.Common
+open NUnit.Framework
 open Djambi.Api.WebClient
 
-[<Fact>]
+[<Test>]
 let ``POST user should work`` () =
     task {
         //Arrange
@@ -22,9 +22,9 @@ let ``POST user should work`` () =
         let user = response.bodyValue
         user.name |> shouldBe request.name
         user.role |> shouldBe request.role
-    }
+    } :> Task
 
-[<Fact>]
+[<Test>]
 let ``POST user should fail if name conflict`` () =
     task {
         //Arrange
@@ -36,9 +36,9 @@ let ``POST user should fail if name conflict`` () =
         
         //Assert
         response |> shouldBeError HttpStatusCode.Conflict "Conflict when attempting to write User."
-    }
+    } :> Task
 
-[<Fact>]
+[<Test>]
 let ``GET user should work`` () =
     task {
         //Arrange
@@ -55,9 +55,9 @@ let ``GET user should work`` () =
         let responseUser = response.bodyValue
         responseUser.name |> shouldBe request.name
         responseUser.role |> shouldBe request.role
-    }
+    } :> Task
 
-[<Fact>]
+[<Test>]
 let ``GET user should fail if user doesnt exist`` () =
     task {
         //Arrange
@@ -68,9 +68,9 @@ let ``GET user should fail if user doesnt exist`` () =
         
         //Assert
         response |> shouldBeError HttpStatusCode.NotFound "User not found."
-    }
+    } :> Task
 
-[<Fact>]
+[<Test>]
 let ``DELETE user should work`` () =
     task {
         //Arrange
@@ -85,9 +85,9 @@ let ``DELETE user should work`` () =
         //Assert
         deleteResponse |> shouldHaveStatus HttpStatusCode.OK
         getResponse |> shouldBeError HttpStatusCode.NotFound "User not found."
-    }
+    } :> Task
 
-[<Fact>]
+[<Test>]
 let ``DELETE user should fail if already deleted`` () =
     task {
         //Arrange
@@ -102,9 +102,9 @@ let ``DELETE user should fail if already deleted`` () =
         
         //Assert
         response |> shouldBeError HttpStatusCode.NotFound "User not found."
-    }
+    } :> Task
 
-[<Fact>]
+[<Test>]
 let ``GET users should return multiple users`` () =
     task {
         //Arrange
@@ -127,4 +127,4 @@ let ``GET users should return multiple users`` () =
         responseUsers.Length |> shouldBeAtLeast 2
         responseUsers |> shouldExist (fun u -> u.id = user1.id)
         responseUsers |> shouldExist (fun u -> u.id = user2.id)
-    }
+    } :> Task
