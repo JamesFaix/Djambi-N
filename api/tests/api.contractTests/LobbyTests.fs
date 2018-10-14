@@ -88,22 +88,132 @@ let ``Delete game should fail if no session``() =
         let! response = LobbyRepository.deleteGame(game.id, token)
 
         //Assert
-        response |> shouldBeError HttpStatusCode.NotFound "Not signed in."
+        response |> shouldBeError HttpStatusCode.Unauthorized "Not signed in."
     } :> Task
 
-//Get games should work
+[<Test>]
+let ``Delete game should fail if game created by user not in session``() =
+    task {
+        //Arrange
+        let! (_, token1) = SetupUtility.createUserAndSignIn()
+        let createGameRequest1 = RequestFactory.createGameRequest()
+        let! gameResponse1 = LobbyRepository.createGame(createGameRequest1, token1)
+        let game1 = gameResponse1.bodyValue
 
-//Get games should fail if no session
+        let! (_, token2) = SetupUtility.createUserAndSignIn()
+        let createGameRequest2 = RequestFactory.createGameRequest()
+        let! gameResponse2 = LobbyRepository.createGame(createGameRequest2, token2)
+        let game2 = gameResponse2.bodyValue
+
+        //Act
+        let! response = LobbyRepository.deleteGame(game1.id, token2)
+
+        //Assert
+        response |> shouldBeError HttpStatusCode.Forbidden "Users can only delete games that they created."
+    } :> Task
+
+[<Test>]
+let ``Get games should work``() =
+    task {
+        //Arrange
+        let! (_, token1) = SetupUtility.createUserAndSignIn()
+        let! (_, token2) = SetupUtility.createUserAndSignIn()
+        let request1 = RequestFactory.createGameRequest()
+        let request2 = RequestFactory.createGameRequest()
+        let! game1 = LobbyRepository.createGame(request1, token1) |> AsyncResponse.bodyValue
+        let! game2 = LobbyRepository.createGame(request2, token2) |> AsyncResponse.bodyValue
+
+        //Act
+        let! response = LobbyRepository.getGames(token1)
+
+        //Assert
+        response |> shouldHaveStatus HttpStatusCode.OK
+
+        let games = response.bodyValue
+        games.Length |> shouldBeAtLeast 2
+        games |> shouldExist (fun g -> g.id = game1.id)
+        games |> shouldExist (fun g -> g.id = game2.id)
+
+        //TODO: Add additional assertions about different game statuses
+    } :> Task
+
+//Get games should fail if not admin
+
+[<Test>]
+let ``Get games should fail if no session``() =
+    task {
+        //Arrange
+
+        //Act
+        let! response = LobbyRepository.getGames("someToken")
+
+        //Assert
+        response |> shouldBeError HttpStatusCode.Unauthorized "Not signed in."
+    } :> Task
 
 //Get open games should only return open games
 
-//Get open games should fail if no session
+[<Test>]
+let ``Get open games should fail if no session``() =
+    task {
+        //Arrange
 
-//Get user games should only return games a user is a player in
+        //Act
+        let! response = LobbyRepository.getOpenGames("someToken")
 
-//Get user games should fail if invalid userId
+        //Assert
+        response |> shouldBeError HttpStatusCode.Unauthorized "Not signed in."
+    } :> Task
 
-//Get user games should fail if no session
+[<Test>]
+let ``Get user games should only return games a user is a player in``() =
+    task {
+        //Arrange
+        let! (user1, token1) = SetupUtility.createUserAndSignIn()
+        let! (_, token2) = SetupUtility.createUserAndSignIn()
+        let request1 = RequestFactory.createGameRequest()
+        let request2 = RequestFactory.createGameRequest()
+        let! game1 = LobbyRepository.createGame(request1, token1) |> AsyncResponse.bodyValue
+        let! _ = LobbyRepository.createGame(request2, token2) |> AsyncResponse.bodyValue
+
+        //Act
+        let! response = LobbyRepository.getUserGames(user1.id, token1)
+
+        //Assert
+        response |> shouldHaveStatus HttpStatusCode.OK
+        let games = response.bodyValue
+        games.Length |> shouldBe 1
+        games |> shouldExist (fun g -> g.id = game1.id)
+    } :> Task
+
+[<Test>]
+let ``Get user games should fail if invalid userId``() =
+    task {
+        //Arrange
+        let! (_, token) = SetupUtility.createUserAndSignIn()
+        let request = RequestFactory.createGameRequest()
+        let! _ = LobbyRepository.createGame(request, token) |> AsyncResponse.bodyValue
+
+        //Act
+        let! response = LobbyRepository.getUserGames(Int32.MinValue, token)
+
+        //Assert
+        response |> shouldBeError HttpStatusCode.NotFound "User not found."
+    } :> Task
+
+[<Test>]
+let ``Get user games should fail if no session``() =
+    task {
+        //Arrange
+        let createUserRequest = RequestFactory.createUserRequest()
+        let! user = UserRepository.createUser createUserRequest |> AsyncResponse.bodyValue
+
+        //Act
+        let! response = LobbyRepository.getUserGames(user.id, "someToken")
+
+        //Assert
+        response |> shouldBeError HttpStatusCode.Unauthorized "Not signed in."
+    } :> Task
 
 //Add player should work
 
@@ -117,7 +227,21 @@ let ``Delete game should fail if no session``() =
 
 //Add player should fail if game is not open
 
-//Add player should fail if no session
+[<Test>]
+let ``Add player to game should fail if no session``() =
+    task {
+        //Arrange
+        let! (user, token) = SetupUtility.createUserAndSignIn()
+        let request = RequestFactory.createGameRequest()
+        let! game = LobbyRepository.createGame(request, token) |> AsyncResponse.bodyValue
+        let! _ = SessionRepository.closeSession token
+
+        //Act
+        let! response = LobbyRepository.addPlayerToGame(game.id, user.id, token)
+
+        //Assert
+        response |> shouldBeError HttpStatusCode.Unauthorized "Not signed in."
+    } :> Task
 
 //Remove player should work
 
@@ -129,4 +253,18 @@ let ``Delete game should fail if no session``() =
 
 //Remove player should fail if game is not open
 
-//Remove player should fail if no session
+[<Test>]
+let ``Remove player from game should fail if no session``() =
+    task {
+        //Arrange
+        let! (user, token) = SetupUtility.createUserAndSignIn()
+        let request = RequestFactory.createGameRequest()
+        let! game = LobbyRepository.createGame(request, token) |> AsyncResponse.bodyValue
+        let! _ = SessionRepository.closeSession token
+
+        //Act
+        let! response = LobbyRepository.removePlayerFromGame(game.id, user.id, token)
+
+        //Assert
+        response |> shouldBeError HttpStatusCode.Unauthorized "Not signed in."
+    } :> Task

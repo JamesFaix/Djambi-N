@@ -49,7 +49,12 @@ let private getGamesInner(gameId : int option, userId : int option, status : Gam
         
 let getGame(gameId : int) : LobbyGameMetadata AsyncHttpResult =
     getGamesInner(Some gameId, None, None)
-    |> thenMap List.head
+    |> thenBind (fun games -> 
+        match games.Length with
+        | 0 -> Error <| HttpException(404, "Game not found.")
+        | 1 -> Ok games.Head
+        | _ -> Error <| HttpException(500, "Duplicate games.")
+    )
 
 let getGames() : LobbyGameMetadata list AsyncHttpResult =
     getGamesInner(None, None, None)

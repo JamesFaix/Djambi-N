@@ -4,7 +4,6 @@ open Giraffe
 open Microsoft.AspNetCore.Http
 open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
-open Djambi.Api.Db.Repositories
 open Djambi.Api.Logic.Services
 open Djambi.Api.Web.HttpUtility
 open Djambi.Api.Web.Mappings.LobbyWebMapping
@@ -12,19 +11,23 @@ open Djambi.Api.Web.Model.LobbyWebModel
 
 let getOpenGames : HttpHandler =
     let func ctx =
-        LobbyRepository.getOpenGames()
+        getSessionFromContext ctx
+        |> thenBindAsync LobbyService.getOpenGames
         |> thenMap (List.map mapLobbyGameResponse)
     handle func
             
 let getGames : HttpHandler =
     let func ctx =
-        LobbyRepository.getGames()
+        getSessionFromContext ctx
+        |> thenBindAsync LobbyService.getGames
         |> thenMap (List.map mapLobbyGameResponse)
     handle func
 
 let getUserGames (userId : int) =
     let func ctx =
-        LobbyRepository.getUserGames userId
+        getSessionFromContext ctx
+        |> thenBindAsync (fun session -> 
+            LobbyService.getUserGames(userId, session))
         |> thenMap (List.map mapLobbyGameResponse)
     handle func
     

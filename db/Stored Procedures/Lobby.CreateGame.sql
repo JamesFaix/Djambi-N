@@ -6,18 +6,26 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	INSERT INTO Games (
-		BoardRegionCount, 
-		[Description], 
-		GameStatusId, 
-		CreatedOn,
-		CreatedByUserid)
-	VALUES (
-		@BoardRegionCount, 
-		@Description, 
-		1, 
-		GETUTCDATE(),
-		@CreatedByUserId)
+	BEGIN TRAN
+		INSERT INTO Games (
+			BoardRegionCount, 
+			[Description], 
+			GameStatusId, 
+			CreatedOn,
+			CreatedByUserid)
+		VALUES (
+			@BoardRegionCount, 
+			@Description, 
+			1, 
+			GETUTCDATE(),
+			@CreatedByUserId)
 
-    SELECT SCOPE_IDENTITY()
+		DECLARE @GameId INT = SCOPE_IDENTITY()
+
+		EXEC Lobby.AddPlayerToGame 
+			@GameId = @GameId,
+			@UserId = @CreatedByUserId
+
+		SELECT @GameId
+	COMMIT
 END
