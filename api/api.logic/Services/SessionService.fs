@@ -75,21 +75,21 @@ module SessionService =
     let removeUserFromSession(userId : int, token : string) : Session AsyncHttpResult =
         let errorIfTokenDoesntMatch (session : Session) =
             match session.token with
-            | token -> Ok session
-            | _ -> Error <| HttpException(403, "Invalid token")
+            | t when t = token -> Ok session
+            | _ -> Error <| HttpException(401, "Invalid token.")
 
         let remove (session : Session) =
             SessionRepository.removeUserFromSession(session.id, userId)
 
         SessionRepository.getSession(None, None, Some userId)
-        |> thenReplaceError 404 (HttpException(403, "User is not signed in"))
+        |> thenReplaceError 404 (HttpException(403, "User not signed in."))
         |> thenBind errorIfTokenDoesntMatch
         |> thenBindAsync remove        
 
     let private errorIfExpired (session : Session) =
         match session with 
         | s when s.expiresOn >= DateTime.UtcNow -> Ok session
-        | _ -> Error <| HttpException(403, "Session expired")
+        | _ -> Error <| HttpException(403, "Session expired.")
 
     let renewSession(token : string) : Session AsyncHttpResult =        
         let renew (s : Session) =

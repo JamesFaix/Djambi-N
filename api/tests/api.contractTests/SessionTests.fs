@@ -294,3 +294,102 @@ let ``Add user to session should fail if user is already in current session``() 
         //Assert
         lockedResponse |> shouldBeError HttpStatusCode.Conflict "Already signed in."
     } :> Task
+
+[<Test>]
+let ``Remove user from session should work for second user in session``() =
+    task {
+        //Arrange
+        let createUserRequest1 = RequestFactory.createUserRequest()
+        let! user1 = UserRepository.createUser createUserRequest1 |> AsyncResponse.bodyValue
+        let loginRequest1 = RequestFactory.loginRequest createUserRequest1
+        let! sessionResponse = SessionRepository.createSession loginRequest1
+        let token = sessionResponse.getToken().Value
+
+        let createUserRequest2 = RequestFactory.createUserRequest()
+        let! user2 = UserRepository.createUser createUserRequest2 |> AsyncResponse.bodyValue
+        let loginRequest2 = RequestFactory.loginRequest createUserRequest2
+        let! _ = SessionRepository.addUserToSession(loginRequest2, token)
+    
+        //Act
+        let! response = SessionRepository.removeUserFromSession(user2.id, token)
+        
+        //Assert
+        response |> shouldHaveStatus HttpStatusCode.OK
+        response.getToken().Value |> shouldBe(token)
+
+        let session = response.bodyValue
+        session.id |> shouldBe sessionResponse.bodyValue.id
+        session.userIds.Length |> shouldBe 1
+        session.userIds |> shouldExist (fun id -> id = user1.id)    
+    } :> Task
+    
+[<Test>]
+let ``Remove user from session should work for last user in session``() =
+    task {
+        //Arrange
+        let createUserRequest = RequestFactory.createUserRequest()
+        let! user = UserRepository.createUser createUserRequest |> AsyncResponse.bodyValue
+        let loginRequest = RequestFactory.loginRequest createUserRequest
+        let! sessionResponse = SessionRepository.createSession loginRequest
+        let token = sessionResponse.getToken().Value
+            
+        //Act
+        let! response = SessionRepository.removeUserFromSession(user.id, token)
+        
+        //Assert
+        response |> shouldHaveStatus HttpStatusCode.OK
+        response.getToken().Value |> shouldBe ""
+        response.bodyValue |> shouldBe Unchecked.defaultof<SessionResponseJsonModel>
+    } :> Task
+
+[<Test>]
+let ``Remove user from session should fail if no current session``() =
+    task {
+        //Arrange
+        let createUserRequest = RequestFactory.createUserRequest()
+        let! user = UserRepository.createUser createUserRequest |> AsyncResponse.bodyValue
+            
+        //Act
+        let! response = SessionRepository.removeUserFromSession(user.id, "")
+        
+        //Assert
+        response |> shouldBeError HttpStatusCode.Unauthorized "Not signed in."
+    } :> Task
+
+[<Test>]
+let ``Remove user from session should fail if user is in a different session``() =
+    task {
+        //Arrange
+        let createUserRequest1 = RequestFactory.createUserRequest()
+        let! _ = UserRepository.createUser createUserRequest1 |> AsyncResponse.bodyValue
+        let loginRequest1 = RequestFactory.loginRequest createUserRequest1
+        let! sessionResponse1 = SessionRepository.createSession loginRequest1
+        let token1 = sessionResponse1.getToken().Value
+                    
+        let createUserRequest2 = RequestFactory.createUserRequest()
+        let! user2 = UserRepository.createUser createUserRequest2 |> AsyncResponse.bodyValue
+        let loginRequest2 = RequestFactory.loginRequest createUserRequest2
+        let! _ = SessionRepository.createSession loginRequest2
+
+        //Act
+        let! response = SessionRepository.removeUserFromSession(user2.id, token1)
+        
+        //Assert
+        response |> shouldBeError HttpStatusCode.Unauthorized "Invalid token."
+    } :> Task
+
+[<Test>]
+let ``Remove user from session should fail if invalid token``() =
+    task {
+        //Arrange
+        let createUserRequest = RequestFactory.createUserRequest()
+        let! user = UserRepository.createUser createUserRequest |> AsyncResponse.bodyValue
+        let loginRequest = RequestFactory.loginRequest createUserRequest
+        let! _ = SessionRepository.createSession loginRequest
+            
+        //Act
+        let! response = SessionRepository.removeUserFromSession(user.id, "invalidToken")
+        
+        //Assert
+        response |> shouldBeError HttpStatusCode.Unauthorized "Invalid token."
+    } :> Task

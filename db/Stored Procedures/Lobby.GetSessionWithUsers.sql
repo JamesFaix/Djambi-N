@@ -19,7 +19,7 @@ BEGIN
 	FROM [Sessions] s
 		LEFT OUTER JOIN SessionUsers su
 			ON s.SessionId = su.SessionId
-	WHERE s.SessionId = @SessionId
-		OR s.Token = @Token
-		AND (@UserId IS NULL OR UserId = @UserId)
+	WHERE (@SessionId IS NULL OR s.SessionId = @SessionId)
+		AND (@Token IS NULL OR s.Token = @Token)
+		AND (@UserId IS NULL OR su.UserId = @UserId)
 END
