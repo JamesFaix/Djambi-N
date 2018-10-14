@@ -12,11 +12,13 @@ BEGIN
 		INSERT INTO Sessions (
 			IsShared, 
 			Token, 
+			PrimaryUserId,
 			CreatedOn, 
 			ExpiresOn)
 		VALUES (
 			0, 
-			@Token, 
+			@Token,
+			@UserId,
 			GETUTCDATE(),
       	    @ExpiresOn)
 

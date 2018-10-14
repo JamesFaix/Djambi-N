@@ -10,6 +10,7 @@ BEGIN
 		g.GameStatusId,
 		g.[Description] AS GameDescription, 
 		g.BoardRegionCount,
+		g.CreatedByUserId,
 		p.PlayerId, 
 		p.UserId, 
 		p.[Name] as PlayerName

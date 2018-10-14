@@ -28,4 +28,5 @@ module TestUtilities =
         {
             boardRegionCount = 3
             description = Some "Test"
+            createdByUserId = 1
         }

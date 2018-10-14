@@ -12,6 +12,7 @@ BEGIN
 		
 	SELECT s.SessionId,
 		s.Token,
+		s.PrimaryUserId,
 		s.CreatedOn,
 		s.ExpiresOn,
 		s.IsShared,

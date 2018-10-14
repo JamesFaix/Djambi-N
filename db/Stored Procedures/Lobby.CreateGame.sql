@@ -1,6 +1,7 @@
 CREATE PROCEDURE [Lobby].[CreateGame]
 	@BoardRegionCount INT,
-	@Description NVARCHAR(100)
+	@Description NVARCHAR(100),
+	@CreatedByUserId INT
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -9,12 +10,14 @@ BEGIN
 		BoardRegionCount, 
 		[Description], 
 		GameStatusId, 
-		CreatedOn)
+		CreatedOn,
+		CreatedByUserid)
 	VALUES (
 		@BoardRegionCount, 
 		@Description, 
 		1, 
-		GETUTCDATE())
+		GETUTCDATE(),
+		@CreatedByUserId)
 
     SELECT SCOPE_IDENTITY()
 END

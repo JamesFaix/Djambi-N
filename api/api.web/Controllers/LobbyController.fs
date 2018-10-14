@@ -31,8 +31,9 @@ let getUserGames (userId : int) =
 let createGame : HttpHandler =
     let func (ctx : HttpContext) : LobbyGameJsonModel AsyncHttpResult =
         getSessionAndModelFromContext<CreateGameJsonModel> ctx 
-        |> thenBindAsync (fun (request, session) -> 
-            LobbyService.createGame (mapCreateGameRequest request, session))
+        |> thenBindAsync (fun (requestJsonModel, session) -> 
+            let request = mapCreateGameRequest (requestJsonModel, session)
+            LobbyService.createGame (request, session))
         |> thenMap mapLobbyGameResponse
     handle func    
 
