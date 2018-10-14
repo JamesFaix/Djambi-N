@@ -42,7 +42,14 @@ module HttpUtility =
         let token = ctx.Request.Cookies.Item(cookieName)
 
         if token |> String.IsNullOrEmpty
-        then errorTask <| HttpException(401, "Not currently logged in")
+        then errorTask <| HttpException(401, "Not signed in.")
         else 
             SessionService.getSession token
-            |> thenReplaceError 404 (HttpException(401, "Session expired"))
+            |> thenReplaceError 404 (HttpException(401, "Session expired."))
+
+    let getSessionAndModelFromContext<'a> (ctx : HttpContext) : ('a * Session) AsyncHttpResult =
+        getSessionFromContext ctx 
+        |> thenBindAsync (fun session -> 
+            ctx.BindModelAsync<'a>()
+            |> Task.map (fun model -> Ok (model, session))
+        )

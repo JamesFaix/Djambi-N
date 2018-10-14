@@ -8,12 +8,11 @@ open NUnit.Framework
 open Djambi.Api.WebClient
 open Djambi.Api.Common.Enums
 
-//Create game should work
 [<Test>]
 let ``Create game should work``() =
     task {
         //Arrange
-        let! (user, token) = SetupUtility.createUserAndSignIn()
+        let! (_, token) = SetupUtility.createUserAndSignIn()
         let request = RequestFactory.createGameRequest()
 
         //Act
@@ -24,24 +23,77 @@ let ``Create game should work``() =
 
         let game = response.bodyValue
         game.id |> shouldNotBe 0
-        //game.players.Length |> shouldBe 1
-        //game.players |> shouldExist (fun p -> p.id = user.id)
+        game.players.Length |> shouldBe 0
         game.status |> shouldBe (GameStatus.Open.ToString())
         game.description |> shouldBe request.description
         game.boardRegionCount |> shouldBe request.boardRegionCount
     } :> Task
 
-//Create game should fail if no session
+[<Test>]
+let ``Create game should fail if no session``() =
+    task {
+        //Arrange
+        let request = RequestFactory.createGameRequest()
 
-//Delete game should work
+        //Act
+        let! response = LobbyRepository.createGame(request, "")
 
-//Delete game should fail if invalid gameId
+        //Assert
+        response |> shouldBeError HttpStatusCode.Unauthorized "Not signed in."
+    } :> Task
 
-//Delete game should fail if no session
+[<Test>]
+let ``Delete game should work``() =
+    task {
+        //Arrange
+        let! (_, token) = SetupUtility.createUserAndSignIn()
+        let createGameRequest = RequestFactory.createGameRequest()
+        let! gameResponse = LobbyRepository.createGame(createGameRequest, token)
+        let game = gameResponse.bodyValue
 
-//Get game should work
+        //Act
+        let! response = LobbyRepository.deleteGame(game.id, token)
 
-//Get game should fail if no session
+        //Assert
+        response |> shouldHaveStatus HttpStatusCode.OK
+
+        let! games = LobbyRepository.getGames(token) |> AsyncResponse.bodyValue
+        games |> List.exists (fun g -> g.id = game.id) |> shouldBeFalse
+    } :> Task
+    
+[<Test>]
+let ``Delete game should fail if invalid gameId``() =
+    task {
+        //Arrange
+        let! (_, token) = SetupUtility.createUserAndSignIn()
+
+        //Act
+        let! response = LobbyRepository.deleteGame(Int32.MinValue, token)
+
+        //Assert
+        response |> shouldBeError HttpStatusCode.NotFound "Game not found."
+    } :> Task
+
+[<Test>]
+let ``Delete game should fail if no session``() =
+    task {
+        //Arrange
+        let! (_, token) = SetupUtility.createUserAndSignIn()
+        let createGameRequest = RequestFactory.createGameRequest()
+        let! gameResponse = LobbyRepository.createGame(createGameRequest, token)
+        let game = gameResponse.bodyValue
+        let! _ = SessionRepository.closeSession token
+
+        //Act
+        let! response = LobbyRepository.deleteGame(game.id, token)
+
+        //Assert
+        response |> shouldBeError HttpStatusCode.NotFound "Not signed in."
+    } :> Task
+
+//Get games should work
+
+//Get games should fail if no session
 
 //Get open games should only return open games
 
