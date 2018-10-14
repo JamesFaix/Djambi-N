@@ -8,7 +8,7 @@ BEGIN
 	SET NOCOUNT ON;
 
 	IF NOT EXISTS(SELECT 1 FROM Games WHERE GameId = @GameId)
-		THROW 50000, 'Game not found', 1
+		THROW 50404, 'Game not found.', 1
 
 	UPDATE Games
 	SET GameStatusId = 2, --Started

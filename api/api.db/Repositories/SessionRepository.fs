@@ -24,7 +24,7 @@ module SessionRepository =
 
         let sessionOrError (xs : SessionUserSqlModel list) = 
             match xs.Length with
-            | 0 -> Error <| HttpException(404, "Session not found")
+            | 0 -> Error <| HttpException(404, "Session not found.")
             | _ -> Ok <| (mapSessionUsers xs)
                     
         queryMany<SessionUserSqlModel>(cmd, "Session") 

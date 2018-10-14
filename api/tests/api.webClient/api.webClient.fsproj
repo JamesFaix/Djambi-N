@@ -7,8 +7,9 @@
   <ItemGroup>
     <Compile Include="Model.fs" />
     <Compile Include="WebUtility.fs" />
-    <Compile Include="Repositories\SessionRepository.fs" />
     <Compile Include="Repositories\UserRepository.fs" />
+    <Compile Include="Repositories\SessionRepository.fs" />
+    <Compile Include="Repositories\LobbyRepository.fs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -19,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\utils\environment\environment.fsproj" />
+    <ProjectReference Include="..\..\api.common\api.common.fsproj" />
     <ProjectReference Include="..\..\api.web.model\api.web.model.fsproj" />
   </ItemGroup>
 
