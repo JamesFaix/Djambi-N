@@ -25,7 +25,10 @@ type Response<'a> with
             | _ -> Some m.Groups.[1].Value
 
     member this.bodyValue : 'a =
-        this.body |> Result.value
+        match this.body with
+        | Ok x -> x
+        | Error msg -> 
+            invalidOp (sprintf "Cannot get value of error result. (%s)" msg)
 
     member this.bodyError : string =
         this.body |> Result.error

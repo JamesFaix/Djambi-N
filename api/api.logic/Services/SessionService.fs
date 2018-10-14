@@ -24,7 +24,7 @@ module SessionService =
         let addUserToSession(token : string, userId: int, expiresOn : DateTime) : Session AsyncHttpResult =
             let errorIfMaxUsers (session : Session) =
                 if session.userIds.Length >= maxSessionUsers
-                then Error <| HttpException(400, "Session already has maximum number of users")
+                then Error <| HttpException(400, "Session already has maximum number of users.")
                 else Ok session
 
             SessionRepository.getSession(None, Some token, None)
@@ -40,7 +40,7 @@ module SessionService =
         let errorIfLocked (user : User) =
             if user.failedLoginAttempts >= maxFailedLoginAttempts 
                 && isWithinLockTimeoutPeriod user
-            then Error <| HttpException(401, "Account locked")
+            then Error <| HttpException(401, "Account locked.")
             else Ok user
 
         let errorIfInvalidPassword (user : User) =
@@ -53,11 +53,11 @@ module SessionService =
                     else 1
 
                 UserRepository.updateFailedLoginAttempts(user.id, failedLoginAttempts, Some DateTime.UtcNow)
-                |> thenBind (fun _ -> Error <| HttpException(401, "Incorrect password"))
+                |> thenBind (fun _ -> Error <| HttpException(401, "Incorrect password."))
 
         let errorIfLoggedIn (user : User) =
             SessionRepository.getSession(None, None, Some user.id)            
-            |> thenBind (fun _ -> Error <| HttpException(409, "User already logged in"))
+            |> thenBind (fun _ -> Error <| HttpException(409, "Already signed in."))
             |> thenBindError 404 (fun _ -> Ok user)
 
         let createOrAddToSession (user : User) =

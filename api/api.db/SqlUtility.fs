@@ -25,7 +25,7 @@ let proc(name : string, param : obj) =
                         
 let queryMany<'a>(command : CommandDefinition, entityType : string) : 'a list AsyncHttpResult =
     task {
-        let connection = getConnection()
+        use connection = getConnection()
 
         try 
             return! SqlMapper.QueryAsync<'a>(connection, command)
