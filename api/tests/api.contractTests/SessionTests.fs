@@ -393,3 +393,39 @@ let ``Remove user from session should fail if invalid token``() =
         //Assert
         response |> shouldBeError HttpStatusCode.Unauthorized "Invalid token."
     } :> Task
+
+[<Test>]
+let ``Close session should work``() =
+    task {
+        //Arrange
+        let createUserRequest1 = RequestFactory.createUserRequest()
+        let! _ = UserRepository.createUser createUserRequest1 |> AsyncResponse.bodyValue
+        let loginRequest1 = RequestFactory.loginRequest createUserRequest1
+        let! sessionResponse = SessionRepository.createSession loginRequest1
+        let token = sessionResponse.getToken().Value
+
+        let createUserRequest2 = RequestFactory.createUserRequest()
+        let! _ = UserRepository.createUser createUserRequest2 |> AsyncResponse.bodyValue
+        let loginRequest2 = RequestFactory.loginRequest createUserRequest2
+        let! _ = SessionRepository.addUserToSession(loginRequest2, token)
+    
+        //Act
+        let! response = SessionRepository.closeSession token
+
+        //Assert
+        response |> shouldHaveStatus HttpStatusCode.OK
+        response.getToken().Value |> shouldBe ""
+    } :> Task
+
+[<Test>]
+let ``Close session should clear cookie if no session on backend``() =
+    task {
+        //Arrange
+
+        //Act
+        let! response = SessionRepository.closeSession "someToken"
+
+        //Assert
+        response |> shouldHaveStatus HttpStatusCode.OK
+        response.getToken().Value |> shouldBe ""
+    } :> Task
