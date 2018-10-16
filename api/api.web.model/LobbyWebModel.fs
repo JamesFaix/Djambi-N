@@ -50,6 +50,16 @@ type LobbiesQueryJsonModel =
         allowGuests : bool Nullable
     }
 
+module LobbiesQueryJsonModel =
+    let empty = 
+        {
+            descriptionContains = Unchecked.defaultof<string>
+            createdByUserId = Unchecked.defaultof<int Nullable>
+            playerUserId = Unchecked.defaultof<int Nullable>
+            isPublic = Unchecked.defaultof<bool Nullable>
+            allowGuests = Unchecked.defaultof<bool Nullable>
+        }
+
 [<CLIMutable>]
 type CreatePlayerJsonModel =
     {

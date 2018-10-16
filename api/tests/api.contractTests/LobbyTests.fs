@@ -6,9 +6,10 @@ open System.Threading.Tasks
 open FSharp.Control.Tasks
 open NUnit.Framework
 open Djambi.Api.WebClient
+open Djambi.Api.Web.Model.LobbyWebModel
 
 [<Test>]
-let ``Create game should work``() =
+let ``Create lobby should work``() =
     task {
         //Arrange
         let! (_, token) = SetupUtility.createUserAndSignIn()
@@ -20,15 +21,14 @@ let ``Create game should work``() =
         //Assert
         response |> shouldHaveStatus HttpStatusCode.OK
 
-        let game = response.bodyValue
-        game.id |> shouldNotBe 0
-      //  game.status |> shouldBe (GameStatus.Open.ToString())
-        game.description |> shouldBe request.description
-        game.regionCount |> shouldBe request.regionCount
+        let lobby = response.bodyValue
+        lobby.id |> shouldNotBe 0
+        lobby.description |> shouldBe request.description
+        lobby.regionCount |> shouldBe request.regionCount
     } :> Task
 
 [<Test>]
-let ``Create game should fail if no session``() =
+let ``Create lobby should fail if no session``() =
     task {
         //Arrange
         let request = RequestFactory.createLobbyRequest()
@@ -41,26 +41,26 @@ let ``Create game should fail if no session``() =
     } :> Task
 
 [<Test>]
-let ``Delete game should work``() =
+let ``Delete lobby should work``() =
     task {
         //Arrange
         let! (_, token) = SetupUtility.createUserAndSignIn()
-        let createGameRequest = RequestFactory.createLobbyRequest()
-        let! gameResponse = LobbyClient.createLobby(createGameRequest, token)
-        let game = gameResponse.bodyValue
+        let createLobbyRequest = RequestFactory.createLobbyRequest()
+        let! lobbyResponse = LobbyClient.createLobby(createLobbyRequest, token)
+        let lobby = lobbyResponse.bodyValue
 
         //Act
-        let! response = LobbyClient.deleteLobby(game.id, token)
+        let! response = LobbyClient.deleteLobby(lobby.id, token)
 
         //Assert
         response |> shouldHaveStatus HttpStatusCode.OK
 
-        let! games = LobbyClient.getLobbies(token) |> AsyncResponse.bodyValue
-        games |> List.exists (fun g -> g.id = game.id) |> shouldBeFalse
+        let! lobbies = LobbyClient.getLobbies(LobbiesQueryJsonModel.empty, token) |> AsyncResponse.bodyValue
+        lobbies |> List.exists (fun g -> g.id = lobby.id) |> shouldBeFalse
     } :> Task
     
 [<Test>]
-let ``Delete game should fail if invalid gameId``() =
+let ``Delete lobby should fail if invalid lobbyId``() =
     task {
         //Arrange
         let! (_, token) = SetupUtility.createUserAndSignIn()
@@ -69,81 +69,81 @@ let ``Delete game should fail if invalid gameId``() =
         let! response = LobbyClient.deleteLobby(Int32.MinValue, token)
 
         //Assert
-        response |> shouldBeError HttpStatusCode.NotFound "Game not found."
+        response |> shouldBeError HttpStatusCode.NotFound "Lobby not found."
     } :> Task
 
 [<Test>]
-let ``Delete game should fail if no session``() =
+let ``Delete lobby should fail if no session``() =
     task {
         //Arrange
         let! (_, token) = SetupUtility.createUserAndSignIn()
-        let createGameRequest = RequestFactory.createLobbyRequest()
-        let! gameResponse = LobbyClient.createLobby(createGameRequest, token)
-        let game = gameResponse.bodyValue
+        let createLobbyRequest = RequestFactory.createLobbyRequest()
+        let! lobbyResponse = LobbyClient.createLobby(createLobbyRequest, token)
+        let lobby = lobbyResponse.bodyValue
         let! _ = SessionClient.closeSession token
 
         //Act
-        let! response = LobbyClient.deleteLobby(game.id, token)
+        let! response = LobbyClient.deleteLobby(lobby.id, token)
 
         //Assert
         response |> shouldBeError HttpStatusCode.Unauthorized "Not signed in."
     } :> Task
 
 [<Test>]
-let ``Delete game should fail if game created by user not in session``() =
+let ``Delete lobby should fail if lobby created by user not in session``() =
     task {
         //Arrange
         let! (_, token1) = SetupUtility.createUserAndSignIn()
-        let createGameRequest1 = RequestFactory.createLobbyRequest()
-        let! gameResponse1 = LobbyClient.createLobby(createGameRequest1, token1)
-        let game1 = gameResponse1.bodyValue
+        let createLobbyRequest1 = RequestFactory.createLobbyRequest()
+        let! lobbyResponse1 = LobbyClient.createLobby(createLobbyRequest1, token1)
+        let lobby1 = lobbyResponse1.bodyValue
 
         let! (_, token2) = SetupUtility.createUserAndSignIn()
-        let createGameRequest2 = RequestFactory.createLobbyRequest()
-        let! gameResponse2 = LobbyClient.createLobby(createGameRequest2, token2)
-        let game2 = gameResponse2.bodyValue
+        let createLobbyRequest2 = RequestFactory.createLobbyRequest()
+        let! lobbyResponse2 = LobbyClient.createLobby(createLobbyRequest2, token2)
+        let lobby2 = lobbyResponse2.bodyValue
 
         //Act
-        let! response = LobbyClient.deleteLobby(game1.id, token2)
+        let! response = LobbyClient.deleteLobby(lobby1.id, token2)
 
         //Assert
-        response |> shouldBeError HttpStatusCode.Forbidden "Users can only delete games that they created."
+        response |> shouldBeError HttpStatusCode.Forbidden "Users can only delete lobbies that they created."
     } :> Task
 
 [<Test>]
-let ``Get games should work``() =
+let ``Get lobbies should work``() =
     task {
         //Arrange
         let! (_, token1) = SetupUtility.createUserAndSignIn()
         let! (_, token2) = SetupUtility.createUserAndSignIn()
         let request1 = RequestFactory.createLobbyRequest()
         let request2 = RequestFactory.createLobbyRequest()
-        let! game1 = LobbyClient.createLobby(request1, token1) |> AsyncResponse.bodyValue
-        let! game2 = LobbyClient.createLobby(request2, token2) |> AsyncResponse.bodyValue
+        let! lobby1 = LobbyClient.createLobby(request1, token1) |> AsyncResponse.bodyValue
+        let! lobby2 = LobbyClient.createLobby(request2, token2) |> AsyncResponse.bodyValue
 
         //Act
-        let! response = LobbyClient.getLobbies(token1)
+        let! response = LobbyClient.getLobbies(LobbiesQueryJsonModel.empty, token1)
 
         //Assert
         response |> shouldHaveStatus HttpStatusCode.OK
 
-        let games = response.bodyValue
-        games.Length |> shouldBeAtLeast 2
-        games |> shouldExist (fun g -> g.id = game1.id)
-        games |> shouldExist (fun g -> g.id = game2.id)
+        let lobbys = response.bodyValue
+        lobbys.Length |> shouldBeAtLeast 2
+        lobbys |> shouldExist (fun g -> g.id = lobby1.id)
+        lobbys |> shouldExist (fun g -> g.id = lobby2.id)
 
-        //TODO: Add additional assertions about different game statuses
+        //TODO: Add additional assertions about different lobby statuses
     } :> Task
 
-//Get games should fail if not admin
+//Get lobbys should fail if not admin
 
 [<Test>]
-let ``Get games should fail if no session``() =
+let ``Get lobbies should fail if no session``() =
     task {
         //Arrange
 
         //Act
-        let! response = LobbyClient.getLobbies("someToken")
+        let! response = LobbyClient.getLobbies(LobbiesQueryJsonModel.empty, "someToken")
 
         //Assert
         response |> shouldBeError HttpStatusCode.Unauthorized "Not signed in."
@@ -151,27 +151,33 @@ let ``Get games should fail if no session``() =
     
 //Add player should work
 
-//Add player should fail if user is already in game
+//Add player should fail if user is already in lobby
 
-//Add player should fail if invalid gameId
+//Add player should fail if invalid lobbyId
 
 //Add player should fail if invalid userId
 
-//Add player should fail if game is at player capacity
+//Add player should fail if lobby is at player capacity
 
-//Add player should fail if game is not open
+//Add player should fail if lobby is not open
 
 [<Test>]
-let ``Add player to game should fail if no session``() =
+let ``Add player to lobby should fail if no session``() =
     task {
         //Arrange
         let! (user, token) = SetupUtility.createUserAndSignIn()
         let request = RequestFactory.createLobbyRequest()
-        let! game = LobbyClient.createLobby(request, token) |> AsyncResponse.bodyValue
+        let! lobby = LobbyClient.createLobby(request, token) |> AsyncResponse.bodyValue
         let! _ = SessionClient.closeSession token
+        let request : CreatePlayerJsonModel = 
+            {
+                userId = Nullable<int>(user.id)
+                ``type`` = "User"
+                name = Unchecked.defaultof<string>
+            }
 
         //Act
-        let! response = LobbyClient.addPlayer(game.id, user.id, token)
+        let! response = LobbyClient.addPlayer(lobby.id, request, token)
 
         //Assert
         response |> shouldBeError HttpStatusCode.Unauthorized "Not signed in."
@@ -179,16 +185,16 @@ let ``Add player to game should fail if no session``() =
 
 //Remove player should work
 
-//Remove player should fail if invalid gameId
+//Remove player should fail if invalid lobbyId
 
 //Remove player should fail if invalid userId
 
-//Remove player should fail if user not in game
+//Remove player should fail if user not in lobby
 
-//Remove player should fail if game is not open
+//Remove player should fail if lobby is not open
 
 [<Test>]
-let ``Remove player from game should fail if no session``() =
+let ``Remove player from lobby should fail if no session``() =
     task {
         //Arrange
         let! (user, token) = SetupUtility.createUserAndSignIn()
