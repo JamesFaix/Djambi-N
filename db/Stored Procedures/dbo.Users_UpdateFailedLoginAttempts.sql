@@ -1,4 +1,4 @@
-CREATE PROCEDURE [Lobby].[UpdateUserFailedLoginAttempts]
+CREATE PROCEDURE [dbo].[Users_UpdateFailedLoginAttempts]
 	@UserId INT,
 	@FailedLoginAttempts INT,
 	@LastFailedLoginAttemptOn DATETIME2

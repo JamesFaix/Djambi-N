@@ -1,6 +1,5 @@
-CREATE PROCEDURE [Lobby].[CreateUser]
+CREATE PROCEDURE [dbo].[Users_Create]
 	@Name NVARCHAR(50),
-	@RoleId TINYINT,
 	@Password NVARCHAR(50)
 AS
 BEGIN
@@ -9,14 +8,14 @@ BEGIN
 	INSERT INTO Users (
 		[Name], 
 		CreatedOn, 
-		RoleId, 
+		IsAdmin, 
 		[Password], 
 		FailedLoginAttempts, 
 		LastFailedLoginAttemptOn)
 	VALUES (
 		@Name, 
 		GETUTCDATE(), 
-		@RoleId, 
+		0, 
 		@Password,
 		0,
 		NULL)

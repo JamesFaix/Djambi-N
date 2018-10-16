@@ -5,10 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Model\PlayDbModel.fs" />
+    <Compile Include="Model\UserDbModel.fs" />
+    <Compile Include="Model\SessionDbModel.fs" />
     <Compile Include="Model\LobbyDbModel.fs" />
-    <Compile Include="Mappings\PlayDbMapping.fs" />
-    <Compile Include="Mappings\LobbyDbMapping.fs" />
+    <Compile Include="Model\PlayDbModel.fs" />
     <Compile Include="SqlUtility.fs" />
     <Compile Include="Repositories\UserRepository.fs" />
     <Compile Include="Repositories\SessionRepository.fs" />

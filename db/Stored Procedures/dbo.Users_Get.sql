@@ -1,13 +1,13 @@
-CREATE PROCEDURE [Lobby].[GetUsers]
+CREATE PROCEDURE [dbo].[Users_Get]
 	@UserId INT,
 	@Name NVARCHAR(50)
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT UserId AS Id, 
+	SELECT UserId, 
 		[Name], 
-		RoleId, 
+		IsAdmin,
 		[Password], 
 		FailedLoginAttempts, 
 		LastFailedLoginAttemptOn

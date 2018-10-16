@@ -1,4 +1,4 @@
-﻿module Djambi.Api.Common.Enums
+﻿module Djambi.Api.Model.Enums
 
 type GameStatus =
     | Open
@@ -18,3 +18,8 @@ type PieceType =
     | Diplomat
     | Gravedigger
     | Corpse
+
+type PlayerType =
+    | User
+    | Guest
+    | Virtual

@@ -1,6 +1,6 @@
 ﻿namespace Djambi.Api.Model
 
-open Djambi.Api.Common.Enums
+open Djambi.Api.Model.Enums
 
 module PlayModel =
 

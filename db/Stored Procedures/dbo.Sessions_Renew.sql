@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [Lobby].[RenewSessionExpiration]
+﻿CREATE PROCEDURE [dbo].[Sessions_Renew]
 	@SessionId INT,
 	@ExpiresOn DATETIME2
 AS

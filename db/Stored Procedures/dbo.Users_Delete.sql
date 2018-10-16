@@ -1,4 +1,4 @@
-CREATE PROCEDURE [Lobby].[DeleteUser]
+CREATE PROCEDURE [dbo].[Users_Delete]
 	@UserId INT
 AS
 BEGIN
@@ -9,8 +9,8 @@ BEGIN
         
 	BEGIN TRAN
 
-		--Delete Players
-		--Delete Session
+		--TODO: Delete Players
+		--TODO: Delete Session
 
 		DELETE FROM Users
 		WHERE UserId = @UserId

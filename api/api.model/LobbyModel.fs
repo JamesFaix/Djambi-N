@@ -1,67 +1,52 @@
 ﻿module Djambi.Api.Model.LobbyModel
 
 open System
-open Djambi.Api.Common.Enums
+open Djambi.Api.Model.Enums
 
-type Role = 
-    | Admin
-    | Normal
-    | Guest
-
-type User = 
-    {
-        id : int
-        name : string
-        role : Role
-        password : string
-        failedLoginAttempts : int
-        lastFailedLoginAttemptOn : DateTime option
-    }
-        
 type LobbyPlayer =
     {
         id : int
+        lobbyId : int
         userId : int option
+        playerType : PlayerType
         name : string
     }
 
-type CreateUserRequest =
+type CreatePlayerRequest = 
     {
-        name : string
-        role : Role
-        password : string
+        lobbyId : int
+        playerType : PlayerType
+        userId : int option
+        name : string option
     }
 
-type CreateGameRequest = 
-    {
-        description : string option
-        boardRegionCount : int
-        createdByUserId : int
-    }
-                
-type LobbyGameMetadata = 
+type Lobby =
     {
         id : int
-        status : GameStatus
-        boardRegionCount : int
         description : string option
-        players : LobbyPlayer list
-        createdByUserId : int
-    }
-
-type LoginRequest = 
-    {
-        userName : string
-        password : string
-    }
-
-type Session =
-    {
-        id : int
-        primaryUserId : int
-        userIds : int list
-        token : string
+        regionCount : int
         createdOn : DateTime
-        expiresOn : DateTime
-        isShared : bool
+        createdByUserId : int
+        isPublic : bool
+        allowGuests : bool
+        //TODO: Add player count
+    }
+
+type CreateLobbyRequest = 
+    {
+        description : string option
+        regionCount : int
+        createdByUserId : int
+        isPublic : bool
+        allowGuests : bool
+    }
+
+type LobbiesQuery =
+    {
+        lobbyId : int option
+        descriptionContains : string option
+        createdByUserId : int option
+        playerUserId : int option
+        isPublic : bool option
+        allowGuests : bool option
     }
