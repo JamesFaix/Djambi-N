@@ -34,7 +34,7 @@ let addVirtualPlayers(lobby : LobbyWithPlayers) : LobbyWithPlayers AsyncHttpResu
         )
         |> thenBindAsync (fun _ -> LobbyRepository.getLobbyWithPlayers lobby.id)
 
-let getStartingConditions(players : LobbyPlayer list) : PlayerStartConditions list =
+let getStartingConditions(players : Player list) : PlayerStartConditions list =
     let colorIds = [0..(Constants.maxRegions-1)] |> Utilities.shuffle |> Seq.take players.Length
     let regions = [0..(players.Length-1)] |> Utilities.shuffle
     let turnOrder = players |> Utilities.shuffle

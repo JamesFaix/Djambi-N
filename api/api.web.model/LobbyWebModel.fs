@@ -11,7 +11,7 @@ type CreateLobbyJsonModel =
         isPublic : bool
     }
 
-type LobbyPlayerResponseJsonModel =
+type PlayerResponseJsonModel =
     {
         id : int
         userId : int Nullable
@@ -37,7 +37,7 @@ type LobbyWithPlayersResponseJsonModel =
         allowGuests : bool
         isPublic : bool
         status : string
-        players : LobbyPlayerResponseJsonModel list
+        players : PlayerResponseJsonModel list
     }
 
 [<CLIMutable>]

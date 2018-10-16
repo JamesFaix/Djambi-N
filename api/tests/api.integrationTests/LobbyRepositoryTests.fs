@@ -1,8 +1,8 @@
 ﻿namespace Djambi.Api.IntegrationTests
 
-open System
 open FSharp.Control.Tasks
 open Xunit
+open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Db
 open Djambi.Api.Db.Repositories
@@ -53,29 +53,31 @@ type LobbyRepositoryTests() =
         //Arrange
         let request = getCreateLobbyRequest()
         task {
-            let! game = LobbyRepository.createLobby request |> thenValue
+            let! lobby = LobbyRepository.createLobby request |> thenValue
 
             //Act
-            let! _ = LobbyRepository.deleteLobby game.id |> thenValue
+            let! _ = LobbyRepository.deleteLobby lobby.id |> thenValue
 
             //Assert
-            let getGame = fun () -> LobbyRepository.getLobby(game.id).Result |> ignore
-            Assert.Throws<AggregateException>(getGame) |> ignore
+            let! getResult = LobbyRepository.getLobby lobby.id
+            let error = getResult |> Result.error
+            Assert.Equal(404, error.statusCode)
         }
 
     [<Fact>]
-    let ``Get games should work``() =
+    let ``Get lobbies should work``() =
         //Arrange
         let request = getCreateLobbyRequest()
         task {
-            let! createdGame = LobbyRepository.createLobby request |> thenValue
+            let! createdLobby = LobbyRepository.createLobby request |> thenValue
             let query = LobbiesQuery.empty
 
             //Act
-            let! games = LobbyRepository.getLobbies query |> thenValue
+            let! lobbies = LobbyRepository.getLobbies query |> thenValue
 
             //Assert
-            Assert.Contains(createdGame, games)
+            let exists = lobbies |> List.exists (fun l -> l.id = createdLobby.id)
+            Assert.True(exists)
           //  Assert.All(games, fun g -> Assert.Equal(GameStatus.Open, g.status))
         }
     

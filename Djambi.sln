@@ -25,15 +25,15 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.web", "api\api.web\api.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{1A1C3DF9-1667-4BA8-88E9-B6A731A25300}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "api.contractTests", "api\tests\api.contractTests\api.contractTests.fsproj", "{2EE3FC63-FB01-4D61-A21C-C6BC10EBC6E1}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.contractTests", "api\tests\api.contractTests\api.contractTests.fsproj", "{2EE3FC63-FB01-4D61-A21C-C6BC10EBC6E1}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "api.unitTests", "api\tests\api.unitTests\api.unitTests.fsproj", "{4B12AF84-7BA7-4E12-9BF2-137FFB87C6C8}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.unitTests", "api\tests\api.unitTests\api.unitTests.fsproj", "{4B12AF84-7BA7-4E12-9BF2-137FFB87C6C8}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "api.integrationTests", "api\tests\api.integrationTests\api.integrationTests.fsproj", "{955D3C4D-6DD5-4C38-80B0-58E3781E7D21}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.integrationTests", "api\tests\api.integrationTests\api.integrationTests.fsproj", "{955D3C4D-6DD5-4C38-80B0-58E3781E7D21}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "api.web.model", "api\api.web.model\api.web.model.fsproj", "{D07EDB3B-EADC-4F5C-9CC6-C8724500E979}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.web.model", "api\api.web.model\api.web.model.fsproj", "{D07EDB3B-EADC-4F5C-9CC6-C8724500E979}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "api.webClient", "api\tests\api.webClient\api.webClient.fsproj", "{89DE769C-74A3-4988-A5CD-363FA91430A1}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.webClient", "api\tests\api.webClient\api.webClient.fsproj", "{89DE769C-74A3-4988-A5CD-363FA91430A1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

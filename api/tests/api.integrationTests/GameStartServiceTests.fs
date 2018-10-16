@@ -28,9 +28,9 @@ type GameStartServiceTests() =
             let! lobbyWithVirtualPlayers = GameStartService.addVirtualPlayers lobbyWithPlayers |> thenValue
 
             //Assert
-            let! updatedPlayers = LobbyRepository.getLobbyPlayers lobby.id |> thenValue
+            let! updatedPlayers = LobbyRepository.getPlayers lobby.id |> thenValue
             Assert.Equal(lobbyRequest.regionCount, lobbyWithVirtualPlayers.players.Length)
-            Assert.Equal<LobbyPlayer list>(updatedPlayers, lobbyWithVirtualPlayers.players)
+            Assert.Equal<Player list>(updatedPlayers, lobbyWithVirtualPlayers.players)
         }
 
     [<Fact>]

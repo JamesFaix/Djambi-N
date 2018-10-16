@@ -3,7 +3,7 @@
 open System
 open Djambi.Api.Model.Enums
 
-type LobbyPlayer =
+type Player =
     {
         id : int
         lobbyId : int
@@ -98,5 +98,5 @@ type LobbyWithPlayers =
         createdByUserId : int
         isPublic : bool
         allowGuests : bool
-        players : LobbyPlayer list
+        players : Player list
     }

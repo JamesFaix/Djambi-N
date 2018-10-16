@@ -69,14 +69,14 @@ let getLobby (lobbyId : int) : Lobby AsyncHttpResult =
     |> thenMap mapLobby
 
 //Players
-let getLobbyPlayers (lobbyId : int) : LobbyPlayer List AsyncHttpResult =
+let getPlayers (lobbyId : int) : Player List AsyncHttpResult =
     let param = DynamicParameters()
                     .add("LobbyId", lobbyId);
 
-    let cmd = proc("LobbyPlayers_Get", param)
+    let cmd = proc("Players_Get", param)
 
-    queryMany<LobbyPlayerSqlModel>(cmd, "LobbyPlayer")
-    |> thenMap (List.map mapLobbyPlayer)
+    queryMany<PlayerSqlModel>(cmd, "Player")
+    |> thenMap (List.map mapPlayer)
        
 let addPlayerToLobby (request : CreatePlayerRequest) : int AsyncHttpResult =
     let param = DynamicParameters()
@@ -85,25 +85,25 @@ let addPlayerToLobby (request : CreatePlayerRequest) : int AsyncHttpResult =
                     .addOption("UserId", request.userId)
                     .addOption("Name", request.name)
         
-    let cmd = proc("LobbyPlayers_Add", param)
+    let cmd = proc("Players_Add", param)
 
-    querySingle<int>(cmd, "LobbyPlayer")
+    querySingle<int>(cmd, "Player")
     
-let removePlayerFromLobby(lobbyPlayerId : int) : Unit AsyncHttpResult =
+let removePlayerFromLobby(playerId : int) : Unit AsyncHttpResult =
     let param = DynamicParameters()
-                    .add("LobbyPlayerId", lobbyPlayerId)
-    let cmd = proc("LobbyPlayers_Remove", param)
-    queryUnit(cmd, "LobbyPlayer")
+                    .add("PlayerId", playerId)
+    let cmd = proc("Players_Remove", param)
+    queryUnit(cmd, "Player")
 
 let getVirtualPlayerNames() : string list AsyncHttpResult =
     let param = new DynamicParameters()
-    let cmd = proc("LobbyPlayers_GetVirtualNames", param)
+    let cmd = proc("Players_GetVirtualNames", param)
     queryMany<string>(cmd, "Virtual player names")
     
 let getLobbyWithPlayers (lobbyId : int) : LobbyWithPlayers AsyncHttpResult =
     getLobby lobbyId
     |> thenBindAsync (fun lobby -> 
-        getLobbyPlayers lobbyId
+        getPlayers lobbyId
         |> thenMap (fun players -> 
             {
                 id = lobby.id

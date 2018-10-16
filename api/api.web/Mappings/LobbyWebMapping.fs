@@ -20,7 +20,7 @@ let mapCreatePlayerRequest (jsonModel : CreatePlayerJsonModel, lobbyId : int)  :
         playerType = jsonModel.``type`` |> mapPlayerTypeFromString
     }
 
-let mapPlayerResponse(player : LobbyPlayer) : LobbyPlayerResponseJsonModel =
+let mapPlayerResponse(player : Player) : PlayerResponseJsonModel =
     {
         id = player.id
         userId = player.userId |> optionToNullable

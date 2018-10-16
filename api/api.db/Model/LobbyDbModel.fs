@@ -19,9 +19,9 @@ type LobbySqlModel =
     }
 
 [<CLIMutable>]
-type LobbyPlayerSqlModel =
+type PlayerSqlModel =
     {
-        lobbyPlayerId : int
+        playerId : int
         lobbyId : int
         userId : int Nullable
         name : string    
@@ -41,9 +41,9 @@ let mapPlayerTypeToId (playerType : PlayerType) : byte =
     | PlayerType.Guest -> 2uy
     | PlayerType.Virtual -> 3uy
 
-let mapLobbyPlayer (sqlModel : LobbyPlayerSqlModel) : LobbyPlayer =
+let mapPlayer (sqlModel : PlayerSqlModel) : Player =
     {
-        id = sqlModel.lobbyPlayerId
+        id = sqlModel.playerId
         lobbyId = sqlModel.lobbyId
         userId = sqlModel.userId |> nullableToOption
         playerType = mapPlayerTypeId sqlModel.playerTypeId

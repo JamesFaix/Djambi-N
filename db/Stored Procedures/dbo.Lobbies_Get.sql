@@ -22,7 +22,7 @@ BEGIN
 		AND (@DescriptionContains IS NULL OR [Description] LIKE '%' + @DescriptionContains + '%')
 		AND (@CreatedByUserId IS NULL OR @CreatedByUserId = CreatedByUserId)
 		AND (@PlayerUserId IS NULL OR EXISTS(
-			SELECT 1 FROM LobbyPlayers lp WHERE lp.LobbyId = LobbyId AND lp.UserId = @PlayerUserId))
+			SELECT 1 FROM Players p WHERE p.LobbyId = LobbyId AND p.UserId = @PlayerUserId))
 		AND (@IsPublic IS NULL OR @IsPublic = IsPublic)
 		AND (@AllowGuests IS NULL OR @AllowGuests = AllowGuests)
 END

@@ -8,6 +8,8 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
+	DECLARE @Ignore TABLE (Id INT)
+
 	BEGIN TRAN
 		INSERT INTO Lobbies (
 			RegionCount, 
@@ -16,7 +18,7 @@ BEGIN
 			CreatedOn,
 			CreatedByUserId,
 			AllowGuests,
-			IsPublic)
+			IsPublic)			
 		VALUES (
 			@RegionCount, 
 			@Description, 
@@ -28,9 +30,12 @@ BEGIN
 
 		DECLARE @LobbyId INT = SCOPE_IDENTITY()
 
-		EXEC Lobbies_AddPlayer
+		INSERT INTO @Ignore -- This is required to prevent this from selection an additional result set
+		EXEC Players_Add
 			@LobbyId = @LobbyId,
-			@UserId = @CreatedByUserId
+			@UserId = @CreatedByUserId,
+			@PlayerTypeId = 1, --User (only users can create a lobby)
+			@Name = NULL --Looked up from user's name
 
 		SELECT @LobbyId
 	COMMIT

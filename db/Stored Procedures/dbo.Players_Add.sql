@@ -1,4 +1,4 @@
-CREATE PROCEDURE [dbo].[Players_AddUser] 
+CREATE PROCEDURE [dbo].[Players_Add] 
 	@LobbyId INT,
 	@UserId INT,
 	@PlayerTypeId TINYINT,
