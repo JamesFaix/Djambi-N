@@ -26,7 +26,6 @@ type LobbyResponseJsonModel =
         description : string        
         allowGuests : bool
         isPublic : bool
-        status : string
     }
 
 type LobbyWithPlayersResponseJsonModel = 
@@ -36,7 +35,6 @@ type LobbyWithPlayersResponseJsonModel =
         description : string        
         allowGuests : bool
         isPublic : bool
-        status : string
         players : PlayerResponseJsonModel list
     }
 

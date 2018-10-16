@@ -131,8 +131,6 @@ let ``Get lobbies should work``() =
         lobbys.Length |> shouldBeAtLeast 2
         lobbys |> shouldExist (fun g -> g.id = lobby1.id)
         lobbys |> shouldExist (fun g -> g.id = lobby2.id)
-
-        //TODO: Add additional assertions about different lobby statuses
     } :> Task
 
 //Get lobbys should fail if not admin

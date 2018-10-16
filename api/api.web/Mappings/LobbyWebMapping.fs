@@ -35,7 +35,6 @@ let mapLobbyResponse(lobby : Lobby) : LobbyResponseJsonModel =
         description = lobby.description |> optionToReference
         isPublic = lobby.isPublic
         allowGuests = lobby.allowGuests
-        status = "" //TODO: Map status
     }
 
 let mapLobbyWithPlayersResponse(lobby : LobbyWithPlayers) : LobbyWithPlayersResponseJsonModel =
@@ -45,7 +44,6 @@ let mapLobbyWithPlayersResponse(lobby : LobbyWithPlayers) : LobbyWithPlayersResp
         description = lobby.description |> optionToReference
         isPublic = lobby.isPublic
         allowGuests = lobby.allowGuests
-        status = "" //TODO: Map status
         players = lobby.players |> List.map mapPlayerResponse
     }
 
