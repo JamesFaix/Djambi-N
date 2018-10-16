@@ -11,9 +11,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Compile Include="TestUtilities.fs" />
-    <Compile Include="GameStartServiceTests.fs" />
-    <Compile Include="LobbyRepositoryTests.fs" />
     <Compile Include="UserRepositoryTests.fs" />
+    <Compile Include="LobbyRepositoryTests.fs" />
+    <Compile Include="GameStartServiceTests.fs" />
   </ItemGroup>
 
   <ItemGroup>

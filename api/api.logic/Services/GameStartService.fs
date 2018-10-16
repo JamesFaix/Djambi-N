@@ -30,6 +30,7 @@ let addVirtualPlayers(lobby : LobbyWithPlayers) : LobbyWithPlayers AsyncHttpResu
         |> thenDoEachAsync (fun name -> 
             let request = CreatePlayerRequest.``virtual`` (lobby.id, name)
             LobbyRepository.addPlayerToLobby request
+            |> thenMap ignore
         )
         |> thenBindAsync (fun _ -> LobbyRepository.getLobbyWithPlayers lobby.id)
 

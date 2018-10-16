@@ -78,7 +78,7 @@ let getLobbyPlayers (lobbyId : int) : LobbyPlayer List AsyncHttpResult =
     queryMany<LobbyPlayerSqlModel>(cmd, "LobbyPlayer")
     |> thenMap (List.map mapLobbyPlayer)
        
-let addPlayerToLobby (request : CreatePlayerRequest) : Unit AsyncHttpResult =
+let addPlayerToLobby (request : CreatePlayerRequest) : int AsyncHttpResult =
     let param = DynamicParameters()
                     .add("LobbyId", request.lobbyId)
                     .add("PlayerTypeId", mapPlayerTypeToId request.playerType)
@@ -87,8 +87,7 @@ let addPlayerToLobby (request : CreatePlayerRequest) : Unit AsyncHttpResult =
         
     let cmd = proc("LobbyPlayers_Add", param)
 
-    querySingle<int>(cmd, "LobbyPlayer") //Id not currently used
-    |> thenMap ignore
+    querySingle<int>(cmd, "LobbyPlayer")
     
 let removePlayerFromLobby(lobbyPlayerId : int) : Unit AsyncHttpResult =
     let param = DynamicParameters()

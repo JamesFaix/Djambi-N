@@ -23,6 +23,7 @@ let deleteLobby (lobbyId : int, session : Session) : Unit AsyncHttpResult =
 
 let addPlayerToLobby (request : CreatePlayerRequest, session : Session) : Unit AsyncHttpResult =
     LobbyRepository.addPlayerToLobby request
+    |> thenMap ignore
 
 let removePlayerFromLobby (lobbyPlayerId : int, session : Session) : Unit AsyncHttpResult =
     LobbyRepository.removePlayerFromLobby lobbyPlayerId

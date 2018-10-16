@@ -2,6 +2,7 @@
 
 open System
 open Microsoft.Extensions.Configuration
+open Djambi.Api.Model.UserModel
 open Djambi.Api.Model.LobbyModel
 open Djambi.Utilities
 
@@ -20,13 +21,14 @@ module TestUtilities =
     let getCreateUserRequest() : CreateUserRequest = 
         {
             name = "Test_" + Guid.NewGuid().ToString()
-            role = Normal
             password = Guid.NewGuid().ToString()
         }
 
-    let getCreateGameRequest() : CreateGameRequest =
+    let getCreateLobbyRequest() : CreateLobbyRequest =
         {
-            boardRegionCount = 3
+            regionCount = 3
             description = Some "Test"
             createdByUserId = 1
+            isPublic = false
+            allowGuests = false
         }
