@@ -6,14 +6,12 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	INSERT INTO Sessions (
-		IsShared, 
+	INSERT INTO [Sessions] (
 		Token, 
 		UserId,
 		CreatedOn, 
 		ExpiresOn)
 	VALUES (
-		0, 
 		@Token,
 		@UserId,
 		GETUTCDATE(),

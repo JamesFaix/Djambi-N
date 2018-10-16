@@ -6,5 +6,5 @@ CREATE TABLE [dbo].[Turns]
 	[CreatedOn] [datetime2](7) NOT NULL,
 	[SelectionsJson] [nvarchar](max) NOT NULL,
     CONSTRAINT [PK_Turns] PRIMARY KEY CLUSTERED ([GameId] ASC, [TurnId] ASC),
-    CONSTRAINT [FK_Turns_PlayerId] FOREIGN KEY([GameId], [PlayerId]) REFERENCES [dbo].[Players] ([GameId], [PlayerId])
+    CONSTRAINT [FK_Turns_PlayerId] FOREIGN KEY([PlayerId]) REFERENCES [dbo].[Players] ([PlayerId])
 )

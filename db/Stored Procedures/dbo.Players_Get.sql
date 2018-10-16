@@ -1,14 +1,14 @@
-CREATE PROCEDURE [dbo].[LobbyPlayers_Get] 
+CREATE PROCEDURE [dbo].[Players_Get] 
 	@LobbyId INT
 AS
 BEGIN
 	SET NOCOUNT ON;
 
 	SELECT LobbyId, 
-		LobbyPlayerId,
+		PlayerId,
 		UserId,
 		PlayerTypeId,
 		[Name]
-    FROM LobbyPlayers
+    FROM Players
 	WHERE LobbyId = @LobbyId
 END

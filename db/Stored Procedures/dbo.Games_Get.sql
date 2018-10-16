@@ -1,4 +1,4 @@
-CREATE PROCEDURE [Play].[GetGame]
+CREATE PROCEDURE [dbo].[Games_Get]
 	@GameId INT
 AS
 BEGIN
@@ -6,8 +6,8 @@ BEGIN
 
 	SELECT g.GameId,
 		l.RegionCount,
-		g.CurrentGameStateJson,
-		g.CurrentTurnStateJson
+		g.GameStateJson,
+		g.TurnStateJson
 	FROM Games g
 		INNER JOIN Lobbies l
 			ON g.LobbyId = l.LobbyId

@@ -1,4 +1,4 @@
-CREATE PROCEDURE [dbo].[LobbyPlayers_GetVirtualNames] 
+CREATE PROCEDURE [dbo].[Players_GetVirtualNames] 
 AS
 BEGIN
 	SET NOCOUNT ON;

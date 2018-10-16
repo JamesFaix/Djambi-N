@@ -63,7 +63,7 @@ let getFilesInOrder : string seq =
             "Users"
             "Sessions"
             "Lobbies"
-            "LobbyPlayers"
+            "Players"
             "Games"
             "Turns"
         ]

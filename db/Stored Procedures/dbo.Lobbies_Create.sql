@@ -2,28 +2,28 @@ CREATE PROCEDURE [dbo].[Lobbies_Create]
 	@RegionCount INT,
 	@Description NVARCHAR(100),
 	@CreatedByUserId INT,
-	@AllowGuestPlayers BIT,
+	@AllowGuests BIT,
 	@IsPublic BIT
 AS
 BEGIN
 	SET NOCOUNT ON;
 
 	BEGIN TRAN
-		INSERT INTO Games (
-			BoardRegionCount, 
+		INSERT INTO Lobbies (
+			RegionCount, 
 			[Description], 
-			GameStatusId, 
+		--	GameStatusId, 
 			CreatedOn,
 			CreatedByUserId,
-			AllowGuestPlayers,
+			AllowGuests,
 			IsPublic)
 		VALUES (
-			@BoardRegionCount, 
+			@RegionCount, 
 			@Description, 
-			1, 
+	--		1, 
 			GETUTCDATE(),
 			@CreatedByUserId,
-			@AllowGuestPlayers,
+			@AllowGuests,
 			@IsPublic)
 
 		DECLARE @LobbyId INT = SCOPE_IDENTITY()

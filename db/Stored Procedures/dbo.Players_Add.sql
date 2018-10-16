@@ -1,4 +1,4 @@
-CREATE PROCEDURE [dbo].[LobbyPlayers_AddUser] 
+CREATE PROCEDURE [dbo].[Players_AddUser] 
 	@LobbyId INT,
 	@UserId INT,
 	@PlayerTypeId TINYINT,
@@ -19,14 +19,14 @@ BEGIN
 		SET @Name = (SELECT [Name] FROM Users WHERE UserId = @UserId)
 	END
 
-	INSERT INTO LobbyPlayers (
+	INSERT INTO Players (
 		LobbyId, 
 		UserId, 
 		PlayerTypeId,
 		[Name])
 	VALUES( 
 		@LobbyId, 
-		UserId, 
+		@UserId, 
 		@PlayerTypeId,
 		@Name)
 		
