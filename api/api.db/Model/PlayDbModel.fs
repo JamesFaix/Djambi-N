@@ -7,18 +7,18 @@ open Djambi.Api.Model.PlayModel
 type GameSqlModel =
     {
         gameId : int
-        boardRegionCount : int
-        currentGameStateJson : string
-        currentTurnStateJson : string
+        regionCount : int
+        gameStateJson : string
+        turnStateJson : string
     }
 
 let mapGameSqlModelResponse(sqlModel : GameSqlModel) : Game =
     {
-        boardRegionCount = sqlModel.boardRegionCount
-        currentGameState = JsonConvert.DeserializeObject<GameState>(sqlModel.currentGameStateJson)
-        currentTurnState = 
-            match sqlModel.currentTurnStateJson with
+        regionCount = sqlModel.regionCount
+        gameState = JsonConvert.DeserializeObject<GameState>(sqlModel.gameStateJson)
+        turnState = 
+            match sqlModel.turnStateJson with
             | null -> TurnState.empty
-            | _ -> JsonConvert.DeserializeObject<TurnState>(sqlModel.currentTurnStateJson)
+            | _ -> JsonConvert.DeserializeObject<TurnState>(sqlModel.turnStateJson)
     }
     

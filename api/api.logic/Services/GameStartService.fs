@@ -8,7 +8,6 @@ open Djambi.Api.Db.Repositories
 open Djambi.Api.Logic.ModelExtensions
 open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
 open Djambi.Api.Model.BoardModel
-open Djambi.Api.Model.Enums
 open Djambi.Api.Model.LobbyModel
 open Djambi.Api.Model.PlayModel
 
@@ -79,7 +78,7 @@ module GameStartService =
         |> List.mapi (fun i cond -> createPlayerPieces(board, cond, i*Constants.piecesPerPlayer))
         |> List.collect id
 
-    let startGame(lobbyId : int) : GameStartResponse AsyncHttpResult =
+    let startGame(lobbyId : int) : StartGameResponse AsyncHttpResult =
         LobbyRepository.getLobbyWithPlayers lobbyId
         |> thenBindAsync addVirtualPlayers
         |> thenMap (fun lobby -> 
@@ -102,9 +101,9 @@ module GameStartService =
 
             let gameWithoutSelectionOptions : Game = 
                 {
-                    boardRegionCount = lobby.regionCount
-                    currentGameState = gameState
-                    currentTurnState = 
+                    regionCount = lobby.regionCount
+                    gameState = gameState
+                    turnState = 
                         {
                             status = AwaitingSelection
                             selections = List.empty
@@ -114,16 +113,22 @@ module GameStartService =
                 }
 
             let (selectionOptions, _) = PlayService.getSelectableCellsFromState gameWithoutSelectionOptions
+           
             {
-                id = lobby.id
+                lobbyId = lobby.id
                 startingConditions = startingConditions
-                currentGameState = gameState
-                currentTurnState = { gameWithoutSelectionOptions.currentTurnState with selectionOptions = selectionOptions }
-            })
-        |> thenDoAsync (fun updateRequest -> PlayRepository.startGame(updateRequest))
-        |> thenMap (fun updateRequest -> 
-            {
-                startingConditions = updateRequest.startingConditions
-                gameState = updateRequest.currentGameState
-                turnState = updateRequest.currentTurnState
-            })
+                gameState = gameState
+                turnState = { gameWithoutSelectionOptions.turnState with selectionOptions = selectionOptions }
+            }
+        )
+        |> thenBindAsync (fun startRequest -> 
+            PlayRepository.startGame startRequest
+            |> thenMap (fun gameId -> 
+                {
+                    gameId = gameId
+                    startingConditions = startRequest.startingConditions
+                    gameState = startRequest.gameState
+                    turnState = startRequest.turnState
+                }
+            )
+        )

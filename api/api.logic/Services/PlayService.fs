@@ -9,12 +9,11 @@ open Djambi.Api.Logic.ModelExtensions
 open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
 open Djambi.Api.Logic.ModelExtensions.PlayModelExtensions
 open Djambi.Api.Model.BoardModel
-open Djambi.Api.Model.Enums
 open Djambi.Api.Model.PlayModel
 
 let getGameState(gameId : int) : GameState AsyncHttpResult =
     PlayRepository.getGame gameId
-    |> thenMap (fun g -> g.currentGameState)
+    |> thenMap (fun g -> g.gameState)
         
 let private getMoveSelectionOptions(game : GameState, piece : Piece, regionCount : int) : int list =
     let board = BoardModelUtility.getBoardMetadata regionCount
@@ -140,25 +139,22 @@ let private getVacateSelectionOptions(game : GameState, turn : TurnState, region
                         |> Seq.toList
                     | _ -> List.empty
 
-let getSelectableCellsFromState(game : Game) : (int list * SelectionType option) =
-    let gameState = game.currentGameState
-    let turnState = game.currentTurnState
-    let regionCount = game.boardRegionCount
-    let currentPlayerId = gameState.currentPlayerId
-    match turnState.selections.Length with
-    | 0 -> let cellIds = gameState.piecesControlledBy currentPlayerId
-                            |> Seq.map (fun piece -> (piece, getMoveSelectionOptions(gameState, piece, regionCount)))
+let getSelectableCellsFromState(game : Game) : (int list * SelectionType option) =    
+    let currentPlayerId = game.gameState.currentPlayerId
+    match game.turnState.selections.Length with
+    | 0 -> let cellIds = game.gameState.piecesControlledBy currentPlayerId
+                            |> Seq.map (fun piece -> (piece, getMoveSelectionOptions(game.gameState, piece, game.regionCount)))
                             |> Seq.filter (fun (_, cells) -> cells.IsEmpty |> not)
                             |> Seq.map (fun (piece, _) -> piece.cellId)
                             |> Seq.toList
            (cellIds, Some Subject)
-    | 1 -> let subject = turnState.subjectPiece(gameState).Value
-           let cellIds = getMoveSelectionOptions(gameState, subject, regionCount)
+    | 1 -> let subject = game.turnState.subjectPiece(game.gameState).Value
+           let cellIds = getMoveSelectionOptions(game.gameState, subject, game.regionCount)
            (cellIds, Some Move)
-    | 2 -> let subject = turnState.subjectPiece(gameState).Value
-           match (subject.pieceType, turnState.selections.[1]) with 
+    | 2 -> let subject = game.turnState.subjectPiece(game.gameState).Value
+           match (subject.pieceType, game.turnState.selections.[1]) with 
             | Reporter, _ -> 
-                let cellIds = getTargetSelectionOptions(gameState, turnState, regionCount)
+                let cellIds = getTargetSelectionOptions(game.gameState, game.turnState, game.regionCount)
                 if cellIds.IsEmpty
                 then (List.empty, None)
                 else (cellIds, Some Target)
@@ -166,19 +162,19 @@ let getSelectableCellsFromState(game : Game) : (int list * SelectionType option)
             | Chief, sel
             | Diplomat, sel
             | Gravedigger, sel when sel.pieceId.IsSome -> 
-                let cellIds = getDropSelectionOptions(gameState, turnState, regionCount)
+                let cellIds = getDropSelectionOptions(game.gameState, game.turnState, game.regionCount)
                 (cellIds, Some Drop)
             | Assassin, sel when sel.pieceId.IsSome -> 
-                let cellIds = getVacateSelectionOptions(gameState, turnState, regionCount)
+                let cellIds = getVacateSelectionOptions(game.gameState, game.turnState, game.regionCount)
                 if cellIds.IsEmpty
                 then (List.empty, None)
                 else (cellIds, Some Vacate)
             | _ -> (List.empty, None)
-    | 3 -> let subject = turnState.subjectPiece(gameState).Value
-           match (subject.pieceType, turnState.selections.[1]) with 
+    | 3 -> let subject = game.turnState.subjectPiece(game.gameState).Value
+           match (subject.pieceType, game.turnState.selections.[1]) with 
             | Diplomat, sel
             | Gravedigger, sel when sel.pieceId.IsSome -> 
-                let cellIds = getVacateSelectionOptions(gameState, turnState, regionCount)
+                let cellIds = getVacateSelectionOptions(game.gameState, game.turnState, game.regionCount)
                 if cellIds.IsEmpty
                 then (List.empty, None)
                 else (cellIds, Some Vacate)
@@ -188,19 +184,19 @@ let getSelectableCellsFromState(game : Game) : (int list * SelectionType option)
 let selectCell(gameId : int, cellId : int) : TurnState AsyncHttpResult = 
     PlayRepository.getGame gameId
     |> thenBind (fun game -> 
-        if game.currentTurnState.selectionOptions |> List.contains cellId |> not
+        if game.turnState.selectionOptions |> List.contains cellId |> not
         then Error <| HttpException(400, (sprintf "Cell %i is not currently selectable" cellId))
         else 
-            let turn = game.currentTurnState
+            let turn = game.turnState
             if turn.status = AwaitingConfirmation
             then Error <| HttpException(400, "Cannot make seletion when awaiting turn confirmation")
             else 
-            let pieceIndex = game.currentGameState.piecesIndexedByCell
-            let board = BoardModelUtility.getBoardMetadata game.boardRegionCount
+            let pieceIndex = game.gameState.piecesIndexedByCell
+            let board = BoardModelUtility.getBoardMetadata game.regionCount
   
             match turn.selections.Length with
             | 0 -> Ok (Selection.subject(cellId, pieceIndex.Item(cellId).id), AwaitingSelection)
-            | 1 -> let subject = turn.subjectPiece(game.currentGameState).Value
+            | 1 -> let subject = turn.subjectPiece(game.gameState).Value
                    match pieceIndex.TryFind(cellId) with
                     | None -> match subject.pieceType with
                                 | Reporter -> 
@@ -218,7 +214,7 @@ let selectCell(gameId : int, cellId : int) : TurnState AsyncHttpResult =
                         then Ok (Selection.moveWithTarget(cellId, target.id), AwaitingSelection) //Awaiting vacate                                
                         else Ok (Selection.moveWithTarget(cellId, target.id), AwaitingConfirmation)
                     | Some piece -> Ok (Selection.moveWithTarget(cellId, piece.id), AwaitingSelection) //Awaiting drop
-            | 2 -> match (turn.subjectPiece game.currentGameState).Value.pieceType with
+            | 2 -> match (turn.subjectPiece game.gameState).Value.pieceType with
                     | Thug
                     | Chief
                     | Diplomat
@@ -226,7 +222,7 @@ let selectCell(gameId : int, cellId : int) : TurnState AsyncHttpResult =
                     | Assassin -> Ok (Selection.move(cellId), AwaitingConfirmation) //Vacate
                     | Reporter -> Ok (Selection.target(cellId, pieceIndex.Item(cellId).id), AwaitingConfirmation)
                     | Corpse -> Error <| HttpException(400, "Subject cannot be corpse")
-            | 3 -> match (turn.subjectPiece game.currentGameState).Value.pieceType with
+            | 3 -> match (turn.subjectPiece game.gameState).Value.pieceType with
                     | Diplomat
                     | Gravedigger -> Ok (Selection.move(cellId), AwaitingConfirmation) //Vacate
                     | _ -> Error <| HttpException(400, "Cannot make fourth selection unless vacating center")
@@ -242,9 +238,9 @@ let selectCell(gameId : int, cellId : int) : TurnState AsyncHttpResult =
                         }
                     let updatedGame = 
                         {
-                            currentGameState = game.currentGameState
-                            currentTurnState = stateWithNewSelection
-                            boardRegionCount = game.boardRegionCount
+                            gameState = game.gameState
+                            turnState = stateWithNewSelection
+                            regionCount = game.regionCount
                         }
                     let (selectionOptions, requiredSelectionType) = getSelectableCellsFromState updatedGame
                       
@@ -253,45 +249,42 @@ let selectCell(gameId : int, cellId : int) : TurnState AsyncHttpResult =
                         selectionOptions = selectionOptions
                         requiredSelectionType = requiredSelectionType
                     }))
-    |> thenDoAsync (fun turnState -> PlayRepository.updateCurrentTurnState(gameId, turnState))            
+    |> thenDoAsync (fun turnState -> PlayRepository.updateTurnState(gameId, turnState))            
 
 let resetTurn(gameId : int) : TurnState AsyncHttpResult =
     PlayRepository.getGame gameId
     |> thenMap (fun game -> 
         let updatedGame = 
             {
-                currentGameState = game.currentGameState
-                currentTurnState = TurnState.empty
-                boardRegionCount = game.boardRegionCount
+                gameState = game.gameState
+                turnState = TurnState.empty
+                regionCount = game.regionCount
             }
                 
         let (selectionOptions, requiredSelectionType) = getSelectableCellsFromState updatedGame
             
         {
-            updatedGame.currentTurnState with 
+            updatedGame.turnState with 
                 selectionOptions = selectionOptions
                 requiredSelectionType = requiredSelectionType
         })
-    |> thenDoAsync (fun turnState -> PlayRepository.updateCurrentTurnState(gameId, turnState))
+    |> thenDoAsync (fun turnState -> PlayRepository.updateTurnState(gameId, turnState))
     
 let private applyTurnStateToPieces(game : Game) : Piece list =
-    let gameState = game.currentGameState
-    let turn = game.currentTurnState
-    let regionCount = game.boardRegionCount        
-    let pieces = gameState.pieces.ToDictionary(fun p -> p.id)
+    let pieces = game.gameState.pieces.ToDictionary(fun p -> p.id)
         
-    match (turn.subjectPiece gameState, turn.destinationCell regionCount) with
+    match (game.turnState.subjectPiece game.gameState, game.turnState.destinationCell game.regionCount) with
     | (None, _) 
     | (_, None) -> raise (HttpException(500, "Cannot commit turn without subject and destination selected."))
     | (Some subject, Some destination) -> 
         let origin = subject.cellId
                     
         //Move subject to destination or vacate cell
-        match turn.vacateCellId with
+        match game.turnState.vacateCellId with
         | None ->        pieces.[subject.id] <- subject.moveTo destination.id
         | Some vacate -> pieces.[subject.id] <- subject.moveTo vacate
                     
-        match turn.targetPiece gameState with 
+        match game.turnState.targetPiece game.gameState with 
         | None -> ()
         | Some target -> 
             //Kill target 
@@ -300,11 +293,11 @@ let private applyTurnStateToPieces(game : Game) : Piece list =
 
             //Enlist players pieces if killing chief
             if subject.isKiller && target.pieceType = Chief
-            then for p in gameState.piecesControlledBy target.playerId.Value do
+            then for p in game.gameState.piecesControlledBy target.playerId.Value do
                     pieces.[p.id] <- pieces.[p.id].enlistBy subject.playerId.Value
                         
             //Drop target if drop cell exists                        
-            match turn.dropCellId with
+            match game.turnState.dropCellId with
             | Some drop ->  pieces.[target.id] <- pieces.[target.id].moveTo drop
             | None -> ()
                         
@@ -321,10 +314,7 @@ let private removeSequentialDuplicates(turnCycle : int list) : int list =
     list |> Seq.toList
 
 let private applyTurnStateToTurnCycle(game : Game) : int list =
-    let gameState = game.currentGameState
-    let turn = game.currentTurnState
-    let regionCount = game.boardRegionCount        
-    let mutable turns = gameState.turnCycle
+    let mutable turns = game.gameState.turnCycle
 
     let removeBonusTurnsForPlayer playerId = 
         //Copy only the last turn of the given player, plus all other turns
@@ -346,7 +336,7 @@ let private applyTurnStateToTurnCycle(game : Game) : int list =
             stack.Push playerId
         turns <- stack |> Seq.toList
 
-    match (turn.subjectPiece gameState, turn.targetPiece gameState, turn.dropCell regionCount) with            
+    match (game.turnState.subjectPiece game.gameState, game.turnState.targetPiece game.gameState, game.turnState.dropCell game.regionCount) with            
     //If chief being killed, remove all its turns
     | (Some subject, Some target, _) 
         when subject.isKiller && target.pieceType = Chief -> 
@@ -357,7 +347,7 @@ let private applyTurnStateToTurnCycle(game : Game) : int list =
         removeBonusTurnsForPlayer target.playerId.Value
     | _ -> ()
 
-    match (turn.subjectPiece gameState, turn.subjectCell regionCount, turn.destinationCell regionCount) with
+    match (game.turnState.subjectPiece game.gameState, game.turnState.subjectCell game.regionCount, game.turnState.destinationCell game.regionCount) with
     //If subject is chief in center and destination is not center, remove extra turns
     | (Some subject, Some origin, Some destination) 
         when subject.pieceType = Chief && origin.isCenter && not destination.isCenter ->
@@ -395,15 +385,13 @@ let private killCurrentPlayer(gameState : GameState) : GameState =
 let commitTurn(gameId : int) : CommitTurnResponse AsyncHttpResult =
     PlayRepository.getGame gameId
     |> thenMap (fun game -> 
-        let gameState = game.currentGameState
-        let turnState = game.currentTurnState
         let turnCycle = applyTurnStateToTurnCycle game
         let pieces = applyTurnStateToPieces game
                                         
-        let mutable players = game.currentGameState.players
+        let mutable players = game.gameState.players
 
         //Kill player if chief killed
-        match (turnState.subjectPiece gameState, turnState.targetPiece gameState) with
+        match (game.turnState.subjectPiece game.gameState, game.turnState.targetPiece game.gameState) with
         | (Some subject, Some target) 
             when subject.isKiller && target.pieceType = Chief ->
             players <- players |> List.map (fun p -> if p.id = target.playerId.Value then p.kill else p)
@@ -411,14 +399,14 @@ let commitTurn(gameId : int) : CommitTurnResponse AsyncHttpResult =
 
         let mutable updatedGame : Game = 
             {
-                currentGameState = 
+                gameState = 
                     {
                         pieces = pieces
                         players = players
                         turnCycle = turnCycle
                     }
-                currentTurnState = TurnState.empty
-                boardRegionCount = game.boardRegionCount
+                turnState = TurnState.empty
+                regionCount = game.regionCount
             }
 
         //While next player has no moves, kill chief and abandon all pieces
@@ -426,12 +414,12 @@ let commitTurn(gameId : int) : CommitTurnResponse AsyncHttpResult =
         let mutable selectionOptions = options
         let mutable requiredSelectionType = reqSelType
                                 
-        while selectionOptions.IsEmpty && updatedGame.currentGameState.turnCycle.Length > 1 do
+        while selectionOptions.IsEmpty && updatedGame.gameState.turnCycle.Length > 1 do
             updatedGame <- 
                 {
-                    currentGameState = killCurrentPlayer(updatedGame.currentGameState)
-                    currentTurnState = TurnState.empty
-                    boardRegionCount = game.boardRegionCount
+                    gameState = killCurrentPlayer(updatedGame.gameState)
+                    turnState = TurnState.empty
+                    regionCount = game.regionCount
                 }
             let (opt, rst) = getSelectableCellsFromState updatedGame
             selectionOptions <- opt
@@ -440,7 +428,7 @@ let commitTurn(gameId : int) : CommitTurnResponse AsyncHttpResult =
         //TODO: If only 1 player, game over
               
         {
-            gameState = updatedGame.currentGameState
+            gameState = updatedGame.gameState
             turnState =  
             { 
                 TurnState.empty with 
@@ -449,5 +437,5 @@ let commitTurn(gameId : int) : CommitTurnResponse AsyncHttpResult =
             }
         })
 
-    |> thenDoAsync (fun response -> PlayRepository.updateCurrentGameState(gameId, response.gameState))
-    |> thenDoAsync (fun response -> PlayRepository.updateCurrentTurnState(gameId, response.turnState))
+    |> thenDoAsync (fun response -> PlayRepository.updateGameState(gameId, response.gameState))
+    |> thenDoAsync (fun response -> PlayRepository.updateTurnState(gameId, response.turnState))

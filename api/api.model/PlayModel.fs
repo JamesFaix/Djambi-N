@@ -1,12 +1,19 @@
 ﻿module Djambi.Api.Model.PlayModel
 
-open Djambi.Api.Model.Enums
-
 type PlayerState =
     {
         id : int
         isAlive : bool
     }
+    
+type PieceType =
+    | Chief
+    | Thug
+    | Reporter
+    | Assassin
+    | Diplomat
+    | Gravedigger
+    | Corpse
 
 type Piece = 
     {
@@ -80,6 +87,10 @@ module Selection =
             cellId = cellId
             pieceId = None
         }
+        
+type TurnStatus =
+    | AwaitingSelection
+    | AwaitingConfirmation
 
 type TurnState =
     {
@@ -106,16 +117,17 @@ type PlayerStartConditions =
         color : int
     }
 
-type UpdateGameForStartRequest =
+type StartGameRequest =
     {
-        id : int
+        lobbyId : int
         startingConditions : PlayerStartConditions list
-        currentGameState : GameState
-        currentTurnState : TurnState
+        gameState : GameState
+        turnState : TurnState
     }
 
-type GameStartResponse = 
+type StartGameResponse = 
     {
+        gameId : int
         startingConditions : PlayerStartConditions list
         gameState : GameState
         turnState : TurnState
@@ -123,9 +135,9 @@ type GameStartResponse =
 
 type Game =
     {
-        boardRegionCount : int
-        currentGameState : GameState
-        currentTurnState : TurnState
+        regionCount : int
+        gameState : GameState
+        turnState : TurnState
     }
 
 type CommitTurnResponse =

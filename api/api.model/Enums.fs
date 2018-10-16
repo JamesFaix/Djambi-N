@@ -6,19 +6,6 @@ type GameStatus =
     | Complete
     | Cancelled
         
-type TurnStatus =
-    | AwaitingSelection
-    | AwaitingConfirmation
-
-type PieceType =
-    | Chief
-    | Thug
-    | Reporter
-    | Assassin
-    | Diplomat
-    | Gravedigger
-    | Corpse
-
 type PlayerType =
     | User
     | Guest

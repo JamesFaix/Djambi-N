@@ -10,42 +10,42 @@ open Djambi.Api.Model.PlayModel
 
 module PlayRepository =
     
-    let startGame(request : UpdateGameForStartRequest) : Unit AsyncHttpResult =
+    let startGame(request : StartGameRequest) : int AsyncHttpResult =
         let startingConditionsJson = request.startingConditions |> JsonConvert.SerializeObject
-        let currentGameStateJson = request.currentGameState |> JsonConvert.SerializeObject
-        let currentTurnStateJson = request.currentTurnState |> JsonConvert.SerializeObject
+        let gameStateJson = request.gameState |> JsonConvert.SerializeObject
+        let turnStateJson = request.turnState |> JsonConvert.SerializeObject
 
         let param = DynamicParameters()
-                        .add("GameId", request.id)
+                        .add("LobbyId", request.lobbyId)
                         .add("StartingConditionsJson", startingConditionsJson)
-                        .add("CurrentGameStateJson", currentGameStateJson)
-                        .add("CurrentTurnStateJson", currentTurnStateJson)
+                        .add("GameStateJson", gameStateJson)
+                        .add("TurnStateJson", turnStateJson)
 
-        let cmd = proc("Play.UpdateGameForStart", param)
-        queryUnit(cmd, "Game")
+        let cmd = proc("Games_Start", param)
+        querySingle<int>(cmd, "Game")
 
     let getGame(gameId : int) : Game AsyncHttpResult =
         let param = DynamicParameters()
                         .add("GameId", gameId)
-        let cmd = proc("Play.GetGame", param)
+        let cmd = proc("Games_Get", param)
 
         querySingle<GameSqlModel>(cmd, "Game")
         |> thenMap mapGameSqlModelResponse
 
-    let updateCurrentGameState(gameId : int, state : GameState) : Unit AsyncHttpResult =
+    let updateGameState(gameId : int, state : GameState) : Unit AsyncHttpResult =
         let json = state |> JsonConvert.SerializeObject
         let param = DynamicParameters()
                         .add("GameId", gameId)
-                        .add("CurrentGameStateJson", json)
+                        .add("GameStateJson", json)
 
-        let cmd = proc("Play.UpdateCurrentGameState", param)
+        let cmd = proc("Games_UpdateGameState", param)
         queryUnit(cmd, "Game")
 
-    let updateCurrentTurnState(gameId: int, state : TurnState) : Unit AsyncHttpResult =
+    let updateTurnState(gameId: int, state : TurnState) : Unit AsyncHttpResult =
         let json = state |> JsonConvert.SerializeObject
         let param = DynamicParameters()
                         .add("GameId", gameId)
-                        .add("CurrentTurnStateJson", json)
+                        .add("TurnStateJson", json)
         
-        let cmd = proc("Play.UpdateCurrentTurnState", param)
+        let cmd = proc("Games_UpdateTurnState", param)
         queryUnit(cmd, "Game")
