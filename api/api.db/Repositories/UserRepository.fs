@@ -17,7 +17,7 @@ module UserRepository =
         let cmd = proc("Users_Get", param)
 
         querySingle<UserSqlModel>(cmd, "User")
-        |> thenMap mapUserResponse
+        |> thenMap UserSqlModel.toModel
     
     let getUserByName(name : string) : User AsyncHttpResult =
         let param = DynamicParameters()
@@ -26,7 +26,7 @@ module UserRepository =
         let cmd = proc("Users_Get", param)
 
         querySingle<UserSqlModel>(cmd, "User")
-        |> thenMap mapUserResponse
+        |> thenMap UserSqlModel.toModel
 
     let getUsers() : User list AsyncHttpResult =
         let param = DynamicParameters()
@@ -36,7 +36,7 @@ module UserRepository =
 
         let mapUsers (xs : UserSqlModel list) =
             xs
-            |> List.map mapUserResponse
+            |> List.map UserSqlModel.toModel
             |> List.sortBy (fun u -> u.id)
             
         queryMany<UserSqlModel>(cmd, "User")

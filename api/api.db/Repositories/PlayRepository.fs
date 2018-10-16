@@ -30,7 +30,7 @@ module PlayRepository =
         let cmd = proc("Games_Get", param)
 
         querySingle<GameSqlModel>(cmd, "Game")
-        |> thenMap mapGameSqlModelResponse
+        |> thenMap GameSqlModel.toModel
 
     let updateGameState(gameId : int, state : GameState) : Unit AsyncHttpResult =
         let json = state |> JsonConvert.SerializeObject
