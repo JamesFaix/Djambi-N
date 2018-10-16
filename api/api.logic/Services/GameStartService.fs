@@ -4,36 +4,37 @@ open System
 open System.Linq
 open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
-open Djambi.Api.Common.Enums
 open Djambi.Api.Db.Repositories
 open Djambi.Api.Logic.ModelExtensions
 open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
 open Djambi.Api.Model.BoardModel
+open Djambi.Api.Model.Enums
 open Djambi.Api.Model.LobbyModel
 open Djambi.Api.Model.PlayModel
 
 module GameStartService =
-                
-    let addVirtualPlayers(game : LobbyGameMetadata) : LobbyPlayer list AsyncHttpResult =
-        let missingPlayerCount = game.boardRegionCount - game.players.Length
+
+    let addVirtualPlayers(lobby : LobbyWithPlayers) : LobbyWithPlayers AsyncHttpResult =
+        let missingPlayerCount = lobby.regionCount - lobby.players.Length
 
         let getVirtualNamesToUse (possibleNames : string list) = 
             Enumerable.Except(
                 possibleNames, 
-                game.players |> Seq.map (fun p -> p.name), 
+                lobby.players |> Seq.map (fun p -> p.name), 
                 StringComparer.OrdinalIgnoreCase) 
             |> Utilities.shuffle
             |> Seq.take missingPlayerCount
 
         if missingPlayerCount = 0
-        then LobbyRepository.getGame(game.id)
-             |> thenMap (fun g -> g.players)
+        then lobby |> okTask
         else
             LobbyRepository.getVirtualPlayerNames()
             |> thenMap getVirtualNamesToUse
-            |> thenDoEachAsync (fun name -> LobbyRepository.addVirtualPlayerToGame(game.id, name))
-            |> thenBindAsync (fun _ -> LobbyRepository.getGame(game.id))
-            |> thenMap (fun g -> g.players)
+            |> thenDoEachAsync (fun name -> 
+                let request = CreatePlayerRequest.``virtual`` (lobby.id, name)
+                LobbyRepository.addPlayerToLobby request
+            )
+            |> thenBindAsync (fun _ -> LobbyRepository.getLobbyWithPlayers lobby.id)
 
     let getStartingConditions(players : LobbyPlayer list) : PlayerStartConditions list =
         let colorIds = [0..(Constants.maxRegions-1)] |> Utilities.shuffle |> Seq.take players.Length
@@ -78,24 +79,19 @@ module GameStartService =
         |> List.mapi (fun i cond -> createPlayerPieces(board, cond, i*Constants.piecesPerPlayer))
         |> List.collect id
 
-    let startGame(gameId : int) : GameStartResponse AsyncHttpResult =
-        LobbyRepository.getGame gameId
-        |> thenBindAsync (fun game -> 
-            addVirtualPlayers game
-            |> thenMap (fun lobbyPlayers -> (game, lobbyPlayers)))
-
-        |> thenMap (fun (game, lobbyPlayers) -> 
-            let startingConditions = getStartingConditions(lobbyPlayers)
-            let board = BoardModelUtility.getBoardMetadata(game.boardRegionCount)
+    let startGame(lobbyId : int) : GameStartResponse AsyncHttpResult =
+        LobbyRepository.getLobbyWithPlayers lobbyId
+        |> thenBindAsync addVirtualPlayers
+        |> thenMap (fun lobby -> 
+            let startingConditions = getStartingConditions lobby.players
+            let board = BoardModelUtility.getBoardMetadata lobby.regionCount
             let pieces = createPieces(board, startingConditions)
             let gameState : GameState = 
                 {
-                    players = lobbyPlayers 
+                    players = lobby.players 
                               |> List.map (fun p -> 
                                 { 
                                     id = p.id
-                                    userId = p.userId
-                                    name = p.name
                                     isAlive = true
                                 })
                     pieces = pieces
@@ -106,7 +102,7 @@ module GameStartService =
 
             let gameWithoutSelectionOptions : Game = 
                 {
-                    boardRegionCount = game.boardRegionCount
+                    boardRegionCount = lobby.regionCount
                     currentGameState = gameState
                     currentTurnState = 
                         {
@@ -119,7 +115,7 @@ module GameStartService =
 
             let (selectionOptions, _) = PlayService.getSelectableCellsFromState gameWithoutSelectionOptions
             {
-                id = gameId
+                id = lobby.id
                 startingConditions = startingConditions
                 currentGameState = gameState
                 currentTurnState = { gameWithoutSelectionOptions.currentTurnState with selectionOptions = selectionOptions }

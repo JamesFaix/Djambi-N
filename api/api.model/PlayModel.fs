@@ -1,139 +1,135 @@
-﻿namespace Djambi.Api.Model
+﻿module Djambi.Api.Model.PlayModel
 
 open Djambi.Api.Model.Enums
 
-module PlayModel =
+type PlayerState =
+    {
+        id : int
+        isAlive : bool
+    }
 
-    type Player =
-        {
-            id : int
-            userId : int option
-            name : string
-            isAlive : bool
+type Piece = 
+    {
+        id : int
+        pieceType : PieceType
+        playerId : int option
+        originalPlayerId : int
+        cellId : int
+    }
+
+type GameState =
+    {
+        players : PlayerState list
+        pieces : Piece list
+        turnCycle : int list
+    }
+
+type SelectionType =
+    | Subject
+    | Move
+    | Target
+    | Drop
+    | Vacate
+
+type Selection = 
+    {
+        selectionType : SelectionType
+        cellId : int
+        pieceId : int option
+    }
+
+module Selection =
+    let subject(cellId, pieceId) = 
+        {   
+            selectionType = Subject
+            cellId = cellId
+            pieceId = Some pieceId
         }
 
-    type Piece = 
+    let move(cellId) =
         {
-            id : int
-            pieceType : PieceType
-            playerId : int option
-            originalPlayerId : int
-            cellId : int
+            selectionType = Move
+            cellId = cellId
+            pieceId = None
         }
 
-    type GameState =
+    let moveWithTarget(cellId, pieceId) =
         {
-            players : Player list
-            pieces : Piece list
-            turnCycle : int list
+            selectionType = Move
+            cellId = cellId
+            pieceId = Some pieceId
         }
 
-    type SelectionType =
-        | Subject
-        | Move
-        | Target
-        | Drop
-        | Vacate
-
-    type Selection = 
+    let target(cellId, pieceId) =
         {
-            selectionType : SelectionType
-            cellId : int
-            pieceId : int option
+            selectionType = Target
+            cellId = cellId
+            pieceId = Some pieceId
         }
 
-    module Selection =
-        let subject(cellId, pieceId) = 
-            {   
-                selectionType = Subject
-                cellId = cellId
-                pieceId = Some pieceId
-            }
-
-        let move(cellId) =
-            {
-                selectionType = Move
-                cellId = cellId
-                pieceId = None
-            }
-
-        let moveWithTarget(cellId, pieceId) =
-            {
-                selectionType = Move
-                cellId = cellId
-                pieceId = Some pieceId
-            }
-
-        let target(cellId, pieceId) =
-            {
-                selectionType = Target
-                cellId = cellId
-                pieceId = Some pieceId
-            }
-
-        let drop(cellId) =
-            {
-                selectionType = Drop
-                cellId = cellId
-                pieceId = None
-            }
-
-        let vacate(cellId) =
-            {
-                selectionType = Vacate
-                cellId = cellId
-                pieceId = None
-            }
-
-    type TurnState =
+    let drop(cellId) =
         {
-            status : TurnStatus
-            selections : Selection list
-            selectionOptions : int list
-            requiredSelectionType : SelectionType option
+            selectionType = Drop
+            cellId = cellId
+            pieceId = None
         }
 
-    module TurnState =
-        let empty = 
-            {
-                status = AwaitingSelection
-                selections = List.empty
-                selectionOptions = List.empty
-                requiredSelectionType = Some Subject
-            }
+    let vacate(cellId) =
+        {
+            selectionType = Vacate
+            cellId = cellId
+            pieceId = None
+        }
+
+type TurnState =
+    {
+        status : TurnStatus
+        selections : Selection list
+        selectionOptions : int list
+        requiredSelectionType : SelectionType option
+    }
+
+module TurnState =
+    let empty = 
+        {
+            status = AwaitingSelection
+            selections = List.empty
+            selectionOptions = List.empty
+            requiredSelectionType = Some Subject
+        }
        
-    type PlayerStartConditions =
-        {
-            playerId : int
-            region : int
-            turnNumber : int
-            color : int
-        }
+type PlayerStartConditions =
+    {
+        playerId : int
+        region : int
+        turnNumber : int
+        color : int
+    }
 
-    type UpdateGameForStartRequest =
-        {
-            id : int
-            startingConditions : PlayerStartConditions list
-            currentGameState : GameState
-            currentTurnState : TurnState
-        }
+type UpdateGameForStartRequest =
+    {
+        id : int
+        startingConditions : PlayerStartConditions list
+        currentGameState : GameState
+        currentTurnState : TurnState
+    }
 
-    type GameStartResponse = 
-        {
-            startingConditions : PlayerStartConditions list
-            gameState : GameState
-            turnState : TurnState
-        }
+type GameStartResponse = 
+    {
+        startingConditions : PlayerStartConditions list
+        gameState : GameState
+        turnState : TurnState
+    }
 
-    type Game =
-        {
-            boardRegionCount : int
-            currentGameState : GameState
-            currentTurnState : TurnState
-        }
+type Game =
+    {
+        boardRegionCount : int
+        currentGameState : GameState
+        currentTurnState : TurnState
+    }
 
-    type CommitTurnResponse =
-        {
-            gameState : GameState
-            turnState : TurnState
-        }
+type CommitTurnResponse =
+    {
+        gameState : GameState
+        turnState : TurnState
+    }

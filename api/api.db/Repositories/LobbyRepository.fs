@@ -54,6 +54,20 @@ let getLobbies (query : LobbiesQuery) : Lobby List AsyncHttpResult =
     queryMany<LobbySqlModel>(cmd, "Lobby")
     |> thenMap (List.map mapLobby)
 
+let getLobby (lobbyId : int) : Lobby AsyncHttpResult = 
+    let param = DynamicParameters()
+                    .add("LobbyId", lobbyId)
+                    .add("DescriptionContains", null)
+                    .add("CreatedByUserId", null)
+                    .add("PlayerUserId",  null)
+                    .add("IsPublic", null)
+                    .add("AllowGuests", null)
+
+    let cmd = proc("Lobbies_Get", param)
+
+    querySingle<LobbySqlModel>(cmd, "Lobby")
+    |> thenMap mapLobby
+
 //Players
 let getLobbyPlayers (lobbyId : int) : LobbyPlayer List AsyncHttpResult =
     let param = DynamicParameters()
@@ -86,3 +100,21 @@ let getVirtualPlayerNames() : string list AsyncHttpResult =
     let param = new DynamicParameters()
     let cmd = proc("LobbyPlayers_GetVirtualNames", param)
     queryMany<string>(cmd, "Virtual player names")
+    
+let getLobbyWithPlayers (lobbyId : int) : LobbyWithPlayers AsyncHttpResult =
+    getLobby lobbyId
+    |> thenBindAsync (fun lobby -> 
+        getLobbyPlayers lobbyId
+        |> thenMap (fun players -> 
+            {
+                id = lobby.id
+                description = lobby.description
+                regionCount = lobby.regionCount
+                allowGuests = lobby.allowGuests
+                isPublic = lobby.isPublic
+                createdByUserId = lobby.createdByUserId
+                createdOn = lobby.createdOn
+                players = players
+            }
+        )
+    )

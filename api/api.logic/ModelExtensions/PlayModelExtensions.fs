@@ -1,8 +1,8 @@
 ﻿namespace Djambi.Api.Logic.ModelExtensions
 
-open Djambi.Api.Common.Enums
 open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
 open Djambi.Api.Model.BoardModel
+open Djambi.Api.Model.Enums
 open Djambi.Api.Model.PlayModel
 
 module PlayModelExtensions =
@@ -30,8 +30,8 @@ module PlayModelExtensions =
             | Corpse -> false
             | _ -> true
 
-    type Player with
-        member this.kill : Player =
+    type PlayerState with
+        member this.kill : PlayerState =
             { this with isAlive = false }
 
     type TurnState with 

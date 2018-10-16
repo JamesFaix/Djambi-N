@@ -1,7 +1,6 @@
 ﻿module Djambi.Api.Db.Model.PlayDbModel
 
 open Newtonsoft.Json
-open Djambi.Api.Model.Enums
 open Djambi.Api.Model.PlayModel
     
 [<CLIMutable>]
@@ -19,12 +18,7 @@ let mapGameSqlModelResponse(sqlModel : GameSqlModel) : Game =
         currentGameState = JsonConvert.DeserializeObject<GameState>(sqlModel.currentGameStateJson)
         currentTurnState = 
             match sqlModel.currentTurnStateJson with
-            | null -> { 
-                        status = TurnStatus.AwaitingSelection
-                        selections = List.empty 
-                        selectionOptions = List.empty
-                        requiredSelectionType = Some Subject
-                        }
+            | null -> TurnState.empty
             | _ -> JsonConvert.DeserializeObject<TurnState>(sqlModel.currentTurnStateJson)
     }
     
