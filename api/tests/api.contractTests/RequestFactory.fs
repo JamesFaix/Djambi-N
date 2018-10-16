@@ -3,12 +3,13 @@ module Djambi.Api.ContractTests.RequestFactory
 
 open System
 open Djambi.Api.Web.Model.LobbyWebModel
+open Djambi.Api.Web.Model.SessionWebModel
+open Djambi.Api.Web.Model.UserWebModel
 
 let createUserRequest() : CreateUserJsonModel = 
     {
         name = Guid.NewGuid().ToString()
         password = "test"
-        role = "Normal"
     }
 
 let loginRequest (createUserRequest : CreateUserJsonModel) : LoginRequestJsonModel =
@@ -17,8 +18,10 @@ let loginRequest (createUserRequest : CreateUserJsonModel) : LoginRequestJsonMod
         password = createUserRequest.password
     }
 
-let createGameRequest () : CreateGameJsonModel =
+let createLobbyRequest () : CreateLobbyJsonModel =
     {
-        boardRegionCount = 3
+        regionCount = 3
         description = "test"
+        isPublic = false
+        allowGuests = false
     }

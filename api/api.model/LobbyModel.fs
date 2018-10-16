@@ -38,7 +38,7 @@ module CreatePlayerRequest =
             name = Some name
         }
 
-    let virtual (lobbyId : int, name : string) : CreatePlayerRequest =
+    let ``virtual`` (lobbyId : int, name : string) : CreatePlayerRequest =
         {
             lobbyId = lobbyId
             playerType = PlayerType.Virtual
