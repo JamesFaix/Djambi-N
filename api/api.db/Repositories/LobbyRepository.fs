@@ -52,7 +52,7 @@ let getLobbies (query : LobbiesQuery) : Lobby List AsyncHttpResult =
     let cmd = proc("Lobbies_Get", param)
 
     queryMany<LobbySqlModel>(cmd, "Lobby")
-    |> thenMap (List.map LobbySqlModel.toModel)
+    |> thenMap (List.map mapLobby)
 
 let getLobby (lobbyId : int) : Lobby AsyncHttpResult = 
     let param = DynamicParameters()
@@ -66,7 +66,7 @@ let getLobby (lobbyId : int) : Lobby AsyncHttpResult =
     let cmd = proc("Lobbies_Get", param)
 
     querySingle<LobbySqlModel>(cmd, "Lobby")
-    |> thenMap LobbySqlModel.toModel
+    |> thenMap mapLobby
 
 //Players
 let getPlayers (lobbyId : int) : Player List AsyncHttpResult =
@@ -76,12 +76,12 @@ let getPlayers (lobbyId : int) : Player List AsyncHttpResult =
     let cmd = proc("Players_Get", param)
 
     queryMany<PlayerSqlModel>(cmd, "Player")
-    |> thenMap (List.map PlayerSqlModel.toModel)
+    |> thenMap (List.map mapPlayer)
        
 let addPlayerToLobby (request : CreatePlayerRequest) : int AsyncHttpResult =
     let param = DynamicParameters()
                     .add("LobbyId", request.lobbyId)
-                    .add("PlayerTypeId", PlayerSqlModel.typeIdFromModel request.playerType)
+                    .add("PlayerTypeId", mapPlayerTypeToId request.playerType)
                     .addOption("UserId", request.userId)
                     .addOption("Name", request.name)
         

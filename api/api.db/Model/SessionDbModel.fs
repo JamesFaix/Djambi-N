@@ -13,13 +13,11 @@ type SessionSqlModel =
         expiresOn : DateTime
     }
 
-module SessionSqlModel =
-    
-    let toModel (sqlModel : SessionSqlModel) : Session =
-        {
-            id = sqlModel.sessionId
-            userId = sqlModel.userId
-            token = sqlModel.token
-            createdOn = sqlModel.createdOn
-            expiresOn = sqlModel.expiresOn
-        }
+let mapSessionResponse (sqlModel : SessionSqlModel) : Session =
+    {
+        id = sqlModel.sessionId
+        userId = sqlModel.userId
+        token = sqlModel.token
+        createdOn = sqlModel.createdOn
+        expiresOn = sqlModel.expiresOn
+    }

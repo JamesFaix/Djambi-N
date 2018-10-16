@@ -12,15 +12,13 @@ type GameSqlModel =
         turnStateJson : string
     }
 
-module GameSqlModel =
-    
-    let toModel (sqlModel : GameSqlModel) : Game =
-        {
-            regionCount = sqlModel.regionCount
-            gameState = JsonConvert.DeserializeObject<GameState>(sqlModel.gameStateJson)
-            turnState = 
-                match sqlModel.turnStateJson with
-                | null -> TurnState.empty
-                | _ -> JsonConvert.DeserializeObject<TurnState>(sqlModel.turnStateJson)
-        }
+let mapGameSqlModelResponse(sqlModel : GameSqlModel) : Game =
+    {
+        regionCount = sqlModel.regionCount
+        gameState = JsonConvert.DeserializeObject<GameState>(sqlModel.gameStateJson)
+        turnState = 
+            match sqlModel.turnStateJson with
+            | null -> TurnState.empty
+            | _ -> JsonConvert.DeserializeObject<TurnState>(sqlModel.turnStateJson)
+    }
     

@@ -22,7 +22,7 @@ module SessionRepository =
         let cmd = proc("Sessions_Get", param)
                     
         querySingle<SessionSqlModel>(cmd, "Session")
-        |> thenMap SessionSqlModel.toModel
+        |> thenMap mapSessionResponse
 
     let createSession(request : CreateSessionRequest) : Session AsyncHttpResult =
         let param = DynamicParameters()

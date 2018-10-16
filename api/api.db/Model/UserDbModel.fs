@@ -15,14 +15,12 @@ type UserSqlModel =
         lastFailedLoginAttemptOn : DateTime Nullable
     }
 
-module UserSqlModel =
-
-    let toModel (sqlModel : UserSqlModel) : User =
-        {
-            id = sqlModel.userId
-            name = sqlModel.name
-            isAdmin = sqlModel.isAdmin
-            password = sqlModel.password
-            failedLoginAttempts = int sqlModel.failedLoginAttempts
-            lastFailedLoginAttemptOn = sqlModel.lastFailedLoginAttemptOn |> nullableToOption
-        }
+let mapUserResponse (sqlModel : UserSqlModel) : User =
+    {
+        id = sqlModel.userId
+        name = sqlModel.name
+        isAdmin = sqlModel.isAdmin
+        password = sqlModel.password
+        failedLoginAttempts = int sqlModel.failedLoginAttempts
+        lastFailedLoginAttemptOn = sqlModel.lastFailedLoginAttemptOn |> nullableToOption
+    }
