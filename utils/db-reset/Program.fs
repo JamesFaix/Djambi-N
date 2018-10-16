@@ -55,18 +55,17 @@ let getFilesInOrder : string seq =
         let tables = [
 
             //Static data first
-            "Roles"
             "GameStatuses"
+            "PlayerTypes"
             "VirtualPlayerNames"
 
             //Then entities
             "Users"
             "Sessions"
-            "SessionUsers"
+            "Lobbies"
+            "LobbyPlayers"
             "Games"
-            "Players"
             "Turns"
-            "Messages"        
         ]
 
         yield! tables |> Seq.map (fun name -> sprintf "Tables\\dbo.%s.sql" name)
@@ -77,7 +76,6 @@ let getFilesInOrder : string seq =
             |> Seq.map (fun path -> Path.Combine(folder, Path.GetFileName(path)))
 
         let folders = [
-            "Security\\Schemas"
             "Stored Procedures"
             "Data"
         ]

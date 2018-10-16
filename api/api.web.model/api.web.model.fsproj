@@ -5,7 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="UserWebModel.fs" />
+    <Compile Include="SessionWebModel.fs" />
     <Compile Include="LobbyWebModel.fs" />
+    <Compile Include="BoardWebModel.fs" />
     <Compile Include="PlayWebModel.fs" />
   </ItemGroup>
 
