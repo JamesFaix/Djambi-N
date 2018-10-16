@@ -15,7 +15,7 @@ let deleteLobby (lobbyId : int, token : string) : Unit AsyncResponse =
         Some token)
         
 let getLobbies (query : LobbiesQueryJsonModel, token : string) : LobbyResponseJsonModel list AsyncResponse =
-    sendRequest(GET, "/lobbies", 
+    sendRequest(POST, "/lobbies/query", 
         Some query,
         Some token)
 

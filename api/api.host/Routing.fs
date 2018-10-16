@@ -23,7 +23,7 @@ module Routing =
                     PATCH >=> routef "/users/%i" UserController.updateUser
 
                 //Lobby
-                    GET >=> route "/lobbies" >=> LobbyController.getLobbies
+                    POST >=> route "/lobbies/query" >=> LobbyController.getLobbies
                     POST >=> route "/lobbies" >=> LobbyController.createLobby
                     DELETE >=> routef "/lobbies/%i" LobbyController.deleteLobby
 
