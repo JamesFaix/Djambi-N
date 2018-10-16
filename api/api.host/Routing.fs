@@ -12,10 +12,8 @@ module Routing =
                 (choose [  
             
                 //Session                    
-                    POST >=> route "/sessions" >=> SessionController.createSessionWithUser
+                    POST >=> route "/sessions" >=> SessionController.openSession
                     DELETE >=> route "/sessions" >=> SessionController.closeSession
-                    POST >=> route "/sessions/users" >=> SessionController.addUserToSession
-                    DELETE >=> routef "/sessions/users/%i" SessionController.removeUserFromSession
 
                 //Users
                     POST >=> route "/users" >=> UserController.createUser
@@ -25,27 +23,25 @@ module Routing =
                     PATCH >=> routef "/users/%i" UserController.updateUser
 
                 //Lobby
-                    GET >=> route "/games/open" >=> LobbyController.getOpenGames
-                    GET >=> routef "/users/%i/games" LobbyController.getUserGames
-                    GET >=> route "/games" >=> LobbyController.getGames
-                    POST >=> route "/games" >=> LobbyController.createGame
-                    DELETE >=> routef "/games/%i" LobbyController.deleteGame
+                    GET >=> route "/lobbies" >=> LobbyController.getLobbies
+                    POST >=> route "/lobbies" >=> LobbyController.createLobby
+                    DELETE >=> routef "/lobbies/%i" LobbyController.deleteLobby
 
-                    POST >=> routef "/games/%i/users/%i" LobbyController.addPlayerToGame
-                    DELETE >=> routef "/games/%i/users/%i" LobbyController.removePlayerFromGame
+                    POST >=> routef "/lobbies/%i/players" LobbyController.addPlayerToLobby
+                    DELETE >=> routef "/lobbies/%i/players/%i" LobbyController.removePlayerFromLobby
 
-                    POST >=> routef "/games/%i/start-request" PlayController.startGame
+                    POST >=> routef "/lobbies/%i/start-request" LobbyController.startGame
 
+                //Board
+                    GET >=> routef "/boards/%i" BoardController.getBoard
+                    GET >=> routef "/boards/%i/cells/%i/paths" BoardController.getCellPaths
+                       
                 //Play
-                    GET >=> routef "/boards/%i" PlayController.getBoard
-                    GET >=> routef "/boards/%i/cells/%i/paths" PlayController.getCellPaths
-                                    
                     GET >=> routef "/games/%i/state" PlayController.getGameState
 
                     POST >=> routef "/games/%i/current-turn/selection-request/%i" PlayController.selectCell
                     POST >=> routef "/games/%i/current-turn/reset-request" PlayController.resetTurn
                     POST >=> routef "/games/%i/current-turn/commit-request" PlayController.commitTurn
 
-                    POST >=> routef "/games/%id/messages" PlayController.sendMessage
                 ])
             setStatusCode 404 >=> text "Not Found" ]

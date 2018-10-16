@@ -8,7 +8,7 @@ open Microsoft.Extensions.Primitives
 open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Logic.Services
-open Djambi.Api.Model.LobbyModel
+open Djambi.Api.Model.SessionModel
 
 type HttpHandler = HttpFunc -> HttpContext -> HttpContext option Task 
 

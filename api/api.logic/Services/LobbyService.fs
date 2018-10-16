@@ -27,13 +27,5 @@ let addPlayerToLobby (request : CreatePlayerRequest, session : Session) : Unit A
 let removePlayerFromLobby (lobbyPlayerId : int, session : Session) : Unit AsyncHttpResult =
     LobbyRepository.removePlayerFromLobby lobbyPlayerId
 
-let getAllLobbies (session : Session) : Lobby list AsyncHttpResult =
-    LobbyRepository.getLobbies LobbiesQuery.empty
-    
-let getPublicLobbies (session : Session) : Lobby list AsyncHttpResult =
-    let query = { LobbiesQuery.empty with isPublic = Some true }
-    LobbyRepository.getLobbies query
-
-let getUserLobbies (session : Session) : Lobby list AsyncHttpResult =
-    let query = { LobbiesQuery.empty with playerUserId = Some session.userId }
+let getLobbies (query : LobbiesQuery, session : Session) : Lobby list AsyncHttpResult =
     LobbyRepository.getLobbies query

@@ -1,65 +1,69 @@
 ﻿module Djambi.Api.Web.Mappings.LobbyWebMapping
 
-open System
 open Djambi.Api.Model.LobbyModel
 open Djambi.Api.Web.Model.LobbyWebModel
+open Djambi.Api.Model.Enums
+open Djambi.Api.Common.Utilities
 
-let mapRoleFromString(roleName : string) : Role =
-    match roleName.ToUpperInvariant() with
-    | "ADMIN" -> Admin
-    | "NORMAL" -> Normal
-    | "GUEST" -> Guest
-    | _ -> failwith ("Invalid role name: " + roleName)
+let mapPlayerTypeFromString(playerTypeName : string) : PlayerType =
+    match playerTypeName.ToUpperInvariant() with
+    | "USER" -> PlayerType.User
+    | "GUEST" -> PlayerType.Guest
+    | "VIRTUAL" -> PlayerType.Virtual
+    | _ -> failwith ("Invalid player type name: " + playerTypeName)
 
-let mapUserResponse(user : User) : UserJsonModel =
+let mapCreatePlayerRequest (jsonModel : CreatePlayerJsonModel, lobbyId : int)  : CreatePlayerRequest =
     {
-        id = user.id
-        name = user.name
-        role = user.role.ToString()
+        lobbyId = lobbyId
+        userId = jsonModel.userId |> nullableToOption
+        name = jsonModel.name |> referenceToOption
+        playerType = jsonModel.``type`` |> mapPlayerTypeFromString
     }
 
-let mapPlayerResponse(player : LobbyPlayer) : PlayerJsonModel =
+let mapPlayerResponse(player : LobbyPlayer) : LobbyPlayerResponseJsonModel =
     {
         id = player.id
-        userId = if player.userId.IsSome 
-                    then new Nullable<int>(player.userId.Value) 
-                    else Unchecked.defaultof<int Nullable>
+        userId = player.userId |> optionToNullable
         name = player.name
+        ``type`` = player.playerType.ToString()
     }
 
-let mapCreateUserRequest(jsonModel : CreateUserJsonModel) : CreateUserRequest =
+let mapLobbyResponse(lobby : Lobby) : LobbyResponseJsonModel =
     {
-        name = jsonModel.name
-        role = jsonModel.role |> mapRoleFromString
-        password = jsonModel.password
+        id = lobby.id
+        regionCount = lobby.regionCount
+        description = lobby.description |> optionToReference
+        isPublic = lobby.isPublic
+        allowGuests = lobby.allowGuests
+        status = "" //TODO: Map status
     }
 
-let mapLobbyGameResponse(game : LobbyGameMetadata) : LobbyGameJsonModel =
+let mapLobbyWithPlayersResponse(lobby : LobbyWithPlayers) : LobbyWithPlayersResponseJsonModel =
     {
-        id = game.id
-        status = game.status.ToString()
-        boardRegionCount = game.boardRegionCount
-        description = if game.description.IsSome 
-                        then game.description.Value 
-                        else Unchecked.defaultof<string>
-        players = game.players |> List.map mapPlayerResponse
+        id = lobby.id
+        regionCount = lobby.regionCount
+        description = lobby.description |> optionToReference
+        isPublic = lobby.isPublic
+        allowGuests = lobby.allowGuests
+        status = "" //TODO: Map status
+        players = lobby.players |> List.map mapPlayerResponse
     }
 
-let mapCreateGameRequest(jsonModel : CreateGameJsonModel, session : Session) : CreateGameRequest =
+let mapCreateLobbyRequest(jsonModel : CreateLobbyJsonModel, sessionUserId : int) : CreateLobbyRequest =
     {
-        boardRegionCount = jsonModel.boardRegionCount
-        description = if jsonModel.description = null then None else Some jsonModel.description
-        createdByUserId = session.primaryUserId
+        regionCount = jsonModel.regionCount
+        description = jsonModel.description |> referenceToOption
+        createdByUserId = sessionUserId
+        isPublic = jsonModel.isPublic
+        allowGuests = jsonModel.allowGuests
     }
 
-let mapLoginRequestFromJson(jsonModel : LoginRequestJsonModel) : LoginRequest =
+let mapLobbiesQuery(jsonModel : LobbiesQueryJsonModel) : LobbiesQuery =
     {
-        userName = jsonModel.userName
-        password = jsonModel.password
-    }
-
-let mapSessionResponse(session : Session) : SessionResponseJsonModel =
-    {
-        id = session.id
-        userIds = session.userIds
+        lobbyId = None
+        descriptionContains = jsonModel.descriptionContains |> referenceToOption
+        createdByUserId = jsonModel.createdByUserId |> nullableToOption
+        playerUserId = jsonModel.playerUserId |> nullableToOption
+        isPublic = jsonModel.isPublic |> nullableToOption
+        allowGuests = jsonModel.allowGuests |> nullableToOption    
     }
