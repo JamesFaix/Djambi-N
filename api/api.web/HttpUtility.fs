@@ -53,3 +53,15 @@ module HttpUtility =
             ctx.BindModelAsync<'a>()
             |> Task.map (fun model -> Ok (model, session))
         )
+
+    let ensureNotSignedIn (ctx : HttpContext) : Result<Unit, HttpException> =
+        let token = ctx.Request.Cookies.Item(cookieName)
+        if token |> String.IsNullOrEmpty |> not
+        then Error <| HttpException(401, "Operation not allowed if already signed in.")
+        else Ok ()
+
+    let ensureNotSignedInAndGetModel<'a> (ctx : HttpContext) : 'a AsyncHttpResult =
+        match ensureNotSignedIn ctx with
+        | Error ex -> errorTask ex
+        | Ok _ -> ctx.BindModelAsync<'a>()
+                  |> Task.map Ok

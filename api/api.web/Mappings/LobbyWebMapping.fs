@@ -41,4 +41,5 @@ let mapLobbiesQuery(jsonModel : LobbiesQueryJsonModel) : LobbiesQuery =
         playerUserId = jsonModel.playerUserId |> nullableToOption
         isPublic = jsonModel.isPublic |> nullableToOption
         allowGuests = jsonModel.allowGuests |> nullableToOption    
+        callingUserId = None
     }

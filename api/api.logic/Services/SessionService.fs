@@ -74,5 +74,5 @@ module SessionService =
         SessionRepository.getSession(None, Some token, None)
         |> thenBind errorIfExpired
 
-    let closeSession(token : string) : Unit AsyncHttpResult =
-        SessionRepository.deleteSession(None, Some token)
+    let closeSession(session : Session) : Unit AsyncHttpResult =
+        SessionRepository.deleteSession(None, Some session.token)

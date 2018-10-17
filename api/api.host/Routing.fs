@@ -20,7 +20,6 @@ module Routing =
                     GET >=> routef "/users/%i" UserController.getUser
                     GET >=> route "/users" >=> UserController.getUsers
                     DELETE >=> routef "/users/%i" UserController.deleteUser
-                    PATCH >=> routef "/users/%i" UserController.updateUser
 
                 //Lobby
                     POST >=> route "/lobbies/query" >=> LobbyController.getLobbies

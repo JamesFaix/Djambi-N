@@ -8,7 +8,7 @@ open NUnit.Framework
 open Djambi.Api.WebClient
 
 [<Test>]
-let ``POST user should work`` () =
+let ``Create user should work`` () =
     task {
         //Arrange
         let request = RequestFactory.createUserRequest()
@@ -25,7 +25,7 @@ let ``POST user should work`` () =
     } :> Task
 
 [<Test>]
-let ``POST user should fail if name conflict`` () =
+let ``Create user should fail if name conflict`` () =
     task {
         //Arrange
         let request = RequestFactory.createUserRequest()
@@ -39,7 +39,21 @@ let ``POST user should fail if name conflict`` () =
     } :> Task
 
 [<Test>]
-let ``GET user should work`` () =
+let ``Create user should fail if already signed in`` () =
+    task {
+        //Arrange
+        let! (_, token) = SetupUtility.createUserAndSignIn()
+        let request = RequestFactory.createUserRequest()
+
+        //Act
+        let! response = UserClient.tryCreateUserWithToken(request, token)
+
+        //Assert
+        response |> shouldBeError HttpStatusCode.Unauthorized "Operation not allowed if already signed in."
+    } :> Task
+
+[<Test>]
+let ``Get user should work`` () =
     task {
         //Arrange
         let request = RequestFactory.createUserRequest()
@@ -58,7 +72,7 @@ let ``GET user should work`` () =
     } :> Task
 
 [<Test>]
-let ``GET user should fail if user doesnt exist`` () =
+let ``Get user should fail if user doesnt exist`` () =
     task {
         //Arrange
         let userId = Int32.MinValue
@@ -71,7 +85,7 @@ let ``GET user should fail if user doesnt exist`` () =
     } :> Task
 
 [<Test>]
-let ``DELETE user should work`` () =
+let ``Delete user should work`` () =
     task {
         //Arrange
         let request = RequestFactory.createUserRequest()    
@@ -88,7 +102,7 @@ let ``DELETE user should work`` () =
     } :> Task
 
 [<Test>]
-let ``DELETE user should fail if already deleted`` () =
+let ``Delete user should fail if already deleted`` () =
     task {
         //Arrange
         let request = RequestFactory.createUserRequest()    
@@ -105,7 +119,7 @@ let ``DELETE user should fail if already deleted`` () =
     } :> Task
 
 [<Test>]
-let ``GET users should return multiple users`` () =
+let ``Get users should return multiple users`` () =
     task {
         //Arrange
         let request1 = RequestFactory.createUserRequest()

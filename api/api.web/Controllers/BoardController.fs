@@ -6,12 +6,14 @@ open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
 open Djambi.Api.Web.HttpUtility
 
 let getBoard(regionCount : int) =
+    //Error if not logged in
     let func ctx =
         BoardModelUtility.getBoard regionCount
         |> okTask
     handle func
             
 let getCellPaths(regionCount : int, cellId : int) =
+    //Error if not logged in
     let func ctx = 
         let board = BoardModelUtility.getBoardMetadata(regionCount)
         let cell = board.cells() |> Seq.find(fun c -> c.id = cellId)

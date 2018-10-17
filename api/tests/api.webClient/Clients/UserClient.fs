@@ -8,6 +8,11 @@ let createUser (request : CreateUserJsonModel) : UserResponseJsonModel AsyncResp
     sendRequest(POST, "/users", 
         Some request,
         None)
+
+let tryCreateUserWithToken (request : CreateUserJsonModel, token : string) : UserResponseJsonModel AsyncResponse =
+    sendRequest(POST, "/users",
+        Some request,
+        Some token)
     
 let deleteUser (userId : int) : Unit AsyncResponse =
     sendRequest(DELETE, sprintf "/users/%i" userId, 

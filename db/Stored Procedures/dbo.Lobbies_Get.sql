@@ -4,7 +4,8 @@ CREATE PROCEDURE [dbo].[Lobbies_Get]
 	@CreatedByUserId INT,
 	@PlayerUserId INT,
 	@IsPublic BIT,
-	@AllowGuests BIT
+	@AllowGuests BIT,
+	@CallingUserId INT
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -28,4 +29,7 @@ BEGIN
 		AND (@IsPublic IS NULL OR @IsPublic = l.IsPublic)
 		AND (@AllowGuests IS NULL OR @AllowGuests = l.AllowGuests)
 		AND g.GameId IS NULL
+		AND (@CallingUserId IS NULL 
+			OR l.IsPublic = 1
+			OR EXISTS (SELECT 1 FROM Players p WHERE p.LobbyId = l.LobbyId AND p.UserId = @CallingUserId))
 END

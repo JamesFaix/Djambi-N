@@ -14,7 +14,7 @@ let getLobbies : HttpHandler =
     let func ctx =
         getSessionAndModelFromContext<LobbiesQueryJsonModel> ctx
         |> thenBindAsync (fun (query, session) ->
-            LobbyService.getLobbies (mapLobbiesQuery query, session)
+            LobbyService.getLobbies (mapLobbiesQuery query) session
         )
         |> thenMap (List.map mapLobbyResponse)
     handle func
@@ -24,20 +24,20 @@ let createLobby : HttpHandler =
         getSessionAndModelFromContext<CreateLobbyJsonModel> ctx 
         |> thenBindAsync (fun (requestJsonModel, session) -> 
             let request = mapCreateLobbyRequest (requestJsonModel, session.userId)
-            LobbyService.createLobby (request, session))
+            LobbyService.createLobby request session)
         |> thenMap mapLobbyResponse
     handle func    
 
 let deleteLobby(lobbyId : int) =
     let func ctx = 
         getSessionFromContext ctx
-        |> thenBindAsync (fun session -> 
-            LobbyService.deleteLobby (lobbyId, session)
-        )
+        |> thenBindAsync (LobbyService.deleteLobby lobbyId)
     handle func
 
 let startGame(lobbyId: int) =
+    //Error if not creating user
     let func ctx = 
-        GameStartService.startGame lobbyId
+        getSessionFromContext ctx
+        |> thenBindAsync (fun session -> GameStartService.startGame lobbyId)
         |> thenMap mapGameStartResponseToJson
     handle func

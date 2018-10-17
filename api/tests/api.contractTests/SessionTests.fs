@@ -54,7 +54,7 @@ let ``Create session should fail if request has a token``() =
         let! response = SessionClient.tryToCreateSessionWithToken(request, "someToken")
 
         //Assert
-        response |> shouldBeError HttpStatusCode.Conflict "Already signed in."
+        response |> shouldBeError HttpStatusCode.Unauthorized "Operation not allowed if already signed in."
         response.getToken() |> shouldBeNone
     } :> Task
 
@@ -124,6 +124,6 @@ let ``Close session should clear cookie if no session on backend``() =
         let! response = SessionClient.closeSession "someToken"
 
         //Assert
-        response |> shouldHaveStatus HttpStatusCode.OK
+        response |> shouldBeError HttpStatusCode.Unauthorized "Not signed in."
         response.getToken().Value |> shouldBe ""
     } :> Task

@@ -57,6 +57,7 @@ type LobbiesQuery =
         playerUserId : int option
         isPublic : bool option
         allowGuests : bool option
+        callingUserId : int option
     }
 
 module LobbiesQuery =
@@ -68,5 +69,6 @@ module LobbiesQuery =
             createdByUserId = None
             playerUserId = None
             isPublic = None
-            allowGuests = None        
+            allowGuests = None  
+            callingUserId = None
         }       
