@@ -8,42 +8,25 @@ open Djambi.Api.Db
 open Djambi.Api.Db.Repositories
 open Djambi.Api.Logic.ModelExtensions
 open Djambi.Api.Logic.Services
-open Djambi.Api.Model.LobbyModel
 open Djambi.Api.Model.PlayModel
 open Djambi.Tests.TestUtilities
 
 type GameStartServiceTests() =
     do 
         SqlUtility.connectionString <- connectionString
-
-    [<Fact>]
-    let ``Add virtual players should work``() =
-        //Arrange
-        let lobbyRequest = getCreateLobbyRequest()
-        task {
-            let! lobby = LobbyRepository.createLobby lobbyRequest |> thenValue
-            let! lobbyWithPlayers = LobbyRepository.getLobbyWithPlayers lobby.id |> thenValue
-
-            //Act
-            let! lobbyWithVirtualPlayers = GameStartService.addVirtualPlayers lobbyWithPlayers |> thenValue
-
-            //Assert
-            let! updatedPlayers = LobbyRepository.getPlayers lobby.id |> thenValue
-            Assert.Equal(lobbyRequest.regionCount, lobbyWithVirtualPlayers.players.Length)
-            Assert.Equal<Player list>(updatedPlayers, lobbyWithVirtualPlayers.players)
-        }
-
+        
     [<Fact>]
     let ``Get starting conditions should work``() =
         //Arrange
         let lobbyRequest = getCreateLobbyRequest()
         task {
             let! lobby = LobbyRepository.createLobby lobbyRequest |> thenValue
-            let! lobbyWithPlayers = LobbyRepository.getLobbyWithPlayers lobby.id |> thenValue
-            let! lobbyWithVirtualPlayers = GameStartService.addVirtualPlayers lobbyWithPlayers |> thenValue
+            let! players = PlayerRepository.getPlayers lobby.id 
+                            |> thenBindAsync (PlayerService.fillEmptyPlayerSlots lobby)
+                            |> thenValue
 
             //Act
-            let startingConditions = GameStartService.getStartingConditions lobbyWithVirtualPlayers.players
+            let startingConditions = GameStartService.getStartingConditions players
 
             //Assert
             Assert.Equal(lobby.regionCount, startingConditions.Length)
@@ -64,9 +47,10 @@ type GameStartServiceTests() =
         let lobbyRequest = getCreateLobbyRequest()
         task {
             let! lobby = LobbyRepository.createLobby lobbyRequest |> thenValue
-            let! lobbyWithPlayers = LobbyRepository.getLobbyWithPlayers lobby.id |> thenValue
-            let! lobbyWithVirtualPlayers = GameStartService.addVirtualPlayers lobbyWithPlayers |> thenValue
-            let startingConditions = GameStartService.getStartingConditions lobbyWithVirtualPlayers.players
+            let! players = PlayerRepository.getPlayers lobby.id 
+                            |> thenBindAsync (PlayerService.fillEmptyPlayerSlots lobby)
+                            |> thenValue
+            let startingConditions = GameStartService.getStartingConditions players
             let board = BoardModelUtility.getBoardMetadata(lobby.regionCount)
 
             //Act

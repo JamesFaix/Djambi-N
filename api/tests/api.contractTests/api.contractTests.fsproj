@@ -14,6 +14,7 @@
     <Compile Include="UserTests.fs" />
     <Compile Include="SessionTests.fs" />
     <Compile Include="LobbyTests.fs" />
+    <Compile Include="PlayerTests.fs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,50 +1,7 @@
 ﻿module Djambi.Api.Model.LobbyModel
 
 open System
-open Djambi.Api.Model.Enums
-
-type Player =
-    {
-        id : int
-        lobbyId : int
-        userId : int option
-        playerType : PlayerType
-        name : string
-    }
-
-type CreatePlayerRequest = 
-    {
-        lobbyId : int
-        playerType : PlayerType
-        userId : int option
-        name : string option
-    }
-
-module CreatePlayerRequest =
-    
-    let user (lobbyId : int, userId : int) : CreatePlayerRequest =
-        {
-            lobbyId = lobbyId
-            playerType = PlayerType.User
-            userId = Some userId
-            name = None
-        }
-
-    let guest (lobbyId : int, userId : int, name : string) : CreatePlayerRequest =
-        {
-            lobbyId = lobbyId
-            playerType = PlayerType.Guest
-            userId = Some userId
-            name = Some name
-        }
-
-    let ``virtual`` (lobbyId : int, name : string) : CreatePlayerRequest =
-        {
-            lobbyId = lobbyId
-            playerType = PlayerType.Virtual
-            userId = None
-            name = Some name
-        }
+open Djambi.Api.Model.PlayerModel
 
 type Lobby =
     {
@@ -56,7 +13,32 @@ type Lobby =
         isPublic : bool
         allowGuests : bool
         //TODO: Add player count
+    } 
+
+type LobbyWithPlayers =
+    {
+        id : int
+        description : string option
+        regionCount : int
+        createdOn : DateTime
+        createdByUserId : int
+        isPublic : bool
+        allowGuests : bool
+        players : Player list
     }
+
+type Lobby with
+    member this.addPlayers (players : Player list) : LobbyWithPlayers =
+        {
+            id = this.id
+            description = this.description
+            regionCount = this.regionCount
+            createdOn = this.createdOn
+            createdByUserId = this.createdByUserId
+            isPublic = this.isPublic
+            allowGuests = this.allowGuests
+            players = players
+        }
 
 type CreateLobbyRequest = 
     {
@@ -87,16 +69,4 @@ module LobbiesQuery =
             playerUserId = None
             isPublic = None
             allowGuests = None        
-        }        
-
-type LobbyWithPlayers =
-    {
-        id : int
-        description : string option
-        regionCount : int
-        createdOn : DateTime
-        createdByUserId : int
-        isPublic : bool
-        allowGuests : bool
-        players : Player list
-    }
+        }       

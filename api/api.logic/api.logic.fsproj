@@ -10,6 +10,7 @@
     <Compile Include="ModelExtensions\PlayModelExtensions.fs" />
     <Compile Include="Services\SessionService.fs" />
     <Compile Include="Services\LobbyService.fs" />
+    <Compile Include="Services\PlayerService.fs" />
     <Compile Include="Services\PlayService.fs" />
     <Compile Include="Services\GameStartService.fs" />
   </ItemGroup>

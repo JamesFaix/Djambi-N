@@ -13,6 +13,8 @@
     <Compile Include="TestUtilities.fs" />
     <Compile Include="UserRepositoryTests.fs" />
     <Compile Include="LobbyRepositoryTests.fs" />
+    <Compile Include="PlayerRepositoryTests.fs" />
+    <Compile Include="PlayerServiceTests.fs" />
     <Compile Include="GameStartServiceTests.fs" />
   </ItemGroup>
 

@@ -27,8 +27,8 @@ module Routing =
                     POST >=> route "/lobbies" >=> LobbyController.createLobby
                     DELETE >=> routef "/lobbies/%i" LobbyController.deleteLobby
 
-                    POST >=> routef "/lobbies/%i/players" LobbyController.addPlayerToLobby
-                    DELETE >=> routef "/lobbies/%i/players/%i" LobbyController.removePlayerFromLobby
+                    POST >=> routef "/lobbies/%i/players" PlayerController.addPlayerToLobby
+                    DELETE >=> routef "/lobbies/%i/players/%i" PlayerController.removePlayerFromLobby
 
                     POST >=> routef "/lobbies/%i/start-request" LobbyController.startGame
 

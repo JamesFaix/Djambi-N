@@ -7,12 +7,14 @@
   <ItemGroup>
     <Compile Include="Mappings\UserWebMapping.fs" />
     <Compile Include="Mappings\SessionWebMapping.fs" />
+    <Compile Include="Mappings\PlayerWebMapping.fs" />
     <Compile Include="Mappings\LobbyWebMapping.fs" />
     <Compile Include="Mappings\PlayWebMapping.fs" />
     <Compile Include="HttpUtility.fs" />
     <Compile Include="Controllers\UserController.fs" />
     <Compile Include="Controllers\SessionController.fs" />
     <Compile Include="Controllers\LobbyController.fs" />
+    <Compile Include="Controllers\PlayerController.fs" />
     <Compile Include="Controllers\BoardController.fs" />
     <Compile Include="Controllers\PlayController.fs" />
   </ItemGroup>

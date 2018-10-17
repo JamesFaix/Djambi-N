@@ -9,23 +9,23 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT LobbyId, 
-		[Description],
-		RegionCount,
-		CreatedByUserId,
-		CreatedOn,
-		AllowGuests,
-		IsPublic
+	SELECT l.LobbyId, 
+		l.[Description],
+		l.RegionCount,
+		l.CreatedByUserId,
+		l.CreatedOn,
+		l.AllowGuests,
+		l.IsPublic
 		--TODO: Add player count
-    FROM Lobbies
+    FROM Lobbies l
 		LEFT OUTER JOIN Games g
-			ON g.LobbyId = LobbyId
-	WHERE (@LobbyId IS NULL OR @LobbyId = LobbyId)
-		AND (@DescriptionContains IS NULL OR [Description] LIKE '%' + @DescriptionContains + '%')
-		AND (@CreatedByUserId IS NULL OR @CreatedByUserId = CreatedByUserId)
+			ON g.LobbyId = l.LobbyId
+	WHERE (@LobbyId IS NULL OR @LobbyId = l.LobbyId)
+		AND (@DescriptionContains IS NULL OR l.[Description] LIKE '%' + @DescriptionContains + '%')
+		AND (@CreatedByUserId IS NULL OR @CreatedByUserId = l.CreatedByUserId)
 		AND (@PlayerUserId IS NULL OR EXISTS(
-			SELECT 1 FROM Players p WHERE p.LobbyId = LobbyId AND p.UserId = @PlayerUserId))
-		AND (@IsPublic IS NULL OR @IsPublic = IsPublic)
-		AND (@AllowGuests IS NULL OR @AllowGuests = AllowGuests)
+			SELECT 1 FROM Players p WHERE p.LobbyId = l.LobbyId AND p.UserId = @PlayerUserId))
+		AND (@IsPublic IS NULL OR @IsPublic = l.IsPublic)
+		AND (@AllowGuests IS NULL OR @AllowGuests = l.AllowGuests)
 		AND g.GameId IS NULL
 END

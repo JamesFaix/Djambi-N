@@ -10,7 +10,11 @@ let createLobby (request : CreateLobbyRequest, session : Session) : Lobby AsyncH
     LobbyRepository.createLobby request
 
 let getLobby (lobbyId : int, session : Session) : LobbyWithPlayers AsyncHttpResult =
-    LobbyRepository.getLobbyWithPlayers lobbyId
+    LobbyRepository.getLobby lobbyId
+    |> thenBindAsync (fun lobby -> 
+        PlayerRepository.getPlayers lobbyId
+        |> thenMap (fun players -> lobby.addPlayers players)
+    )
 
 let deleteLobby (lobbyId : int, session : Session) : Unit AsyncHttpResult =
     getLobby (lobbyId, session)
@@ -20,13 +24,6 @@ let deleteLobby (lobbyId : int, session : Session) : Unit AsyncHttpResult =
         else Error <| HttpException(403, "Users can only delete lobbies that they created.")
     )
     |> thenBindAsync (fun _ -> LobbyRepository.deleteLobby lobbyId)
-
-let addPlayerToLobby (request : CreatePlayerRequest, session : Session) : Unit AsyncHttpResult =
-    LobbyRepository.addPlayerToLobby request
-    |> thenMap ignore
-
-let removePlayerFromLobby (lobbyPlayerId : int, session : Session) : Unit AsyncHttpResult =
-    LobbyRepository.removePlayerFromLobby lobbyPlayerId
 
 let getLobbies (query : LobbiesQuery, session : Session) : Lobby list AsyncHttpResult =
     LobbyRepository.getLobbies query

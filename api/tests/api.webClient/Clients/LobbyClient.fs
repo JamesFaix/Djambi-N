@@ -18,13 +18,3 @@ let getLobbies (query : LobbiesQueryJsonModel, token : string) : LobbyResponseJs
     sendRequest(POST, "/lobbies/query", 
         Some query,
         Some token)
-
-let addPlayer (lobbyId : int, request : CreatePlayerJsonModel, token : string) : Unit AsyncResponse =
-    sendRequest(POST, sprintf "/lobbies/%i/players" lobbyId, 
-        Some request,
-        Some token)
-
-let removePlayer (lobbyId : int, playerId : int, token : string) : Unit AsyncResponse =
-    sendRequest(DELETE, sprintf "/lobbies/%i/players/%i" lobbyId playerId, 
-        None,
-        Some token)

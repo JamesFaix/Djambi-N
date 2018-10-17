@@ -1,38 +1,14 @@
 ﻿module Djambi.Api.Logic.Services.GameStartService
 
-open System
-open System.Linq
 open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Db.Repositories
 open Djambi.Api.Logic.ModelExtensions
 open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
 open Djambi.Api.Model.BoardModel
-open Djambi.Api.Model.LobbyModel
 open Djambi.Api.Model.PlayModel
-
-let addVirtualPlayers(lobby : LobbyWithPlayers) : LobbyWithPlayers AsyncHttpResult =
-    let missingPlayerCount = lobby.regionCount - lobby.players.Length
-
-    let getVirtualNamesToUse (possibleNames : string list) = 
-        Enumerable.Except(
-            possibleNames, 
-            lobby.players |> Seq.map (fun p -> p.name), 
-            StringComparer.OrdinalIgnoreCase) 
-        |> Utilities.shuffle
-        |> Seq.take missingPlayerCount
-
-    if missingPlayerCount = 0
-    then lobby |> okTask
-    else
-        LobbyRepository.getVirtualPlayerNames()
-        |> thenMap getVirtualNamesToUse
-        |> thenDoEachAsync (fun name -> 
-            let request = CreatePlayerRequest.``virtual`` (lobby.id, name)
-            LobbyRepository.addPlayerToLobby request
-            |> thenMap ignore
-        )
-        |> thenBindAsync (fun _ -> LobbyRepository.getLobbyWithPlayers lobby.id)
+open Djambi.Api.Model.PlayerModel
+open Djambi.Api.Logic.Services
 
 let getStartingConditions(players : Player list) : PlayerStartConditions list =
     let colorIds = [0..(Constants.maxRegions-1)] |> Utilities.shuffle |> Seq.take players.Length
@@ -78,8 +54,12 @@ let createPieces(board : BoardMetadata, startingConditions : PlayerStartConditio
     |> List.collect id
 
 let startGame(lobbyId : int) : StartGameResponse AsyncHttpResult =
-    LobbyRepository.getLobbyWithPlayers lobbyId
-    |> thenBindAsync addVirtualPlayers
+    LobbyRepository.getLobby lobbyId
+    |> thenBindAsync (fun lobby -> 
+        PlayerRepository.getPlayers lobbyId
+        |> thenBindAsync (PlayerService.fillEmptyPlayerSlots lobby)
+        |> thenMap (fun players -> lobby.addPlayers players)
+    )
     |> thenMap (fun lobby -> 
         let startingConditions = getStartingConditions lobby.players
         let board = BoardModelUtility.getBoardMetadata lobby.regionCount

@@ -6,15 +6,12 @@ open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Db
 open Djambi.Api.Db.Repositories
-open Djambi.Api.Model.Enums
 open Djambi.Api.Model.LobbyModel
 open Djambi.Tests.TestUtilities
 
 type LobbyRepositoryTests() =
     do 
         SqlUtility.connectionString <- connectionString
-
-    //Game CRUD
 
     [<Fact>] 
     let ``Create lobby should work``() =
@@ -79,89 +76,4 @@ type LobbyRepositoryTests() =
             let exists = lobbies |> List.exists (fun l -> l.id = createdLobby.id)
             Assert.True(exists)
           //  Assert.All(games, fun g -> Assert.Equal(GameStatus.Open, g.status))
-        }
-    
-    //Player CRUD
-    [<Fact>]
-    let ``Add user player should work``() =
-        //Arrange
-        let lobbyRequest = getCreateLobbyRequest()
-        let userRequest = getCreateUserRequest()
-        task {
-            let! lobby = LobbyRepository.createLobby lobbyRequest |> thenValue
-            let! user = UserRepository.createUser userRequest |> thenValue
-            let request = CreatePlayerRequest.user(lobby.id, user.id)
-           
-            //Act
-            let! _ = LobbyRepository.addPlayerToLobby request |> thenValue
-
-            //Assert
-            let! updatedLobby = LobbyRepository.getLobbyWithPlayers lobby.id |> thenValue
-            let exists = updatedLobby.players 
-                         |> List.exists (fun p -> p.userId = Some user.id
-                                                  && p.name = user.name 
-                                                  && p.playerType = PlayerType.User)
-            Assert.True(exists)
-        }
-
-    [<Fact>]
-    let ``Add virtual player should work``() =
-        //Arrange
-        let lobbyRequest = getCreateLobbyRequest()
-        task {
-            let! lobby = LobbyRepository.createLobby lobbyRequest |> thenValue
-            let request = CreatePlayerRequest.``virtual``(lobby.id, "test")
-           
-            //Act
-            let! _ = LobbyRepository.addPlayerToLobby request |> thenValue
-
-            //Assert
-            let! updatedLobby = LobbyRepository.getLobbyWithPlayers lobby.id |> thenValue
-            let exists = updatedLobby.players 
-                         |> List.exists (fun p -> p.userId = None
-                                                  && p.name = request.name.Value
-                                                  && p.playerType = PlayerType.Virtual)
-            Assert.True(exists)
-        }
-    
-    [<Fact>]
-    let ``Add guest player should work``() =
-        //Arrange
-        let lobbyRequest = getCreateLobbyRequest()
-        let userRequest = getCreateUserRequest()
-        task {
-            let! lobby = LobbyRepository.createLobby lobbyRequest |> thenValue
-            let! user = UserRepository.createUser userRequest |> thenValue
-            let request = CreatePlayerRequest.guest(lobby.id, user.id, "test")
-           
-            //Act
-            let! _ = LobbyRepository.addPlayerToLobby request |> thenValue
-
-            //Assert
-            let! updatedLobby = LobbyRepository.getLobbyWithPlayers lobby.id |> thenValue
-            let exists = updatedLobby.players 
-                         |> List.exists (fun p -> p.userId = Some user.id
-                                                  && p.name = request.name.Value
-                                                  && p.playerType = PlayerType.Guest)
-            Assert.True(exists)
-        }
-
-    [<Fact>]
-    let ``Remove player should work``() =
-        //Arrange
-        let lobbyRequest = getCreateLobbyRequest()
-        let userRequest = getCreateUserRequest()
-        task {
-            let! lobby = LobbyRepository.createLobby lobbyRequest |> thenValue
-            let! user = UserRepository.createUser userRequest |> thenValue
-            let playerRequest = CreatePlayerRequest.user(lobby.id, user.id)
-            let! playerId = LobbyRepository.addPlayerToLobby playerRequest |> thenValue
-
-            //Act
-            let! _ = LobbyRepository.removePlayerFromLobby playerId |> thenValue
-
-            //Assert
-            let! updatedLobby = LobbyRepository.getLobbyWithPlayers lobby.id |> thenValue
-            let exists = updatedLobby.players |> List.exists (fun p -> p.id = playerId)
-            Assert.False(exists)
         }

@@ -35,23 +35,6 @@ let deleteLobby(lobbyId : int) =
             LobbyService.deleteLobby (lobbyId, session)
         )
     handle func
- 
-let addPlayerToLobby(lobbyId : int) =
-    let func ctx =
-        getSessionAndModelFromContext<CreatePlayerJsonModel> ctx
-        |> thenBindAsync (fun (requestJsonModel, session) -> 
-            let request = mapCreatePlayerRequest(requestJsonModel, lobbyId)
-            LobbyService.addPlayerToLobby(request, session)
-        )
-    handle func
-
-let removePlayerFromLobby(lobbyId : int, playerId : int) =
-    let func ctx =
-        getSessionFromContext ctx
-        |> thenBindAsync (fun session -> 
-            LobbyService.removePlayerFromLobby(playerId, session)
-        )
-    handle func
 
 let startGame(lobbyId: int) =
     let func ctx = 

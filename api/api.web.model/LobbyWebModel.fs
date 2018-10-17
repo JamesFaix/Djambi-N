@@ -1,7 +1,8 @@
 module Djambi.Api.Web.Model.LobbyWebModel
 
 open System
-       
+open Djambi.Api.Web.Model.PlayerWebModel
+
 [<CLIMutable>]
 type CreateLobbyJsonModel =
     {
@@ -9,14 +10,6 @@ type CreateLobbyJsonModel =
         description : string
         allowGuests : bool
         isPublic : bool
-    }
-
-type PlayerResponseJsonModel =
-    {
-        id : int
-        userId : int Nullable
-        name : string
-        ``type`` : string
     }
 
 type LobbyResponseJsonModel =
@@ -57,11 +50,3 @@ module LobbiesQueryJsonModel =
             isPublic = Unchecked.defaultof<bool Nullable>
             allowGuests = Unchecked.defaultof<bool Nullable>
         }
-
-[<CLIMutable>]
-type CreatePlayerJsonModel =
-    {
-        userId : int Nullable
-        name : string
-        ``type`` : string
-    }

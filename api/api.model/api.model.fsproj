@@ -8,6 +8,7 @@
     <Compile Include="Enums.fs" />
     <Compile Include="UserModel.fs" />
     <Compile Include="SessionModel.fs" />
+    <Compile Include="PlayerModel.fs" />
     <Compile Include="LobbyModel.fs" />
     <Compile Include="BoardModel.fs" />
     <Compile Include="PlayModel.fs" />
