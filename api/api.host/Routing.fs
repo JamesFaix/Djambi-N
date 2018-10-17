@@ -36,12 +36,12 @@ module Routing =
                     GET >=> routef "/boards/%i" BoardController.getBoard
                     GET >=> routef "/boards/%i/cells/%i/paths" BoardController.getCellPaths
                        
-                //Play
-                    GET >=> routef "/games/%i/state" PlayController.getGameState
+                //Game
+                    GET >=> routef "/games/%i/state" GameController.getGameState
 
-                    POST >=> routef "/games/%i/current-turn/selection-request/%i" PlayController.selectCell
-                    POST >=> routef "/games/%i/current-turn/reset-request" PlayController.resetTurn
-                    POST >=> routef "/games/%i/current-turn/commit-request" PlayController.commitTurn
+                    POST >=> routef "/games/%i/current-turn/selection-request/%i" GameController.selectCell
+                    POST >=> routef "/games/%i/current-turn/reset-request" GameController.resetTurn
+                    POST >=> routef "/games/%i/current-turn/commit-request" GameController.commitTurn
 
                 ])
             setStatusCode 404 >=> text "Not Found" ]

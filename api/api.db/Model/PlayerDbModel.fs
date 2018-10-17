@@ -2,7 +2,6 @@
 
 open System
 open Djambi.Api.Common.Utilities
-open Djambi.Api.Model.Enums
 open Djambi.Api.Model.PlayerModel
 
 [<CLIMutable>]

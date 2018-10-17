@@ -1,4 +1,4 @@
-﻿module Djambi.Api.Web.Model.PlayWebModel
+﻿module Djambi.Api.Web.Model.GameWebModel
 
 open System
 

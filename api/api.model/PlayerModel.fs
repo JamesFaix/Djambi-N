@@ -1,6 +1,9 @@
 ﻿module Djambi.Api.Model.PlayerModel
 
-open Djambi.Api.Model.Enums
+type PlayerType =
+    | User
+    | Guest
+    | Virtual
 
 type Player =
     {

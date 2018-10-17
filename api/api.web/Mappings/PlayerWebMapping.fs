@@ -2,7 +2,6 @@
 
 open Djambi.Api.Model.PlayerModel
 open Djambi.Api.Web.Model.PlayerWebModel
-open Djambi.Api.Model.Enums
 open Djambi.Api.Common.Utilities
 
 let mapPlayerTypeFromString(playerTypeName : string) : PlayerType =

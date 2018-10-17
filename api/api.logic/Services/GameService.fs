@@ -1,4 +1,4 @@
-﻿module Djambi.Api.Logic.Services.PlayService
+﻿module Djambi.Api.Logic.Services.GameService
 
 open System.Collections.Generic
 open System.Linq
@@ -7,12 +7,12 @@ open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Db.Repositories
 open Djambi.Api.Logic.ModelExtensions
 open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
-open Djambi.Api.Logic.ModelExtensions.PlayModelExtensions
+open Djambi.Api.Logic.ModelExtensions.GameModelExtensions
 open Djambi.Api.Model.BoardModel
-open Djambi.Api.Model.PlayModel
+open Djambi.Api.Model.GameModel
 
 let getGameState(gameId : int) : GameState AsyncHttpResult =
-    PlayRepository.getGame gameId
+    GameRepository.getGame gameId
     |> thenMap (fun g -> g.gameState)
         
 let private getMoveSelectionOptions(game : GameState, piece : Piece, regionCount : int) : int list =
@@ -182,7 +182,7 @@ let getSelectableCellsFromState(game : Game) : (int list * SelectionType option)
     | _ -> (List.empty, None)
 
 let selectCell(gameId : int, cellId : int) : TurnState AsyncHttpResult = 
-    PlayRepository.getGame gameId
+    GameRepository.getGame gameId
     |> thenBind (fun game -> 
         if game.turnState.selectionOptions |> List.contains cellId |> not
         then Error <| HttpException(400, (sprintf "Cell %i is not currently selectable" cellId))
@@ -249,10 +249,10 @@ let selectCell(gameId : int, cellId : int) : TurnState AsyncHttpResult =
                         selectionOptions = selectionOptions
                         requiredSelectionType = requiredSelectionType
                     }))
-    |> thenDoAsync (fun turnState -> PlayRepository.updateTurnState(gameId, turnState))            
+    |> thenDoAsync (fun turnState -> GameRepository.updateTurnState(gameId, turnState))            
 
 let resetTurn(gameId : int) : TurnState AsyncHttpResult =
-    PlayRepository.getGame gameId
+    GameRepository.getGame gameId
     |> thenMap (fun game -> 
         let updatedGame = 
             {
@@ -268,7 +268,7 @@ let resetTurn(gameId : int) : TurnState AsyncHttpResult =
                 selectionOptions = selectionOptions
                 requiredSelectionType = requiredSelectionType
         })
-    |> thenDoAsync (fun turnState -> PlayRepository.updateTurnState(gameId, turnState))
+    |> thenDoAsync (fun turnState -> GameRepository.updateTurnState(gameId, turnState))
     
 let private applyTurnStateToPieces(game : Game) : Piece list =
     let pieces = game.gameState.pieces.ToDictionary(fun p -> p.id)
@@ -383,7 +383,7 @@ let private killCurrentPlayer(gameState : GameState) : GameState =
     }
 
 let commitTurn(gameId : int) : CommitTurnResponse AsyncHttpResult =
-    PlayRepository.getGame gameId
+    GameRepository.getGame gameId
     |> thenMap (fun game -> 
         let turnCycle = applyTurnStateToTurnCycle game
         let pieces = applyTurnStateToPieces game
@@ -437,5 +437,5 @@ let commitTurn(gameId : int) : CommitTurnResponse AsyncHttpResult =
             }
         })
 
-    |> thenDoAsync (fun response -> PlayRepository.updateGameState(gameId, response.gameState))
-    |> thenDoAsync (fun response -> PlayRepository.updateTurnState(gameId, response.turnState))
+    |> thenDoAsync (fun response -> GameRepository.updateGameState(gameId, response.gameState))
+    |> thenDoAsync (fun response -> GameRepository.updateTurnState(gameId, response.turnState))

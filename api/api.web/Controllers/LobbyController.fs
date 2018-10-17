@@ -7,7 +7,7 @@ open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Logic.Services
 open Djambi.Api.Web.HttpUtility
 open Djambi.Api.Web.Mappings.LobbyWebMapping
-open Djambi.Api.Web.Mappings.PlayWebMapping
+open Djambi.Api.Web.Mappings.GameWebMapping
 open Djambi.Api.Web.Model.LobbyWebModel
 
 let getLobbies : HttpHandler =

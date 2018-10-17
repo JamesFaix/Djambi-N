@@ -6,7 +6,7 @@ open Djambi.Api.Db.Repositories
 open Djambi.Api.Logic.ModelExtensions
 open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
 open Djambi.Api.Model.BoardModel
-open Djambi.Api.Model.PlayModel
+open Djambi.Api.Model.GameModel
 open Djambi.Api.Model.PlayerModel
 open Djambi.Api.Logic.Services
 
@@ -91,7 +91,7 @@ let startGame(lobbyId : int) : StartGameResponse AsyncHttpResult =
                     }
             }
 
-        let (selectionOptions, _) = PlayService.getSelectableCellsFromState gameWithoutSelectionOptions
+        let (selectionOptions, _) = GameService.getSelectableCellsFromState gameWithoutSelectionOptions
            
         {
             lobbyId = lobby.id
@@ -101,7 +101,7 @@ let startGame(lobbyId : int) : StartGameResponse AsyncHttpResult =
         }
     )
     |> thenBindAsync (fun startRequest -> 
-        PlayRepository.startGame startRequest
+        GameRepository.startGame startRequest
         |> thenMap (fun gameId -> 
             {
                 gameId = gameId

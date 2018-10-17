@@ -1,4 +1,4 @@
-﻿module Djambi.Api.Model.PlayModel
+﻿module Djambi.Api.Model.GameModel
 
 type PlayerState =
     {
@@ -145,3 +145,9 @@ type CommitTurnResponse =
         gameState : GameState
         turnState : TurnState
     }
+
+type GameStatus =
+    | Open
+    | Started
+    | Complete
+    | Cancelled

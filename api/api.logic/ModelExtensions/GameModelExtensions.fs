@@ -2,10 +2,9 @@
 
 open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
 open Djambi.Api.Model.BoardModel
-open Djambi.Api.Model.Enums
-open Djambi.Api.Model.PlayModel
+open Djambi.Api.Model.GameModel
 
-module PlayModelExtensions =
+module GameModelExtensions =
 
     type Piece with
         member this.moveTo cellId =

@@ -4,11 +4,11 @@ open Dapper
 open Newtonsoft.Json
 open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
-open Djambi.Api.Db.Model.PlayDbModel
+open Djambi.Api.Db.Model.GameDbModel
 open Djambi.Api.Db.SqlUtility
-open Djambi.Api.Model.PlayModel
+open Djambi.Api.Model.GameModel
 
-module PlayRepository =
+module GameRepository =
     
     let startGame(request : StartGameRequest) : int AsyncHttpResult =
         let startingConditionsJson = request.startingConditions |> JsonConvert.SerializeObject

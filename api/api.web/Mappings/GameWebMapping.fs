@@ -1,9 +1,9 @@
-﻿module Djambi.Api.Web.Mappings.PlayWebMapping
+﻿module Djambi.Api.Web.Mappings.GameWebMapping
 
 open System
 open Djambi.Api.Common.Utilities
-open Djambi.Api.Model.PlayModel
-open Djambi.Api.Web.Model.PlayWebModel
+open Djambi.Api.Model.GameModel
+open Djambi.Api.Web.Model.GameWebModel
 
 let mapPlayerStateToJson(player : PlayerState) : PlayerStateJsonModel =
     {

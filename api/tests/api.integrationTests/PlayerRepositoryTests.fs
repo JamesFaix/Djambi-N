@@ -2,11 +2,9 @@
 
 open FSharp.Control.Tasks
 open Xunit
-open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Db
 open Djambi.Api.Db.Repositories
-open Djambi.Api.Model.Enums
 open Djambi.Api.Model.PlayerModel
 open Djambi.Tests.TestUtilities
 

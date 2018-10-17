@@ -10,7 +10,7 @@
     <Compile Include="PlayerWebModel.fs" />
     <Compile Include="LobbyWebModel.fs" />
     <Compile Include="BoardWebModel.fs" />
-    <Compile Include="PlayWebModel.fs" />
+    <Compile Include="GameWebModel.fs" />
   </ItemGroup>
 
 </Project>

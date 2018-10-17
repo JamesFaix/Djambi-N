@@ -8,7 +8,7 @@ open Djambi.Api.Db
 open Djambi.Api.Db.Repositories
 open Djambi.Api.Logic.ModelExtensions
 open Djambi.Api.Logic.Services
-open Djambi.Api.Model.PlayModel
+open Djambi.Api.Model.GameModel
 open Djambi.Tests.TestUtilities
 
 type GameStartServiceTests() =
@@ -82,8 +82,6 @@ type GameStartServiceTests() =
             let! _ = GameStartService.startGame lobby.id |> thenValue
 
             //Assert
-            let! updated = LobbyRepository.getLobby lobby.id |> thenValue
-
-            //Assert.Equal(GameStatus.Started, updated.status)
-            ()
+            let! lobbyError = LobbyRepository.getLobby lobby.id |> thenError
+            Assert.Equal(404, lobbyError.statusCode)
         }
