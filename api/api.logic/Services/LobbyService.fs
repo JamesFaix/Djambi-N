@@ -1,19 +1,29 @@
 ﻿module Djambi.Api.Logic.Services.LobbyService
 
-open System
 open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Db.Repositories
 open Djambi.Api.Model.LobbyModel
+open Djambi.Api.Model.SessionModel
 
-let createGame (request : CreateGameRequest, session : Session) : LobbyGameMetadata AsyncHttpResult =
-    LobbyRepository.createGame request
+let createLobby (request : CreateLobbyRequest, session : Session) : Lobby AsyncHttpResult =
+    LobbyRepository.createLobby request
 
-let deleteGame (gameId : int, session : Session) : Unit AsyncHttpResult =
-    LobbyRepository.deleteGame gameId
+let getLobby (lobbyId : int, session : Session) : LobbyWithPlayers AsyncHttpResult =
+    LobbyRepository.getLobby lobbyId
+    |> thenBindAsync (fun lobby -> 
+        PlayerRepository.getPlayers lobbyId
+        |> thenMap (fun players -> lobby.addPlayers players)
+    )
 
-let addPlayerToGame (gameId : int, userId : int, session : Session) : Unit AsyncHttpResult =
-    LobbyRepository.addPlayerToGame(gameId, userId)
+let deleteLobby (lobbyId : int, session : Session) : Unit AsyncHttpResult =
+    getLobby (lobbyId, session)
+    |> thenBind (fun lobby -> 
+        if lobby.createdByUserId = session.userId
+        then Ok lobby
+        else Error <| HttpException(403, "Users can only delete lobbies that they created.")
+    )
+    |> thenBindAsync (fun _ -> LobbyRepository.deleteLobby lobbyId)
 
-let removePlayerFromGame (gameId : int, userId : int, session : Session) : Unit AsyncHttpResult =
-    LobbyRepository.removePlayerFromGame(gameId, userId)
+let getLobbies (query : LobbiesQuery, session : Session) : Lobby list AsyncHttpResult =
+    LobbyRepository.getLobbies query

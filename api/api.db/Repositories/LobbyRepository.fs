@@ -1,94 +1,68 @@
-﻿namespace Djambi.Api.Db.Repositories
+﻿module Djambi.Api.Db.Repositories.LobbyRepository
 
+open System
 open Dapper
 open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
-open Djambi.Api.Common.Enums
-open Djambi.Api.Db.Mappings.LobbyDbMapping
 open Djambi.Api.Db.Model.LobbyDbModel
 open Djambi.Api.Db.SqlUtility
 open Djambi.Api.Model.LobbyModel
     
-module LobbyRepository =
+let createLobby (request : CreateLobbyRequest) : Lobby AsyncHttpResult =
+    let param = DynamicParameters()
+                    .add("RegionCount", request.regionCount)
+                    .add("CreatedByUserId", request.createdByUserId)
+                    .add("AllowGuests", request.allowGuests)
+                    .add("IsPublic", request.isPublic)
+                    .addOption("Description", request.description)
 
-//Games
-    let createGame(request : CreateGameRequest) : LobbyGameMetadata AsyncHttpResult =
-        let param = DynamicParameters()
-                        .add("BoardRegionCount", request.boardRegionCount)
-                        .addOption("Description", request.description)
+    let cmd = proc("Lobbies_Create", param)
 
-        let cmd = proc("Lobby.CreateGame", param)
+    let createResponse (lobbyId : int) =
+        {
+            id = lobbyId 
+            description = request.description
+            regionCount = request.regionCount
+            createdByUserId = request.createdByUserId
+            createdOn = DateTime.UtcNow
+            isPublic = request.isPublic
+            allowGuests = request.allowGuests
+            //TODO: Add player count
+        }
 
-        let mapGame (gameId : int) =
-            {
-                id = gameId 
-                description = request.description
-                status = GameStatus.Open
-                boardRegionCount = request.boardRegionCount
-                players = List.empty
-            }
-
-        querySingle<int>(cmd, "Game")
-        |> thenMap mapGame
+    querySingle<int>(cmd, "Lobby")
+    |> thenMap createResponse
         
-    let deleteGame(gameId : int) : Unit AsyncHttpResult =
-        let param = DynamicParameters()
-                        .add("GameId", gameId)
-        let cmd = proc("Lobby.DeleteGame", param)
-        queryUnit(cmd, "Game")
+let deleteLobby (lobbyId : int) : Unit AsyncHttpResult =
+    let param = DynamicParameters()
+                    .add("LobbyId", lobbyId)
+    let cmd = proc("Lobbies_Delete", param)
+    queryUnit(cmd, "Lobby")
+                        
+let getLobbies (query : LobbiesQuery) : Lobby List AsyncHttpResult =
+    let param = DynamicParameters()
+                    .addOption("LobbyId", query.lobbyId)
+                    .addOption("DescriptionContains", query.descriptionContains)
+                    .addOption("CreatedByUserId", query.createdByUserId)
+                    .addOption("PlayerUserId", query.playerUserId)
+                    .addOption("IsPublic", query.isPublic)
+                    .addOption("AllowGuests", query.allowGuests)
 
-    let private getGamesInner(gameId : int option, userId : int option, status : GameStatus option) : LobbyGameMetadata list AsyncHttpResult =
-        let param = DynamicParameters()
-                        .addOption("GameId", gameId)
-                        .addOption("UserId", userId)
-                        .addOption("StatusId", status |> Option.map mapGameStatusToId)
-        let cmd = proc("Lobby.GetGamesWithPlayers", param)
+    let cmd = proc("Lobbies_Get", param)
 
-        queryMany<LobbyGamePlayerSqlModel>(cmd, "Game")
-        |> thenMap mapLobbyGamesResponse
-        
-    let getGame(gameId : int) : LobbyGameMetadata AsyncHttpResult =
-        getGamesInner(Some gameId, None, None)
-        |> thenMap List.head
+    queryMany<LobbySqlModel>(cmd, "Lobby")
+    |> thenMap (List.map mapLobby)
 
-    let getGames() : LobbyGameMetadata list AsyncHttpResult =
-        getGamesInner(None, None, None)
+let getLobby (lobbyId : int) : Lobby AsyncHttpResult = 
+    let param = DynamicParameters()
+                    .add("LobbyId", lobbyId)
+                    .add("DescriptionContains", null)
+                    .add("CreatedByUserId", null)
+                    .add("PlayerUserId",  null)
+                    .add("IsPublic", null)
+                    .add("AllowGuests", null)
 
-    let getOpenGames() : LobbyGameMetadata list AsyncHttpResult =
-        getGamesInner(None, None, Some Open)
+    let cmd = proc("Lobbies_Get", param)
 
-    let getUserGames(userId : int) : LobbyGameMetadata list AsyncHttpResult =
-        getGamesInner(None, Some userId, None)
-
-//Players
-    let addPlayerToGame(gameId : int, userId : int) : Unit AsyncHttpResult =
-        let param = DynamicParameters()
-                        .add("GameId", gameId)
-                        .add("UserId", userId)
-        
-        let cmd = proc("Lobby.AddPlayerToGame", param)
-
-        querySingle<int>(cmd, "Player")
-        |> thenMap ignore  //Id not currently used
-
-    let addVirtualPlayerToGame(gameId : int, name : string) : Unit AsyncHttpResult =
-        let param = DynamicParameters()
-                        .add("GameId", gameId)
-                        .add("Name", name)
-
-        let cmd = proc("Lobby.AddVirtualPlayerToGame", param)
-                
-        querySingle<int>(cmd, "Player")
-        |> thenMap ignore  //Id not currently used
-
-    let removePlayerFromGame(gameId : int, userId : int) : Unit AsyncHttpResult =
-        let param = DynamicParameters()
-                        .add("GameId", gameId)
-                        .add("UserId", userId)
-        let cmd = proc("Lobby.RemovePlayerFromGame", param)
-        queryUnit(cmd, "Player")
-
-    let getVirtualPlayerNames() : string list AsyncHttpResult =
-        let param = new DynamicParameters()
-        let cmd = proc("Lobby.GetVirtualPlayerNames", param)
-        queryMany<string>(cmd, "Virtual player names")
+    querySingle<LobbySqlModel>(cmd, "Lobby")
+    |> thenMap mapLobby

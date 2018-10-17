@@ -1,66 +1,44 @@
-﻿namespace Djambi.Api.Web.Mappings
+﻿module Djambi.Api.Web.Mappings.LobbyWebMapping
 
-open System
 open Djambi.Api.Model.LobbyModel
 open Djambi.Api.Web.Model.LobbyWebModel
+open Djambi.Api.Common.Utilities
+open Djambi.Api.Web.Mappings.PlayerWebMapping
 
-module LobbyWebMapping =
+let mapLobbyResponse(lobby : Lobby) : LobbyResponseJsonModel =
+    {
+        id = lobby.id
+        regionCount = lobby.regionCount
+        description = lobby.description |> optionToReference
+        isPublic = lobby.isPublic
+        allowGuests = lobby.allowGuests
+    }
 
-    let mapRoleFromString(roleName : string) : Role =
-        match roleName.ToUpperInvariant() with
-        | "ADMIN" -> Admin
-        | "NORMAL" -> Normal
-        | "GUEST" -> Guest
-        | _ -> failwith ("Invalid role name: " + roleName)
+let mapLobbyWithPlayersResponse(lobby : LobbyWithPlayers) : LobbyWithPlayersResponseJsonModel =
+    {
+        id = lobby.id
+        regionCount = lobby.regionCount
+        description = lobby.description |> optionToReference
+        isPublic = lobby.isPublic
+        allowGuests = lobby.allowGuests
+        players = lobby.players |> List.map mapPlayerResponse
+    }
 
-    let mapUserResponse(user : User) : UserJsonModel =
-        {
-            id = user.id
-            name = user.name
-            role = user.role.ToString()
-        }
+let mapCreateLobbyRequest(jsonModel : CreateLobbyJsonModel, sessionUserId : int) : CreateLobbyRequest =
+    {
+        regionCount = jsonModel.regionCount
+        description = jsonModel.description |> referenceToOption
+        createdByUserId = sessionUserId
+        isPublic = jsonModel.isPublic
+        allowGuests = jsonModel.allowGuests
+    }
 
-    let mapPlayerResponse(player : LobbyPlayer) : PlayerJsonModel =
-        {
-            id = player.id
-            userId = if player.userId.IsSome 
-                     then new Nullable<int>(player.userId.Value) 
-                     else Unchecked.defaultof<int Nullable>
-            name = player.name
-        }
-
-    let mapCreateUserRequest(jsonModel : CreateUserJsonModel) : CreateUserRequest =
-        {
-            name = jsonModel.name
-            role = jsonModel.role |> mapRoleFromString
-            password = jsonModel.password
-        }
-
-    let mapLobbyGameResponse(game : LobbyGameMetadata) : LobbyGameJsonModel =
-        {
-            id = game.id
-            status = game.status.ToString()
-            boardRegionCount = game.boardRegionCount
-            description = if game.description.IsSome 
-                          then game.description.Value 
-                          else Unchecked.defaultof<string>
-            players = game.players |> List.map mapPlayerResponse
-        }
-
-    let mapCreateGameRequest(jsonModel : CreateGameJsonModel) : CreateGameRequest =
-        {
-            boardRegionCount = jsonModel.boardRegionCount
-            description = if jsonModel.description = null then None else Some jsonModel.description
-        }
-
-    let mapLoginRequestFromJson(jsonModel : LoginRequestJsonModel) : LoginRequest =
-        {
-            userName = jsonModel.userName
-            password = jsonModel.password
-        }
-
-    let mapSessionResponse(session : Session) : SessionResponseJsonModel =
-        {
-            id = session.id
-            userIds = session.userIds
-        }
+let mapLobbiesQuery(jsonModel : LobbiesQueryJsonModel) : LobbiesQuery =
+    {
+        lobbyId = None
+        descriptionContains = jsonModel.descriptionContains |> referenceToOption
+        createdByUserId = jsonModel.createdByUserId |> nullableToOption
+        playerUserId = jsonModel.playerUserId |> nullableToOption
+        isPublic = jsonModel.isPublic |> nullableToOption
+        allowGuests = jsonModel.allowGuests |> nullableToOption    
+    }

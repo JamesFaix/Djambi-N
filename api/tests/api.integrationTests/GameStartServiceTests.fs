@@ -4,64 +4,63 @@ open FSharp.Control.Tasks
 open Xunit
 open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
-open Djambi.Api.Common.Enums
 open Djambi.Api.Db
 open Djambi.Api.Db.Repositories
 open Djambi.Api.Logic.ModelExtensions
 open Djambi.Api.Logic.Services
-open Djambi.Api.Model.LobbyModel
-open Djambi.Api.Model.PlayModel
+open Djambi.Api.Model.GameModel
 open Djambi.Tests.TestUtilities
 
 type GameStartServiceTests() =
     do 
         SqlUtility.connectionString <- connectionString
-
-    [<Fact>]
-    let ``Add virtual players should work``() =
-        let gameRequest = getCreateGameRequest()
-        task {
-            let! game = LobbyRepository.createGame gameRequest |> thenValue
-            let! players = GameStartService.addVirtualPlayers game |> thenValue
-            let! updatedGame = LobbyRepository.getGame game.id |> thenValue
-            Assert.Equal(gameRequest.boardRegionCount, updatedGame.players.Length)
-            Assert.Equal<LobbyPlayer list>(players, updatedGame.players)
-        }
-
+        
     [<Fact>]
     let ``Get starting conditions should work``() =
-        let gameRequest = getCreateGameRequest()
+        //Arrange
+        let lobbyRequest = getCreateLobbyRequest()
         task {
-            let! game = LobbyRepository.createGame gameRequest |> thenValue
-            let! players = GameStartService.addVirtualPlayers game |> thenValue
+            let! lobby = LobbyRepository.createLobby lobbyRequest |> thenValue
+            let! players = PlayerRepository.getPlayers lobby.id 
+                            |> thenBindAsync (PlayerService.fillEmptyPlayerSlots lobby)
+                            |> thenValue
+
+            //Act
             let startingConditions = GameStartService.getStartingConditions players
 
-            Assert.Equal(game.boardRegionCount, startingConditions.Length)
+            //Assert
+            Assert.Equal(lobby.regionCount, startingConditions.Length)
 
             let turnNumbers = startingConditions |> List.map (fun cond -> cond.turnNumber) |> List.sort
-            Assert.Equal<int list>([0..(game.boardRegionCount-1)], turnNumbers)
+            Assert.Equal<int list>([0..(lobby.regionCount-1)], turnNumbers)
 
             let regions = startingConditions |> List.map (fun cond -> cond.region) |> List.sort
-            Assert.Equal<int list>([0..(game.boardRegionCount-1)], regions)
+            Assert.Equal<int list>([0..(lobby.regionCount-1)], regions)
 
             let colors = startingConditions |> List.map (fun cond -> cond.color)
             Assert.All(colors, fun c -> Assert.True(c >= 0 && c < Constants.maxRegions))
         }
 
     [<Fact>]
-    let ``Create pieces should work``() =    
-        let gameRequest = getCreateGameRequest()
+    let ``Create pieces should work``() =
+        //Arrange
+        let lobbyRequest = getCreateLobbyRequest()
         task {
-            let! game = LobbyRepository.createGame gameRequest |> thenValue
-            let! players = GameStartService.addVirtualPlayers game |> thenValue
+            let! lobby = LobbyRepository.createLobby lobbyRequest |> thenValue
+            let! players = PlayerRepository.getPlayers lobby.id 
+                            |> thenBindAsync (PlayerService.fillEmptyPlayerSlots lobby)
+                            |> thenValue
             let startingConditions = GameStartService.getStartingConditions players
-            let board = BoardModelUtility.getBoardMetadata(game.boardRegionCount)
+            let board = BoardModelUtility.getBoardMetadata(lobby.regionCount)
+
+            //Act
             let pieces = GameStartService.createPieces(board, startingConditions)
 
-            Assert.Equal(players.Length * Constants.piecesPerPlayer, pieces.Length)
+            //Assert
+            Assert.Equal(lobby.regionCount * Constants.piecesPerPlayer, pieces.Length)
 
             let groupByPlayer = pieces |> List.groupBy (fun p -> p.originalPlayerId)
-            Assert.Equal(players.Length, groupByPlayer.Length)
+            Assert.Equal(lobby.regionCount, groupByPlayer.Length)
 
             for (_, grp) in groupByPlayer do
                 Assert.Single<Piece>(grp, (fun p -> p.pieceType = Chief)) |> ignore
@@ -74,12 +73,15 @@ type GameStartServiceTests() =
 
     [<Fact>]
     let ``Start game should work``() =
-        let gameRequest = getCreateGameRequest()
+        //Arrange
+        let lobbyRequest = getCreateLobbyRequest()
         task {
-            let! game = LobbyRepository.createGame gameRequest |> thenValue
-            let! _ = GameStartService.startGame game.id |> thenValue
+            let! lobby = LobbyRepository.createLobby lobbyRequest |> thenValue
 
-            let! updated = LobbyRepository.getGame game.id |> thenValue
+            //Act
+            let! _ = GameStartService.startGame lobby.id |> thenValue
 
-            Assert.Equal(GameStatus.Started, updated.status)
+            //Assert
+            let! lobbyError = LobbyRepository.getLobby lobby.id |> thenError
+            Assert.Equal(404, lobbyError.statusCode)
         }

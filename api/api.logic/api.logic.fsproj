@@ -7,10 +7,11 @@
   <ItemGroup>
     <Compile Include="ModelExtensions\BoardModelExtensions.fs" />
     <Compile Include="ModelExtensions\BoardModelUtility.fs" />
-    <Compile Include="ModelExtensions\PlayModelExtensions.fs" />
+    <Compile Include="ModelExtensions\GameModelExtensions.fs" />
     <Compile Include="Services\SessionService.fs" />
     <Compile Include="Services\LobbyService.fs" />
-    <Compile Include="Services\PlayService.fs" />
+    <Compile Include="Services\PlayerService.fs" />
+    <Compile Include="Services\GameService.fs" />
     <Compile Include="Services\GameStartService.fs" />
   </ItemGroup>
 

@@ -1,39 +1,30 @@
-﻿namespace Djambi.Api.Db.Model
+﻿module Djambi.Api.Db.Model.LobbyDbModel
 
 open System
+open Djambi.Api.Common.Utilities
+open Djambi.Api.Model.LobbyModel
 
-module LobbyDbModel =
-
-    [<CLIMutable>]
-    type UserSqlModel = 
-        {
-            id : int
-            name : string
-            roleId : byte
-            password : string
-            failedLoginAttempts : byte
-            lastFailedLoginAttemptOn : Nullable<DateTime>
-        }
-
-    [<CLIMutable>]
-    type LobbyGamePlayerSqlModel =
-        {
-            gameId : int
-            gameDescription : string
-            boardRegionCount : int
-            gameStatusId : byte
-            userId : int Nullable
-            playerName : string
-            playerId : int Nullable
-        }
-
-    [<CLIMutable>]
-    type SessionUserSqlModel =
-        {
-            sessionId : int
-            userId : Nullable<int>
-            token : string
-            createdOn : DateTime
-            expiresOn : DateTime
-            isShared : bool   
-        }
+[<CLIMutable>]
+type LobbySqlModel =
+    {
+        lobbyId : int
+        description : string
+        regionCount : int
+        createdOn : DateTime
+        createdByUserId : int
+        isPublic : bool
+        allowGuests : bool
+        //TODO: Add player count
+    }
+    
+let mapLobby (sqlModel : LobbySqlModel) : Lobby =
+    {
+        id = sqlModel.lobbyId
+        description = sqlModel.description |> referenceToOption
+        regionCount = sqlModel.regionCount
+        createdOn = sqlModel.createdOn
+        createdByUserId = sqlModel.createdByUserId
+        isPublic = sqlModel.isPublic
+        allowGuests = sqlModel.allowGuests
+        //TODO: Add player count
+    }

@@ -1,66 +1,72 @@
-﻿namespace Djambi.Api.Model
+﻿module Djambi.Api.Model.LobbyModel
 
 open System
-open Djambi.Api.Common.Enums
+open Djambi.Api.Model.PlayerModel
 
-module LobbyModel =
+type Lobby =
+    {
+        id : int
+        description : string option
+        regionCount : int
+        createdOn : DateTime
+        createdByUserId : int
+        isPublic : bool
+        allowGuests : bool
+        //TODO: Add player count
+    } 
 
-    type Role = 
-        | Admin
-        | Normal
-        | Guest
+type LobbyWithPlayers =
+    {
+        id : int
+        description : string option
+        regionCount : int
+        createdOn : DateTime
+        createdByUserId : int
+        isPublic : bool
+        allowGuests : bool
+        players : Player list
+    }
 
-    type User = 
+type Lobby with
+    member this.addPlayers (players : Player list) : LobbyWithPlayers =
         {
-            id : int
-            name : string
-            role : Role
-            password : string
-            failedLoginAttempts : int
-            lastFailedLoginAttemptOn : DateTime option
-        }
-        
-    type LobbyPlayer =
-        {
-            id : int
-            userId : int option
-            name : string
-        }
-
-    type CreateUserRequest =
-        {
-            name : string
-            role : Role
-            password : string
-        }
-
-    type CreateGameRequest = 
-        {
-            description : string option
-            boardRegionCount : int
-        }
-                
-    type LobbyGameMetadata = 
-        {
-            id : int
-            status : GameStatus
-            boardRegionCount : int
-            description : string option
-            players : LobbyPlayer list
+            id = this.id
+            description = this.description
+            regionCount = this.regionCount
+            createdOn = this.createdOn
+            createdByUserId = this.createdByUserId
+            isPublic = this.isPublic
+            allowGuests = this.allowGuests
+            players = players
         }
 
-    type LoginRequest = 
-        {
-            userName : string
-            password : string
-        }
+type CreateLobbyRequest = 
+    {
+        description : string option
+        regionCount : int
+        createdByUserId : int
+        isPublic : bool
+        allowGuests : bool
+    }
 
-    type Session =
+type LobbiesQuery =
+    {
+        lobbyId : int option
+        descriptionContains : string option
+        createdByUserId : int option
+        playerUserId : int option
+        isPublic : bool option
+        allowGuests : bool option
+    }
+
+module LobbiesQuery =
+    
+    let empty : LobbiesQuery =
         {
-            id : int
-            userIds : int list
-            token : string
-            createdOn : DateTime
-            expiresOn : DateTime
-            isShared : bool
-        }
+            lobbyId = None
+            descriptionContains = None
+            createdByUserId = None
+            playerUserId = None
+            isPublic = None
+            allowGuests = None        
+        }       

@@ -1,10 +1,9 @@
 ﻿namespace Djambi.Api.IntegrationTests
 
-open System
 open FSharp.Control.Tasks
 open Xunit
+open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
-open Djambi.Api.Common.Enums
 open Djambi.Api.Db
 open Djambi.Api.Db.Repositories
 open Djambi.Api.Model.LobbyModel
@@ -14,89 +13,67 @@ type LobbyRepositoryTests() =
     do 
         SqlUtility.connectionString <- connectionString
 
-    //Game CRUD
-
     [<Fact>] 
-    let ``Create game should work``() =
-        let request = getCreateGameRequest()
+    let ``Create lobby should work``() =
+        //Arrange
+        let request = getCreateLobbyRequest()
         task {
-            let! game = LobbyRepository.createGame(request) |> thenValue
-            Assert.NotEqual(0, game.id)
-            Assert.Equal(request.boardRegionCount, game.boardRegionCount)
-            Assert.Equal(request.description, game.description)
-            Assert.Equal(GameStatus.Open, game.status)
-            Assert.Equal(0, game.players.Length)
+            //Act
+            let! lobby = LobbyRepository.createLobby request |> thenValue
+
+            //Assert
+            Assert.NotEqual(0, lobby.id)
+            Assert.Equal(request.regionCount, lobby.regionCount)
+            Assert.Equal(request.description, lobby.description)
+          //  Assert.Equal(GameStatus.Open, game.status)
         }
 
     [<Fact>]
-    let ``Get game should work`` () =
-        let request = getCreateGameRequest()
+    let ``Get lobby should work`` () =
+        //Arrange
+        let request = getCreateLobbyRequest()
         task {
-            let! createdGame = LobbyRepository.createGame(request) |> thenValue
-            let! game = LobbyRepository.getGame(createdGame.id) |> thenValue
-            Assert.Equal(createdGame.id, game.id)
-            Assert.Equal(createdGame.description, game.description)
-            Assert.Equal(createdGame.boardRegionCount, game.boardRegionCount)
-            Assert.Equal(createdGame.status, game.status)
-            Assert.Equal<LobbyPlayer list>(createdGame.players, game.players)
+            let! createdLobby = LobbyRepository.createLobby request |> thenValue
+
+            //Act
+            let! lobby = LobbyRepository.getLobby createdLobby.id |> thenValue
+
+            //Assert
+            Assert.Equal(createdLobby.id, lobby.id)
+            Assert.Equal(createdLobby.description, lobby.description)
+            Assert.Equal(createdLobby.regionCount, lobby.regionCount)
+            //Assert.Equal(createdLobby.status, lobby.status)
         }
 
     [<Fact>]
-    let ``Delete game should work``() =
-        let request = getCreateGameRequest()
+    let ``Delete lobby should work``() =
+        //Arrange
+        let request = getCreateLobbyRequest()
         task {
-            let! game = LobbyRepository.createGame(request) |> thenValue
-            let! _ = LobbyRepository.deleteGame(game.id) |> thenValue
-            let getGame = fun () -> LobbyRepository.getGame(game.id).Result |> ignore
-            Assert.Throws<AggregateException>(getGame) |> ignore
+            let! lobby = LobbyRepository.createLobby request |> thenValue
+
+            //Act
+            let! _ = LobbyRepository.deleteLobby lobby.id |> thenValue
+
+            //Assert
+            let! getResult = LobbyRepository.getLobby lobby.id
+            let error = getResult |> Result.error
+            Assert.Equal(404, error.statusCode)
         }
 
     [<Fact>]
-    let ``Get open games should work``() =
-        let request = getCreateGameRequest()
+    let ``Get lobbies should work``() =
+        //Arrange
+        let request = getCreateLobbyRequest()
         task {
-            let! createdGame = LobbyRepository.createGame(request) |> thenValue
-            let! games = LobbyRepository.getOpenGames() |> thenValue
-            Assert.Contains(createdGame, games)
-            Assert.All(games, fun g -> Assert.Equal(GameStatus.Open, g.status))
-        }
-    
-    //Player CRUD
-    [<Fact>]
-    let ``Add player should work``() =
-        let gameRequest = getCreateGameRequest()
-        let userRequest = getCreateUserRequest()
-        task {
-            let! game = LobbyRepository.createGame(gameRequest) |> thenValue
-            let! user = UserRepository.createUser(userRequest) |> thenValue
-            let! _ = LobbyRepository.addPlayerToGame(game.id, user.id) |> thenValue
-            let! updatedGame = LobbyRepository.getGame(game.id) |> thenValue
-            let exists = updatedGame.players |> List.exists (fun p -> p.userId = Some user.id && p.name = user.name)
+            let! createdLobby = LobbyRepository.createLobby request |> thenValue
+            let query = LobbiesQuery.empty
+
+            //Act
+            let! lobbies = LobbyRepository.getLobbies query |> thenValue
+
+            //Assert
+            let exists = lobbies |> List.exists (fun l -> l.id = createdLobby.id)
             Assert.True(exists)
-        }
-
-    [<Fact>]
-    let ``Repository - Add virtual player should work``() =
-        let gameRequest = getCreateGameRequest()
-        let userRequest = getCreateUserRequest()
-        task {
-            let! game = LobbyRepository.createGame(gameRequest) |> thenValue
-            let! _ = LobbyRepository.addVirtualPlayerToGame(game.id, userRequest.name) |> thenValue
-            let! updatedGame = LobbyRepository.getGame(game.id) |> thenValue
-            let exists = updatedGame.players |> List.exists (fun p -> p.userId = None && p.name = userRequest.name)
-            Assert.True(exists)
-        }
-
-    [<Fact>]
-    let ``Remove player should work``() =
-        let gameRequest = getCreateGameRequest()
-        let userRequest = getCreateUserRequest()
-        task {
-            let! game = LobbyRepository.createGame(gameRequest) |> thenValue
-            let! user = UserRepository.createUser(userRequest) |> thenValue
-            let! _ = LobbyRepository.addPlayerToGame(game.id, user.id) |> thenValue
-            let! _ = LobbyRepository.removePlayerFromGame(game.id, user.id) |> thenValue
-            let! updatedGame = LobbyRepository.getGame(game.id) |> thenValue
-            let exists = updatedGame.players |> List.exists (fun p -> p.userId = Some user.id && p.name = user.name)
-            Assert.False(exists)
+          //  Assert.All(games, fun g -> Assert.Equal(GameStatus.Open, g.status))
         }

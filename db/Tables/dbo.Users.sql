@@ -3,10 +3,9 @@ CREATE TABLE [dbo].[Users](
 	[Name]                     [nvarchar](50) NOT NULL,
 	[Password]                 [nvarchar](50) NULL,
 	[CreatedOn]                [datetime2](7) NOT NULL,
-	[RoleId]                   [tinyint] NOT NULL,
+	[IsAdmin]                  [bit] NOT NULL,
 	[FailedLoginAttempts]      [tinyint] NOT NULL,
 	[LastFailedLoginAttemptOn] [datetime2] NULL
     CONSTRAINT [PK_Users] PRIMARY KEY CLUSTERED ([UserId] ASC),
-    CONSTRAINT [UQ_Users_Name] UNIQUE NONCLUSTERED ([Name] ASC),
-    CONSTRAINT [FK_Users_RoleId] FOREIGN KEY([RoleId]) REFERENCES [dbo].[Roles] ([RoleId])
+    CONSTRAINT [UQ_Users_Name] UNIQUE NONCLUSTERED ([Name] ASC)
 )

@@ -1,69 +1,52 @@
-namespace Djambi.Api.Web.Model
+module Djambi.Api.Web.Model.LobbyWebModel
 
 open System
+open Djambi.Api.Web.Model.PlayerWebModel
 
-module LobbyWebModel =
-    
-    [<CLIMutable>]
-    type PlaceHolderJsonModel =
-        {
-            text : string
-        }
+[<CLIMutable>]
+type CreateLobbyJsonModel =
+    {
+        regionCount : int    
+        description : string
+        allowGuests : bool
+        isPublic : bool
+    }
 
-    //Use for POST and PATCH /users
-    [<CLIMutable>]
-    type CreateUserJsonModel =
-        {
-            name : string
-            role : string
-            password : string
-        }
+type LobbyResponseJsonModel =
+    {
+        id : int
+        regionCount : int
+        description : string        
+        allowGuests : bool
+        isPublic : bool
+    }
 
-    //Use for GET /users
-    [<CLIMutable>]
-    type UserJsonModel =
-        {
-            id : int
-            name : string
-            role : string
-            //Don't return password here
-        }
-        
-    type PlayerJsonModel =
-        {
-            id : int
-            userId : int Nullable
-            name : string
-        }
+type LobbyWithPlayersResponseJsonModel = 
+    {
+        id : int
+        regionCount : int
+        description : string        
+        allowGuests : bool
+        isPublic : bool
+        players : PlayerResponseJsonModel list
+    }
 
-    //Use for POST /games
-    [<CLIMutable>]
-    type CreateGameJsonModel =
-        {
-            boardRegionCount : int    
-            description : string
-        }
+[<CLIMutable>]
+type LobbiesQueryJsonModel =
+    {
+        descriptionContains : string
+        createdByUserId : int Nullable
+        playerUserId : int Nullable
+        isPublic : bool Nullable
+        allowGuests : bool Nullable
+    }
 
-    //Use for GET /games
-    type LobbyGameJsonModel = 
+module LobbiesQueryJsonModel =
+    let empty = 
         {
-            id : int
-            status : string
-            boardRegionCount : int
-            description : string
-            players : PlayerJsonModel list
-        }
-
-    [<CLIMutable>]
-    type LoginRequestJsonModel =
-        {
-            userName : string
-            password : string
-        }
-
-    [<CLIMutable>]
-    type SessionResponseJsonModel =
-        {
-            id : int
-            userIds : int list
+            descriptionContains = Unchecked.defaultof<string>
+            createdByUserId = Unchecked.defaultof<int Nullable>
+            playerUserId = Unchecked.defaultof<int Nullable>
+            isPublic = Unchecked.defaultof<bool Nullable>
+            allowGuests = Unchecked.defaultof<bool Nullable>
         }

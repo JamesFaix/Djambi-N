@@ -8,8 +8,8 @@ open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Db.Repositories
 open Djambi.Api.Web.HttpUtility
-open Djambi.Api.Web.Mappings.LobbyWebMapping
-open Djambi.Api.Web.Model.LobbyWebModel
+open Djambi.Api.Web.Mappings.UserWebMapping
+open Djambi.Api.Web.Model.UserWebModel
 
 let createUser : HttpHandler =
     let func (ctx : HttpContext) =            

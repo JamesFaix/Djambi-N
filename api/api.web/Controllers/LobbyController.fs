@@ -4,58 +4,40 @@ open Giraffe
 open Microsoft.AspNetCore.Http
 open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
-open Djambi.Api.Db.Repositories
 open Djambi.Api.Logic.Services
 open Djambi.Api.Web.HttpUtility
 open Djambi.Api.Web.Mappings.LobbyWebMapping
+open Djambi.Api.Web.Mappings.GameWebMapping
 open Djambi.Api.Web.Model.LobbyWebModel
 
-let getOpenGames : HttpHandler =
+let getLobbies : HttpHandler =
     let func ctx =
-        LobbyRepository.getOpenGames()
-        |> thenMap (List.map mapLobbyGameResponse)
+        getSessionAndModelFromContext<LobbiesQueryJsonModel> ctx
+        |> thenBindAsync (fun (query, session) ->
+            LobbyService.getLobbies (mapLobbiesQuery query, session)
+        )
+        |> thenMap (List.map mapLobbyResponse)
     handle func
-            
-let getGames : HttpHandler =
-    let func ctx =
-        LobbyRepository.getGames()
-        |> thenMap (List.map mapLobbyGameResponse)
-    handle func
-
-let getUserGames (userId : int) =
-    let func ctx =
-        LobbyRepository.getUserGames userId
-        |> thenMap (List.map mapLobbyGameResponse)
-    handle func
-    
-let createGame : HttpHandler =
-    let func (ctx : HttpContext) : LobbyGameJsonModel AsyncHttpResult =
-        getSessionAndModelFromContext<CreateGameJsonModel> ctx 
-        |> thenBindAsync (fun (request, session) -> 
-            LobbyService.createGame (mapCreateGameRequest request, session))
-        |> thenMap mapLobbyGameResponse
+                
+let createLobby : HttpHandler =
+    let func (ctx : HttpContext) : LobbyResponseJsonModel AsyncHttpResult =
+        getSessionAndModelFromContext<CreateLobbyJsonModel> ctx 
+        |> thenBindAsync (fun (requestJsonModel, session) -> 
+            let request = mapCreateLobbyRequest (requestJsonModel, session.userId)
+            LobbyService.createLobby (request, session))
+        |> thenMap mapLobbyResponse
     handle func    
 
-let deleteGame(gameId : int) =
+let deleteLobby(lobbyId : int) =
     let func ctx = 
         getSessionFromContext ctx
         |> thenBindAsync (fun session -> 
-            LobbyService.deleteGame (gameId, session)
-        )
-    handle func
- 
-let addPlayerToGame(gameId : int, userId : int) =
-    let func ctx =
-        getSessionFromContext ctx
-        |> thenBindAsync (fun session -> 
-            LobbyService.addPlayerToGame(gameId, userId, session)
+            LobbyService.deleteLobby (lobbyId, session)
         )
     handle func
 
-let removePlayerFromGame(gameId : int, userId : int) =
-    let func ctx =
-        getSessionFromContext ctx
-        |> thenBindAsync (fun session -> 
-            LobbyService.removePlayerFromGame(gameId, userId, session)
-        )
+let startGame(lobbyId: int) =
+    let func ctx = 
+        GameStartService.startGame lobbyId
+        |> thenMap mapGameStartResponseToJson
     handle func

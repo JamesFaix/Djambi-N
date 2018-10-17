@@ -8,7 +8,7 @@ open Microsoft.Extensions.Primitives
 open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Logic.Services
-open Djambi.Api.Model.LobbyModel
+open Djambi.Api.Model.SessionModel
 
 type HttpHandler = HttpFunc -> HttpContext -> HttpContext option Task 
 
@@ -45,7 +45,7 @@ module HttpUtility =
         then errorTask <| HttpException(401, "Not signed in.")
         else 
             SessionService.getSession token
-            |> thenReplaceError 404 (HttpException(401, "Session expired."))
+            |> thenReplaceError 404 (HttpException(401, "Not signed in."))
 
     let getSessionAndModelFromContext<'a> (ctx : HttpContext) : ('a * Session) AsyncHttpResult =
         getSessionFromContext ctx 

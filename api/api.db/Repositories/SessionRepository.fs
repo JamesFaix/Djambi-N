@@ -4,10 +4,9 @@ open System
 open Dapper
 open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
-open Djambi.Api.Db.Mappings.LobbyDbMapping
-open Djambi.Api.Db.Model.LobbyDbModel
+open Djambi.Api.Db.Model.SessionDbModel
 open Djambi.Api.Db.SqlUtility
-open Djambi.Api.Model.LobbyModel
+open Djambi.Api.Model.SessionModel
 
 module SessionRepository =
 
@@ -20,53 +19,28 @@ module SessionRepository =
                         .addOption("Token", token)
                         .addOption("UserId", userId)
 
-        let cmd = proc("Lobby.GetSessionWithUsers", param)
-
-        let sessionOrError (xs : SessionUserSqlModel list) = 
-            match xs.Length with
-            | 0 -> Error <| HttpException(404, "Session not found.")
-            | _ -> Ok <| (mapSessionUsers xs)
+        let cmd = proc("Sessions_Get", param)
                     
-        queryMany<SessionUserSqlModel>(cmd, "Session") 
-        |> thenBind sessionOrError
+        querySingle<SessionSqlModel>(cmd, "Session")
+        |> thenMap mapSessionResponse
 
-    let createSessionWithUser(userId : int, token : string, expiresOn : DateTime) : Session AsyncHttpResult =
+    let createSession(request : CreateSessionRequest) : Session AsyncHttpResult =
         let param = DynamicParameters()
-                        .add("UserId", userId)
-                        .add("Token", token)
-                        .add("ExpiresOn", expiresOn)
+                        .add("UserId", request.userId)
+                        .add("Token", request.token)
+                        .add("ExpiresOn", request.expiresOn)
 
-        let cmd = proc("Lobby.CreateSessionWithUser", param)
+        let cmd = proc("Sessions_Create", param)
 
         querySingle<int>(cmd, "Session")
         |> thenBindAsync(fun sessionId -> getSession(Some sessionId, None, None))
         
-    let addUserToSession(sessionId : int, userId : int) : Session AsyncHttpResult =
-        let param = DynamicParameters()
-                        .add("UserId", userId)
-                        .add("SessionId", sessionId)
-        
-        let cmd = proc("Lobby.AddUserToSession", param)
-
-        queryUnit(cmd, "Session")
-        |> thenBindAsync (fun _ -> getSession(Some sessionId, None, None))
-
-    let removeUserFromSession(sessionId : int, userId : int) : Session AsyncHttpResult =
-        let param = DynamicParameters()
-                        .add("UserId", userId)
-                        .add("SessionId", sessionId)
-        
-        let cmd = proc("Lobby.RemoveUserFromSession", param)
-        
-        queryUnit(cmd, "Session")
-        |> thenBindAsync (fun _ -> getSession(Some sessionId, None, None))
-
     let renewSessionExpiration(sessionId : int, expiresOn : DateTime) : Session AsyncHttpResult =
         let param = DynamicParameters()
                         .add("SessionId", sessionId)
                         .add("ExpiresOn", expiresOn)
         
-        let cmd = proc("Lobby.RenewSessionExpiration", param)
+        let cmd = proc("Sessions_Renew", param)
 
         queryUnit(cmd, "Session")
         |> thenBindAsync (fun _ -> getSession(Some sessionId, None, None))
@@ -76,7 +50,7 @@ module SessionRepository =
                         .addOption("SessionId", sessionId)
                         .addOption("Token", token)
 
-        let cmd = proc("Lobby.DeleteSession", param)
+        let cmd = proc("Sessions_Delete", param)
         
         queryUnit(cmd, "Session")
         
