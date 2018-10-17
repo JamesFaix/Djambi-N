@@ -53,38 +53,6 @@ let ``Create user should fail if already signed in`` () =
     } :> Task
 
 [<Test>]
-let ``Get user should work`` () =
-    task {
-        //Arrange
-        let request = RequestFactory.createUserRequest()
-        let! user = UserClient.createUser request
-                    |> AsyncResponse.bodyValue
-    
-        //Act
-        let! response = UserClient.getUser user.id
-        
-        //Assert
-        response |> shouldHaveStatus HttpStatusCode.OK
-                
-        let responseUser = response.bodyValue
-        responseUser.name |> shouldBe request.name
-        responseUser.isAdmin |> shouldBe false
-    } :> Task
-
-[<Test>]
-let ``Get user should fail if user doesnt exist`` () =
-    task {
-        //Arrange
-        let userId = Int32.MinValue
-    
-        //Act
-        let! response = UserClient.getUser userId
-        
-        //Assert
-        response |> shouldBeError HttpStatusCode.NotFound "User not found."
-    } :> Task
-
-[<Test>]
 let ``Delete user should work`` () =
     task {
         //Arrange
@@ -118,6 +86,8 @@ let ``Delete user should fail if already deleted`` () =
         response |> shouldBeError HttpStatusCode.NotFound "User not found."
     } :> Task
 
+//TODO: Delete user should log out if deleting self
+
 [<Test>]
 let ``Get users should return multiple users`` () =
     task {
@@ -142,3 +112,43 @@ let ``Get users should return multiple users`` () =
         responseUsers |> shouldExist (fun u -> u.id = user1.id)
         responseUsers |> shouldExist (fun u -> u.id = user2.id)
     } :> Task
+
+//TODO: Get users should fail if not logged in
+    
+//TODO: Get users should fail if not admin
+
+[<Test>]
+let ``Get user should work`` () =
+    task {
+        //Arrange
+        let request = RequestFactory.createUserRequest()
+        let! user = UserClient.createUser request
+                    |> AsyncResponse.bodyValue
+    
+        //Act
+        let! response = UserClient.getUser user.id
+        
+        //Assert
+        response |> shouldHaveStatus HttpStatusCode.OK
+                
+        let responseUser = response.bodyValue
+        responseUser.name |> shouldBe request.name
+        responseUser.isAdmin |> shouldBe false
+    } :> Task
+
+[<Test>]
+let ``Get user should fail if user doesnt exist`` () =
+    task {
+        //Arrange
+        let userId = Int32.MinValue
+    
+        //Act
+        let! response = UserClient.getUser userId
+        
+        //Assert
+        response |> shouldBeError HttpStatusCode.NotFound "User not found."
+    } :> Task
+    
+//TODO: Get user should fail if not logged in
+
+//TODO: Get user should fail if not admin

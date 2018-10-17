@@ -8,17 +8,39 @@ open NUnit.Framework
 open Djambi.Api.WebClient
 open Djambi.Api.Web.Model.PlayerWebModel
 
-//Add player should work
+//TODO: Add user player should work
 
-//Add player should fail if user is already in lobby
+//TODO: Add user player should fail if adding a different user and not admin
 
-//Add player should fail if invalid lobbyId
+//TODO: Add user player should work if adding different user, but admin
 
-//Add player should fail if invalid userId
+//TODO: Add user player should fail if not passing userid
 
-//Add player should fail if lobby is at player capacity
+//TODO: Add user player should fail if passing name
 
-//Add player should fail if lobby is not open
+//TODO: Add user player should fail if already in lobby
+
+//TODO: Add guest player should work
+
+//TODO: Add guest player should fail if adding guest to different user and not admin
+
+//TOOD: Add guest player should work if adding guest to different user, but admin
+
+//TODO: Add guest player should fail if not passing userid
+
+//TODO: Add guest player should fail if not passing name
+
+//TODO: Add guest player should fail if duplicate name
+
+//TODO: Add guest player should fail if lobby does not allow guests
+
+//TODO: Add virtual player should fail
+
+//TODO: Add player should fail if invalid lobbyId
+
+//TODO: Add player should fail if lobby is at player capacity
+
+//TODO: Add player should fail if game already started
 
 [<Test>]
 let ``Add player to lobby should fail if no session``() =
@@ -42,15 +64,21 @@ let ``Add player to lobby should fail if no session``() =
         response |> shouldBeError HttpStatusCode.Unauthorized "Not signed in."
     } :> Task
 
-//Remove player should work
+//TODO: Remove player should work
 
-//Remove player should fail if invalid lobbyId
+//TODO: Removing user player should remove all guests
 
-//Remove player should fail if invalid userId
+//TODO: Remove player should fail if invalid lobbyId
 
-//Remove player should fail if user not in lobby
+//TODO: Remove player should fail if invalid playerId
 
-//Remove player should fail if lobby is not open
+//TODO: Remove player should fail if player not in lobby
+
+//TODO: Remove player should fail if different user and not admin
+
+//TODO: Remove player should work if different user, but admin
+
+//TODO: Remove player should fail if game already started
 
 [<Test>]
 let ``Remove player from lobby should fail if no session``() =

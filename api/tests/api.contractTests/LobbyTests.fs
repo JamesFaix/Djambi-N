@@ -90,7 +90,7 @@ let ``Delete lobby should fail if no session``() =
     } :> Task
 
 [<Test>]
-let ``Delete lobby should fail if lobby created by user not in session``() =
+let ``Delete lobby should fail if lobby created by another user and not admin``() =
     task {
         //Arrange
         let! (_, token1) = SetupUtility.createUserAndSignIn()
@@ -109,6 +109,8 @@ let ``Delete lobby should fail if lobby created by user not in session``() =
         //Assert
         response |> shouldBeError HttpStatusCode.Forbidden "Users can only delete lobbies that they created."
     } :> Task
+
+//TODO: Delete lobby should work if lobby created by another user and session is admin
 
 [<Test>]
 let ``Get lobbies should work``() =
@@ -133,8 +135,6 @@ let ``Get lobbies should work``() =
         lobbys |> shouldExist (fun g -> g.id = lobby2.id)
     } :> Task
 
-//Get lobbys should fail if not admin
-
 [<Test>]
 let ``Get lobbies should fail if no session``() =
     task {
@@ -146,3 +146,21 @@ let ``Get lobbies should fail if no session``() =
         //Assert
         response |> shouldBeError HttpStatusCode.Unauthorized "Not signed in."
     } :> Task
+
+//TODO: Get lobbies should filter on created by
+
+//TODO: Get lobbies should filter on allow guests
+
+//TODO: Get lobbies should filter on is public
+
+//TODO: Get lobbies should filter on player userId
+
+//TODO: Get lobbies should filter non-public lobbies current user is not in, if not admin
+
+//TODO: Start game should work
+
+//TODO: Start game should fail if not logged in
+
+//TODO: Start game should fail if not user who created lobby and not admin
+
+//TODO: Start game shoudl work if not user who created lobby but is admin

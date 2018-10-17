@@ -9,7 +9,9 @@ open Djambi.Api.Db.Repositories
 open Djambi.Api.Logic.ModelExtensions
 open Djambi.Api.Logic.Services
 open Djambi.Api.Model.GameModel
+open Djambi.Api.Model.SessionModel
 open Djambi.Tests.TestUtilities
+open System
 
 type GameStartServiceTests() =
     do 
@@ -77,9 +79,18 @@ type GameStartServiceTests() =
         let lobbyRequest = getCreateLobbyRequest()
         task {
             let! lobby = LobbyRepository.createLobby lobbyRequest |> thenValue
+            let session : Session = 
+                {
+                    isAdmin = false
+                    userId = lobbyRequest.createdByUserId
+                    token = ""
+                    id = 1
+                    createdOn = DateTime.UtcNow
+                    expiresOn = DateTime.UtcNow
+                }
 
             //Act
-            let! _ = GameStartService.startGame lobby.id |> thenValue
+            let! _ = GameStartService.startGame lobby.id session |> thenValue
 
             //Assert
             let! lobbyError = LobbyRepository.getLobby lobby.id |> thenError

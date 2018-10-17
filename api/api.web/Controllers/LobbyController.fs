@@ -35,9 +35,8 @@ let deleteLobby(lobbyId : int) =
     handle func
 
 let startGame(lobbyId: int) =
-    //Error if not creating user
     let func ctx = 
         getSessionFromContext ctx
-        |> thenBindAsync (fun session -> GameStartService.startGame lobbyId)
+        |> thenBindAsync (GameStartService.startGame lobbyId)
         |> thenMap mapGameStartResponseToJson
     handle func

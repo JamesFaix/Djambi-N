@@ -8,6 +8,7 @@ open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
 open Djambi.Api.Model.BoardModel
 open Djambi.Api.Model.GameModel
 open Djambi.Api.Model.PlayerModel
+open Djambi.Api.Model.SessionModel
 open Djambi.Api.Logic.Services
 
 let getStartingConditions(players : Player list) : PlayerStartConditions list =
@@ -53,8 +54,13 @@ let createPieces(board : BoardMetadata, startingConditions : PlayerStartConditio
     |> List.mapi (fun i cond -> createPlayerPieces(board, cond, i*Constants.piecesPerPlayer))
     |> List.collect id
 
-let startGame(lobbyId : int) : StartGameResponse AsyncHttpResult =
+let startGame (lobbyId : int) (session : Session) : StartGameResponse AsyncHttpResult =
     LobbyRepository.getLobby lobbyId
+    |> thenBind (fun lobby -> 
+        if session.isAdmin || session.userId = lobby.createdByUserId
+        then Ok lobby
+        else Error <| HttpException(403, "Cannot start game from lobby created by another user.")
+    )
     |> thenBindAsync (fun lobby -> 
         PlayerRepository.getPlayers lobbyId
         |> thenBindAsync (PlayerService.fillEmptyPlayerSlots lobby)
