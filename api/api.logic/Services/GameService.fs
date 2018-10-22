@@ -10,9 +10,13 @@ open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
 open Djambi.Api.Logic.ModelExtensions.GameModelExtensions
 open Djambi.Api.Model.BoardModel
 open Djambi.Api.Model.GameModel
+open Djambi.Api.Model.SessionModel
 
-let getGameState(gameId : int) : GameState AsyncHttpResult =
+let getGameState(gameId : int) (session : Session) : GameState AsyncHttpResult =
     GameRepository.getGame gameId
+    //TODO: Must be either
+        //Admin
+        //User in game
     |> thenMap (fun g -> g.gameState)
         
 let private getMoveSelectionOptions(game : GameState, piece : Piece, regionCount : int) : int list =
@@ -181,8 +185,11 @@ let getSelectableCellsFromState(game : Game) : (int list * SelectionType option)
             | _ -> (List.empty, None)
     | _ -> (List.empty, None)
 
-let selectCell(gameId : int, cellId : int) : TurnState AsyncHttpResult = 
+let selectCell(gameId : int, cellId : int) (session: Session) : TurnState AsyncHttpResult = 
     GameRepository.getGame gameId
+    //TODO: Must be either
+        //Admin
+        //Current user/guest in game
     |> thenBind (fun game -> 
         if game.turnState.selectionOptions |> List.contains cellId |> not
         then Error <| HttpException(400, (sprintf "Cell %i is not currently selectable" cellId))
@@ -251,8 +258,11 @@ let selectCell(gameId : int, cellId : int) : TurnState AsyncHttpResult =
                     }))
     |> thenDoAsync (fun turnState -> GameRepository.updateTurnState(gameId, turnState))            
 
-let resetTurn(gameId : int) : TurnState AsyncHttpResult =
+let resetTurn(gameId : int) (session : Session) : TurnState AsyncHttpResult =
     GameRepository.getGame gameId
+    //TODO: Must be either
+        //Admin
+        //Current user/guest in game    
     |> thenMap (fun game -> 
         let updatedGame = 
             {
@@ -382,8 +392,11 @@ let private killCurrentPlayer(gameState : GameState) : GameState =
         turnCycle = turns
     }
 
-let commitTurn(gameId : int) : CommitTurnResponse AsyncHttpResult =
+let commitTurn(gameId : int) (session : Session) : CommitTurnResponse AsyncHttpResult =
     GameRepository.getGame gameId
+    //TODO: Must be either
+        //Admin
+        //Current user/guest in game
     |> thenMap (fun game -> 
         let turnCycle = applyTurnStateToTurnCycle game
         let pieces = applyTurnStateToPieces game

@@ -85,8 +85,14 @@ let ``Delete user should fail if already deleted`` () =
         //Assert
         response |> shouldBeError HttpStatusCode.NotFound "User not found."
     } :> Task
-
+    
 //TODO: Delete user should log out if deleting self
+
+//TODO: Delete user should fail if not logged in
+
+//TODO: Delete user should fail if not admin and deleting other user
+
+//TODO: Delete user should work if admin and deleting other user
 
 [<Test>]
 let ``Get users should return multiple users`` () =
