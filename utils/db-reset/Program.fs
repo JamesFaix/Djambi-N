@@ -31,6 +31,7 @@ let private djambiConnectionString = getConnectionString "djambi"
 
 let private executeCommand (cnStr : string)(command : string) : unit =
     use cn = new SqlConnection(cnStr)
+    
     cn.Execute(command) |> ignore
     
 let private dropAndCreateDb() : unit =
@@ -83,11 +84,25 @@ let getFilesInOrder : string seq =
         yield! folders |> Seq.collect getFiles
     }
 
+let createAdminUser() : unit =
+    printfn "Creating admin user"
+
+    let cmd = sprintf 
+                "INSERT INTO dbo.Users ([Name], [Password], [CreatedOn], [IsAdmin], [FailedLoginAttempts], [LastFailedLoginAttemptOn]) 
+                 VALUES (N'%s', N'%s', GETUTCDATE(), 1, 0, NULL)"
+                config.["adminUsername"]
+                config.["adminPassword"]
+
+    executeCommand djambiConnectionString cmd
+
 [<EntryPoint>]
 let main argv =
     dropAndCreateDb()
+
     for f in getFilesInOrder do
         loadFile f
-    
+
+    createAdminUser()
+        
     printfn "Done"
     0

@@ -12,7 +12,7 @@ BEGIN
 		s.CreatedOn,
 		s.ExpiresOn,
 		u.IsAdmin
-	FROM [Sessions]
+	FROM [Sessions] s
 		INNER JOIN Users u
 			ON u.UserId = s.UserId
 	WHERE (@SessionId IS NULL OR s.SessionId = @SessionId)
