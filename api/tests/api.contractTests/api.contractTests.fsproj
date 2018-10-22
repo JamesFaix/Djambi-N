@@ -7,16 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="GameTests.fs" />
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="RequestFactory.fs" />
     <Compile Include="SetupUtility.fs" />
     <Compile Include="Assertions.fs" />
-    <Compile Include="UserTests.fs" />
-    <Compile Include="SessionTests.fs" />
-    <Compile Include="LobbyTests.fs" />
-    <Compile Include="PlayerTests.fs" />
-    <Compile Include="BoardTests.fs" />
+    <Compile Include="Tests\UserTests.fs" />
+    <Compile Include="Tests\SessionTests.fs" />
+    <Compile Include="Tests\LobbyTests.fs" />
+    <Compile Include="Tests\PlayerTests.fs" />
+    <Compile Include="Tests\BoardTests.fs" />
+    <Compile Include="Tests\GameTests.fs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\utils\environment\environment.fsproj" />
     <ProjectReference Include="..\..\api.common\api.common.fsproj" />
     <ProjectReference Include="..\..\api.web.model\api.web.model.fsproj" />
     <ProjectReference Include="..\api.webClient\api.webClient.fsproj" />

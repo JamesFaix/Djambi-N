@@ -53,16 +53,17 @@ let ``Create user should fail if already signed in`` () =
     } :> Task
 
 [<Test>]
-let ``Delete user should work`` () =
+let ``Delete user should work if admin and deleting other user`` () =
     task {
         //Arrange
+        let! token = SetupUtility.loginAsAdmin()
         let request = RequestFactory.createUserRequest()    
         let! user = UserClient.createUser request
                     |> AsyncResponse.bodyValue
 
         //Act
-        let! deleteResponse = UserClient.deleteUser user.id
-        let! getResponse = UserClient.getUser user.id
+        let! deleteResponse = UserClient.deleteUser(user.id, token)
+        let! getResponse = UserClient.getUser(user.id, token)
         
         //Assert
         deleteResponse |> shouldHaveStatus HttpStatusCode.OK
@@ -73,14 +74,15 @@ let ``Delete user should work`` () =
 let ``Delete user should fail if already deleted`` () =
     task {
         //Arrange
+        let! token = SetupUtility.loginAsAdmin()
         let request = RequestFactory.createUserRequest()    
         let! user = UserClient.createUser request
                     |> AsyncResponse.bodyValue
-
-        let! _ = UserClient.deleteUser user.id
+                    
+        let! _ = UserClient.deleteUser(user.id, token)
 
         //Act
-        let! response = UserClient.deleteUser user.id
+        let! response = UserClient.deleteUser(user.id, token)
         
         //Assert
         response |> shouldBeError HttpStatusCode.NotFound "User not found."
@@ -92,12 +94,13 @@ let ``Delete user should fail if already deleted`` () =
 
 //TODO: Delete user should fail if not admin and deleting other user
 
-//TODO: Delete user should work if admin and deleting other user
+//TODO: Delete user should work if not admin and deleting self
 
 [<Test>]
 let ``Get users should return multiple users`` () =
     task {
         //Arrange
+        let! token = SetupUtility.loginAsAdmin()
         let request1 = RequestFactory.createUserRequest()
         let request2 = RequestFactory.createUserRequest()
 
@@ -108,7 +111,7 @@ let ``Get users should return multiple users`` () =
                      |> AsyncResponse.bodyValue
     
         //Act
-        let! response = UserClient.getUsers ()
+        let! response = UserClient.getUsers token
         
         //Assert
         response |> shouldHaveStatus HttpStatusCode.OK
@@ -127,12 +130,13 @@ let ``Get users should return multiple users`` () =
 let ``Get user should work`` () =
     task {
         //Arrange
+        let! token = SetupUtility.loginAsAdmin()
         let request = RequestFactory.createUserRequest()
         let! user = UserClient.createUser request
                     |> AsyncResponse.bodyValue
     
         //Act
-        let! response = UserClient.getUser user.id
+        let! response = UserClient.getUser(user.id, token)
         
         //Assert
         response |> shouldHaveStatus HttpStatusCode.OK
@@ -146,10 +150,11 @@ let ``Get user should work`` () =
 let ``Get user should fail if user doesnt exist`` () =
     task {
         //Arrange
+        let! token = SetupUtility.loginAsAdmin()
         let userId = Int32.MinValue
     
         //Act
-        let! response = UserClient.getUser userId
+        let! response = UserClient.getUser(userId, token)
         
         //Assert
         response |> shouldBeError HttpStatusCode.NotFound "User not found."
