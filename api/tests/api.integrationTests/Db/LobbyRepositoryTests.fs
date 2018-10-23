@@ -4,14 +4,12 @@ open FSharp.Control.Tasks
 open Xunit
 open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
-open Djambi.Api.Db
 open Djambi.Api.Db.Repositories
+open Djambi.Api.IntegrationTests
 open Djambi.Api.Model.LobbyModel
-open Djambi.Tests.TestUtilities
 
 type LobbyRepositoryTests() =
-    do 
-        SqlUtility.connectionString <- connectionString
+    inherit TestsBase()
 
     [<Fact>] 
     let ``Create lobby should work``() =

@@ -1,21 +1,19 @@
 ﻿namespace Djambi.Api.IntegrationTests.Logic
 
+open System
 open FSharp.Control.Tasks
 open Xunit
 open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
-open Djambi.Api.Db
 open Djambi.Api.Db.Repositories
+open Djambi.Api.IntegrationTests
 open Djambi.Api.Logic.ModelExtensions
 open Djambi.Api.Logic.Services
 open Djambi.Api.Model.GameModel
 open Djambi.Api.Model.SessionModel
-open Djambi.Tests.TestUtilities
-open System
 
 type GameStartServiceTests() =
-    do 
-        SqlUtility.connectionString <- connectionString
+    inherit TestsBase()
         
     [<Fact>]
     let ``Get starting conditions should work``() =

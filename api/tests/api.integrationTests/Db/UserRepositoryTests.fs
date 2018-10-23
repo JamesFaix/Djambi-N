@@ -4,13 +4,11 @@ open FSharp.Control.Tasks
 open Xunit
 open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
-open Djambi.Api.Db
 open Djambi.Api.Db.Repositories
-open Djambi.Tests.TestUtilities
+open Djambi.Api.IntegrationTests
 
 type UserRepositoryTests() =
-    do 
-        SqlUtility.connectionString <- connectionString
+    inherit TestsBase()
 
     [<Fact>]
     let ``Create user should work``() =
