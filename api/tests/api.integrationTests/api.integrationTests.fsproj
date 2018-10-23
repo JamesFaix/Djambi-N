@@ -11,11 +11,11 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Compile Include="TestUtilities.fs" />
-    <Compile Include="UserRepositoryTests.fs" />
-    <Compile Include="LobbyRepositoryTests.fs" />
-    <Compile Include="PlayerRepositoryTests.fs" />
-    <Compile Include="PlayerServiceTests.fs" />
-    <Compile Include="GameStartServiceTests.fs" />
+    <Compile Include="Db\UserRepositoryTests.fs" />
+    <Compile Include="Db\LobbyRepositoryTests.fs" />
+    <Compile Include="Db\PlayerRepositoryTests.fs" />
+    <Compile Include="Logic\PlayerServiceTests.fs" />
+    <Compile Include="Logic\GameStartServiceTests.fs" />
   </ItemGroup>
 
   <ItemGroup>
