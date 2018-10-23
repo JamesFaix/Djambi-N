@@ -6,6 +6,9 @@ open Djambi.Api.Db.Repositories
 open Djambi.Api.Model.SessionModel
 open Djambi.Api.Model.UserModel
 
+let createUser (request : CreateUserRequest) : User AsyncHttpResult =
+    UserRepository.createUser request
+
 let deleteUser (userId : int) (session : Session) : Unit AsyncHttpResult =
     if not session.isAdmin
         && userId <> session.userId

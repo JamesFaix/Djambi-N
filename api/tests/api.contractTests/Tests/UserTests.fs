@@ -25,20 +25,6 @@ let ``Create user should work`` () =
     } :> Task
 
 [<Test>]
-let ``Create user should fail if name conflict`` () =
-    task {
-        //Arrange
-        let request = RequestFactory.createUserRequest()
-        let! _ = UserClient.createUser request
-    
-        //Act
-        let! response = UserClient.createUser request
-        
-        //Assert
-        response |> shouldBeError HttpStatusCode.Conflict "Conflict when attempting to write User."
-    } :> Task
-
-[<Test>]
 let ``Create user should fail if already signed in`` () =
     task {
         //Arrange
@@ -69,32 +55,10 @@ let ``Delete user should work if admin and deleting other user`` () =
         deleteResponse |> shouldHaveStatus HttpStatusCode.OK
         getResponse |> shouldBeError HttpStatusCode.NotFound "User not found."
     } :> Task
-
-[<Test>]
-let ``Delete user should fail if already deleted`` () =
-    task {
-        //Arrange
-        let! token = SetupUtility.loginAsAdmin()
-        let request = RequestFactory.createUserRequest()    
-        let! user = UserClient.createUser request
-                    |> AsyncResponse.bodyValue
-                    
-        let! _ = UserClient.deleteUser(user.id, token)
-
-        //Act
-        let! response = UserClient.deleteUser(user.id, token)
-        
-        //Assert
-        response |> shouldBeError HttpStatusCode.NotFound "User not found."
-    } :> Task
-    
+   
 //TODO: Delete user should log out if deleting self
 
 //TODO: Delete user should fail if not logged in
-
-//TODO: Delete user should fail if not admin and deleting other user
-
-//TODO: Delete user should work if not admin and deleting self
 
 [<Test>]
 let ``Get users should return multiple users`` () =

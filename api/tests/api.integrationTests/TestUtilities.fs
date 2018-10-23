@@ -5,6 +5,7 @@ open System
 open Microsoft.Extensions.Configuration
 open Djambi.Api.Model.UserModel
 open Djambi.Api.Model.LobbyModel
+open Djambi.Api.Model.SessionModel
 open Djambi.Utilities
 
 let private config = 
@@ -33,3 +34,13 @@ let getCreateLobbyRequest() : CreateLobbyRequest =
     }
 
 let adminUserId = 1
+
+let getSessionForUser (userId : int) : Session =
+    {
+        userId = userId
+        isAdmin = false
+        id = 0
+        token = ""
+        createdOn = DateTime.MinValue
+        expiresOn = DateTime.MinValue
+    }

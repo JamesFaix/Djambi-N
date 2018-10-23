@@ -4,7 +4,6 @@ open System.Threading.Tasks
 open Giraffe
 open Microsoft.AspNetCore.Http
 open Djambi.Api.Common.AsyncHttpResult
-open Djambi.Api.Db.Repositories
 open Djambi.Api.Logic.Services
 open Djambi.Api.Web.HttpUtility
 open Djambi.Api.Web.Mappings.UserWebMapping
@@ -14,7 +13,7 @@ let createUser : HttpHandler =
     let func (ctx : HttpContext) =         
         ensureNotSignedInAndGetModel<CreateUserJsonModel> ctx
         |> thenMap mapCreateUserRequest
-        |> thenBindAsync UserRepository.createUser
+        |> thenBindAsync UserService.createUser
         |> thenMap mapUserResponse
     handle func
 
