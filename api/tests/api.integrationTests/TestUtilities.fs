@@ -32,3 +32,5 @@ module TestUtilities =
             isPublic = false
             allowGuests = false
         }
+
+    let adminUserId = 1

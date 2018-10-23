@@ -36,7 +36,7 @@ type LobbyRepositoryTests() =
             let! createdLobby = LobbyRepository.createLobby request |> thenValue
 
             //Act
-            let! lobby = LobbyRepository.getLobby createdLobby.id |> thenValue
+            let! lobby = LobbyRepository.getLobby(createdLobby.id, adminUserId) |> thenValue
 
             //Assert
             Assert.Equal(createdLobby.id, lobby.id)
@@ -56,7 +56,7 @@ type LobbyRepositoryTests() =
             let! _ = LobbyRepository.deleteLobby lobby.id |> thenValue
 
             //Assert
-            let! getResult = LobbyRepository.getLobby lobby.id
+            let! getResult = LobbyRepository.getLobby(lobby.id, adminUserId)
             let error = getResult |> Result.error
             Assert.Equal(404, error.statusCode)
         }
@@ -70,7 +70,7 @@ type LobbyRepositoryTests() =
             let query = LobbiesQuery.empty
 
             //Act
-            let! lobbies = LobbyRepository.getLobbies query |> thenValue
+            let! lobbies = LobbyRepository.getLobbies(query, adminUserId) |> thenValue
 
             //Assert
             let exists = lobbies |> List.exists (fun l -> l.id = createdLobby.id)

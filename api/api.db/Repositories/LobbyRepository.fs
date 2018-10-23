@@ -39,7 +39,7 @@ let deleteLobby (lobbyId : int) : Unit AsyncHttpResult =
     let cmd = proc("Lobbies_Delete", param)
     queryUnit(cmd, "Lobby")
                         
-let getLobbies (query : LobbiesQuery) : Lobby List AsyncHttpResult =
+let getLobbies (query : LobbiesQuery, callingUserId : int) : Lobby List AsyncHttpResult =
     let param = DynamicParameters()
                     .addOption("LobbyId", query.lobbyId)
                     .addOption("DescriptionContains", query.descriptionContains)
@@ -47,13 +47,14 @@ let getLobbies (query : LobbiesQuery) : Lobby List AsyncHttpResult =
                     .addOption("PlayerUserId", query.playerUserId)
                     .addOption("IsPublic", query.isPublic)
                     .addOption("AllowGuests", query.allowGuests)
+                    .add("CallingUserId", callingUserId)
 
     let cmd = proc("Lobbies_Get", param)
 
     queryMany<LobbySqlModel>(cmd, "Lobby")
     |> thenMap (List.map mapLobby)
 
-let getLobby (lobbyId : int) : Lobby AsyncHttpResult = 
+let getLobby (lobbyId : int, callingUserId : int) : Lobby AsyncHttpResult = 
     let param = DynamicParameters()
                     .add("LobbyId", lobbyId)
                     .add("DescriptionContains", null)
@@ -61,6 +62,7 @@ let getLobby (lobbyId : int) : Lobby AsyncHttpResult =
                     .add("PlayerUserId",  null)
                     .add("IsPublic", null)
                     .add("AllowGuests", null)
+                    .add("CallingUserId", callingUserId)
 
     let cmd = proc("Lobbies_Get", param)
 

@@ -10,7 +10,7 @@ open Djambi.Api.Model.PlayerModel
 open Djambi.Api.Model.SessionModel
 
 let addPlayerToLobby (request : CreatePlayerRequest) (session : Session) : Unit AsyncHttpResult =
-    LobbyRepository.getLobby request.lobbyId
+    LobbyRepository.getLobby(request.lobbyId, session.userId)
     |> thenBind (fun lobby -> 
         match request.playerType with
         | PlayerType.User ->

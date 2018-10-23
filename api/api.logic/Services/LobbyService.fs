@@ -13,7 +13,7 @@ let deleteLobby (lobbyId : int) (session : Session) : Unit AsyncHttpResult =
     if session.isAdmin
     then okTask ()
     else 
-        LobbyRepository.getLobby lobbyId
+        LobbyRepository.getLobby(lobbyId, session.userId)
         |> thenBind (fun lobby -> 
             if lobby.createdByUserId = session.userId
             then Ok ()
@@ -26,4 +26,4 @@ let getLobbies (query : LobbiesQuery) (session : Session) : Lobby list AsyncHttp
         if session.isAdmin
         then query
         else { query with callingUserId = Some session.userId }
-    LobbyRepository.getLobbies updatedQuery
+    LobbyRepository.getLobbies(updatedQuery, session.userId)

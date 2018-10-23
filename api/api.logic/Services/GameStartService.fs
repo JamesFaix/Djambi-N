@@ -55,7 +55,7 @@ let createPieces(board : BoardMetadata, startingConditions : PlayerStartConditio
     |> List.collect id
 
 let startGame (lobbyId : int) (session : Session) : StartGameResponse AsyncHttpResult =
-    LobbyRepository.getLobby lobbyId
+    LobbyRepository.getLobby(lobbyId, session.userId)
     |> thenBind (fun lobby -> 
         if session.isAdmin || session.userId = lobby.createdByUserId
         then Ok lobby

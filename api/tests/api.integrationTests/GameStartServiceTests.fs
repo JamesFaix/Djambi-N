@@ -93,6 +93,6 @@ type GameStartServiceTests() =
             let! _ = GameStartService.startGame lobby.id session |> thenValue
 
             //Assert
-            let! lobbyError = LobbyRepository.getLobby lobby.id |> thenError
+            let! lobbyError = LobbyRepository.getLobby(lobby.id, adminUserId) |> thenError
             Assert.Equal(404, lobbyError.statusCode)
         }
