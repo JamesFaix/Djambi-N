@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.IntegrationTests.Logic
+﻿namespace Djambi.Api.IntegrationTests.Logic.PlayerService
 
 open FSharp.Control.Tasks
 open Xunit
@@ -8,7 +8,7 @@ open Djambi.Api.IntegrationTests
 open Djambi.Api.Logic.Services
 open Djambi.Api.Model.PlayerModel
 
-type PlayerServiceTests() =
+type FillEmptyPlayerSlotsTests() =
     inherit TestsBase()
 
     [<Fact>]
