@@ -3,5 +3,5 @@
 open Djambi.Api.Db
 
 type TestsBase() =
-    do 
+    do
         SqlUtility.connectionString <- connectionString

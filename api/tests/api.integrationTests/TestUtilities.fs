@@ -8,7 +8,7 @@ open Djambi.Api.Model.LobbyModel
 open Djambi.Api.Model.SessionModel
 open Djambi.Utilities
 
-let private config = 
+let private config =
     ConfigurationBuilder()
         .AddJsonFile("appsettings.json", false)
         .AddJsonFile(Environment.environmentConfigPath(6), false)
@@ -18,10 +18,16 @@ let connectionString =
     config.GetConnectionString("Main")
             .Replace("{sqlAddress}", config.["sqlAddress"])
 
-let getCreateUserRequest() : CreateUserRequest = 
+let getCreateUserRequest() : CreateUserRequest =
     {
         name = "Test_" + Guid.NewGuid().ToString()
         password = Guid.NewGuid().ToString()
+    }
+
+let getLoginRequest(userRequest : CreateUserRequest) : LoginRequest =
+    {
+        username = userRequest.name
+        password = userRequest.password
     }
 
 let getCreateLobbyRequest() : CreateLobbyRequest =

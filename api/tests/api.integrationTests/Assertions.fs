@@ -28,6 +28,12 @@ let shouldBeAtLeast<'a when 'a : comparison> (minimum : 'a) (actual : 'a) =
 let shouldBeAtMost<'a when 'a : comparison> (maximum : 'a) (actual : 'a) =
     Assert.True(actual <= maximum)
 
+let shouldBeGreaterThan<'a when 'a : comparison> (threshold : 'a) (actual : 'a) =
+    Assert.True(actual > threshold)
+
+let shouldBeLessThan<'a when 'a : comparison> (threshold : 'a) (actual : 'a) =
+    Assert.True(actual < threshold)
+
 let shouldBeError<'a> (statusCode : int) (message : string) (result : Result<'a, HttpException>) =
     Assert.True(result |> Result.isError)
     let error = result |> Result.error

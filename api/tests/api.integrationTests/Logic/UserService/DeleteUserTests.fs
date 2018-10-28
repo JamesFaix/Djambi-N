@@ -16,9 +16,9 @@ type DeleteUserTests() =
         task {
             //Arrange
             let request = getCreateUserRequest()
-            let! user = UserService.createUser request
+            let! user = UserService.createUser request None
                         |> AsyncHttpResult.thenValue
-                        
+
             let session = { getSessionForUser user.id with isAdmin = isAdmin }
 
             //Act
@@ -27,15 +27,15 @@ type DeleteUserTests() =
             //Assert
             response |> Result.isOk |> shouldBeTrue
         }
-        
+
     [<Fact>]
     let ``Delete user should work if admin and deleting other user`` () =
         task {
             //Arrange
             let request = getCreateUserRequest()
-            let! user = UserService.createUser request
+            let! user = UserService.createUser request None
                         |> AsyncHttpResult.thenValue
-                        
+
             let session = { getSessionForUser (user.id + 1) with isAdmin = true }
 
             //Act
@@ -43,16 +43,16 @@ type DeleteUserTests() =
 
             //Assert
             response |> Result.isOk |> shouldBeTrue
-        }        
-        
+        }
+
     [<Fact>]
     let ``Delete user should fail if not admin and deleting other user`` () =
         task {
             //Arrange
             let request = getCreateUserRequest()
-            let! user = UserService.createUser request
+            let! user = UserService.createUser request None
                         |> AsyncHttpResult.thenValue
-                        
+
             let session = { getSessionForUser (user.id + 1) with isAdmin = false }
 
             //Act
@@ -61,16 +61,16 @@ type DeleteUserTests() =
             //Assert
             response |> shouldBeError 403 "Cannot delete other users."
         }
-                 
+
     [<Fact>]
     let ``Delete user should fail if already deleted`` () =
         task {
             //Arrange
             let request = getCreateUserRequest()
-            let! user = UserService.createUser request
+            let! user = UserService.createUser request None
                         |> AsyncHttpResult.thenValue
-                        
-            let session = { getSessionForUser (user.id + 1) with isAdmin = true }
+
+            let session = { getSessionForUser 1 with isAdmin = true }
 
             let! _ = UserService.deleteUser user.id session
 
