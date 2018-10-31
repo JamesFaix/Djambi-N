@@ -40,6 +40,10 @@ let shouldBeError<'a> (statusCode : int) (message : string) (result : Result<'a,
     Assert.Equal(statusCode, error.statusCode)
     Assert.Equal(message, error.Message)
 
-let shouldExist<'a> (predicate: 'a -> bool) (xs: 'a seq) =
+let shouldExist<'a> (predicate : 'a -> bool) (xs : 'a seq) =
     xs |> Seq.exists predicate
        |> shouldBeTrue
+
+let shouldNotExist<'a> (predicate : 'a -> bool) (xs : 'a seq) =
+    xs |> Seq.exists predicate
+       |> shouldBeFalse

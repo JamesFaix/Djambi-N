@@ -7,6 +7,7 @@ open Djambi.Api.Model.UserModel
 open Djambi.Api.Model.LobbyModel
 open Djambi.Api.Model.SessionModel
 open Djambi.Utilities
+open Djambi.Api.Model.PlayerModel
 
 let private config =
     ConfigurationBuilder()
@@ -34,9 +35,16 @@ let getCreateLobbyRequest() : CreateLobbyRequest =
     {
         regionCount = 3
         description = Some "Test"
-        createdByUserId = 1
         isPublic = false
         allowGuests = false
+    }
+
+let getCreatePlayerRequest(lobbyId : int) : CreatePlayerRequest =
+    {
+        playerType = PlayerType.User
+        userId = None
+        lobbyId = lobbyId
+        name = None
     }
 
 let adminUserId = 1

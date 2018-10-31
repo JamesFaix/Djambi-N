@@ -14,14 +14,15 @@ open Djambi.Api.Model.SessionModel
 
 type GameStartServiceTests() =
     inherit TestsBase()
-        
+
     [<Fact>]
     let ``Get starting conditions should work``() =
-        //Arrange
-        let lobbyRequest = getCreateLobbyRequest()
         task {
-            let! lobby = LobbyRepository.createLobby lobbyRequest |> thenValue
-            let! players = PlayerRepository.getPlayers lobby.id 
+            //Arrange
+            let session = getSessionForUser 1
+            let lobbyRequest = getCreateLobbyRequest()
+            let! lobby = LobbyRepository.createLobby (lobbyRequest, session.userId) |> thenValue
+            let! players = PlayerRepository.getPlayers lobby.id
                             |> thenBindAsync (PlayerService.fillEmptyPlayerSlots lobby)
                             |> thenValue
 
@@ -43,11 +44,12 @@ type GameStartServiceTests() =
 
     [<Fact>]
     let ``Create pieces should work``() =
-        //Arrange
-        let lobbyRequest = getCreateLobbyRequest()
         task {
-            let! lobby = LobbyRepository.createLobby lobbyRequest |> thenValue
-            let! players = PlayerRepository.getPlayers lobby.id 
+            //Arrange
+            let session = getSessionForUser 1
+            let lobbyRequest = getCreateLobbyRequest()
+            let! lobby = LobbyRepository.createLobby (lobbyRequest, session.userId) |> thenValue
+            let! players = PlayerRepository.getPlayers lobby.id
                             |> thenBindAsync (PlayerService.fillEmptyPlayerSlots lobby)
                             |> thenValue
             let startingConditions = GameStartService.getStartingConditions players
@@ -73,24 +75,16 @@ type GameStartServiceTests() =
 
     [<Fact>]
     let ``Start game should work``() =
-        //Arrange
-        let lobbyRequest = getCreateLobbyRequest()
         task {
-            let! lobby = LobbyRepository.createLobby lobbyRequest |> thenValue
-            let session : Session = 
-                {
-                    isAdmin = false
-                    userId = lobbyRequest.createdByUserId
-                    token = ""
-                    id = 1
-                    createdOn = DateTime.UtcNow
-                    expiresOn = DateTime.UtcNow
-                }
+            //Arrange
+            let session = getSessionForUser 1
+            let lobbyRequest = getCreateLobbyRequest()
+            let! lobby = LobbyRepository.createLobby (lobbyRequest, session.userId) |> thenValue
 
             //Act
             let! _ = GameStartService.startGame lobby.id session |> thenValue
 
             //Assert
-            let! lobbyError = LobbyRepository.getLobby(lobby.id, adminUserId) |> thenError
+            let! lobbyError = LobbyRepository.getLobby lobby.id |> thenError
             Assert.Equal(404, lobbyError.statusCode)
         }

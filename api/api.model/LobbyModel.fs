@@ -13,7 +13,7 @@ type Lobby =
         isPublic : bool
         allowGuests : bool
         //TODO: Add player count
-    } 
+    }
 
 type LobbyWithPlayers =
     {
@@ -40,11 +40,10 @@ type Lobby with
             players = players
         }
 
-type CreateLobbyRequest = 
+type CreateLobbyRequest =
     {
         description : string option
         regionCount : int
-        createdByUserId : int
         isPublic : bool
         allowGuests : bool
     }
@@ -57,11 +56,10 @@ type LobbiesQuery =
         playerUserId : int option
         isPublic : bool option
         allowGuests : bool option
-        callingUserId : int option
     }
 
 module LobbiesQuery =
-    
+
     let empty : LobbiesQuery =
         {
             lobbyId = None
@@ -69,6 +67,5 @@ module LobbiesQuery =
             createdByUserId = None
             playerUserId = None
             isPublic = None
-            allowGuests = None  
-            callingUserId = None
-        }       
+            allowGuests = None
+        }

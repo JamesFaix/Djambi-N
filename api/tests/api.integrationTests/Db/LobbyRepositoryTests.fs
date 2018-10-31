@@ -11,13 +11,14 @@ open Djambi.Api.Model.LobbyModel
 type LobbyRepositoryTests() =
     inherit TestsBase()
 
-    [<Fact>] 
+    [<Fact>]
     let ``Create lobby should work``() =
         //Arrange
+        let userId = 1
         let request = getCreateLobbyRequest()
         task {
             //Act
-            let! lobby = LobbyRepository.createLobby request |> thenValue
+            let! lobby = LobbyRepository.createLobby (request, userId) |> thenValue
 
             //Assert
             Assert.NotEqual(0, lobby.id)
@@ -29,12 +30,13 @@ type LobbyRepositoryTests() =
     [<Fact>]
     let ``Get lobby should work`` () =
         //Arrange
+        let userId = 1
         let request = getCreateLobbyRequest()
         task {
-            let! createdLobby = LobbyRepository.createLobby request |> thenValue
+            let! createdLobby = LobbyRepository.createLobby (request, userId) |> thenValue
 
             //Act
-            let! lobby = LobbyRepository.getLobby(createdLobby.id, adminUserId) |> thenValue
+            let! lobby = LobbyRepository.getLobby createdLobby.id |> thenValue
 
             //Assert
             Assert.Equal(createdLobby.id, lobby.id)
@@ -46,15 +48,16 @@ type LobbyRepositoryTests() =
     [<Fact>]
     let ``Delete lobby should work``() =
         //Arrange
+        let userId = 1
         let request = getCreateLobbyRequest()
         task {
-            let! lobby = LobbyRepository.createLobby request |> thenValue
+            let! lobby = LobbyRepository.createLobby (request, userId) |> thenValue
 
             //Act
             let! _ = LobbyRepository.deleteLobby lobby.id |> thenValue
 
             //Assert
-            let! getResult = LobbyRepository.getLobby(lobby.id, adminUserId)
+            let! getResult = LobbyRepository.getLobby lobby.id
             let error = getResult |> Result.error
             Assert.Equal(404, error.statusCode)
         }
@@ -62,13 +65,14 @@ type LobbyRepositoryTests() =
     [<Fact>]
     let ``Get lobbies should work``() =
         //Arrange
+        let userId = 1
         let request = getCreateLobbyRequest()
         task {
-            let! createdLobby = LobbyRepository.createLobby request |> thenValue
+            let! createdLobby = LobbyRepository.createLobby (request, userId) |> thenValue
             let query = LobbiesQuery.empty
 
             //Act
-            let! lobbies = LobbyRepository.getLobbies(query, adminUserId) |> thenValue
+            let! lobbies = LobbyRepository.getLobbies query |> thenValue
 
             //Assert
             let exists = lobbies |> List.exists (fun l -> l.id = createdLobby.id)

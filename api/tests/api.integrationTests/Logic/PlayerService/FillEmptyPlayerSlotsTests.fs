@@ -14,9 +14,10 @@ type FillEmptyPlayerSlotsTests() =
     [<Fact>]
     let ``Fill empty player slots should work``() =
         //Arrange
+        let userId = 1
         let lobbyRequest = getCreateLobbyRequest()
         task {
-            let! lobby = LobbyRepository.createLobby lobbyRequest |> thenValue
+            let! lobby = LobbyRepository.createLobby (lobbyRequest, userId) |> thenValue
             let! players = PlayerRepository.getPlayers lobby.id |> thenValue
 
             //Act
@@ -26,4 +27,4 @@ type FillEmptyPlayerSlotsTests() =
             let! doubleCheck = PlayerRepository.getPlayers lobby.id |> thenValue
             Assert.Equal(lobbyRequest.regionCount, updatedPlayers.Length)
             Assert.Equal<Player list>(updatedPlayers, doubleCheck)
-        }        
+        }
