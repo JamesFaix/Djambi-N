@@ -1,6 +1,6 @@
 ﻿module Djambi.Api.Common.Result
 
-let isOk (r : Result<'a, 'b>) = 
+let isOk (r : Result<'a, 'b>) =
     match r with
     | Ok _ -> true
     | _ -> false

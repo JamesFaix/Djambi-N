@@ -87,13 +87,13 @@ type PlayerRepositoryTests() =
             let! lobby = LobbyRepository.createLobby (lobbyRequest, userId) |> thenValue
             let! user = UserRepository.createUser userRequest |> thenValue
             let playerRequest = CreatePlayerRequest.user(lobby.id, user.id)
-            let! playerId = PlayerRepository.addPlayerToLobby playerRequest |> thenValue
+            let! player = PlayerRepository.addPlayerToLobby playerRequest |> thenValue
 
             //Act
-            let! _ = PlayerRepository.removePlayerFromLobby playerId |> thenValue
+            let! _ = PlayerRepository.removePlayerFromLobby player.id |> thenValue
 
             //Assert
             let! players = PlayerRepository.getPlayers lobby.id |> thenValue
-            let exists = players |> List.exists (fun p -> p.id = playerId)
+            let exists = players |> List.exists (fun p -> p.id = player.id)
             Assert.False(exists)
         }

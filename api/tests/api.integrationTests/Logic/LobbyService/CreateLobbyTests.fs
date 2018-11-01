@@ -5,6 +5,7 @@ open Xunit
 open Djambi.Api.Common
 open Djambi.Api.IntegrationTests
 open Djambi.Api.Logic.Services
+open Djambi.Api.Model.PlayerModel
 
 type CreateLobbyTests() =
     inherit TestsBase()
@@ -27,5 +28,25 @@ type CreateLobbyTests() =
             lobby.isPublic |> shouldBe request.isPublic
             lobby.regionCount |> shouldBe request.regionCount
             lobby.createdByUserId |> shouldBe session.userId
+        }
+
+    [<Fact>]
+    let ``Create lobby should add self as player``() =
+        task {
+            //Arrange
+            let request = getCreateLobbyRequest()
+            let session = getSessionForUser 1
+
+            //Act
+            let! lobby = LobbyService.createLobby request session
+                         |> AsyncHttpResult.thenValue
+
+            //Assert
+            let! players = PlayerService.getPlayers lobby.id session
+                           |> AsyncHttpResult.thenValue
+
+            players.Length |> shouldBe 1
+            players |> shouldExist (fun p -> p.userId = Some session.userId
+                                          && p.playerType = PlayerType.User)
         }
 

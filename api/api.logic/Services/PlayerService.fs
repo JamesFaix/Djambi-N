@@ -9,7 +9,10 @@ open Djambi.Api.Model.LobbyModel
 open Djambi.Api.Model.PlayerModel
 open Djambi.Api.Model.SessionModel
 
-let addPlayerToLobby (request : CreatePlayerRequest) (session : Session) : Unit AsyncHttpResult =
+let getPlayers (lobbyId : int) (session : Session) : Player list AsyncHttpResult =
+    PlayerRepository.getPlayers lobbyId
+
+let addPlayerToLobby (request : CreatePlayerRequest) (session : Session) : Player AsyncHttpResult =
     LobbyRepository.getLobby request.lobbyId
     |> thenBind (fun lobby ->
         match request.playerType with
@@ -18,7 +21,7 @@ let addPlayerToLobby (request : CreatePlayerRequest) (session : Session) : Unit 
             then Error <| HttpException(400, "UserID must be provided when adding a user player.")
             elif request.name.IsSome
             then Error <| HttpException(400, "Cannot provide name when adding a user player.")
-            elif not session.isAdmin || request.userId.Value <> session.userId
+            elif not session.isAdmin && request.userId.Value <> session.userId
             then Error <| HttpException(403, "Cannot add other users to a lobby.")
             else Ok ()
 
@@ -29,7 +32,7 @@ let addPlayerToLobby (request : CreatePlayerRequest) (session : Session) : Unit 
             then Error <| HttpException(400, "UserID must be provided when adding a guest player.")
             elif request.name.IsNone
             then Error <| HttpException(400, "Must provide name when adding a guest player.")
-            elif not session.isAdmin || request.userId.Value <> session.userId
+            elif not session.isAdmin && request.userId.Value <> session.userId
             then Error <| HttpException(403, "Cannot add guests for other users to a lobby.")
             else Ok ()
 
@@ -37,7 +40,6 @@ let addPlayerToLobby (request : CreatePlayerRequest) (session : Session) : Unit 
             Error <| HttpException(400, "Cannot directly add virtual players to a lobby.")
     )
     |> thenBindAsync (fun _ -> PlayerRepository.addPlayerToLobby request)
-    |> thenMap ignore
 
 let removePlayerFromLobby (lobbyId : int, playerId : int) (session : Session) : Unit AsyncHttpResult =
     PlayerRepository.getPlayers lobbyId

@@ -12,17 +12,17 @@ BEGIN
 
 	BEGIN TRAN
 		INSERT INTO Lobbies (
-			RegionCount, 
-			[Description], 
-		--	GameStatusId, 
+			RegionCount,
+			[Description],
+		--	GameStatusId,
 			CreatedOn,
 			CreatedByUserId,
 			AllowGuests,
-			IsPublic)			
+			IsPublic)
 		VALUES (
-			@RegionCount, 
-			@Description, 
-	--		1, 
+			@RegionCount,
+			@Description,
+	--		1,
 			GETUTCDATE(),
 			@CreatedByUserId,
 			@AllowGuests,

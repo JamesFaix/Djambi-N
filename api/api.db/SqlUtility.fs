@@ -17,23 +17,23 @@ let getConnection() =
     cn :> IDbConnection
 
 let proc(name : string, param : obj) =
-    new CommandDefinition(name, 
-                          param, 
-                          null, 
-                          new Nullable<int>(), 
+    new CommandDefinition(name,
+                          param,
+                          null,
+                          new Nullable<int>(),
                           new Nullable<CommandType>(CommandType.StoredProcedure))
-                        
+
 let queryMany<'a>(command : CommandDefinition, entityType : string) : 'a list AsyncHttpResult =
     task {
         use connection = getConnection()
 
-        try 
+        try
             return! SqlMapper.QueryAsync<'a>(connection, command)
                     |> Task.map (Seq.toList >> Ok)
         with
         | :? SqlException as ex when ex.Number >= 50400 && ex.Number <= 50599 ->
             return Error <| HttpException(ex.Number % 50000, ex.Message)
-        | :? SqlException as ex when Regex.IsMatch(ex.Message, "Violation of.*constraint.*") -> 
+        | :? SqlException as ex when Regex.IsMatch(ex.Message, "Violation of.*constraint.*") ->
             return Error <| HttpException(409, sprintf "Conflict when attempting to write %s." entityType)
     }
 
@@ -43,19 +43,19 @@ let querySingle<'a>(command : CommandDefinition, entityType : string) : 'a Async
         | 1 -> Ok <| xs.[0]
         | 0 -> Error <| HttpException(404, sprintf "%s not found." entityType)
         | _ -> Error <| HttpException(500, sprintf "An unknown error occurred when manipulating %s." entityType)
-        
+
     queryMany<'a>(command, entityType)
     |> thenBind singleOrError
 
 let queryUnit(command : CommandDefinition, entityType : string) : Unit AsyncHttpResult =
-    queryMany<Unit>(command, entityType) 
+    queryMany<Unit>(command, entityType)
     |> thenMap ignore
 
 type DynamicParameters with
     member this.add<'a>(name : string, value : 'a) : DynamicParameters =
         this.Add(name, value)
         this
-        
+
     member this.addOption<'a> (name : string, opt : 'a option) : DynamicParameters =
         match opt with
         | Some x -> this.Add(name, x)

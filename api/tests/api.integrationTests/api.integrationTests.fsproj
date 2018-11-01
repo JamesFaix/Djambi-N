@@ -27,10 +27,10 @@
     <Compile Include="Logic\LobbyService\CreateLobbyTests.fs" />
     <Compile Include="Logic\LobbyService\DeleteLobbyTests.fs" />
     <Compile Include="Logic\LobbyService\GetLobbiesTests.fs" />
-    <Compile Include="Logic\LobbyService\StartGameTests.fs" />
     <Compile Include="Logic\PlayerService\AddPlayerTests.fs" />
     <Compile Include="Logic\PlayerService\FillEmptyPlayerSlotsTests.fs" />
     <Compile Include="Logic\PlayerService\RemovePlayerTests.fs" />
+    <Compile Include="Logic\GameStartService\StartGameTests.fs" />
     <Compile Include="Logic\GameStartServiceTests.fs" />
   </ItemGroup>
 
