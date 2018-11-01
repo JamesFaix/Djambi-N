@@ -8,23 +8,23 @@ type AsyncHttpResult<'a> = Task<Result<'a, HttpException>>
 
 module AsyncHttpResult =
 
-    let thenMap 
-        (projection : 'a -> 'b) 
-        (t : 'a AsyncHttpResult) 
+    let thenMap
+        (projection : 'a -> 'b)
+        (t : 'a AsyncHttpResult)
         : 'b AsyncHttpResult =
-    
+
         t |> map (Result.map projection)
 
-    let thenBind 
-        (projection : 'a -> Result<'b, HttpException>) 
-        (t : 'a AsyncHttpResult) 
+    let thenBind
+        (projection : 'a -> Result<'b, HttpException>)
+        (t : 'a AsyncHttpResult)
         : 'b AsyncHttpResult =
 
         t |> map (Result.bind projection)
 
-    let thenBindAsync 
-        (projection : 'a -> 'b AsyncHttpResult) 
-        (t : 'a AsyncHttpResult) 
+    let thenBindAsync
+        (projection : 'a -> 'b AsyncHttpResult)
+        (t : 'a AsyncHttpResult)
         : 'b AsyncHttpResult =
 
         let projectIfValue (result : Result<'a, HttpException>) =
@@ -33,26 +33,26 @@ module AsyncHttpResult =
             | Error x -> Task.FromResult(Error x)
 
         t |> bind projectIfValue
-        
-    let thenDoAsync 
-        (action : 'a -> _ AsyncHttpResult) 
-        (t : 'a AsyncHttpResult) 
+
+    let thenDoAsync
+        (action : 'a -> _ AsyncHttpResult)
+        (t : 'a AsyncHttpResult)
         : 'a AsyncHttpResult =
 
         task {
             let! result = t
             match result with
-            | Error _ -> return result   
-            | Ok x -> 
-                let! actionResult = action x        
+            | Error _ -> return result
+            | Ok x ->
+                let! actionResult = action x
                 match actionResult with
                 | Ok _ -> return Ok x
-                | Error y -> return Error y                    
+                | Error y -> return Error y
         }
 
-    let thenDoEachAsync 
-        (action : 'a -> Unit AsyncHttpResult) 
-        (t : 'a seq AsyncHttpResult) 
+    let thenDoEachAsync
+        (action : 'a -> Unit AsyncHttpResult)
+        (t : 'a seq AsyncHttpResult)
         : Unit AsyncHttpResult =
 
         let doEachAsync (items : 'a seq) : Unit AsyncHttpResult =
@@ -72,11 +72,11 @@ module AsyncHttpResult =
             }
 
         t |> thenBindAsync doEachAsync
-    
+
     let thenReplaceError
         (statusCode : int)
         (newException : HttpException)
-        (t : 'a AsyncHttpResult) 
+        (t : 'a AsyncHttpResult)
         : 'a AsyncHttpResult =
 
         let mapIfMatch (oldException : HttpException) =
@@ -85,29 +85,29 @@ module AsyncHttpResult =
             | _ -> oldException
 
         t |> map (Result.mapError mapIfMatch)
-       
-    let thenBindError 
-        (statusCode : int) 
-        (projection : HttpException -> Result<'a, HttpException>) 
-        (t : 'a AsyncHttpResult) 
+
+    let thenBindError
+        (statusCode : int)
+        (projection : HttpException -> Result<'a, HttpException>)
+        (t : 'a AsyncHttpResult)
         : 'a AsyncHttpResult =
 
         task {
             let! result = t
             match result with
-            | Error ex when ex.statusCode = statusCode -> 
+            | Error ex when ex.statusCode = statusCode ->
                 return projection ex
             | _ -> return result
         }
 
     let thenValue (t : 'a AsyncHttpResult) : 'a Task =
         t |> map Result.value
-    
+
     let thenError (t : 'a AsyncHttpResult) : HttpException Task =
         t |> map Result.error
 
     let okTask (value : 'a): 'a AsyncHttpResult =
         value |> Ok |> Task.FromResult
-    
+
     let errorTask (ex : HttpException) : 'a AsyncHttpResult =
         ex |> Error |> Task.FromResult

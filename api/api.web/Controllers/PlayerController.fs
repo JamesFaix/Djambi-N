@@ -11,14 +11,12 @@ let addPlayerToLobby(lobbyId : int) =
         getSessionAndModelFromContext<CreatePlayerJsonModel> ctx
         |> thenBindAsync (fun (requestJsonModel, session) -> 
             let request = mapCreatePlayerRequest(requestJsonModel, lobbyId)
-            PlayerService.addPlayerToLobby(request, session)
+            PlayerService.addPlayerToLobby request session
         )
     handle func
 
 let removePlayerFromLobby(lobbyId : int, playerId : int) =
     let func ctx =
         getSessionFromContext ctx
-        |> thenBindAsync (fun session -> 
-            PlayerService.removePlayerFromLobby(playerId, session)
-        )
+        |> thenBindAsync (PlayerService.removePlayerFromLobby(lobbyId, playerId))
     handle func

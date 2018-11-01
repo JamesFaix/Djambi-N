@@ -1,4 +1,4 @@
-CREATE PROCEDURE [dbo].[Lobbies_Get] 
+CREATE PROCEDURE [dbo].[Lobbies_Get]
 	@LobbyId INT,
 	@DescriptionContains NVARCHAR(100),
 	@CreatedByUserId INT,
@@ -9,7 +9,7 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT l.LobbyId, 
+	SELECT l.LobbyId,
 		l.[Description],
 		l.RegionCount,
 		l.CreatedByUserId,
@@ -20,6 +20,7 @@ BEGIN
     FROM Lobbies l
 		LEFT OUTER JOIN Games g
 			ON g.LobbyId = l.LobbyId
+
 	WHERE (@LobbyId IS NULL OR @LobbyId = l.LobbyId)
 		AND (@DescriptionContains IS NULL OR l.[Description] LIKE '%' + @DescriptionContains + '%')
 		AND (@CreatedByUserId IS NULL OR @CreatedByUserId = l.CreatedByUserId)

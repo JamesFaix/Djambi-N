@@ -1,16 +1,14 @@
-﻿namespace Djambi.Api.IntegrationTests
+﻿namespace Djambi.Api.IntegrationTests.Db
 
 open FSharp.Control.Tasks
 open Xunit
 open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
-open Djambi.Api.Db
 open Djambi.Api.Db.Repositories
-open Djambi.Tests.TestUtilities
+open Djambi.Api.IntegrationTests
 
 type UserRepositoryTests() =
-    do 
-        SqlUtility.connectionString <- connectionString
+    inherit TestsBase()
 
     [<Fact>]
     let ``Create user should work``() =
@@ -26,7 +24,7 @@ type UserRepositoryTests() =
         let request = getCreateUserRequest()
         task {
             let! createdUser = UserRepository.createUser(request) |> thenValue
-            let! user = UserRepository.getUser(createdUser.id) |> thenValue  
+            let! user = UserRepository.getUser(createdUser.id) |> thenValue
             Assert.Equal(createdUser.id, user.id)
             Assert.Equal(createdUser.name, user.name)
         }

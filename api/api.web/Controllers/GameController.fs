@@ -7,24 +7,28 @@ open Djambi.Api.Web.Mappings.GameWebMapping
 
 let getGameState(gameId : int) =
     let func ctx =
-        GameService.getGameState(gameId)
+        getSessionFromContext ctx
+        |> thenBindAsync (GameService.getGameState gameId)
         |> thenMap mapGameStateToJsonModel
     handle func
 
-let selectCell(gameId : int, cellId : int) =
+let selectCell(gameId : int, cellId : int) =   
     let func ctx = 
-        GameService.selectCell(gameId, cellId)
+        getSessionFromContext ctx
+        |> thenBindAsync (GameService.selectCell(gameId, cellId))
         |> thenMap mapTurnStateToJsonModel
     handle func
 
 let resetTurn(gameId : int) =
     let func ctx =
-        GameService.resetTurn gameId
+        getSessionFromContext ctx
+        |> thenBindAsync (GameService.resetTurn gameId)
         |> thenMap mapTurnStateToJsonModel
     handle func
 
 let commitTurn(gameId : int) =
     let func ctx =
-        GameService.commitTurn gameId
+        getSessionFromContext ctx
+        |> thenBindAsync (GameService.commitTurn gameId)
         |> thenMap mapCommitTurnResponseToJsonModel
     handle func

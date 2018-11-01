@@ -11,6 +11,7 @@ type SessionSqlModel =
         token : string
         createdOn : DateTime
         expiresOn : DateTime
+        isAdmin : bool
     }
 
 let mapSessionResponse (sqlModel : SessionSqlModel) : Session =
@@ -20,4 +21,5 @@ let mapSessionResponse (sqlModel : SessionSqlModel) : Session =
         token = sqlModel.token
         createdOn = sqlModel.createdOn
         expiresOn = sqlModel.expiresOn
+        isAdmin = sqlModel.isAdmin
     }

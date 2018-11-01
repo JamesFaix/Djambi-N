@@ -1,25 +1,24 @@
-﻿namespace Djambi.Api.IntegrationTests
+﻿namespace Djambi.Api.IntegrationTests.Db
 
 open FSharp.Control.Tasks
 open Xunit
 open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
-open Djambi.Api.Db
 open Djambi.Api.Db.Repositories
+open Djambi.Api.IntegrationTests
 open Djambi.Api.Model.LobbyModel
-open Djambi.Tests.TestUtilities
 
 type LobbyRepositoryTests() =
-    do 
-        SqlUtility.connectionString <- connectionString
+    inherit TestsBase()
 
-    [<Fact>] 
+    [<Fact>]
     let ``Create lobby should work``() =
         //Arrange
+        let userId = 1
         let request = getCreateLobbyRequest()
         task {
             //Act
-            let! lobby = LobbyRepository.createLobby request |> thenValue
+            let! lobby = LobbyRepository.createLobby (request, userId) |> thenValue
 
             //Assert
             Assert.NotEqual(0, lobby.id)
@@ -31,9 +30,10 @@ type LobbyRepositoryTests() =
     [<Fact>]
     let ``Get lobby should work`` () =
         //Arrange
+        let userId = 1
         let request = getCreateLobbyRequest()
         task {
-            let! createdLobby = LobbyRepository.createLobby request |> thenValue
+            let! createdLobby = LobbyRepository.createLobby (request, userId) |> thenValue
 
             //Act
             let! lobby = LobbyRepository.getLobby createdLobby.id |> thenValue
@@ -48,9 +48,10 @@ type LobbyRepositoryTests() =
     [<Fact>]
     let ``Delete lobby should work``() =
         //Arrange
+        let userId = 1
         let request = getCreateLobbyRequest()
         task {
-            let! lobby = LobbyRepository.createLobby request |> thenValue
+            let! lobby = LobbyRepository.createLobby (request, userId) |> thenValue
 
             //Act
             let! _ = LobbyRepository.deleteLobby lobby.id |> thenValue
@@ -64,9 +65,10 @@ type LobbyRepositoryTests() =
     [<Fact>]
     let ``Get lobbies should work``() =
         //Arrange
+        let userId = 1
         let request = getCreateLobbyRequest()
         task {
-            let! createdLobby = LobbyRepository.createLobby request |> thenValue
+            let! createdLobby = LobbyRepository.createLobby (request, userId) |> thenValue
             let query = LobbiesQuery.empty
 
             //Act

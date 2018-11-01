@@ -9,6 +9,7 @@ type Session =
         token : string
         createdOn : DateTime
         expiresOn : DateTime
+        isAdmin : bool
     }
 
 type LoginRequest =

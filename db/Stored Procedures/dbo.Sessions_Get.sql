@@ -6,13 +6,16 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT SessionId,
-		UserId,
-		Token,
-		CreatedOn,
-		ExpiresOn
-	FROM [Sessions]
-	WHERE (@SessionId IS NULL OR SessionId = @SessionId)
-		AND (@Token IS NULL OR Token = @Token)
-		AND (@UserId IS NULL OR UserId = @UserId)
+	SELECT s.SessionId,
+		s.UserId,
+		s.Token,
+		s.CreatedOn,
+		s.ExpiresOn,
+		u.IsAdmin
+	FROM [Sessions] s
+		INNER JOIN Users u
+			ON u.UserId = s.UserId
+	WHERE (@SessionId IS NULL OR s.SessionId = @SessionId)
+		AND (@Token IS NULL OR s.Token = @Token)
+		AND (@UserId IS NULL OR s.UserId = @UserId)
 END

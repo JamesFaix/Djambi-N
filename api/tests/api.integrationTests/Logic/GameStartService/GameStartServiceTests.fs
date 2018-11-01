@@ -1,27 +1,27 @@
-﻿namespace Djambi.Api.IntegrationTests
+﻿namespace Djambi.Api.IntegrationTests.Logic.GameStartService
 
 open FSharp.Control.Tasks
 open Xunit
 open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
-open Djambi.Api.Db
 open Djambi.Api.Db.Repositories
+open Djambi.Api.IntegrationTests
 open Djambi.Api.Logic.ModelExtensions
 open Djambi.Api.Logic.Services
 open Djambi.Api.Model.GameModel
-open Djambi.Tests.TestUtilities
+open Djambi.Api.Model.PlayerModel
 
 type GameStartServiceTests() =
-    do 
-        SqlUtility.connectionString <- connectionString
-        
+    inherit TestsBase()
+
     [<Fact>]
     let ``Get starting conditions should work``() =
-        //Arrange
-        let lobbyRequest = getCreateLobbyRequest()
         task {
-            let! lobby = LobbyRepository.createLobby lobbyRequest |> thenValue
-            let! players = PlayerRepository.getPlayers lobby.id 
+            //Arrange
+            let session = getSessionForUser 1
+            let lobbyRequest = getCreateLobbyRequest()
+            let! lobby = LobbyRepository.createLobby (lobbyRequest, session.userId) |> thenValue
+            let! players = PlayerRepository.getPlayersForLobby lobby.id
                             |> thenBindAsync (PlayerService.fillEmptyPlayerSlots lobby)
                             |> thenValue
 
@@ -31,11 +31,8 @@ type GameStartServiceTests() =
             //Assert
             Assert.Equal(lobby.regionCount, startingConditions.Length)
 
-            let turnNumbers = startingConditions |> List.map (fun cond -> cond.turnNumber) |> List.sort
-            Assert.Equal<int list>([0..(lobby.regionCount-1)], turnNumbers)
-
             let regions = startingConditions |> List.map (fun cond -> cond.region) |> List.sort
-            Assert.Equal<int list>([0..(lobby.regionCount-1)], regions)
+            regions |> shouldBe [0..(lobby.regionCount-1)]
 
             let colors = startingConditions |> List.map (fun cond -> cond.color)
             Assert.All(colors, fun c -> Assert.True(c >= 0 && c < Constants.maxRegions))
@@ -43,11 +40,12 @@ type GameStartServiceTests() =
 
     [<Fact>]
     let ``Create pieces should work``() =
-        //Arrange
-        let lobbyRequest = getCreateLobbyRequest()
         task {
-            let! lobby = LobbyRepository.createLobby lobbyRequest |> thenValue
-            let! players = PlayerRepository.getPlayers lobby.id 
+            //Arrange
+            let session = getSessionForUser 1
+            let lobbyRequest = getCreateLobbyRequest()
+            let! lobby = LobbyRepository.createLobby (lobbyRequest, session.userId) |> thenValue
+            let! players = PlayerRepository.getPlayersForLobby lobby.id
                             |> thenBindAsync (PlayerService.fillEmptyPlayerSlots lobby)
                             |> thenValue
             let startingConditions = GameStartService.getStartingConditions players
@@ -73,15 +71,51 @@ type GameStartServiceTests() =
 
     [<Fact>]
     let ``Start game should work``() =
-        //Arrange
-        let lobbyRequest = getCreateLobbyRequest()
         task {
-            let! lobby = LobbyRepository.createLobby lobbyRequest |> thenValue
+            //Arrange
+            let session = getSessionForUser 1
+            let lobbyRequest = getCreateLobbyRequest()
+            let! lobby = LobbyRepository.createLobby (lobbyRequest, session.userId) |> thenValue
 
             //Act
-            let! _ = GameStartService.startGame lobby.id |> thenValue
+            let! _ = GameStartService.startGame lobby.id session |> thenValue
 
             //Assert
             let! lobbyError = LobbyRepository.getLobby lobby.id |> thenError
             Assert.Equal(404, lobbyError.statusCode)
+        }
+
+    [<Fact>]
+    let ``Start game should fail if only one non-virtual player``() =
+        task {
+            failwith "Not yet implemented"
+        }
+
+    [<Fact>]
+    let ``Virtual players should not be in the turn cycle``() =
+        task {
+            //Arrange
+            //Arrange
+            let session = getSessionForUser 1
+            let lobbyRequest = getCreateLobbyRequest()
+            let! lobby = LobbyRepository.createLobby (lobbyRequest, session.userId) |> thenValue
+
+            //Act
+            let! gameStartResponse = GameStartService.startGame lobby.id session |> thenValue
+
+            //Assert
+
+            let! players = PlayerService.getGamePlayers gameStartResponse.gameId session |> thenValue
+
+            let virtualPlayerIds =
+                players
+                |> List.filter (fun p -> p.playerType = PlayerType.Virtual)
+                |> List.map (fun p -> p.id)
+                |> Set.ofList
+
+            gameStartResponse.gameState.turnCycle
+            |> Set.ofList
+            |> Set.intersect virtualPlayerIds
+            |> Set.count
+            |> shouldBe 0
         }

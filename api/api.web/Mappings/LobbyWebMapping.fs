@@ -28,7 +28,6 @@ let mapCreateLobbyRequest(jsonModel : CreateLobbyJsonModel, sessionUserId : int)
     {
         regionCount = jsonModel.regionCount
         description = jsonModel.description |> referenceToOption
-        createdByUserId = sessionUserId
         isPublic = jsonModel.isPublic
         allowGuests = jsonModel.allowGuests
     }
@@ -40,5 +39,5 @@ let mapLobbiesQuery(jsonModel : LobbiesQueryJsonModel) : LobbiesQuery =
         createdByUserId = jsonModel.createdByUserId |> nullableToOption
         playerUserId = jsonModel.playerUserId |> nullableToOption
         isPublic = jsonModel.isPublic |> nullableToOption
-        allowGuests = jsonModel.allowGuests |> nullableToOption    
+        allowGuests = jsonModel.allowGuests |> nullableToOption
     }

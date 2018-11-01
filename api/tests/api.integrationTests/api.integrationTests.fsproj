@@ -10,12 +10,27 @@
     <Content Include="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Compile Include="Assertions.fs" />
     <Compile Include="TestUtilities.fs" />
-    <Compile Include="UserRepositoryTests.fs" />
-    <Compile Include="LobbyRepositoryTests.fs" />
-    <Compile Include="PlayerRepositoryTests.fs" />
-    <Compile Include="PlayerServiceTests.fs" />
-    <Compile Include="GameStartServiceTests.fs" />
+    <Compile Include="TestsBase.fs" />
+    <Compile Include="Logic\UserService\CreateUserTests.fs" />
+    <Compile Include="Logic\UserService\DeleteUserTests.fs" />
+    <Compile Include="Logic\UserService\GetUserTests.fs" />
+    <Compile Include="Logic\UserService\GetUsersTests.fs" />
+    <Compile Include="Logic\SessionService\CreateSessionTests.fs" />
+    <Compile Include="Logic\SessionService\CloseSessionTests.fs" />
+    <Compile Include="Logic\SessionService\GetSessionTests.fs" />
+    <Compile Include="Db\UserRepositoryTests.fs" />
+    <Compile Include="Db\LobbyRepositoryTests.fs" />
+    <Compile Include="Db\PlayerRepositoryTests.fs" />
+    <Compile Include="Logic\SessionService\RenewSessionTests.fs" />
+    <Compile Include="Logic\LobbyService\CreateLobbyTests.fs" />
+    <Compile Include="Logic\LobbyService\DeleteLobbyTests.fs" />
+    <Compile Include="Logic\LobbyService\GetLobbiesTests.fs" />
+    <Compile Include="Logic\PlayerService\AddPlayerTests.fs" />
+    <Compile Include="Logic\PlayerService\FillEmptyPlayerSlotsTests.fs" />
+    <Compile Include="Logic\PlayerService\RemovePlayerTests.fs" />
+    <Compile Include="Logic\GameStartService\GameStartServiceTests.fs" />
   </ItemGroup>
 
   <ItemGroup>

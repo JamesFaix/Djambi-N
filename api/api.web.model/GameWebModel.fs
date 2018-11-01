@@ -25,7 +25,7 @@ type PieceJsonModel =
 
 type GameStateJsonModel =
     {
-        players : PlayerStateJsonModel list 
+        players : PlayerStateJsonModel list
         pieces : PieceJsonModel list
         turnCycle : int list
     }
@@ -33,7 +33,7 @@ type GameStateJsonModel =
 type PlayerStartConditionsJsonModel =
     {
         playerId : int
-        turnNumber : int
+        turnNumber : int Nullable
         region : int
         color : int
     }
@@ -45,14 +45,14 @@ type SelectionJsonModel =
         pieceId : Nullable<int>
     }
 
-type TurnStateJsonModel = 
+type TurnStateJsonModel =
     {
         status : string
         selections : SelectionJsonModel list
         selectionOptions : int list
         requiredSelectionType : string
     }
-        
+
 type GameStartResponseJsonModel =
     {
         gameState : GameStateJsonModel
