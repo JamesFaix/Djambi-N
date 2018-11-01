@@ -1,6 +1,5 @@
-﻿namespace Djambi.Api.IntegrationTests.Logic
+﻿namespace Djambi.Api.IntegrationTests.Logic.GameStartService
 
-open System
 open FSharp.Control.Tasks
 open Xunit
 open Djambi.Api.Common
@@ -10,7 +9,6 @@ open Djambi.Api.IntegrationTests
 open Djambi.Api.Logic.ModelExtensions
 open Djambi.Api.Logic.Services
 open Djambi.Api.Model.GameModel
-open Djambi.Api.Model.SessionModel
 
 type GameStartServiceTests() =
     inherit TestsBase()
