@@ -49,15 +49,13 @@ let ``Delete lobby should work``() =
 let ``Get lobbies should work``() =
     task {
         //Arrange
-        let! (_, token1) = SetupUtility.createUserAndSignIn()
-        let! (_, token2) = SetupUtility.createUserAndSignIn()
-        let request1 = RequestFactory.createLobbyRequest()
-        let request2 = RequestFactory.createLobbyRequest()
-        let! lobby1 = LobbyClient.createLobby(request1, token1) |> AsyncResponse.bodyValue
-        let! lobby2 = LobbyClient.createLobby(request2, token2) |> AsyncResponse.bodyValue
+        let! (_, token) = SetupUtility.createUserAndSignIn()
+        let request = RequestFactory.createLobbyRequest()
+        let! lobby1 = LobbyClient.createLobby(request, token) |> AsyncResponse.bodyValue
+        let! lobby2 = LobbyClient.createLobby(request, token) |> AsyncResponse.bodyValue
 
         //Act
-        let! response = LobbyClient.getLobbies(LobbiesQueryJsonModel.empty, token1)
+        let! response = LobbyClient.getLobbies(LobbiesQueryJsonModel.empty, token)
 
         //Assert
         response |> shouldHaveStatus HttpStatusCode.OK

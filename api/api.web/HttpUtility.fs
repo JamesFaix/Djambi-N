@@ -10,49 +10,70 @@ open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Logic.Services
 open Djambi.Api.Model.SessionModel
 
-type HttpHandler = HttpFunc -> HttpContext -> HttpContext option Task 
+type HttpHandler = HttpFunc -> HttpContext -> HttpContext option Task
 
-module HttpUtility = 
+module HttpUtility =
 
     let handle<'a> (func : HttpContext -> 'a AsyncHttpResult) : HttpHandler =
 
         fun (next : HttpFunc) (ctx : HttpContext) ->
             task {
-                try 
+                try
                     let! result = func ctx
                     match result with
-                    | Ok value -> 
+                    | Ok value ->
                         ctx.Response.Headers.Add("Access-Control-Allow-Credentials", StringValues("true"))
                         return! json value next ctx
-                    | Error ex -> 
+                    | Error ex ->
                         ctx.SetStatusCode ex.statusCode
-                        return! json ex.Message next ctx                    
+                        return! json ex.Message next ctx
                 with
-                | :? HttpException as ex -> 
+                | :? HttpException as ex ->
                     ctx.SetStatusCode ex.statusCode
                     return! json ex.Message next ctx
-                | _ as ex -> 
+                | _ as ex ->
                     ctx.SetStatusCode 500
                     return! json ex.Message next ctx
             }
-            
+
     let cookieName = "DjambiSession"
 
-    let getSessionFromContext (ctx : HttpContext) : Session AsyncHttpResult =
+    let getSessionOptionFromContext (ctx : HttpContext) : Session option AsyncHttpResult =
         let token = ctx.Request.Cookies.Item(cookieName)
 
         if token |> String.IsNullOrEmpty
-        then errorTask <| HttpException(401, "Not signed in.")
-        else 
-            SessionService.getSession token
-            |> thenReplaceError 404 (HttpException(401, "Not signed in."))
+        then okTask <| None
+        else
+            task {
+                let! result = SessionService.getSession token
+                return match result with
+                        | Ok session -> Ok <| Some(session)
+                        | Error ex when ex.statusCode = 404 -> Ok(None)
+                        | Error ex -> Error ex
+            }
+
+    let getSessionFromContext (ctx : HttpContext) : Session AsyncHttpResult =
+        getSessionOptionFromContext ctx
+        |> thenBind (fun opt ->
+            match opt with
+            | None -> Error <| HttpException(401, "Not signed in.")
+            | Some session -> Ok session
+        )
+
+    let private tupleWithModel<'a, 'b> (ctx : HttpContext) (result : 'b AsyncHttpResult): ('a * 'b) AsyncHttpResult =
+        result
+        |> thenBindAsync (fun value ->
+            ctx.BindModelAsync<'a>()
+            |> Task.map (fun model -> Ok (model, value))
+        )
 
     let getSessionAndModelFromContext<'a> (ctx : HttpContext) : ('a * Session) AsyncHttpResult =
-        getSessionFromContext ctx 
-        |> thenBindAsync (fun session -> 
-            ctx.BindModelAsync<'a>()
-            |> Task.map (fun model -> Ok (model, session))
-        )
+        getSessionFromContext ctx
+        |> tupleWithModel ctx
+
+    let getSessionOptionAndModelFromContext<'a> (ctx : HttpContext) : ('a * Session option) AsyncHttpResult =
+        getSessionOptionFromContext ctx
+        |> tupleWithModel ctx
 
     let ensureNotSignedIn (ctx : HttpContext) : Result<Unit, HttpException> =
         let token = ctx.Request.Cookies.Item(cookieName)

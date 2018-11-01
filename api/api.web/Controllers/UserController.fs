@@ -10,10 +10,10 @@ open Djambi.Api.Web.Mappings.UserWebMapping
 open Djambi.Api.Web.Model.UserWebModel
 
 let createUser : HttpHandler =
-    let func (ctx : HttpContext) =         
-        ensureNotSignedInAndGetModel<CreateUserJsonModel> ctx
-        |> thenMap mapCreateUserRequest
-        |> thenBindAsync UserService.createUser
+    let func (ctx : HttpContext) =
+        getSessionOptionAndModelFromContext<CreateUserJsonModel> ctx
+        |> thenMap (fun (model, sessionOption) -> (mapCreateUserRequest model, sessionOption))
+        |> thenBindAsync (fun (model, sessionOption) -> UserService.createUser model sessionOption)
         |> thenMap mapUserResponse
     handle func
 
