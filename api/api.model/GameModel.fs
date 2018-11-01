@@ -5,7 +5,7 @@ type PlayerState =
         id : int
         isAlive : bool
     }
-    
+
 type PieceType =
     | Chief
     | Thug
@@ -15,7 +15,7 @@ type PieceType =
     | Gravedigger
     | Corpse
 
-type Piece = 
+type Piece =
     {
         id : int
         pieceType : PieceType
@@ -38,7 +38,7 @@ type SelectionType =
     | Drop
     | Vacate
 
-type Selection = 
+type Selection =
     {
         selectionType : SelectionType
         cellId : int
@@ -46,8 +46,8 @@ type Selection =
     }
 
 module Selection =
-    let subject(cellId, pieceId) = 
-        {   
+    let subject(cellId, pieceId) =
+        {
             selectionType = Subject
             cellId = cellId
             pieceId = Some pieceId
@@ -87,7 +87,7 @@ module Selection =
             cellId = cellId
             pieceId = None
         }
-        
+
 type TurnStatus =
     | AwaitingSelection
     | AwaitingConfirmation
@@ -101,19 +101,19 @@ type TurnState =
     }
 
 module TurnState =
-    let empty = 
+    let empty =
         {
             status = AwaitingSelection
             selections = List.empty
             selectionOptions = List.empty
             requiredSelectionType = Some Subject
         }
-       
+
 type PlayerStartConditions =
     {
         playerId : int
         region : int
-        turnNumber : int
+        turnNumber : int option
         color : int
     }
 
@@ -125,7 +125,7 @@ type StartGameRequest =
         turnState : TurnState
     }
 
-type StartGameResponse = 
+type StartGameResponse =
     {
         gameId : int
         startingConditions : PlayerStartConditions list

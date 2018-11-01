@@ -27,14 +27,14 @@ let mapGameStateToJsonModel(gameState : GameState) : GameStateJsonModel =
         turnCycle = gameState.turnCycle
     }
 
-let mapPlayerStartConditionsToJson(conditions : PlayerStartConditions) : PlayerStartConditionsJsonModel = 
+let mapPlayerStartConditionsToJson(conditions : PlayerStartConditions) : PlayerStartConditionsJsonModel =
     {
         playerId = conditions.playerId
         color = conditions.color
         region = conditions.region
-        turnNumber = conditions.turnNumber
+        turnNumber = conditions.turnNumber |> optionToNullable
     }
-    
+
 let mapSelectionToJsonModel(selection : Selection) : SelectionJsonModel =
     {
         ``type`` = selection.selectionType.ToString()
@@ -50,14 +50,14 @@ let mapTurnStateToJsonModel(turnState : TurnState) : TurnStateJsonModel =
         requiredSelectionType = if turnState.requiredSelectionType.IsNone then null else turnState.requiredSelectionType.Value.ToString()
     }
 
-let mapGameStartResponseToJson(response : StartGameResponse) : GameStartResponseJsonModel = 
+let mapGameStartResponseToJson(response : StartGameResponse) : GameStartResponseJsonModel =
     {
         gameState = response.gameState |> mapGameStateToJsonModel
         turnState = response.turnState |> mapTurnStateToJsonModel
         startingConditions = response.startingConditions |> List.map mapPlayerStartConditionsToJson
     }
 
-let mapCommitTurnResponseToJsonModel(response : CommitTurnResponse) : CommitTurnResponseJsonModel = 
+let mapCommitTurnResponseToJsonModel(response : CommitTurnResponse) : CommitTurnResponseJsonModel =
     {
         gameState = response.gameState |> mapGameStateToJsonModel
         turnState = response.turnState |> mapTurnStateToJsonModel

@@ -31,11 +31,8 @@ type GameStartServiceTests() =
             //Assert
             Assert.Equal(lobby.regionCount, startingConditions.Length)
 
-            let turnNumbers = startingConditions |> List.map (fun cond -> cond.turnNumber) |> List.sort
-            Assert.Equal<int list>([0..(lobby.regionCount-1)], turnNumbers)
-
             let regions = startingConditions |> List.map (fun cond -> cond.region) |> List.sort
-            Assert.Equal<int list>([0..(lobby.regionCount-1)], regions)
+            regions |> shouldBe [0..(lobby.regionCount-1)]
 
             let colors = startingConditions |> List.map (fun cond -> cond.color)
             Assert.All(colors, fun c -> Assert.True(c >= 0 && c < Constants.maxRegions))
@@ -86,6 +83,12 @@ type GameStartServiceTests() =
             //Assert
             let! lobbyError = LobbyRepository.getLobby lobby.id |> thenError
             Assert.Equal(404, lobbyError.statusCode)
+        }
+
+    [<Fact>]
+    let ``Start game should fail if only one non-virtual player``() =
+        task {
+            failwith "Not yet implemented"
         }
 
     [<Fact>]

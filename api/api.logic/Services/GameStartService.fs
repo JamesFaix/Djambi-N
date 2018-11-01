@@ -1,5 +1,6 @@
 ﻿module Djambi.Api.Logic.Services.GameStartService
 
+open System.Linq
 open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Db.Repositories
@@ -14,18 +15,30 @@ open Djambi.Api.Logic.Services
 let getStartingConditions(players : Player list) : PlayerStartConditions list =
     let colorIds = [0..(Constants.maxRegions-1)] |> Utilities.shuffle |> Seq.take players.Length
     let regions = [0..(players.Length-1)] |> Utilities.shuffle
-    let turnOrder = players |> Utilities.shuffle
 
-    turnOrder
-    |> Seq.zip3 colorIds regions
-    |> Seq.mapi (fun i (c, r, p) ->
-        {
-            playerId = p.id
-            turnNumber = i
-            region = r
-            color = c
-        })
-    |> Seq.toList
+    let startConds =
+        players
+        |> Seq.zip3 colorIds regions
+        |> Seq.map (fun (c, r, p) ->
+            {
+                playerId = p.id
+                region = r
+                color = c
+                turnNumber = None
+            })
+
+    let dict = Enumerable.ToDictionary (startConds, (fun startCond -> startCond.playerId))
+
+    let nonVirtualPlayers =
+        players
+        |> List.filter (fun p -> p.playerType <> PlayerType.Virtual)
+        |> Utilities.shuffle
+        |> Seq.mapi (fun i p -> (i, p))
+
+    for (i, p) in nonVirtualPlayers do
+        dict.[p.id] <- { dict.[p.id] with turnNumber = Some i }
+
+    dict.Values |> Seq.toList
 
 let createPieces(board : BoardMetadata, startingConditions : PlayerStartConditions list) : Piece list =
     let createPlayerPieces(board : BoardMetadata, player : PlayerStartConditions, startingId : int) : Piece list =
@@ -80,7 +93,8 @@ let startGame (lobbyId : int) (session : Session) : StartGameResponse AsyncHttpR
                             })
                 pieces = pieces
                 turnCycle = startingConditions
-                            |> List.sortBy (fun cond -> cond.turnNumber)
+                            |> List.filter (fun cond -> cond.turnNumber.IsSome)
+                            |> List.sortBy (fun cond -> cond.turnNumber.Value)
                             |> List.map (fun cond -> cond.playerId)
             }
 
