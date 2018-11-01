@@ -18,13 +18,13 @@ type FillEmptyPlayerSlotsTests() =
         let lobbyRequest = getCreateLobbyRequest()
         task {
             let! lobby = LobbyRepository.createLobby (lobbyRequest, userId) |> thenValue
-            let! players = PlayerRepository.getPlayers lobby.id |> thenValue
+            let! players = PlayerRepository.getPlayersForLobby lobby.id |> thenValue
 
             //Act
             let! updatedPlayers = PlayerService.fillEmptyPlayerSlots lobby players |> thenValue
 
             //Assert
-            let! doubleCheck = PlayerRepository.getPlayers lobby.id |> thenValue
+            let! doubleCheck = PlayerRepository.getPlayersForLobby lobby.id |> thenValue
 
             updatedPlayers.Length |> shouldBe lobbyRequest.regionCount
             doubleCheck |> shouldBe updatedPlayers

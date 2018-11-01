@@ -9,6 +9,7 @@ open Djambi.Api.IntegrationTests
 open Djambi.Api.Logic.ModelExtensions
 open Djambi.Api.Logic.Services
 open Djambi.Api.Model.GameModel
+open Djambi.Api.Model.PlayerModel
 
 type GameStartServiceTests() =
     inherit TestsBase()
@@ -20,7 +21,7 @@ type GameStartServiceTests() =
             let session = getSessionForUser 1
             let lobbyRequest = getCreateLobbyRequest()
             let! lobby = LobbyRepository.createLobby (lobbyRequest, session.userId) |> thenValue
-            let! players = PlayerRepository.getPlayers lobby.id
+            let! players = PlayerRepository.getPlayersForLobby lobby.id
                             |> thenBindAsync (PlayerService.fillEmptyPlayerSlots lobby)
                             |> thenValue
 
@@ -47,7 +48,7 @@ type GameStartServiceTests() =
             let session = getSessionForUser 1
             let lobbyRequest = getCreateLobbyRequest()
             let! lobby = LobbyRepository.createLobby (lobbyRequest, session.userId) |> thenValue
-            let! players = PlayerRepository.getPlayers lobby.id
+            let! players = PlayerRepository.getPlayersForLobby lobby.id
                             |> thenBindAsync (PlayerService.fillEmptyPlayerSlots lobby)
                             |> thenValue
             let startingConditions = GameStartService.getStartingConditions players
@@ -85,4 +86,33 @@ type GameStartServiceTests() =
             //Assert
             let! lobbyError = LobbyRepository.getLobby lobby.id |> thenError
             Assert.Equal(404, lobbyError.statusCode)
+        }
+
+    [<Fact>]
+    let ``Virtual players should not be in the turn cycle``() =
+        task {
+            //Arrange
+            //Arrange
+            let session = getSessionForUser 1
+            let lobbyRequest = getCreateLobbyRequest()
+            let! lobby = LobbyRepository.createLobby (lobbyRequest, session.userId) |> thenValue
+
+            //Act
+            let! gameStartResponse = GameStartService.startGame lobby.id session |> thenValue
+
+            //Assert
+
+            let! players = PlayerService.getGamePlayers gameStartResponse.gameId session |> thenValue
+
+            let virtualPlayerIds =
+                players
+                |> List.filter (fun p -> p.playerType = PlayerType.Virtual)
+                |> List.map (fun p -> p.id)
+                |> Set.ofList
+
+            gameStartResponse.gameState.turnCycle
+            |> Set.ofList
+            |> Set.intersect virtualPlayerIds
+            |> Set.count
+            |> shouldBe 0
         }

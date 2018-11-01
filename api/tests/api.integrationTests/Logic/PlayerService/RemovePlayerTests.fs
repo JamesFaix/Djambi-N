@@ -37,7 +37,7 @@ type RemovePlayerTests() =
             //Assert
             result |> Result.isOk |> shouldBeTrue
 
-            let! players = PlayerService.getPlayers lobby.id session
+            let! players = PlayerService.getLobbyPlayers lobby.id session
                            |> AsyncHttpResult.thenValue
 
             players |> shouldNotExist (fun p -> p.id = player.id)
@@ -66,7 +66,7 @@ type RemovePlayerTests() =
             //Assert
             result |> Result.isOk |> shouldBeTrue
 
-            let! players = PlayerService.getPlayers lobby.id session
+            let! players = PlayerService.getLobbyPlayers lobby.id session
                            |> AsyncHttpResult.thenValue
 
             players |> shouldNotExist (fun p -> p.id = player.id)
@@ -97,7 +97,7 @@ type RemovePlayerTests() =
             //Assert
             result |> Result.isOk |> shouldBeTrue
 
-            let! players = PlayerService.getPlayers lobby.id session
+            let! players = PlayerService.getLobbyPlayers lobby.id session
                            |> AsyncHttpResult.thenValue
 
             players |> shouldNotExist (fun p -> p.id = player.id)
@@ -141,7 +141,7 @@ type RemovePlayerTests() =
             //Assert
             result |> Result.isOk |> shouldBeTrue
 
-            let! players = PlayerService.getPlayers lobby.id session
+            let! players = PlayerService.getLobbyPlayers lobby.id session
                            |> AsyncHttpResult.thenValue
 
             players |> shouldNotExist (fun p -> p.id = userPlayer.id)
@@ -186,7 +186,7 @@ type RemovePlayerTests() =
             //Assert
             result |> Result.isOk |> shouldBeTrue
 
-            let! players = PlayerService.getPlayers lobby.id session
+            let! players = PlayerService.getLobbyPlayers lobby.id session
                            |> AsyncHttpResult.thenValue
 
             players |> shouldExist (fun p -> p.id = userPlayer.id)
@@ -198,7 +198,7 @@ type RemovePlayerTests() =
         task {
             //Arrange
             let! (_, session, lobby) = createUserSessionAndLobby(false) |> AsyncHttpResult.thenValue
-            let! players = PlayerService.getPlayers lobby.id session |> AsyncHttpResult.thenValue
+            let! players = PlayerService.getLobbyPlayers lobby.id session |> AsyncHttpResult.thenValue
             let creator = players |> List.head
 
             //Act
@@ -207,7 +207,7 @@ type RemovePlayerTests() =
             //Assert
             result |> Result.isOk |> shouldBeTrue
 
-            let! error = PlayerService.getPlayers lobby.id session
+            let! error = PlayerService.getLobbyPlayers lobby.id session
 
             error |> shouldBeError 404 "Lobby not found."
         }
@@ -237,7 +237,7 @@ type RemovePlayerTests() =
             //Assert
             error |> shouldBeError 403 "Cannot remove other users from lobby."
 
-            let! players = PlayerService.getPlayers lobby.id session
+            let! players = PlayerService.getLobbyPlayers lobby.id session
                            |> AsyncHttpResult.thenValue
 
             players |> shouldExist (fun p -> p.id = player.id)
@@ -268,7 +268,7 @@ type RemovePlayerTests() =
             //Assert
             error |> shouldBeError 403 "Cannot remove other users from lobby."
 
-            let! players = PlayerService.getPlayers lobby.id session
+            let! players = PlayerService.getLobbyPlayers lobby.id session
                            |> AsyncHttpResult.thenValue
 
             players |> shouldExist (fun p -> p.id = player.id)
@@ -281,9 +281,9 @@ type RemovePlayerTests() =
             //Arrange
             let! (_, session, lobby) = createUserSessionAndLobby(false) |> AsyncHttpResult.thenValue
 
-            let! players = PlayerService.getPlayers lobby.id session |> AsyncHttpResult.thenValue
+            let! players = PlayerService.getLobbyPlayers lobby.id session |> AsyncHttpResult.thenValue
             let! _ = PlayerService.fillEmptyPlayerSlots lobby players |> AsyncHttpResult.thenValue
-            let! updatedPlayers = PlayerService.getPlayers lobby.id session |> AsyncHttpResult.thenValue
+            let! updatedPlayers = PlayerService.getLobbyPlayers lobby.id session |> AsyncHttpResult.thenValue
             let virtualPlayer = updatedPlayers
                                 |> List.filter(fun p -> p.playerType = PlayerType.Virtual)
                                 |> List.head
@@ -323,7 +323,7 @@ type RemovePlayerTests() =
             //Assert
             error |> shouldBeError 404 "Player not found."
 
-            let! players = PlayerService.getPlayers lobby1.id session
+            let! players = PlayerService.getLobbyPlayers lobby1.id session
                            |> AsyncHttpResult.thenValue
 
             players |> shouldExist (fun p -> p.id = player.id)
@@ -354,7 +354,7 @@ type RemovePlayerTests() =
             //Assert
             error |> shouldBeError 404 "Lobby not found."
 
-            let! players = PlayerService.getPlayers lobby.id session
+            let! players = PlayerService.getLobbyPlayers lobby.id session
                            |> AsyncHttpResult.thenValue
 
             players |> shouldExist (fun p -> p.id = player.id)
@@ -385,7 +385,7 @@ type RemovePlayerTests() =
             //Assert
             error |> shouldBeError 404 "Player not found."
 
-            let! players = PlayerService.getPlayers lobby.id session
+            let! players = PlayerService.getLobbyPlayers lobby.id session
                            |> AsyncHttpResult.thenValue
 
             players |> shouldExist (fun p -> p.id = player.id)

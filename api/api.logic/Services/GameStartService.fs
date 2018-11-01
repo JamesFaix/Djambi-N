@@ -62,7 +62,7 @@ let startGame (lobbyId : int) (session : Session) : StartGameResponse AsyncHttpR
         else Error <| HttpException(403, "Cannot start game from lobby created by another user.")
     )
     |> thenBindAsync (fun lobby ->
-        PlayerRepository.getPlayers lobbyId
+        PlayerRepository.getPlayersForLobby lobbyId
         |> thenBindAsync (PlayerService.fillEmptyPlayerSlots lobby)
         |> thenMap (fun players -> lobby.addPlayers players)
     )

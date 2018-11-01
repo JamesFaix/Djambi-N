@@ -9,8 +9,11 @@ open Djambi.Api.Model.LobbyModel
 open Djambi.Api.Model.PlayerModel
 open Djambi.Api.Model.SessionModel
 
-let getPlayers (lobbyId : int) (session : Session) : Player list AsyncHttpResult =
-    PlayerRepository.getPlayers lobbyId
+let getLobbyPlayers (lobbyId : int) (session : Session) : Player list AsyncHttpResult =
+    PlayerRepository.getPlayersForLobby lobbyId
+
+let getGamePlayers (gameId : int) (session : Session) : Player list AsyncHttpResult =
+    PlayerRepository.getPlayersForGame gameId
 
 let addPlayerToLobby (request : CreatePlayerRequest) (session : Session) : Player AsyncHttpResult =
     LobbyRepository.getLobby request.lobbyId
@@ -43,7 +46,7 @@ let addPlayerToLobby (request : CreatePlayerRequest) (session : Session) : Playe
 
 let removePlayerFromLobby (lobbyId : int, playerId : int) (session : Session) : Unit AsyncHttpResult =
     LobbyRepository.getLobby lobbyId //Will error if game already started
-    |> thenBindAsync (fun _ -> PlayerRepository.getPlayers lobbyId)
+    |> thenBindAsync (fun _ -> PlayerRepository.getPlayersForLobby lobbyId)
     |> thenBind (fun players ->
         match players |> List.tryFind (fun p -> p.id = playerId) with
         | None -> Error <| HttpException(404, "Player not found.")
@@ -79,4 +82,4 @@ let fillEmptyPlayerSlots (lobby : Lobby) (players : Player list) : Player list A
             PlayerRepository.addPlayerToLobby request
             |> thenMap ignore
         )
-        |> thenBindAsync (fun _ -> PlayerRepository.getPlayers lobby.id)
+        |> thenBindAsync (fun _ -> PlayerRepository.getPlayersForLobby lobby.id)

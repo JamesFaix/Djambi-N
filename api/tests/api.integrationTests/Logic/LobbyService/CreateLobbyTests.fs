@@ -42,7 +42,7 @@ type CreateLobbyTests() =
                          |> AsyncHttpResult.thenValue
 
             //Assert
-            let! players = PlayerService.getPlayers lobby.id session
+            let! players = PlayerService.getLobbyPlayers lobby.id session
                            |> AsyncHttpResult.thenValue
 
             players.Length |> shouldBe 1

@@ -7,9 +7,10 @@ open Djambi.Api.Db.Model.PlayerDbModel
 open Djambi.Api.Db.SqlUtility
 open Djambi.Api.Model.PlayerModel
 
-let getPlayers (lobbyId : int) : Player List AsyncHttpResult =
+let private getPlayers (lobbyId : int option, gameId : int option) : Player List AsyncHttpResult =
     let param = DynamicParameters()
-                    .add("LobbyId", lobbyId)
+                    .addOption("LobbyId", lobbyId)
+                    .addOption("GameId", gameId)
                     .add("PlayerId", null);
 
     let cmd = proc("Players_Get", param)
@@ -17,9 +18,16 @@ let getPlayers (lobbyId : int) : Player List AsyncHttpResult =
     queryMany<PlayerSqlModel>(cmd, "Player")
     |> thenMap (List.map mapPlayer)
 
+let getPlayersForLobby (lobbyId : int) : Player List AsyncHttpResult =
+    getPlayers (Some lobbyId, None)
+
+let getPlayersForGame (gameId : int) : Player List AsyncHttpResult =
+    getPlayers (None, Some gameId)
+
 let getPlayer (playerId : int) : Player AsyncHttpResult =
     let param = DynamicParameters()
                     .add("LobbyId", null)
+                    .add("GameId", null)
                     .add("PlayerId", playerId);
 
     let cmd = proc("Players_Get", param)

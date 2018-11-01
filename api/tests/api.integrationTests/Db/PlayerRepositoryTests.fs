@@ -25,7 +25,7 @@ type PlayerRepositoryTests() =
             let! _ = PlayerRepository.addPlayerToLobby request |> thenValue
 
             //Assert
-            let! players = PlayerRepository.getPlayers lobby.id |> thenValue
+            let! players = PlayerRepository.getPlayersForLobby lobby.id |> thenValue
             let exists = players
                          |> List.exists (fun p -> p.userId = Some user.id
                                                   && p.name = user.name
@@ -46,7 +46,7 @@ type PlayerRepositoryTests() =
             let! _ = PlayerRepository.addPlayerToLobby request |> thenValue
 
             //Assert
-            let! players = PlayerRepository.getPlayers lobby.id |> thenValue
+            let! players = PlayerRepository.getPlayersForLobby lobby.id |> thenValue
             let exists = players |> List.exists (fun p ->
                 p.userId = None
                 && p.name = request.name.Value
@@ -69,7 +69,7 @@ type PlayerRepositoryTests() =
             let! _ = PlayerRepository.addPlayerToLobby request |> thenValue
 
             //Assert
-            let! players = PlayerRepository.getPlayers lobby.id |> thenValue
+            let! players = PlayerRepository.getPlayersForLobby lobby.id |> thenValue
             let exists = players |> List.exists (fun p ->
                 p.userId = Some user.id
                 && p.name = request.name.Value
@@ -93,7 +93,7 @@ type PlayerRepositoryTests() =
             let! _ = PlayerRepository.removePlayerFromLobby player.id |> thenValue
 
             //Assert
-            let! players = PlayerRepository.getPlayers lobby.id |> thenValue
+            let! players = PlayerRepository.getPlayersForLobby lobby.id |> thenValue
             let exists = players |> List.exists (fun p -> p.id = player.id)
             Assert.False(exists)
         }
