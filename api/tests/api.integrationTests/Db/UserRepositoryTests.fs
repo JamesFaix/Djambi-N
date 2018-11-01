@@ -24,7 +24,7 @@ type UserRepositoryTests() =
         let request = getCreateUserRequest()
         task {
             let! createdUser = UserRepository.createUser(request) |> thenValue
-            let! user = UserRepository.getUser(createdUser.id) |> thenValue  
+            let! user = UserRepository.getUser(createdUser.id) |> thenValue
             Assert.Equal(createdUser.id, user.id)
             Assert.Equal(createdUser.name, user.name)
         }

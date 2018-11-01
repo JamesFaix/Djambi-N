@@ -42,7 +42,8 @@ let addPlayerToLobby (request : CreatePlayerRequest) (session : Session) : Playe
     |> thenBindAsync (fun _ -> PlayerRepository.addPlayerToLobby request)
 
 let removePlayerFromLobby (lobbyId : int, playerId : int) (session : Session) : Unit AsyncHttpResult =
-    PlayerRepository.getPlayers lobbyId
+    LobbyRepository.getLobby lobbyId //Will error if game already started
+    |> thenBindAsync (fun _ -> PlayerRepository.getPlayers lobbyId)
     |> thenBind (fun players ->
         match players |> List.tryFind (fun p -> p.id = playerId) with
         | None -> Error <| HttpException(404, "Player not found.")
