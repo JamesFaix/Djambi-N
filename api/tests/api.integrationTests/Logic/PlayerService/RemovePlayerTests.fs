@@ -275,6 +275,25 @@ type RemovePlayerTests() =
         }
 
     //TODO: Remove player should fail if removing virtual player
+    [<Fact>]
+    let ``Remove player should work if removing self``() =
+        task {
+            //Arrange
+            let! (_, session, lobby) = createUserSessionAndLobby(false) |> AsyncHttpResult.thenValue
+
+            let! players = PlayerService.getPlayers lobby.id session |> AsyncHttpResult.thenValue
+            let! _ = PlayerService.fillEmptyPlayerSlots lobby players |> AsyncHttpResult.thenValue
+            let! updatedPlayers = PlayerService.getPlayers lobby.id session |> AsyncHttpResult.thenValue
+            let virtualPlayer = updatedPlayers
+                                |> List.filter(fun p -> p.playerType = PlayerType.Virtual)
+                                |> List.head
+
+            //Act
+            let! error = PlayerService.removePlayerFromLobby (lobby.id, virtualPlayer.id) session
+
+            //Assert
+            error |> shouldBeError 400 "Cannot remove virtual players from lobby."
+        }
 
     [<Fact>]
     let ``Remove player should fail if removing player not in lobby``() =

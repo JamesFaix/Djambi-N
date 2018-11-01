@@ -25,6 +25,13 @@ type FillEmptyPlayerSlotsTests() =
 
             //Assert
             let! doubleCheck = PlayerRepository.getPlayers lobby.id |> thenValue
-            Assert.Equal(lobbyRequest.regionCount, updatedPlayers.Length)
-            Assert.Equal<Player list>(updatedPlayers, doubleCheck)
+
+            updatedPlayers.Length |> shouldBe lobbyRequest.regionCount
+            doubleCheck |> shouldBe updatedPlayers
+
+            //All players after creator are virtual
+            updatedPlayers
+            |> List.filter (fun p -> p.playerType = PlayerType.Virtual)
+            |> List.length
+            |> shouldBe (updatedPlayers.Length - 1)
         }
