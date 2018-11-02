@@ -177,9 +177,12 @@ let getSelectableCellsFromState(game : Game) : (int list * SelectionType option)
 
 let selectCell(gameId : int, cellId : int) (session: Session) : TurnState AsyncHttpResult =
     GameRepository.getGame gameId
-    //TODO: Must be either
-        //Admin
-        //Current user/guest in game
+    //|> thenBind (fun game ->
+        //if session.isAdmin
+        //then Ok game
+        //else
+            //must be current user/guest
+    //)
     |> thenBind (fun game ->
         if game.turnState.selectionOptions |> List.contains cellId |> not
         then Error <| HttpException(400, (sprintf "Cell %i is not currently selectable" cellId))

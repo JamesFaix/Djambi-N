@@ -30,7 +30,11 @@
     <Compile Include="Logic\PlayerService\AddPlayerTests.fs" />
     <Compile Include="Logic\PlayerService\FillEmptyPlayerSlotsTests.fs" />
     <Compile Include="Logic\PlayerService\RemovePlayerTests.fs" />
+    <Compile Include="Logic\SelectionService\SelectCellTests.fs" />
     <Compile Include="Logic\GameStartService\GameStartServiceTests.fs" />
+    <None Include="Logic\TurnService\CommitTurnTests.fs" />
+    <Compile Include="Logic\TurnService\ResetTurnTests.fs" />
+    <Compile Include="Logic\GameService\GetGameStateTests.fs" />
   </ItemGroup>
 
   <ItemGroup>
