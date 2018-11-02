@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.IntegrationTests.Logic.SelectionService
+﻿namespace Djambi.Api.IntegrationTests.Logic.TurnService
 
 open System
 open FSharp.Control.Tasks
@@ -32,7 +32,7 @@ type SelectCellTests() =
             let cellId = gameStart.turnState.selectionOptions.Head
 
             //Act
-            let! result = SelectionService.selectCell (gameStart.gameId, cellId) session
+            let! result = TurnService.selectCell (gameStart.gameId, cellId) session
 
             //Assert
             result |> Result.isOk |> shouldBeTrue
@@ -70,7 +70,7 @@ type SelectCellTests() =
                 | _ -> session2
 
             //Act
-            let! result = SelectionService.selectCell (gameStart.gameId, cellId) sessionWithoutActivePlayer
+            let! result = TurnService.selectCell (gameStart.gameId, cellId) sessionWithoutActivePlayer
 
             //Assert
             result |> shouldBeError 400 "Cannot select cell during another player's turn."
@@ -103,8 +103,8 @@ type SelectCellTests() =
                 | _ -> session2
 
             //Act
-            let! result = SelectionService.selectCell (gameStart.gameId, cellId)
-                                                      { sessionWithoutActivePlayer with isAdmin = true }
+            let! result = TurnService.selectCell (gameStart.gameId, cellId)
+                                                 { sessionWithoutActivePlayer with isAdmin = true }
 
             //Assert
             result |> Result.isOk |> shouldBeTrue
@@ -135,7 +135,7 @@ type SelectCellTests() =
             let cellId = gameStart.turnState.selectionOptions.Head
 
             //Act
-            let! result = SelectionService.selectCell (Int32.MinValue, cellId) session
+            let! result = TurnService.selectCell (Int32.MinValue, cellId) session
 
             //Assert
             result |> shouldBeError 404 "Game not found."
@@ -161,7 +161,7 @@ type SelectCellTests() =
             let cellId = gameStart.turnState.selectionOptions.Head
 
             //Act
-            let! result = SelectionService.selectCell (gameStart.gameId, Int32.MinValue) session
+            let! result = TurnService.selectCell (gameStart.gameId, Int32.MinValue) session
 
             //Assert
             result |> shouldBeError 404 "Cell not found."

@@ -118,7 +118,7 @@ let startGame (lobbyId : int) (session : Session) : StartGameResponse AsyncHttpR
                     }
             }
 
-        let (selectionOptions, _) = SelectionService.getSelectableCellsFromState gameWithoutSelectionOptions
+        let (selectionOptions, _) = SelectionOptionsService.getSelectableCellsFromState gameWithoutSelectionOptions
 
         {
             lobbyId = lobby.id

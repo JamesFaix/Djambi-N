@@ -15,7 +15,7 @@ let getGameState(gameId : int) =
 let selectCell(gameId : int, cellId : int) =
     let func ctx =
         getSessionFromContext ctx
-        |> thenBindAsync (SelectionService.selectCell(gameId, cellId))
+        |> thenBindAsync (TurnService.selectCell(gameId, cellId))
         |> thenMap mapTurnStateToJsonModel
     handle func
 
