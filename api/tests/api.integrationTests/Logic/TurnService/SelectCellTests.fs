@@ -73,7 +73,7 @@ type SelectCellTests() =
             let! result = TurnService.selectCell (gameStart.gameId, cellId) sessionWithoutActivePlayer
 
             //Assert
-            result |> shouldBeError 400 "Cannot select cell during another player's turn."
+            result |> shouldBeError 400 "Cannot perform this action during another player's turn."
         }
 
     [<Fact>]

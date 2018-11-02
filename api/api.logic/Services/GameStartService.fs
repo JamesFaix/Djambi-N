@@ -107,6 +107,7 @@ let startGame (lobbyId : int) (session : Session) : StartGameResponse AsyncHttpR
 
         let gameWithoutSelectionOptions : Game =
             {
+                id = 0 //TODO: Don't assign random IDs
                 regionCount = lobby.regionCount
                 gameState = gameState
                 turnState =

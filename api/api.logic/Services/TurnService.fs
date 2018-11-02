@@ -11,14 +11,21 @@ open Djambi.Api.Logic.ModelExtensions.GameModelExtensions
 open Djambi.Api.Model.GameModel
 open Djambi.Api.Model.SessionModel
 
+let private ensureSessionIsAdminOrContainsCurrentPlayer (session : Session) (game : Game) : Game AsyncHttpResult =
+    if session.isAdmin
+    then okTask <| game
+    else
+        PlayerRepository.getPlayersForGame game.id
+        |> thenBind (fun players ->
+            let currentPlayer = players |> List.find (fun p -> p.id = game.gameState.turnCycle.Head)
+            match currentPlayer.userId with
+            | Some uId when uId = session.userId -> Ok game
+            | _ -> Error <| HttpException(400, "Cannot perform this action during another player's turn.")
+        )
+
 let selectCell(gameId : int, cellId : int) (session: Session) : TurnState AsyncHttpResult =
     GameRepository.getGame gameId
-    //|> thenBind (fun game ->
-        //if session.isAdmin
-        //then Ok game
-        //else
-            //must be current user/guest
-    //)
+    |> thenBindAsync (ensureSessionIsAdminOrContainsCurrentPlayer session)
     |> thenBind (fun game ->
         if game.turnState.selectionOptions |> List.contains cellId |> not
         then Error <| HttpException(400, (sprintf "Cell %i is not currently selectable" cellId))
@@ -74,6 +81,7 @@ let selectCell(gameId : int, cellId : int) (session: Session) : TurnState AsyncH
                         }
                     let updatedGame =
                         {
+                            id = gameId
                             gameState = game.gameState
                             turnState = stateWithNewSelection
                             regionCount = game.regionCount
@@ -219,6 +227,7 @@ let commitTurn(gameId : int) (session : Session) : CommitTurnResponse AsyncHttpR
 
         let mutable updatedGame : Game =
             {
+                id = gameId
                 gameState =
                     {
                         pieces = pieces
@@ -237,6 +246,7 @@ let commitTurn(gameId : int) (session : Session) : CommitTurnResponse AsyncHttpR
         while selectionOptions.IsEmpty && updatedGame.gameState.turnCycle.Length > 1 do
             updatedGame <-
                 {
+                    id = gameId
                     gameState = killCurrentPlayer(updatedGame.gameState)
                     turnState = TurnState.empty
                     regionCount = game.regionCount
@@ -268,6 +278,7 @@ let resetTurn(gameId : int) (session : Session) : TurnState AsyncHttpResult =
     |> thenMap (fun game ->
         let updatedGame =
             {
+                id = gameId
                 gameState = game.gameState
                 turnState = TurnState.empty
                 regionCount = game.regionCount
