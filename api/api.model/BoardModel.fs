@@ -14,7 +14,7 @@ type RadialDirections =
     | Clockwise = 1
     | CounterClockwise = 2
 
-type Location = 
+type Location =
     {
         region : int
         x : int
@@ -26,14 +26,14 @@ type Cell =
         id : int
         locations : Location list
     }
-      
+
 type BoardMetadata =
     {
         regionCount : int
         regionSize : int
     }
 
-type Board = 
+type Board =
     {
         regionCount : int
         regionSize : int

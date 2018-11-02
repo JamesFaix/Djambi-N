@@ -158,11 +158,38 @@ type SelectCellTests() =
 
             let! gameStart = GameStartService.startGame lobby.id session |> thenValue
 
-            let cellId = gameStart.turnState.selectionOptions.Head
-
             //Act
             let! result = TurnService.selectCell (gameStart.gameId, Int32.MinValue) session
 
             //Assert
             result |> shouldBeError 404 "Cell not found."
+        }
+
+    [<Fact>]
+    let ``Select cell should fail if cell is not currently selectable``() =
+        task {
+            //Arrange
+            let! (user, session, lobby) = createUserSessionAndLobby(true) |> thenValue
+
+            let guestRequest : CreatePlayerRequest =
+                {
+                    lobbyId = lobby.id
+                    userId = Some user.id
+                    name = Some "test"
+                    playerType = PlayerType.Guest
+                }
+            let! _ = PlayerService.addPlayerToLobby guestRequest session |> thenValue
+
+            let! gameStart = GameStartService.startGame lobby.id session |> thenValue
+
+            let cellId =
+                [1..100]
+                |> List.find (fun n -> gameStart.turnState.selectionOptions
+                                       |> (not << List.exists (fun cId -> cId = n)))
+
+            //Act
+            let! result = TurnService.selectCell (gameStart.gameId, cellId) session
+
+            //Assert
+            result |> shouldBeError 400 (sprintf "Cell %i is not currently selectable." cellId)
         }

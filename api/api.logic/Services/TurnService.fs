@@ -28,11 +28,11 @@ let selectCell(gameId : int, cellId : int) (session: Session) : TurnState AsyncH
     |> thenBindAsync (ensureSessionIsAdminOrContainsCurrentPlayer session)
     |> thenBind (fun game ->
         if game.turnState.selectionOptions |> List.contains cellId |> not
-        then Error <| HttpException(400, (sprintf "Cell %i is not currently selectable" cellId))
+        then Error <| HttpException(400, (sprintf "Cell %i is not currently selectable." cellId))
         else
             let turn = game.turnState
             if turn.status = AwaitingConfirmation
-            then Error <| HttpException(400, "Cannot make seletion when awaiting turn confirmation")
+            then Error <| HttpException(400, "Cannot make seletion when awaiting turn confirmation.")
             else
             let pieceIndex = game.gameState.piecesIndexedByCell
             let board = BoardModelUtility.getBoardMetadata game.regionCount
@@ -209,9 +209,7 @@ let private killCurrentPlayer(gameState : GameState) : GameState =
 
 let commitTurn(gameId : int) (session : Session) : CommitTurnResponse AsyncHttpResult =
     GameRepository.getGame gameId
-    //TODO: Must be either
-        //Admin
-        //Current user/guest in game
+    |> thenBindAsync (ensureSessionIsAdminOrContainsCurrentPlayer session)
     |> thenMap (fun game ->
         let turnCycle = applyTurnStateToTurnCycle game
         let pieces = applyTurnStateToPieces game
@@ -272,9 +270,7 @@ let commitTurn(gameId : int) (session : Session) : CommitTurnResponse AsyncHttpR
 
 let resetTurn(gameId : int) (session : Session) : TurnState AsyncHttpResult =
     GameRepository.getGame gameId
-    //TODO: Must be either
-        //Admin
-        //Current user/guest in game
+    |> thenBindAsync (ensureSessionIsAdminOrContainsCurrentPlayer session)
     |> thenMap (fun game ->
         let updatedGame =
             {
