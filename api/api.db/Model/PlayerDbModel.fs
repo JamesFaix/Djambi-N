@@ -10,7 +10,7 @@ type PlayerSqlModel =
         playerId : int
         lobbyId : int
         userId : int Nullable
-        name : string    
+        name : string
         playerTypeId : byte
     }
 
@@ -34,4 +34,4 @@ let mapPlayer (sqlModel : PlayerSqlModel) : Player =
         userId = sqlModel.userId |> nullableToOption
         playerType = mapPlayerTypeId sqlModel.playerTypeId
         name = sqlModel.name
-    }    
+    }

@@ -13,8 +13,10 @@
     <Compile Include="Services\LobbyService.fs" />
     <Compile Include="Services\PlayerService.fs" />
     <Compile Include="Services\BoardService.fs" />
-    <Compile Include="Services\GameService.fs" />
+    <Compile Include="Services\SelectionService.fs" />
     <Compile Include="Services\GameStartService.fs" />
+    <Compile Include="Services\TurnService.fs" />
+    <Compile Include="Services\GameService.fs" />
   </ItemGroup>
 
   <ItemGroup>
