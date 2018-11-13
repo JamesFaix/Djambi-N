@@ -112,8 +112,8 @@ module BoardModelExtensions =
 
             memoize cellsInner this
 
-        member this.cell(cellId : int) : Cell =
-            this.cells() |> List.find(fun c -> c.id = cellId)
+        member this.cell(cellId : int) : Cell option =
+            this.cells() |> List.tryFind(fun c -> c.id = cellId)
 
         member this.cellAt(location : Location) : Cell =
             let cellAtInner(landscape : BoardMetadata)(loc : Location) =
@@ -146,7 +146,9 @@ module BoardModelExtensions =
             else Some next
 
         member this.neighborsFromCellId(cellId : int) : Cell list =
-            this.neighborsFromCell(this.cell cellId)
+            match this.cell cellId with
+            | Some c -> this.neighborsFromCell c
+            | None -> List.empty
 
         member this.neighborsFromCell(cell : Cell) : Cell list =
             if cell.isCenter
@@ -225,7 +227,9 @@ module BoardModelExtensions =
                     | _ -> failwith ("Cannot pass through center by coming from " + oldDir.ToString())
 
         member this.pathsFromCellId(cellId : int) : Cell list list =
-            this.pathsFromCell(this.cell cellId)
+            match this.cell cellId with
+            | Some c -> this.pathsFromCell c
+            | None -> List.empty
 
         member this.pathsFromCell(cell : Cell) : Cell list list =
             if cell.isCenter

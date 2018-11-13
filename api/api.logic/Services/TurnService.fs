@@ -26,6 +26,12 @@ let private ensureSessionIsAdminOrContainsCurrentPlayer (session : Session) (gam
 let selectCell(gameId : int, cellId : int) (session: Session) : TurnState AsyncHttpResult =
     GameRepository.getGame gameId
     |> thenBindAsync (ensureSessionIsAdminOrContainsCurrentPlayer session)
+    |> thenBindAsync (fun game ->
+        let board = BoardModelUtility.getBoardMetadata game.regionCount
+        match board.cell cellId with
+        | Some _ -> okTask game
+        | None -> errorTask <| HttpException(404, "Cell not found.")
+    )
     |> thenBind (fun game ->
         if game.turnState.selectionOptions |> List.contains cellId |> not
         then Error <| HttpException(400, (sprintf "Cell %i is not currently selectable." cellId))
@@ -53,9 +59,12 @@ let selectCell(gameId : int, cellId : int) (session: Session) : TurnState AsyncH
                                     else Ok (Selection.move(cellId), AwaitingSelection) //Awaiting target
                                 | _ -> Ok <| (Selection.move(cellId), AwaitingConfirmation)
                     | Some target when subject.pieceType = Assassin ->
-                        if board.cell(cellId).isCenter
-                        then Ok (Selection.moveWithTarget(cellId, target.id), AwaitingSelection) //Awaiting vacate
-                        else Ok (Selection.moveWithTarget(cellId, target.id), AwaitingConfirmation)
+                        match board.cell cellId with
+                        | None -> Error <| HttpException(404, "Cell not found.")
+                        | Some c when c.isCenter ->
+                            Ok (Selection.moveWithTarget(cellId, target.id), AwaitingSelection) //Awaiting vacate
+                        | _ ->
+                            Ok (Selection.moveWithTarget(cellId, target.id), AwaitingConfirmation)
                     | Some piece -> Ok (Selection.moveWithTarget(cellId, piece.id), AwaitingSelection) //Awaiting drop
             | 2 -> match (turn.subjectPiece game.gameState).Value.pieceType with
                     | Thug
