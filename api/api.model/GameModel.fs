@@ -135,6 +135,7 @@ type StartGameResponse =
 
 type Game =
     {
+        id : int
         regionCount : int
         gameState : GameState
         turnState : TurnState

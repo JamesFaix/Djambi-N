@@ -2,7 +2,7 @@
 
 open Newtonsoft.Json
 open Djambi.Api.Model.GameModel
-    
+
 [<CLIMutable>]
 type GameSqlModel =
     {
@@ -14,11 +14,11 @@ type GameSqlModel =
 
 let mapGameSqlModelResponse(sqlModel : GameSqlModel) : Game =
     {
+        id = sqlModel.gameId
         regionCount = sqlModel.regionCount
         gameState = JsonConvert.DeserializeObject<GameState>(sqlModel.gameStateJson)
-        turnState = 
+        turnState =
             match sqlModel.turnStateJson with
             | null -> TurnState.empty
             | _ -> JsonConvert.DeserializeObject<TurnState>(sqlModel.turnStateJson)
     }
-    

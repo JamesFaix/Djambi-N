@@ -76,6 +76,13 @@ let startGame (lobbyId : int) (session : Session) : StartGameResponse AsyncHttpR
     )
     |> thenBindAsync (fun lobby ->
         PlayerRepository.getPlayersForLobby lobbyId
+        |> thenBind (fun players ->
+            if players
+                |> List.filter (fun p -> p.playerType <> PlayerType.Virtual)
+                |> List.length = 1
+            then Error <| HttpException(400, "Cannot start game with only one player.")
+            else Ok players
+        )
         |> thenBindAsync (PlayerService.fillEmptyPlayerSlots lobby)
         |> thenMap (fun players -> lobby.addPlayers players)
     )
@@ -100,6 +107,7 @@ let startGame (lobbyId : int) (session : Session) : StartGameResponse AsyncHttpR
 
         let gameWithoutSelectionOptions : Game =
             {
+                id = 0 //TODO: Don't assign random IDs
                 regionCount = lobby.regionCount
                 gameState = gameState
                 turnState =
@@ -111,7 +119,7 @@ let startGame (lobbyId : int) (session : Session) : StartGameResponse AsyncHttpR
                     }
             }
 
-        let (selectionOptions, _) = GameService.getSelectableCellsFromState gameWithoutSelectionOptions
+        let (selectionOptions, _) = SelectionOptionsService.getSelectableCellsFromState gameWithoutSelectionOptions
 
         {
             lobbyId = lobby.id

@@ -73,14 +73,24 @@ type GameStartServiceTests() =
     let ``Start game should work``() =
         task {
             //Arrange
-            let session = getSessionForUser 1
-            let lobbyRequest = getCreateLobbyRequest()
-            let! lobby = LobbyRepository.createLobby (lobbyRequest, session.userId) |> thenValue
+            let! (user, session, lobby) = createUserSessionAndLobby(true) |> thenValue
+
+            let playerRequest : CreatePlayerRequest =
+                {
+                    lobbyId = lobby.id
+                    userId = Some user.id
+                    name = Some "test"
+                    playerType = PlayerType.Guest
+                }
+
+            let! _ = PlayerService.addPlayerToLobby playerRequest session |> thenValue
 
             //Act
-            let! _ = GameStartService.startGame lobby.id session |> thenValue
+            let! result = GameStartService.startGame lobby.id session
 
             //Assert
+            result |> Result.isOk |> shouldBeTrue
+
             let! lobbyError = LobbyRepository.getLobby lobby.id |> thenError
             Assert.Equal(404, lobbyError.statusCode)
         }
@@ -88,23 +98,39 @@ type GameStartServiceTests() =
     [<Fact>]
     let ``Start game should fail if only one non-virtual player``() =
         task {
-            failwith "Not yet implemented"
+             //Arrange
+            let! (user, session, lobby) = createUserSessionAndLobby(true) |> thenValue
+
+            //Act
+            let! result = GameStartService.startGame lobby.id session
+
+            //Assert
+            result |> shouldBeError 400 "Cannot start game with only one player."
+
+            let! lobbyResult = LobbyRepository.getLobby lobby.id
+            lobbyResult |> Result.isOk |> shouldBeTrue
         }
 
     [<Fact>]
     let ``Virtual players should not be in the turn cycle``() =
         task {
             //Arrange
-            //Arrange
-            let session = getSessionForUser 1
-            let lobbyRequest = getCreateLobbyRequest()
-            let! lobby = LobbyRepository.createLobby (lobbyRequest, session.userId) |> thenValue
+            let! (user, session, lobby) = createUserSessionAndLobby(true) |> thenValue
+
+            let playerRequest : CreatePlayerRequest =
+                {
+                    lobbyId = lobby.id
+                    userId = Some user.id
+                    name = Some "test"
+                    playerType = PlayerType.Guest
+                }
+
+            let! _ = PlayerService.addPlayerToLobby playerRequest session |> thenValue
 
             //Act
             let! gameStartResponse = GameStartService.startGame lobby.id session |> thenValue
 
             //Assert
-
             let! players = PlayerService.getGamePlayers gameStartResponse.gameId session |> thenValue
 
             let virtualPlayerIds =

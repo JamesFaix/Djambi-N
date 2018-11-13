@@ -25,7 +25,7 @@ module GameModelExtensions =
             | _ -> false
 
         member this.isAlive =
-            match this.pieceType with 
+            match this.pieceType with
             | Corpse -> false
             | _ -> true
 
@@ -33,16 +33,16 @@ module GameModelExtensions =
         member this.kill : PlayerState =
             { this with isAlive = false }
 
-    type TurnState with 
+    type TurnState with
 
         member this.subject : Selection option =
-            this.selections 
+            this.selections
             |> List.tryFind (fun s -> s.selectionType = Subject)
-                        
-        member this.subjectPieceId : int option = 
+
+        member this.subjectPieceId : int option =
             this.subject
             |> Option.map (fun s -> s.pieceId.Value)
-                        
+
         member this.subjectCellId : int option =
             this.subject
             |> Option.map (fun s -> s.cellId)
@@ -51,7 +51,7 @@ module GameModelExtensions =
             this.selections
             |> List.tryFind (fun s -> s.selectionType = Move)
             |> Option.map (fun s -> s.cellId)
-        
+
         member this.targetPieceId : int option =
             this.selections
             |> List.tryFind (fun s -> s.selectionType = Target || (s.selectionType = Move && s.pieceId.IsSome))
@@ -64,14 +64,14 @@ module GameModelExtensions =
 
         member this.vacateCellId : int option =
             let moves = this.selections |> List.filter (fun s -> s.selectionType = Move)
-            match moves.Length with 
+            match moves.Length with
             | 2 -> Some(moves.[1].cellId)
             | _ -> None
 
         member private this.getPieceFromId(gameState : GameState)(id : int) : Piece =
             gameState.pieces |> List.find (fun p -> p.id = id)
-            
-        member private this.getCellFromId(regionCount : int)(id : int) : Cell =
+
+        member private this.getCellFromId(regionCount : int)(id : int) : Cell option =
             let board = BoardModelUtility.getBoardMetadata regionCount
             board.cell id
 
@@ -85,24 +85,23 @@ module GameModelExtensions =
 
         member this.subjectCell(regionCount : int) : Cell option =
             this.subjectCellId
-            |> Option.map (this.getCellFromId regionCount)
+            |> Option.bind (this.getCellFromId regionCount)
 
         member this.destinationCell (regionCount : int) : Cell option =
             this.destinationCellId
-            |> Option.map (this.getCellFromId regionCount)
-            
+            |> Option.bind (this.getCellFromId regionCount)
+
         member this.dropCell (regionCount : int) : Cell option =
             this.dropCellId
-            |> Option.map (this.getCellFromId regionCount)
+            |> Option.bind (this.getCellFromId regionCount)
 
-    type GameState with 
-        
-        member this.currentPlayerId = 
+    type GameState with
+
+        member this.currentPlayerId =
             this.turnCycle.Head
 
         member this.piecesControlledBy playerId =
             this.pieces |> List.filter (fun p -> p.playerId = Some playerId)
 
         member this.piecesIndexedByCell =
-            this.pieces |> Seq.map (fun p -> (p.cellId, p)) |> Map.ofSeq 
-            
+            this.pieces |> Seq.map (fun p -> (p.cellId, p)) |> Map.ofSeq

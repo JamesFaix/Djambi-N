@@ -12,23 +12,23 @@ let getGameState(gameId : int) =
         |> thenMap mapGameStateToJsonModel
     handle func
 
-let selectCell(gameId : int, cellId : int) =   
-    let func ctx = 
+let selectCell(gameId : int, cellId : int) =
+    let func ctx =
         getSessionFromContext ctx
-        |> thenBindAsync (GameService.selectCell(gameId, cellId))
+        |> thenBindAsync (TurnService.selectCell(gameId, cellId))
         |> thenMap mapTurnStateToJsonModel
     handle func
 
 let resetTurn(gameId : int) =
     let func ctx =
         getSessionFromContext ctx
-        |> thenBindAsync (GameService.resetTurn gameId)
+        |> thenBindAsync (TurnService.resetTurn gameId)
         |> thenMap mapTurnStateToJsonModel
     handle func
 
 let commitTurn(gameId : int) =
     let func ctx =
         getSessionFromContext ctx
-        |> thenBindAsync (GameService.commitTurn gameId)
+        |> thenBindAsync (TurnService.commitTurn gameId)
         |> thenMap mapCommitTurnResponseToJsonModel
     handle func

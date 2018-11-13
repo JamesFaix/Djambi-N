@@ -4,6 +4,7 @@ open System
 open FSharp.Control.Tasks
 open Xunit
 open Djambi.Api.Common
+open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.IntegrationTests
 open Djambi.Api.Logic.Services
 open Djambi.Api.Model.PlayerModel
@@ -17,9 +18,9 @@ type AddPlayerTests() =
     let ``Add user player should work if adding self``() =
         task {
             //Arrange
-            let! (_, _, lobby) = createUserSessionAndLobby(false) |> AsyncHttpResult.thenValue
+            let! (_, _, lobby) = createUserSessionAndLobby(false) |> thenValue
 
-            let! user = createUser() |> AsyncHttpResult.thenValue
+            let! user = createUser() |> thenValue
             let session = getSessionForUser user.id
 
             let request : CreatePlayerRequest =
@@ -31,8 +32,7 @@ type AddPlayerTests() =
                 }
 
             //Act
-            let! player = PlayerService.addPlayerToLobby request session
-                          |> AsyncHttpResult.thenValue
+            let! player = PlayerService.addPlayerToLobby request session |> thenValue
 
             //Assert
             player.id |> shouldNotBe 0
@@ -46,9 +46,9 @@ type AddPlayerTests() =
     let ``Add user player should work if admin and adding different user``() =
         task {
             //Arrange
-            let! (_, session, lobby) = createUserSessionAndLobby(false) |> AsyncHttpResult.thenValue
+            let! (_, session, lobby) = createUserSessionAndLobby(false) |> thenValue
 
-            let! user = createUser() |> AsyncHttpResult.thenValue
+            let! user = createUser() |> thenValue
 
             let request : CreatePlayerRequest =
                 {
@@ -59,8 +59,7 @@ type AddPlayerTests() =
                 }
 
             //Act
-            let! player = PlayerService.addPlayerToLobby request { session with isAdmin = true }
-                          |> AsyncHttpResult.thenValue
+            let! player = PlayerService.addPlayerToLobby request { session with isAdmin = true } |> thenValue
 
             //Assert
             player.id |> shouldNotBe 0
@@ -74,9 +73,9 @@ type AddPlayerTests() =
     let ``Add user player should fail if not admin and adding different user``() =
         task {
             //Arrange
-            let! (_, session, lobby) = createUserSessionAndLobby(false) |> AsyncHttpResult.thenValue
+            let! (_, session, lobby) = createUserSessionAndLobby(false) |> thenValue
 
-            let! user = createUser() |> AsyncHttpResult.thenValue
+            let! user = createUser() |> thenValue
 
             let request : CreatePlayerRequest =
                 {
@@ -97,9 +96,9 @@ type AddPlayerTests() =
     let ``Add user player should fail if not passing user id``() =
         task {
             //Arrange
-            let! (_, session, lobby) = createUserSessionAndLobby(false) |> AsyncHttpResult.thenValue
+            let! (_, session, lobby) = createUserSessionAndLobby(false) |> thenValue
 
-            let! user = createUser() |> AsyncHttpResult.thenValue
+            let! user = createUser() |> thenValue
 
             let request : CreatePlayerRequest =
                 {
@@ -120,9 +119,9 @@ type AddPlayerTests() =
     let ``Add user player should fail if passing name``() =
         task {
             //Arrange
-            let! (_, session, lobby) = createUserSessionAndLobby(false) |> AsyncHttpResult.thenValue
+            let! (_, session, lobby) = createUserSessionAndLobby(false) |> thenValue
 
-            let! user = createUser() |> AsyncHttpResult.thenValue
+            let! user = createUser() |> thenValue
 
             let request : CreatePlayerRequest =
                 {
@@ -143,7 +142,7 @@ type AddPlayerTests() =
     let ``Add user player should fail if user already in lobby``() =
         task {
             //Arrange
-            let! (user, session, lobby) = createUserSessionAndLobby(false) |> AsyncHttpResult.thenValue
+            let! (user, session, lobby) = createUserSessionAndLobby(false) |> thenValue
 
             let request : CreatePlayerRequest =
                 {
@@ -177,8 +176,7 @@ type AddPlayerTests() =
                 }
 
             //Act
-            let! player = PlayerService.addPlayerToLobby request session
-                          |> AsyncHttpResult.thenValue
+            let! player = PlayerService.addPlayerToLobby request session |> thenValue
 
             //Assert
             player.id |> shouldNotBe 0
@@ -192,9 +190,9 @@ type AddPlayerTests() =
     let ``Add guest player should work if admin and adding guest to different user``() =
         task {
             //Arrange
-            let! (_, session, lobby) = createUserSessionAndLobby(true) |> AsyncHttpResult.thenValue
+            let! (_, session, lobby) = createUserSessionAndLobby(true) |> thenValue
 
-            let! user = createUser() |> AsyncHttpResult.thenValue
+            let! user = createUser() |> thenValue
 
             let request : CreatePlayerRequest =
                 {
@@ -206,7 +204,7 @@ type AddPlayerTests() =
 
             //Act
             let! player = PlayerService.addPlayerToLobby request { session with isAdmin = true }
-                          |> AsyncHttpResult.thenValue
+                          |> thenValue
 
             //Assert
             player.id |> shouldNotBe 0
@@ -220,9 +218,9 @@ type AddPlayerTests() =
     let ``Add guest player should fail if not admin and adding guest to different user``() =
         task {
             //Arrange
-            let! (_, session, lobby) = createUserSessionAndLobby(true) |> AsyncHttpResult.thenValue
+            let! (_, session, lobby) = createUserSessionAndLobby(true) |> thenValue
 
-            let! user = createUser() |> AsyncHttpResult.thenValue
+            let! user = createUser() |> thenValue
 
             let request : CreatePlayerRequest =
                 {
@@ -243,7 +241,7 @@ type AddPlayerTests() =
     let ``Add guest player should fail if not passing user id``() =
         task {
             //Arrange
-            let! (_, session, lobby) = createUserSessionAndLobby(true) |> AsyncHttpResult.thenValue
+            let! (_, session, lobby) = createUserSessionAndLobby(true) |> thenValue
 
             let request : CreatePlayerRequest =
                 {
@@ -264,7 +262,7 @@ type AddPlayerTests() =
     let ``Add guest player should fail if not passing name``() =
         task {
             //Arrange
-            let! (user, session, lobby) = createUserSessionAndLobby(true) |> AsyncHttpResult.thenValue
+            let! (user, session, lobby) = createUserSessionAndLobby(true) |> thenValue
 
             let request : CreatePlayerRequest =
                 {
@@ -285,7 +283,7 @@ type AddPlayerTests() =
     let ``Add guest player should fail if duplicate name``() =
         task {
             //Arrange
-            let! (user, session, lobby) = createUserSessionAndLobby(true) |> AsyncHttpResult.thenValue
+            let! (user, session, lobby) = createUserSessionAndLobby(true) |> thenValue
 
             let request : CreatePlayerRequest =
                 {
@@ -306,7 +304,7 @@ type AddPlayerTests() =
     let ``Add guest player should fail if lobby does not allow guests``() =
         task {
             //Arrange
-            let! (user, session, lobby) = createUserSessionAndLobby(false) |> AsyncHttpResult.thenValue
+            let! (user, session, lobby) = createUserSessionAndLobby(false) |> thenValue
 
             let request : CreatePlayerRequest =
                 {
@@ -329,7 +327,7 @@ type AddPlayerTests() =
     let ``Add virtual player should fail``() =
         task {
             //Arrange
-            let! (_, session, lobby) = createUserSessionAndLobby(false) |> AsyncHttpResult.thenValue
+            let! (_, session, lobby) = createUserSessionAndLobby(false) |> thenValue
 
             let request : CreatePlayerRequest =
                 {
@@ -352,7 +350,7 @@ type AddPlayerTests() =
     let ``Add player should fail if invalid lobby id``() =
         task {
             //Arrange
-            let! (user, session, _) = createUserSessionAndLobby(true) |> AsyncHttpResult.thenValue
+            let! (user, session, _) = createUserSessionAndLobby(true) |> thenValue
 
             let request : CreatePlayerRequest =
                 {
@@ -373,7 +371,7 @@ type AddPlayerTests() =
     let ``Add player should fail if lobby at capacity``() =
         task {
             //Arrange
-            let! (user, session, lobby) = createUserSessionAndLobby(true) |> AsyncHttpResult.thenValue
+            let! (user, session, lobby) = createUserSessionAndLobby(true) |> thenValue
 
             let request1 : CreatePlayerRequest =
                 {
@@ -385,8 +383,8 @@ type AddPlayerTests() =
             let request2 = { request1 with name = Some "test2" }
             let request3 = { request1 with name = Some "test3" }
 
-            let! _ = PlayerService.addPlayerToLobby request1 session |> AsyncHttpResult.thenValue
-            let! _ = PlayerService.addPlayerToLobby request2 session |> AsyncHttpResult.thenValue
+            let! _ = PlayerService.addPlayerToLobby request1 session |> thenValue
+            let! _ = PlayerService.addPlayerToLobby request2 session |> thenValue
 
             //Act
             let! error = PlayerService.addPlayerToLobby request3 session
@@ -399,20 +397,22 @@ type AddPlayerTests() =
     let ``Add player should fail if game already started``() =
         task {
             //Arrange
-            let! (user, session, lobby) = createUserSessionAndLobby(true) |> AsyncHttpResult.thenValue
+            let! (user, session, lobby) = createUserSessionAndLobby(true) |> thenValue
 
-            let! _ = GameStartService.startGame lobby.id session |> AsyncHttpResult.thenValue
-
-            let request : CreatePlayerRequest =
+            let request1 : CreatePlayerRequest =
                 {
                     lobbyId = lobby.id
                     userId = Some user.id
-                    name = Some "test"
+                    name = Some "test1"
                     playerType = PlayerType.Guest
                 }
+            let request2 = { request1 with name = Some "test2" }
+
+            let! _ = PlayerService.addPlayerToLobby request1 session |> thenValue
+            let! _ = GameStartService.startGame lobby.id session |> thenValue
 
             //Act
-            let! error = PlayerService.addPlayerToLobby request session
+            let! error = PlayerService.addPlayerToLobby request2 session
 
             //Assert
             error |> shouldBeError 404 "Lobby not found."
