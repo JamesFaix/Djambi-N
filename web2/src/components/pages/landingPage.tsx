@@ -7,8 +7,8 @@ export default class LandingPage extends React.Component {
 
     render() {
         const links = [
-            { to: '/login', label: 'Login' },
             { to: '/signup', label: 'Sign up' },
+            { to: '/login', label: 'Login' },
         ];
 
         return (
