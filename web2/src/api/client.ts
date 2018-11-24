@@ -26,7 +26,9 @@ export default class Client {
         .then(_ => result);
     }
 
-    async login(request : Model.LoginRequest) : Promise<void> {
+    async login(request : Model.LoginRequest) : Promise<Model.UserResponse> {
+        let result : Model.UserResponse;
+
         return await $.ajax({
             type : "POST",
             url: Environment.apiAddress() + "/sessions",
@@ -34,10 +36,12 @@ export default class Client {
             data: request,
             success: (data, status, xhr) => {
                 console.log("Create session succeeded");
+                result = data;
             },
             error : () => {
                 console.log("Create session failed");
             }
-        });
+        })
+        .then(_ => result);
     }
 }

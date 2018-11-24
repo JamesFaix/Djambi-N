@@ -37,7 +37,7 @@ let configureCors (builder : CorsPolicyBuilder) =
            .AllowAnyMethod()
            .AllowAnyHeader()
            |> ignore
-           
+
 let configureApp (app : IApplicationBuilder) =
 //    let env = app.ApplicationServices.GetService<IHostingEnvironment>()
 
@@ -65,7 +65,7 @@ let main _ =
         .UseIISIntegration()
         .Configure(Action<IApplicationBuilder> configureApp)
         .ConfigureServices(configureServices)
-        .ConfigureLogging(configureLogging)        
+        .ConfigureLogging(configureLogging)
         .Build()
         .Run()
     0

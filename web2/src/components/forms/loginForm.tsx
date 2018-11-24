@@ -45,12 +45,12 @@ export default class LoginForm extends React.Component<LoginFormProps, LoginForm
 
         Client.Instance()
             .login(request)
-            .then(_ => {
+            .then(user => {
                 this.setState({
                     username: "",
                     password: ""
                 });
-                alert("Successfully logged in");
+                alert("Successfully logged in as " + user.name);
             });
     }
 
