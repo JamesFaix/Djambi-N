@@ -1,0 +1,97 @@
+body {
+    font: 14px "Century Gothic", Futura, sans-serif;
+    margin: 0;
+}
+
+button {
+    border: 1px;
+    background: #ffffff;
+    box-shadow: none;
+    border-radius: none;
+    border-style: solid;
+    border-color: #eeeeee;
+    padding: 5px 10px 5px 10px;
+}
+
+.form {
+    display: table;
+    margin: 0 auto;
+}
+
+.labeledTextBox {
+    display: table-row;
+}
+
+.labeledTextBox label {
+    display: table-cell;
+    padding: 0px 10px 0px 0px;
+}
+
+.labeledTextBox input {
+    display: table-cell;
+}
+
+.headerBar {
+    display: flex;
+}
+
+.headerBarLabel {
+    flex: 1;
+    font-size: 30px;
+    text-align: center;
+}
+
+.headerBarLinks {
+    flex: 1;
+    position: absolute;
+    right: 20px;
+}
+
+.appTitle {
+    font-size: 40px;
+    display: flex;
+    width: 400px;
+    margin: 0 auto;
+    height: 50px;
+
+    border: 1px;
+    border-style: solid;
+    border-color: #eeeeee;
+    text-align: center;
+    top: 0;
+}
+
+.appTitleCharA {
+    background-color: #ffffff;
+    color: #000000;
+    width: 50px;
+}
+
+.appTitleCharB {
+    background-color: #000000;
+    color: #ffffff;
+    width: 50px;
+}
+
+.topMenu {
+    overflow: hidden;
+    background-color: #ffffff;
+    position: fixed;
+    top: 0;
+    width: 100%;
+}
+
+.pageTitle {
+    margin-top: 70px;
+    font-size: 30px;
+    text-align: center;
+}
+
+.navigationStrip {
+    background-color: #ffffff;
+    text-align: center;
+}
+
+.formSubmitButtonBar {
+    text-align: center;
+}
