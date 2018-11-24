@@ -1,6 +1,8 @@
 import * as React from 'react';
 import '../../index.css';
 import LabeledTextbox from './labeledTextbox';
+import { LoginRequest } from '../../api/model';
+import Client from '../../api/client';
 
 export interface LoginFormProps {
 
@@ -36,9 +38,20 @@ export default class LoginForm extends React.Component<LoginFormProps, LoginForm
         }
     }
 
-    handleSubmit(event : React.MouseEvent<HTMLButtonElement>) {
-        alert('username: ' + this.state.username + ' | password: ' + this.state.password);
-        event.preventDefault();
+    handleSubmit() {
+        const request = new LoginRequest(
+            this.state.username,
+            this.state.password);
+
+        Client.Instance()
+            .login(request)
+            .then(_ => {
+                this.setState({
+                    username: "",
+                    password: ""
+                });
+                alert("Successfully logged in");
+            });
     }
 
     render() {
@@ -61,7 +74,7 @@ export default class LoginForm extends React.Component<LoginFormProps, LoginForm
                     <br/>
                 </div>
                 <div className="formSubmitButtonBar">
-                    <button onClick={e => this.handleSubmit(e)}>
+                    <button onClick={_ => this.handleSubmit()}>
                         Submit
                     </button>
                 </div>
