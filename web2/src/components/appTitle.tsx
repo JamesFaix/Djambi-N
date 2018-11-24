@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import '../index.css';
 
 export default class AppTitle extends React.Component {

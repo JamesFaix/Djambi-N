@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import '../../index.css';
 import SignupForm from '../forms/signupForm';
 import PageTitle from '../pageTitle';
