@@ -1,9 +1,10 @@
 import React from 'react';
 import '../../index.css';
 import LabeledTextbox from './labeledTextbox';
+import Client from '../../api/client';
+import { CreateUserRequest } from '../../api/model';
 
 export interface SignupFormProps {
-
 }
 
 export interface SignupFormState {
@@ -36,9 +37,20 @@ export default class SignupForm extends React.Component<SignupFormProps, SignupF
         }
     }
 
-    handleSubmit(event : React.MouseEvent<HTMLButtonElement>) {
-        alert('username: ' + this.state.username + ' | password: ' + this.state.password);
-        event.preventDefault();
+    handleSubmit() {
+        const request = new CreateUserRequest(
+            this.state.username,
+            this.state.password);
+
+        Client.Instance()
+            .createUser(request)
+            .then(createdUser => {
+                this.setState({
+                    username: "",
+                    password: ""
+                });
+                alert("Successfully created user " + createdUser.id);
+            });
     }
 
     render() {
@@ -61,7 +73,7 @@ export default class SignupForm extends React.Component<SignupFormProps, SignupF
                     <br/>
                 </div>
                 <div className="formSubmitButtonBar">
-                    <button onClick={e => this.handleSubmit(e)}>
+                    <button onClick={_ => this.handleSubmit()}>
                         Submit
                     </button>
                 </div>

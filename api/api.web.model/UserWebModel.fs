@@ -14,4 +14,4 @@ type UserResponseJsonModel =
         name : string
         isAdmin : bool
         //Don't return password here
-    }        
+    }
