@@ -2,10 +2,28 @@ import * as Model from './model';
 import * as $ from 'jquery';
 import Environment from "../environment";
 
-export default class Client {
+export default class ApiClient {
 
-    private static instance : Client = new Client();
-    public static Instance() : Client { return this.instance; }
+    async getCurrentUser() : Promise<Model.UserResponse> {
+        let result : Model.UserResponse;
+        return await $.ajax({
+            type : "GET",
+            url: Environment.apiAddress() + "/users/current",
+            dataType : "json",
+            success: (data, status, xhr) => {
+                console.log("Get current user succeeded");
+                result = data;
+            },
+            error : () => {
+                console.log("Get current user failed");
+            },
+            crossDomain : true,
+            xhrFields : {
+                withCredentials: true
+            }
+        })
+        .then(_ => result);
+    }
 
     async createUser(request : Model.CreateUserRequest) : Promise<Model.UserResponse> {
         let result : Model.UserResponse;
@@ -21,6 +39,10 @@ export default class Client {
             },
             error : () => {
                 console.log("Create user failed");
+            },
+            crossDomain : true,
+            xhrFields : {
+                withCredentials: true
             }
         })
         .then(_ => result);
@@ -40,6 +62,10 @@ export default class Client {
             },
             error : () => {
                 console.log("Create session failed");
+            },
+            crossDomain : true,
+            xhrFields : {
+                withCredentials: true
             }
         })
         .then(_ => result);

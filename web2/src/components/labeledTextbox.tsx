@@ -1,5 +1,5 @@
 import * as React from 'react';
-import '../../index.css';
+import '../index.css';
 
 export interface LabeledTextBoxProps {
     type : string,

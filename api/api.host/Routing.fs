@@ -4,20 +4,21 @@ open Giraffe
 open Microsoft.AspNetCore.Http
 open Djambi.Api.Web.Controllers
 
-module Routing = 
+module Routing =
 
     let getRoutingTable : HttpFunc -> HttpContext -> HttpFuncResult =
         choose [
             subRoute "/api"
-                (choose [  
-            
-                //Session                    
+                (choose [
+
+                //Session
                     POST >=> route "/sessions" >=> SessionController.openSession
                     DELETE >=> route "/sessions" >=> SessionController.closeSession
 
                 //Users
                     POST >=> route "/users" >=> UserController.createUser
                     GET >=> routef "/users/%i" UserController.getUser
+                    GET >=> route "/users/current" >=> UserController.getCurrentUser
                     GET >=> route "/users" >=> UserController.getUsers
                     DELETE >=> routef "/users/%i" UserController.deleteUser
 
@@ -34,7 +35,7 @@ module Routing =
                 //Board
                     GET >=> routef "/boards/%i" BoardController.getBoard
                     GET >=> routef "/boards/%i/cells/%i/paths" BoardController.getCellPaths
-                       
+
                 //Game
                     GET >=> routef "/games/%i/state" GameController.getGameState
 
