@@ -1,17 +1,16 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
 import '../index.css';
 
 export interface ActionButtonProps {
     label : string,
-    action() : void
+    onClick() : void
 }
 
 export default class ActionButton extends React.Component<ActionButtonProps> {
 
     render() {
         return (
-            <button onClick={_ => this.props.action()}>
+            <button onClick={_ => this.props.onClick()}>
                 {this.props.label}
             </button>
         );

@@ -28,7 +28,7 @@ export default class LoginPage extends React.Component<LoginPageProps, LoginPage
         };
     }
 
-    handleChange(event : React.ChangeEvent<HTMLInputElement>) {
+    private formOnChange(event : React.ChangeEvent<HTMLInputElement>) {
         const input = event.target;
         switch (input.name) {
             case "Username":
@@ -44,7 +44,7 @@ export default class LoginPage extends React.Component<LoginPageProps, LoginPage
         }
     }
 
-    handleSubmit() {
+    private submitOnClick() {
         const request = new LoginRequest(
             this.state.username,
             this.state.password);
@@ -84,19 +84,19 @@ export default class LoginPage extends React.Component<LoginPageProps, LoginPage
                         label="Username"
                         type="text"
                         value={this.state.username}
-                        handleChange={e => this.handleChange(e)}
+                        handleChange={e => this.formOnChange(e)}
                     />
                     <br/>
                     <LabeledTextbox
                         label="Password"
                         type="password"
                         value={this.state.password}
-                        handleChange={e => this.handleChange(e)}
+                        handleChange={e => this.formOnChange(e)}
                     />
                     <br/>
                 </div>
                 <div className="formSubmitButtonBar">
-                    <ActionButton label="Submit" action={() => this.handleSubmit()}/>
+                    <ActionButton label="Submit" onClick={() => this.submitOnClick()}/>
                 </div>
             </div>
         );

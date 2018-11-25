@@ -15,7 +15,7 @@ export interface DashboardPageProps {
 
 export default class DashboardPage extends React.Component<DashboardPageProps> {
 
-    logoutClick() {
+    private logoutOnClick() {
         this.props.api
             .logout()
             .then(_ => {
@@ -24,6 +24,11 @@ export default class DashboardPage extends React.Component<DashboardPageProps> {
             .catch(reason => {
                 alert("Logout failed because " + reason);
             });
+    }
+
+    private rulesOnClick() : void {
+        const win = window.open(this.props.rulesUrl, '_blank');
+        win.focus();
     }
 
     render() {
@@ -37,7 +42,8 @@ export default class DashboardPage extends React.Component<DashboardPageProps> {
                 <PageTitle label={"Welcome, " + this.props.user.name}/>
                 <br/>
                 <div className="navigationStrip">
-                    <ActionButton label="Log out" action={() => this.logoutClick()}/>
+                    <ActionButton label="Rules" onClick={() => this.rulesOnClick()}/>
+                    <ActionButton label="Log out" onClick={() => this.logoutOnClick()}/>
                 </div>
             </div>
         );

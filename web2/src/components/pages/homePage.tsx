@@ -16,7 +16,7 @@ export interface HomePageProps {
 
 export default class HomePage extends React.Component<HomePageProps> {
 
-    private rulesButtonClick() : void {
+    private rulesOnClick() : void {
         const win = window.open(this.props.rulesUrl, '_blank');
         win.focus();
     }
@@ -42,7 +42,7 @@ export default class HomePage extends React.Component<HomePageProps> {
                 <div className="navigationStrip">
                     <LinkButton to="/signup" label="Sign up"/>
                     <LinkButton to="/login" label="Login"/>
-                    <ActionButton label="Rules" action={() => this.rulesButtonClick()}/>
+                    <ActionButton label="Rules" onClick={() => this.rulesOnClick()}/>
                 </div>
                 <br/>
                 <br/>
