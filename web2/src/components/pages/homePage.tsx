@@ -1,10 +1,10 @@
 import * as React from 'react';
 import '../../index.css';
 import PageTitle from '../pageTitle';
-import NavigationStrip from '../navigationStrip';
 import { Redirect } from 'react-router';
 import { UserResponse } from '../../api/model';
 import ApiClient from '../../api/client';
+import LinkButton from '../linkButton';
 
 export interface HomePageProps {
     user : UserResponse,
@@ -28,16 +28,14 @@ export default class HomePage extends React.Component<HomePageProps> {
                 }
             });
 
-        const links = [
-            { to: '/signup', label: 'Sign up' },
-            { to: '/login', label: 'Login' },
-        ];
-
         return (
             <div>
                 <PageTitle label="Welcome"/>
                 <br/>
-                <NavigationStrip links={links}/>
+                <div className="navigationStrip">
+                    <LinkButton to="/signup" label="Sign up"/>
+                    <LinkButton to="/login" label="Login"/>
+                </div>
             </div>
         );
     }

@@ -1,11 +1,11 @@
 import * as React from 'react';
 import '../../index.css';
 import PageTitle from '../pageTitle';
-import NavigationStrip from '../navigationStrip';
 import ApiClient from '../../api/client';
 import { LoginRequest, UserResponse } from '../../api/model';
 import LabeledTextbox from '../labeledTextbox';
 import { Redirect } from 'react-router';
+import LinkButton from '../linkButton';
 
 export interface LoginPageProps {
     api : ApiClient,
@@ -68,16 +68,14 @@ export default class LoginPage extends React.Component<LoginPageProps, LoginPage
             return <Redirect to='/dashboard'/>
         }
 
-        const links = [
-            { to: '/', label: 'Home' },
-            { to: '/signup', label: 'Sign up' },
-        ];
-
         return (
             <div>
                 <PageTitle label="Log in"/>
                 <br/>
-                <NavigationStrip links={links}/>
+                <div className="navigationStrip">
+                    <LinkButton to="/" label="Home"/>
+                    <LinkButton to="/login" label="Login"/>
+                </div>
                 <br/>
                 <br/>
                 <div className="form">
