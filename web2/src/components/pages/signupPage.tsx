@@ -6,6 +6,7 @@ import { CreateUserRequest, UserResponse, LoginRequest } from '../../api/model';
 import LabeledTextbox from '../labeledTextbox';
 import { Redirect } from 'react-router';
 import LinkButton from '../linkButton';
+import ActionButton from '../actionButton';
 
 export interface SignupPageProps {
     api : ApiClient,
@@ -102,9 +103,7 @@ export default class SignupPage extends React.Component<SignupPageProps, SignupP
                     <br/>
                 </div>
                 <div className="formSubmitButtonBar">
-                    <button onClick={_ => this.handleSubmit()}>
-                        Submit
-                    </button>
+                    <ActionButton label="Submit" action={() => this.handleSubmit()}/>
                 </div>
             </div>
         );

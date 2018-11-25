@@ -4,6 +4,7 @@ import PageTitle from '../pageTitle';
 import { UserResponse } from '../../api/model';
 import ApiClient from '../../api/client';
 import { Redirect } from 'react-router';
+import ActionButton from '../actionButton';
 
 export interface DashboardPageProps {
     user : UserResponse,
@@ -36,9 +37,7 @@ export default class DashboardPage extends React.Component<DashboardPageProps> {
                 <PageTitle label={"Welcome, " + this.props.user.name}/>
                 <br/>
                 <div className="navigationStrip">
-                    <button onClick={_ => this.logoutClick()}>
-                        Log out
-                    </button>
+                    <ActionButton label="Log out" action={() => this.logoutClick()}/>
                 </div>
             </div>
         );

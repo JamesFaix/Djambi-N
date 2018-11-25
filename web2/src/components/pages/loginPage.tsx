@@ -6,6 +6,7 @@ import { LoginRequest, UserResponse } from '../../api/model';
 import LabeledTextbox from '../labeledTextbox';
 import { Redirect } from 'react-router';
 import LinkButton from '../linkButton';
+import ActionButton from '../actionButton';
 
 export interface LoginPageProps {
     api : ApiClient,
@@ -95,9 +96,7 @@ export default class LoginPage extends React.Component<LoginPageProps, LoginPage
                     <br/>
                 </div>
                 <div className="formSubmitButtonBar">
-                    <button onClick={_ => this.handleSubmit()}>
-                        Submit
-                    </button>
+                    <ActionButton label="Submit" action={() => this.handleSubmit()}/>
                 </div>
             </div>
         );

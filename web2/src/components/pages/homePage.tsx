@@ -5,6 +5,7 @@ import { Redirect } from 'react-router';
 import { UserResponse } from '../../api/model';
 import ApiClient from '../../api/client';
 import LinkButton from '../linkButton';
+import ActionButton from '../actionButton';
 
 export interface HomePageProps {
     user : UserResponse,
@@ -36,14 +37,12 @@ export default class HomePage extends React.Component<HomePageProps> {
 
         return (
             <div>
-                <PageTitle label="Welcome"/>
+                <PageTitle label="Greetings, visitor"/>
                 <br/>
                 <div className="navigationStrip">
                     <LinkButton to="/signup" label="Sign up"/>
                     <LinkButton to="/login" label="Login"/>
-                    <button onClick={_ => this.rulesButtonClick()}>
-                        Rules
-                    </button>
+                    <ActionButton label="Rules" action={() => this.rulesButtonClick()}/>
                 </div>
                 <br/>
                 <br/>
