@@ -4,7 +4,6 @@ open System
 open System.Threading.Tasks
 open Giraffe
 open Microsoft.AspNetCore.Http
-open Microsoft.Extensions.Primitives
 open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Logic.Services
@@ -22,7 +21,6 @@ module HttpUtility =
                     let! result = func ctx
                     match result with
                     | Ok value ->
-                        ctx.Response.Headers.Add("Access-Control-Allow-Credentials", StringValues("true"))
                         return! json value next ctx
                     | Error ex ->
                         ctx.SetStatusCode ex.statusCode

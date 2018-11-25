@@ -70,4 +70,23 @@ export default class ApiClient {
         })
         .then(_ => result);
     }
+
+    async logout() : Promise<void> {
+        return await $.ajax({
+            type : "DELETE",
+            url: Environment.apiAddress() + "/sessions",
+            dataType : "json",
+            success: (data, status, xhr) => {
+                console.log("Close session succeeded");
+            },
+            error : x => {
+                console.log(x);
+                console.log("Close session failed");
+            },
+            crossDomain : true,
+            xhrFields : {
+                withCredentials: true
+            }
+        });
+    }
 }

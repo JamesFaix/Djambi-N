@@ -70,6 +70,7 @@ export default class App extends React.Component<AppProps, AppState> {
                             <DashboardPage
                                 user={this.state.user}
                                 api={this.state.api}
+                                setUser={user => this.setState({user : user})}
                             />
                         }
                     />
