@@ -3,11 +3,14 @@ import '../../index.css';
 import PageTitle from '../pageTitle';
 import NavigationStrip from '../navigationStrip';
 import ApiClient from '../../api/client';
-import { LoginRequest } from '../../api/model';
+import { LoginRequest, UserResponse } from '../../api/model';
 import LabeledTextbox from '../labeledTextbox';
+import { Redirect } from 'react-router';
 
 export interface LoginPageProps {
-    api : ApiClient
+    api : ApiClient,
+    user : UserResponse,
+    setUser(user : UserResponse) : void
 }
 
 export interface LoginPageState {
@@ -52,11 +55,19 @@ export default class LoginPage extends React.Component<LoginPageProps, LoginPage
                     username: "",
                     password: ""
                 });
-                alert("Successfully logged in as " + user.name);
+                this.props.setUser(user);
+            })
+            .catch(reason => {
+                alert("Login failed because " + reason);
             });
     }
 
     render() {
+        //Go straight to dashboard if already logged in
+        if (this.props.user !== null) {
+            return <Redirect to='/dashboard'/>
+        }
+
         const links = [
             { to: '/', label: 'Home' },
             { to: '/signup', label: 'Sign up' },

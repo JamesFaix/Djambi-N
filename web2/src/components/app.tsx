@@ -49,6 +49,8 @@ export default class App extends React.Component<AppProps, AppState> {
                         render={_ =>
                             <SignupPage
                                 api={this.state.api}
+                                user={this.state.user}
+                                setUser={user => this.setState({user : user})}
                             />
                         }
                     />
@@ -57,6 +59,8 @@ export default class App extends React.Component<AppProps, AppState> {
                         render={_ =>
                             <LoginPage
                                 api={this.state.api}
+                                user={this.state.user}
+                                setUser={user => this.setState({user : user})}
                             />
                         }
                     />

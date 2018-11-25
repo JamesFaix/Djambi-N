@@ -3,11 +3,14 @@ import '../../index.css';
 import PageTitle from '../pageTitle';
 import NavigationStrip from '../navigationStrip';
 import ApiClient from '../../api/client';
-import { CreateUserRequest } from '../../api/model';
+import { CreateUserRequest, UserResponse, LoginRequest } from '../../api/model';
 import LabeledTextbox from '../labeledTextbox';
+import { Redirect } from 'react-router';
 
 export interface SignupPageProps {
-    api : ApiClient
+    api : ApiClient,
+    user : UserResponse,
+    setUser(user : UserResponse) : void
 }
 
 export interface SignupPageState {
@@ -47,16 +50,31 @@ export default class SignupPage extends React.Component<SignupPageProps, SignupP
 
         this.props.api
             .createUser(request)
-            .then(createdUser => {
+            .then(_ => {
                 this.setState({
                     username: "",
                     password: ""
                 });
-                alert("Successfully created user " + createdUser.id);
+
+                const loginRequest = new LoginRequest(request.name, request.password);
+
+                return this.props.api
+                    .login(loginRequest);
+            })
+            .then(user => {
+                this.props.setUser(user);
+            })
+            .catch(reason => {
+                alert("User creation failed because " + reason);
             });
     }
 
     render() {
+        //Go straight to dashboard if already logged in
+        if (this.props.user !== null) {
+            return <Redirect to='/dashboard'/>
+        }
+
         const links = [
             { to: '/', label: 'Home' },
             { to: '/login', label: 'Log in' },
