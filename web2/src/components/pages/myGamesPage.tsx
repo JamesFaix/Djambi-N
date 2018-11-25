@@ -25,6 +25,8 @@ export default class MyGamesPage extends React.Component<MyGamesPageProps> {
                 <br/>
                 <div className="navigationStrip">
                     <LinkButton label="Home" to="/dashboard"/>
+                    <LinkButton label="Create Game" to="/createGame"/>
+                    <LinkButton label="Find Game" to="/findGame"/>
                 </div>
             </div>
         );

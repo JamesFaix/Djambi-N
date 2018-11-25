@@ -25,6 +25,8 @@ export default class FindLobbyPage extends React.Component<FindLobbyPageProps> {
                 <br/>
                 <div className="navigationStrip">
                     <LinkButton label="Home" to="/dashboard"/>
+                    <LinkButton label="My Games" to="/myGames"/>
+                    <LinkButton label="Create Game" to="/createGame"/>
                 </div>
             </div>
         );

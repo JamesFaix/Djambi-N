@@ -3,7 +3,7 @@ import '../../index.css';
 import PageTitle from '../pageTitle';
 import ApiClient from '../../api/client';
 import { CreateUserRequest, UserResponse, LoginRequest } from '../../api/model';
-import LabeledTextbox from '../labeledTextbox';
+import LabeledInput from '../labeledInput';
 import { Redirect } from 'react-router';
 import LinkButton from '../linkButton';
 import ActionButton from '../actionButton';
@@ -87,14 +87,14 @@ export default class SignupPage extends React.Component<SignupPageProps, SignupP
                 <br/>
                 <br/>
                 <div className="form">
-                    <LabeledTextbox
+                    <LabeledInput
                         label="Username"
                         type="text"
                         value={this.state.username}
                         handleChange={e => this.formOnChange(e)}
                     />
                     <br/>
-                    <LabeledTextbox
+                    <LabeledInput
                         label="Password"
                         type="password"
                         value={this.state.password}

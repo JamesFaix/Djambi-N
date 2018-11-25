@@ -11,6 +11,7 @@ export interface DashboardPageProps {
     user : UserResponse,
     api : ApiClient,
     setUser(user: UserResponse) : void,
+    setLobbyId(lobbyId : number) : void,
     rulesUrl : string
 }
 
@@ -30,6 +31,11 @@ export default class DashboardPage extends React.Component<DashboardPageProps> {
     private rulesOnClick() : void {
         const win = window.open(this.props.rulesUrl, '_blank');
         win.focus();
+    }
+
+    componentWillMount() {
+        //Clear lobbyId from application state
+        this.props.setLobbyId(null);
     }
 
     render() {

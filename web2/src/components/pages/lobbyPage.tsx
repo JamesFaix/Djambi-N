@@ -9,10 +9,16 @@ import LinkButton from '../linkButton';
 export interface LobbyPageProps {
     user : UserResponse,
     api : ApiClient,
-    lobbyId : number
+    lobbyId : number,
+    setLobbyId(lobbyId : number) : void
 }
 
 export default class LobbyPage extends React.Component<LobbyPageProps> {
+
+    componentWillMount() {
+        //Set lobbyId in state upon navigation
+        this.props.setLobbyId(this.props.lobbyId);
+    }
 
     render() {
         //Go to home if not logged in

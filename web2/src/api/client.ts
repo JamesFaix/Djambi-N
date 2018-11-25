@@ -89,4 +89,27 @@ export default class ApiClient {
             }
         });
     }
+
+    async createLobby(request : Model.CreateLobbyRequest) : Promise<Model.LobbyResponse> {
+        let result : Model.LobbyResponse;
+
+        return await $.ajax({
+            type : "POST",
+            url: Environment.apiAddress() + "/lobbies",
+            dataType : "json",
+            data: request,
+            success: (data, status, xhr) => {
+                console.log("Create lobby succeeded");
+                result = data;
+            },
+            error : () => {
+                console.log("Create lobby failed");
+            },
+            crossDomain : true,
+            xhrFields : {
+                withCredentials: true
+            }
+        })
+        .then(_ => result);
+    }
 }
