@@ -9,10 +9,16 @@ import LinkButton from '../linkButton';
 export interface HomePageProps {
     user : UserResponse,
     api : ApiClient,
-    setUser(user : UserResponse) : void
+    setUser(user : UserResponse) : void,
+    rulesUrl : string
 }
 
 export default class HomePage extends React.Component<HomePageProps> {
+
+    private rulesButtonClick() : void {
+        const win = window.open(this.props.rulesUrl, '_blank');
+        win.focus();
+    }
 
     render() {
         //Go straight to dashboard if already logged in
@@ -35,6 +41,14 @@ export default class HomePage extends React.Component<HomePageProps> {
                 <div className="navigationStrip">
                     <LinkButton to="/signup" label="Sign up"/>
                     <LinkButton to="/login" label="Login"/>
+                    <button onClick={_ => this.rulesButtonClick()}>
+                        Rules
+                    </button>
+                </div>
+                <br/>
+                <br/>
+                <div className="navigationStrip">
+                    <img src={"../../../resources/djambi6.png"} height={500}/>
                 </div>
             </div>
         );

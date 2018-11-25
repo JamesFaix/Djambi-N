@@ -8,7 +8,8 @@ import { Redirect } from 'react-router';
 export interface DashboardPageProps {
     user : UserResponse,
     api : ApiClient,
-    setUser(user: UserResponse) : void
+    setUser(user: UserResponse) : void,
+    rulesUrl : string
 }
 
 export default class DashboardPage extends React.Component<DashboardPageProps> {

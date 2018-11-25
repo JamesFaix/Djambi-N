@@ -29,6 +29,8 @@ export default class App extends React.Component<AppProps, AppState> {
         };
     }
 
+    private rulesUrl = "https://github.com/GamesFaix/Djambi3/blob/master/docs/Rules.md";
+
     render() {
         return (
             <main>
@@ -41,6 +43,7 @@ export default class App extends React.Component<AppProps, AppState> {
                                 user={this.state.user}
                                 api={this.state.api}
                                 setUser={user => this.setState({user : user})}
+                                rulesUrl={this.rulesUrl}
                             />
                         }
                     />
@@ -71,6 +74,7 @@ export default class App extends React.Component<AppProps, AppState> {
                                 user={this.state.user}
                                 api={this.state.api}
                                 setUser={user => this.setState({user : user})}
+                                rulesUrl={this.rulesUrl}
                             />
                         }
                     />
