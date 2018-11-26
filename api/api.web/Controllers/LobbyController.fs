@@ -18,24 +18,31 @@ let getLobbies : HttpHandler =
         )
         |> thenMap (List.map mapLobbyResponse)
     handle func
-                
+
+let getLobby(lobbyId : int) : HttpHandler =
+    let func ctx =
+        getSessionFromContext ctx
+        |> thenBindAsync (LobbyService.getLobby lobbyId)
+        |> thenMap mapLobbyWithPlayersResponse
+    handle func
+
 let createLobby : HttpHandler =
     let func (ctx : HttpContext) : LobbyResponseJsonModel AsyncHttpResult =
-        getSessionAndModelFromContext<CreateLobbyJsonModel> ctx 
-        |> thenBindAsync (fun (requestJsonModel, session) -> 
+        getSessionAndModelFromContext<CreateLobbyJsonModel> ctx
+        |> thenBindAsync (fun (requestJsonModel, session) ->
             let request = mapCreateLobbyRequest (requestJsonModel, session.userId)
             LobbyService.createLobby request session)
         |> thenMap mapLobbyResponse
-    handle func    
+    handle func
 
 let deleteLobby(lobbyId : int) =
-    let func ctx = 
+    let func ctx =
         getSessionFromContext ctx
         |> thenBindAsync (LobbyService.deleteLobby lobbyId)
     handle func
 
 let startGame(lobbyId: int) =
-    let func ctx = 
+    let func ctx =
         getSessionFromContext ctx
         |> thenBindAsync (GameStartService.startGame lobbyId)
         |> thenMap mapGameStartResponseToJson

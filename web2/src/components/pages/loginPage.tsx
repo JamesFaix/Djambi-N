@@ -73,7 +73,7 @@ export default class LoginPage extends React.Component<LoginPageProps, LoginPage
             <div>
                 <PageTitle label="Log in"/>
                 <br/>
-                <div className="navigationStrip">
+                <div className="centeredContainer">
                     <LinkButton to="/" label="Home"/>
                     <LinkButton to="/login" label="Login"/>
                 </div>
@@ -95,7 +95,7 @@ export default class LoginPage extends React.Component<LoginPageProps, LoginPage
                     />
                     <br/>
                 </div>
-                <div className="formSubmitButtonBar">
+                <div className="centeredContainer">
                     <ActionButton label="Submit" onClick={() => this.submitOnClick()}/>
                 </div>
             </div>

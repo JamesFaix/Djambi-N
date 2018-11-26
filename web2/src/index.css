@@ -4,10 +4,32 @@ body {
 }
 
 button {
+    font: 14px "Century Gothic", Futura, sans-serif;
     border: 1px;
     background: #ffffff;
     box-shadow: none;
     border-radius: none;
+    border-style: solid;
+    border-color: #eeeeee;
+    padding: 5px 10px 5px 10px;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+th {
+    font-weight: normal;
+    border: 1px;
+    border-style: solid;
+    border-color: #eeeeee;
+    padding: 5px 10px 5px 10px;
+}
+
+td {
+    font-weight: normal;
+    text-align: left;
+    border: 1px;
     border-style: solid;
     border-color: #eeeeee;
     padding: 5px 10px 5px 10px;
@@ -87,11 +109,20 @@ button {
     text-align: center;
 }
 
-.navigationStrip {
-    background-color: #ffffff;
-    text-align: center;
+.lobbyDetailsContainer {
+    width: 500px;
+    margin: 0 auto;
 }
 
-.formSubmitButtonBar {
+.lobbyPlayersTable {
+    width: 400px;
+    margin: 0 auto;
+}
+
+.lobbyPlayersTableHeader {
+    width: 50%;
+}
+
+.centeredContainer {
     text-align: center;
 }

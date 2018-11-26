@@ -23,7 +23,7 @@ export default class MyGamesPage extends React.Component<MyGamesPageProps> {
             <div>
                 <PageTitle label={"My Games"}/>
                 <br/>
-                <div className="navigationStrip">
+                <div className="centeredContainer">
                     <LinkButton label="Home" to="/dashboard"/>
                     <LinkButton label="Create Game" to="/createGame"/>
                     <LinkButton label="Find Game" to="/findGame"/>

@@ -97,7 +97,7 @@ export default class CreateLobbyPage extends React.Component<CreateLobbyPageProp
             <div>
                 <PageTitle label={"Create Game"}/>
                 <br/>
-                <div className="navigationStrip">
+                <div className="centeredContainer">
                     <LinkButton label="Home" to="/dashboard"/>
                     <LinkButton label="My Games" to="/myGames"/>
                     <LinkButton label="Find Game" to="/findGame"/>
@@ -141,7 +141,7 @@ export default class CreateLobbyPage extends React.Component<CreateLobbyPageProp
                     />
                     <br/>
                 </div>
-                <div className="formSubmitButtonBar">
+                <div className="centeredContainer">
                     <ActionButton label="Submit" onClick={() => this.submitOnClick()}/>
                 </div>
             </div>

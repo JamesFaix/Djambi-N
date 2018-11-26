@@ -112,4 +112,26 @@ export default class ApiClient {
         })
         .then(_ => result);
     }
+
+    async getLobby(lobbyId : number) : Promise<Model.LobbyWithPlayersResponse> {
+        let result : Model.LobbyWithPlayersResponse;
+
+        return await $.ajax({
+            type : "GET",
+            url: Environment.apiAddress() + "/lobbies/" + lobbyId,
+            dataType : "json",
+            success: (data, status, xhr) => {
+                console.log("Get lobby succeeded");
+                result = data;
+            },
+            error : () => {
+                console.log("Get lobby failed");
+            },
+            crossDomain : true,
+            xhrFields : {
+                withCredentials: true
+            }
+        })
+        .then(_ => result);
+    }
 }

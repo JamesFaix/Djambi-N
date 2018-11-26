@@ -25,6 +25,7 @@ module Routing =
                 //Lobby
                     POST >=> route "/lobbies/query" >=> LobbyController.getLobbies
                     POST >=> route "/lobbies" >=> LobbyController.createLobby
+                    GET >=> routef "/lobbies/%i" LobbyController.getLobby
                     DELETE >=> routef "/lobbies/%i" LobbyController.deleteLobby
 
                     POST >=> routef "/lobbies/%i/players" PlayerController.addPlayerToLobby

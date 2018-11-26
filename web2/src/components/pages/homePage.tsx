@@ -39,14 +39,14 @@ export default class HomePage extends React.Component<HomePageProps> {
             <div>
                 <PageTitle label="Greetings, visitor"/>
                 <br/>
-                <div className="navigationStrip">
+                <div className="centeredContainer">
                     <LinkButton to="/signup" label="Sign up"/>
                     <LinkButton to="/login" label="Login"/>
                     <ActionButton label="Rules" onClick={() => this.rulesOnClick()}/>
                 </div>
                 <br/>
                 <br/>
-                <div className="navigationStrip">
+                <div className="centeredContainer">
                     <img src={"../../../resources/djambi6.png"} height={500}/>
                 </div>
             </div>

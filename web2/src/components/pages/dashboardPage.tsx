@@ -33,7 +33,7 @@ export default class DashboardPage extends React.Component<DashboardPageProps> {
         win.focus();
     }
 
-    componentWillMount() {
+    componentDidMount() {
         //Clear lobbyId from application state
         this.props.setLobbyId(null);
     }
@@ -48,7 +48,7 @@ export default class DashboardPage extends React.Component<DashboardPageProps> {
             <div>
                 <PageTitle label={"Welcome, " + this.props.user.name}/>
                 <br/>
-                <div className="navigationStrip">
+                <div className="centeredContainer">
                     <LinkButton label="My Games" to="/myGames"/>
                     <LinkButton label="Create Game" to="/createGame"/>
                     <LinkButton label="Find Game" to="/findGame"/>

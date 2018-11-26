@@ -80,7 +80,7 @@ export default class SignupPage extends React.Component<SignupPageProps, SignupP
             <div>
                 <PageTitle label="Sign up"/>
                 <br/>
-                <div className="navigationStrip">
+                <div className="centeredContainer">
                     <LinkButton to="/" label="Home"/>
                     <LinkButton to="/login" label="Login"/>
                 </div>
@@ -102,7 +102,7 @@ export default class SignupPage extends React.Component<SignupPageProps, SignupP
                     />
                     <br/>
                 </div>
-                <div className="formSubmitButtonBar">
+                <div className="centeredContainer">
                     <ActionButton label="Submit" onClick={() => this.submitOnClick()}/>
                 </div>
             </div>
