@@ -15,7 +15,7 @@ let mapCreatePlayerRequest (jsonModel : CreatePlayerJsonModel, lobbyId : int)  :
     {
         lobbyId = lobbyId
         userId = jsonModel.userId |> nullableToOption
-        name = jsonModel.name |> referenceToOption
+        name = jsonModel.name |> stringToOption
         playerType = jsonModel.``type`` |> mapPlayerTypeFromString
     }
 

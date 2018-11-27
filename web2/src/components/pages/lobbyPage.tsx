@@ -84,6 +84,40 @@ export default class LobbyPage extends React.Component<LobbyPageProps, LobbyPage
             });
     }
 
+    private isSelfAPlayer(lobby : LobbyWithPlayersResponse) : boolean {
+        return lobby.players.find(p => p.userId === this.props.user.id) !== undefined;
+    }
+
+//---Event handlers---
+
+    private addSelfOnClick() : void {
+        const request = new CreatePlayerRequest(
+            this.props.user.id,
+            null,
+            PlayerType.User);
+
+        this.props.api
+            .addPlayer(this.props.lobbyId, request)
+            .then(newPlayer => {
+                const oldLobby = this.state.lobbyWithPlayers;
+                const newLobby = new LobbyWithPlayersResponse(
+                    oldLobby.id,
+                    oldLobby.regionCount,
+                    oldLobby.description,
+                    oldLobby.allowGuests,
+                    oldLobby.isPublic,
+                    oldLobby.createdByUserId,
+                    oldLobby.players.concat(newPlayer));
+
+                this.setState({
+                    lobbyWithPlayers : newLobby
+                });
+            })
+            .catch(reason => {
+                alert("Add player failed because " + reason);
+            });
+    }
+
     private addGuestOnClick() : void {
         const request = new CreatePlayerRequest(
             this.props.user.id,
@@ -156,6 +190,8 @@ export default class LobbyPage extends React.Component<LobbyPageProps, LobbyPage
                 alert("Remove player failed because " + reason);
             });
     }
+
+//---Rendering---
 
     private renderLobbyDetails(lobby : LobbyWithPlayersResponse) {
         if (lobby === null){
@@ -235,11 +271,8 @@ export default class LobbyPage extends React.Component<LobbyPageProps, LobbyPage
             </div>
         );
     }
-    private isSelfAPlayer(lobby : LobbyWithPlayersResponse) : boolean {
-        return lobby.players.find(p => p.userId === this.props.user.id) !== undefined;
-    }
 
-    private renderAddGuest(lobby : LobbyWithPlayersResponse) {
+    private renderAddSelf(lobby : LobbyWithPlayersResponse) {
         if (lobby === null) {
             return "";
         }
@@ -276,6 +309,26 @@ export default class LobbyPage extends React.Component<LobbyPageProps, LobbyPage
         );
     }
 
+    private renderAddGuest(lobby : LobbyWithPlayersResponse) {
+        if (lobby === null) {
+            return "";
+        }
+
+        if (lobby.regionCount === lobby.players.length
+            || this.isSelfAPlayer(lobby)) {
+            return "";
+        }
+
+        return (
+            <div className="centeredContainer">
+                <ActionButton
+                    label="Join"
+                    onClick={() => this.addSelfOnClick()}
+                />
+            </div>
+        );
+    }
+
     render() {
         //Go to home if not logged in
         if (this.props.user === null) {
@@ -302,6 +355,7 @@ export default class LobbyPage extends React.Component<LobbyPageProps, LobbyPage
                 <br/>
                 {this.renderPlayersTable(this.state.lobbyWithPlayers)}
                 <br/>
+                {this.renderAddSelf(this.state.lobbyWithPlayers)}
                 {this.renderAddGuest(this.state.lobbyWithPlayers)}
             </div>
         );
