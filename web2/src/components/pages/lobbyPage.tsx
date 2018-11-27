@@ -20,11 +20,17 @@ export interface LobbyPageState {
     guestName : string
 }
 
-interface LobbyPlayerViewModel {
-    id : number,
-    name : string,
-    guestOf : string,
-    canRemove : boolean
+enum SeatActionType {
+    None,
+    Remove,
+    Join,
+    AddGuest
+}
+
+interface Seat {
+    player : PlayerResponse,
+    note : string,
+    action : SeatActionType
 }
 
 export default class LobbyPage extends React.Component<LobbyPageProps, LobbyPageState> {
@@ -51,41 +57,84 @@ export default class LobbyPage extends React.Component<LobbyPageProps, LobbyPage
             });
     }
 
-    private getPlayerViewModels(lobby : LobbyWithPlayersResponse) : LobbyPlayerViewModel[] {
+    private getSeats(lobby : LobbyWithPlayersResponse) : Seat[] {
         if (lobby === null) {
             return [];
         }
 
         const self = this.props.user;
 
-        return lobby.players
+        //Get player seats first
+        const seats = lobby.players
             .map(p => {
-                const vm : LobbyPlayerViewModel = {
-                    id : p.id,
-                    name : p.name,
-                    guestOf : null,
-                    canRemove : false
+                console.log(p);
+
+                const seat : Seat = {
+                    player : p,
+                    note : null,
+                    action : SeatActionType.None
                 };
+
+                if (p.type === PlayerType.User
+                    && p.userId === lobby.createdByUserId) {
+                    seat.note = "Host";
+                }
 
                 if (p.type === PlayerType.Guest) {
                     const host = lobby.players
                         .find(h => h.userId === p.userId
                             && h.type === PlayerType.User);
 
-                    vm.guestOf = host.name;
+                    seat.note = "Guest of " + host.name;
                 }
 
-                vm.canRemove = self.isAdmin
+                if (self.isAdmin
                     || lobby.createdByUserId === self.id
-                    || vm.name === self.name
-                    || vm.guestOf === self.name;
+                    || seat.player.name === self.name
+                    || (seat.player.type === PlayerType.Guest
+                        && seat.player.userId === self.id)) {
 
-                return vm;
+                    seat.action = SeatActionType.Remove;
+                }
+                console.log(seat);
+                return seat;
             });
+
+        //If self is not a player, add "Join" seat
+        if (!this.isSelfAPlayer(lobby)) {
+            seats.push({
+                player : null,
+                note : "",
+                action : SeatActionType.Join
+            })
+        //If self is a player and guests allowed, add "Add Guest" seat
+        } else if (lobby.allowGuests) {
+            seats.push({
+                player : null,
+                note : "",
+                action : SeatActionType.AddGuest
+            });
+        }
+
+        //Add empty seats until regionCount
+        while (seats.length < lobby.regionCount) {
+            seats.push({
+                player : null,
+                note : "",
+                action : SeatActionType.None
+            });
+        }
+
+        return seats;
     }
 
     private isSelfAPlayer(lobby : LobbyWithPlayersResponse) : boolean {
         return lobby.players.find(p => p.userId === this.props.user.id) !== undefined;
+    }
+
+    private isSeatSelf(seat : Seat) : boolean {
+        return seat.player.type === PlayerType.User
+            && seat.player.userId === this.props.user.id;
     }
 
 //---Event handlers---
@@ -148,15 +197,8 @@ export default class LobbyPage extends React.Component<LobbyPageProps, LobbyPage
     }
 
     private addGuestOnChanged(event : React.ChangeEvent<HTMLInputElement>) : void {
-        const input = event.target;
-        switch (input.name) {
-            case "Guest name":
-                this.setState({ guestName: input.value });
-                break;
-
-            default:
-                break;
-        }
+        const name = event.target.value;
+        this.setState({ guestName: name });
     }
 
     private removeOnClick(playerId : number) : void {
@@ -204,7 +246,6 @@ export default class LobbyPage extends React.Component<LobbyPageProps, LobbyPage
                     {this.renderLobbyDescription(lobby)}
                     {this.renderLobbyOptions(lobby)}
                     <p>{lobby.regionCount + " regions"}</p>
-                    <p>{lobby.players.length + " of " + lobby.regionCount + " seats taken"}</p>
                 </div>
             </div>
         );
@@ -230,16 +271,88 @@ export default class LobbyPage extends React.Component<LobbyPageProps, LobbyPage
         }
     }
 
-    private renderRemoveButton(player : LobbyPlayerViewModel) {
-        if (player.canRemove){
-            return (
-                <ActionButton
-                    label="Remove"
-                    onClick={() => this.removeOnClick(player.id)}
-                />
+    private renderPlayerRow(seat : Seat, rowNumber : number) {
+        switch (seat.action) {
+            case SeatActionType.None:
+                if (seat.player === null) {
+                    return (
+                        <tr key={"row" + rowNumber}>
+                            <td className="lightText lobbyPlayersTableTextCell">
+                                (Empty)
+                            </td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    );
+                } else {
+                    return (
+                        <tr key={"row" + rowNumber}>
+                            <td className="lobbyPlayersTableTextCell">
+                                {seat.player.name}
+                            </td>
+                            <td>{seat.note}</td>
+                            <td></td>
+                        </tr>
+                    );
+                }
+
+            case SeatActionType.Join:
+                return (
+                    <tr key={"row" + rowNumber}>
+                        <td className="lightText lobbyPlayersTableTextCell">
+                            (Empty)
+                        </td>
+                        <td></td>
+                        <td className="centeredContainer">
+                            <ActionButton
+                                label="Join"
+                                onClick={() => this.addSelfOnClick()}
+                            />
+                        </td>
+                    </tr>
                 );
-        } else {
-            return "";
+
+            case SeatActionType.AddGuest:
+                return (
+                    <tr key={"row" + rowNumber}>
+                        <td>
+                            <input
+                                type="text"
+                                value={this.state.guestName}
+                                onChange={e => this.addGuestOnChanged(e)}
+                                className="fullWidth"
+                            />
+                        </td>
+                        <td></td>
+                        <td className="centeredContainer">
+                            <ActionButton
+                                label="Add Guest"
+                                onClick={() => this.addGuestOnClick()}
+                            />
+                        </td>
+                    </tr>
+                );
+
+            case SeatActionType.Remove:
+                const label = this.isSeatSelf(seat) ? "Quit" : "Remove";
+
+                return (
+                    <tr key={"row" + rowNumber}>
+                        <td className="lobbyPlayersTableTextCell">
+                            {seat.player.name}
+                        </td>
+                        <td>{seat.note}</td>
+                        <td className="centeredContainer">
+                            <ActionButton
+                                label={label}
+                                onClick={() => this.removeOnClick(seat.player.id)}
+                            />
+                        </td>
+                    </tr>
+                );
+
+            default:
+                return "";
         }
     }
 
@@ -248,83 +361,24 @@ export default class LobbyPage extends React.Component<LobbyPageProps, LobbyPage
             return "";
         }
 
-        const viewModels = this.getPlayerViewModels(lobby);
+        const seats = this.getSeats(lobby);
 
         return (
-            <div className="centeredContainer">
+            <div>
                 <table className="lobbyPlayersTable">
                     <tbody>
                         <tr>
-                            <th className="lobbyPlayersTableHeader">Name</th>
-                            <th className="lobbyPlayersTableHeader">Guest of</th>
-                            <th className="lobbyPlayersTableHeader">(Remove)</th>
+                            <td className="centeredContainer">
+                                Seats
+                            </td>
                         </tr>
-                        {viewModels.map((vm, i) =>
-                            <tr key={"row" + i}>
-                                <td>{vm.name}</td>
-                                <td>{vm.guestOf}</td>
-                                <td>{this.renderRemoveButton(vm)}</td>
-                            </tr>
-                        )}
                     </tbody>
                 </table>
-            </div>
-        );
-    }
-
-    private renderAddSelf(lobby : LobbyWithPlayersResponse) {
-        if (lobby === null) {
-            return "";
-        }
-
-        if (!lobby.allowGuests
-            || lobby.regionCount === lobby.players.length
-            || !this.isSelfAPlayer(lobby)) {
-            return "";
-        }
-
-        return (
-            <div className="centeredContainer addGuestContainer">
-                <table>
+                <table className="lobbyPlayersTable">
                     <tbody>
-                        <tr>
-                            <td className="addGuestTableCell">
-                                <LabeledInput
-                                    type="text"
-                                    value={this.state.guestName}
-                                    label="Guest name"
-                                    handleChange={e => this.addGuestOnChanged(e)}
-                                />
-                            </td>
-                            <td className="addGuestTableCell">
-                                <ActionButton
-                                    label="Add"
-                                    onClick={() => this.addGuestOnClick()}
-                                />
-                            </td>
-                        </tr>
+                        {seats.map((seat, i) => this.renderPlayerRow(seat, i))}
                     </tbody>
                 </table>
-            </div>
-        );
-    }
-
-    private renderAddGuest(lobby : LobbyWithPlayersResponse) {
-        if (lobby === null) {
-            return "";
-        }
-
-        if (lobby.regionCount === lobby.players.length
-            || this.isSelfAPlayer(lobby)) {
-            return "";
-        }
-
-        return (
-            <div className="centeredContainer">
-                <ActionButton
-                    label="Join"
-                    onClick={() => this.addSelfOnClick()}
-                />
             </div>
         );
     }
@@ -352,11 +406,7 @@ export default class LobbyPage extends React.Component<LobbyPageProps, LobbyPage
                     <LinkButton label="Find Game" to="/findGame"/>
                 </div>
                 {this.renderLobbyDetails(this.state.lobbyWithPlayers)}
-                <br/>
                 {this.renderPlayersTable(this.state.lobbyWithPlayers)}
-                <br/>
-                {this.renderAddSelf(this.state.lobbyWithPlayers)}
-                {this.renderAddGuest(this.state.lobbyWithPlayers)}
             </div>
         );
     }

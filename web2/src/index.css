@@ -115,23 +115,22 @@ td {
 }
 
 .lobbyPlayersTable {
-    width: 400px;
+    width: 500px;
     margin: 0 auto;
-}
-
-.lobbyPlayersTableHeader {
-    width: 50%;
 }
 
 .centeredContainer {
     text-align: center;
 }
 
-.addGuestTableCell {
-    border: 0;
+.lightText {
+    color: #aaaaaa;
 }
 
-.addGuestContainer {
-    display: table;
-    margin: 0 auto;
+.lobbyPlayersTableTextCell {
+    padding: 10px;
+}
+
+.fullWidth {
+    width: 100%;
 }
