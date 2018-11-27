@@ -6,7 +6,6 @@ import ApiClient from '../../api/client';
 import { Redirect } from 'react-router';
 import LinkButton from '../linkButton';
 import ActionButton from '../actionButton';
-import LabeledInput from '../labeledInput';
 
 export interface LobbyPageProps {
     user : UserResponse,
@@ -140,23 +139,26 @@ export default class LobbyPage extends React.Component<LobbyPageProps, LobbyPage
 //---Event handlers---
 
     private addSelfOnClick() : void {
-        const request = new CreatePlayerRequest(
-            this.props.user.id,
-            null,
-            PlayerType.User);
+        const request : CreatePlayerRequest = {
+            userId: this.props.user.id,
+            name: null,
+            type: PlayerType.User
+        };
 
         this.props.api
             .addPlayer(this.props.lobbyId, request)
             .then(newPlayer => {
                 const oldLobby = this.state.lobbyWithPlayers;
-                const newLobby = new LobbyWithPlayersResponse(
-                    oldLobby.id,
-                    oldLobby.regionCount,
-                    oldLobby.description,
-                    oldLobby.allowGuests,
-                    oldLobby.isPublic,
-                    oldLobby.createdByUserId,
-                    oldLobby.players.concat(newPlayer));
+                const newLobby : LobbyWithPlayersResponse = {
+                    id: oldLobby.id,
+                    regionCount: oldLobby.regionCount,
+                    description: oldLobby.description,
+                    allowGuests: oldLobby.allowGuests,
+                    isPublic: oldLobby.isPublic,
+                    createdByUserId: oldLobby.createdByUserId,
+                    createdOn: oldLobby.createdOn,
+                    players: oldLobby.players.concat(newPlayer)
+                };
 
                 this.setState({
                     lobbyWithPlayers : newLobby
@@ -168,23 +170,26 @@ export default class LobbyPage extends React.Component<LobbyPageProps, LobbyPage
     }
 
     private addGuestOnClick() : void {
-        const request = new CreatePlayerRequest(
-            this.props.user.id,
-            this.state.guestName,
-            PlayerType.Guest);
+        const request : CreatePlayerRequest = {
+            userId: this.props.user.id,
+            name: this.state.guestName,
+            type: PlayerType.Guest
+        };
 
         this.props.api
             .addPlayer(this.props.lobbyId, request)
             .then(newPlayer => {
                 const oldLobby = this.state.lobbyWithPlayers;
-                const newLobby = new LobbyWithPlayersResponse(
-                    oldLobby.id,
-                    oldLobby.regionCount,
-                    oldLobby.description,
-                    oldLobby.allowGuests,
-                    oldLobby.isPublic,
-                    oldLobby.createdByUserId,
-                    oldLobby.players.concat(newPlayer));
+                const newLobby : LobbyWithPlayersResponse = {
+                    id: oldLobby.id,
+                    regionCount: oldLobby.regionCount,
+                    description: oldLobby.description,
+                    allowGuests: oldLobby.allowGuests,
+                    isPublic: oldLobby.isPublic,
+                    createdByUserId: oldLobby.createdByUserId,
+                    createdOn: oldLobby.createdOn,
+                    players: oldLobby.players.concat(newPlayer)
+                };
 
                 this.setState({
                     lobbyWithPlayers : newLobby,
@@ -216,14 +221,16 @@ export default class LobbyPage extends React.Component<LobbyPageProps, LobbyPage
                 }
                 //Otherwise, remove player and all guests
                 else {
-                    const newLobby = new LobbyWithPlayersResponse(
-                        oldLobby.id,
-                        oldLobby.regionCount,
-                        oldLobby.description,
-                        oldLobby.allowGuests,
-                        oldLobby.isPublic,
-                        oldLobby.createdByUserId,
-                        oldLobby.players.filter(p => p.userId !== removedPlayer.userId));
+                    const newLobby : LobbyWithPlayersResponse = {
+                        id: oldLobby.id,
+                        regionCount: oldLobby.regionCount,
+                        description: oldLobby.description,
+                        allowGuests: oldLobby.allowGuests,
+                        isPublic: oldLobby.isPublic,
+                        createdByUserId: oldLobby.createdByUserId,
+                        createdOn: oldLobby.createdOn,
+                        players: oldLobby.players.filter(p => p.userId !== removedPlayer.userId)
+                    };
 
                     this.setState({lobbyWithPlayers : newLobby});
                 }

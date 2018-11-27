@@ -59,11 +59,12 @@ export default class CreateLobbyPage extends React.Component<CreateLobbyPageProp
     }
 
     private submitOnClick() {
-        const request = new CreateLobbyRequest(
-            this.state.regionCount,
-            this.state.description,
-            this.state.allowGuests,
-            this.state.isPublic);
+        const request : CreateLobbyRequest = {
+            regionCount: this.state.regionCount,
+            description: this.state.description,
+            allowGuests: this.state.allowGuests,
+            isPublic: this.state.isPublic
+        };
 
         this.props.api
             .createLobby(request)

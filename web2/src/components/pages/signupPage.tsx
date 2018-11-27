@@ -45,9 +45,10 @@ export default class SignupPage extends React.Component<SignupPageProps, SignupP
     }
 
     private submitOnClick() {
-        const request = new CreateUserRequest(
-            this.state.username,
-            this.state.password);
+        const request : CreateUserRequest = {
+            name: this.state.username,
+            password: this.state.password
+        };
 
         this.props.api
             .createUser(request)
@@ -57,7 +58,10 @@ export default class SignupPage extends React.Component<SignupPageProps, SignupP
                     password: ""
                 });
 
-                const loginRequest = new LoginRequest(request.name, request.password);
+                const loginRequest : LoginRequest = {
+                    username: request.name,
+                    password: request.password
+                };
 
                 return this.props.api
                     .login(loginRequest);

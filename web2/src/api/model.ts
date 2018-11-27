@@ -1,43 +1,34 @@
-export class CreateUserRequest {
-    constructor(
-        public readonly name : string,
-        public readonly password : string
-    ){}
+export interface CreateUserRequest {
+    name : string,
+    password : string
 }
 
-export class UserResponse {
-    constructor(
-        public readonly id : number,
-        public readonly name : string,
-        public readonly isAdmin : boolean
-    ){}
+export interface UserResponse {
+    id : number,
+    name : string,
+    isAdmin : boolean
 }
 
-export class LoginRequest {
-    constructor(
-        public readonly username : string,
-        public readonly password : string
-    ){}
+export interface LoginRequest {
+    username : string,
+    password : string
 }
 
-export class CreateLobbyRequest {
-    constructor(
-        public readonly regionCount : number,
-        public readonly description: string,
-        public readonly allowGuests : boolean,
-        public readonly isPublic : boolean
-    ){}
+export interface CreateLobbyRequest {
+    regionCount : number,
+    description: string,
+    allowGuests : boolean,
+    isPublic : boolean
 }
 
-export class LobbyResponse {
-    constructor(
-        public readonly id : number,
-        public readonly regionCount : number,
-        public readonly description : string,
-        public readonly allowGuests : boolean,
-        public readonly isPublic : boolean,
-        public readonly createdByUserId : number
-    ){}
+export interface LobbyResponse {
+    id : number,
+    regionCount : number,
+    description : string,
+    allowGuests : boolean,
+    isPublic : boolean,
+    createdByUserId : number,
+    createdOn : Date
 }
 
 export enum PlayerType {
@@ -46,56 +37,45 @@ export enum PlayerType {
     Virtual = "Virtual"
 }
 
-export class CreatePlayerRequest {
-    constructor(
-        public readonly userId : number,
-        public readonly name : string,
-        public readonly type : PlayerType
-    ){}
+export interface CreatePlayerRequest {
+    userId : number,
+    name : string,
+    type : PlayerType
 }
 
-export class PlayerResponse {
-    constructor(
-        public readonly id : number,
-        public readonly userId : number,
-        public readonly name : string,
-        public readonly type : PlayerType
-    ){}
+export interface PlayerResponse {
+    id : number,
+    userId : number,
+    name : string,
+    type : PlayerType
 }
 
-export class LobbyWithPlayersResponse {
-    constructor(
-        public readonly id : number,
-        public readonly regionCount : number,
-        public readonly description : string,
-        public readonly allowGuests : boolean,
-        public readonly isPublic : boolean,
-        public readonly createdByUserId : number,
-        public readonly players : PlayerResponse[]
-    ){}
+export interface LobbyWithPlayersResponse {
+    id : number,
+    regionCount : number,
+    description : string,
+    allowGuests : boolean,
+    isPublic : boolean,
+    createdByUserId : number,
+    createdOn : Date,
+    players : PlayerResponse[]
 }
 
-export class LobbiesQueryRequest {
-    constructor(
-        public readonly descriptionContains : string,
-        public readonly createdByUserId : number,
-        public readonly playerUserId : number,
-        public readonly isPublic : boolean,
-        public readonly allowGuests : boolean
-    ){}
+export interface LobbiesQueryRequest {
+    descriptionContains : string,
+    createdByUserId : number,
+    playerUserId : number,
+    isPublic : boolean,
+    allowGuests : boolean
 }
 
-export class LocationResponse {
-    constructor(
-        public readonly region : number,
-        public readonly x : number,
-        public readonly y : number
-    ){}
+export interface LocationResponse {
+    region : number,
+    x : number,
+    y : number
 }
 
-export class CellResponse {
-    constructor(
-        public readonly id : number,
-        public readonly locations : LocationResponse[]
-    ){}
+export interface CellResponse {
+    id : number,
+    locations : LocationResponse[]
 }

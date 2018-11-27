@@ -45,9 +45,10 @@ export default class LoginPage extends React.Component<LoginPageProps, LoginPage
     }
 
     private submitOnClick() {
-        const request = new LoginRequest(
-            this.state.username,
-            this.state.password);
+        const request : LoginRequest = {
+            username: this.state.username,
+            password: this.state.password
+        };
 
         this.props.api
             .login(request)

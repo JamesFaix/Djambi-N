@@ -20,6 +20,7 @@ type LobbyResponseJsonModel =
         allowGuests : bool
         isPublic : bool
         createdByUserId : int
+        createdOn : DateTime
     }
 
 type LobbyWithPlayersResponseJsonModel =
@@ -31,6 +32,7 @@ type LobbyWithPlayersResponseJsonModel =
         isPublic : bool
         players : PlayerResponseJsonModel list
         createdByUserId : int
+        createdOn : DateTime
     }
 
 [<CLIMutable>]
