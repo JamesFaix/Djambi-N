@@ -134,4 +134,21 @@ export default class ApiClient {
         })
         .then(_ => result);
     }
+
+    async removePlayer(lobbyId : number, playerId : number) : Promise<void> {
+        return await $.ajax({
+            type : "DELETE",
+            url: Environment.apiAddress() + "/lobbies/" + lobbyId + "/players/" + playerId,
+            success: (data, status, xhr) => {
+                console.log("Remove player succeeded");
+            },
+            error : () => {
+                console.log("Remove player failed");
+            },
+            crossDomain : true,
+            xhrFields : {
+                withCredentials: true
+            }
+        })
+    }
 }

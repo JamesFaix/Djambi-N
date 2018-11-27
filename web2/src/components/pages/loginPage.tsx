@@ -75,7 +75,7 @@ export default class LoginPage extends React.Component<LoginPageProps, LoginPage
                 <br/>
                 <div className="centeredContainer">
                     <LinkButton to="/" label="Home"/>
-                    <LinkButton to="/login" label="Login"/>
+                    <LinkButton to="/signup" label="Sign up"/>
                 </div>
                 <br/>
                 <br/>

@@ -35,7 +35,8 @@ export class LobbyResponse {
         public readonly regionCount : number,
         public readonly description : string,
         public readonly allowGuests : boolean,
-        public readonly isPublic : boolean
+        public readonly isPublic : boolean,
+        public readonly createdByUserId : number
     ){}
 }
 
@@ -69,6 +70,7 @@ export class LobbyWithPlayersResponse {
         public readonly description : string,
         public readonly allowGuests : boolean,
         public readonly isPublic : boolean,
+        public readonly createdByUserId : number,
         public readonly players : PlayerResponse[]
     ){}
 }
