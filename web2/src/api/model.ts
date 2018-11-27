@@ -41,9 +41,9 @@ export class LobbyResponse {
 }
 
 export enum PlayerType {
-    User = "user",
-    Guest = "guest",
-    Virtual = "virtual"
+    User = "User",
+    Guest = "Guest",
+    Virtual = "Virtual"
 }
 
 export class CreatePlayerRequest {

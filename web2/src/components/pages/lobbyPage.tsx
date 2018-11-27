@@ -1,11 +1,12 @@
 import * as React from 'react';
 import '../../index.css';
 import PageTitle from '../pageTitle';
-import { UserResponse, LobbyWithPlayersResponse, PlayerResponse, PlayerType } from '../../api/model';
+import { UserResponse, LobbyWithPlayersResponse, PlayerResponse, PlayerType, CreatePlayerRequest } from '../../api/model';
 import ApiClient from '../../api/client';
 import { Redirect } from 'react-router';
 import LinkButton from '../linkButton';
 import ActionButton from '../actionButton';
+import LabeledInput from '../labeledInput';
 
 export interface LobbyPageProps {
     user : UserResponse,
@@ -15,7 +16,8 @@ export interface LobbyPageProps {
 }
 
 export interface LobbyPageState {
-    lobbyWithPlayers : LobbyWithPlayersResponse
+    lobbyWithPlayers : LobbyWithPlayersResponse,
+    guestName : string
 }
 
 interface LobbyPlayerViewModel {
@@ -30,7 +32,8 @@ export default class LobbyPage extends React.Component<LobbyPageProps, LobbyPage
     constructor(props : LobbyPageProps) {
         super(props);
         this.state = {
-            lobbyWithPlayers : null
+            lobbyWithPlayers : null,
+            guestName : ""
         };
     }
 
@@ -81,7 +84,48 @@ export default class LobbyPage extends React.Component<LobbyPageProps, LobbyPage
             });
     }
 
-    private removeOnClicked(playerId : number) : void {
+    private addGuestOnClick() : void {
+        const request = new CreatePlayerRequest(
+            this.props.user.id,
+            this.state.guestName,
+            PlayerType.Guest);
+
+        this.props.api
+            .addPlayer(this.props.lobbyId, request)
+            .then(newPlayer => {
+                const oldLobby = this.state.lobbyWithPlayers;
+                const newLobby = new LobbyWithPlayersResponse(
+                    oldLobby.id,
+                    oldLobby.regionCount,
+                    oldLobby.description,
+                    oldLobby.allowGuests,
+                    oldLobby.isPublic,
+                    oldLobby.createdByUserId,
+                    oldLobby.players.concat(newPlayer));
+
+                this.setState({
+                    lobbyWithPlayers : newLobby,
+                    guestName : ""
+                });
+            })
+            .catch(reason => {
+                alert("Add player failed because " + reason);
+            });
+    }
+
+    private addGuestOnChanged(event : React.ChangeEvent<HTMLInputElement>) : void {
+        const input = event.target;
+        switch (input.name) {
+            case "Guest name":
+                this.setState({ guestName: input.value });
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    private removeOnClick(playerId : number) : void {
         this.props.api
             .removePlayer(this.props.lobbyId, playerId)
             .then(_ => {
@@ -155,7 +199,7 @@ export default class LobbyPage extends React.Component<LobbyPageProps, LobbyPage
             return (
                 <ActionButton
                     label="Remove"
-                    onClick={() => this.removeOnClicked(player.id)}
+                    onClick={() => this.removeOnClick(player.id)}
                 />
                 );
         } else {
@@ -191,6 +235,46 @@ export default class LobbyPage extends React.Component<LobbyPageProps, LobbyPage
             </div>
         );
     }
+    private isSelfAPlayer(lobby : LobbyWithPlayersResponse) : boolean {
+        return lobby.players.find(p => p.userId === this.props.user.id) !== undefined;
+    }
+
+    private renderAddGuest(lobby : LobbyWithPlayersResponse) {
+        if (lobby === null) {
+            return "";
+        }
+
+        if (!lobby.allowGuests
+            || lobby.regionCount === lobby.players.length
+            || !this.isSelfAPlayer(lobby)) {
+            return "";
+        }
+
+        return (
+            <div className="centeredContainer addGuestContainer">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td className="addGuestTableCell">
+                                <LabeledInput
+                                    type="text"
+                                    value={this.state.guestName}
+                                    label="Guest name"
+                                    handleChange={e => this.addGuestOnChanged(e)}
+                                />
+                            </td>
+                            <td className="addGuestTableCell">
+                                <ActionButton
+                                    label="Add"
+                                    onClick={() => this.addGuestOnClick()}
+                                />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        );
+    }
 
     render() {
         //Go to home if not logged in
@@ -217,6 +301,8 @@ export default class LobbyPage extends React.Component<LobbyPageProps, LobbyPage
                 {this.renderLobbyDetails(this.state.lobbyWithPlayers)}
                 <br/>
                 {this.renderPlayersTable(this.state.lobbyWithPlayers)}
+                <br/>
+                {this.renderAddGuest(this.state.lobbyWithPlayers)}
             </div>
         );
     }

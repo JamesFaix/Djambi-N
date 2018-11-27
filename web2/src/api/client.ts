@@ -151,4 +151,27 @@ export default class ApiClient {
             }
         })
     }
+
+    async addPlayer(lobbyId : number, request : Model.CreatePlayerRequest) : Promise<Model.PlayerResponse> {
+        let result : Model.PlayerResponse;
+
+        return await $.ajax({
+            type : "POST",
+            url: Environment.apiAddress() + "/lobbies/" + lobbyId + "/players",
+            dataType : "json",
+            data: request,
+            success: (data, status, xhr) => {
+                console.log("Add player succeeded");
+                result = data;
+            },
+            error : () => {
+                console.log("Add player failed");
+            },
+            crossDomain : true,
+            xhrFields : {
+                withCredentials: true
+            }
+        })
+        .then(_ => result);
+    }
 }

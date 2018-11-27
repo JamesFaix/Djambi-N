@@ -126,3 +126,12 @@ td {
 .centeredContainer {
     text-align: center;
 }
+
+.addGuestTableCell {
+    border: 0;
+}
+
+.addGuestContainer {
+    display: table;
+    margin: 0 auto;
+}

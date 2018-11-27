@@ -5,13 +5,14 @@ open Djambi.Api.Logic.Services
 open Djambi.Api.Web.HttpUtility
 open Djambi.Api.Web.Mappings.PlayerWebMapping
 open Djambi.Api.Web.Model.PlayerWebModel
- 
+
 let addPlayerToLobby(lobbyId : int) =
     let func ctx =
         getSessionAndModelFromContext<CreatePlayerJsonModel> ctx
-        |> thenBindAsync (fun (requestJsonModel, session) -> 
+        |> thenBindAsync (fun (requestJsonModel, session) ->
             let request = mapCreatePlayerRequest(requestJsonModel, lobbyId)
             PlayerService.addPlayerToLobby request session
+            |> thenMap mapPlayerResponse
         )
     handle func
 
