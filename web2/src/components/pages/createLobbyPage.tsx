@@ -107,7 +107,7 @@ export default class CreateLobbyPage extends React.Component<CreateLobbyPageProp
                 <br/>
                 <div className="form">
                     <LabeledInput
-                        label="Region count"
+                        label="Regions"
                         type="number"
                         value={this.state.regionCount.toString()}
                         handleChange={e => this.formOnChange(e)}

@@ -135,6 +135,29 @@ export default class ApiClient {
         .then(_ => result);
     }
 
+    async getLobbies(query : Model.LobbiesQueryRequest) : Promise<Model.LobbyResponse[]> {
+        let result : Model.LobbyResponse[];
+
+        return await $.ajax({
+            type : "POST",
+            url: Environment.apiAddress() + "/lobbies/query",
+            data: query,
+            dataType : "json",
+            success: (data, status, xhr) => {
+                console.log("Get lobbies succeeded");
+                result = data;
+            },
+            error : () => {
+                console.log("Get lobbies failed");
+            },
+            crossDomain : true,
+            xhrFields : {
+                withCredentials: true
+            }
+        })
+        .then(_ => result);
+    }
+
     async removePlayer(lobbyId : number, playerId : number) : Promise<void> {
         return await $.ajax({
             type : "DELETE",

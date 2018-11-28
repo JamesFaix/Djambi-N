@@ -372,7 +372,7 @@ export default class LobbyPage extends React.Component<LobbyPageProps, LobbyPage
 
         return (
             <div>
-                <table className="lobbyPlayersTable">
+                <table className="table">
                     <tbody>
                         <tr>
                             <td className="centeredContainer">
@@ -381,7 +381,7 @@ export default class LobbyPage extends React.Component<LobbyPageProps, LobbyPage
                         </tr>
                     </tbody>
                 </table>
-                <table className="lobbyPlayersTable">
+                <table className="table">
                     <tbody>
                         {seats.map((seat, i) => this.renderPlayerRow(seat, i))}
                     </tbody>
