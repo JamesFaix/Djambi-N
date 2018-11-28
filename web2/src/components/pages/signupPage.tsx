@@ -7,6 +7,7 @@ import LabeledInput from '../labeledInput';
 import { Redirect } from 'react-router';
 import LinkButton from '../linkButton';
 import ActionButton from '../actionButton';
+import { InputTypes } from '../../constants';
 
 export interface SignupPageProps {
     api : ApiClient,
@@ -93,16 +94,16 @@ export default class SignupPage extends React.Component<SignupPageProps, SignupP
                 <div className="form">
                     <LabeledInput
                         label="Username"
-                        type="text"
+                        type={InputTypes.Text}
                         value={this.state.username}
-                        handleChange={e => this.formOnChange(e)}
+                        onChange={e => this.formOnChange(e)}
                     />
                     <br/>
                     <LabeledInput
                         label="Password"
-                        type="password"
+                        type={InputTypes.Password}
                         value={this.state.password}
-                        handleChange={e => this.formOnChange(e)}
+                        onChange={e => this.formOnChange(e)}
                     />
                     <br/>
                 </div>

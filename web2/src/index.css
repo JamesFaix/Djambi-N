@@ -134,3 +134,11 @@ td {
 .fullWidth {
     width: 100%;
 }
+
+.borderless {
+    border: 0;
+}
+
+.rightAligned {
+    text-align: right;
+}

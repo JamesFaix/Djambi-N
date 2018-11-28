@@ -1,11 +1,12 @@
 import * as React from 'react';
 import '../index.css';
+import { InputTypes } from '../constants';
 
 export interface LabeledInputProps {
-    type : string,
+    type : InputTypes,
     label : string,
     value? : string,
-    handleChange(e : React.ChangeEvent<HTMLInputElement>) : void
+    onChange(e : React.ChangeEvent<HTMLInputElement>) : void
     min? : number,
     max? : number,
     tip? : string,
@@ -15,8 +16,6 @@ export interface LabeledInputProps {
 
 export default class LabeledInput extends React.Component<LabeledInputProps> {
     render() {
-        const type = this.props.type ? this.props.type : "text";
-
         return (
             <div
                 className="labeledTextBox"
@@ -25,9 +24,9 @@ export default class LabeledInput extends React.Component<LabeledInputProps> {
                 <label>{this.props.label}:</label>
                 <input
                     name={this.props.label}
-                    type={type}
+                    type={this.props.type}
                     value={this.props.value}
-                    onChange={this.props.handleChange}
+                    onChange={this.props.onChange}
                     min={this.props.min}
                     max={this.props.max}
                     checked={this.props.checked}

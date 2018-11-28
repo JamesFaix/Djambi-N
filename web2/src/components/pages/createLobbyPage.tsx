@@ -7,7 +7,7 @@ import { Redirect } from 'react-router';
 import LinkButton from '../linkButton';
 import LabeledInput from '../labeledInput';
 import ActionButton from '../actionButton';
-import Constants from '../../constants';
+import Constants, { InputTypes } from '../../constants';
 
 export interface CreateLobbyPageProps {
     user : UserResponse,
@@ -108,9 +108,9 @@ export default class CreateLobbyPage extends React.Component<CreateLobbyPageProp
                 <div className="form">
                     <LabeledInput
                         label="Regions"
-                        type="number"
+                        type={InputTypes.Number}
                         value={this.state.regionCount.toString()}
-                        handleChange={e => this.formOnChange(e)}
+                        onChange={e => this.formOnChange(e)}
                         min={Constants.minRegionCount}
                         max={Constants.maxRegionCount}
                         tip="Number of sides on the board, and max number of players."
@@ -118,26 +118,26 @@ export default class CreateLobbyPage extends React.Component<CreateLobbyPageProp
                     <br/>
                     <LabeledInput
                         label="Description"
-                        type="text"
+                        type={InputTypes.Text}
                         placeholder="(Optional)"
                         value={this.state.description}
-                        handleChange={e => this.formOnChange(e)}
+                        onChange={e => this.formOnChange(e)}
                         tip="A helpful note to idenity this game."
                     />
                     <br/>
                     <LabeledInput
                         label="Allow guests"
-                        type="checkbox"
+                        type={InputTypes.Checkbox}
                         checked={this.state.allowGuests}
-                        handleChange={e => this.formOnChange(e)}
+                        onChange={e => this.formOnChange(e)}
                         tip="If checked, multiple players can share the same computer."
                     />
                     <br/>
                     <LabeledInput
                         label="Public"
-                        type="checkbox"
+                        type={InputTypes.Checkbox}
                         checked={this.state.isPublic}
-                        handleChange={e => this.formOnChange(e)}
+                        onChange={e => this.formOnChange(e)}
                         tip="If checked, any user can join the game."
                     />
                     <br/>
