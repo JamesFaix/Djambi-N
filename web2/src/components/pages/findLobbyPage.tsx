@@ -5,12 +5,12 @@ import { UserResponse, LobbyResponse, LobbiesQueryRequest } from '../../api/mode
 import ApiClient from '../../api/client';
 import { Redirect } from 'react-router';
 import LinkButton from '../linkButton';
-import * as moment from 'moment';
 import LabeledInput from '../labeledInput';
 import { InputTypes } from '../../constants';
 import LabeledTristateDropdown from '../labeledTristateDropdown';
 import ActionButton from '../actionButton';
 import Util from '../../util';
+import LobbiesTable from '../lobbiesTable';
 
 export interface FindLobbyPageProps {
     user : UserResponse,
@@ -76,41 +76,6 @@ export default class FindLobbyPage extends React.Component<FindLobbyPageProps, F
     }
 
 //---Rendering---
-
-    renderLobbyRow(lobby : LobbyResponse, rowNumber : number) {
-        return (
-            <tr key={"row" + rowNumber}>
-                <td>
-                    <LinkButton
-                        label="Go"
-                        to={"/lobby/" + lobby.id}
-                    />
-                </td>
-                <td>
-                    {moment(lobby.createdOn).format('MM/DD/YY hh:mm a')}
-                </td>
-                <td>{lobby.createdByUserId}</td>
-                <td className="centeredContainer">
-                    {lobby.regionCount}
-                </td>
-                <td className="centeredContainer">
-                    <input
-                        type="checkbox"
-                        checked={lobby.isPublic}
-                        disabled={true}
-                    />
-                </td>
-                <td className="centeredContainer">
-                    <input
-                        type="checkbox"
-                        checked={lobby.allowGuests}
-                        disabled={true}
-                    />
-                </td>
-                <td>{lobby.description}</td>
-            </tr>
-        );
-    }
 
     renderQueryFilters() {
         return (
@@ -183,27 +148,6 @@ export default class FindLobbyPage extends React.Component<FindLobbyPageProps, F
         );
     }
 
-    renderLobbiesTable() {
-        return (
-            <div>
-                <table className="table">
-                    <tbody>
-                        <tr>
-                            <th></th>
-                            <th>Created on</th>
-                            <th>Created by</th>
-                            <th>Regions</th>
-                            <th>Public</th>
-                            <th>Guests allowed</th>
-                            <th>Description</th>
-                        </tr>
-                        {this.state.lobbies.map((lobby, i) => this.renderLobbyRow(lobby, i))}
-                    </tbody>
-                </table>
-            </div>
-        );
-    }
-
     render() {
         //Go to home if not logged in
         if (this.props.user === null) {
@@ -222,7 +166,9 @@ export default class FindLobbyPage extends React.Component<FindLobbyPageProps, F
                 <br/>
                 {this.renderQueryFilters()}
                 <br/>
-                {this.renderLobbiesTable()}
+                <LobbiesTable
+                    lobbies={this.state.lobbies}
+                />
             </div>
         );
     }
