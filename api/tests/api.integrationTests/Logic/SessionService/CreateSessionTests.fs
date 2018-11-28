@@ -5,6 +5,7 @@ open Xunit
 open Djambi.Api.Common
 open Djambi.Api.IntegrationTests
 open Djambi.Api.Logic.Services
+open Djambi.Api.Common.AsyncHttpResult;
 
 type CreateSessionTests() =
     inherit TestsBase()
@@ -15,13 +16,13 @@ type CreateSessionTests() =
             //Arrange
             let userRequest = getCreateUserRequest()
             let! user = UserService.createUser userRequest None
-                        |> AsyncHttpResult.thenValue
+                        |> thenValue
 
             let request = getLoginRequest userRequest
 
             //Act
             let! session = SessionService.openSession request
-                           |> AsyncHttpResult.thenValue
+                           |> thenValue
 
             //Assert
             session.userId |> shouldBe user.id
@@ -30,23 +31,23 @@ type CreateSessionTests() =
         }
 
     [<Fact>]
-    let ``Create session should fail if user already has session``() =
+    let ``Create session should replace existing session if user already has session``() =
         task {
             //Arrange
             let userRequest = getCreateUserRequest()
             let! user = UserService.createUser userRequest None
-                        |> AsyncHttpResult.thenValue
+                        |> thenValue
 
             let request = getLoginRequest userRequest
 
-            let! _ = SessionService.openSession request
-                           |> AsyncHttpResult.thenValue
+            let! oldSession = SessionService.openSession request
+                              |> thenValue
 
             //Act
-            let! error = SessionService.openSession request
+            let! newSession = SessionService.openSession request |> thenValue
 
             //Assert
-            error |> shouldBeError 409 "Already signed in."
+            newSession.token |> shouldNotBe oldSession.token
         }
 
     [<Fact>]
@@ -55,7 +56,7 @@ type CreateSessionTests() =
             //Arrange
             let userRequest = getCreateUserRequest()
             let! _ = UserService.createUser userRequest None
-                        |> AsyncHttpResult.thenValue
+                        |> thenValue
 
             let request = { getLoginRequest userRequest with password = "wrong" }
 
@@ -72,7 +73,7 @@ type CreateSessionTests() =
              //Arrange
             let userRequest = getCreateUserRequest()
             let! _ = UserService.createUser userRequest None
-                        |> AsyncHttpResult.thenValue
+                        |> thenValue
 
             let request = { getLoginRequest userRequest with password = "wrong" }
 

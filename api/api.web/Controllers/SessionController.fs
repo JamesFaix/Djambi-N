@@ -17,7 +17,7 @@ let appendCookie (ctx : HttpContext) (sessionToken : string, expiration : DateTi
     cookieOptions.Domain <- "localhost" //TODO: Move this to a config file
     cookieOptions.Path <- "/"
     cookieOptions.Secure <- false
-    //cookieOptions.HttpOnly <- true
+    cookieOptions.HttpOnly <- true
     cookieOptions.Expires <-  DateTimeOffset(expiration) |> toNullable
     ctx.Response.Cookies.Append(cookieName, sessionToken, cookieOptions);
 
