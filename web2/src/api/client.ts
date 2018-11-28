@@ -197,4 +197,26 @@ export default class ApiClient {
         })
         .then(_ => result);
     }
+
+    async startGame(lobbyId : number) : Promise<Model.GameStartResponse> {
+        let result : Model.GameStartResponse;
+
+        return await $.ajax({
+            type : "POST",
+            url: Environment.apiAddress() + "/lobbies/" + lobbyId + "/start-request",
+            dataType : "json",
+            success: (data, status, xhr) => {
+                console.log("Start game succeeded");
+                result = data;
+            },
+            error : () => {
+                console.log("Start game failed");
+            },
+            crossDomain : true,
+            xhrFields : {
+                withCredentials: true
+            }
+        })
+        .then(_ => result);
+    }
 }

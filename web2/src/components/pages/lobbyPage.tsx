@@ -240,6 +240,17 @@ export default class LobbyPage extends React.Component<LobbyPageProps, LobbyPage
             });
     }
 
+    private startOnClick() {
+        this.props.api
+            .startGame(this.state.lobbyWithPlayers.id)
+            .then(gameStart => {
+                alert("Game started");
+            })
+            .catch(reason => {
+                alert("Game start failed because " + reason);
+            });
+    }
+
 //---Rendering---
 
     private renderLobbyDetails(lobby : LobbyWithPlayersResponse) {
@@ -390,6 +401,31 @@ export default class LobbyPage extends React.Component<LobbyPageProps, LobbyPage
         );
     }
 
+    private renderStartButton(lobby: LobbyWithPlayersResponse){
+        if (lobby === null) {
+            return "";
+        }
+
+        //Only creator can start
+        if (this.props.user.id !== lobby.createdByUserId) {
+            return "";
+        }
+
+        //Can only start with at least 2 players
+        if (lobby.players.length < 2){
+            return "";
+        }
+
+        return (
+            <div className="centeredContainer">
+                <ActionButton
+                    label="Start"
+                    onClick={() => this.startOnClick()}
+                />
+            </div>
+        );
+    }
+
     render() {
         //Go to home if not logged in
         if (this.props.user === null) {
@@ -414,6 +450,8 @@ export default class LobbyPage extends React.Component<LobbyPageProps, LobbyPage
                 </div>
                 {this.renderLobbyDetails(this.state.lobbyWithPlayers)}
                 {this.renderPlayersTable(this.state.lobbyWithPlayers)}
+                <br/>
+                {this.renderStartButton(this.state.lobbyWithPlayers)}
             </div>
         );
     }
