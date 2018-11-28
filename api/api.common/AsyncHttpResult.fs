@@ -100,6 +100,20 @@ module AsyncHttpResult =
             | _ -> return result
         }
 
+    let thenBindErrorAsync
+        (statusCode : int)
+        (projection : HttpException -> 'a AsyncHttpResult)
+        (t : 'a AsyncHttpResult)
+        : 'a AsyncHttpResult =
+
+        task {
+            let! result = t
+            match result with
+            | Error ex when ex.statusCode = statusCode ->
+                return! projection ex
+            | _ -> return result
+        }
+
     let thenValue (t : 'a AsyncHttpResult) : 'a Task =
         t |> map Result.value
 

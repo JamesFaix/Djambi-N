@@ -12,8 +12,8 @@ let inline GetValues<'a>() : 'a list =
 
 let memoize fn =
     let cache = new Dictionary<_,_>()
-    (fun input -> 
-        match cache.TryGetValue input with  
+    (fun input ->
+        match cache.TryGetValue input with
         | true, output -> output
         | false, _ -> let output = fn(input)
                       cache.Add(input, output)
@@ -30,9 +30,9 @@ let shuffle<'a> (xs : 'a seq) : 'a seq =
         list.[n] <- value
     list :> 'a seq
 
-let nullableToOption<'a when 'a : struct 
-                and 'a :> ValueType 
-                and 'a : (new: Unit -> 'a)> 
+let nullableToOption<'a when 'a : struct
+                and 'a :> ValueType
+                and 'a : (new: Unit -> 'a)>
                 (x : 'a Nullable) : 'a option =
     match x with
     | some when some.HasValue -> Some some.Value
@@ -43,9 +43,15 @@ let referenceToOption<'a when 'a : null> (x : 'a) : 'a option =
     | null -> None
     | _ as value -> Some value
 
-let optionToNullable<'a when 'a : struct 
-                and 'a :> ValueType 
-                and 'a : (new: Unit -> 'a)> 
+let stringToOption (str : string) : string option =
+    match str with
+    | null
+    | "" -> None
+    | _ as value -> Some value;
+
+let optionToNullable<'a when 'a : struct
+                and 'a :> ValueType
+                and 'a : (new: Unit -> 'a)>
                 (x : 'a option) : 'a Nullable =
     match x with
     | Some value -> new Nullable<'a>(value)

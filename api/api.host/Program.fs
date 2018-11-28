@@ -36,8 +36,9 @@ let configureCors (builder : CorsPolicyBuilder) =
     builder.WithOrigins(config.["webAddress"])
            .AllowAnyMethod()
            .AllowAnyHeader()
+           .AllowCredentials()
            |> ignore
-           
+
 let configureApp (app : IApplicationBuilder) =
 //    let env = app.ApplicationServices.GetService<IHostingEnvironment>()
 
@@ -63,9 +64,9 @@ let main _ =
         .UseUrls(config.["apiAddress"])
         .UseKestrel()
         .UseIISIntegration()
-        .Configure(Action<IApplicationBuilder> configureApp)
         .ConfigureServices(configureServices)
-        .ConfigureLogging(configureLogging)        
+        .Configure(Action<IApplicationBuilder> configureApp)
+        .ConfigureLogging(configureLogging)
         .Build()
         .Run()
     0

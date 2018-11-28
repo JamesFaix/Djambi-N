@@ -46,18 +46,21 @@ let addPlayerToLobby (request : CreatePlayerRequest) (session : Session) : Playe
 
 let removePlayerFromLobby (lobbyId : int, playerId : int) (session : Session) : Unit AsyncHttpResult =
     LobbyRepository.getLobby lobbyId //Will error if game already started
-    |> thenBindAsync (fun _ -> PlayerRepository.getPlayersForLobby lobbyId)
-    |> thenBind (fun players ->
-        match players |> List.tryFind (fun p -> p.id = playerId) with
-        | None -> Error <| HttpException(404, "Player not found.")
-        | Some p ->
-            if session.isAdmin
-            then Ok ()
-            else
+    |> thenBindAsync (fun lobby ->
+        PlayerRepository.getPlayersForLobby lobbyId
+        |> thenBind (fun players ->
+            match players |> List.tryFind (fun p -> p.id = playerId) with
+            | None -> Error <| HttpException(404, "Player not found.")
+            | Some p ->
                 match p.userId with
-                | Some x when x = session.userId -> Ok ()
                 | None -> Error <| HttpException(400, "Cannot remove virtual players from lobby.")
-                | _ -> Error <| HttpException(403, "Cannot remove other users from lobby.")
+                | Some x ->
+                    if session.isAdmin
+                        || lobby.createdByUserId = session.userId
+                        || x = session.userId
+                    then Ok ()
+                    else Error <| HttpException(403, "Cannot remove other users from lobby.")
+        )
     )
     |> thenBindAsync (fun _ -> PlayerRepository.removePlayerFromLobby playerId)
 

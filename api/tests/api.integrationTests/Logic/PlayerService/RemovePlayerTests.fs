@@ -92,7 +92,7 @@ type RemovePlayerTests() =
                           |> AsyncHttpResult.thenValue
 
             //Act
-            let! result = PlayerService.removePlayerFromLobby (lobby.id, player.id) { session with isAdmin = true }
+            let! result = PlayerService.removePlayerFromLobby (lobby.id, player.id) { session with isAdmin = true; userId = Int32.MinValue }
 
             //Assert
             result |> Result.isOk |> shouldBeTrue
@@ -213,7 +213,7 @@ type RemovePlayerTests() =
         }
 
     [<Fact>]
-    let ``Remove player should fail if removing different user and not admin``() =
+    let ``Remove player should work if creator and removing different user``() =
         task {
             //Arrange
             let! (_, session, lobby) = createUserSessionAndLobby(false) |> AsyncHttpResult.thenValue
@@ -232,7 +232,38 @@ type RemovePlayerTests() =
                           |> AsyncHttpResult.thenValue
 
             //Act
-            let! error = PlayerService.removePlayerFromLobby (lobby.id, player.id) { session with isAdmin = false }
+            let! result = PlayerService.removePlayerFromLobby (lobby.id, player.id) { session with isAdmin = false }
+
+            //Assert
+            result |> Result.isOk |> shouldBeTrue
+
+            let! players = PlayerService.getLobbyPlayers lobby.id session
+                           |> AsyncHttpResult.thenValue
+
+            players |> shouldNotExist (fun p -> p.id = player.id)
+        }
+
+    [<Fact>]
+    let ``Remove player should fail if removing different user and not admin or creator``() =
+        task {
+            //Arrange
+            let! (_, session, lobby) = createUserSessionAndLobby(false) |> AsyncHttpResult.thenValue
+
+            let! user = createUser() |> AsyncHttpResult.thenValue
+
+            let request : CreatePlayerRequest =
+                {
+                    lobbyId = lobby.id
+                    userId = Some user.id
+                    name = None
+                    playerType = PlayerType.User
+                }
+
+            let! player = PlayerService.addPlayerToLobby request { session with isAdmin = true }
+                          |> AsyncHttpResult.thenValue
+
+            //Act
+            let! error = PlayerService.removePlayerFromLobby (lobby.id, player.id) { session with isAdmin = false; userId = Int32.MinValue }
 
             //Assert
             error |> shouldBeError 403 "Cannot remove other users from lobby."
@@ -244,7 +275,7 @@ type RemovePlayerTests() =
         }
 
     [<Fact>]
-    let ``Remove player should fail if removing guest of different user and not admin``() =
+    let ``Remove player should fail if removing guest of different user and not admin or creator``() =
         task {
             //Arrange
             let! (_, session, lobby) = createUserSessionAndLobby(true) |> AsyncHttpResult.thenValue
@@ -263,7 +294,7 @@ type RemovePlayerTests() =
                           |> AsyncHttpResult.thenValue
 
             //Act
-            let! error = PlayerService.removePlayerFromLobby (lobby.id, player.id) { session with isAdmin = false }
+            let! error = PlayerService.removePlayerFromLobby (lobby.id, player.id) { session with isAdmin = false; userId = Int32.MinValue }
 
             //Assert
             error |> shouldBeError 403 "Cannot remove other users from lobby."

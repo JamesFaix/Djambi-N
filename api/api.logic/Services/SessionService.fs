@@ -37,23 +37,24 @@ module SessionService =
                 UserRepository.updateFailedLoginAttempts(user.id, failedLoginAttempts, Some DateTime.UtcNow)
                 |> thenBind (fun _ -> Error <| HttpException(401, "Incorrect password."))
 
-        let errorIfLoggedIn (user : User) =
-            SessionRepository.getSession(None, None, Some user.id)
-            |> thenBind (fun _ -> Error <| HttpException(409, "Already signed in."))
-            |> thenBindError 404 (fun _ -> Ok user)
-
         UserRepository.getUserByName request.username
         |> thenBind errorIfLocked
         |> thenBindAsync errorIfInvalidPassword
-        |> thenBindAsync errorIfLoggedIn
         |> thenBindAsync (fun user ->
-            let sessionRequest =
-                {
-                    userId = user.id
-                    token = Guid.NewGuid().ToString()
-                    expiresOn = DateTime.UtcNow.Add(sessionTimeout)
-                }
-            SessionRepository.createSession sessionRequest
+            //If a session already exists for this user, delete it
+            SessionRepository.getSession(None, None, Some user.id)
+            |> thenBindAsync(fun session -> SessionRepository.deleteSession (Some session.id, None))
+            |> thenBindError 404 (fun _ -> Ok ()) //If no session thats fine
+            //Create a new session
+            |> thenBindAsync(fun _ ->
+                let sessionRequest =
+                    {
+                        userId = user.id
+                        token = Guid.NewGuid().ToString()
+                        expiresOn = DateTime.UtcNow.Add(sessionTimeout)
+                    }
+                SessionRepository.createSession sessionRequest
+            )
             |> thenDoAsync (fun _ -> UserRepository.updateFailedLoginAttempts(user.id, 0, None))
         )
 

@@ -37,3 +37,12 @@ let getUsers : HttpFunc -> HttpContext -> HttpContext option Task =
         |> thenBindAsync UserService.getUsers
         |> thenMap (Seq.map mapUserResponse)
     handle func
+
+let getCurrentUser : HttpFunc -> HttpContext -> HttpContext option Task =
+    let func ctx =
+        getSessionFromContext ctx
+        |> thenBindAsync (fun session ->
+            UserService.getUser session.userId session
+        )
+        |> thenMap mapUserResponse
+    handle func

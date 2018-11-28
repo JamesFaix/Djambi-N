@@ -32,3 +32,17 @@ let getLobbies (query : LobbiesQuery) (session : Session) : Lobby list AsyncHttp
         then lobbies
         else lobbies |> List.filter isViewableByActiveUser
     )
+
+let getLobby (lobbyId : int) (session : Session) : LobbyWithPlayers AsyncHttpResult =
+    LobbyRepository.getLobby lobbyId
+    |> thenBindAsync (fun lobby ->
+        PlayerRepository.getPlayersForLobby lobbyId
+        |> thenBind (fun players ->
+            if (lobby.isPublic
+                || lobby.createdByUserId = session.userId
+                || players |> List.exists(fun p -> p.userId.IsSome
+                                                && p.userId.Value = session.userId))
+            then Ok <| lobby.addPlayers players
+            else Error <| HttpException(404, "Lobby not found.")
+        )
+    )

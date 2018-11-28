@@ -1,7 +1,7 @@
 ﻿module Djambi.Api.Web.Model.PlayerWebModel
 
 open System
-       
+
 type PlayerResponseJsonModel =
     {
         id : int

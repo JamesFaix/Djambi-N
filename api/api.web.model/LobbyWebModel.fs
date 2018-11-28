@@ -6,7 +6,7 @@ open Djambi.Api.Web.Model.PlayerWebModel
 [<CLIMutable>]
 type CreateLobbyJsonModel =
     {
-        regionCount : int    
+        regionCount : int
         description : string
         allowGuests : bool
         isPublic : bool
@@ -16,19 +16,23 @@ type LobbyResponseJsonModel =
     {
         id : int
         regionCount : int
-        description : string        
+        description : string
         allowGuests : bool
         isPublic : bool
+        createdByUserId : int
+        createdOn : DateTime
     }
 
-type LobbyWithPlayersResponseJsonModel = 
+type LobbyWithPlayersResponseJsonModel =
     {
         id : int
         regionCount : int
-        description : string        
+        description : string
         allowGuests : bool
         isPublic : bool
         players : PlayerResponseJsonModel list
+        createdByUserId : int
+        createdOn : DateTime
     }
 
 [<CLIMutable>]
@@ -42,7 +46,7 @@ type LobbiesQueryJsonModel =
     }
 
 module LobbiesQueryJsonModel =
-    let empty = 
+    let empty =
         {
             descriptionContains = Unchecked.defaultof<string>
             createdByUserId = Unchecked.defaultof<int Nullable>
