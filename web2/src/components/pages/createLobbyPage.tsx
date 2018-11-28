@@ -11,16 +11,15 @@ import Constants, { InputTypes } from '../../constants';
 
 export interface CreateLobbyPageProps {
     user : UserResponse,
-    api : ApiClient,
-    lobbyId : number,
-    setLobbyId(lobbyId : number) : void
+    api : ApiClient
 }
 
 export interface CreateLobbyPageState {
     regionCount : number,
     description : string,
     allowGuests : boolean,
-    isPublic : boolean
+    isPublic : boolean,
+    lobbyId : number
 }
 
 export default class CreateLobbyPage extends React.Component<CreateLobbyPageProps, CreateLobbyPageState> {
@@ -30,7 +29,8 @@ export default class CreateLobbyPage extends React.Component<CreateLobbyPageProp
             regionCount : 3,
             description : "",
             allowGuests : true,
-            isPublic : true
+            isPublic : true,
+            lobbyId : null
         }
     }
 
@@ -76,7 +76,7 @@ export default class CreateLobbyPage extends React.Component<CreateLobbyPageProp
                     isPublic : true
                 });
 
-                this.props.setLobbyId(lobby.id);
+                this.setState({lobbyId : lobby.id});
             })
             .catch(reason => {
                 alert("Create lobby failed because " + reason);
@@ -86,12 +86,12 @@ export default class CreateLobbyPage extends React.Component<CreateLobbyPageProp
     render() {
         //Go to home if not logged in
         if (this.props.user === null) {
-            return <Redirect to='/'/>
+            return <Redirect to='/'/>;
         }
 
         //If lobby created, redirect to that lobby
-        if (this.props.lobbyId !== null) {
-            return <Redirect to={'/lobby/' + this.props.lobbyId}/>
+        if (this.state.lobbyId !== null) {
+            return <Redirect to={'/lobby/' + this.state.lobbyId}/>;
         }
 
         return (

@@ -21,7 +21,6 @@ export interface AppProps {
 
 export interface AppState {
     user : UserResponse,
-    lobbyId : number,
     api : ApiClient
 }
 
@@ -30,7 +29,6 @@ export default class App extends React.Component<AppProps, AppState> {
         super(props);
         this.state = {
             user : null,
-            lobbyId : null,
             api : new ApiClient()
         };
     }
@@ -80,7 +78,6 @@ export default class App extends React.Component<AppProps, AppState> {
                                 user={this.state.user}
                                 api={this.state.api}
                                 setUser={user => this.setState({user : user})}
-                                setLobbyId={lobbyId => this.setState({lobbyId : lobbyId})}
                                 rulesUrl={this.rulesUrl}
                             />
                         }
@@ -100,8 +97,6 @@ export default class App extends React.Component<AppProps, AppState> {
                             <CreateLobbyPage
                                 user={this.state.user}
                                 api={this.state.api}
-                                lobbyId={this.state.lobbyId}
-                                setLobbyId={lobbyId => this.setState({lobbyId : lobbyId})}
                             />
                         }
                     />
@@ -121,7 +116,6 @@ export default class App extends React.Component<AppProps, AppState> {
                                 user={this.state.user}
                                 api={this.state.api}
                                 lobbyId={props.match.params.lobbyId}
-                                setLobbyId={lobbyId => this.setState({lobbyId : lobbyId})}
                             />
                         }
                     />
