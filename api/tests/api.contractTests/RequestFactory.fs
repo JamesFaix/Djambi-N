@@ -21,7 +21,7 @@ let loginRequest (createUserRequest : CreateUserJsonModel) : LoginRequestJsonMod
 let createLobbyRequest () : CreateLobbyJsonModel =
     {
         regionCount = 3
-        description = "test"
+        description = Some "test"
         isPublic = false
         allowGuests = false
     }

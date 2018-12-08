@@ -1,8 +1,6 @@
 ﻿[<AutoOpen>]
 module Djambi.Api.Web.Mappings.GameWebMapping
 
-open System
-open Djambi.Api.Common.Utilities
 open Djambi.Api.Model
 open Djambi.Api.Web.Model
 
@@ -15,8 +13,8 @@ let mapPlayerStateToJson(player : PlayerState) : PlayerStateJsonModel =
 let mapPieceToJson(piece : Piece) : PieceJsonModel =
     {
         id = piece.id
-        ``type`` = piece.pieceType.ToString()
-        playerId = piece.playerId |> optionToNullable
+        ``type`` = piece.pieceType
+        playerId = piece.playerId
         originalPlayerId = piece.originalPlayerId
         cellId = piece.cellId
     }
@@ -33,22 +31,22 @@ let mapPlayerStartConditionsToJson(conditions : PlayerStartConditions) : PlayerS
         playerId = conditions.playerId
         color = conditions.color
         region = conditions.region
-        turnNumber = conditions.turnNumber |> optionToNullable
+        turnNumber = conditions.turnNumber
     }
 
 let mapSelectionToJsonModel(selection : Selection) : SelectionJsonModel =
     {
-        ``type`` = selection.selectionType.ToString()
-        pieceId = if selection.pieceId.IsNone then new Nullable<int>() else new Nullable<int>(selection.pieceId.Value)
+        ``type`` = selection.selectionType
+        pieceId = selection.pieceId
         cellId = selection.cellId
     }
 
 let mapTurnStateToJsonModel(turnState : TurnState) : TurnStateJsonModel =
     {
-        status = turnState.status.ToString()
+        status = turnState.status
         selections = turnState.selections |> List.map mapSelectionToJsonModel
         selectionOptions = turnState.selectionOptions
-        requiredSelectionType = if turnState.requiredSelectionType.IsNone then null else turnState.requiredSelectionType.Value.ToString()
+        requiredSelectionType = turnState.requiredSelectionType
     }
 
 let mapGameStartResponseToJson(response : StartGameResponse) : GameStartResponseJsonModel =
