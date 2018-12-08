@@ -3,11 +3,9 @@
 open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Logic.Services
-open Djambi.Api.Web.Mappings.LobbyWebMapping
-open Djambi.Api.Web.Mappings.GameWebMapping
-open Djambi.Api.Web.Model.LobbyWebModel
-open Djambi.Api.Model.SessionModel
-open Djambi.Api.Web.Model.GameWebModel
+open Djambi.Api.Web.Mappings
+open Djambi.Api.Web.Model
+open Djambi.Api.Model
 
 let getLobbies (jsonModel : LobbiesQueryJsonModel) (session : Session) : LobbyResponseJsonModel list AsyncHttpResult =
     LobbyService.getLobbies (mapLobbiesQuery jsonModel) session

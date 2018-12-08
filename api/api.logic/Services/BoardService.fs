@@ -4,8 +4,7 @@ open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Logic.ModelExtensions
 open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
-open Djambi.Api.Model.BoardModel
-open Djambi.Api.Model.SessionModel
+open Djambi.Api.Model
 
 let getBoard (regionCount : int) (session : Session) : Board AsyncHttpResult =
     okTask <| (BoardModelUtility.getBoard regionCount)

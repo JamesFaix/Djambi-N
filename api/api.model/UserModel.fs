@@ -1,4 +1,5 @@
-﻿module Djambi.Api.Model.UserModel
+﻿[<AutoOpen>]
+module Djambi.Api.Model.UserModel
 
 open System
 

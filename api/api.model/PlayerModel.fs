@@ -1,4 +1,5 @@
-﻿module Djambi.Api.Model.PlayerModel
+﻿[<AutoOpen>]
+module Djambi.Api.Model.PlayerModel
 
 type PlayerType =
     | User

@@ -2,7 +2,7 @@
 
 open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Web.HttpUtility
-open Djambi.Api.Web.Model.PlayerWebModel
+open Djambi.Api.Web.Model
 open Djambi.Api.Web.Managers
 
 let addPlayerToLobby(lobbyId : int) =

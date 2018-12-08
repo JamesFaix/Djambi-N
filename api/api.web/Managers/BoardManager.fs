@@ -1,9 +1,8 @@
 ﻿module Djambi.Api.Web.Managers.BoardManager
 
 open Djambi.Api.Logic.Services
-open Djambi.Api.Model.SessionModel
+open Djambi.Api.Model
 open Djambi.Api.Common
-open Djambi.Api.Model.BoardModel
 
 let getBoard (regionCount : int) (session : Session) : Board AsyncHttpResult =
     BoardService.getBoard regionCount session

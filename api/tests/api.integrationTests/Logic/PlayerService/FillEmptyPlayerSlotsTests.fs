@@ -6,7 +6,7 @@ open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Db.Repositories
 open Djambi.Api.IntegrationTests
 open Djambi.Api.Logic.Services
-open Djambi.Api.Model.PlayerModel
+open Djambi.Api.Model
 
 type FillEmptyPlayerSlotsTests() =
     inherit TestsBase()

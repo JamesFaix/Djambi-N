@@ -5,9 +5,7 @@ open System.Linq
 open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Db.Repositories
-open Djambi.Api.Model.LobbyModel
-open Djambi.Api.Model.PlayerModel
-open Djambi.Api.Model.SessionModel
+open Djambi.Api.Model
 
 let getLobbyPlayers (lobbyId : int) (session : Session) : Player list AsyncHttpResult =
     PlayerRepository.getPlayersForLobby lobbyId

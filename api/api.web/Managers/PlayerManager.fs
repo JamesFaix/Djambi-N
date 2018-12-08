@@ -2,9 +2,9 @@
 
 open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Logic.Services
-open Djambi.Api.Web.Mappings.PlayerWebMapping
-open Djambi.Api.Web.Model.PlayerWebModel
-open Djambi.Api.Model.SessionModel
+open Djambi.Api.Web.Mappings
+open Djambi.Api.Web.Model
+open Djambi.Api.Model
 open Djambi.Api.Common
 
 let addPlayerToLobby(jsonModel : CreatePlayerJsonModel, lobbyId : int) (session : Session) : PlayerResponseJsonModel AsyncHttpResult =

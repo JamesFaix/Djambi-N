@@ -5,7 +5,7 @@ open Microsoft.AspNetCore.Http
 open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Web.HttpUtility
-open Djambi.Api.Web.Model.LobbyWebModel
+open Djambi.Api.Web.Model
 open Djambi.Api.Web.Managers
 
 let getLobbies : HttpHandler =

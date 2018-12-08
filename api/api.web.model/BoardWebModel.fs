@@ -1,4 +1,5 @@
-﻿module Djambi.Api.WebModel.BoardWebModel
+﻿[<AutoOpen>]
+module Djambi.Api.WebModel.BoardWebModel
 
 type LocationJsonModel =
     {

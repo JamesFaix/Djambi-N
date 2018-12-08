@@ -3,8 +3,7 @@
 open Djambi.Api.Logic.ModelExtensions
 open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
 open Djambi.Api.Logic.ModelExtensions.GameModelExtensions
-open Djambi.Api.Model.BoardModel
-open Djambi.Api.Model.GameModel
+open Djambi.Api.Model
 
 let private getMoveSelectionOptions(game : GameState, piece : Piece, regionCount : int) : int list =
     let board = BoardModelUtility.getBoardMetadata regionCount

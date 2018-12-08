@@ -1,4 +1,5 @@
-﻿module Djambi.Api.Model.GameModel
+﻿[<AutoOpen>]
+module Djambi.Api.Model.GameModel
 
 type PlayerState =
     {

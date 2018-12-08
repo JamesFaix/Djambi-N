@@ -3,9 +3,9 @@
 open Dapper
 open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
-open Djambi.Api.Db.Model.PlayerDbModel
+open Djambi.Api.Db.Model
 open Djambi.Api.Db.SqlUtility
-open Djambi.Api.Model.PlayerModel
+open Djambi.Api.Model
 
 let private getPlayers (lobbyId : int option, gameId : int option) : Player List AsyncHttpResult =
     let param = DynamicParameters()

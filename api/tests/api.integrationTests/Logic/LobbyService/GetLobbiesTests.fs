@@ -5,7 +5,7 @@ open Xunit
 open Djambi.Api.Common
 open Djambi.Api.IntegrationTests
 open Djambi.Api.Logic.Services
-open Djambi.Api.Model.LobbyModel
+open Djambi.Api.Model
 
 type GetLobbiesTests() =
     inherit TestsBase()

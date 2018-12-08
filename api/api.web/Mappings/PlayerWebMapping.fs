@@ -1,7 +1,8 @@
-﻿module Djambi.Api.Web.Mappings.PlayerWebMapping
+﻿[<AutoOpen>]
+module Djambi.Api.Web.Mappings.PlayerWebMapping
 
-open Djambi.Api.Model.PlayerModel
-open Djambi.Api.Web.Model.PlayerWebModel
+open Djambi.Api.Model
+open Djambi.Api.Web.Model
 open Djambi.Api.Common.Utilities
 
 let mapPlayerTypeFromString(playerTypeName : string) : PlayerType =

@@ -4,9 +4,9 @@ open System
 open Dapper
 open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
-open Djambi.Api.Db.Model.SessionDbModel
+open Djambi.Api.Db.Model
 open Djambi.Api.Db.SqlUtility
-open Djambi.Api.Model.SessionModel
+open Djambi.Api.Model
 
 let getSession(sessionId : int option,
                token : string option,

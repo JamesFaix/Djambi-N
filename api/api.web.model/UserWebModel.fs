@@ -1,4 +1,5 @@
-﻿module Djambi.Api.Web.Model.UserWebModel
+﻿[<AutoOpen>]
+module Djambi.Api.Web.Model.UserWebModel
 
 [<CLIMutable>]
 type CreateUserJsonModel =

@@ -1,4 +1,5 @@
-﻿module Djambi.Api.Web.Model.SessionWebModel
+﻿[<AutoOpen>]
+module Djambi.Api.Web.Model.SessionWebModel
 
 [<CLIMutable>]
 type LoginRequestJsonModel =

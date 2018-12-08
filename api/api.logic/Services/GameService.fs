@@ -3,8 +3,7 @@
 open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Db.Repositories
-open Djambi.Api.Model.GameModel
-open Djambi.Api.Model.SessionModel
+open Djambi.Api.Model
 
 let getGameState(gameId : int) (session : Session) : GameState AsyncHttpResult =
     GameRepository.getGame gameId

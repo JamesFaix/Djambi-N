@@ -5,7 +5,7 @@ open Xunit
 open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Db.Repositories
 open Djambi.Api.IntegrationTests
-open Djambi.Api.Model.PlayerModel
+open Djambi.Api.Model
 
 type PlayerRepositoryTests() =
     inherit TestsBase()

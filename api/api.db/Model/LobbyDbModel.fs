@@ -1,8 +1,9 @@
-﻿module Djambi.Api.Db.Model.LobbyDbModel
+﻿[<AutoOpen>]
+module Djambi.Api.Db.Model.LobbyDbModel
 
 open System
 open Djambi.Api.Common.Utilities
-open Djambi.Api.Model.LobbyModel
+open Djambi.Api.Model
 
 [<CLIMutable>]
 type LobbySqlModel =

@@ -3,7 +3,7 @@
 open System.Collections.Generic
 open System.Linq
 open Djambi.Api.Common.Utilities
-open Djambi.Api.Model.BoardModel
+open Djambi.Api.Model
 
 module BoardModelExtensions =
 

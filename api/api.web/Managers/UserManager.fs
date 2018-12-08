@@ -2,10 +2,10 @@
 
 open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Logic.Services
-open Djambi.Api.Web.Mappings.UserWebMapping
-open Djambi.Api.Web.Model.UserWebModel
+open Djambi.Api.Web.Mappings
+open Djambi.Api.Web.Model
 open Djambi.Api.Common
-open Djambi.Api.Model.SessionModel
+open Djambi.Api.Model
 
 let createUser (jsonModel : CreateUserJsonModel) (sessionOption : Session option) : UserResponseJsonModel AsyncHttpResult =
     let model = mapCreateUserRequest jsonModel

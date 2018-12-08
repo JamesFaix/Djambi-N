@@ -2,10 +2,10 @@
 
 open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Logic.Services
-open Djambi.Api.Web.Mappings.GameWebMapping
+open Djambi.Api.Web.Mappings
 open Djambi.Api.Common
-open Djambi.Api.Model.SessionModel
-open Djambi.Api.Web.Model.GameWebModel
+open Djambi.Api.Model
+open Djambi.Api.Web.Model
 
 let getGameState (gameId : int) (session : Session) : GameStateJsonModel AsyncHttpResult =
     GameService.getGameState gameId session

@@ -5,7 +5,7 @@ open Giraffe
 open Microsoft.AspNetCore.Http
 open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Web.HttpUtility
-open Djambi.Api.Web.Model.UserWebModel
+open Djambi.Api.Web.Model
 open Djambi.Api.Web.Managers
 
 let createUser : HttpHandler =
