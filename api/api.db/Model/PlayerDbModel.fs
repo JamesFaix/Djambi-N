@@ -1,8 +1,9 @@
-﻿module Djambi.Api.Db.Model.PlayerDbModel
+﻿[<AutoOpen>]
+module Djambi.Api.Db.Model.PlayerDbModel
 
 open System
 open Djambi.Api.Common.Utilities
-open Djambi.Api.Model.PlayerModel
+open Djambi.Api.Model
 
 [<CLIMutable>]
 type PlayerSqlModel =

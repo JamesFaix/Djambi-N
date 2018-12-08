@@ -1,8 +1,9 @@
-﻿module Djambi.Api.Db.Model.UserDbModel
+﻿[<AutoOpen>]
+module Djambi.Api.Db.Model.UserDbModel
 
 open System
 open Djambi.Api.Common.Utilities
-open Djambi.Api.Model.UserModel
+open Djambi.Api.Model
 
 [<CLIMutable>]
 type UserSqlModel = 

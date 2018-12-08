@@ -3,8 +3,7 @@
 open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Db.Repositories
-open Djambi.Api.Model.SessionModel
-open Djambi.Api.Model.UserModel
+open Djambi.Api.Model
 
 let createUser (request : CreateUserRequest) (session : Session option) : User AsyncHttpResult =
     match session with

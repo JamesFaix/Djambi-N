@@ -1,4 +1,5 @@
-﻿module Djambi.Api.Model.SessionModel
+﻿[<AutoOpen>]
+module Djambi.Api.Model.SessionModel
 
 open System
     

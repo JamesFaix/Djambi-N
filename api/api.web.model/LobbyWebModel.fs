@@ -1,7 +1,7 @@
+[<AutoOpen>]
 module Djambi.Api.Web.Model.LobbyWebModel
 
 open System
-open Djambi.Api.Web.Model.PlayerWebModel
 
 [<CLIMutable>]
 type CreateLobbyJsonModel =

@@ -6,10 +6,7 @@ open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Db.Repositories
 open Djambi.Api.Logic.ModelExtensions
 open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
-open Djambi.Api.Model.BoardModel
-open Djambi.Api.Model.GameModel
-open Djambi.Api.Model.PlayerModel
-open Djambi.Api.Model.SessionModel
+open Djambi.Api.Model
 open Djambi.Api.Logic.Services
 
 let getStartingConditions(players : Player list) : PlayerStartConditions list =

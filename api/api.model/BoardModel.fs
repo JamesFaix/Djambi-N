@@ -1,3 +1,4 @@
+[<AutoOpen>]
 module Djambi.Api.Model.BoardModel
 
 type Directions =

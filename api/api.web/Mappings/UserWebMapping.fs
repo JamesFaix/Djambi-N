@@ -1,7 +1,8 @@
-﻿module Djambi.Api.Web.Mappings.UserWebMapping
+﻿[<AutoOpen>]
+module Djambi.Api.Web.Mappings.UserWebMapping
 
-open Djambi.Api.Model.UserModel
-open Djambi.Api.Web.Model.UserWebModel
+open Djambi.Api.Model
+open Djambi.Api.Web.Model
 
 let mapUserResponse(user : User) : UserResponseJsonModel =
     {

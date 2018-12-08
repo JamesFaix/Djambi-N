@@ -1,4 +1,5 @@
-﻿module Djambi.Api.Web.Model.GameWebModel
+﻿[<AutoOpen>]
+module Djambi.Api.Web.Model.GameWebModel
 
 open System
 

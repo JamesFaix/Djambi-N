@@ -1,7 +1,7 @@
-﻿module Djambi.Api.Model.LobbyModel
+﻿[<AutoOpen>]
+module Djambi.Api.Model.LobbyModel
 
 open System
-open Djambi.Api.Model.PlayerModel
 
 type Lobby =
     {

@@ -4,9 +4,9 @@ open System
 open Dapper
 open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
-open Djambi.Api.Db.Model.LobbyDbModel
+open Djambi.Api.Db.Model
 open Djambi.Api.Db.SqlUtility
-open Djambi.Api.Model.LobbyModel
+open Djambi.Api.Model
 
 let createLobby (request : CreateLobbyRequest, createdByUserId : int) : Lobby AsyncHttpResult =
     let param = DynamicParameters()

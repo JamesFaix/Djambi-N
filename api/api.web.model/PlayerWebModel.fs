@@ -1,4 +1,5 @@
-﻿module Djambi.Api.Web.Model.PlayerWebModel
+﻿[<AutoOpen>]
+module Djambi.Api.Web.Model.PlayerWebModel
 
 open System
 

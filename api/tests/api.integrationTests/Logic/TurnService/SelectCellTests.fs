@@ -7,7 +7,7 @@ open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.IntegrationTests
 open Djambi.Api.Logic.Services
-open Djambi.Api.Model.PlayerModel
+open Djambi.Api.Model
 
 type SelectCellTests() =
     inherit TestsBase()

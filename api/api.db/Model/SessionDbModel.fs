@@ -1,7 +1,8 @@
-﻿module Djambi.Api.Db.Model.SessionDbModel
+﻿[<AutoOpen>]
+module Djambi.Api.Db.Model.SessionDbModel
 
 open System
-open Djambi.Api.Model.SessionModel
+open Djambi.Api.Model
 
 [<CLIMutable>]
 type SessionSqlModel =

@@ -1,7 +1,8 @@
-﻿module Djambi.Api.Db.Model.GameDbModel
+﻿[<AutoOpen>]
+module Djambi.Api.Db.Model.GameDbModel
 
 open Newtonsoft.Json
-open Djambi.Api.Model.GameModel
+open Djambi.Api.Model
 
 [<CLIMutable>]
 type GameSqlModel =

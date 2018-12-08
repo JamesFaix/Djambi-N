@@ -1,7 +1,8 @@
-﻿module Djambi.Api.Web.Mappings.SessionWebMapping
+﻿[<AutoOpen>]
+module Djambi.Api.Web.Mappings.SessionWebMapping
 
-open Djambi.Api.Model.SessionModel
-open Djambi.Api.Web.Model.SessionWebModel
+open Djambi.Api.Model
+open Djambi.Api.Web.Model
 
 let mapLoginRequestFromJson(jsonModel : LoginRequestJsonModel) : LoginRequest =
     {

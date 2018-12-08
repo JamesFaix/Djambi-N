@@ -6,7 +6,7 @@ open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Db.Repositories
 open Djambi.Api.IntegrationTests
-open Djambi.Api.Model.LobbyModel
+open Djambi.Api.Model
 
 type LobbyRepositoryTests() =
     inherit TestsBase()

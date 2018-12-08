@@ -8,8 +8,7 @@ open Djambi.Api.Db.Repositories
 open Djambi.Api.Logic.ModelExtensions
 open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
 open Djambi.Api.Logic.ModelExtensions.GameModelExtensions
-open Djambi.Api.Model.GameModel
-open Djambi.Api.Model.SessionModel
+open Djambi.Api.Model
 
 let private ensureSessionIsAdminOrContainsCurrentPlayer (session : Session) (game : Game) : Game AsyncHttpResult =
     if session.isAdmin

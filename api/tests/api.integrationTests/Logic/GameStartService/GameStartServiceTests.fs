@@ -8,8 +8,7 @@ open Djambi.Api.Db.Repositories
 open Djambi.Api.IntegrationTests
 open Djambi.Api.Logic.ModelExtensions
 open Djambi.Api.Logic.Services
-open Djambi.Api.Model.GameModel
-open Djambi.Api.Model.PlayerModel
+open Djambi.Api.Model
 
 type GameStartServiceTests() =
     inherit TestsBase()

@@ -1,9 +1,10 @@
-﻿module Djambi.Api.Web.Mappings.LobbyWebMapping
+﻿[<AutoOpen>]
+module Djambi.Api.Web.Mappings.LobbyWebMapping
 
-open Djambi.Api.Model.LobbyModel
-open Djambi.Api.Web.Model.LobbyWebModel
+open Djambi.Api.Model
+open Djambi.Api.Web.Model
 open Djambi.Api.Common.Utilities
-open Djambi.Api.Web.Mappings.PlayerWebMapping
+open Djambi.Api.Web.Mappings
 
 let mapLobbyResponse(lobby : Lobby) : LobbyResponseJsonModel =
     {
