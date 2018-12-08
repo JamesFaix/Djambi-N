@@ -1,34 +1,29 @@
 ﻿module Djambi.Api.Web.Controllers.GameController
 
 open Djambi.Api.Common.AsyncHttpResult
-open Djambi.Api.Logic.Services
 open Djambi.Api.Web.HttpUtility
-open Djambi.Api.Web.Mappings.GameWebMapping
+open Djambi.Api.Web.Managers
 
 let getGameState(gameId : int) =
     let func ctx =
         getSessionFromContext ctx
-        |> thenBindAsync (GameService.getGameState gameId)
-        |> thenMap mapGameStateToJsonModel
+        |> thenBindAsync (GameManager.getGameState gameId)
     handle func
 
 let selectCell(gameId : int, cellId : int) =
     let func ctx =
         getSessionFromContext ctx
-        |> thenBindAsync (TurnService.selectCell(gameId, cellId))
-        |> thenMap mapTurnStateToJsonModel
+        |> thenBindAsync (GameManager.selectCell(gameId, cellId))
     handle func
 
 let resetTurn(gameId : int) =
     let func ctx =
         getSessionFromContext ctx
-        |> thenBindAsync (TurnService.resetTurn gameId)
-        |> thenMap mapTurnStateToJsonModel
+        |> thenBindAsync (GameManager.resetTurn gameId)
     handle func
 
 let commitTurn(gameId : int) =
     let func ctx =
         getSessionFromContext ctx
-        |> thenBindAsync (TurnService.commitTurn gameId)
-        |> thenMap mapCommitTurnResponseToJsonModel
+        |> thenBindAsync (GameManager.commitTurn gameId)
     handle func

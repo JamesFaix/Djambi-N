@@ -2,15 +2,12 @@
 
 open System
 open Microsoft.AspNetCore.Http
-open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Common.Utilities
-open Djambi.Api.Logic.Services
 open Djambi.Api.Web
 open Djambi.Api.Web.HttpUtility
-open Djambi.Api.Web.Mappings.SessionWebMapping
 open Djambi.Api.Web.Model.SessionWebModel
-open Djambi.Api.Web.Mappings
+open Djambi.Api.Web.Managers
 
 let appendCookie (ctx : HttpContext) (sessionToken : string, expiration : DateTime) =
     let cookieOptions = new CookieOptions()
@@ -24,15 +21,7 @@ let appendCookie (ctx : HttpContext) (sessionToken : string, expiration : DateTi
 let openSession : HttpHandler =
     let func (ctx : HttpContext) =
         ensureNotSignedInAndGetModel<LoginRequestJsonModel> ctx
-        |> thenMap mapLoginRequestFromJson
-        |> thenBindAsync SessionService.openSession
-        |> thenBindAsync (fun session ->
-            appendCookie ctx (session.token, session.expiresOn)
-            UserService.getUser session.userId session
-        )
-        |> thenMap UserWebMapping.mapUserResponse
-        |> thenReplaceError 409 (HttpException(409, "Already signed in."))
-
+        |> thenBindAsync (fun jsonModel -> SessionManager.openSession(jsonModel, appendCookie ctx))
     handle func
 
 let closeSession : HttpHandler =
@@ -41,7 +30,6 @@ let closeSession : HttpHandler =
         appendCookie ctx ("", DateTime.MinValue)
 
         getSessionFromContext ctx
-        |> thenBindAsync SessionService.closeSession
-        |> thenMap ignore
+        |> thenBindAsync SessionManager.closeSession
 
     handle func

@@ -10,6 +10,12 @@
     <Compile Include="Mappings\PlayerWebMapping.fs" />
     <Compile Include="Mappings\LobbyWebMapping.fs" />
     <Compile Include="Mappings\GameWebMapping.fs" />
+    <Compile Include="Managers\UserManager.fs" />
+    <Compile Include="Managers\SessionManager.fs" />
+    <Compile Include="Managers\BoardManager.fs" />
+    <Compile Include="Managers\LobbyManager.fs" />
+    <Compile Include="Managers\PlayerManager.fs" />
+    <Compile Include="Managers\GameManager.fs" />
     <Compile Include="HttpUtility.fs" />
     <Compile Include="Controllers\UserController.fs" />
     <Compile Include="Controllers\SessionController.fs" />

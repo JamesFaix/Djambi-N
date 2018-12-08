@@ -1,0 +1,25 @@
+﻿module Djambi.Api.Web.Managers.SessionManager
+
+open System
+open Djambi.Api.Common
+open Djambi.Api.Common.AsyncHttpResult
+open Djambi.Api.Logic.Services
+open Djambi.Api.Web.Mappings.SessionWebMapping
+open Djambi.Api.Web.Model.SessionWebModel
+open Djambi.Api.Web.Mappings
+open Djambi.Api.Web.Model.UserWebModel
+open Djambi.Api.Model.SessionModel
+
+let openSession (jsonModel : LoginRequestJsonModel, appendCookie : string * DateTime -> Unit) : UserResponseJsonModel AsyncHttpResult=
+    let model = mapLoginRequestFromJson jsonModel
+    SessionService.openSession model
+    |> thenBindAsync (fun session ->
+        appendCookie (session.token, session.expiresOn)
+        UserService.getUser session.userId session
+    )
+    |> thenMap UserWebMapping.mapUserResponse
+    |> thenReplaceError 409 (HttpException(409, "Already signed in."))
+
+let closeSession (session : Session) : Unit AsyncHttpResult =
+    SessionService.closeSession session
+    |> thenMap ignore
