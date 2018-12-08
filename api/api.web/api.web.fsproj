@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="JsonConverters.fs" />
     <Compile Include="Mappings\UserWebMapping.fs" />
     <Compile Include="Mappings\SessionWebMapping.fs" />
     <Compile Include="Mappings\PlayerWebMapping.fs" />
