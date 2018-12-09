@@ -10,7 +10,7 @@ open Djambi.Api.Model
 
 module UserRepository =
 
-    let getUser(id : int) : User AsyncHttpResult =
+    let getUser(id : int) : UserDetails AsyncHttpResult =
         let param = DynamicParameters()
                         .add("UserId", id)
                         .add("Name", null)        
@@ -19,7 +19,7 @@ module UserRepository =
         querySingle<UserSqlModel>(cmd, "User")
         |> thenMap mapUserResponse
     
-    let getUserByName(name : string) : User AsyncHttpResult =
+    let getUserByName(name : string) : UserDetails AsyncHttpResult =
         let param = DynamicParameters()
                         .add("UserId", null)
                         .add("Name", name)        
@@ -28,7 +28,7 @@ module UserRepository =
         querySingle<UserSqlModel>(cmd, "User")
         |> thenMap mapUserResponse
 
-    let getUsers() : User list AsyncHttpResult =
+    let getUsers() : UserDetails list AsyncHttpResult =
         let param = DynamicParameters()
                         .add("UserId", null)
                         .add("Name", null)        
@@ -42,7 +42,7 @@ module UserRepository =
         queryMany<UserSqlModel>(cmd, "User")
         |> thenMap mapUsers
 
-    let createUser(request : CreateUserRequest) : User AsyncHttpResult =
+    let createUser(request : CreateUserRequest) : UserDetails AsyncHttpResult =
         let param = DynamicParameters()
                         .add("Name", request.name)
                         .add("Password", request.password)

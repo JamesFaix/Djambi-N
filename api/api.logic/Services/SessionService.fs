@@ -14,17 +14,17 @@ module SessionService =
 
     let openSession(request : LoginRequest) : Session AsyncHttpResult =
 
-        let isWithinLockTimeoutPeriod (u : User) =
+        let isWithinLockTimeoutPeriod (u : UserDetails) =
             u.lastFailedLoginAttemptOn.IsNone
             || DateTime.UtcNow - u.lastFailedLoginAttemptOn.Value < accountLockTimeout
 
-        let errorIfLocked (user : User) =
+        let errorIfLocked (user : UserDetails) =
             if user.failedLoginAttempts >= maxFailedLoginAttempts
                 && isWithinLockTimeoutPeriod user
             then Error <| HttpException(401, "Account locked.")
             else Ok user
 
-        let errorIfInvalidPassword (user : User) =
+        let errorIfInvalidPassword (user : UserDetails) =
             if request.password = user.password
             then okTask user
             else

@@ -2,27 +2,24 @@
 
 open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Logic.Services
-open Djambi.Api.Web.Mappings
-open Djambi.Api.Web.Model
 open Djambi.Api.Common
 open Djambi.Api.Model
 
-let createUser (jsonModel : CreateUserJsonModel) (sessionOption : Session option) : UserResponseJsonModel AsyncHttpResult =
-    let model = mapCreateUserRequest jsonModel
-    UserService.createUser model sessionOption
-    |> thenMap mapUserResponse
+let createUser (request : CreateUserRequest) (sessionOption : Session option) : User AsyncHttpResult =
+    UserService.createUser request sessionOption
+    |> thenMap UserDetails.hideDetails
 
 let deleteUser (userId : int) (session : Session) : Unit AsyncHttpResult =
     UserService.deleteUser userId session
 
-let getUser (userId : int) (session : Session) : UserResponseJsonModel AsyncHttpResult =
+let getUser (userId : int) (session : Session) : User AsyncHttpResult =
     UserService.getUser userId session
-    |> thenMap mapUserResponse
+    |> thenMap UserDetails.hideDetails
 
-let getUsers (session : Session) : UserResponseJsonModel list AsyncHttpResult =
+let getUsers (session : Session) : User list AsyncHttpResult =
     UserService.getUsers session
-    |> thenMap (List.map mapUserResponse)
+    |> thenMap (List.map UserDetails.hideDetails)
 
-let getCurrentUser (session : Session) : UserResponseJsonModel AsyncHttpResult =
+let getCurrentUser (session : Session) : User AsyncHttpResult =
     UserService.getUser session.userId session
-    |> thenMap mapUserResponse
+    |> thenMap UserDetails.hideDetails
