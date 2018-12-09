@@ -4,6 +4,7 @@ module Djambi.Api.ContractTests.RequestFactory
 open System
 open Djambi.Api.Web.Model
 open Djambi.Api.Model.UserModel
+open Djambi.Api.Model.SessionModel
 
 let createUserRequest() : CreateUserRequest = 
     {
@@ -11,9 +12,9 @@ let createUserRequest() : CreateUserRequest =
         password = "test"
     }
 
-let loginRequest (createUserRequest : CreateUserRequest) : LoginRequestJsonModel =
+let loginRequest (createUserRequest : CreateUserRequest) : LoginRequest =
     {
-        userName = createUserRequest.name
+        username = createUserRequest.name
         password = createUserRequest.password
     }
 

@@ -3,7 +3,6 @@
 open System.Threading.Tasks
 open FSharp.Control.Tasks
 open Microsoft.Extensions.Configuration
-open Djambi.Api.Web.Model.SessionWebModel
 open Djambi.Api.WebClient
 open Djambi.Utilities
 open Djambi.Api.Model
@@ -25,9 +24,9 @@ let createUserAndSignIn () : (User * string) Task =
 
 let loginAsAdmin () : string Task =
     task {
-        let request : LoginRequestJsonModel = 
+        let request : LoginRequest = 
             {
-                userName = config.["adminUsername"]
+                username = config.["adminUsername"]
                 password = config.["adminPassword"]
             }
         let! sessionResponse = SessionClient.createSession request

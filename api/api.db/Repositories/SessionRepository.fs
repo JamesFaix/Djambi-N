@@ -22,11 +22,13 @@ let getSession(sessionId : int option,
     querySingle<SessionSqlModel>(cmd, "Session")
     |> thenMap mapSessionResponse
 
-let createSession(request : CreateSessionRequest) : Session AsyncHttpResult =
+let createSession(userId : int,
+                  token : string,
+                  expiresOn : DateTime) : Session AsyncHttpResult =
     let param = DynamicParameters()
-                    .add("UserId", request.userId)
-                    .add("Token", request.token)
-                    .add("ExpiresOn", request.expiresOn)
+                    .add("UserId", userId)
+                    .add("Token", token)
+                    .add("ExpiresOn", expiresOn)
 
     let cmd = proc("Sessions_Create", param)
 

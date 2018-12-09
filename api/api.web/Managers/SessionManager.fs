@@ -4,13 +4,10 @@ open System
 open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Logic.Services
-open Djambi.Api.Web.Mappings
-open Djambi.Api.Web.Model
 open Djambi.Api.Model
 
-let openSession (jsonModel : LoginRequestJsonModel, appendCookie : string * DateTime -> Unit) : User AsyncHttpResult=
-    let model = mapLoginRequestFromJson jsonModel
-    SessionService.openSession model
+let openSession (request : LoginRequest, appendCookie : string * DateTime -> Unit) : User AsyncHttpResult=
+    SessionService.openSession request
     |> thenBindAsync (fun session ->
         appendCookie (session.token, session.expiresOn)
         UserService.getUser session.userId session

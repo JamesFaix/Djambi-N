@@ -6,8 +6,8 @@ open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Common.Utilities
 open Djambi.Api.Web
 open Djambi.Api.Web.HttpUtility
-open Djambi.Api.Web.Model
 open Djambi.Api.Web.Managers
+open Djambi.Api.Model.SessionModel
 
 let appendCookie (ctx : HttpContext) (sessionToken : string, expiration : DateTime) =
     let cookieOptions = new CookieOptions()
@@ -20,7 +20,7 @@ let appendCookie (ctx : HttpContext) (sessionToken : string, expiration : DateTi
 
 let openSession : HttpHandler =
     let func (ctx : HttpContext) =
-        ensureNotSignedInAndGetModel<LoginRequestJsonModel> ctx
+        ensureNotSignedInAndGetModel<LoginRequest> ctx
         |> thenBindAsync (fun jsonModel -> SessionManager.openSession(jsonModel, appendCookie ctx))
     handle func
 

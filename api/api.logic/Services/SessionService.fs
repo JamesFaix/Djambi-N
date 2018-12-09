@@ -46,13 +46,10 @@ module SessionService =
             |> thenBindError 404 (fun _ -> Ok ()) //If no session thats fine
             //Create a new session
             |> thenBindAsync(fun _ ->
-                let sessionRequest =
-                    {
-                        userId = user.id
-                        token = Guid.NewGuid().ToString()
-                        expiresOn = DateTime.UtcNow.Add(sessionTimeout)
-                    }
-                SessionRepository.createSession sessionRequest
+                SessionRepository.createSession (
+                    user.id, 
+                    Guid.NewGuid().ToString(), 
+                    DateTime.UtcNow.Add(sessionTimeout))
             )
             |> thenDoAsync (fun _ -> UserRepository.updateFailedLoginAttempts(user.id, 0, None))
         )
