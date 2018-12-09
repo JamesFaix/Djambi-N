@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="LobbyWebModel.fs" />
     <Compile Include="BoardWebModel.fs" />
     <Compile Include="GameWebModel.fs" />
   </ItemGroup>

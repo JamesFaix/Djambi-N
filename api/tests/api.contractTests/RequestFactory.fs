@@ -2,9 +2,7 @@
 module Djambi.Api.ContractTests.RequestFactory
 
 open System
-open Djambi.Api.Web.Model
-open Djambi.Api.Model.UserModel
-open Djambi.Api.Model.SessionModel
+open Djambi.Api.Model
 
 let createUserRequest() : CreateUserRequest = 
     {
@@ -18,7 +16,7 @@ let loginRequest (createUserRequest : CreateUserRequest) : LoginRequest =
         password = createUserRequest.password
     }
 
-let createLobbyRequest () : CreateLobbyJsonModel =
+let createLobbyRequest () : CreateLobbyRequest =
     {
         regionCount = 3
         description = Some "test"

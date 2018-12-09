@@ -5,7 +5,7 @@ open System.Threading.Tasks
 open FSharp.Control.Tasks
 open NUnit.Framework
 open Djambi.Api.WebClient
-open Djambi.Api.Web.Model.LobbyWebModel
+open Djambi.Api.Model.LobbyModel
 
 [<Test>]
 let ``Create lobby should work``() =
@@ -41,7 +41,7 @@ let ``Delete lobby should work``() =
         //Assert
         response |> shouldHaveStatus HttpStatusCode.OK
 
-        let! lobbies = LobbyClient.getLobbies(LobbiesQueryJsonModel.empty, token) |> AsyncResponse.bodyValue
+        let! lobbies = LobbyClient.getLobbies(LobbiesQuery.empty, token) |> AsyncResponse.bodyValue
         lobbies |> List.exists (fun g -> g.id = lobby.id) |> shouldBeFalse
     } :> Task
 
@@ -55,7 +55,7 @@ let ``Get lobbies should work``() =
         let! lobby2 = LobbyClient.createLobby(request, token) |> AsyncResponse.bodyValue
 
         //Act
-        let! response = LobbyClient.getLobbies(LobbiesQueryJsonModel.empty, token)
+        let! response = LobbyClient.getLobbies(LobbiesQuery.empty, token)
 
         //Assert
         response |> shouldHaveStatus HttpStatusCode.OK
