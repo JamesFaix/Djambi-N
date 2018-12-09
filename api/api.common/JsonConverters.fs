@@ -1,4 +1,4 @@
-﻿module Djambi.Api.Web.JsonConverters
+﻿module Djambi.Api.Common.JsonConverters
 
 open System
 open System.Collections.Generic
@@ -32,28 +32,6 @@ type OptionJsonConverter() =
         else FSharpValue.MakeUnion(cases.[1], [|value|])
 
 //Taken from http://gorodinski.com/blog/2013/01/05/json-dot-net-type-converters-for-f-option-list-tuple/
-type ListJsonConverter() =
-    inherit JsonConverter()
-    
-    override x.CanConvert (t : Type) : bool =
-        t.IsGenericType && t.GetGenericTypeDefinition() = typedefof<list<_>>
-
-    override x.WriteJson (writer : JsonWriter, value : obj, serializer : JsonSerializer) : Unit =
-        let list = value :?> System.Collections.IEnumerable |> Seq.cast
-        serializer.Serialize(writer, list)
-
-    override x.ReadJson(reader : JsonReader, t : Type, existingValue : obj, serializer : JsonSerializer) : obj =        
-        let itemType = t.GetGenericArguments().[0]
-        let collectionType = typedefof<IEnumerable<_>>.MakeGenericType(itemType)
-        let collection = serializer.Deserialize(reader, collectionType) :?> IEnumerable<_>        
-        let listType = typedefof<list<_>>.MakeGenericType(itemType)
-        let cases = FSharpType.GetUnionCases(listType)
-        let rec make = function
-            | [] -> FSharpValue.MakeUnion(cases.[0], [||])
-            | head::tail -> FSharpValue.MakeUnion(cases.[1], [| head; (make tail); |])                    
-        make (collection |> Seq.toList)
-
-//Taken from http://gorodinski.com/blog/2013/01/05/json-dot-net-type-converters-for-f-option-list-tuple/
 type TupleArrayJsonConverter() =
     inherit JsonConverter()
     
@@ -85,6 +63,8 @@ type TupleArrayJsonConverter() =
             let values = readElements()
             FSharpValue.MakeTuple(values |> List.toArray, t)
         | _ -> failwith "invalid token"
+
+
 
 //Taken from http://www.hoonzis.com/fsharp-json-serializaton/
 type DiscriminatedUnionJsonConverter() =
