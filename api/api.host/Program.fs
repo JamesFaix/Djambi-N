@@ -10,11 +10,10 @@ open Microsoft.Extensions.Configuration
 open Microsoft.Extensions.Logging
 open Microsoft.Extensions.DependencyInjection
 open Newtonsoft.Json
-open Newtonsoft.Json.Converters
 open Djambi.Api.Db
 open Djambi.Api.Http
 open Djambi.Utilities
-open Djambi.Api.Web.JsonConverters
+open Djambi.Api.Common.JsonConverters
 
 // ---------------------------------
 // Error handler
@@ -47,9 +46,8 @@ let configureNewtonsoft () =
     let converters : List<JsonConverter> =
          [
             new OptionJsonConverter()
-            new ListJsonConverter()
             new TupleArrayJsonConverter()
-            new DiscriminatedUnionConverter()
+            new DiscriminatedUnionJsonConverter()
         ]
 
     let settings = new JsonSerializerSettings()
@@ -58,6 +56,10 @@ let configureNewtonsoft () =
 
 let configureApp (app : IApplicationBuilder) =
 //    let env = app.ApplicationServices.GetService<IHostingEnvironment>()
+
+    //This will only provide custom serialization of responses to clients. 
+    //Custom deserialization of request bodies does not work that same way in this framework.
+    //See HttpUtility for deserialization.
     configureNewtonsoft()
 
     app.UseGiraffeErrorHandler(errorHandler)
