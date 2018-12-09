@@ -33,7 +33,7 @@ type GameStartServiceTests() =
             let regions = startingConditions |> List.map (fun cond -> cond.region) |> List.sort
             regions |> shouldBe [0..(lobby.regionCount-1)]
 
-            let colors = startingConditions |> List.map (fun cond -> cond.color)
+            let colors = startingConditions |> List.map (fun cond -> cond.colodId)
             Assert.All(colors, fun c -> Assert.True(c >= 0 && c < Constants.maxRegions))
         }
 
@@ -60,12 +60,12 @@ type GameStartServiceTests() =
             Assert.Equal(lobby.regionCount, groupByPlayer.Length)
 
             for (_, grp) in groupByPlayer do
-                Assert.Single<Piece>(grp, (fun p -> p.pieceType = Chief)) |> ignore
-                Assert.Single<Piece>(grp, (fun p -> p.pieceType = Diplomat)) |> ignore
-                Assert.Single<Piece>(grp, (fun p -> p.pieceType = Reporter)) |> ignore
-                Assert.Single<Piece>(grp, (fun p -> p.pieceType = Gravedigger)) |> ignore
-                Assert.Single<Piece>(grp, (fun p -> p.pieceType = Assassin)) |> ignore
-                Assert.Equal(4, grp |> List.filter (fun p -> p.pieceType = Thug) |> List.length)
+                Assert.Single<Piece>(grp, (fun p -> p.kind = Chief)) |> ignore
+                Assert.Single<Piece>(grp, (fun p -> p.kind = Diplomat)) |> ignore
+                Assert.Single<Piece>(grp, (fun p -> p.kind = Reporter)) |> ignore
+                Assert.Single<Piece>(grp, (fun p -> p.kind = Gravedigger)) |> ignore
+                Assert.Single<Piece>(grp, (fun p -> p.kind = Assassin)) |> ignore
+                Assert.Equal(4, grp |> List.filter (fun p -> p.kind = Thug) |> List.length)
         }
 
     [<Fact>]

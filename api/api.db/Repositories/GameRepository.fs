@@ -10,13 +10,16 @@ open Djambi.Api.Model
 
 module GameRepository =
     
-    let startGame(request : StartGameRequest) : int AsyncHttpResult =
-        let startingConditionsJson = request.startingConditions |> JsonConvert.SerializeObject
-        let gameStateJson = request.gameState |> JsonConvert.SerializeObject
-        let turnStateJson = request.turnState |> JsonConvert.SerializeObject
+    let startGame(lobbyId : int,
+                  startingConditions : PlayerStartConditions list,
+                  gameState : GameState,
+                  turnState : TurnState) : int AsyncHttpResult =
+        let startingConditionsJson = startingConditions |> JsonConvert.SerializeObject
+        let gameStateJson = gameState |> JsonConvert.SerializeObject
+        let turnStateJson = turnState |> JsonConvert.SerializeObject
 
         let param = DynamicParameters()
-                        .add("LobbyId", request.lobbyId)
+                        .add("LobbyId", lobbyId)
                         .add("StartingConditionsJson", startingConditionsJson)
                         .add("GameStateJson", gameStateJson)
                         .add("TurnStateJson", turnStateJson)

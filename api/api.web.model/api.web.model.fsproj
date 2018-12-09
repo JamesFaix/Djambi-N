@@ -5,11 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="BoardWebModel.fs" />
-    <Compile Include="GameWebModel.fs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\api.model\api.model.fsproj" />
   </ItemGroup>
 

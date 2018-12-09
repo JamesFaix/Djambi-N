@@ -1,10 +1,7 @@
 ﻿module Djambi.Api.Web.Managers.LobbyManager
 
 open Djambi.Api.Common
-open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Logic.Services
-open Djambi.Api.Web.Mappings
-open Djambi.Api.Web.Model
 open Djambi.Api.Model
 
 let getLobbies (query : LobbiesQuery) (session : Session) : Lobby list AsyncHttpResult =
@@ -19,6 +16,5 @@ let createLobby (request : CreateLobbyRequest) (session : Session) : Lobby Async
 let deleteLobby (lobbyId : int) (session : Session) : Unit AsyncHttpResult =
     LobbyService.deleteLobby lobbyId session
  
-let startGame (lobbyId: int) (session : Session) : GameStartResponseJsonModel AsyncHttpResult =
+let startGame (lobbyId: int) (session : Session) : StartGameResponse AsyncHttpResult =
     GameStartService.startGame lobbyId session
-    |> thenMap mapGameStartResponseToJson

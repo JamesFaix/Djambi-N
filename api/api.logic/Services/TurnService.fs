@@ -46,7 +46,7 @@ let selectCell(gameId : int, cellId : int) (session: Session) : TurnState AsyncH
             | 0 -> Ok (Selection.subject(cellId, pieceIndex.Item(cellId).id), AwaitingSelection)
             | 1 -> let subject = turn.subjectPiece(game.gameState).Value
                    match pieceIndex.TryFind(cellId) with
-                    | None -> match subject.pieceType with
+                    | None -> match subject.kind with
                                 | Reporter ->
                                     if board.neighborsFromCellId cellId
                                         |> Seq.map (fun c -> pieceIndex.TryFind c.id)
@@ -57,7 +57,7 @@ let selectCell(gameId : int, cellId : int) (session: Session) : TurnState AsyncH
                                     then Ok (Selection.move(cellId), AwaitingConfirmation)
                                     else Ok (Selection.move(cellId), AwaitingSelection) //Awaiting target
                                 | _ -> Ok <| (Selection.move(cellId), AwaitingConfirmation)
-                    | Some target when subject.pieceType = Assassin ->
+                    | Some target when subject.kind = Assassin ->
                         match board.cell cellId with
                         | None -> Error <| HttpException(404, "Cell not found.")
                         | Some c when c.isCenter ->
@@ -65,7 +65,7 @@ let selectCell(gameId : int, cellId : int) (session: Session) : TurnState AsyncH
                         | _ ->
                             Ok (Selection.moveWithTarget(cellId, target.id), AwaitingConfirmation)
                     | Some piece -> Ok (Selection.moveWithTarget(cellId, piece.id), AwaitingSelection) //Awaiting drop
-            | 2 -> match (turn.subjectPiece game.gameState).Value.pieceType with
+            | 2 -> match (turn.subjectPiece game.gameState).Value.kind with
                     | Thug
                     | Chief
                     | Diplomat
@@ -73,7 +73,7 @@ let selectCell(gameId : int, cellId : int) (session: Session) : TurnState AsyncH
                     | Assassin -> Ok (Selection.move(cellId), AwaitingConfirmation) //Vacate
                     | Reporter -> Ok (Selection.target(cellId, pieceIndex.Item(cellId).id), AwaitingConfirmation)
                     | Corpse -> Error <| HttpException(400, "Subject cannot be corpse")
-            | 3 -> match (turn.subjectPiece game.gameState).Value.pieceType with
+            | 3 -> match (turn.subjectPiece game.gameState).Value.kind with
                     | Diplomat
                     | Gravedigger -> Ok (Selection.move(cellId), AwaitingConfirmation) //Vacate
                     | _ -> Error <| HttpException(400, "Cannot make fourth selection unless vacating center")
@@ -85,7 +85,7 @@ let selectCell(gameId : int, cellId : int) (session: Session) : TurnState AsyncH
                             status = turnStatus
                             selections = List.append turn.selections [selection]
                             selectionOptions = List.empty
-                            requiredSelectionType = None
+                            requiredSelectionKind = None
                         }
                     let updatedGame =
                         {
@@ -99,7 +99,7 @@ let selectCell(gameId : int, cellId : int) (session: Session) : TurnState AsyncH
                     {
                     stateWithNewSelection with
                         selectionOptions = selectionOptions
-                        requiredSelectionType = requiredSelectionType
+                        requiredSelectionKind = requiredSelectionType
                     }))
     |> thenDoAsync (fun turnState -> GameRepository.updateTurnState(gameId, turnState))
 
@@ -125,7 +125,7 @@ let private applyTurnStateToPieces(game : Game) : Piece list =
             then pieces.[target.id] <- target.kill
 
             //Enlist players pieces if killing chief
-            if subject.isKiller && target.pieceType = Chief
+            if subject.isKiller && target.kind = Chief
             then for p in game.gameState.piecesControlledBy target.playerId.Value do
                     pieces.[p.id] <- pieces.[p.id].enlistBy subject.playerId.Value
 
@@ -135,7 +135,7 @@ let private applyTurnStateToPieces(game : Game) : Piece list =
             | None -> ()
 
             //Move target back to origin if subject is assassin
-            if subject.pieceType = Assassin
+            if subject.kind = Assassin
             then pieces.[target.id] <- pieces.[target.id].moveTo origin
         pieces.Values |> Seq.toList
 
@@ -172,22 +172,22 @@ let private applyTurnStateToTurnCycle(game : Game) : int list =
     match (game.turnState.subjectPiece game.gameState, game.turnState.targetPiece game.gameState, game.turnState.dropCell game.regionCount) with
     //If chief being killed, remove all its turns
     | (Some subject, Some target, _)
-        when subject.isKiller && target.pieceType = Chief ->
+        when subject.isKiller && target.kind = Chief ->
         turns <- turns |> Seq.filter(fun playerId -> playerId <> target.playerId.Value) |> Seq.toList
     //If chief being forced out of power, remove its bonus turns only
     | (Some subject, Some target, Some drop)
-        when subject.pieceType = Diplomat && target.pieceType = Chief && not drop.isCenter ->
+        when subject.kind = Diplomat && target.kind = Chief && not drop.isCenter ->
         removeBonusTurnsForPlayer target.playerId.Value
     | _ -> ()
 
     match (game.turnState.subjectPiece game.gameState, game.turnState.subjectCell game.regionCount, game.turnState.destinationCell game.regionCount) with
     //If subject is chief in center and destination is not center, remove extra turns
     | (Some subject, Some origin, Some destination)
-        when subject.pieceType = Chief && origin.isCenter && not destination.isCenter ->
+        when subject.kind = Chief && origin.isCenter && not destination.isCenter ->
         removeBonusTurnsForPlayer subject.playerId.Value
     //If subject is chief and destination is center, add extra turns to queue
     | (Some subject, _, Some destination)
-        when subject.pieceType = Chief && destination.isCenter ->
+        when subject.kind = Chief && destination.isCenter ->
         addBonusTurnsForPlayer subject.playerId.Value
     | _ -> ()
 
@@ -227,7 +227,7 @@ let commitTurn(gameId : int) (session : Session) : CommitTurnResponse AsyncHttpR
         //Kill player if chief killed
         match (game.turnState.subjectPiece game.gameState, game.turnState.targetPiece game.gameState) with
         | (Some subject, Some target)
-            when subject.isKiller && target.pieceType = Chief ->
+            when subject.isKiller && target.kind = Chief ->
             players <- players |> List.map (fun p -> if p.id = target.playerId.Value then p.kill else p)
         | _ -> ()
 
@@ -269,7 +269,7 @@ let commitTurn(gameId : int) (session : Session) : CommitTurnResponse AsyncHttpR
             {
                 TurnState.empty with
                     selectionOptions = selectionOptions
-                    requiredSelectionType = requiredSelectionType
+                    requiredSelectionKind = requiredSelectionType
             }
         })
 
@@ -293,6 +293,6 @@ let resetTurn(gameId : int) (session : Session) : TurnState AsyncHttpResult =
         {
             updatedGame.turnState with
                 selectionOptions = selectionOptions
-                requiredSelectionType = requiredSelectionType
+                requiredSelectionKind = requiredSelectionType
         })
     |> thenDoAsync (fun turnState -> GameRepository.updateTurnState(gameId, turnState))

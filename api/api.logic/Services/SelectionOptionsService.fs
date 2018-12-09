@@ -32,7 +32,7 @@ let private getMoveSelectionOptions(game : GameState, piece : Piece, regionCount
                 | Some p -> condition p
         else true
 
-    match piece.pieceType with
+    match piece.kind with
     | Chief ->
         paths
         |> Seq.collect (takeCellsUntilAndIncluding (fun p -> p.isAlive && p.playerId <> piece.playerId))
@@ -48,7 +48,7 @@ let private getMoveSelectionOptions(game : GameState, piece : Piece, regionCount
     | Assassin ->
         paths
         |> Seq.collect (takeCellsUntilAndIncluding (fun p -> p.isAlive && p.playerId <> piece.playerId))
-        |> Seq.filter (excludeCenterUnless (fun p -> p.pieceType = Chief))
+        |> Seq.filter (excludeCenterUnless (fun p -> p.kind = Chief))
         |> Seq.map (fun cell -> cell.id)
         |> Seq.toList
     | Reporter ->
@@ -60,13 +60,13 @@ let private getMoveSelectionOptions(game : GameState, piece : Piece, regionCount
     | Diplomat ->
         paths
         |> Seq.collect (takeCellsUntilAndIncluding (fun p -> p.isAlive && p.playerId <> piece.playerId))
-        |> Seq.filter (excludeCenterUnless (fun p -> p.pieceType = Chief))
+        |> Seq.filter (excludeCenterUnless (fun p -> p.kind = Chief))
         |> Seq.map (fun cell -> cell.id)
         |> Seq.toList
     | Gravedigger ->
         paths
         |> Seq.collect (takeCellsUntilAndIncluding (fun p -> not p.isAlive))
-        |> Seq.filter (excludeCenterUnless (fun p -> p.pieceType = Corpse))
+        |> Seq.filter (excludeCenterUnless (fun p -> p.kind = Corpse))
         |> Seq.map (fun cell -> cell.id)
         |> Seq.toList
     | _ -> List.empty
@@ -78,7 +78,7 @@ let private getTargetSelectionOptions(game : GameState, turn : TurnState, region
         match turn.subjectPiece game with
         | None -> list.Empty
         | Some subject ->
-            match subject.pieceType with
+            match subject.kind with
             | Reporter ->
                 let board = BoardModelUtility.getBoardMetadata regionCount
                 let neighbors = board.neighborsFromCellId destinationCellId
@@ -115,7 +115,7 @@ let private getVacateSelectionOptions(game : GameState, turn : TurnState, region
         | Some destination ->
             if not destination.isCenter
             then List.empty
-            else match subject.pieceType with
+            else match subject.kind with
                     | Assassin
                     | Gravedigger
                     | Diplomat ->
@@ -128,7 +128,7 @@ let private getVacateSelectionOptions(game : GameState, turn : TurnState, region
                         |> Seq.toList
                     | _ -> List.empty
 
-let getSelectableCellsFromState(game : Game) : (int list * SelectionType option) =
+let getSelectableCellsFromState(game : Game) : (int list * SelectionKind option) =
     let currentPlayerId = game.gameState.currentPlayerId
     match game.turnState.selections.Length with
     | 0 -> let cellIds = game.gameState.piecesControlledBy currentPlayerId
@@ -141,7 +141,7 @@ let getSelectableCellsFromState(game : Game) : (int list * SelectionType option)
            let cellIds = getMoveSelectionOptions(game.gameState, subject, game.regionCount)
            (cellIds, Some Move)
     | 2 -> let subject = game.turnState.subjectPiece(game.gameState).Value
-           match (subject.pieceType, game.turnState.selections.[1]) with
+           match (subject.kind, game.turnState.selections.[1]) with
             | Reporter, _ ->
                 let cellIds = getTargetSelectionOptions(game.gameState, game.turnState, game.regionCount)
                 if cellIds.IsEmpty
@@ -160,7 +160,7 @@ let getSelectableCellsFromState(game : Game) : (int list * SelectionType option)
                 else (cellIds, Some Vacate)
             | _ -> (List.empty, None)
     | 3 -> let subject = game.turnState.subjectPiece(game.gameState).Value
-           match (subject.pieceType, game.turnState.selections.[1]) with
+           match (subject.kind, game.turnState.selections.[1]) with
             | Diplomat, sel
             | Gravedigger, sel when sel.pieceId.IsSome ->
                 let cellIds = getVacateSelectionOptions(game.gameState, game.turnState, game.regionCount)
