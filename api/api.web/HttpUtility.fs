@@ -5,12 +5,12 @@ open System.IO
 open System.Threading.Tasks
 open Giraffe
 open Microsoft.AspNetCore.Http
+open Newtonsoft.Json
 open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
+open Djambi.Api.Common.JsonConverters
 open Djambi.Api.Logic.Services
 open Djambi.Api.Model.SessionModel
-open Newtonsoft.Json
-open Djambi.Api.Common.JsonConverters
 
 type HttpHandler = HttpFunc -> HttpContext -> HttpContext option Task
 

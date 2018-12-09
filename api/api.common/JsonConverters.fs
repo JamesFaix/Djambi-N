@@ -64,8 +64,6 @@ type TupleArrayJsonConverter() =
             FSharpValue.MakeTuple(values |> List.toArray, t)
         | _ -> failwith "invalid token"
 
-
-
 //Taken from http://www.hoonzis.com/fsharp-json-serializaton/
 type DiscriminatedUnionJsonConverter() =
     inherit JsonConverter()
