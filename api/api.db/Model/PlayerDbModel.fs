@@ -22,8 +22,8 @@ let mapPlayerTypeId (playerTypeId : byte) : PlayerKind =
     | 3uy -> PlayerKind.Virtual
     | _ -> raise <| Exception("Invalid player type")
 
-let mapPlayerTypeToId (playerType : PlayerKind) : byte =
-    match playerType with
+let mapPlayerKindToId (kind : PlayerKind) : byte =
+    match kind with
     | PlayerKind.User -> 1uy
     | PlayerKind.Guest -> 2uy
     | PlayerKind.Virtual -> 3uy

@@ -38,7 +38,7 @@ let getPlayer (playerId : int) : Player AsyncHttpResult =
 let addPlayerToLobby (lobbyId : int, request : CreatePlayerRequest) : Player AsyncHttpResult =
     let param = DynamicParameters()
                     .add("LobbyId", lobbyId)
-                    .add("PlayerTypeId", mapPlayerTypeToId request.kind)
+                    .add("PlayerTypeId", mapPlayerKindToId request.kind)
                     .addOption("UserId", request.userId)
                     .addOption("Name", request.name)
 
