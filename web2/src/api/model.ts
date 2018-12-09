@@ -31,23 +31,23 @@ export interface LobbyResponse {
     createdOn : Date
 }
 
-export enum PlayerType {
+export enum PlayerKind {
     User = "User",
     Guest = "Guest",
-    Virtual = "Virtual"
+    Neutral = "Neutral"
 }
 
 export interface CreatePlayerRequest {
     userId : number,
     name : string,
-    type : PlayerType
+    type : PlayerKind
 }
 
 export interface PlayerResponse {
     id : number,
     userId : number,
     name : string,
-    type : PlayerType
+    kind : PlayerKind
 }
 
 export interface LobbyWithPlayersResponse {
@@ -89,7 +89,7 @@ export interface PlayerStateResponse {
     isAlive : boolean
 }
 
-export enum PieceType {
+export enum PieceKind {
     Chief = "Chief",
     Thug = "Thug",
     Reporter = "Reporter",
@@ -101,7 +101,7 @@ export enum PieceType {
 
 export interface PieceResponse {
     id : number,
-    type : PieceType,
+    kind : PieceKind,
     playerId : number,
     originalPlayerId : number,
     cellId : number
@@ -117,10 +117,10 @@ export interface PlayerStartConditionsResponse {
     playerId : number,
     turNumber : number,
     region : number,
-    color : number
+    colorId : number
 }
 
-export enum SelectionType {
+export enum SelectionKind {
     Subject = "Subject",
     Move = "Move",
     Target = "Target",
@@ -129,7 +129,7 @@ export enum SelectionType {
 }
 
 export interface SelectionResponse {
-    type : SelectionType,
+    kind : SelectionKind,
     cellId : number,
     pieceId : number
 }
@@ -143,7 +143,7 @@ export interface TurnStateResponse {
     status : TurnStatus,
     selections : SelectionResponse[],
     selectionOptions : number[],
-    requiredSelectionType : SelectionType
+    requiredSelectionKind : SelectionKind
 }
 
 export interface GameStartResponse {
