@@ -9,12 +9,20 @@ open Microsoft.Extensions.Configuration
 open Newtonsoft.Json
 open Djambi.Api.WebClient.Model
 open Djambi.Utilities
+open Djambi.Api.Common.JsonConverters
+
+let converters =
+    [|
+        new OptionJsonConverter() :> JsonConverter
+        new TupleArrayJsonConverter() :> JsonConverter
+        new DiscriminatedUnionJsonConverter() :> JsonConverter
+    |]
 
 let private config = 
     ConfigurationBuilder()
         .AddJsonFile(Environment.environmentConfigPath(6), false)
         .Build()
-        
+
 let apiAddress = config.["apiAddress"]
 
 let DELETE = "DELETE";
@@ -38,7 +46,7 @@ let sendRequest<'a, 'b> (httpVerb : string,
 
     if body.IsSome
     then
-        let bodyText = JsonConvert.SerializeObject(body.Value)
+        let bodyText = JsonConvert.SerializeObject(body.Value, converters)
         use writer = new StreamWriter(request.GetRequestStream())
         writer.Write(bodyText)
         writer.Flush()
@@ -65,7 +73,7 @@ let sendRequest<'a, 'b> (httpVerb : string,
             | x when x >= HttpStatusCode.BadRequest -> 
                 Error <| responseText.Substring(1, responseText.Length-2) //It will return in quotes, fix this later
             | _ -> 
-                Ok <| JsonConvert.DeserializeObject<'b>(responseText)
+                Ok <| JsonConvert.DeserializeObject<'b>(responseText, converters)
            
         let headers = 
             webResponse.Headers.Keys

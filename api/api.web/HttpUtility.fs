@@ -1,6 +1,7 @@
 ﻿namespace Djambi.Api.Web
 
 open System
+open System.IO
 open System.Threading.Tasks
 open Giraffe
 open Microsoft.AspNetCore.Http
@@ -8,6 +9,8 @@ open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Logic.Services
 open Djambi.Api.Model.SessionModel
+open Newtonsoft.Json
+open Djambi.Api.Common.JsonConverters
 
 type HttpHandler = HttpFunc -> HttpContext -> HttpContext option Task
 
@@ -58,11 +61,27 @@ module HttpUtility =
             | Some session -> Ok session
         )
 
+    let private converters = 
+        [|
+            new OptionJsonConverter() :> JsonConverter
+            new TupleArrayJsonConverter() :> JsonConverter
+            new DiscriminatedUnionJsonConverter() :> JsonConverter
+        |]
+
+    let private readJsonBody<'a> (ctx : HttpContext) : 'a AsyncHttpResult =
+        try 
+            use reader = new StreamReader(ctx.Request.Body)
+            let json = reader.ReadToEnd()
+            let value = JsonConvert.DeserializeObject<'a>(json, converters)
+            okTask value
+        with
+        | ex -> errorTask <| HttpException(400, ex.Message)
+
     let private tupleWithModel<'a, 'b> (ctx : HttpContext) (result : 'b AsyncHttpResult): ('a * 'b) AsyncHttpResult =
         result
         |> thenBindAsync (fun value ->
-            ctx.BindModelAsync<'a>()
-            |> Task.map (fun model -> Ok (model, value))
+            readJsonBody<'a> ctx
+            |> thenBindAsync (fun body -> okTask (body, value))
         )
 
     let getSessionAndModelFromContext<'a> (ctx : HttpContext) : ('a * Session) AsyncHttpResult =
@@ -82,5 +101,4 @@ module HttpUtility =
     let ensureNotSignedInAndGetModel<'a> (ctx : HttpContext) : 'a AsyncHttpResult =
         match ensureNotSignedIn ctx with
         | Error ex -> errorTask ex
-        | Ok _ -> ctx.BindModelAsync<'a>()
-                  |> Task.map Ok
+        | Ok _ -> readJsonBody<'a> ctx
