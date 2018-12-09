@@ -40,7 +40,7 @@ type PlayerRepositoryTests() =
         let lobbyRequest = getCreateLobbyRequest()
         task {
             let! lobby = LobbyRepository.createLobby (lobbyRequest, userId) |> thenValue
-            let request = CreatePlayerRequest.``virtual`` "test"
+            let request = CreatePlayerRequest.neutral "test"
 
             //Act
             let! _ = PlayerRepository.addPlayerToLobby (lobby.id, request) |> thenValue
@@ -50,7 +50,7 @@ type PlayerRepositoryTests() =
             let exists = players |> List.exists (fun p ->
                 p.userId = None
                 && p.name = request.name.Value
-                && p.kind = PlayerKind.Virtual)
+                && p.kind = PlayerKind.Neutral)
             Assert.True(exists)
         }
 

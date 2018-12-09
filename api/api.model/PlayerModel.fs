@@ -4,7 +4,7 @@ module Djambi.Api.Model.PlayerModel
 type PlayerKind =
     | User
     | Guest
-    | Virtual
+    | Neutral
 
 type Player =
     {
@@ -39,9 +39,9 @@ module CreatePlayerRequest =
             name = Some name
         }
 
-    let ``virtual`` (name : string) : CreatePlayerRequest =
+    let neutral (name : string) : CreatePlayerRequest =
         {
-            kind = PlayerKind.Virtual
+            kind = PlayerKind.Neutral
             userId = None
             name = Some name
         }        

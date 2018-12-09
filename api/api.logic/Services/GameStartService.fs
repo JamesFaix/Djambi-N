@@ -28,7 +28,7 @@ let getStartingConditions(players : Player list) : PlayerStartConditions list =
 
     let nonVirtualPlayers =
         players
-        |> List.filter (fun p -> p.kind <> PlayerKind.Virtual)
+        |> List.filter (fun p -> p.kind <> PlayerKind.Neutral)
         |> Utilities.shuffle
         |> Seq.mapi (fun i p -> (i, p))
 
@@ -75,7 +75,7 @@ let startGame (lobbyId : int) (session : Session) : StartGameResponse AsyncHttpR
         PlayerRepository.getPlayersForLobby lobbyId
         |> thenBind (fun players ->
             if players
-                |> List.filter (fun p -> p.kind <> PlayerKind.Virtual)
+                |> List.filter (fun p -> p.kind <> PlayerKind.Neutral)
                 |> List.length = 1
             then Error <| HttpException(400, "Cannot start game with only one player.")
             else Ok players

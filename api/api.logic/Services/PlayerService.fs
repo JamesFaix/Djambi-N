@@ -37,7 +37,7 @@ let addPlayerToLobby (lobbyId : int, request : CreatePlayerRequest) (session : S
             then Error <| HttpException(403, "Cannot add guests for other users to a lobby.")
             else Ok ()
 
-        | PlayerKind.Virtual ->
+        | PlayerKind.Neutral ->
             Error <| HttpException(400, "Cannot directly add virtual players to a lobby.")
     )
     |> thenBindAsync (fun _ -> PlayerRepository.addPlayerToLobby (lobbyId, request))
@@ -79,7 +79,7 @@ let fillEmptyPlayerSlots (lobby : Lobby) (players : Player list) : Player list A
         PlayerRepository.getVirtualPlayerNames()
         |> thenMap getVirtualNamesToUse
         |> thenDoEachAsync (fun name ->
-            let request = CreatePlayerRequest.``virtual`` (name)
+            let request = CreatePlayerRequest.neutral (name)
             PlayerRepository.addPlayerToLobby (lobby.id, request)
             |> thenMap ignore
         )

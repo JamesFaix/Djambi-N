@@ -132,7 +132,7 @@ type GameStartServiceTests() =
 
             let virtualPlayerIds =
                 players
-                |> List.filter (fun p -> p.kind = PlayerKind.Virtual)
+                |> List.filter (fun p -> p.kind = PlayerKind.Neutral)
                 |> List.map (fun p -> p.id)
                 |> Set.ofList
 

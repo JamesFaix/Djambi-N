@@ -320,7 +320,7 @@ type AddPlayerTests() =
                 {
                     userId = None
                     name = Some "test"
-                    kind = PlayerKind.Virtual
+                    kind = PlayerKind.Neutral
                 }
 
             //Act

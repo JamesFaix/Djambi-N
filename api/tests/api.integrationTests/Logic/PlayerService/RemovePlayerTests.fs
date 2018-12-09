@@ -306,7 +306,7 @@ type RemovePlayerTests() =
             let! _ = PlayerService.fillEmptyPlayerSlots lobby players |> AsyncHttpResult.thenValue
             let! updatedPlayers = PlayerService.getLobbyPlayers lobby.id session |> AsyncHttpResult.thenValue
             let virtualPlayer = updatedPlayers
-                                |> List.filter(fun p -> p.kind = PlayerKind.Virtual)
+                                |> List.filter(fun p -> p.kind = PlayerKind.Neutral)
                                 |> List.head
 
             //Act

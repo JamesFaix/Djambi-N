@@ -19,14 +19,14 @@ let mapPlayerTypeId (playerTypeId : byte) : PlayerKind =
     match playerTypeId with
     | 1uy -> PlayerKind.User
     | 2uy -> PlayerKind.Guest
-    | 3uy -> PlayerKind.Virtual
+    | 3uy -> PlayerKind.Neutral
     | _ -> raise <| Exception("Invalid player type")
 
 let mapPlayerKindToId (kind : PlayerKind) : byte =
     match kind with
     | PlayerKind.User -> 1uy
     | PlayerKind.Guest -> 2uy
-    | PlayerKind.Virtual -> 3uy
+    | PlayerKind.Neutral -> 3uy
 
 let mapPlayer (sqlModel : PlayerSqlModel) : Player =
     {
