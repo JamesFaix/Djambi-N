@@ -3,14 +3,13 @@ module Djambi.Api.Web.Mappings.LobbyWebMapping
 
 open Djambi.Api.Model
 open Djambi.Api.Web.Model
-open Djambi.Api.Common.Utilities
 open Djambi.Api.Web.Mappings
 
 let mapLobbyResponse(lobby : Lobby) : LobbyResponseJsonModel =
     {
         id = lobby.id
         regionCount = lobby.regionCount
-        description = lobby.description |> optionToReference
+        description = lobby.description
         isPublic = lobby.isPublic
         allowGuests = lobby.allowGuests
         createdByUserId = lobby.createdByUserId
@@ -21,7 +20,7 @@ let mapLobbyWithPlayersResponse(lobby : LobbyWithPlayers) : LobbyWithPlayersResp
     {
         id = lobby.id
         regionCount = lobby.regionCount
-        description = lobby.description |> optionToReference
+        description = lobby.description
         isPublic = lobby.isPublic
         allowGuests = lobby.allowGuests
         createdByUserId = lobby.createdByUserId
@@ -32,7 +31,7 @@ let mapLobbyWithPlayersResponse(lobby : LobbyWithPlayers) : LobbyWithPlayersResp
 let mapCreateLobbyRequest(jsonModel : CreateLobbyJsonModel, sessionUserId : int) : CreateLobbyRequest =
     {
         regionCount = jsonModel.regionCount
-        description = jsonModel.description |> referenceToOption
+        description = jsonModel.description
         isPublic = jsonModel.isPublic
         allowGuests = jsonModel.allowGuests
     }
@@ -40,9 +39,9 @@ let mapCreateLobbyRequest(jsonModel : CreateLobbyJsonModel, sessionUserId : int)
 let mapLobbiesQuery(jsonModel : LobbiesQueryJsonModel) : LobbiesQuery =
     {
         lobbyId = None
-        descriptionContains = jsonModel.descriptionContains |> referenceToOption
-        createdByUserId = jsonModel.createdByUserId |> nullableToOption
-        playerUserId = jsonModel.playerUserId |> nullableToOption
-        isPublic = jsonModel.isPublic |> nullableToOption
-        allowGuests = jsonModel.allowGuests |> nullableToOption
+        descriptionContains = jsonModel.descriptionContains
+        createdByUserId = jsonModel.createdByUserId
+        playerUserId = jsonModel.playerUserId
+        isPublic = jsonModel.isPublic
+        allowGuests = jsonModel.allowGuests
     }

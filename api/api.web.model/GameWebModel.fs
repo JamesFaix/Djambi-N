@@ -1,7 +1,7 @@
 ﻿[<AutoOpen>]
 module Djambi.Api.Web.Model.GameWebModel
 
-open System
+open Djambi.Api.Model
 
 [<CLIMutable>]
 type CreateSelectionJsonModel =
@@ -18,8 +18,8 @@ type PlayerStateJsonModel =
 type PieceJsonModel =
     {
         id : int
-        ``type`` : string
-        playerId : Nullable<int>
+        ``type`` : PieceType
+        playerId : int option
         originalPlayerId : int
         cellId : int
     }
@@ -34,24 +34,24 @@ type GameStateJsonModel =
 type PlayerStartConditionsJsonModel =
     {
         playerId : int
-        turnNumber : int Nullable
+        turnNumber : int option
         region : int
         color : int
     }
 
 type SelectionJsonModel =
     {
-        ``type`` : string
+        ``type`` : SelectionType
         cellId : int
-        pieceId : Nullable<int>
+        pieceId : int option
     }
 
 type TurnStateJsonModel =
     {
-        status : string
+        status : TurnStatus
         selections : SelectionJsonModel list
         selectionOptions : int list
-        requiredSelectionType : string
+        requiredSelectionType : SelectionType option
     }
 
 type GameStartResponseJsonModel =

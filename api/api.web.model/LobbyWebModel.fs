@@ -7,7 +7,7 @@ open System
 type CreateLobbyJsonModel =
     {
         regionCount : int
-        description : string
+        description : string option
         allowGuests : bool
         isPublic : bool
     }
@@ -16,7 +16,7 @@ type LobbyResponseJsonModel =
     {
         id : int
         regionCount : int
-        description : string
+        description : string option
         allowGuests : bool
         isPublic : bool
         createdByUserId : int
@@ -27,7 +27,7 @@ type LobbyWithPlayersResponseJsonModel =
     {
         id : int
         regionCount : int
-        description : string
+        description : string option
         allowGuests : bool
         isPublic : bool
         players : PlayerResponseJsonModel list
@@ -38,19 +38,19 @@ type LobbyWithPlayersResponseJsonModel =
 [<CLIMutable>]
 type LobbiesQueryJsonModel =
     {
-        descriptionContains : string
-        createdByUserId : int Nullable
-        playerUserId : int Nullable
-        isPublic : bool Nullable
-        allowGuests : bool Nullable
+        descriptionContains : string option
+        createdByUserId : int option
+        playerUserId : int option
+        isPublic : bool option
+        allowGuests : bool option
     }
 
 module LobbiesQueryJsonModel =
     let empty =
         {
-            descriptionContains = Unchecked.defaultof<string>
-            createdByUserId = Unchecked.defaultof<int Nullable>
-            playerUserId = Unchecked.defaultof<int Nullable>
-            isPublic = Unchecked.defaultof<bool Nullable>
-            allowGuests = Unchecked.defaultof<bool Nullable>
+            descriptionContains = None
+            createdByUserId = None
+            playerUserId = None
+            isPublic = None
+            allowGuests = None
         }

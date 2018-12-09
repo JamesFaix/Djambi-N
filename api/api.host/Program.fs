@@ -1,6 +1,7 @@
 module Djambi.Api.App
 
 open System
+open System.Linq
 open Giraffe
 open Microsoft.AspNetCore.Builder
 open Microsoft.AspNetCore.Cors.Infrastructure
@@ -8,9 +9,11 @@ open Microsoft.AspNetCore.Hosting
 open Microsoft.Extensions.Configuration
 open Microsoft.Extensions.Logging
 open Microsoft.Extensions.DependencyInjection
+open Newtonsoft.Json
 open Djambi.Api.Db
 open Djambi.Api.Http
 open Djambi.Utilities
+open Djambi.Api.Common.JsonConverters
 
 // ---------------------------------
 // Error handler
@@ -39,8 +42,25 @@ let configureCors (builder : CorsPolicyBuilder) =
            .AllowCredentials()
            |> ignore
 
+let configureNewtonsoft () =
+    let converters : List<JsonConverter> =
+         [
+            new OptionJsonConverter()
+            new TupleArrayJsonConverter()
+            new DiscriminatedUnionJsonConverter()
+        ]
+
+    let settings = new JsonSerializerSettings()
+    settings.Converters <- converters.ToList()
+    JsonConvert.DefaultSettings <- (fun () -> settings)
+
 let configureApp (app : IApplicationBuilder) =
 //    let env = app.ApplicationServices.GetService<IHostingEnvironment>()
+
+    //This will only provide custom serialization of responses to clients. 
+    //Custom deserialization of request bodies does not work that same way in this framework.
+    //See HttpUtility for deserialization.
+    configureNewtonsoft()
 
     app.UseGiraffeErrorHandler(errorHandler)
     //(match env.IsDevelopment() with

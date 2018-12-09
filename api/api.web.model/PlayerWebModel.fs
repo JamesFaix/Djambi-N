@@ -1,20 +1,20 @@
 ﻿[<AutoOpen>]
 module Djambi.Api.Web.Model.PlayerWebModel
 
-open System
+open Djambi.Api.Model
 
 type PlayerResponseJsonModel =
     {
         id : int
-        userId : int Nullable
+        userId : int option
         name : string
-        ``type`` : string
+        ``type`` : PlayerType
     }
 
 [<CLIMutable>]
 type CreatePlayerJsonModel =
     {
-        userId : int Nullable
-        name : string
-        ``type`` : string
+        userId : int option
+        name : string option
+        ``type`` : PlayerType
     }

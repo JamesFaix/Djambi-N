@@ -3,27 +3,19 @@ module Djambi.Api.Web.Mappings.PlayerWebMapping
 
 open Djambi.Api.Model
 open Djambi.Api.Web.Model
-open Djambi.Api.Common.Utilities
-
-let mapPlayerTypeFromString(playerTypeName : string) : PlayerType =
-    match playerTypeName.ToUpperInvariant() with
-    | "USER" -> PlayerType.User
-    | "GUEST" -> PlayerType.Guest
-    | "VIRTUAL" -> PlayerType.Virtual
-    | _ -> failwith ("Invalid player type name: " + playerTypeName)
 
 let mapCreatePlayerRequest (jsonModel : CreatePlayerJsonModel, lobbyId : int)  : CreatePlayerRequest =
     {
         lobbyId = lobbyId
-        userId = jsonModel.userId |> nullableToOption
-        name = jsonModel.name |> stringToOption
-        playerType = jsonModel.``type`` |> mapPlayerTypeFromString
+        userId = jsonModel.userId
+        name = jsonModel.name
+        playerType = jsonModel.``type``
     }
 
 let mapPlayerResponse(player : Player) : PlayerResponseJsonModel =
     {
         id = player.id
-        userId = player.userId |> optionToNullable
+        userId = player.userId
         name = player.name
-        ``type`` = player.playerType.ToString()
+        ``type`` = player.playerType
     }
