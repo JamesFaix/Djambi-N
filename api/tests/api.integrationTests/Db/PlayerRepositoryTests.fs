@@ -34,7 +34,7 @@ type PlayerRepositoryTests() =
         }
 
     [<Fact>]
-    let ``Add virtual player should work``() =
+    let ``Add neutral player should work``() =
         //Arrange
         let userId = 1
         let lobbyRequest = getCreateLobbyRequest()

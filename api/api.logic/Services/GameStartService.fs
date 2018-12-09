@@ -26,13 +26,13 @@ let getStartingConditions(players : Player list) : PlayerStartConditions list =
 
     let dict = Enumerable.ToDictionary (startConds, (fun startCond -> startCond.playerId))
 
-    let nonVirtualPlayers =
+    let nonNeutralPlayers =
         players
         |> List.filter (fun p -> p.kind <> PlayerKind.Neutral)
         |> Utilities.shuffle
         |> Seq.mapi (fun i p -> (i, p))
 
-    for (i, p) in nonVirtualPlayers do
+    for (i, p) in nonNeutralPlayers do
         dict.[p.id] <- { dict.[p.id] with turnNumber = Some i }
 
     dict.Values |> Seq.toList

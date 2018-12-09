@@ -38,7 +38,7 @@ let addPlayerToLobby (lobbyId : int, request : CreatePlayerRequest) (session : S
             else Ok ()
 
         | PlayerKind.Neutral ->
-            Error <| HttpException(400, "Cannot directly add virtual players to a lobby.")
+            Error <| HttpException(400, "Cannot directly add neutral players to a lobby.")
     )
     |> thenBindAsync (fun _ -> PlayerRepository.addPlayerToLobby (lobbyId, request))
 
@@ -51,7 +51,7 @@ let removePlayerFromLobby (lobbyId : int, playerId : int) (session : Session) : 
             | None -> Error <| HttpException(404, "Player not found.")
             | Some p ->
                 match p.userId with
-                | None -> Error <| HttpException(400, "Cannot remove virtual players from lobby.")
+                | None -> Error <| HttpException(400, "Cannot remove neutral players from lobby.")
                 | Some x ->
                     if session.isAdmin
                         || lobby.createdByUserId = session.userId
@@ -65,7 +65,7 @@ let removePlayerFromLobby (lobbyId : int, playerId : int) (session : Session) : 
 let fillEmptyPlayerSlots (lobby : Lobby) (players : Player list) : Player list AsyncHttpResult =
     let missingPlayerCount = lobby.regionCount - players.Length
 
-    let getVirtualNamesToUse (possibleNames : string list) =
+    let getNeutralPlayerNamesToUse (possibleNames : string list) =
         Enumerable.Except(
             possibleNames,
             players |> Seq.map (fun p -> p.name),
@@ -76,8 +76,8 @@ let fillEmptyPlayerSlots (lobby : Lobby) (players : Player list) : Player list A
     if missingPlayerCount = 0
     then players |> okTask
     else
-        PlayerRepository.getVirtualPlayerNames()
-        |> thenMap getVirtualNamesToUse
+        PlayerRepository.getNeutralPlayerNames()
+        |> thenMap getNeutralPlayerNamesToUse
         |> thenDoEachAsync (fun name ->
             let request = CreatePlayerRequest.neutral (name)
             PlayerRepository.addPlayerToLobby (lobby.id, request)

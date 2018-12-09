@@ -18,12 +18,7 @@ type SelectCellTests() =
             //Arrange
             let! (user, session, lobby) = createUserSessionAndLobby(true) |> thenValue
 
-            let guestRequest : CreatePlayerRequest =
-                {
-                    userId = Some user.id
-                    name = Some "test"
-                    kind = PlayerKind.Guest
-                }
+            let guestRequest = CreatePlayerRequest.guest (user.id, "test")
             let! _ = PlayerService.addPlayerToLobby (lobby.id, guestRequest) session |> thenValue
 
             let! gameStart = GameStartService.startGame lobby.id session |> thenValue
@@ -50,12 +45,7 @@ type SelectCellTests() =
 
             let! user2 = createUser() |> thenValue
             let session2 = getSessionForUser user2.id
-            let playerRequest : CreatePlayerRequest =
-                {
-                    userId = Some user2.id
-                    name = None
-                    kind = PlayerKind.User
-                }
+            let playerRequest = CreatePlayerRequest.user user2.id
             let! player2 = PlayerService.addPlayerToLobby (lobby.id, playerRequest) session2 |> thenValue
 
             let! gameStart = GameStartService.startGame lobby.id session1 |> thenValue
@@ -82,12 +72,7 @@ type SelectCellTests() =
 
             let! user2 = createUser() |> thenValue
             let session2 = getSessionForUser user2.id
-            let playerRequest : CreatePlayerRequest =
-                {
-                    userId = Some user2.id
-                    name = None
-                    kind = PlayerKind.User
-                }
+            let playerRequest = CreatePlayerRequest.user user2.id
             let! player2 = PlayerService.addPlayerToLobby (lobby.id, playerRequest) session2 |> thenValue
 
             let! gameStart = GameStartService.startGame lobby.id session1 |> thenValue
@@ -118,12 +103,7 @@ type SelectCellTests() =
             //Arrange
             let! (user, session, lobby) = createUserSessionAndLobby(true) |> thenValue
 
-            let guestRequest : CreatePlayerRequest =
-                {
-                    userId = Some user.id
-                    name = Some "test"
-                    kind = PlayerKind.Guest
-                }
+            let guestRequest = CreatePlayerRequest.guest (user.id, "test")
             let! _ = PlayerService.addPlayerToLobby (lobby.id, guestRequest) session |> thenValue
 
             let! gameStart = GameStartService.startGame lobby.id session |> thenValue
@@ -143,12 +123,7 @@ type SelectCellTests() =
             //Arrange
             let! (user, session, lobby) = createUserSessionAndLobby(true) |> thenValue
 
-            let guestRequest : CreatePlayerRequest =
-                {
-                    userId = Some user.id
-                    name = Some "test"
-                    kind = PlayerKind.Guest
-                }
+            let guestRequest = CreatePlayerRequest.guest (user.id, "test")
             let! _ = PlayerService.addPlayerToLobby (lobby.id, guestRequest) session |> thenValue
 
             let! gameStart = GameStartService.startGame lobby.id session |> thenValue
@@ -166,12 +141,7 @@ type SelectCellTests() =
             //Arrange
             let! (user, session, lobby) = createUserSessionAndLobby(true) |> thenValue
 
-            let guestRequest : CreatePlayerRequest =
-                {
-                    userId = Some user.id
-                    name = Some "test"
-                    kind = PlayerKind.Guest
-                }
+            let guestRequest = CreatePlayerRequest.guest (user.id, "test")
             let! _ = PlayerService.addPlayerToLobby (lobby.id, guestRequest) session |> thenValue
 
             let! gameStart = GameStartService.startGame lobby.id session |> thenValue

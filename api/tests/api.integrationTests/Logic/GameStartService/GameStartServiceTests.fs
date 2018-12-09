@@ -74,12 +74,7 @@ type GameStartServiceTests() =
             //Arrange
             let! (user, session, lobby) = createUserSessionAndLobby(true) |> thenValue
 
-            let playerRequest : CreatePlayerRequest =
-                {
-                    userId = Some user.id
-                    name = Some "test"
-                    kind = PlayerKind.Guest
-                }
+            let playerRequest = CreatePlayerRequest.guest (user.id, "test")
 
             let! _ = PlayerService.addPlayerToLobby (lobby.id, playerRequest) session |> thenValue
 
@@ -94,7 +89,7 @@ type GameStartServiceTests() =
         }
 
     [<Fact>]
-    let ``Start game should fail if only one non-virtual player``() =
+    let ``Start game should fail if only one non-neutral player``() =
         task {
              //Arrange
             let! (user, session, lobby) = createUserSessionAndLobby(true) |> thenValue
@@ -110,17 +105,12 @@ type GameStartServiceTests() =
         }
 
     [<Fact>]
-    let ``Virtual players should not be in the turn cycle``() =
+    let ``Neutral players should not be in the turn cycle``() =
         task {
             //Arrange
             let! (user, session, lobby) = createUserSessionAndLobby(true) |> thenValue
 
-            let playerRequest : CreatePlayerRequest =
-                {
-                    userId = Some user.id
-                    name = Some "test"
-                    kind = PlayerKind.Guest
-                }
+            let playerRequest = CreatePlayerRequest.guest (user.id, "test")
 
             let! _ = PlayerService.addPlayerToLobby (lobby.id, playerRequest) session |> thenValue
 
@@ -130,7 +120,7 @@ type GameStartServiceTests() =
             //Assert
             let! players = PlayerService.getGamePlayers gameStartResponse.gameId session |> thenValue
 
-            let virtualPlayerIds =
+            let neutralPlayerIds =
                 players
                 |> List.filter (fun p -> p.kind = PlayerKind.Neutral)
                 |> List.map (fun p -> p.id)
@@ -138,7 +128,7 @@ type GameStartServiceTests() =
 
             gameStartResponse.gameState.turnCycle
             |> Set.ofList
-            |> Set.intersect virtualPlayerIds
+            |> Set.intersect neutralPlayerIds
             |> Set.count
             |> shouldBe 0
         }

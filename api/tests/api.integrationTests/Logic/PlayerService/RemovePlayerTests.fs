@@ -19,13 +19,7 @@ type RemovePlayerTests() =
 
             let! user = createUser() |> AsyncHttpResult.thenValue
             let session = getSessionForUser user.id
-
-            let request : CreatePlayerRequest =
-                {
-                    userId = Some user.id
-                    name = None
-                    kind = PlayerKind.User
-                }
+            let request = CreatePlayerRequest.user user.id
 
             let! player = PlayerService.addPlayerToLobby (lobby.id, request) session
                           |> AsyncHttpResult.thenValue
@@ -47,13 +41,7 @@ type RemovePlayerTests() =
         task {
             //Arrange
             let! (user, session, lobby) = createUserSessionAndLobby(true) |> AsyncHttpResult.thenValue
-
-            let request : CreatePlayerRequest =
-                {
-                    userId = Some user.id
-                    name = Some "test"
-                    kind = PlayerKind.Guest
-                }
+            let request = CreatePlayerRequest.guest (user.id, "test")
 
             let! player = PlayerService.addPlayerToLobby (lobby.id, request) session
                           |> AsyncHttpResult.thenValue
@@ -77,13 +65,7 @@ type RemovePlayerTests() =
             let! (_, session, lobby) = createUserSessionAndLobby(false) |> AsyncHttpResult.thenValue
 
             let! user = createUser() |> AsyncHttpResult.thenValue
-
-            let request : CreatePlayerRequest =
-                {
-                    userId = Some user.id
-                    name = None
-                    kind = PlayerKind.User
-                }
+            let request = CreatePlayerRequest.user user.id
 
             let! player = PlayerService.addPlayerToLobby (lobby.id, request) { session with isAdmin = true }
                           |> AsyncHttpResult.thenValue
@@ -107,20 +89,8 @@ type RemovePlayerTests() =
             let! (_, session, lobby) = createUserSessionAndLobby(true) |> AsyncHttpResult.thenValue
 
             let! user = createUser() |> AsyncHttpResult.thenValue
-
-            let userPlayerRequest : CreatePlayerRequest =
-                {
-                    userId = Some user.id
-                    name = None
-                    kind = PlayerKind.User
-                }
-
-            let guestPlayerRequest : CreatePlayerRequest =
-                {
-                    userId = Some user.id
-                    name = Some "test"
-                    kind = PlayerKind.Guest
-                }
+            let userPlayerRequest = CreatePlayerRequest.user user.id
+            let guestPlayerRequest = CreatePlayerRequest.guest (user.id, "test")
 
             let! userPlayer =
                 PlayerService.addPlayerToLobby (lobby.id, userPlayerRequest) { session with isAdmin = true }
@@ -150,20 +120,8 @@ type RemovePlayerTests() =
             let! (_, session, lobby) = createUserSessionAndLobby(true) |> AsyncHttpResult.thenValue
 
             let! user = createUser() |> AsyncHttpResult.thenValue
-
-            let userPlayerRequest : CreatePlayerRequest =
-                {
-                    userId = Some user.id
-                    name = None
-                    kind = PlayerKind.User
-                }
-
-            let guestPlayerRequest : CreatePlayerRequest =
-                {
-                    userId = Some user.id
-                    name = Some "test"
-                    kind = PlayerKind.Guest
-                }
+            let userPlayerRequest = CreatePlayerRequest.user user.id
+            let guestPlayerRequest = CreatePlayerRequest.guest (user.id, "test")
 
             let! userPlayer =
                 PlayerService.addPlayerToLobby (lobby.id, userPlayerRequest) { session with isAdmin = true }
@@ -212,14 +170,8 @@ type RemovePlayerTests() =
             let! (_, session, lobby) = createUserSessionAndLobby(false) |> AsyncHttpResult.thenValue
 
             let! user = createUser() |> AsyncHttpResult.thenValue
-
-            let request : CreatePlayerRequest =
-                {
-                    userId = Some user.id
-                    name = None
-                    kind = PlayerKind.User
-                }
-
+            let request = CreatePlayerRequest.user user.id
+            
             let! player = PlayerService.addPlayerToLobby (lobby.id, request) { session with isAdmin = true }
                           |> AsyncHttpResult.thenValue
 
@@ -242,13 +194,7 @@ type RemovePlayerTests() =
             let! (_, session, lobby) = createUserSessionAndLobby(false) |> AsyncHttpResult.thenValue
 
             let! user = createUser() |> AsyncHttpResult.thenValue
-
-            let request : CreatePlayerRequest =
-                {
-                    userId = Some user.id
-                    name = None
-                    kind = PlayerKind.User
-                }
+            let request = CreatePlayerRequest.user user.id
 
             let! player = PlayerService.addPlayerToLobby (lobby.id, request) { session with isAdmin = true }
                           |> AsyncHttpResult.thenValue
@@ -272,13 +218,7 @@ type RemovePlayerTests() =
             let! (_, session, lobby) = createUserSessionAndLobby(true) |> AsyncHttpResult.thenValue
 
             let! user = createUser() |> AsyncHttpResult.thenValue
-
-            let request : CreatePlayerRequest =
-                {
-                    userId = Some user.id
-                    name = Some "test"
-                    kind = PlayerKind.Guest
-                }
+            let request = CreatePlayerRequest.guest (user.id, "test")
 
             let! player = PlayerService.addPlayerToLobby (lobby.id, request) { session with isAdmin = true }
                           |> AsyncHttpResult.thenValue
@@ -295,9 +235,8 @@ type RemovePlayerTests() =
             players |> shouldExist (fun p -> p.id = player.id)
         }
 
-    //TODO: Remove player should fail if removing virtual player
     [<Fact>]
-    let ``Remove player should work if removing self``() =
+    let ``Remove player should fail if removing neutral player``() =
         task {
             //Arrange
             let! (_, session, lobby) = createUserSessionAndLobby(false) |> AsyncHttpResult.thenValue
@@ -305,15 +244,15 @@ type RemovePlayerTests() =
             let! players = PlayerService.getLobbyPlayers lobby.id session |> AsyncHttpResult.thenValue
             let! _ = PlayerService.fillEmptyPlayerSlots lobby players |> AsyncHttpResult.thenValue
             let! updatedPlayers = PlayerService.getLobbyPlayers lobby.id session |> AsyncHttpResult.thenValue
-            let virtualPlayer = updatedPlayers
+            let neutralPlayer = updatedPlayers
                                 |> List.filter(fun p -> p.kind = PlayerKind.Neutral)
                                 |> List.head
 
             //Act
-            let! error = PlayerService.removePlayerFromLobby (lobby.id, virtualPlayer.id) session
+            let! error = PlayerService.removePlayerFromLobby (lobby.id, neutralPlayer.id) session
 
             //Assert
-            error |> shouldBeError 400 "Cannot remove virtual players from lobby."
+            error |> shouldBeError 400 "Cannot remove neutral players from lobby."
         }
 
     [<Fact>]
@@ -326,13 +265,7 @@ type RemovePlayerTests() =
             let! lobby2 = LobbyService.createLobby lobbyRequest session |> AsyncHttpResult.thenValue
 
             let! user = createUser() |> AsyncHttpResult.thenValue
-
-            let request : CreatePlayerRequest =
-                {
-                    userId = Some user.id
-                    name = None
-                    kind = PlayerKind.User
-                }
+            let request = CreatePlayerRequest.user user.id
 
             let! player = PlayerService.addPlayerToLobby (lobby1.id, request) { session with isAdmin = true }
                           |> AsyncHttpResult.thenValue
@@ -356,13 +289,7 @@ type RemovePlayerTests() =
             let! (_, session, lobby) = createUserSessionAndLobby(false) |> AsyncHttpResult.thenValue
 
             let! user = createUser() |> AsyncHttpResult.thenValue
-
-            let request : CreatePlayerRequest =
-                {
-                    userId = Some user.id
-                    name = None
-                    kind = PlayerKind.User
-                }
+            let request = CreatePlayerRequest.user user.id
 
             let! player = PlayerService.addPlayerToLobby (lobby.id, request) { session with isAdmin = true }
                           |> AsyncHttpResult.thenValue
@@ -386,13 +313,7 @@ type RemovePlayerTests() =
             let! (_, session, lobby) = createUserSessionAndLobby(false) |> AsyncHttpResult.thenValue
 
             let! user = createUser() |> AsyncHttpResult.thenValue
-
-            let request : CreatePlayerRequest =
-                {
-                    userId = Some user.id
-                    name = None
-                    kind = PlayerKind.User
-                }
+            let request = CreatePlayerRequest.user user.id
 
             let! player = PlayerService.addPlayerToLobby (lobby.id, request) { session with isAdmin = true }
                           |> AsyncHttpResult.thenValue
@@ -416,13 +337,7 @@ type RemovePlayerTests() =
             let! (_, session, lobby) = createUserSessionAndLobby(false) |> AsyncHttpResult.thenValue
 
             let! user = createUser() |> AsyncHttpResult.thenValue
-
-            let request : CreatePlayerRequest =
-                {
-                    userId = Some user.id
-                    name = None
-                    kind = PlayerKind.User
-                }
+            let request = CreatePlayerRequest.user user.id
 
             let! player = PlayerService.addPlayerToLobby (lobby.id, request) { session with isAdmin = true }
                           |> AsyncHttpResult.thenValue

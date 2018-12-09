@@ -53,7 +53,7 @@ let removePlayerFromLobby(playerId : int) : Unit AsyncHttpResult =
     let cmd = proc("Players_Remove", param)
     queryUnit(cmd, "Player")
 
-let getVirtualPlayerNames() : string list AsyncHttpResult =
+let getNeutralPlayerNames() : string list AsyncHttpResult =
     let param = new DynamicParameters()
     let cmd = proc("Players_GetVirtualNames", param)
-    queryMany<string>(cmd, "Virtual player names")
+    queryMany<string>(cmd, "Neutral player names")

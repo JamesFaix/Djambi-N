@@ -29,7 +29,7 @@ type FillEmptyPlayerSlotsTests() =
             updatedPlayers.Length |> shouldBe lobbyRequest.regionCount
             doubleCheck |> shouldBe updatedPlayers
 
-            //All players after creator are virtual
+            //All players after creator are neutral
             updatedPlayers
             |> List.filter (fun p -> p.kind = PlayerKind.Neutral)
             |> List.length

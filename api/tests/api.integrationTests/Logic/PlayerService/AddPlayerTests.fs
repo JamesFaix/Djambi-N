@@ -22,13 +22,7 @@ type AddPlayerTests() =
 
             let! user = createUser() |> thenValue
             let session = getSessionForUser user.id
-
-            let request : CreatePlayerRequest =
-                {
-                    userId = Some user.id
-                    name = None
-                    kind = PlayerKind.User
-                }
+            let request = CreatePlayerRequest.user user.id
 
             //Act
             let! player = PlayerService.addPlayerToLobby (lobby.id, request) session |> thenValue
@@ -48,13 +42,7 @@ type AddPlayerTests() =
             let! (_, session, lobby) = createUserSessionAndLobby(false) |> thenValue
 
             let! user = createUser() |> thenValue
-
-            let request : CreatePlayerRequest =
-                {
-                    userId = Some user.id
-                    name = None
-                    kind = PlayerKind.User
-                }
+            let request = CreatePlayerRequest.user user.id
 
             //Act
             let! player = PlayerService.addPlayerToLobby (lobby.id, request) { session with isAdmin = true } |> thenValue
@@ -74,13 +62,7 @@ type AddPlayerTests() =
             let! (_, session, lobby) = createUserSessionAndLobby(false) |> thenValue
 
             let! user = createUser() |> thenValue
-
-            let request : CreatePlayerRequest =
-                {
-                    userId = Some user.id
-                    name = None
-                    kind = PlayerKind.User
-                }
+            let request = CreatePlayerRequest.user user.id
 
             //Act
             let! error = PlayerService.addPlayerToLobby (lobby.id, request) { session with isAdmin = false }
@@ -138,13 +120,7 @@ type AddPlayerTests() =
         task {
             //Arrange
             let! (user, session, lobby) = createUserSessionAndLobby(false) |> thenValue
-
-            let request : CreatePlayerRequest =
-                {
-                    userId = Some user.id
-                    name = None
-                    kind = PlayerKind.User
-                }
+            let request = CreatePlayerRequest.user user.id
 
             //Act
             let! error = PlayerService.addPlayerToLobby (lobby.id, request) { session with isAdmin = true }
@@ -160,13 +136,7 @@ type AddPlayerTests() =
         task {
             //Arrange
             let! (user, session, lobby) = createUserSessionAndLobby(true) |> AsyncHttpResult.thenValue
-
-            let request : CreatePlayerRequest =
-                {
-                    userId = Some user.id
-                    name = Some "test"
-                    kind = PlayerKind.Guest
-                }
+            let request = CreatePlayerRequest.guest (user.id, "test")
 
             //Act
             let! player = PlayerService.addPlayerToLobby (lobby.id, request) session |> thenValue
@@ -186,13 +156,7 @@ type AddPlayerTests() =
             let! (_, session, lobby) = createUserSessionAndLobby(true) |> thenValue
 
             let! user = createUser() |> thenValue
-
-            let request : CreatePlayerRequest =
-                {
-                    userId = Some user.id
-                    name = Some "test"
-                    kind = PlayerKind.Guest
-                }
+            let request = CreatePlayerRequest.guest (user.id, "test")
 
             //Act
             let! player = PlayerService.addPlayerToLobby (lobby.id, request) { session with isAdmin = true }
@@ -213,13 +177,7 @@ type AddPlayerTests() =
             let! (_, session, lobby) = createUserSessionAndLobby(true) |> thenValue
 
             let! user = createUser() |> thenValue
-
-            let request : CreatePlayerRequest =
-                {
-                    userId = Some user.id
-                    name = Some "test"
-                    kind = PlayerKind.Guest
-                }
+            let request = CreatePlayerRequest.guest (user.id, "test")
 
             //Act
             let! error = PlayerService.addPlayerToLobby (lobby.id, request) { session with isAdmin = false }
@@ -273,13 +231,7 @@ type AddPlayerTests() =
         task {
             //Arrange
             let! (user, session, lobby) = createUserSessionAndLobby(true) |> thenValue
-
-            let request : CreatePlayerRequest =
-                {
-                    userId = Some user.id
-                    name = Some user.name
-                    kind = PlayerKind.Guest
-                }
+            let request = CreatePlayerRequest.guest (user.id, user.name)
 
             //Act
             let! error = PlayerService.addPlayerToLobby (lobby.id, request) session
@@ -293,13 +245,7 @@ type AddPlayerTests() =
         task {
             //Arrange
             let! (user, session, lobby) = createUserSessionAndLobby(false) |> thenValue
-
-            let request : CreatePlayerRequest =
-                {
-                    userId = Some user.id
-                    name = Some "test"
-                    kind = PlayerKind.Guest
-                }
+            let request = CreatePlayerRequest.guest (user.id, "test")
 
             //Act
             let! error = PlayerService.addPlayerToLobby (lobby.id, request) session
@@ -308,26 +254,20 @@ type AddPlayerTests() =
             error |> shouldBeError 400 "Lobby does not allow guest players."
         }
 
-    //VIRTUAL PLAYER
+    //NEUTRAL PLAYER
 
     [<Fact>]
-    let ``Add virtual player should fail``() =
+    let ``Add neutral player should fail``() =
         task {
             //Arrange
             let! (_, session, lobby) = createUserSessionAndLobby(false) |> thenValue
-
-            let request : CreatePlayerRequest =
-                {
-                    userId = None
-                    name = Some "test"
-                    kind = PlayerKind.Neutral
-                }
+            let request = CreatePlayerRequest.neutral ("test")
 
             //Act
             let! error = PlayerService.addPlayerToLobby (lobby.id, request) { session with isAdmin = true }
 
             //Assert
-            error |> shouldBeError 400 "Cannot directly add virtual players to a lobby."
+            error |> shouldBeError 400 "Cannot directly add neutral players to a lobby."
         }
 
     //GENERAL
@@ -337,13 +277,7 @@ type AddPlayerTests() =
         task {
             //Arrange
             let! (user, session, _) = createUserSessionAndLobby(true) |> thenValue
-
-            let request : CreatePlayerRequest =
-                {
-                    userId = Some user.id
-                    name = Some "test"
-                    kind = PlayerKind.Guest
-                }
+            let request = CreatePlayerRequest.guest (user.id, "test")
 
             //Act
             let! error = PlayerService.addPlayerToLobby (Int32.MinValue, request) { session with isAdmin = true }
@@ -358,12 +292,7 @@ type AddPlayerTests() =
             //Arrange
             let! (user, session, lobby) = createUserSessionAndLobby(true) |> thenValue
 
-            let request1 : CreatePlayerRequest =
-                {
-                    userId = Some user.id
-                    name = Some "test1"
-                    kind = PlayerKind.Guest
-                }
+            let request1 = CreatePlayerRequest.guest (user.id, "test")
             let request2 = { request1 with name = Some "test2" }
             let request3 = { request1 with name = Some "test3" }
 
@@ -382,13 +311,7 @@ type AddPlayerTests() =
         task {
             //Arrange
             let! (user, session, lobby) = createUserSessionAndLobby(true) |> thenValue
-
-            let request1 : CreatePlayerRequest =
-                {
-                    userId = Some user.id
-                    name = Some "test1"
-                    kind = PlayerKind.Guest
-                }
+            let request1 = CreatePlayerRequest.guest (user.id, "test")
             let request2 = { request1 with name = Some "test2" }
 
             let! _ = PlayerService.addPlayerToLobby (lobby.id, request1) session |> thenValue
