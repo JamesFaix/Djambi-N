@@ -16,7 +16,7 @@ let getLobby (lobbyId : int) (session : Session) : LobbyWithPlayersResponseJsonM
     |> thenMap mapLobbyWithPlayersResponse
 
 let createLobby (jsonModel : CreateLobbyJsonModel) (session : Session) : LobbyResponseJsonModel AsyncHttpResult =
-    let model = mapCreateLobbyRequest (jsonModel, session.userId)
+    let model = mapCreateLobbyRequest (jsonModel)
     LobbyService.createLobby model session
     |> thenMap mapLobbyResponse
 

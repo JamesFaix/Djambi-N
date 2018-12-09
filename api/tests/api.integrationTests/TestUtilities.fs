@@ -42,11 +42,10 @@ let getCreateLobbyRequest() : CreateLobbyRequest =
         allowGuests = false
     }
 
-let getCreatePlayerRequest(lobbyId : int) : CreatePlayerRequest =
+let getCreatePlayerRequest : CreatePlayerRequest =
     {
-        playerType = PlayerType.User
+        kind = PlayerKind.User
         userId = None
-        lobbyId = lobbyId
         name = None
     }
 

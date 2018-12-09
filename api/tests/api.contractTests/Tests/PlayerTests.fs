@@ -6,7 +6,6 @@ open System.Threading.Tasks
 open FSharp.Control.Tasks
 open NUnit.Framework
 open Djambi.Api.WebClient
-open Djambi.Api.Web.Model.PlayerWebModel
 
 //TODO: Add user player should work
 

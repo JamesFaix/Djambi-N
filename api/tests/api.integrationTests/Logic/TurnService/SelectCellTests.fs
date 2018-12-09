@@ -20,12 +20,11 @@ type SelectCellTests() =
 
             let guestRequest : CreatePlayerRequest =
                 {
-                    lobbyId = lobby.id
                     userId = Some user.id
                     name = Some "test"
-                    playerType = PlayerType.Guest
+                    kind = PlayerKind.Guest
                 }
-            let! _ = PlayerService.addPlayerToLobby guestRequest session |> thenValue
+            let! _ = PlayerService.addPlayerToLobby (lobby.id, guestRequest) session |> thenValue
 
             let! gameStart = GameStartService.startGame lobby.id session |> thenValue
 
@@ -53,12 +52,11 @@ type SelectCellTests() =
             let session2 = getSessionForUser user2.id
             let playerRequest : CreatePlayerRequest =
                 {
-                    lobbyId = lobby.id
                     userId = Some user2.id
                     name = None
-                    playerType = PlayerType.User
+                    kind = PlayerKind.User
                 }
-            let! player2 = PlayerService.addPlayerToLobby playerRequest session2 |> thenValue
+            let! player2 = PlayerService.addPlayerToLobby (lobby.id, playerRequest) session2 |> thenValue
 
             let! gameStart = GameStartService.startGame lobby.id session1 |> thenValue
 
@@ -86,12 +84,11 @@ type SelectCellTests() =
             let session2 = getSessionForUser user2.id
             let playerRequest : CreatePlayerRequest =
                 {
-                    lobbyId = lobby.id
                     userId = Some user2.id
                     name = None
-                    playerType = PlayerType.User
+                    kind = PlayerKind.User
                 }
-            let! player2 = PlayerService.addPlayerToLobby playerRequest session2 |> thenValue
+            let! player2 = PlayerService.addPlayerToLobby (lobby.id, playerRequest) session2 |> thenValue
 
             let! gameStart = GameStartService.startGame lobby.id session1 |> thenValue
 
@@ -123,12 +120,11 @@ type SelectCellTests() =
 
             let guestRequest : CreatePlayerRequest =
                 {
-                    lobbyId = lobby.id
                     userId = Some user.id
                     name = Some "test"
-                    playerType = PlayerType.Guest
+                    kind = PlayerKind.Guest
                 }
-            let! _ = PlayerService.addPlayerToLobby guestRequest session |> thenValue
+            let! _ = PlayerService.addPlayerToLobby (lobby.id, guestRequest) session |> thenValue
 
             let! gameStart = GameStartService.startGame lobby.id session |> thenValue
 
@@ -149,12 +145,11 @@ type SelectCellTests() =
 
             let guestRequest : CreatePlayerRequest =
                 {
-                    lobbyId = lobby.id
                     userId = Some user.id
                     name = Some "test"
-                    playerType = PlayerType.Guest
+                    kind = PlayerKind.Guest
                 }
-            let! _ = PlayerService.addPlayerToLobby guestRequest session |> thenValue
+            let! _ = PlayerService.addPlayerToLobby (lobby.id, guestRequest) session |> thenValue
 
             let! gameStart = GameStartService.startGame lobby.id session |> thenValue
 
@@ -173,12 +168,11 @@ type SelectCellTests() =
 
             let guestRequest : CreatePlayerRequest =
                 {
-                    lobbyId = lobby.id
                     userId = Some user.id
                     name = Some "test"
-                    playerType = PlayerType.Guest
+                    kind = PlayerKind.Guest
                 }
-            let! _ = PlayerService.addPlayerToLobby guestRequest session |> thenValue
+            let! _ = PlayerService.addPlayerToLobby (lobby.id, guestRequest) session |> thenValue
 
             let! gameStart = GameStartService.startGame lobby.id session |> thenValue
 

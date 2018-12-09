@@ -19,17 +19,17 @@ type PlayerRepositoryTests() =
         task {
             let! lobby = LobbyRepository.createLobby (lobbyRequest, userId) |> thenValue
             let! user = UserRepository.createUser userRequest |> thenValue
-            let request = CreatePlayerRequest.user(lobby.id, user.id)
+            let request = CreatePlayerRequest.user user.id
 
             //Act
-            let! _ = PlayerRepository.addPlayerToLobby request |> thenValue
+            let! _ = PlayerRepository.addPlayerToLobby (lobby.id, request) |> thenValue
 
             //Assert
             let! players = PlayerRepository.getPlayersForLobby lobby.id |> thenValue
             let exists = players
                          |> List.exists (fun p -> p.userId = Some user.id
                                                   && p.name = user.name
-                                                  && p.playerType = PlayerType.User)
+                                                  && p.kind = PlayerKind.User)
             Assert.True(exists)
         }
 
@@ -40,17 +40,17 @@ type PlayerRepositoryTests() =
         let lobbyRequest = getCreateLobbyRequest()
         task {
             let! lobby = LobbyRepository.createLobby (lobbyRequest, userId) |> thenValue
-            let request = CreatePlayerRequest.``virtual``(lobby.id, "test")
+            let request = CreatePlayerRequest.``virtual`` "test"
 
             //Act
-            let! _ = PlayerRepository.addPlayerToLobby request |> thenValue
+            let! _ = PlayerRepository.addPlayerToLobby (lobby.id, request) |> thenValue
 
             //Assert
             let! players = PlayerRepository.getPlayersForLobby lobby.id |> thenValue
             let exists = players |> List.exists (fun p ->
                 p.userId = None
                 && p.name = request.name.Value
-                && p.playerType = PlayerType.Virtual)
+                && p.kind = PlayerKind.Virtual)
             Assert.True(exists)
         }
 
@@ -63,17 +63,17 @@ type PlayerRepositoryTests() =
         task {
             let! lobby = LobbyRepository.createLobby (lobbyRequest, userId) |> thenValue
             let! user = UserRepository.createUser userRequest |> thenValue
-            let request = CreatePlayerRequest.guest(lobby.id, user.id, "test")
+            let request = CreatePlayerRequest.guest (user.id, "test")
 
             //Act
-            let! _ = PlayerRepository.addPlayerToLobby request |> thenValue
+            let! _ = PlayerRepository.addPlayerToLobby (lobby.id, request) |> thenValue
 
             //Assert
             let! players = PlayerRepository.getPlayersForLobby lobby.id |> thenValue
             let exists = players |> List.exists (fun p ->
                 p.userId = Some user.id
                 && p.name = request.name.Value
-                && p.playerType = PlayerType.Guest)
+                && p.kind = PlayerKind.Guest)
             Assert.True(exists)
         }
 
@@ -86,8 +86,8 @@ type PlayerRepositoryTests() =
         task {
             let! lobby = LobbyRepository.createLobby (lobbyRequest, userId) |> thenValue
             let! user = UserRepository.createUser userRequest |> thenValue
-            let playerRequest = CreatePlayerRequest.user(lobby.id, user.id)
-            let! player = PlayerRepository.addPlayerToLobby playerRequest |> thenValue
+            let playerRequest = CreatePlayerRequest.user user.id
+            let! player = PlayerRepository.addPlayerToLobby (lobby.id, playerRequest) |> thenValue
 
             //Act
             let! _ = PlayerRepository.removePlayerFromLobby player.id |> thenValue

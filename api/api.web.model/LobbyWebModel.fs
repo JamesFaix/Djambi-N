@@ -2,6 +2,7 @@
 module Djambi.Api.Web.Model.LobbyWebModel
 
 open System
+open Djambi.Api.Model.PlayerModel
 
 [<CLIMutable>]
 type CreateLobbyJsonModel =
@@ -30,7 +31,7 @@ type LobbyWithPlayersResponseJsonModel =
         description : string option
         allowGuests : bool
         isPublic : bool
-        players : PlayerResponseJsonModel list
+        players : Player list
         createdByUserId : int
         createdOn : DateTime
     }

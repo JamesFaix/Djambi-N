@@ -47,6 +47,6 @@ type CreateLobbyTests() =
 
             players.Length |> shouldBe 1
             players |> shouldExist (fun p -> p.userId = Some session.userId
-                                          && p.playerType = PlayerType.User)
+                                          && p.kind = PlayerKind.User)
         }
 

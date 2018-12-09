@@ -35,10 +35,10 @@ let getPlayer (playerId : int) : Player AsyncHttpResult =
     querySingle<PlayerSqlModel>(cmd, "Player")
     |> thenMap mapPlayer
 
-let addPlayerToLobby (request : CreatePlayerRequest) : Player AsyncHttpResult =
+let addPlayerToLobby (lobbyId : int, request : CreatePlayerRequest) : Player AsyncHttpResult =
     let param = DynamicParameters()
-                    .add("LobbyId", request.lobbyId)
-                    .add("PlayerTypeId", mapPlayerTypeToId request.playerType)
+                    .add("LobbyId", lobbyId)
+                    .add("PlayerTypeId", mapPlayerTypeToId request.kind)
                     .addOption("UserId", request.userId)
                     .addOption("Name", request.name)
 

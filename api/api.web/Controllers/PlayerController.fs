@@ -2,13 +2,13 @@
 
 open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Web.HttpUtility
-open Djambi.Api.Web.Model
 open Djambi.Api.Web.Managers
+open Djambi.Api.Model.PlayerModel
 
 let addPlayerToLobby(lobbyId : int) =
     let func ctx =
-        getSessionAndModelFromContext<CreatePlayerJsonModel> ctx
-        |> thenBindAsync (fun (jsonModel, session) -> PlayerManager.addPlayerToLobby(jsonModel, lobbyId) session)
+        getSessionAndModelFromContext<CreatePlayerRequest> ctx
+        |> thenBindAsync (fun (request, session) -> PlayerManager.addPlayerToLobby(request, lobbyId) session)
     handle func
 
 let removePlayerFromLobby(lobbyId : int, playerId : int) =

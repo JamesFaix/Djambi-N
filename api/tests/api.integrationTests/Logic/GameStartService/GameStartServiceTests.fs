@@ -76,13 +76,12 @@ type GameStartServiceTests() =
 
             let playerRequest : CreatePlayerRequest =
                 {
-                    lobbyId = lobby.id
                     userId = Some user.id
                     name = Some "test"
-                    playerType = PlayerType.Guest
+                    kind = PlayerKind.Guest
                 }
 
-            let! _ = PlayerService.addPlayerToLobby playerRequest session |> thenValue
+            let! _ = PlayerService.addPlayerToLobby (lobby.id, playerRequest) session |> thenValue
 
             //Act
             let! result = GameStartService.startGame lobby.id session
@@ -118,13 +117,12 @@ type GameStartServiceTests() =
 
             let playerRequest : CreatePlayerRequest =
                 {
-                    lobbyId = lobby.id
                     userId = Some user.id
                     name = Some "test"
-                    playerType = PlayerType.Guest
+                    kind = PlayerKind.Guest
                 }
 
-            let! _ = PlayerService.addPlayerToLobby playerRequest session |> thenValue
+            let! _ = PlayerService.addPlayerToLobby (lobby.id, playerRequest) session |> thenValue
 
             //Act
             let! gameStartResponse = GameStartService.startGame lobby.id session |> thenValue
@@ -134,7 +132,7 @@ type GameStartServiceTests() =
 
             let virtualPlayerIds =
                 players
-                |> List.filter (fun p -> p.playerType = PlayerType.Virtual)
+                |> List.filter (fun p -> p.kind = PlayerKind.Virtual)
                 |> List.map (fun p -> p.id)
                 |> Set.ofList
 

@@ -31,7 +31,7 @@ type FillEmptyPlayerSlotsTests() =
 
             //All players after creator are virtual
             updatedPlayers
-            |> List.filter (fun p -> p.playerType = PlayerType.Virtual)
+            |> List.filter (fun p -> p.kind = PlayerKind.Virtual)
             |> List.length
             |> shouldBe (updatedPlayers.Length - 1)
         }

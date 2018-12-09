@@ -25,21 +25,20 @@ type AddPlayerTests() =
 
             let request : CreatePlayerRequest =
                 {
-                    lobbyId = lobby.id
                     userId = Some user.id
                     name = None
-                    playerType = PlayerType.User
+                    kind = PlayerKind.User
                 }
 
             //Act
-            let! player = PlayerService.addPlayerToLobby request session |> thenValue
+            let! player = PlayerService.addPlayerToLobby (lobby.id, request) session |> thenValue
 
             //Assert
             player.id |> shouldNotBe 0
             player.lobbyId |> shouldBe lobby.id
             player.name |> shouldBe user.name
             player.userId |> shouldBe (Some user.id)
-            player.playerType |> shouldBe PlayerType.User
+            player.kind |> shouldBe PlayerKind.User
         }
 
     [<Fact>]
@@ -52,21 +51,20 @@ type AddPlayerTests() =
 
             let request : CreatePlayerRequest =
                 {
-                    lobbyId = lobby.id
                     userId = Some user.id
                     name = None
-                    playerType = PlayerType.User
+                    kind = PlayerKind.User
                 }
 
             //Act
-            let! player = PlayerService.addPlayerToLobby request { session with isAdmin = true } |> thenValue
+            let! player = PlayerService.addPlayerToLobby (lobby.id, request) { session with isAdmin = true } |> thenValue
 
             //Assert
             player.id |> shouldNotBe 0
             player.lobbyId |> shouldBe lobby.id
             player.name |> shouldBe user.name
             player.userId |> shouldBe (Some user.id)
-            player.playerType |> shouldBe PlayerType.User
+            player.kind |> shouldBe PlayerKind.User
         }
 
     [<Fact>]
@@ -79,14 +77,13 @@ type AddPlayerTests() =
 
             let request : CreatePlayerRequest =
                 {
-                    lobbyId = lobby.id
                     userId = Some user.id
                     name = None
-                    playerType = PlayerType.User
+                    kind = PlayerKind.User
                 }
 
             //Act
-            let! error = PlayerService.addPlayerToLobby request { session with isAdmin = false }
+            let! error = PlayerService.addPlayerToLobby (lobby.id, request) { session with isAdmin = false }
 
             //Assert
             error |> shouldBeError 403 "Cannot add other users to a lobby."
@@ -102,14 +99,13 @@ type AddPlayerTests() =
 
             let request : CreatePlayerRequest =
                 {
-                    lobbyId = lobby.id
                     userId = None
                     name = None
-                    playerType = PlayerType.User
+                    kind = PlayerKind.User
                 }
 
             //Act
-            let! error = PlayerService.addPlayerToLobby request { session with isAdmin = true }
+            let! error = PlayerService.addPlayerToLobby (lobby.id, request) { session with isAdmin = true }
 
             //Assert
             error |> shouldBeError 400 "UserID must be provided when adding a user player."
@@ -125,14 +121,13 @@ type AddPlayerTests() =
 
             let request : CreatePlayerRequest =
                 {
-                    lobbyId = lobby.id
                     userId = Some user.id
                     name = Some "test"
-                    playerType = PlayerType.User
+                    kind = PlayerKind.User
                 }
 
             //Act
-            let! error = PlayerService.addPlayerToLobby request { session with isAdmin = true }
+            let! error = PlayerService.addPlayerToLobby (lobby.id, request) { session with isAdmin = true }
 
             //Assert
             error |> shouldBeError 400 "Cannot provide name when adding a user player."
@@ -146,14 +141,13 @@ type AddPlayerTests() =
 
             let request : CreatePlayerRequest =
                 {
-                    lobbyId = lobby.id
                     userId = Some user.id
                     name = None
-                    playerType = PlayerType.User
+                    kind = PlayerKind.User
                 }
 
             //Act
-            let! error = PlayerService.addPlayerToLobby request { session with isAdmin = true }
+            let! error = PlayerService.addPlayerToLobby (lobby.id, request) { session with isAdmin = true }
 
             //Assert
             error |> shouldBeError 409 "Conflict when attempting to write Player."
@@ -169,21 +163,20 @@ type AddPlayerTests() =
 
             let request : CreatePlayerRequest =
                 {
-                    lobbyId = lobby.id
                     userId = Some user.id
                     name = Some "test"
-                    playerType = PlayerType.Guest
+                    kind = PlayerKind.Guest
                 }
 
             //Act
-            let! player = PlayerService.addPlayerToLobby request session |> thenValue
+            let! player = PlayerService.addPlayerToLobby (lobby.id, request) session |> thenValue
 
             //Assert
             player.id |> shouldNotBe 0
             player.lobbyId |> shouldBe lobby.id
             player.name |> shouldBe request.name.Value
             player.userId |> shouldBe (Some user.id)
-            player.playerType |> shouldBe PlayerType.Guest
+            player.kind |> shouldBe PlayerKind.Guest
         }
 
     [<Fact>]
@@ -196,14 +189,13 @@ type AddPlayerTests() =
 
             let request : CreatePlayerRequest =
                 {
-                    lobbyId = lobby.id
                     userId = Some user.id
                     name = Some "test"
-                    playerType = PlayerType.Guest
+                    kind = PlayerKind.Guest
                 }
 
             //Act
-            let! player = PlayerService.addPlayerToLobby request { session with isAdmin = true }
+            let! player = PlayerService.addPlayerToLobby (lobby.id, request) { session with isAdmin = true }
                           |> thenValue
 
             //Assert
@@ -211,7 +203,7 @@ type AddPlayerTests() =
             player.lobbyId |> shouldBe lobby.id
             player.name |> shouldBe request.name.Value
             player.userId |> shouldBe (Some user.id)
-            player.playerType |> shouldBe PlayerType.Guest
+            player.kind |> shouldBe PlayerKind.Guest
         }
 
     [<Fact>]
@@ -224,14 +216,13 @@ type AddPlayerTests() =
 
             let request : CreatePlayerRequest =
                 {
-                    lobbyId = lobby.id
                     userId = Some user.id
                     name = Some "test"
-                    playerType = PlayerType.Guest
+                    kind = PlayerKind.Guest
                 }
 
             //Act
-            let! error = PlayerService.addPlayerToLobby request { session with isAdmin = false }
+            let! error = PlayerService.addPlayerToLobby (lobby.id, request) { session with isAdmin = false }
 
             //Assert
             error |> shouldBeError 403 "Cannot add guests for other users to a lobby."
@@ -245,14 +236,13 @@ type AddPlayerTests() =
 
             let request : CreatePlayerRequest =
                 {
-                    lobbyId = lobby.id
                     userId = None
                     name = Some "test"
-                    playerType = PlayerType.Guest
+                    kind = PlayerKind.Guest
                 }
 
             //Act
-            let! error = PlayerService.addPlayerToLobby request session
+            let! error = PlayerService.addPlayerToLobby (lobby.id, request) session
 
             //Assert
             error |> shouldBeError 400 "UserID must be provided when adding a guest player."
@@ -266,14 +256,13 @@ type AddPlayerTests() =
 
             let request : CreatePlayerRequest =
                 {
-                    lobbyId = lobby.id
                     userId = Some user.id
                     name = None
-                    playerType = PlayerType.Guest
+                    kind = PlayerKind.Guest
                 }
 
             //Act
-            let! error = PlayerService.addPlayerToLobby request session
+            let! error = PlayerService.addPlayerToLobby (lobby.id, request) session
 
             //Assert
             error |> shouldBeError 400 "Must provide name when adding a guest player."
@@ -287,14 +276,13 @@ type AddPlayerTests() =
 
             let request : CreatePlayerRequest =
                 {
-                    lobbyId = lobby.id
                     userId = Some user.id
                     name = Some user.name
-                    playerType = PlayerType.Guest
+                    kind = PlayerKind.Guest
                 }
 
             //Act
-            let! error = PlayerService.addPlayerToLobby request session
+            let! error = PlayerService.addPlayerToLobby (lobby.id, request) session
 
             //Assert
             error |> shouldBeError 409 "Conflict when attempting to write Player."
@@ -308,14 +296,13 @@ type AddPlayerTests() =
 
             let request : CreatePlayerRequest =
                 {
-                    lobbyId = lobby.id
                     userId = Some user.id
                     name = Some "test"
-                    playerType = PlayerType.Guest
+                    kind = PlayerKind.Guest
                 }
 
             //Act
-            let! error = PlayerService.addPlayerToLobby request session
+            let! error = PlayerService.addPlayerToLobby (lobby.id, request) session
 
             //Assert
             error |> shouldBeError 400 "Lobby does not allow guest players."
@@ -331,14 +318,13 @@ type AddPlayerTests() =
 
             let request : CreatePlayerRequest =
                 {
-                    lobbyId = lobby.id
                     userId = None
                     name = Some "test"
-                    playerType = PlayerType.Virtual
+                    kind = PlayerKind.Virtual
                 }
 
             //Act
-            let! error = PlayerService.addPlayerToLobby request { session with isAdmin = true }
+            let! error = PlayerService.addPlayerToLobby (lobby.id, request) { session with isAdmin = true }
 
             //Assert
             error |> shouldBeError 400 "Cannot directly add virtual players to a lobby."
@@ -354,14 +340,13 @@ type AddPlayerTests() =
 
             let request : CreatePlayerRequest =
                 {
-                    lobbyId = Int32.MinValue
                     userId = Some user.id
                     name = Some "test"
-                    playerType = PlayerType.Guest
+                    kind = PlayerKind.Guest
                 }
 
             //Act
-            let! error = PlayerService.addPlayerToLobby request { session with isAdmin = true }
+            let! error = PlayerService.addPlayerToLobby (Int32.MinValue, request) { session with isAdmin = true }
 
             //Assert
             error |> shouldBeError 404 "Lobby not found."
@@ -375,19 +360,18 @@ type AddPlayerTests() =
 
             let request1 : CreatePlayerRequest =
                 {
-                    lobbyId = lobby.id
                     userId = Some user.id
                     name = Some "test1"
-                    playerType = PlayerType.Guest
+                    kind = PlayerKind.Guest
                 }
             let request2 = { request1 with name = Some "test2" }
             let request3 = { request1 with name = Some "test3" }
 
-            let! _ = PlayerService.addPlayerToLobby request1 session |> thenValue
-            let! _ = PlayerService.addPlayerToLobby request2 session |> thenValue
+            let! _ = PlayerService.addPlayerToLobby (lobby.id, request1) session |> thenValue
+            let! _ = PlayerService.addPlayerToLobby (lobby.id, request2) session |> thenValue
 
             //Act
-            let! error = PlayerService.addPlayerToLobby request3 session
+            let! error = PlayerService.addPlayerToLobby (lobby.id, request3) session
 
             //Assert
             error |> shouldBeError 400 "Max player count reached."
@@ -401,18 +385,17 @@ type AddPlayerTests() =
 
             let request1 : CreatePlayerRequest =
                 {
-                    lobbyId = lobby.id
                     userId = Some user.id
                     name = Some "test1"
-                    playerType = PlayerType.Guest
+                    kind = PlayerKind.Guest
                 }
             let request2 = { request1 with name = Some "test2" }
 
-            let! _ = PlayerService.addPlayerToLobby request1 session |> thenValue
+            let! _ = PlayerService.addPlayerToLobby (lobby.id, request1) session |> thenValue
             let! _ = GameStartService.startGame lobby.id session |> thenValue
 
             //Act
-            let! error = PlayerService.addPlayerToLobby request2 session
+            let! error = PlayerService.addPlayerToLobby (lobby.id, request2) session
 
             //Assert
             error |> shouldBeError 404 "Lobby not found."
