@@ -1,15 +1,15 @@
 ﻿module Djambi.Api.WebClient.UserClient
 
-open Djambi.Api.Web.Model.UserWebModel
+open Djambi.Api.Model
 open Djambi.Api.WebClient.Model
 open Djambi.Api.WebClient.WebUtility
 
-let createUser (request : CreateUserJsonModel) : UserResponseJsonModel AsyncResponse =
+let createUser (request : CreateUserRequest) : User AsyncResponse =
     sendRequest(POST, "/users", 
         Some request,
         None)
 
-let tryCreateUserWithToken (request : CreateUserJsonModel, token : string) : UserResponseJsonModel AsyncResponse =
+let tryCreateUserWithToken (request : CreateUserRequest, token : string) : User AsyncResponse =
     sendRequest(POST, "/users",
         Some request,
         Some token)
@@ -19,12 +19,12 @@ let deleteUser (userId : int, token : string) : Unit AsyncResponse =
         None,
         Some token)
 
-let getUser (userId : int, token : string) : UserResponseJsonModel AsyncResponse =
+let getUser (userId : int, token : string) : User AsyncResponse =
     sendRequest(GET, sprintf "/users/%i" userId, 
         None,
         Some token)
 
-let getUsers (token : string) : UserResponseJsonModel list AsyncResponse =
+let getUsers (token : string) : User list AsyncResponse =
     sendRequest(GET, "/users", 
         None,
         Some token)

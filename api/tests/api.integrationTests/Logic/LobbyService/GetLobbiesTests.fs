@@ -99,8 +99,8 @@ type GetLobbiesTests() =
             let! lobby2 = LobbyService.createLobby request session2
                           |> AsyncHttpResult.thenValue
 
-            let playerRequest = { getCreatePlayerRequest lobby1.id with userId = Some 1 }
-            let! _ = PlayerService.addPlayerToLobby playerRequest adminSession
+            let playerRequest = { getCreatePlayerRequest with userId = Some 1 }
+            let! _ = PlayerService.addPlayerToLobby (lobby1.id, playerRequest) adminSession
 
             let query = { LobbiesQuery.empty with playerUserId = Some 1 }
 
@@ -128,8 +128,8 @@ type GetLobbiesTests() =
             let! lobby3 = LobbyService.createLobby { request with isPublic = true } session2
                           |> AsyncHttpResult.thenValue
 
-            let playerRequest = { getCreatePlayerRequest lobby1.id with userId = Some 1 }
-            let! _ = PlayerService.addPlayerToLobby playerRequest session1
+            let playerRequest = { getCreatePlayerRequest with userId = Some 1 }
+            let! _ = PlayerService.addPlayerToLobby (lobby1.id, playerRequest) session1
 
             let query = LobbiesQuery.empty
 

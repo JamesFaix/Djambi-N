@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { LobbyWithPlayersResponse, PlayerResponse, UserResponse, PlayerType, CreatePlayerRequest } from '../api/model';
+import { LobbyWithPlayersResponse, PlayerResponse, UserResponse, PlayerKind, CreatePlayerRequest } from '../api/model';
 import ActionButton from './actionButton';
 import ApiClient from '../api/client';
 
@@ -53,15 +53,15 @@ export default class LobbyPlayersTable extends React.Component<LobbyPlayersTable
                     action : SeatActionType.None
                 };
 
-                if (p.type === PlayerType.User
+                if (p.kind === PlayerKind.User
                     && p.userId === lobby.createdByUserId) {
                     seat.note = "Host";
                 }
 
-                if (p.type === PlayerType.Guest) {
+                if (p.kind === PlayerKind.Guest) {
                     const host = lobby.players
                         .find(h => h.userId === p.userId
-                            && h.type === PlayerType.User);
+                            && h.kind === PlayerKind.User);
 
                     seat.note = "Guest of " + host.name;
                 }
@@ -69,7 +69,7 @@ export default class LobbyPlayersTable extends React.Component<LobbyPlayersTable
                 if (self.isAdmin
                     || lobby.createdByUserId === self.id
                     || seat.player.name === self.name
-                    || (seat.player.type === PlayerType.Guest
+                    || (seat.player.kind === PlayerKind.Guest
                         && seat.player.userId === self.id)) {
 
                     seat.action = SeatActionType.Remove;
@@ -111,7 +111,7 @@ export default class LobbyPlayersTable extends React.Component<LobbyPlayersTable
     }
 
     private isSeatSelf(seat : Seat) : boolean {
-        return seat.player.type === PlayerType.User
+        return seat.player.kind === PlayerKind.User
             && seat.player.userId === this.props.user.id;
     }
 
@@ -121,7 +121,7 @@ export default class LobbyPlayersTable extends React.Component<LobbyPlayersTable
         const request : CreatePlayerRequest = {
             userId: this.props.user.id,
             name: null,
-            type: PlayerType.User
+            type: PlayerKind.User
         };
 
         this.props.api
@@ -150,7 +150,7 @@ export default class LobbyPlayersTable extends React.Component<LobbyPlayersTable
         const request : CreatePlayerRequest = {
             userId: this.props.user.id,
             name: this.state.guestName,
-            type: PlayerType.Guest
+            type: PlayerKind.Guest
         };
 
         this.props.api
@@ -191,7 +191,7 @@ export default class LobbyPlayersTable extends React.Component<LobbyPlayersTable
                 const removedPlayer = oldLobby.players.find(p => p.id === playerId);
 
                 //Lobby is closed when creator is removed
-                if (removedPlayer.type === PlayerType.User
+                if (removedPlayer.kind === PlayerKind.User
                     && removedPlayer.userId === oldLobby.createdByUserId) {
                     this.props.updateLobby(null);
                 }

@@ -5,12 +5,12 @@ open Microsoft.AspNetCore.Http
 open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Web.HttpUtility
-open Djambi.Api.Web.Model
 open Djambi.Api.Web.Managers
+open Djambi.Api.Model.LobbyModel
 
 let getLobbies : HttpHandler =
     let func ctx =
-        getSessionAndModelFromContext<LobbiesQueryJsonModel> ctx
+        getSessionAndModelFromContext<LobbiesQuery> ctx
         |> thenBindAsync (fun (jsonModel, session) -> LobbyManager.getLobbies jsonModel session)
     handle func
 
@@ -21,8 +21,8 @@ let getLobby(lobbyId : int) : HttpHandler =
     handle func
 
 let createLobby : HttpHandler =
-    let func (ctx : HttpContext) : LobbyResponseJsonModel AsyncHttpResult =
-        getSessionAndModelFromContext<CreateLobbyJsonModel> ctx
+    let func (ctx : HttpContext) : Lobby AsyncHttpResult =
+        getSessionAndModelFromContext<CreateLobbyRequest> ctx
         |> thenBindAsync (fun (jsonModel, session) -> LobbyManager.createLobby jsonModel session)
     handle func
 

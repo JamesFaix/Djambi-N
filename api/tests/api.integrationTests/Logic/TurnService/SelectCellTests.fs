@@ -18,14 +18,8 @@ type SelectCellTests() =
             //Arrange
             let! (user, session, lobby) = createUserSessionAndLobby(true) |> thenValue
 
-            let guestRequest : CreatePlayerRequest =
-                {
-                    lobbyId = lobby.id
-                    userId = Some user.id
-                    name = Some "test"
-                    playerType = PlayerType.Guest
-                }
-            let! _ = PlayerService.addPlayerToLobby guestRequest session |> thenValue
+            let guestRequest = CreatePlayerRequest.guest (user.id, "test")
+            let! _ = PlayerService.addPlayerToLobby (lobby.id, guestRequest) session |> thenValue
 
             let! gameStart = GameStartService.startGame lobby.id session |> thenValue
 
@@ -51,14 +45,8 @@ type SelectCellTests() =
 
             let! user2 = createUser() |> thenValue
             let session2 = getSessionForUser user2.id
-            let playerRequest : CreatePlayerRequest =
-                {
-                    lobbyId = lobby.id
-                    userId = Some user2.id
-                    name = None
-                    playerType = PlayerType.User
-                }
-            let! player2 = PlayerService.addPlayerToLobby playerRequest session2 |> thenValue
+            let playerRequest = CreatePlayerRequest.user user2.id
+            let! player2 = PlayerService.addPlayerToLobby (lobby.id, playerRequest) session2 |> thenValue
 
             let! gameStart = GameStartService.startGame lobby.id session1 |> thenValue
 
@@ -84,14 +72,8 @@ type SelectCellTests() =
 
             let! user2 = createUser() |> thenValue
             let session2 = getSessionForUser user2.id
-            let playerRequest : CreatePlayerRequest =
-                {
-                    lobbyId = lobby.id
-                    userId = Some user2.id
-                    name = None
-                    playerType = PlayerType.User
-                }
-            let! player2 = PlayerService.addPlayerToLobby playerRequest session2 |> thenValue
+            let playerRequest = CreatePlayerRequest.user user2.id
+            let! player2 = PlayerService.addPlayerToLobby (lobby.id, playerRequest) session2 |> thenValue
 
             let! gameStart = GameStartService.startGame lobby.id session1 |> thenValue
 
@@ -121,14 +103,8 @@ type SelectCellTests() =
             //Arrange
             let! (user, session, lobby) = createUserSessionAndLobby(true) |> thenValue
 
-            let guestRequest : CreatePlayerRequest =
-                {
-                    lobbyId = lobby.id
-                    userId = Some user.id
-                    name = Some "test"
-                    playerType = PlayerType.Guest
-                }
-            let! _ = PlayerService.addPlayerToLobby guestRequest session |> thenValue
+            let guestRequest = CreatePlayerRequest.guest (user.id, "test")
+            let! _ = PlayerService.addPlayerToLobby (lobby.id, guestRequest) session |> thenValue
 
             let! gameStart = GameStartService.startGame lobby.id session |> thenValue
 
@@ -147,14 +123,8 @@ type SelectCellTests() =
             //Arrange
             let! (user, session, lobby) = createUserSessionAndLobby(true) |> thenValue
 
-            let guestRequest : CreatePlayerRequest =
-                {
-                    lobbyId = lobby.id
-                    userId = Some user.id
-                    name = Some "test"
-                    playerType = PlayerType.Guest
-                }
-            let! _ = PlayerService.addPlayerToLobby guestRequest session |> thenValue
+            let guestRequest = CreatePlayerRequest.guest (user.id, "test")
+            let! _ = PlayerService.addPlayerToLobby (lobby.id, guestRequest) session |> thenValue
 
             let! gameStart = GameStartService.startGame lobby.id session |> thenValue
 
@@ -171,14 +141,8 @@ type SelectCellTests() =
             //Arrange
             let! (user, session, lobby) = createUserSessionAndLobby(true) |> thenValue
 
-            let guestRequest : CreatePlayerRequest =
-                {
-                    lobbyId = lobby.id
-                    userId = Some user.id
-                    name = Some "test"
-                    playerType = PlayerType.Guest
-                }
-            let! _ = PlayerService.addPlayerToLobby guestRequest session |> thenValue
+            let guestRequest = CreatePlayerRequest.guest (user.id, "test")
+            let! _ = PlayerService.addPlayerToLobby (lobby.id, guestRequest) session |> thenValue
 
             let! gameStart = GameStartService.startGame lobby.id session |> thenValue
 

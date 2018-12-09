@@ -16,7 +16,7 @@ type UserSqlModel =
         lastFailedLoginAttemptOn : DateTime Nullable
     }
 
-let mapUserResponse (sqlModel : UserSqlModel) : User =
+let mapUserResponse (sqlModel : UserSqlModel) : UserDetails =
     {
         id = sqlModel.userId
         name = sqlModel.name

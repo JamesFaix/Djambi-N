@@ -13,15 +13,9 @@ type Session =
         isAdmin : bool
     }
 
+[<CLIMutable>]
 type LoginRequest =
     {
         username : string
         password : string
-    }
-
-type CreateSessionRequest = 
-    {
-        userId : int
-        token : string
-        expiresOn : DateTime
     }

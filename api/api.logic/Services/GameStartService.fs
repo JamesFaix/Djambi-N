@@ -20,29 +20,29 @@ let getStartingConditions(players : Player list) : PlayerStartConditions list =
             {
                 playerId = p.id
                 region = r
-                color = c
+                colodId = c
                 turnNumber = None
             })
 
     let dict = Enumerable.ToDictionary (startConds, (fun startCond -> startCond.playerId))
 
-    let nonVirtualPlayers =
+    let nonNeutralPlayers =
         players
-        |> List.filter (fun p -> p.playerType <> PlayerType.Virtual)
+        |> List.filter (fun p -> p.kind <> PlayerKind.Neutral)
         |> Utilities.shuffle
         |> Seq.mapi (fun i p -> (i, p))
 
-    for (i, p) in nonVirtualPlayers do
+    for (i, p) in nonNeutralPlayers do
         dict.[p.id] <- { dict.[p.id] with turnNumber = Some i }
 
     dict.Values |> Seq.toList
 
 let createPieces(board : BoardMetadata, startingConditions : PlayerStartConditions list) : Piece list =
     let createPlayerPieces(board : BoardMetadata, player : PlayerStartConditions, startingId : int) : Piece list =
-        let getPiece(id : int, pieceType: PieceType, x : int, y : int) =
+        let getPiece(id : int, pieceType: PieceKind, x : int, y : int) =
             {
                 id = id
-                pieceType = pieceType
+                kind = pieceType
                 playerId = Some player.playerId
                 originalPlayerId = player.playerId
                 cellId = board.cellAt({ x = x; y = y; region = player.region}).id
@@ -75,7 +75,7 @@ let startGame (lobbyId : int) (session : Session) : StartGameResponse AsyncHttpR
         PlayerRepository.getPlayersForLobby lobbyId
         |> thenBind (fun players ->
             if players
-                |> List.filter (fun p -> p.playerType <> PlayerType.Virtual)
+                |> List.filter (fun p -> p.kind <> PlayerKind.Neutral)
                 |> List.length = 1
             then Error <| HttpException(400, "Cannot start game with only one player.")
             else Ok players
@@ -83,7 +83,7 @@ let startGame (lobbyId : int) (session : Session) : StartGameResponse AsyncHttpR
         |> thenBindAsync (PlayerService.fillEmptyPlayerSlots lobby)
         |> thenMap (fun players -> lobby.addPlayers players)
     )
-    |> thenMap (fun lobby ->
+    |> thenBindAsync (fun lobby ->
         let startingConditions = getStartingConditions lobby.players
         let board = BoardModelUtility.getBoardMetadata lobby.regionCount
         let pieces = createPieces(board, startingConditions)
@@ -112,27 +112,21 @@ let startGame (lobbyId : int) (session : Session) : StartGameResponse AsyncHttpR
                         status = AwaitingSelection
                         selections = List.empty
                         selectionOptions = List.empty
-                        requiredSelectionType = Some Subject
+                        requiredSelectionKind = Some Subject
                     }
             }
 
         let (selectionOptions, _) = SelectionOptionsService.getSelectableCellsFromState gameWithoutSelectionOptions
 
-        {
-            lobbyId = lobby.id
-            startingConditions = startingConditions
-            gameState = gameState
-            turnState = { gameWithoutSelectionOptions.turnState with selectionOptions = selectionOptions }
-        }
-    )
-    |> thenBindAsync (fun startRequest ->
-        GameRepository.startGame startRequest
+        let turnState = { gameWithoutSelectionOptions.turnState with selectionOptions = selectionOptions }
+
+        GameRepository.startGame (lobby.id, startingConditions, gameState, turnState)
         |> thenMap (fun gameId ->
             {
                 gameId = gameId
-                startingConditions = startRequest.startingConditions
-                gameState = startRequest.gameState
-                turnState = startRequest.turnState
+                startingConditions = startingConditions
+                gameState = gameState
+                turnState = turnState
             }
         )
     )

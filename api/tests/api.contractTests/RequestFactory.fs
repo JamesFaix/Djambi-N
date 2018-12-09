@@ -2,23 +2,21 @@
 module Djambi.Api.ContractTests.RequestFactory
 
 open System
-open Djambi.Api.Web.Model.LobbyWebModel
-open Djambi.Api.Web.Model.SessionWebModel
-open Djambi.Api.Web.Model.UserWebModel
+open Djambi.Api.Model
 
-let createUserRequest() : CreateUserJsonModel = 
+let createUserRequest() : CreateUserRequest = 
     {
         name = Guid.NewGuid().ToString()
         password = "test"
     }
 
-let loginRequest (createUserRequest : CreateUserJsonModel) : LoginRequestJsonModel =
+let loginRequest (createUserRequest : CreateUserRequest) : LoginRequest =
     {
-        userName = createUserRequest.name
+        username = createUserRequest.name
         password = createUserRequest.password
     }
 
-let createLobbyRequest () : CreateLobbyJsonModel =
+let createLobbyRequest () : CreateLobbyRequest =
     {
         regionCount = 3
         description = Some "test"

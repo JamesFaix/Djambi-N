@@ -7,7 +7,7 @@ type PlayerState =
         isAlive : bool
     }
 
-type PieceType =
+type PieceKind =
     | Chief
     | Thug
     | Reporter
@@ -19,7 +19,7 @@ type PieceType =
 type Piece =
     {
         id : int
-        pieceType : PieceType
+        kind : PieceKind
         playerId : int option
         originalPlayerId : int
         cellId : int
@@ -32,7 +32,7 @@ type GameState =
         turnCycle : int list
     }
 
-type SelectionType =
+type SelectionKind =
     | Subject
     | Move
     | Target
@@ -41,7 +41,7 @@ type SelectionType =
 
 type Selection =
     {
-        selectionType : SelectionType
+        kind : SelectionKind
         cellId : int
         pieceId : int option
     }
@@ -49,45 +49,51 @@ type Selection =
 module Selection =
     let subject(cellId, pieceId) =
         {
-            selectionType = Subject
+            kind = Subject
             cellId = cellId
             pieceId = Some pieceId
         }
 
     let move(cellId) =
         {
-            selectionType = Move
+            kind = Move
             cellId = cellId
             pieceId = None
         }
 
     let moveWithTarget(cellId, pieceId) =
         {
-            selectionType = Move
+            kind = Move
             cellId = cellId
             pieceId = Some pieceId
         }
 
     let target(cellId, pieceId) =
         {
-            selectionType = Target
+            kind = Target
             cellId = cellId
             pieceId = Some pieceId
         }
 
     let drop(cellId) =
         {
-            selectionType = Drop
+            kind = Drop
             cellId = cellId
             pieceId = None
         }
 
     let vacate(cellId) =
         {
-            selectionType = Vacate
+            kind = Vacate
             cellId = cellId
             pieceId = None
         }
+
+[<CLIMutable>]
+type SelectionRequest =
+    {
+        cellId : int
+    }
 
 type TurnStatus =
     | AwaitingSelection
@@ -98,7 +104,7 @@ type TurnState =
         status : TurnStatus
         selections : Selection list
         selectionOptions : int list
-        requiredSelectionType : SelectionType option
+        requiredSelectionKind : SelectionKind option
     }
 
 module TurnState =
@@ -107,7 +113,7 @@ module TurnState =
             status = AwaitingSelection
             selections = List.empty
             selectionOptions = List.empty
-            requiredSelectionType = Some Subject
+            requiredSelectionKind = Some Subject
         }
 
 type PlayerStartConditions =
@@ -115,17 +121,9 @@ type PlayerStartConditions =
         playerId : int
         region : int
         turnNumber : int option
-        color : int
+        colodId : int
     }
-
-type StartGameRequest =
-    {
-        lobbyId : int
-        startingConditions : PlayerStartConditions list
-        gameState : GameState
-        turnState : TurnState
-    }
-
+    
 type StartGameResponse =
     {
         gameId : int

@@ -1,28 +1,20 @@
 ﻿module Djambi.Api.Web.Managers.LobbyManager
 
 open Djambi.Api.Common
-open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Logic.Services
-open Djambi.Api.Web.Mappings
-open Djambi.Api.Web.Model
 open Djambi.Api.Model
 
-let getLobbies (jsonModel : LobbiesQueryJsonModel) (session : Session) : LobbyResponseJsonModel list AsyncHttpResult =
-    LobbyService.getLobbies (mapLobbiesQuery jsonModel) session
-    |> thenMap (List.map mapLobbyResponse)
+let getLobbies (query : LobbiesQuery) (session : Session) : Lobby list AsyncHttpResult =
+    LobbyService.getLobbies query session
 
-let getLobby (lobbyId : int) (session : Session) : LobbyWithPlayersResponseJsonModel AsyncHttpResult =
+let getLobby (lobbyId : int) (session : Session) : LobbyWithPlayers AsyncHttpResult =
     LobbyService.getLobby lobbyId session
-    |> thenMap mapLobbyWithPlayersResponse
 
-let createLobby (jsonModel : CreateLobbyJsonModel) (session : Session) : LobbyResponseJsonModel AsyncHttpResult =
-    let model = mapCreateLobbyRequest (jsonModel, session.userId)
-    LobbyService.createLobby model session
-    |> thenMap mapLobbyResponse
+let createLobby (request : CreateLobbyRequest) (session : Session) : Lobby AsyncHttpResult =
+    LobbyService.createLobby request session
 
 let deleteLobby (lobbyId : int) (session : Session) : Unit AsyncHttpResult =
     LobbyService.deleteLobby lobbyId session
  
-let startGame (lobbyId: int) (session : Session) : GameStartResponseJsonModel AsyncHttpResult =
+let startGame (lobbyId: int) (session : Session) : StartGameResponse AsyncHttpResult =
     GameStartService.startGame lobbyId session
-    |> thenMap mapGameStartResponseToJson

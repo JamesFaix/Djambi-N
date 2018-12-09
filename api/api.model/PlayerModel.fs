@@ -1,50 +1,47 @@
 ﻿[<AutoOpen>]
 module Djambi.Api.Model.PlayerModel
 
-type PlayerType =
+type PlayerKind =
     | User
     | Guest
-    | Virtual
+    | Neutral
 
 type Player =
     {
         id : int
         lobbyId : int
         userId : int option
-        playerType : PlayerType
+        kind : PlayerKind
         name : string
     }
 
+[<CLIMutable>]
 type CreatePlayerRequest = 
     {
-        lobbyId : int
-        playerType : PlayerType
+        kind : PlayerKind
         userId : int option
         name : string option
     }
 
 module CreatePlayerRequest =
     
-    let user (lobbyId : int, userId : int) : CreatePlayerRequest =
+    let user (userId : int) : CreatePlayerRequest =
         {
-            lobbyId = lobbyId
-            playerType = PlayerType.User
+            kind = PlayerKind.User
             userId = Some userId
             name = None
         }
 
-    let guest (lobbyId : int, userId : int, name : string) : CreatePlayerRequest =
+    let guest (userId : int, name : string) : CreatePlayerRequest =
         {
-            lobbyId = lobbyId
-            playerType = PlayerType.Guest
+            kind = PlayerKind.Guest
             userId = Some userId
             name = Some name
         }
 
-    let ``virtual`` (lobbyId : int, name : string) : CreatePlayerRequest =
+    let neutral (name : string) : CreatePlayerRequest =
         {
-            lobbyId = lobbyId
-            playerType = PlayerType.Virtual
+            kind = PlayerKind.Neutral
             userId = None
             name = Some name
         }        

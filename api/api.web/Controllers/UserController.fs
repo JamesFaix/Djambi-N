@@ -5,12 +5,12 @@ open Giraffe
 open Microsoft.AspNetCore.Http
 open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Web.HttpUtility
-open Djambi.Api.Web.Model
 open Djambi.Api.Web.Managers
+open Djambi.Api.Model
 
 let createUser : HttpHandler =
     let func (ctx : HttpContext) =
-        getSessionOptionAndModelFromContext<CreateUserJsonModel> ctx
+        getSessionOptionAndModelFromContext<CreateUserRequest> ctx
         |> thenBindAsync (fun (model, sessionOption) -> UserManager.createUser model sessionOption)
     handle func
 

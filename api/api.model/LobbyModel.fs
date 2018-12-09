@@ -40,6 +40,7 @@ type Lobby with
             players = players
         }
 
+[<CLIMutable>]
 type CreateLobbyRequest =
     {
         description : string option

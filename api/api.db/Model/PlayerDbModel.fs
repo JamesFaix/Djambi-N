@@ -15,24 +15,24 @@ type PlayerSqlModel =
         playerTypeId : byte
     }
 
-let mapPlayerTypeId (playerTypeId : byte) : PlayerType =
+let mapPlayerTypeId (playerTypeId : byte) : PlayerKind =
     match playerTypeId with
-    | 1uy -> PlayerType.User
-    | 2uy -> PlayerType.Guest
-    | 3uy -> PlayerType.Virtual
+    | 1uy -> PlayerKind.User
+    | 2uy -> PlayerKind.Guest
+    | 3uy -> PlayerKind.Neutral
     | _ -> raise <| Exception("Invalid player type")
 
-let mapPlayerTypeToId (playerType : PlayerType) : byte =
-    match playerType with
-    | PlayerType.User -> 1uy
-    | PlayerType.Guest -> 2uy
-    | PlayerType.Virtual -> 3uy
+let mapPlayerKindToId (kind : PlayerKind) : byte =
+    match kind with
+    | PlayerKind.User -> 1uy
+    | PlayerKind.Guest -> 2uy
+    | PlayerKind.Neutral -> 3uy
 
 let mapPlayer (sqlModel : PlayerSqlModel) : Player =
     {
         id = sqlModel.playerId
         lobbyId = sqlModel.lobbyId
         userId = sqlModel.userId |> nullableToOption
-        playerType = mapPlayerTypeId sqlModel.playerTypeId
+        kind = mapPlayerTypeId sqlModel.playerTypeId
         name = sqlModel.name
     }

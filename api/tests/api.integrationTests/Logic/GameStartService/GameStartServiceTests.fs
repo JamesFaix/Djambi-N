@@ -33,7 +33,7 @@ type GameStartServiceTests() =
             let regions = startingConditions |> List.map (fun cond -> cond.region) |> List.sort
             regions |> shouldBe [0..(lobby.regionCount-1)]
 
-            let colors = startingConditions |> List.map (fun cond -> cond.color)
+            let colors = startingConditions |> List.map (fun cond -> cond.colodId)
             Assert.All(colors, fun c -> Assert.True(c >= 0 && c < Constants.maxRegions))
         }
 
@@ -60,12 +60,12 @@ type GameStartServiceTests() =
             Assert.Equal(lobby.regionCount, groupByPlayer.Length)
 
             for (_, grp) in groupByPlayer do
-                Assert.Single<Piece>(grp, (fun p -> p.pieceType = Chief)) |> ignore
-                Assert.Single<Piece>(grp, (fun p -> p.pieceType = Diplomat)) |> ignore
-                Assert.Single<Piece>(grp, (fun p -> p.pieceType = Reporter)) |> ignore
-                Assert.Single<Piece>(grp, (fun p -> p.pieceType = Gravedigger)) |> ignore
-                Assert.Single<Piece>(grp, (fun p -> p.pieceType = Assassin)) |> ignore
-                Assert.Equal(4, grp |> List.filter (fun p -> p.pieceType = Thug) |> List.length)
+                Assert.Single<Piece>(grp, (fun p -> p.kind = Chief)) |> ignore
+                Assert.Single<Piece>(grp, (fun p -> p.kind = Diplomat)) |> ignore
+                Assert.Single<Piece>(grp, (fun p -> p.kind = Reporter)) |> ignore
+                Assert.Single<Piece>(grp, (fun p -> p.kind = Gravedigger)) |> ignore
+                Assert.Single<Piece>(grp, (fun p -> p.kind = Assassin)) |> ignore
+                Assert.Equal(4, grp |> List.filter (fun p -> p.kind = Thug) |> List.length)
         }
 
     [<Fact>]
@@ -74,15 +74,9 @@ type GameStartServiceTests() =
             //Arrange
             let! (user, session, lobby) = createUserSessionAndLobby(true) |> thenValue
 
-            let playerRequest : CreatePlayerRequest =
-                {
-                    lobbyId = lobby.id
-                    userId = Some user.id
-                    name = Some "test"
-                    playerType = PlayerType.Guest
-                }
+            let playerRequest = CreatePlayerRequest.guest (user.id, "test")
 
-            let! _ = PlayerService.addPlayerToLobby playerRequest session |> thenValue
+            let! _ = PlayerService.addPlayerToLobby (lobby.id, playerRequest) session |> thenValue
 
             //Act
             let! result = GameStartService.startGame lobby.id session
@@ -95,7 +89,7 @@ type GameStartServiceTests() =
         }
 
     [<Fact>]
-    let ``Start game should fail if only one non-virtual player``() =
+    let ``Start game should fail if only one non-neutral player``() =
         task {
              //Arrange
             let! (user, session, lobby) = createUserSessionAndLobby(true) |> thenValue
@@ -111,20 +105,14 @@ type GameStartServiceTests() =
         }
 
     [<Fact>]
-    let ``Virtual players should not be in the turn cycle``() =
+    let ``Neutral players should not be in the turn cycle``() =
         task {
             //Arrange
             let! (user, session, lobby) = createUserSessionAndLobby(true) |> thenValue
 
-            let playerRequest : CreatePlayerRequest =
-                {
-                    lobbyId = lobby.id
-                    userId = Some user.id
-                    name = Some "test"
-                    playerType = PlayerType.Guest
-                }
+            let playerRequest = CreatePlayerRequest.guest (user.id, "test")
 
-            let! _ = PlayerService.addPlayerToLobby playerRequest session |> thenValue
+            let! _ = PlayerService.addPlayerToLobby (lobby.id, playerRequest) session |> thenValue
 
             //Act
             let! gameStartResponse = GameStartService.startGame lobby.id session |> thenValue
@@ -132,15 +120,15 @@ type GameStartServiceTests() =
             //Assert
             let! players = PlayerService.getGamePlayers gameStartResponse.gameId session |> thenValue
 
-            let virtualPlayerIds =
+            let neutralPlayerIds =
                 players
-                |> List.filter (fun p -> p.playerType = PlayerType.Virtual)
+                |> List.filter (fun p -> p.kind = PlayerKind.Neutral)
                 |> List.map (fun p -> p.id)
                 |> Set.ofList
 
             gameStartResponse.gameState.turnCycle
             |> Set.ofList
-            |> Set.intersect virtualPlayerIds
+            |> Set.intersect neutralPlayerIds
             |> Set.count
             |> shouldBe 0
         }

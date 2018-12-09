@@ -10,7 +10,7 @@ module GameModelExtensions =
             { this with cellId = cellId }
 
         member this.kill =
-            { this with pieceType = Corpse; playerId = None }
+            { this with kind = Corpse; playerId = None }
 
         member this.enlistBy playerId =
             { this with playerId = Some playerId }
@@ -19,12 +19,12 @@ module GameModelExtensions =
             { this with playerId = None }
 
         member this.isKiller =
-            match this.pieceType with
+            match this.kind with
             | Chief | Thug | Reporter | Assassin -> true
             | _ -> false
 
         member this.isAlive =
-            match this.pieceType with
+            match this.kind with
             | Corpse -> false
             | _ -> true
 
@@ -36,7 +36,7 @@ module GameModelExtensions =
 
         member this.subject : Selection option =
             this.selections
-            |> List.tryFind (fun s -> s.selectionType = Subject)
+            |> List.tryFind (fun s -> s.kind = Subject)
 
         member this.subjectPieceId : int option =
             this.subject
@@ -48,21 +48,21 @@ module GameModelExtensions =
 
         member this.destinationCellId : int option =
             this.selections
-            |> List.tryFind (fun s -> s.selectionType = Move)
+            |> List.tryFind (fun s -> s.kind = Move)
             |> Option.map (fun s -> s.cellId)
 
         member this.targetPieceId : int option =
             this.selections
-            |> List.tryFind (fun s -> s.selectionType = Target || (s.selectionType = Move && s.pieceId.IsSome))
+            |> List.tryFind (fun s -> s.kind = Target || (s.kind = Move && s.pieceId.IsSome))
             |> Option.map (fun s -> s.pieceId.Value)
 
         member this.dropCellId : int option =
             this.selections
-            |> List.tryFind (fun s -> s.selectionType = Drop)
+            |> List.tryFind (fun s -> s.kind = Drop)
             |> Option.map (fun s -> s.cellId)
 
         member this.vacateCellId : int option =
-            let moves = this.selections |> List.filter (fun s -> s.selectionType = Move)
+            let moves = this.selections |> List.filter (fun s -> s.kind = Move)
             match moves.Length with
             | 2 -> Some(moves.[1].cellId)
             | _ -> None

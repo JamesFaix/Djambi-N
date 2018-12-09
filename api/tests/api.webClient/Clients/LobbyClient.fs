@@ -1,10 +1,10 @@
 ﻿module Djambi.Api.WebClient.LobbyClient
 
-open Djambi.Api.Web.Model.LobbyWebModel
 open Djambi.Api.WebClient.Model
 open Djambi.Api.WebClient.WebUtility
+open Djambi.Api.Model.LobbyModel
 
-let createLobby (request : CreateLobbyJsonModel, token : string) : LobbyResponseJsonModel AsyncResponse =
+let createLobby (request : CreateLobbyRequest, token : string) : Lobby AsyncResponse =
     sendRequest(POST, "/lobbies", 
         Some request,
         Some token)
@@ -14,7 +14,7 @@ let deleteLobby (lobbyId : int, token : string) : Unit AsyncResponse =
         None,
         Some token)
         
-let getLobbies (query : LobbiesQueryJsonModel, token : string) : LobbyResponseJsonModel list AsyncResponse =
+let getLobbies (query : LobbiesQuery, token : string) : Lobby list AsyncResponse =
     sendRequest(POST, "/lobbies/query", 
         Some query,
         Some token)

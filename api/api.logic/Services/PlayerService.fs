@@ -13,11 +13,11 @@ let getLobbyPlayers (lobbyId : int) (session : Session) : Player list AsyncHttpR
 let getGamePlayers (gameId : int) (session : Session) : Player list AsyncHttpResult =
     PlayerRepository.getPlayersForGame gameId
 
-let addPlayerToLobby (request : CreatePlayerRequest) (session : Session) : Player AsyncHttpResult =
-    LobbyRepository.getLobby request.lobbyId
+let addPlayerToLobby (lobbyId : int, request : CreatePlayerRequest) (session : Session) : Player AsyncHttpResult =
+    LobbyRepository.getLobby lobbyId
     |> thenBind (fun lobby ->
-        match request.playerType with
-        | PlayerType.User ->
+        match request.kind with
+        | PlayerKind.User ->
             if request.userId.IsNone
             then Error <| HttpException(400, "UserID must be provided when adding a user player.")
             elif request.name.IsSome
@@ -26,7 +26,7 @@ let addPlayerToLobby (request : CreatePlayerRequest) (session : Session) : Playe
             then Error <| HttpException(403, "Cannot add other users to a lobby.")
             else Ok ()
 
-        | PlayerType.Guest ->
+        | PlayerKind.Guest ->
             if not lobby.allowGuests
             then Error <| HttpException(400, "Lobby does not allow guest players.")
             elif request.userId.IsNone
@@ -37,10 +37,10 @@ let addPlayerToLobby (request : CreatePlayerRequest) (session : Session) : Playe
             then Error <| HttpException(403, "Cannot add guests for other users to a lobby.")
             else Ok ()
 
-        | PlayerType.Virtual ->
-            Error <| HttpException(400, "Cannot directly add virtual players to a lobby.")
+        | PlayerKind.Neutral ->
+            Error <| HttpException(400, "Cannot directly add neutral players to a lobby.")
     )
-    |> thenBindAsync (fun _ -> PlayerRepository.addPlayerToLobby request)
+    |> thenBindAsync (fun _ -> PlayerRepository.addPlayerToLobby (lobbyId, request))
 
 let removePlayerFromLobby (lobbyId : int, playerId : int) (session : Session) : Unit AsyncHttpResult =
     LobbyRepository.getLobby lobbyId //Will error if game already started
@@ -51,7 +51,7 @@ let removePlayerFromLobby (lobbyId : int, playerId : int) (session : Session) : 
             | None -> Error <| HttpException(404, "Player not found.")
             | Some p ->
                 match p.userId with
-                | None -> Error <| HttpException(400, "Cannot remove virtual players from lobby.")
+                | None -> Error <| HttpException(400, "Cannot remove neutral players from lobby.")
                 | Some x ->
                     if session.isAdmin
                         || lobby.createdByUserId = session.userId
@@ -65,7 +65,7 @@ let removePlayerFromLobby (lobbyId : int, playerId : int) (session : Session) : 
 let fillEmptyPlayerSlots (lobby : Lobby) (players : Player list) : Player list AsyncHttpResult =
     let missingPlayerCount = lobby.regionCount - players.Length
 
-    let getVirtualNamesToUse (possibleNames : string list) =
+    let getNeutralPlayerNamesToUse (possibleNames : string list) =
         Enumerable.Except(
             possibleNames,
             players |> Seq.map (fun p -> p.name),
@@ -76,11 +76,11 @@ let fillEmptyPlayerSlots (lobby : Lobby) (players : Player list) : Player list A
     if missingPlayerCount = 0
     then players |> okTask
     else
-        PlayerRepository.getVirtualPlayerNames()
-        |> thenMap getVirtualNamesToUse
+        PlayerRepository.getNeutralPlayerNames()
+        |> thenMap getNeutralPlayerNamesToUse
         |> thenDoEachAsync (fun name ->
-            let request = CreatePlayerRequest.``virtual`` (lobby.id, name)
-            PlayerRepository.addPlayerToLobby request
+            let request = CreatePlayerRequest.neutral (name)
+            PlayerRepository.addPlayerToLobby (lobby.id, request)
             |> thenMap ignore
         )
         |> thenBindAsync (fun _ -> PlayerRepository.getPlayersForLobby lobby.id)

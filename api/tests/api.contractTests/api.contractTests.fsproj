@@ -29,7 +29,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\utils\environment\environment.fsproj" />
     <ProjectReference Include="..\..\api.common\api.common.fsproj" />
-    <ProjectReference Include="..\..\api.web.model\api.web.model.fsproj" />
     <ProjectReference Include="..\api.webClient\api.webClient.fsproj" />
   </ItemGroup>
 
