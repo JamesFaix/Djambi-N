@@ -3,6 +3,7 @@
 open Dapper
 open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
+open Djambi.Api.Db.Mapping
 open Djambi.Api.Db.Model
 open Djambi.Api.Db.SqlUtility
 open Djambi.Api.Model
