@@ -5,7 +5,7 @@ open System.Threading.Tasks
 open FSharp.Control.Tasks
 open NUnit.Framework
 open Djambi.Api.WebClient
-open Djambi.Api.Model.LobbyModel
+open Djambi.Api.Model
 
 [<Test>]
 let ``Create lobby should work``() =

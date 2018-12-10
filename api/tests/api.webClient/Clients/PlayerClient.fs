@@ -2,7 +2,7 @@
 
 open Djambi.Api.WebClient.Model
 open Djambi.Api.WebClient.WebUtility
-open Djambi.Api.Model.PlayerModel
+open Djambi.Api.Model
 
 let addPlayer (lobbyId : int, request : CreatePlayerRequest, token : string) : Unit AsyncResponse =
     sendRequest(POST, sprintf "/lobbies/%i/players" lobbyId, 

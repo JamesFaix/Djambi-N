@@ -7,10 +7,9 @@
   <ItemGroup>
     <Compile Include="UserModel.fs" />
     <Compile Include="SessionModel.fs" />
-    <Compile Include="PlayerModel.fs" />
-    <Compile Include="LobbyModel.fs" />
     <Compile Include="BoardModel.fs" />
     <Compile Include="GameModel.fs" />
+    <Compile Include="GameRequestModel.fs" />
   </ItemGroup>
 
   <ItemGroup>

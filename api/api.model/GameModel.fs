@@ -1,11 +1,64 @@
 ﻿[<AutoOpen>]
 module Djambi.Api.Model.GameModel
 
+open System
+
+type PlayerKind =
+    | User
+    | Guest
+    | Neutral
+
+type Player =
+    {
+        id : int
+        lobbyId : int
+        userId : int option
+        kind : PlayerKind
+        name : string
+    }
+
 type PlayerState =
     {
         id : int
         isAlive : bool
     }
+
+type Lobby =
+    {
+        id : int
+        description : string option
+        regionCount : int
+        createdOn : DateTime
+        createdByUserId : int
+        isPublic : bool
+        allowGuests : bool
+        //TODO: Add player count
+    }
+
+type LobbyWithPlayers =
+    {
+        id : int
+        description : string option
+        regionCount : int
+        createdOn : DateTime
+        createdByUserId : int
+        isPublic : bool
+        allowGuests : bool
+        players : Player list
+    }
+
+type Lobby with
+    member this.addPlayers (players : Player list) : LobbyWithPlayers =
+        {
+            id = this.id
+            description = this.description
+            regionCount = this.regionCount
+            createdOn = this.createdOn
+            createdByUserId = this.createdByUserId
+            isPublic = this.isPublic
+            allowGuests = this.allowGuests
+            players = players
+        }
 
 type PieceKind =
     | Chief
@@ -89,12 +142,6 @@ module Selection =
             pieceId = None
         }
 
-[<CLIMutable>]
-type SelectionRequest =
-    {
-        cellId : int
-    }
-
 type TurnStatus =
     | AwaitingSelection
     | AwaitingConfirmation
@@ -122,26 +169,12 @@ type PlayerStartConditions =
         region : int
         turnNumber : int option
         colodId : int
-    }
-    
-type StartGameResponse =
-    {
-        gameId : int
-        startingConditions : PlayerStartConditions list
-        gameState : GameState
-        turnState : TurnState
-    }
+    }   
 
 type Game =
     {
         id : int
         regionCount : int
-        gameState : GameState
-        turnState : TurnState
-    }
-
-type CommitTurnResponse =
-    {
         gameState : GameState
         turnState : TurnState
     }

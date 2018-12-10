@@ -6,7 +6,7 @@ open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Web.HttpUtility
 open Djambi.Api.Web.Managers
-open Djambi.Api.Model.LobbyModel
+open Djambi.Api.Model
 
 let getLobbies : HttpHandler =
     let func ctx =

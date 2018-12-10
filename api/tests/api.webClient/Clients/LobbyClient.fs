@@ -2,7 +2,7 @@
 
 open Djambi.Api.WebClient.Model
 open Djambi.Api.WebClient.WebUtility
-open Djambi.Api.Model.LobbyModel
+open Djambi.Api.Model
 
 let createLobby (request : CreateLobbyRequest, token : string) : Lobby AsyncResponse =
     sendRequest(POST, "/lobbies", 

@@ -4,11 +4,8 @@ module Djambi.Api.IntegrationTests.TestUtilities
 open System
 open FSharp.Control.Tasks
 open Microsoft.Extensions.Configuration
-open Djambi.Api.Model.UserModel
-open Djambi.Api.Model.LobbyModel
-open Djambi.Api.Model.SessionModel
+open Djambi.Api.Model
 open Djambi.Utilities
-open Djambi.Api.Model.PlayerModel
 open Djambi.Api.Common
 open Djambi.Api.Logic.Services
 
