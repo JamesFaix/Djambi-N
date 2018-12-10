@@ -28,31 +28,30 @@ type SessionSqlModel =
 type PlayerSqlModel =
     {
         playerId : int
-        lobbyId : int
+        gameId : int
         userId : int Nullable
         name : string
-        playerTypeId : byte
-        isAlive : bool
-    }
-
-[<CLIMutable>]
-type GameParametersSqlModel =
-    {
-        lobbyId : int
-        description : string
-        regionCount : int
-        createdOn : DateTime
-        createdByUserId : int
-        isPublic : bool
-        allowGuests : bool
-        //TODO: Add player count
+        playerKindId : byte
+        isAlive : bool Nullable
+        colorId : byte Nullable
+        startingRegion : byte Nullable
+        startingTurnNumber : byte Nullable
     }
     
 [<CLIMutable>]
 type GameSqlModel =
     {
         gameId : int
+        createdOn : DateTime
+        createdByUserId : int
+        gameStatusId : byte
+        //Game parameters
+        description : string
         regionCount : int
-        gameStateJson : string
-        turnStateJson : string
+        isPublic : bool
+        allowGuests : bool
+        //State
+        turnCycleJson : string
+        piecesJson : string
+        currentTurnJson : string
     }

@@ -1,0 +1,8 @@
+INSERT INTO [dbo].[NeutralPlayerNames] ([Name]) VALUES (N'Derp')
+INSERT INTO [dbo].[NeutralPlayerNames] ([Name]) VALUES (N'Dwyde Schrude')
+INSERT INTO [dbo].[NeutralPlayerNames] ([Name]) VALUES (N'Hambrosia')
+INSERT INTO [dbo].[NeutralPlayerNames] ([Name]) VALUES (N'Kerfuffle')
+INSERT INTO [dbo].[NeutralPlayerNames] ([Name]) VALUES (N'Oozlefinch')
+INSERT INTO [dbo].[NeutralPlayerNames] ([Name]) VALUES (N'Quinotaur')
+INSERT INTO [dbo].[NeutralPlayerNames] ([Name]) VALUES (N'Squonk')
+INSERT INTO [dbo].[NeutralPlayerNames] ([Name]) VALUES (N'Tofu Kozo')

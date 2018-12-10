@@ -33,7 +33,7 @@ type GameStartServiceTests() =
             let regions = startingConditions |> List.map (fun cond -> cond.region) |> List.sort
             regions |> shouldBe [0..(lobby.regionCount-1)]
 
-            let colors = startingConditions |> List.map (fun cond -> cond.colodId)
+            let colors = startingConditions |> List.map (fun cond -> cond.colorId)
             Assert.All(colors, fun c -> Assert.True(c >= 0 && c < Constants.maxRegions))
         }
 

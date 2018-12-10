@@ -10,8 +10,6 @@
     <Compile Include="SqlUtility.fs" />
     <Compile Include="Repositories\UserRepository.fs" />
     <Compile Include="Repositories\SessionRepository.fs" />
-    <Compile Include="Repositories\LobbyRepository.fs" />
-    <Compile Include="Repositories\PlayerRepository.fs" />
     <Compile Include="Repositories\GameRepository.fs" />
   </ItemGroup>
 

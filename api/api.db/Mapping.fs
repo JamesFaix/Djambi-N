@@ -26,12 +26,12 @@ let mapSessionResponse (sqlModel : SessionSqlModel) : Session =
         isAdmin = sqlModel.isAdmin
     }
     
-let mapPlayerTypeId (playerTypeId : byte) : PlayerKind =
-    match playerTypeId with
+let mapPlayerKindId (playerKindId : byte) : PlayerKind =
+    match playerKindId with
     | 1uy -> PlayerKind.User
     | 2uy -> PlayerKind.Guest
     | 3uy -> PlayerKind.Neutral
-    | _ -> raise <| Exception("Invalid player type")
+    | _ -> raise <| Exception("Invalid player kind")
 
 let mapPlayerKindToId (kind : PlayerKind) : byte =
     match kind with
@@ -42,31 +42,48 @@ let mapPlayerKindToId (kind : PlayerKind) : byte =
 let mapPlayerResponse (sqlModel : PlayerSqlModel) : Player =
     {
         id = sqlModel.playerId
-        lobbyId = sqlModel.lobbyId
+        gameId = sqlModel.gameId
         userId = sqlModel.userId |> nullableToOption
-        kind = mapPlayerTypeId sqlModel.playerTypeId
+        kind = mapPlayerKindId sqlModel.playerKindId
         name = sqlModel.name
-        isAlive = sqlModel.isAlive
+        isAlive = sqlModel.isAlive |> nullableToOption
+        colorId = sqlModel.colorId |> nullableToOption |> Option.map int
+        startingRegion = sqlModel.startingRegion |> nullableToOption |> Option.map int
+        startingTurnNumber = sqlModel.startingTurnNumber |> nullableToOption |> Option.map int
     }
 
-let mapGameParametersResponse (sqlModel : GameParametersSqlModel) : GameParameters =
-    {
-        id = sqlModel.lobbyId
-        description = sqlModel.description |> referenceToOption
-        regionCount = sqlModel.regionCount
-        createdOn = sqlModel.createdOn
-        createdByUserId = sqlModel.createdByUserId
-        isPublic = sqlModel.isPublic
-        allowGuests = sqlModel.allowGuests
-    }
-    
-let mapGameSqlModelResponse(sqlModel : GameSqlModel) : Game =
+let mapGameStatusId (gameStatusId : byte) : GameStatus =
+    match gameStatusId with
+    | 1uy -> GameStatus.Pending
+    | 2uy -> GameStatus.AbortedWhilePending
+    | 3uy -> GameStatus.Started
+    | 4uy -> GameStatus.Aborted
+    | 5uy -> GameStatus.Finished
+    | _ -> raise <| Exception("Invalid game status")
+
+let mapGameStatusToId (status : GameStatus) : byte =
+    match status with
+    | GameStatus.Pending -> 1uy
+    | GameStatus.AbortedWhilePending -> 2uy
+    | GameStatus.Started -> 3uy
+    | GameStatus.Aborted -> 4uy
+    | GameStatus.Finished -> 5uy
+
+let mapGameResponse(sqlModel : GameSqlModel) : Game =
     {
         id = sqlModel.gameId
-        regionCount = sqlModel.regionCount
-        gameState = JsonConvert.DeserializeObject<GameState>(sqlModel.gameStateJson)
-        turnState =
-            match sqlModel.turnStateJson with
-            | null -> Turn.empty
-            | _ -> JsonConvert.DeserializeObject<Turn>(sqlModel.turnStateJson)
+        status = sqlModel.gameStatusId |> mapGameStatusId
+        createdOn = sqlModel.createdOn
+        createdByUserId = sqlModel.createdByUserId
+        parameters = 
+            {
+                regionCount = sqlModel.regionCount
+                description = sqlModel.description |> referenceToOption
+                isPublic = sqlModel.isPublic
+                allowGuests = sqlModel.allowGuests
+            }
+        players = List.empty
+        pieces = JsonConvert.DeserializeObject<List<Piece>>(sqlModel.piecesJson)
+        turnCycle = JsonConvert.DeserializeObject<List<int>>(sqlModel.turnCycleJson)
+        currentTurn = JsonConvert.DeserializeObject<Option<Turn>>(sqlModel.currentTurnJson)
     }

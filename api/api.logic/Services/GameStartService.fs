@@ -20,7 +20,7 @@ let getStartingConditions(players : Player list) : PlayerStartConditions list =
             {
                 playerId = p.id
                 region = r
-                colodId = c
+                colorId = c
                 turnNumber = None
             })
 

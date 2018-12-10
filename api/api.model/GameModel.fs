@@ -11,57 +11,15 @@ type PlayerKind =
 type Player =
     {
         id : int
-        lobbyId : int
+        gameId : int
         userId : int option
         kind : PlayerKind
         name : string
-        isAlive : bool
+        isAlive : bool option
+        colorId : int option
+        startingRegion : int option
+        startingTurnNumber : int option
     }
-    
-[<Obsolete>]
-type PlayerState =
-    {
-        id : int
-        isAlive : bool
-    }
-
-type GameParameters =
-    {
-        id : int
-        description : string option
-        regionCount : int
-        createdOn : DateTime
-        createdByUserId : int
-        isPublic : bool
-        allowGuests : bool
-    }
-
-[<Obsolete>]
-type LobbyWithPlayers =
-    {
-        id : int
-        description : string option
-        regionCount : int
-        createdOn : DateTime
-        createdByUserId : int
-        isPublic : bool
-        allowGuests : bool
-        players : Player list
-    }
-    
-[<Obsolete>]
-type GameParameters with
-    member this.addPlayers (players : Player list) : LobbyWithPlayers =
-        {
-            id = this.id
-            description = this.description
-            regionCount = this.regionCount
-            createdOn = this.createdOn
-            createdByUserId = this.createdByUserId
-            isPublic = this.isPublic
-            allowGuests = this.allowGuests
-            players = players
-        }
 
 type PieceKind =
     | Chief
@@ -79,14 +37,6 @@ type Piece =
         playerId : int option
         originalPlayerId : int
         cellId : int
-    }
-    
-[<Obsolete>]
-type GameState =
-    {
-        players : PlayerState list
-        pieces : Piece list
-        turnCycle : int list
     }
 
 type SelectionKind =
@@ -167,26 +117,30 @@ module Turn =
             requiredSelectionKind = Some Subject
         }
 
-type PlayerStartConditions =
-    {
-        playerId : int
-        region : int
-        turnNumber : int option
-        colodId : int
-    }   
-    
-[<Obsolete>]
-type Game =
-    {
-        id : int
-        regionCount : int
-        gameState : GameState
-        turnState : Turn
-    }
-
 type GameStatus =
     | Pending
     | AbortedWhilePending
     | Started
     | Aborted
     | Finished
+
+type GameParameters =
+    {
+        description : string option
+        regionCount : int
+        isPublic : bool
+        allowGuests : bool
+    }
+
+type Game =
+    {
+        id : int
+        createdOn : DateTime
+        createdByUserId : int
+        parameters : GameParameters
+        status : GameStatus
+        players : Player list
+        pieces : Piece list
+        turnCycle : int list
+        currentTurn : Turn option
+    }
