@@ -14,7 +14,7 @@ module GameRepository =
     let startGame(lobbyId : int,
                   startingConditions : PlayerStartConditions list,
                   gameState : GameState,
-                  turnState : TurnState) : int AsyncHttpResult =
+                  turnState : Turn) : int AsyncHttpResult =
         let startingConditionsJson = startingConditions |> JsonConvert.SerializeObject
         let gameStateJson = gameState |> JsonConvert.SerializeObject
         let turnStateJson = turnState |> JsonConvert.SerializeObject
@@ -45,7 +45,7 @@ module GameRepository =
         let cmd = proc("Games_UpdateGameState", param)
         queryUnit(cmd, "Game")
 
-    let updateTurnState(gameId: int, state : TurnState) : Unit AsyncHttpResult =
+    let updateTurnState(gameId: int, state : Turn) : Unit AsyncHttpResult =
         let json = state |> JsonConvert.SerializeObject
         let param = DynamicParameters()
                         .add("GameId", gameId)

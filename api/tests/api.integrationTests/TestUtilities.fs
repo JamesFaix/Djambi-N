@@ -62,7 +62,7 @@ let createUser() : UserDetails AsyncHttpResult =
     let userRequest = getCreateUserRequest()
     UserService.createUser userRequest None
 
-let createUserSessionAndLobby(allowGuests : bool) : (UserDetails * Session * Lobby) AsyncHttpResult =
+let createUserSessionAndLobby(allowGuests : bool) : (UserDetails * Session * GameParameters) AsyncHttpResult =
     task {
         let! user = createUser() |> AsyncHttpResult.thenValue
 

@@ -24,7 +24,7 @@ type GetLobbiesTests() =
             let! lobby2 = LobbyService.createLobby request session2
                           |> AsyncHttpResult.thenValue
 
-            let query = { LobbiesQuery.empty with createdByUserId = Some 1 }
+            let query = { GamesQuery.empty with createdByUserId = Some 1 }
 
             //Act
             let! result = LobbyService.getLobbies query adminSession
@@ -49,7 +49,7 @@ type GetLobbiesTests() =
             let! lobby2 = LobbyService.createLobby { request with allowGuests = true } session2
                           |> AsyncHttpResult.thenValue
 
-            let query = { LobbiesQuery.empty with allowGuests = Some true }
+            let query = { GamesQuery.empty with allowGuests = Some true }
 
             //Act
             let! result = LobbyService.getLobbies query adminSession
@@ -74,7 +74,7 @@ type GetLobbiesTests() =
             let! lobby2 = LobbyService.createLobby { request with isPublic = true } session2
                           |> AsyncHttpResult.thenValue
 
-            let query = { LobbiesQuery.empty with isPublic = Some true }
+            let query = { GamesQuery.empty with isPublic = Some true }
 
             //Act
             let! result = LobbyService.getLobbies query adminSession
@@ -102,7 +102,7 @@ type GetLobbiesTests() =
             let playerRequest = { getCreatePlayerRequest with userId = Some 1 }
             let! _ = PlayerService.addPlayerToLobby (lobby1.id, playerRequest) adminSession
 
-            let query = { LobbiesQuery.empty with playerUserId = Some 1 }
+            let query = { GamesQuery.empty with playerUserId = Some 1 }
 
             //Act
             let! result = LobbyService.getLobbies query adminSession
@@ -131,7 +131,7 @@ type GetLobbiesTests() =
             let playerRequest = { getCreatePlayerRequest with userId = Some 1 }
             let! _ = PlayerService.addPlayerToLobby (lobby1.id, playerRequest) session1
 
-            let query = LobbiesQuery.empty
+            let query = GamesQuery.empty
 
             //Act
             let! result = LobbyService.getLobbies query session1

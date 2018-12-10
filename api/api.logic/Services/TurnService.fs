@@ -22,7 +22,7 @@ let private ensureSessionIsAdminOrContainsCurrentPlayer (session : Session) (gam
             | _ -> Error <| HttpException(400, "Cannot perform this action during another player's turn.")
         )
 
-let selectCell(gameId : int, cellId : int) (session: Session) : TurnState AsyncHttpResult =
+let selectCell(gameId : int, cellId : int) (session: Session) : Turn AsyncHttpResult =
     GameRepository.getGame gameId
     |> thenBindAsync (ensureSessionIsAdminOrContainsCurrentPlayer session)
     |> thenBindAsync (fun game ->
@@ -240,7 +240,7 @@ let commitTurn(gameId : int) (session : Session) : CommitTurnResponse AsyncHttpR
                         players = players
                         turnCycle = turnCycle
                     }
-                turnState = TurnState.empty
+                turnState = Turn.empty
                 regionCount = game.regionCount
             }
 
@@ -254,7 +254,7 @@ let commitTurn(gameId : int) (session : Session) : CommitTurnResponse AsyncHttpR
                 {
                     id = gameId
                     gameState = killCurrentPlayer(updatedGame.gameState)
-                    turnState = TurnState.empty
+                    turnState = Turn.empty
                     regionCount = game.regionCount
                 }
             let (opt, rst) = SelectionOptionsService.getSelectableCellsFromState updatedGame
@@ -267,7 +267,7 @@ let commitTurn(gameId : int) (session : Session) : CommitTurnResponse AsyncHttpR
             gameState = updatedGame.gameState
             turnState =
             {
-                TurnState.empty with
+                Turn.empty with
                     selectionOptions = selectionOptions
                     requiredSelectionKind = requiredSelectionType
             }
@@ -276,7 +276,7 @@ let commitTurn(gameId : int) (session : Session) : CommitTurnResponse AsyncHttpR
     |> thenDoAsync (fun response -> GameRepository.updateGameState(gameId, response.gameState))
     |> thenDoAsync (fun response -> GameRepository.updateTurnState(gameId, response.turnState))
 
-let resetTurn(gameId : int) (session : Session) : TurnState AsyncHttpResult =
+let resetTurn(gameId : int) (session : Session) : Turn AsyncHttpResult =
     GameRepository.getGame gameId
     |> thenBindAsync (ensureSessionIsAdminOrContainsCurrentPlayer session)
     |> thenMap (fun game ->
@@ -284,7 +284,7 @@ let resetTurn(gameId : int) (session : Session) : TurnState AsyncHttpResult =
             {
                 id = gameId
                 gameState = game.gameState
-                turnState = TurnState.empty
+                turnState = Turn.empty
                 regionCount = game.regionCount
             }
 

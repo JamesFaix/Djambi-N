@@ -62,7 +62,7 @@ let removePlayerFromLobby (lobbyId : int, playerId : int) (session : Session) : 
     )
     |> thenBindAsync (fun _ -> PlayerRepository.removePlayerFromLobby playerId)
 
-let fillEmptyPlayerSlots (lobby : Lobby) (players : Player list) : Player list AsyncHttpResult =
+let fillEmptyPlayerSlots (lobby : GameParameters) (players : Player list) : Player list AsyncHttpResult =
     let missingPlayerCount = lobby.regionCount - players.Length
 
     let getNeutralPlayerNamesToUse (possibleNames : string list) =

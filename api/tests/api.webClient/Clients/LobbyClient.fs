@@ -4,7 +4,7 @@ open Djambi.Api.WebClient.Model
 open Djambi.Api.WebClient.WebUtility
 open Djambi.Api.Model
 
-let createLobby (request : CreateLobbyRequest, token : string) : Lobby AsyncResponse =
+let createLobby (request : CreateLobbyRequest, token : string) : GameParameters AsyncResponse =
     sendRequest(POST, "/lobbies", 
         Some request,
         Some token)
@@ -14,7 +14,7 @@ let deleteLobby (lobbyId : int, token : string) : Unit AsyncResponse =
         None,
         Some token)
         
-let getLobbies (query : LobbiesQuery, token : string) : Lobby list AsyncResponse =
+let getLobbies (query : GamesQuery, token : string) : GameParameters list AsyncResponse =
     sendRequest(POST, "/lobbies/query", 
         Some query,
         Some token)

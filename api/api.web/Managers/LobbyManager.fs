@@ -4,13 +4,13 @@ open Djambi.Api.Common
 open Djambi.Api.Logic.Services
 open Djambi.Api.Model
 
-let getLobbies (query : LobbiesQuery) (session : Session) : Lobby list AsyncHttpResult =
+let getLobbies (query : GamesQuery) (session : Session) : GameParameters list AsyncHttpResult =
     LobbyService.getLobbies query session
 
 let getLobby (lobbyId : int) (session : Session) : LobbyWithPlayers AsyncHttpResult =
     LobbyService.getLobby lobbyId session
 
-let createLobby (request : CreateLobbyRequest) (session : Session) : Lobby AsyncHttpResult =
+let createLobby (request : CreateLobbyRequest) (session : Session) : GameParameters AsyncHttpResult =
     LobbyService.createLobby request session
 
 let deleteLobby (lobbyId : int) (session : Session) : Unit AsyncHttpResult =

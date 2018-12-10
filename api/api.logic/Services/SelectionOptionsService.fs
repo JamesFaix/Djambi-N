@@ -71,7 +71,7 @@ let private getMoveSelectionOptions(game : GameState, piece : Piece, regionCount
         |> Seq.toList
     | _ -> List.empty
 
-let private getTargetSelectionOptions(game : GameState, turn : TurnState, regionCount : int) : int list =
+let private getTargetSelectionOptions(game : GameState, turn : Turn, regionCount : int) : int list =
     match turn.destinationCellId with
     | None -> List.empty
     | Some destinationCellId ->
@@ -90,7 +90,7 @@ let private getTargetSelectionOptions(game : GameState, turn : TurnState, region
                             |> Seq.toList
             | _ -> List.Empty
 
-let private getDropSelectionOptions(game : GameState, turn : TurnState, regionCount : int) : int list =
+let private getDropSelectionOptions(game : GameState, turn : Turn, regionCount : int) : int list =
     match turn.subjectPiece game with
     | None -> List.empty
     | Some subject ->
@@ -106,7 +106,7 @@ let private getDropSelectionOptions(game : GameState, turn : TurnState, regionCo
             |> Seq.map (fun c -> c.id)
             |> Seq.toList
 
-let private getVacateSelectionOptions(game : GameState, turn : TurnState, regionCount : int) : int list =
+let private getVacateSelectionOptions(game : GameState, turn : Turn, regionCount : int) : int list =
     match turn.subjectPiece game with
     | None -> List.empty
     | Some subject ->

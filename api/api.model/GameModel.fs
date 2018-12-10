@@ -15,15 +15,17 @@ type Player =
         userId : int option
         kind : PlayerKind
         name : string
+        isAlive : bool
     }
-
+    
+[<Obsolete>]
 type PlayerState =
     {
         id : int
         isAlive : bool
     }
 
-type Lobby =
+type GameParameters =
     {
         id : int
         description : string option
@@ -32,9 +34,9 @@ type Lobby =
         createdByUserId : int
         isPublic : bool
         allowGuests : bool
-        //TODO: Add player count
     }
 
+[<Obsolete>]
 type LobbyWithPlayers =
     {
         id : int
@@ -46,8 +48,9 @@ type LobbyWithPlayers =
         allowGuests : bool
         players : Player list
     }
-
-type Lobby with
+    
+[<Obsolete>]
+type GameParameters with
     member this.addPlayers (players : Player list) : LobbyWithPlayers =
         {
             id = this.id
@@ -77,7 +80,8 @@ type Piece =
         originalPlayerId : int
         cellId : int
     }
-
+    
+[<Obsolete>]
 type GameState =
     {
         players : PlayerState list
@@ -146,7 +150,7 @@ type TurnStatus =
     | AwaitingSelection
     | AwaitingConfirmation
 
-type TurnState =
+type Turn =
     {
         status : TurnStatus
         selections : Selection list
@@ -154,7 +158,7 @@ type TurnState =
         requiredSelectionKind : SelectionKind option
     }
 
-module TurnState =
+module Turn =
     let empty =
         {
             status = AwaitingSelection
@@ -170,17 +174,19 @@ type PlayerStartConditions =
         turnNumber : int option
         colodId : int
     }   
-
+    
+[<Obsolete>]
 type Game =
     {
         id : int
         regionCount : int
         gameState : GameState
-        turnState : TurnState
+        turnState : Turn
     }
 
 type GameStatus =
-    | Open
+    | Pending
+    | AbortedWhilePending
     | Started
-    | Complete
-    | Cancelled
+    | Aborted
+    | Finished

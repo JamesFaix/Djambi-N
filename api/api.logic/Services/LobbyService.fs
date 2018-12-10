@@ -5,7 +5,7 @@ open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Db.Repositories
 open Djambi.Api.Model
 
-let createLobby (request : CreateLobbyRequest) (session : Session) : Lobby AsyncHttpResult =
+let createLobby (request : CreateLobbyRequest) (session : Session) : GameParameters AsyncHttpResult =
     LobbyRepository.createLobby (request, session.userId)
 
 let deleteLobby (lobbyId : int) (session : Session) : Unit AsyncHttpResult =
@@ -20,8 +20,8 @@ let deleteLobby (lobbyId : int) (session : Session) : Unit AsyncHttpResult =
         )
     |> thenBindAsync (fun _ -> LobbyRepository.deleteLobby lobbyId)
 
-let getLobbies (query : LobbiesQuery) (session : Session) : Lobby list AsyncHttpResult =
-    let isViewableByActiveUser (lobby : Lobby) : bool =
+let getLobbies (query : GamesQuery) (session : Session) : GameParameters list AsyncHttpResult =
+    let isViewableByActiveUser (lobby : GameParameters) : bool =
         lobby.isPublic
         || lobby.createdByUserId = session.userId
 

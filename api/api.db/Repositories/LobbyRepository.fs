@@ -9,7 +9,7 @@ open Djambi.Api.Db.Model
 open Djambi.Api.Db.SqlUtility
 open Djambi.Api.Model
 
-let createLobby (request : CreateLobbyRequest, createdByUserId : int) : Lobby AsyncHttpResult =
+let createLobby (request : CreateLobbyRequest, createdByUserId : int) : GameParameters AsyncHttpResult =
     let param = DynamicParameters()
                     .add("RegionCount", request.regionCount)
                     .add("CreatedByUserId", createdByUserId)
@@ -40,7 +40,7 @@ let deleteLobby (lobbyId : int) : Unit AsyncHttpResult =
     let cmd = proc("Lobbies_Delete", param)
     queryUnit(cmd, "Lobby")
 
-let getLobbies (query : LobbiesQuery) : Lobby List AsyncHttpResult =
+let getLobbies (query : GamesQuery) : GameParameters List AsyncHttpResult =
     let param = DynamicParameters()
                     .addOption("LobbyId", query.lobbyId)
                     .addOption("DescriptionContains", query.descriptionContains)
@@ -51,10 +51,10 @@ let getLobbies (query : LobbiesQuery) : Lobby List AsyncHttpResult =
 
     let cmd = proc("Lobbies_Get", param)
 
-    queryMany<LobbySqlModel>(cmd, "Lobby")
-    |> thenMap (List.map mapLobby)
+    queryMany<GameParametersSqlModel>(cmd, "Lobby")
+    |> thenMap (List.map mapGameParametersResponse)
 
-let getLobby (lobbyId : int) : Lobby AsyncHttpResult =
+let getLobby (lobbyId : int) : GameParameters AsyncHttpResult =
     let param = DynamicParameters()
                     .add("LobbyId", lobbyId)
                     .add("DescriptionContains", null)
@@ -65,5 +65,5 @@ let getLobby (lobbyId : int) : Lobby AsyncHttpResult =
 
     let cmd = proc("Lobbies_Get", param)
 
-    querySingle<LobbySqlModel>(cmd, "Lobby")
-    |> thenMap mapLobby
+    querySingle<GameParametersSqlModel>(cmd, "Lobby")
+    |> thenMap mapGameParametersResponse

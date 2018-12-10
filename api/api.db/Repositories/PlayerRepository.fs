@@ -17,7 +17,7 @@ let private getPlayers (lobbyId : int option, gameId : int option) : Player List
     let cmd = proc("Players_Get", param)
 
     queryMany<PlayerSqlModel>(cmd, "Player")
-    |> thenMap (List.map mapPlayer)
+    |> thenMap (List.map mapPlayerResponse)
 
 let getPlayersForLobby (lobbyId : int) : Player List AsyncHttpResult =
     getPlayers (Some lobbyId, None)
@@ -34,7 +34,7 @@ let getPlayer (playerId : int) : Player AsyncHttpResult =
     let cmd = proc("Players_Get", param)
 
     querySingle<PlayerSqlModel>(cmd, "Player")
-    |> thenMap mapPlayer
+    |> thenMap mapPlayerResponse
 
 let addPlayerToLobby (lobbyId : int, request : CreatePlayerRequest) : Player AsyncHttpResult =
     let param = DynamicParameters()

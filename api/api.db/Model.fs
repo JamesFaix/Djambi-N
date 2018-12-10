@@ -32,10 +32,11 @@ type PlayerSqlModel =
         userId : int Nullable
         name : string
         playerTypeId : byte
+        isAlive : bool
     }
 
 [<CLIMutable>]
-type LobbySqlModel =
+type GameParametersSqlModel =
     {
         lobbyId : int
         description : string

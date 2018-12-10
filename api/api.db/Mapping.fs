@@ -39,16 +39,17 @@ let mapPlayerKindToId (kind : PlayerKind) : byte =
     | PlayerKind.Guest -> 2uy
     | PlayerKind.Neutral -> 3uy
 
-let mapPlayer (sqlModel : PlayerSqlModel) : Player =
+let mapPlayerResponse (sqlModel : PlayerSqlModel) : Player =
     {
         id = sqlModel.playerId
         lobbyId = sqlModel.lobbyId
         userId = sqlModel.userId |> nullableToOption
         kind = mapPlayerTypeId sqlModel.playerTypeId
         name = sqlModel.name
+        isAlive = sqlModel.isAlive
     }
 
-let mapLobby (sqlModel : LobbySqlModel) : Lobby =
+let mapGameParametersResponse (sqlModel : GameParametersSqlModel) : GameParameters =
     {
         id = sqlModel.lobbyId
         description = sqlModel.description |> referenceToOption
@@ -57,7 +58,6 @@ let mapLobby (sqlModel : LobbySqlModel) : Lobby =
         createdByUserId = sqlModel.createdByUserId
         isPublic = sqlModel.isPublic
         allowGuests = sqlModel.allowGuests
-        //TODO: Add player count
     }
     
 let mapGameSqlModelResponse(sqlModel : GameSqlModel) : Game =
@@ -67,6 +67,6 @@ let mapGameSqlModelResponse(sqlModel : GameSqlModel) : Game =
         gameState = JsonConvert.DeserializeObject<GameState>(sqlModel.gameStateJson)
         turnState =
             match sqlModel.turnStateJson with
-            | null -> TurnState.empty
-            | _ -> JsonConvert.DeserializeObject<TurnState>(sqlModel.turnStateJson)
+            | null -> Turn.empty
+            | _ -> JsonConvert.DeserializeObject<Turn>(sqlModel.turnStateJson)
     }

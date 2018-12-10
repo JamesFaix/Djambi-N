@@ -1,6 +1,8 @@
 ﻿[<AutoOpen>]
 module Djambi.Api.Model.GameRequestModel
 
+open System
+
 [<CLIMutable>]
 type CreatePlayerRequest = 
     {
@@ -40,8 +42,9 @@ type CreateLobbyRequest =
         isPublic : bool
         allowGuests : bool
     }
-
-type LobbiesQuery =
+    
+[<CLIMutable>]
+type GamesQuery =
     {
         lobbyId : int option
         descriptionContains : string option
@@ -51,9 +54,9 @@ type LobbiesQuery =
         allowGuests : bool option
     }
 
-module LobbiesQuery =
+module GamesQuery =
 
-    let empty : LobbiesQuery =
+    let empty : GamesQuery =
         {
             lobbyId = None
             descriptionContains = None
@@ -69,16 +72,18 @@ type SelectionRequest =
         cellId : int
     }
          
+[<Obsolete>]
 type StartGameResponse =
     {
         gameId : int
         startingConditions : PlayerStartConditions list
         gameState : GameState
-        turnState : TurnState
+        turnState : Turn
     }
-    
+   
+[<Obsolete>] 
 type CommitTurnResponse =
     {
         gameState : GameState
-        turnState : TurnState
+        turnState : Turn
     }

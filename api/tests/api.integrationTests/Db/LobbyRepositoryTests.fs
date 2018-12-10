@@ -69,7 +69,7 @@ type LobbyRepositoryTests() =
         let request = getCreateLobbyRequest()
         task {
             let! createdLobby = LobbyRepository.createLobby (request, userId) |> thenValue
-            let query = LobbiesQuery.empty
+            let query = GamesQuery.empty
 
             //Act
             let! lobbies = LobbyRepository.getLobbies query |> thenValue

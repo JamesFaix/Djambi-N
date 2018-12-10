@@ -32,7 +32,7 @@ module GameModelExtensions =
         member this.kill : PlayerState =
             { this with isAlive = false }
 
-    type TurnState with
+    type Turn with
 
         member this.subject : Selection option =
             this.selections

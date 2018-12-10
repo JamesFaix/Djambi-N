@@ -10,7 +10,7 @@ open Djambi.Api.Model
 
 let getLobbies : HttpHandler =
     let func ctx =
-        getSessionAndModelFromContext<LobbiesQuery> ctx
+        getSessionAndModelFromContext<GamesQuery> ctx
         |> thenBindAsync (fun (jsonModel, session) -> LobbyManager.getLobbies jsonModel session)
     handle func
 
@@ -21,7 +21,7 @@ let getLobby(lobbyId : int) : HttpHandler =
     handle func
 
 let createLobby : HttpHandler =
-    let func (ctx : HttpContext) : Lobby AsyncHttpResult =
+    let func (ctx : HttpContext) : GameParameters AsyncHttpResult =
         getSessionAndModelFromContext<CreateLobbyRequest> ctx
         |> thenBindAsync (fun (jsonModel, session) -> LobbyManager.createLobby jsonModel session)
     handle func
