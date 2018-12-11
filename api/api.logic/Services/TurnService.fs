@@ -271,9 +271,6 @@ let commitTurn(gameId : int) (session : Session) : Game AsyncHttpResult =
     )
     |> thenBindAsync (fun _ -> GameRepository.getGame gameId)
 
-    //|> thenDoAsync (fun response -> GameRepository.updateGameState(gameId, response.gameState))
-    //|> thenDoAsync (fun response -> GameRepository.updateTurnState(gameId, response.turnState))
-
 let resetTurn(gameId : int) (session : Session) : Turn AsyncHttpResult =
     GameRepository.getGame gameId
     |> thenBindAsync (ensureSessionIsAdminOrContainsCurrentPlayer session)

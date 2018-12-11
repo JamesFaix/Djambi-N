@@ -83,7 +83,7 @@ let mapGameResponse(sqlModel : GameSqlModel) : Game =
                 allowGuests = sqlModel.allowGuests
             }
         players = List.empty
-        pieces = JsonUtility.deserializeList(sqlModel.piecesJson)
-        turnCycle = JsonUtility.deserializeList(sqlModel.turnCycleJson)
-        currentTurn = JsonUtility.deserializeOption(sqlModel.currentTurnJson)
+        pieces = JsonUtility.deserializeList sqlModel.piecesJson
+        turnCycle = JsonUtility.deserializeList sqlModel.turnCycleJson
+        currentTurn = JsonUtility.deserializeOption sqlModel.currentTurnJson
     }
