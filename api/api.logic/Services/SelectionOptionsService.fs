@@ -5,8 +5,8 @@ open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
 open Djambi.Api.Logic.ModelExtensions.GameModelExtensions
 open Djambi.Api.Model
 
-let private getMoveSelectionOptions(game : GameState, piece : Piece, regionCount : int) : int list =
-    let board = BoardModelUtility.getBoardMetadata regionCount
+let private getMoveSelectionOptions(game : Game, piece : Piece) : int list =
+    let board = BoardModelUtility.getBoardMetadata game.parameters.regionCount
     let paths = board.pathsFromCellId piece.cellId
     let pieceIndex = game.piecesIndexedByCell
     let takeCellsUntilAndIncluding(condition : Piece -> bool)(path : Cell list) : Cell seq =
@@ -71,7 +71,7 @@ let private getMoveSelectionOptions(game : GameState, piece : Piece, regionCount
         |> Seq.toList
     | _ -> List.empty
 
-let private getTargetSelectionOptions(game : GameState, turn : TurnState, regionCount : int) : int list =
+let private getTargetSelectionOptions(game : Game, turn : Turn) : int list =
     match turn.destinationCellId with
     | None -> List.empty
     | Some destinationCellId ->
@@ -80,7 +80,7 @@ let private getTargetSelectionOptions(game : GameState, turn : TurnState, region
         | Some subject ->
             match subject.kind with
             | Reporter ->
-                let board = BoardModelUtility.getBoardMetadata regionCount
+                let board = BoardModelUtility.getBoardMetadata game.parameters.regionCount
                 let neighbors = board.neighborsFromCellId destinationCellId
                 let pieceIndex = game.piecesIndexedByCell
                 neighbors |> Seq.filter (fun cell -> match pieceIndex.TryFind cell.id with
@@ -90,7 +90,7 @@ let private getTargetSelectionOptions(game : GameState, turn : TurnState, region
                             |> Seq.toList
             | _ -> List.Empty
 
-let private getDropSelectionOptions(game : GameState, turn : TurnState, regionCount : int) : int list =
+let private getDropSelectionOptions(game : Game, turn : Turn) : int list =
     match turn.subjectPiece game with
     | None -> List.empty
     | Some subject ->
@@ -98,7 +98,7 @@ let private getDropSelectionOptions(game : GameState, turn : TurnState, regionCo
         | None -> List.empty
         | Some _ ->
             let pieceIndex = game.piecesIndexedByCell
-            let board = BoardModelUtility.getBoardMetadata regionCount
+            let board = BoardModelUtility.getBoardMetadata game.parameters.regionCount
             board.cells()
             |> Seq.filter (fun c -> match pieceIndex.TryFind c.id with
                                     | None -> true
@@ -106,11 +106,11 @@ let private getDropSelectionOptions(game : GameState, turn : TurnState, regionCo
             |> Seq.map (fun c -> c.id)
             |> Seq.toList
 
-let private getVacateSelectionOptions(game : GameState, turn : TurnState, regionCount : int) : int list =
+let private getVacateSelectionOptions(game : Game, turn : Turn) : int list =
     match turn.subjectPiece game with
     | None -> List.empty
     | Some subject ->
-        match turn.destinationCell regionCount with
+        match turn.destinationCell game.parameters.regionCount with
         | None -> List.empty
         | Some destination ->
             if not destination.isCenter
@@ -119,7 +119,7 @@ let private getVacateSelectionOptions(game : GameState, turn : TurnState, region
                     | Assassin
                     | Gravedigger
                     | Diplomat ->
-                        let board = BoardModelUtility.getBoardMetadata regionCount
+                        let board = BoardModelUtility.getBoardMetadata game.parameters.regionCount
                         let pieceIndex = game.piecesIndexedByCell
                         board.pathsFromCell destination
                         |> Seq.collect (fun path -> path |> Seq.takeWhile (fun cell -> (pieceIndex.TryFind cell.id).IsNone))
@@ -129,21 +129,22 @@ let private getVacateSelectionOptions(game : GameState, turn : TurnState, region
                     | _ -> List.empty
 
 let getSelectableCellsFromState(game : Game) : (int list * SelectionKind option) =
-    let currentPlayerId = game.gameState.currentPlayerId
-    match game.turnState.selections.Length with
-    | 0 -> let cellIds = game.gameState.piecesControlledBy currentPlayerId
-                            |> Seq.map (fun piece -> (piece, getMoveSelectionOptions(game.gameState, piece, game.regionCount)))
+    let currentTurn = game.currentTurn.Value
+    let currentPlayerId = game.currentPlayerId
+    match currentTurn.selections.Length with
+    | 0 -> let cellIds = game.piecesControlledBy currentPlayerId
+                            |> Seq.map (fun piece -> (piece, getMoveSelectionOptions(game, piece)))
                             |> Seq.filter (fun (_, cells) -> cells.IsEmpty |> not)
                             |> Seq.map (fun (piece, _) -> piece.cellId)
                             |> Seq.toList
            (cellIds, Some Subject)
-    | 1 -> let subject = game.turnState.subjectPiece(game.gameState).Value
-           let cellIds = getMoveSelectionOptions(game.gameState, subject, game.regionCount)
+    | 1 -> let subject = currentTurn.subjectPiece(game).Value
+           let cellIds = getMoveSelectionOptions(game, subject)
            (cellIds, Some Move)
-    | 2 -> let subject = game.turnState.subjectPiece(game.gameState).Value
-           match (subject.kind, game.turnState.selections.[1]) with
+    | 2 -> let subject = currentTurn.subjectPiece(game).Value
+           match (subject.kind, currentTurn.selections.[1]) with
             | Reporter, _ ->
-                let cellIds = getTargetSelectionOptions(game.gameState, game.turnState, game.regionCount)
+                let cellIds = getTargetSelectionOptions(game, currentTurn)
                 if cellIds.IsEmpty
                 then (List.empty, None)
                 else (cellIds, Some Target)
@@ -151,19 +152,19 @@ let getSelectableCellsFromState(game : Game) : (int list * SelectionKind option)
             | Chief, sel
             | Diplomat, sel
             | Gravedigger, sel when sel.pieceId.IsSome ->
-                let cellIds = getDropSelectionOptions(game.gameState, game.turnState, game.regionCount)
+                let cellIds = getDropSelectionOptions(game, currentTurn)
                 (cellIds, Some Drop)
             | Assassin, sel when sel.pieceId.IsSome ->
-                let cellIds = getVacateSelectionOptions(game.gameState, game.turnState, game.regionCount)
+                let cellIds = getVacateSelectionOptions(game, currentTurn)
                 if cellIds.IsEmpty
                 then (List.empty, None)
                 else (cellIds, Some Vacate)
             | _ -> (List.empty, None)
-    | 3 -> let subject = game.turnState.subjectPiece(game.gameState).Value
-           match (subject.kind, game.turnState.selections.[1]) with
+    | 3 -> let subject = currentTurn.subjectPiece(game).Value
+           match (subject.kind, currentTurn.selections.[1]) with
             | Diplomat, sel
             | Gravedigger, sel when sel.pieceId.IsSome ->
-                let cellIds = getVacateSelectionOptions(game.gameState, game.turnState, game.regionCount)
+                let cellIds = getVacateSelectionOptions(game, currentTurn)
                 if cellIds.IsEmpty
                 then (List.empty, None)
                 else (cellIds, Some Vacate)

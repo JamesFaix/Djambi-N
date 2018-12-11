@@ -21,12 +21,11 @@
     <Compile Include="Logic\SessionService\CloseSessionTests.fs" />
     <Compile Include="Logic\SessionService\GetSessionTests.fs" />
     <Compile Include="Db\UserRepositoryTests.fs" />
-    <Compile Include="Db\LobbyRepositoryTests.fs" />
-    <Compile Include="Db\PlayerRepositoryTests.fs" />
+    <Compile Include="Db\GameRepositoryTests.fs" />
     <Compile Include="Logic\SessionService\RenewSessionTests.fs" />
-    <Compile Include="Logic\LobbyService\CreateLobbyTests.fs" />
-    <Compile Include="Logic\LobbyService\DeleteLobbyTests.fs" />
-    <Compile Include="Logic\LobbyService\GetLobbiesTests.fs" />
+    <Compile Include="Logic\LobbyService\CreateGameTests.fs" />
+    <Compile Include="Logic\LobbyService\DeleteGameTests.fs" />
+    <Compile Include="Logic\LobbyService\GetGamesTests.fs" />
     <Compile Include="Logic\PlayerService\AddPlayerTests.fs" />
     <Compile Include="Logic\PlayerService\FillEmptyPlayerSlotsTests.fs" />
     <Compile Include="Logic\PlayerService\RemovePlayerTests.fs" />

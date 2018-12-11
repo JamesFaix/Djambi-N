@@ -1,4 +1,4 @@
-CREATE PROCEDURE [dbo].[Lobbies_Create]
+CREATE PROCEDURE [dbo].[Games_Create]
 	@RegionCount INT,
 	@Description NVARCHAR(100),
 	@CreatedByUserId INT,
@@ -11,32 +11,38 @@ BEGIN
 	DECLARE @Ignore TABLE (Id INT)
 
 	BEGIN TRAN
-		INSERT INTO Lobbies (
-			RegionCount,
-			[Description],
-		--	GameStatusId,
+		INSERT INTO Games (
+			GameStatusId,
 			CreatedOn,
 			CreatedByUserId,
+			RegionCount,
+			[Description],
 			AllowGuests,
-			IsPublic)
+			IsPublic,
+			TurnCycleJson,
+			PiecesJson,
+			CurrentTurnJson)
 		VALUES (
-			@RegionCount,
-			@Description,
-	--		1,
+			1, --Pending
 			GETUTCDATE(),
 			@CreatedByUserId,
+			@RegionCount,
+			@Description,
 			@AllowGuests,
-			@IsPublic)
+			@IsPublic,
+			'',
+			'',
+			'')
 
-		DECLARE @LobbyId INT = SCOPE_IDENTITY()
+		DECLARE @GameId INT = SCOPE_IDENTITY()
 
 		INSERT INTO @Ignore -- This is required to prevent this from selection an additional result set
 		EXEC Players_Add
-			@LobbyId = @LobbyId,
+			@GameId = @GameId,
 			@UserId = @CreatedByUserId,
-			@PlayerTypeId = 1, --User (only users can create a lobby)
+			@PlayerKindId = 1, --User (only users can create a lobby)
 			@Name = NULL --Looked up from user's name
 
-		SELECT @LobbyId
+		SELECT @GameId
 	COMMIT
 END

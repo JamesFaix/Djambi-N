@@ -15,23 +15,23 @@ type FillEmptyPlayerSlotsTests() =
     let ``Fill empty player slots should work``() =
         //Arrange
         let userId = 1
-        let lobbyRequest = getCreateLobbyRequest()
+        let gameRequest = getCreateGameRequest()
         task {
-            let! lobby = LobbyRepository.createLobby (lobbyRequest, userId) |> thenValue
-            let! players = PlayerRepository.getPlayersForLobby lobby.id |> thenValue
+            let! game = GameRepository.createGame (gameRequest, userId) |> thenValue
+            let! players = GameRepository.getPlayersForGames [game.id] |> thenValue
 
             //Act
-            let! updatedPlayers = PlayerService.fillEmptyPlayerSlots lobby players |> thenValue
+            let! updatedGame = PlayerService.fillEmptyPlayerSlots game |> thenValue
 
             //Assert
-            let! doubleCheck = PlayerRepository.getPlayersForLobby lobby.id |> thenValue
+            let! doubleCheck = GameRepository.getGame game.id |> thenValue
 
-            updatedPlayers.Length |> shouldBe lobbyRequest.regionCount
-            doubleCheck |> shouldBe updatedPlayers
+            updatedGame.players.Length |> shouldBe gameRequest.regionCount
+            doubleCheck |> shouldBe updatedGame
 
             //All players after creator are neutral
-            updatedPlayers
+            updatedGame.players
             |> List.filter (fun p -> p.kind = PlayerKind.Neutral)
             |> List.length
-            |> shouldBe (updatedPlayers.Length - 1)
+            |> shouldBe (updatedGame.players.Length - 1)
         }

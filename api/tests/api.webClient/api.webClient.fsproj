@@ -9,8 +9,7 @@
     <Compile Include="WebUtility.fs" />
     <Compile Include="Clients\UserClient.fs" />
     <Compile Include="Clients\SessionClient.fs" />
-    <Compile Include="Clients\LobbyClient.fs" />
-    <Compile Include="Clients\PlayerClient.fs" />
+    <Compile Include="Clients\GameClient.fs" />
   </ItemGroup>
 
   <ItemGroup>

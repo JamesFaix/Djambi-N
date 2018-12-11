@@ -1,10 +1,24 @@
 ﻿[<AutoOpen>]
 module Djambi.Api.Model.GameModel
 
-type PlayerState =
+open System
+
+type PlayerKind =
+    | User
+    | Guest
+    | Neutral
+
+type Player =
     {
         id : int
-        isAlive : bool
+        gameId : int
+        userId : int option
+        kind : PlayerKind
+        name : string
+        isAlive : bool option
+        colorId : int option
+        startingRegion : int option
+        startingTurnNumber : int option
     }
 
 type PieceKind =
@@ -23,13 +37,6 @@ type Piece =
         playerId : int option
         originalPlayerId : int
         cellId : int
-    }
-
-type GameState =
-    {
-        players : PlayerState list
-        pieces : Piece list
-        turnCycle : int list
     }
 
 type SelectionKind =
@@ -89,17 +96,11 @@ module Selection =
             pieceId = None
         }
 
-[<CLIMutable>]
-type SelectionRequest =
-    {
-        cellId : int
-    }
-
 type TurnStatus =
     | AwaitingSelection
     | AwaitingConfirmation
 
-type TurnState =
+type Turn =
     {
         status : TurnStatus
         selections : Selection list
@@ -107,7 +108,7 @@ type TurnState =
         requiredSelectionKind : SelectionKind option
     }
 
-module TurnState =
+module Turn =
     let empty =
         {
             status = AwaitingSelection
@@ -116,38 +117,30 @@ module TurnState =
             requiredSelectionKind = Some Subject
         }
 
-type PlayerStartConditions =
+type GameStatus =
+    | Pending
+    | AbortedWhilePending
+    | Started
+    | Aborted
+    | Finished
+
+type GameParameters =
     {
-        playerId : int
-        region : int
-        turnNumber : int option
-        colodId : int
-    }
-    
-type StartGameResponse =
-    {
-        gameId : int
-        startingConditions : PlayerStartConditions list
-        gameState : GameState
-        turnState : TurnState
+        description : string option
+        regionCount : int
+        isPublic : bool
+        allowGuests : bool
     }
 
 type Game =
     {
         id : int
-        regionCount : int
-        gameState : GameState
-        turnState : TurnState
+        createdOn : DateTime
+        createdByUserId : int
+        parameters : GameParameters
+        status : GameStatus
+        players : Player list
+        pieces : Piece list
+        turnCycle : int list
+        currentTurn : Turn option
     }
-
-type CommitTurnResponse =
-    {
-        gameState : GameState
-        turnState : TurnState
-    }
-
-type GameStatus =
-    | Open
-    | Started
-    | Complete
-    | Cancelled

@@ -5,16 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Model\UserDbModel.fs" />
-    <Compile Include="Model\SessionDbModel.fs" />
-    <Compile Include="Model\LobbyDbModel.fs" />
-    <Compile Include="Model\PlayerDbModel.fs" />
-    <Compile Include="Model\GameDbModel.fs" />
+    <Compile Include="Model.fs" />
+    <Compile Include="Mapping.fs" />
     <Compile Include="SqlUtility.fs" />
     <Compile Include="Repositories\UserRepository.fs" />
     <Compile Include="Repositories\SessionRepository.fs" />
-    <Compile Include="Repositories\LobbyRepository.fs" />
-    <Compile Include="Repositories\PlayerRepository.fs" />
     <Compile Include="Repositories\GameRepository.fs" />
   </ItemGroup>
 

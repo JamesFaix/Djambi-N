@@ -28,11 +28,11 @@ module GameModelExtensions =
             | Corpse -> false
             | _ -> true
 
-    type PlayerState with
-        member this.kill : PlayerState =
-            { this with isAlive = false }
+    type Player with
+        member this.kill : Player =
+            { this with isAlive = Some false }
 
-    type TurnState with
+    type Turn with
 
         member this.subject : Selection option =
             this.selections
@@ -67,20 +67,20 @@ module GameModelExtensions =
             | 2 -> Some(moves.[1].cellId)
             | _ -> None
 
-        member private this.getPieceFromId(gameState : GameState)(id : int) : Piece =
-            gameState.pieces |> List.find (fun p -> p.id = id)
+        member private this.getPieceFromId(game : Game)(id : int) : Piece =
+            game.pieces |> List.find (fun p -> p.id = id)
 
         member private this.getCellFromId(regionCount : int)(id : int) : Cell option =
             let board = BoardModelUtility.getBoardMetadata regionCount
             board.cell id
 
-        member this.subjectPiece(gameState : GameState) : Piece option =
+        member this.subjectPiece(game : Game) : Piece option =
             this.subjectPieceId
-            |> Option.map (this.getPieceFromId gameState)
+            |> Option.map (this.getPieceFromId game)
 
-        member this.targetPiece (gameState : GameState): Piece option =
+        member this.targetPiece (game : Game): Piece option =
             this.targetPieceId
-            |> Option.map (this.getPieceFromId gameState)
+            |> Option.map (this.getPieceFromId game)
 
         member this.subjectCell(regionCount : int) : Cell option =
             this.subjectCellId
@@ -94,7 +94,7 @@ module GameModelExtensions =
             this.dropCellId
             |> Option.bind (this.getCellFromId regionCount)
 
-    type GameState with
+    type Game with
 
         member this.currentPlayerId =
             this.turnCycle.Head

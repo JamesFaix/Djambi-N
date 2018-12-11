@@ -16,7 +16,7 @@ let loginRequest (createUserRequest : CreateUserRequest) : LoginRequest =
         password = createUserRequest.password
     }
 
-let createLobbyRequest () : CreateLobbyRequest =
+let createGameRequest () : CreateGameRequest =
     {
         regionCount = 3
         description = Some "test"

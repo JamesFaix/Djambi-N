@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="JsonUtility.fs" />
     <Compile Include="JsonConverters.fs" />
     <Compile Include="Result.fs" />
     <Compile Include="Constants.fs" />

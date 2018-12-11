@@ -21,24 +21,21 @@ module Routing =
                     GET >=> route "/users/current" >=> UserController.getCurrentUser
                     GET >=> route "/users" >=> UserController.getUsers
                     DELETE >=> routef "/users/%i" UserController.deleteUser
-
-                //Lobby
-                    POST >=> route "/lobbies/query" >=> LobbyController.getLobbies
-                    POST >=> route "/lobbies" >=> LobbyController.createLobby
-                    GET >=> routef "/lobbies/%i" LobbyController.getLobby
-                    DELETE >=> routef "/lobbies/%i" LobbyController.deleteLobby
-
-                    POST >=> routef "/lobbies/%i/players" PlayerController.addPlayerToLobby
-                    DELETE >=> routef "/lobbies/%i/players/%i" PlayerController.removePlayerFromLobby
-
-                    POST >=> routef "/lobbies/%i/start-request" LobbyController.startGame
-
+                    
                 //Board
                     GET >=> routef "/boards/%i" BoardController.getBoard
                     GET >=> routef "/boards/%i/cells/%i/paths" BoardController.getCellPaths
 
                 //Game
-                    GET >=> routef "/games/%i/state" GameController.getGameState
+                    POST >=> route "/games/query" >=> GameController.getGames
+                    POST >=> route "/games" >=> GameController.createGame
+                    GET >=> routef "/games/%i" GameController.getGame
+                    DELETE >=> routef "/games/%i" GameController.deleteGame
+
+                    POST >=> routef "/games/%i/players" GameController.addPlayer
+                    DELETE >=> routef "/games/%i/players/%i" GameController.removePlayer
+
+                    POST >=> routef "/games/%i/start-request" GameController.startGame
 
                     POST >=> routef "/games/%i/current-turn/selection-request/%i" GameController.selectCell
                     POST >=> routef "/games/%i/current-turn/reset-request" GameController.resetTurn

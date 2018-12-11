@@ -4,36 +4,41 @@ open System
 open Dapper
 open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
+open Djambi.Api.Db.Mapping
 open Djambi.Api.Db.Model
 open Djambi.Api.Db.SqlUtility
 open Djambi.Api.Model
 
-let getSession(sessionId : int option,
-               token : string option,
-               userId : int option) : Session AsyncHttpResult =
+let getSession(query : SessionQuery) : Session AsyncHttpResult =
 
     let param = DynamicParameters()
-                    .addOption("SessionId", sessionId)
-                    .addOption("Token", token)
-                    .addOption("UserId", userId)
+                    .addOption("SessionId", query.sessionId)
+                    .addOption("Token", query.token)
+                    .addOption("UserId", query.userId)
 
     let cmd = proc("Sessions_Get", param)
 
     querySingle<SessionSqlModel>(cmd, "Session")
     |> thenMap mapSessionResponse
 
-let createSession(userId : int,
-                  token : string,
-                  expiresOn : DateTime) : Session AsyncHttpResult =
+let createSession(request : CreateSessionRequest) : Session AsyncHttpResult =
     let param = DynamicParameters()
-                    .add("UserId", userId)
-                    .add("Token", token)
-                    .add("ExpiresOn", expiresOn)
+                    .add("UserId", request.userId)
+                    .add("Token", request.token)
+                    .add("ExpiresOn", request.expiresOn)
 
     let cmd = proc("Sessions_Create", param)
 
     querySingle<int>(cmd, "Session")
-    |> thenBindAsync(fun sessionId -> getSession(Some sessionId, None, None))
+    |> thenBindAsync(fun sessionId -> 
+        let query = 
+            {
+                sessionId = Some sessionId
+                token = None
+                userId = None
+            }    
+        getSession query
+    )
 
 let renewSessionExpiration(sessionId : int, expiresOn : DateTime) : Session AsyncHttpResult =
     let param = DynamicParameters()
@@ -43,7 +48,15 @@ let renewSessionExpiration(sessionId : int, expiresOn : DateTime) : Session Asyn
     let cmd = proc("Sessions_Renew", param)
 
     queryUnit(cmd, "Session")
-    |> thenBindAsync (fun _ -> getSession(Some sessionId, None, None))
+    |> thenBindAsync (fun _ -> 
+        let query = 
+            {
+                sessionId = Some sessionId
+                token = None
+                userId = None
+            }    
+        getSession query
+    )
 
 let deleteSession(sessionId : int option, token : string option) : Unit AsyncHttpResult =
     let param = DynamicParameters()

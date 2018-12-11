@@ -1,6 +1,5 @@
 CREATE PROCEDURE [dbo].[Players_Get]
-	@LobbyId INT,
-	@GameId INT,
+	@GameIds NVARCHAR(MAX),
 	@PlayerId INT
 AS
 BEGIN
@@ -8,43 +7,37 @@ BEGIN
 
 	IF @PlayerId IS NOT NULL
 	BEGIN
-		SELECT LobbyId,
+		SELECT GameId,
 			PlayerId,
 			UserId,
-			PlayerTypeId,
-			[Name]
+			PlayerKindId,
+			[Name],
+			IsAlive,
+			ColorId,
+			StartingRegion,
+			StartingTurnNumber
 		FROM Players
 		WHERE PlayerId = @PlayerId
 	END
 
-	ELSE IF @LobbyId IS NOT NULL
+	ELSE IF @GameIds IS NOT NULL
 	BEGIN
-		IF NOT EXISTS (SELECT 1 FROM Lobbies WHERE LobbyId = @LobbyId)
-			THROW 50404, 'Lobby not found.', 1
+		SELECT value
+		INTO #GameIds
+		FROM STRING_SPLIT(@GameIds, ',') --TODO: Vendor dependency
 
-		SELECT LobbyId,
-			PlayerId,
-			UserId,
-			PlayerTypeId,
-			[Name]
-		FROM Players
-		WHERE LobbyId = @LobbyId
-	END
-
-	ELSE IF @GameId IS NOT NULL
-	BEGIN
-		IF NOT EXISTS (SELECT 1 FROM Games WHERE GameId = @GameId)
-			THROW 50404, 'Game not found.', 1
-
-		SELECT p.LobbyId,
+		SELECT p.GameId,
 			p.PlayerId,
 			p.UserId,
-			p.PlayerTypeId,
-			p.[Name]
+			p.PlayerKindId,
+			p.[Name],
+			p.IsAlive,
+			p.ColorId,
+			p.StartingRegion,
+			p.StartingTurnNumber
 		FROM Players p
-			INNER JOIN Games g
-				ON p.LobbyId = g.LobbyId
-		WHERE g.GameId = @GameId
+			INNER JOIN #GameIds g
+				ON p.GameId = g.value
 	END
 	ELSE
 		THROW 50500, 'Invalid parameters for player query.', 1
