@@ -1,4 +1,4 @@
-﻿module Djambi.Api.Logic.Services.LobbyService
+﻿module Djambi.Api.Logic.Services.GameCrudService
 
 open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
@@ -6,7 +6,15 @@ open Djambi.Api.Db.Repositories
 open Djambi.Api.Model
 
 let createGame (request : CreateGameRequest) (session : Session) : Game AsyncHttpResult =
+    //Create game
     GameRepository.createGame (request, session.userId)
+    |> thenBindAsync (fun gameId ->
+        //Add self as first player
+        let playerRequest = CreatePlayerRequest.user session.userId
+        GameRepository.addPlayer (gameId, playerRequest)
+        //Return game
+        |> thenBindAsync (fun _ -> GameRepository.getGame gameId)
+    )
 
 let deleteGame (gameId : int) (session : Session) : Unit AsyncHttpResult =
     if session.isAdmin

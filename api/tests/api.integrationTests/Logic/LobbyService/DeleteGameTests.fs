@@ -16,11 +16,11 @@ type DeleteGameTests() =
             //Arrange
             let request = getCreateGameRequest()
             let session = { getSessionForUser 1 with isAdmin = true }
-            let! game = LobbyService.createGame request session
+            let! game = GameCrudService.createGame request session
                          |> AsyncHttpResult.thenValue
 
             //Act
-            let! result = LobbyService.deleteGame game.id session
+            let! result = GameCrudService.deleteGame game.id session
 
             //Assert
             result |> Result.isOk |> shouldBeTrue
@@ -32,11 +32,11 @@ type DeleteGameTests() =
             //Arrange
             let request = getCreateGameRequest()
             let session = { getSessionForUser 1 with isAdmin = false }
-            let! game = LobbyService.createGame request session
+            let! game = GameCrudService.createGame request session
                          |> AsyncHttpResult.thenValue
 
             //Act
-            let! result = LobbyService.deleteGame game.id session
+            let! result = GameCrudService.deleteGame game.id session
 
             //Assert
             result |> Result.isOk |> shouldBeTrue
@@ -48,13 +48,13 @@ type DeleteGameTests() =
             //Arrange
             let request = getCreateGameRequest()
             let createSession = getSessionForUser 1
-            let! game = LobbyService.createGame request createSession
+            let! game = GameCrudService.createGame request createSession
                          |> AsyncHttpResult.thenValue
 
             let deleteSession = { getSessionForUser 2 with isAdmin = false }
 
             //Act
-            let! result = LobbyService.deleteGame game.id deleteSession
+            let! result = GameCrudService.deleteGame game.id deleteSession
 
             //Assert
             result |> shouldBeError 403 "Cannot delete a game created by another user."
@@ -67,7 +67,7 @@ type DeleteGameTests() =
             let session = { getSessionForUser 1 with isAdmin = true }
 
             //Act
-            let! result = LobbyService.deleteGame Int32.MinValue session
+            let! result = GameCrudService.deleteGame Int32.MinValue session
 
             //Assert
             result |> shouldBeError 404 "Game not found."

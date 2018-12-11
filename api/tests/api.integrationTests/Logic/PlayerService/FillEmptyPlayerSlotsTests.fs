@@ -14,11 +14,10 @@ type FillEmptyPlayerSlotsTests() =
     [<Fact>]
     let ``Fill empty player slots should work``() =
         //Arrange
-        let userId = 1
+        let session = getSessionForUser 1
         let gameRequest = getCreateGameRequest()
         task {
-            let! game = GameRepository.createGame (gameRequest, userId) |> thenValue
-            let! players = GameRepository.getPlayersForGames [game.id] |> thenValue
+            let! game = GameCrudService.createGame gameRequest session |> thenValue
 
             //Act
             let! updatedGame = PlayerService.fillEmptyPlayerSlots game |> thenValue

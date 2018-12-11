@@ -19,7 +19,7 @@ type GameStartServiceTests() =
             //Arrange
             let session = getSessionForUser 1
             let gameRequest = getCreateGameRequest()
-            let! game = GameRepository.createGame (gameRequest, session.userId)
+            let! game = GameCrudService.createGame gameRequest session
                         |> thenBindAsync PlayerService.fillEmptyPlayerSlots
                         |> thenValue
 
@@ -42,7 +42,7 @@ type GameStartServiceTests() =
             //Arrange
             let session = getSessionForUser 1
             let gameRequest = getCreateGameRequest()
-            let! game = GameRepository.createGame (gameRequest, session.userId) 
+            let! game = GameCrudService.createGame gameRequest session 
                         |> thenBindAsync PlayerService.fillEmptyPlayerSlots
                         |> thenValue
             let playersWithStartConditions = GameStartService.assignStartingConditions game.players

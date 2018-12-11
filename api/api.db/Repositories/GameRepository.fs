@@ -88,7 +88,7 @@ let getGames (query : GamesQuery) : Game list AsyncHttpResult =
         )
     )
 
-let createGame (request : CreateGameRequest, createdByUserId : int) : Game AsyncHttpResult =
+let createGame (request : CreateGameRequest, createdByUserId : int) : int AsyncHttpResult =
     let param = DynamicParameters()
                     .add("RegionCount", request.regionCount)
                     .add("CreatedByUserId", createdByUserId)
@@ -99,7 +99,6 @@ let createGame (request : CreateGameRequest, createdByUserId : int) : Game Async
     let cmd = proc("Games_Create", param)
 
     querySingle<int>(cmd, "Game")
-    |> thenBindAsync getGame
 
 let addPlayer (gameId : int, request : CreatePlayerRequest) : Player AsyncHttpResult =
     let param = DynamicParameters()

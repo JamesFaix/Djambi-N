@@ -18,7 +18,7 @@ type CreateGameTests() =
             let session = getSessionForUser 1
 
             //Act
-            let! game = LobbyService.createGame request session
+            let! game = GameCrudService.createGame request session
                           |> AsyncHttpResult.thenValue
 
             //Assert
@@ -38,7 +38,7 @@ type CreateGameTests() =
             let session = getSessionForUser 1
 
             //Act
-            let! game = LobbyService.createGame request session
+            let! game = GameCrudService.createGame request session
                          |> AsyncHttpResult.thenValue
 
             //Assert

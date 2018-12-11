@@ -69,7 +69,7 @@ let createuserSessionAndGame(allowGuests : bool) : (UserDetails * Session * Game
         let session = getSessionForUser user.id
 
         let gameRequest = { getCreateGameRequest() with allowGuests = allowGuests }
-        let! game = LobbyService.createGame gameRequest session
+        let! game = GameCrudService.createGame gameRequest session
                      |> AsyncHttpResult.thenValue
 
         return Ok <| (user, session, game)
