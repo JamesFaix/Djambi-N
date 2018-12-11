@@ -31,7 +31,7 @@ let getLoginRequest(userRequest : CreateUserRequest) : LoginRequest =
         password = userRequest.password
     }
 
-let getCreateLobbyRequest() : CreateLobbyRequest =
+let getCreateGameRequest() : CreateGameRequest =
     {
         regionCount = 3
         description = Some "Test"
@@ -62,15 +62,15 @@ let createUser() : UserDetails AsyncHttpResult =
     let userRequest = getCreateUserRequest()
     UserService.createUser userRequest None
 
-let createUserSessionAndLobby(allowGuests : bool) : (UserDetails * Session * GameParameters) AsyncHttpResult =
+let createuserSessionAndGame(allowGuests : bool) : (UserDetails * Session * Game) AsyncHttpResult =
     task {
         let! user = createUser() |> AsyncHttpResult.thenValue
 
         let session = getSessionForUser user.id
 
-        let lobbyRequest = { getCreateLobbyRequest() with allowGuests = allowGuests }
-        let! lobby = LobbyService.createLobby lobbyRequest session
+        let gameRequest = { getCreateGameRequest() with allowGuests = allowGuests }
+        let! game = LobbyService.createGame gameRequest session
                      |> AsyncHttpResult.thenValue
 
-        return Ok <| (user, session, lobby)
+        return Ok <| (user, session, game)
     }

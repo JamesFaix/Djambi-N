@@ -1,9 +1,9 @@
 ﻿module Djambi.Api.Db.Mapping
 
 open System
-open Newtonsoft.Json
 open Djambi.Api.Db.Model
 open Djambi.Api.Model
+open Djambi.Api.Common
 open Djambi.Api.Common.Utilities
 
 let mapUserResponse (sqlModel : UserSqlModel) : UserDetails =
@@ -83,7 +83,7 @@ let mapGameResponse(sqlModel : GameSqlModel) : Game =
                 allowGuests = sqlModel.allowGuests
             }
         players = List.empty
-        pieces = JsonConvert.DeserializeObject<List<Piece>>(sqlModel.piecesJson)
-        turnCycle = JsonConvert.DeserializeObject<List<int>>(sqlModel.turnCycleJson)
-        currentTurn = JsonConvert.DeserializeObject<Option<Turn>>(sqlModel.currentTurnJson)
+        pieces = JsonUtility.deserializeList(sqlModel.piecesJson)
+        turnCycle = JsonUtility.deserializeList(sqlModel.turnCycleJson)
+        currentTurn = JsonUtility.deserializeOption(sqlModel.currentTurnJson)
     }

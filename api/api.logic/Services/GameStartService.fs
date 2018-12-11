@@ -9,22 +9,23 @@ open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
 open Djambi.Api.Model
 open Djambi.Api.Logic.Services
 
-let getStartingConditions(players : Player list) : PlayerStartConditions list =
+let assignStartingConditions(players : Player list) : Player list =
     let colorIds = [0..(Constants.maxRegions-1)] |> Utilities.shuffle |> Seq.take players.Length
     let regions = [0..(players.Length-1)] |> Utilities.shuffle
 
-    let startConds =
+    let playersWithAssignments =
         players
         |> Seq.zip3 colorIds regions
-        |> Seq.map (fun (c, r, p) ->
-            {
-                playerId = p.id
-                region = r
-                colorId = c
-                turnNumber = None
-            })
+        |> Seq.map (fun (c, r, p) -> 
+            { 
+                p with 
+                    startingRegion = Some r
+                    startingTurnNumber = None
+                    colorId = Some c 
+            }
+        )
 
-    let dict = Enumerable.ToDictionary (startConds, (fun startCond -> startCond.playerId))
+    let dict = Enumerable.ToDictionary (playersWithAssignments, (fun p -> p.id))
 
     let nonNeutralPlayers =
         players
@@ -33,19 +34,21 @@ let getStartingConditions(players : Player list) : PlayerStartConditions list =
         |> Seq.mapi (fun i p -> (i, p))
 
     for (i, p) in nonNeutralPlayers do
-        dict.[p.id] <- { dict.[p.id] with turnNumber = Some i }
+        dict.[p.id] <- { dict.[p.id] with startingTurnNumber = Some i }
 
-    dict.Values |> Seq.toList
+    dict.Values 
+    |> Seq.map (fun p -> { p with isAlive = Some true })
+    |> Seq.toList
 
-let createPieces(board : BoardMetadata, startingConditions : PlayerStartConditions list) : Piece list =
-    let createPlayerPieces(board : BoardMetadata, player : PlayerStartConditions, startingId : int) : Piece list =
+let createPieces(board : BoardMetadata, players : Player list) : Piece list =
+    let createPlayerPieces(board : BoardMetadata, player : Player, startingId : int) : Piece list =
         let getPiece(id : int, pieceType: PieceKind, x : int, y : int) =
             {
                 id = id
                 kind = pieceType
-                playerId = Some player.playerId
-                originalPlayerId = player.playerId
-                cellId = board.cellAt({ x = x; y = y; region = player.region}).id
+                playerId = Some player.id
+                originalPlayerId = player.id
+                cellId = board.cellAt({x = x; y = y; region = player.startingRegion.Value}).id
             }
         let n = Constants.regionSize - 1
         [
@@ -60,73 +63,79 @@ let createPieces(board : BoardMetadata, startingConditions : PlayerStartConditio
             getPiece(startingId+8, Thug, n,n-2)
         ]
 
-    startingConditions
+    players
     |> List.mapi (fun i cond -> createPlayerPieces(board, cond, i*Constants.piecesPerPlayer))
     |> List.collect id
 
-let startGame (lobbyId : int) (session : Session) : StartGameResponse AsyncHttpResult =
-    LobbyRepository.getLobby lobbyId
-    |> thenBind (fun lobby ->
-        if session.isAdmin || session.userId = lobby.createdByUserId
-        then Ok lobby
-        else Error <| HttpException(403, "Cannot start game from lobby created by another user.")
+let startGame (gameId : int) (session : Session) : Game AsyncHttpResult =
+    GameRepository.getGame gameId
+    |> thenBind (fun game ->
+        if session.isAdmin || session.userId = game.createdByUserId
+        then Ok game
+        else Error <| HttpException(403, "Cannot start game created by another user.")
     )
-    |> thenBindAsync (fun lobby ->
-        PlayerRepository.getPlayersForLobby lobbyId
-        |> thenBind (fun players ->
-            if players
-                |> List.filter (fun p -> p.kind <> PlayerKind.Neutral)
-                |> List.length = 1
-            then Error <| HttpException(400, "Cannot start game with only one player.")
-            else Ok players
-        )
-        |> thenBindAsync (PlayerService.fillEmptyPlayerSlots lobby)
-        |> thenMap (fun players -> lobby.addPlayers players)
+    |> thenBindAsync (fun game ->
+        if game.players
+            |> List.filter (fun p -> p.kind <> PlayerKind.Neutral)
+            |> List.length = 1
+        then errorTask <| HttpException(400, "Cannot start game with only one player.")
+        else PlayerService.fillEmptyPlayerSlots game
     )
-    |> thenBindAsync (fun lobby ->
-        let startingConditions = getStartingConditions lobby.players
-        let board = BoardModelUtility.getBoardMetadata lobby.regionCount
-        let pieces = createPieces(board, startingConditions)
-        let gameState : GameState =
-            {
-                players = lobby.players
-                            |> List.map (fun p ->
-                            {
-                                id = p.id
-                                isAlive = true
-                            })
-                pieces = pieces
-                turnCycle = startingConditions
-                            |> List.filter (fun cond -> cond.turnNumber.IsSome)
-                            |> List.sortBy (fun cond -> cond.turnNumber.Value)
-                            |> List.map (fun cond -> cond.playerId)
+    |> thenBindAsync (fun game ->
+        let board = BoardModelUtility.getBoardMetadata game.parameters.regionCount
+        let players = assignStartingConditions game.players
+
+        let game = 
+            { 
+                game with 
+                    status = GameStatus.Started
+                    pieces = createPieces(board, players) //Starting conditions must first be assigned
+                    players = players
+                    turnCycle = players //Starting conditions must first be assigned
+                        |> List.filter (fun p -> p.startingTurnNumber.IsSome)
+                        |> List.sortBy (fun p -> p.startingTurnNumber.Value)
+                        |> List.map (fun p -> p.id)
+                    currentTurn = 
+                        Some {
+                            status = AwaitingSelection
+                            selections = List.empty
+                            selectionOptions = List.empty
+                            requiredSelectionKind = Some Subject
+                        }
             }
 
-        let gameWithoutSelectionOptions : Game =
-            {
-                id = 0 //TODO: Don't assign random IDs
-                regionCount = lobby.regionCount
-                gameState = gameState
-                turnState =
-                    {
-                        status = AwaitingSelection
-                        selections = List.empty
-                        selectionOptions = List.empty
-                        requiredSelectionKind = Some Subject
-                    }
+        let (selectionOptions, _) = SelectionOptionsService.getSelectableCellsFromState game
+
+        let game = 
+            { 
+                game with 
+                    currentTurn = 
+                        Some {
+                            game.currentTurn.Value with selectionOptions = selectionOptions
+                        }        
             }
 
-        let (selectionOptions, _) = SelectionOptionsService.getSelectableCellsFromState gameWithoutSelectionOptions
-
-        let turnState = { gameWithoutSelectionOptions.turnState with selectionOptions = selectionOptions }
-
-        GameRepository.startGame (lobby.id, startingConditions, gameState, turnState)
-        |> thenMap (fun gameId ->
-            {
-                gameId = gameId
-                startingConditions = startingConditions
-                gameState = gameState
-                turnState = turnState
-            }
+        game.players |> Seq.ofList |> okTask
+        |> thenDoEachAsync (fun p -> 
+            let request : SetPlayerStartConditionsRequest = 
+                {
+                    playerId = p.id
+                    colorId = p.colorId.Value
+                    startingRegion = p.startingRegion.Value
+                    startingTurnNumber = p.startingTurnNumber
+                }
+            GameRepository.setPlayerStartConditions request        
         )
+        |> thenBindAsync (fun _ ->
+            let request : UpdateGameStateRequest = 
+                {
+                    gameId = game.id
+                    status = game.status
+                    pieces = game.pieces
+                    currentTurn = game.currentTurn
+                    turnCycle = game.turnCycle
+                }
+            GameRepository.updateGameState request
+        )
+        |> thenMap (fun _ -> game)
     )

@@ -8,62 +8,62 @@ open Djambi.Api.WebClient
 open Djambi.Api.Model
 
 [<Test>]
-let ``Create lobby should work``() =
+let ``Create game should work``() =
     task {
         //Arrange
         let! (_, token) = SetupUtility.createUserAndSignIn()
-        let request = RequestFactory.createLobbyRequest()
+        let request = RequestFactory.createGameRequest()
 
         //Act
-        let! response = LobbyClient.createLobby(request, token)
+        let! response = GameClient.createGame(request, token)
 
         //Assert
         response |> shouldHaveStatus HttpStatusCode.OK
 
-        let lobby = response.bodyValue
-        lobby.id |> shouldNotBe 0
-        lobby.description |> shouldBe request.description
-        lobby.regionCount |> shouldBe request.regionCount
+        let game = response.bodyValue
+        game.id |> shouldNotBe 0
+        game.parameters.description |> shouldBe request.description
+        game.parameters.regionCount |> shouldBe request.regionCount
     } :> Task
 
 [<Test>]
-let ``Delete lobby should work``() =
+let ``Delete game should work``() =
     task {
         //Arrange
         let! (_, token) = SetupUtility.createUserAndSignIn()
-        let createLobbyRequest = RequestFactory.createLobbyRequest()
-        let! lobbyResponse = LobbyClient.createLobby(createLobbyRequest, token)
-        let lobby = lobbyResponse.bodyValue
+        let createGameRequest = RequestFactory.createGameRequest()
+        let! gameResponse = GameClient.createGame(createGameRequest, token)
+        let game = gameResponse.bodyValue
 
         //Act
-        let! response = LobbyClient.deleteLobby(lobby.id, token)
+        let! response = GameClient.deleteGame(game.id, token)
 
         //Assert
         response |> shouldHaveStatus HttpStatusCode.OK
 
-        let! lobbies = LobbyClient.getLobbies(GamesQuery.empty, token) |> AsyncResponse.bodyValue
-        lobbies |> List.exists (fun g -> g.id = lobby.id) |> shouldBeFalse
+        let! games = GameClient.getGames(GamesQuery.empty, token) |> AsyncResponse.bodyValue
+        games |> List.exists (fun g -> g.id = game.id) |> shouldBeFalse
     } :> Task
 
 [<Test>]
-let ``Get lobbies should work``() =
+let ``Get games should work``() =
     task {
         //Arrange
         let! (_, token) = SetupUtility.createUserAndSignIn()
-        let request = RequestFactory.createLobbyRequest()
-        let! lobby1 = LobbyClient.createLobby(request, token) |> AsyncResponse.bodyValue
-        let! lobby2 = LobbyClient.createLobby(request, token) |> AsyncResponse.bodyValue
+        let request = RequestFactory.createGameRequest()
+        let! game1 = GameClient.createGame(request, token) |> AsyncResponse.bodyValue
+        let! game2 = GameClient.createGame(request, token) |> AsyncResponse.bodyValue
 
         //Act
-        let! response = LobbyClient.getLobbies(GamesQuery.empty, token)
+        let! response = GameClient.getGames(GamesQuery.empty, token)
 
         //Assert
         response |> shouldHaveStatus HttpStatusCode.OK
 
-        let lobbys = response.bodyValue
-        lobbys.Length |> shouldBeAtLeast 2
-        lobbys |> shouldExist (fun g -> g.id = lobby1.id)
-        lobbys |> shouldExist (fun g -> g.id = lobby2.id)
+        let games = response.bodyValue
+        games.Length |> shouldBeAtLeast 2
+        games |> shouldExist (fun g -> g.id = game1.id)
+        games |> shouldExist (fun g -> g.id = game2.id)
     } :> Task
 
 //TODO: Start game should work

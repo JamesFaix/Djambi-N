@@ -2,6 +2,7 @@
 
 open System
 open Dapper
+open Newtonsoft.Json
 open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Db.Mapping
@@ -103,7 +104,7 @@ let createGame (request : CreateGameRequest, createdByUserId : int) : Game Async
 let addPlayer (gameId : int, request : CreatePlayerRequest) : Player AsyncHttpResult =
     let param = DynamicParameters()
                     .add("GameId", gameId)
-                    .add("PlayerTypeId", mapPlayerKindToId request.kind)
+                    .add("PlayerKindId", mapPlayerKindToId request.kind)
                     .addOption("UserId", request.userId)
                     .addOption("Name", request.name)
 
@@ -119,7 +120,41 @@ let removePlayer(playerId : int) : Unit AsyncHttpResult =
     queryUnit(cmd, "Player")
 
 let getNeutralPlayerNames() : string list AsyncHttpResult =
-    let param = new DynamicParameters()
+    let param = DynamicParameters()
     let cmd = proc("Players_GetNeutralNames", param)
     queryMany<string>(cmd, "Neutral player names")
     
+let updateGameParameters(request : UpdateGameParametersRequest) : Unit AsyncHttpResult =
+    let param = DynamicParameters()
+                    .add("GameId", request.gameId)
+                    .addOption("Description", request.description)
+                    .add("AllowGuests", request.allowGuests)
+                    .add("IsPublic", request.isPublic)
+                    .add("RegionCount", request.regionCount)
+    let cmd = proc("Games_UpdateParameters", param)
+    queryUnit(cmd, "Game")
+    
+let updateGameState(request : UpdateGameStateRequest) : Unit AsyncHttpResult =
+    let param = DynamicParameters()
+                    .add("GameId", request.gameId)
+                    .add("GameStatusId", request.status |> mapGameStatusToId)
+                    .add("PiecesJson", JsonConvert.SerializeObject(request.pieces))
+                    .add("CurrentTurnJson", JsonConvert.SerializeObject(request.currentTurn))
+                    .add("TurnCycleJson", JsonConvert.SerializeObject(request.turnCycle))
+    let cmd = proc("Games_UpdateState", param)
+    queryUnit(cmd, "Game")
+            
+let setPlayerStartConditions(request : SetPlayerStartConditionsRequest) : Unit AsyncHttpResult =
+    let param = DynamicParameters()
+                    .add("PlayerId", request.playerId)
+                    .add("ColorId", byte request.colorId)
+                    .add("StartingRegion", byte request.startingRegion)
+                    .addOption("StartingTurnNumber", request.startingTurnNumber |> Option.map byte)
+    let cmd = proc("Players_SetStartConditions", param)
+    queryUnit(cmd, "Player")
+
+let killPlayer(playerId : int) : Unit AsyncHttpResult =
+    let param = DynamicParameters()
+                    .add("PlayerId", playerId)
+    let cmd = proc("Players_Kill", param)
+    queryUnit(cmd, "Player")

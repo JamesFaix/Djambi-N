@@ -28,12 +28,14 @@ module SessionService =
             if request.password = user.password
             then okTask user
             else
-                let failedLoginAttempts =
+                let attempts = 
                     if isWithinLockTimeoutPeriod user
                     then user.failedLoginAttempts + 1
                     else 1
 
-                UserRepository.updateFailedLoginAttempts(user.id, failedLoginAttempts, Some DateTime.UtcNow)
+                let request = UpdateFailedLoginsRequest.increment (user.id, attempts)
+
+                UserRepository.updateFailedLoginAttempts request
                 |> thenBind (fun _ -> Error <| HttpException(401, "Incorrect password."))
 
         UserRepository.getUserByName request.username
@@ -41,17 +43,22 @@ module SessionService =
         |> thenBindAsync errorIfInvalidPassword
         |> thenBindAsync (fun user ->
             //If a session already exists for this user, delete it
-            SessionRepository.getSession(None, None, Some user.id)
+            SessionRepository.getSession (SessionQuery.byUserId user.id)
             |> thenBindAsync(fun session -> SessionRepository.deleteSession (Some session.id, None))
             |> thenBindError 404 (fun _ -> Ok ()) //If no session thats fine
             //Create a new session
             |> thenBindAsync(fun _ ->
-                SessionRepository.createSession (
-                    user.id, 
-                    Guid.NewGuid().ToString(), 
-                    DateTime.UtcNow.Add(sessionTimeout))
+                let request : CreateSessionRequest =
+                    {
+                        userId = user.id
+                        token = Guid.NewGuid().ToString()
+                        expiresOn = DateTime.UtcNow.Add(sessionTimeout)
+                    }
+                SessionRepository.createSession request
             )
-            |> thenDoAsync (fun _ -> UserRepository.updateFailedLoginAttempts(user.id, 0, None))
+            |> thenDoAsync (fun _ -> 
+                UserRepository.updateFailedLoginAttempts (UpdateFailedLoginsRequest.reset user.id)                
+            )
         )
 
     let private errorIfExpired (session : Session) =
@@ -63,12 +70,12 @@ module SessionService =
         let renew (s : Session) =
             SessionRepository.renewSessionExpiration(s.id, DateTime.UtcNow.Add(sessionTimeout))
 
-        SessionRepository.getSession(None, Some token, None)
+        SessionRepository.getSession (SessionQuery.byToken token)
         |> thenBind errorIfExpired
         |> thenBindAsync renew
 
     let getSession(token : string) : Session AsyncHttpResult =
-        SessionRepository.getSession(None, Some token, None)
+        SessionRepository.getSession (SessionQuery.byToken token)
         |> thenBind errorIfExpired
 
     let closeSession(session : Session) : Unit AsyncHttpResult =

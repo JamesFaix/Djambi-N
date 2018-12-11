@@ -1,6 +1,5 @@
 ﻿namespace Djambi.Api.Db.Repositories
 
-open System
 open Dapper
 open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
@@ -59,14 +58,11 @@ module UserRepository =
         let cmd = proc("Users_Delete", param)
         queryUnit(cmd, "User")
 
-    let updateFailedLoginAttempts(userId : int, 
-                                  failedLoginAttempts : int, 
-                                  lastFailedLoginAttemptOn : DateTime option) 
-                                  : Unit AsyncHttpResult =
+    let updateFailedLoginAttempts(request : UpdateFailedLoginsRequest) : Unit AsyncHttpResult =
         let param = DynamicParameters()
-                        .add("UserId", userId)
-                        .add("FailedLoginAttempts", failedLoginAttempts)
-                        .addOption("LastFailedLoginAttemptOn", lastFailedLoginAttemptOn)
+                        .add("UserId", request.userId)
+                        .add("FailedLoginAttempts", request.failedLoginAttempts)
+                        .addOption("LastFailedLoginAttemptOn", request.lastFailedLoginAttemptOn)
 
         let cmd = proc("Users_UpdateFailedLoginAttempts", param)
         queryUnit(cmd, "User")

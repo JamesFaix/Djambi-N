@@ -16,49 +16,49 @@ type SelectCellTests() =
     let ``Select cell should work if current player is active user or guest of active user``() =
         task {
             //Arrange
-            let! (user, session, lobby) = createUserSessionAndLobby(true) |> thenValue
+            let! (user, session, game) = createuserSessionAndGame(true) |> thenValue
 
             let guestRequest = CreatePlayerRequest.guest (user.id, "test")
-            let! _ = PlayerService.addPlayerToLobby (lobby.id, guestRequest) session |> thenValue
+            let! _ = PlayerService.addPlayer (game.id, guestRequest) session |> thenValue
 
-            let! gameStart = GameStartService.startGame lobby.id session |> thenValue
+            let! updatedGame = GameStartService.startGame game.id session |> thenValue
 
-            let cellId = gameStart.turnState.selectionOptions.Head
+            let cellId = updatedGame.currentTurn.Value.selectionOptions.Head
 
             //Act
-            let! result = TurnService.selectCell (gameStart.gameId, cellId) session
+            let! result = TurnService.selectCell (updatedGame.id, cellId) session
 
             //Assert
             result |> Result.isOk |> shouldBeTrue
 
-            let turnState = result |> Result.value
-            turnState.selections.Length |> shouldBe 1
-            turnState.selections.Head.cellId |> shouldBe cellId
-            turnState.selectionOptions |> shouldNotExist (fun cId -> cId = cellId)
+            let turn = result |> Result.value
+            turn.selections.Length |> shouldBe 1
+            turn.selections.Head.cellId |> shouldBe cellId
+            turn.selectionOptions |> shouldNotExist (fun cId -> cId = cellId)
         }
 
     [<Fact>]
     let ``Select cell should fail if current player is not active user or guest of active user``() =
         task {
             //Arrange
-            let! (user1, session1, lobby) = createUserSessionAndLobby(true) |> thenValue
+            let! (user1, session1, game) = createuserSessionAndGame(true) |> thenValue
 
             let! user2 = createUser() |> thenValue
             let session2 = getSessionForUser user2.id
             let playerRequest = CreatePlayerRequest.user user2.id
-            let! player2 = PlayerService.addPlayerToLobby (lobby.id, playerRequest) session2 |> thenValue
+            let! player2 = PlayerService.addPlayer (game.id, playerRequest) session2 |> thenValue
 
-            let! gameStart = GameStartService.startGame lobby.id session1 |> thenValue
+            let! updatedGame = GameStartService.startGame game.id session1 |> thenValue
 
-            let cellId = gameStart.turnState.selectionOptions.Head
+            let cellId = updatedGame.currentTurn.Value.selectionOptions.Head
 
             let sessionWithoutActivePlayer =
-                match gameStart.gameState.turnCycle.Head with
+                match updatedGame.turnCycle.Head with
                 | x when x = player2.id -> session1
                 | _ -> session2
 
             //Act
-            let! result = TurnService.selectCell (gameStart.gameId, cellId) sessionWithoutActivePlayer
+            let! result = TurnService.selectCell (updatedGame.id, cellId) sessionWithoutActivePlayer
 
             //Assert
             result |> shouldBeError 400 "Cannot perform this action during another player's turn."
@@ -68,47 +68,47 @@ type SelectCellTests() =
     let ``Select cell should work if admin and current player is not active user or guest of active user``() =
         task {
             //Arrange
-            let! (user1, session1, lobby) = createUserSessionAndLobby(true) |> thenValue
+            let! (user1, session1, game) = createuserSessionAndGame(true) |> thenValue
 
             let! user2 = createUser() |> thenValue
             let session2 = getSessionForUser user2.id
             let playerRequest = CreatePlayerRequest.user user2.id
-            let! player2 = PlayerService.addPlayerToLobby (lobby.id, playerRequest) session2 |> thenValue
+            let! player2 = PlayerService.addPlayer (game.id, playerRequest) session2 |> thenValue
 
-            let! gameStart = GameStartService.startGame lobby.id session1 |> thenValue
+            let! updatedGame = GameStartService.startGame game.id session1 |> thenValue
 
-            let cellId = gameStart.turnState.selectionOptions.Head
+            let cellId = updatedGame.currentTurn.Value.selectionOptions.Head
 
             let sessionWithoutActivePlayer =
-                match gameStart.gameState.turnCycle.Head with
+                match updatedGame.turnCycle.Head with
                 | x when x = player2.id -> session1
                 | _ -> session2
 
             //Act
-            let! result = TurnService.selectCell (gameStart.gameId, cellId)
+            let! result = TurnService.selectCell (updatedGame.id, cellId)
                                                  { sessionWithoutActivePlayer with isAdmin = true }
 
             //Assert
             result |> Result.isOk |> shouldBeTrue
 
-            let turnState = result |> Result.value
-            turnState.selections.Length |> shouldBe 1
-            turnState.selections.Head.cellId |> shouldBe cellId
-            turnState.selectionOptions |> shouldNotExist (fun cId -> cId = cellId)
+            let turn = result |> Result.value
+            turn.selections.Length |> shouldBe 1
+            turn.selections.Head.cellId |> shouldBe cellId
+            turn.selectionOptions |> shouldNotExist (fun cId -> cId = cellId)
         }
 
     [<Fact>]
     let ``Select cell should fail if invalid game ID``() =
         task {
             //Arrange
-            let! (user, session, lobby) = createUserSessionAndLobby(true) |> thenValue
+            let! (user, session, game) = createuserSessionAndGame(true) |> thenValue
 
             let guestRequest = CreatePlayerRequest.guest (user.id, "test")
-            let! _ = PlayerService.addPlayerToLobby (lobby.id, guestRequest) session |> thenValue
+            let! _ = PlayerService.addPlayer (game.id, guestRequest) session |> thenValue
 
-            let! gameStart = GameStartService.startGame lobby.id session |> thenValue
+            let! updatedGame = GameStartService.startGame game.id session |> thenValue
 
-            let cellId = gameStart.turnState.selectionOptions.Head
+            let cellId = updatedGame.currentTurn.Value.selectionOptions.Head
 
             //Act
             let! result = TurnService.selectCell (Int32.MinValue, cellId) session
@@ -121,15 +121,15 @@ type SelectCellTests() =
     let ``Select cell should fail if invalid cell ID``() =
         task {
             //Arrange
-            let! (user, session, lobby) = createUserSessionAndLobby(true) |> thenValue
+            let! (user, session, game) = createuserSessionAndGame(true) |> thenValue
 
             let guestRequest = CreatePlayerRequest.guest (user.id, "test")
-            let! _ = PlayerService.addPlayerToLobby (lobby.id, guestRequest) session |> thenValue
+            let! _ = PlayerService.addPlayer (game.id, guestRequest) session |> thenValue
 
-            let! gameStart = GameStartService.startGame lobby.id session |> thenValue
+            let! updatedGame = GameStartService.startGame game.id session |> thenValue
 
             //Act
-            let! result = TurnService.selectCell (gameStart.gameId, Int32.MinValue) session
+            let! result = TurnService.selectCell (updatedGame.id, Int32.MinValue) session
 
             //Assert
             result |> shouldBeError 404 "Cell not found."
@@ -139,20 +139,20 @@ type SelectCellTests() =
     let ``Select cell should fail if cell is not currently selectable``() =
         task {
             //Arrange
-            let! (user, session, lobby) = createUserSessionAndLobby(true) |> thenValue
+            let! (user, session, game) = createuserSessionAndGame(true) |> thenValue
 
             let guestRequest = CreatePlayerRequest.guest (user.id, "test")
-            let! _ = PlayerService.addPlayerToLobby (lobby.id, guestRequest) session |> thenValue
+            let! _ = PlayerService.addPlayer (game.id, guestRequest) session |> thenValue
 
-            let! gameStart = GameStartService.startGame lobby.id session |> thenValue
+            let! updatedGame = GameStartService.startGame game.id session |> thenValue
 
             let cellId =
                 [1..100]
-                |> List.find (fun n -> gameStart.turnState.selectionOptions
+                |> List.find (fun n -> updatedGame.currentTurn.Value.selectionOptions
                                        |> (not << List.exists (fun cId -> cId = n)))
 
             //Act
-            let! result = TurnService.selectCell (gameStart.gameId, cellId) session
+            let! result = TurnService.selectCell (updatedGame.id, cellId) session
 
             //Assert
             result |> shouldBeError 400 (sprintf "Cell %i is not currently selectable." cellId)

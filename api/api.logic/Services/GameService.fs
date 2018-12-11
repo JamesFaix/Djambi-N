@@ -5,9 +5,8 @@ open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Db.Repositories
 open Djambi.Api.Model
 
-let getGameState(gameId : int) (session : Session) : GameState AsyncHttpResult =
+let getGame(gameId : int) (session : Session) : Game AsyncHttpResult =
     GameRepository.getGame gameId
     //TODO: Must be either
         //Admin
         //User in game
-    |> thenMap (fun g -> g.gameState)

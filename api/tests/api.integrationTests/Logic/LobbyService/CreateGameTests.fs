@@ -7,42 +7,42 @@ open Djambi.Api.IntegrationTests
 open Djambi.Api.Logic.Services
 open Djambi.Api.Model
 
-type CreateLobbyTests() =
+type CreateGameTests() =
     inherit TestsBase()
 
     [<Fact>]
-    let ``Create lobby should work``() =
+    let ``Create game should work``() =
         task {
             //Arrange
-            let request = getCreateLobbyRequest()
+            let request = getCreateGameRequest()
             let session = getSessionForUser 1
 
             //Act
-            let! lobby = LobbyService.createLobby request session
+            let! game = LobbyService.createGame request session
                           |> AsyncHttpResult.thenValue
 
             //Assert
-            lobby.id |> shouldNotBe 0
-            lobby.allowGuests |> shouldBe request.allowGuests
-            lobby.description |> shouldBe request.description
-            lobby.isPublic |> shouldBe request.isPublic
-            lobby.regionCount |> shouldBe request.regionCount
-            lobby.createdByUserId |> shouldBe session.userId
+            game.id |> shouldNotBe 0
+            game.parameters.allowGuests |> shouldBe request.allowGuests
+            game.parameters.description |> shouldBe request.description
+            game.parameters.isPublic |> shouldBe request.isPublic
+            game.parameters.regionCount |> shouldBe request.regionCount
+            game.createdByUserId |> shouldBe session.userId
         }
 
     [<Fact>]
-    let ``Create lobby should add self as player``() =
+    let ``Create game should add self as player``() =
         task {
             //Arrange
-            let request = getCreateLobbyRequest()
+            let request = getCreateGameRequest()
             let session = getSessionForUser 1
 
             //Act
-            let! lobby = LobbyService.createLobby request session
+            let! game = LobbyService.createGame request session
                          |> AsyncHttpResult.thenValue
 
             //Assert
-            let! players = PlayerService.getLobbyPlayers lobby.id session
+            let! players = PlayerService.getGamePlayers game.id session
                            |> AsyncHttpResult.thenValue
 
             players.Length |> shouldBe 1

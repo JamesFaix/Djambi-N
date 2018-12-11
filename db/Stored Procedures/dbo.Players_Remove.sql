@@ -8,6 +8,7 @@ BEGIN
 	DECLARE @PlayerKindId TINYINT = (SELECT TOP 1 PlayerKindId FROM Players WHERE PlayerId = @PlayerId)
 	DECLARE @GameId INT = (SELECT TOP 1 GameId FROM Players WHERE PlayerId = @PlayerId)
 	DECLARE @GameCreatorUserId INT = (SELECT TOP 1 CreatedByUserId FROM Games WHERE GameId = @GameId)
+	DECLARE @GameStatusId TINYINT = (SELECT TOP 1 GameStatusId FROM Games WHERE GameId = @GameId)
 
 	IF @PlayerKindId IS NULL
 		THROW 50404, 'Player not found.', 1
@@ -19,7 +20,19 @@ BEGIN
 		AND (@UserId = @GameCreatorUserId)
 		BEGIN
 			DELETE FROM Players WHERE GameId = @GameId
-			DELETE FROM Games WHERE GameId = @GameId
+
+			IF @GameStatusId = 1 --Pending
+				UPDATE Games
+				SET GameStatusId = 2 --AbortedWhilePending
+				WHERE GameId = @GameId
+
+			ELSE IF @GameStatusId = 3 --Started
+				UPDATE Games
+				SET GameStatusId = 4 --Aborted
+				WHERE GameId = @GameId
+
+			ELSE
+				THROW 50400, 'Cannot remove players from finished or aborted games.', 1
 		END
 
 		ELSE

@@ -7,138 +7,138 @@ open Djambi.Api.IntegrationTests
 open Djambi.Api.Logic.Services
 open Djambi.Api.Model
 
-type GetLobbiesTests() =
+type GetGamesTests() =
     inherit TestsBase()
 
     [<Fact>]
-    let ``Get lobbies should filter on createdByUserId``() =
+    let ``Get games should filter on createdByUserId``() =
         task {
             //Arrange
-            let request = getCreateLobbyRequest()
+            let request = getCreateGameRequest()
             let session1 = getSessionForUser 1
             let session2 = getSessionForUser 2
             let adminSession = { getSessionForUser 3 with isAdmin = true }
 
-            let! lobby1 = LobbyService.createLobby request session1
+            let! game1 = LobbyService.createGame request session1
                           |> AsyncHttpResult.thenValue
-            let! lobby2 = LobbyService.createLobby request session2
+            let! game2 = LobbyService.createGame request session2
                           |> AsyncHttpResult.thenValue
 
             let query = { GamesQuery.empty with createdByUserId = Some 1 }
 
             //Act
-            let! result = LobbyService.getLobbies query adminSession
+            let! result = LobbyService.getGames query adminSession
                           |> AsyncHttpResult.thenValue
 
             //Assert
-            result |> shouldExist (fun l -> l.id = lobby1.id)
-            result |> shouldNotExist (fun l -> l.id = lobby2.id)
+            result |> shouldExist (fun l -> l.id = game1.id)
+            result |> shouldNotExist (fun l -> l.id = game2.id)
         }
 
     [<Fact>]
-    let ``Get lobbies should filter on allowGuests``() =
+    let ``Get games should filter on allowGuests``() =
         task {
             //Arrange
-            let request = getCreateLobbyRequest()
+            let request = getCreateGameRequest()
             let session1 = getSessionForUser 1
             let session2 = getSessionForUser 2
             let adminSession = { getSessionForUser 3 with isAdmin = true }
 
-            let! lobby1 = LobbyService.createLobby request session1
+            let! game1 = LobbyService.createGame request session1
                           |> AsyncHttpResult.thenValue
-            let! lobby2 = LobbyService.createLobby { request with allowGuests = true } session2
+            let! game2 = LobbyService.createGame { request with allowGuests = true } session2
                           |> AsyncHttpResult.thenValue
 
             let query = { GamesQuery.empty with allowGuests = Some true }
 
             //Act
-            let! result = LobbyService.getLobbies query adminSession
+            let! result = LobbyService.getGames query adminSession
                           |> AsyncHttpResult.thenValue
 
             //Assert
-            result |> shouldNotExist (fun l -> l.id = lobby1.id)
-            result |> shouldExist (fun l -> l.id = lobby2.id)
+            result |> shouldNotExist (fun l -> l.id = game1.id)
+            result |> shouldExist (fun l -> l.id = game2.id)
         }
 
     [<Fact>]
-    let ``Get lobbies should filter on isPublic``() =
+    let ``Get games should filter on isPublic``() =
         task {
             //Arrange
-            let request = getCreateLobbyRequest()
+            let request = getCreateGameRequest()
             let session1 = getSessionForUser 1
             let session2 = getSessionForUser 2
             let adminSession = { getSessionForUser 3 with isAdmin = true }
 
-            let! lobby1 = LobbyService.createLobby request session1
+            let! game1 = LobbyService.createGame request session1
                           |> AsyncHttpResult.thenValue
-            let! lobby2 = LobbyService.createLobby { request with isPublic = true } session2
+            let! game2 = LobbyService.createGame { request with isPublic = true } session2
                           |> AsyncHttpResult.thenValue
 
             let query = { GamesQuery.empty with isPublic = Some true }
 
             //Act
-            let! result = LobbyService.getLobbies query adminSession
+            let! result = LobbyService.getGames query adminSession
                           |> AsyncHttpResult.thenValue
 
             //Assert
-            result |> shouldNotExist (fun l -> l.id = lobby1.id)
-            result |> shouldExist (fun l -> l.id = lobby2.id)
+            result |> shouldNotExist (fun l -> l.id = game1.id)
+            result |> shouldExist (fun l -> l.id = game2.id)
         }
 
     [<Fact>]
-    let ``Get lobbies should filter on playerUserId``() =
+    let ``Get games should filter on playerUserId``() =
         task {
             //Arrange
-            let request = getCreateLobbyRequest()
+            let request = getCreateGameRequest()
             let session1 = getSessionForUser 1
             let session2 = getSessionForUser 2
             let adminSession = { getSessionForUser 3 with isAdmin = true }
 
-            let! lobby1 = LobbyService.createLobby request session1
+            let! game1 = LobbyService.createGame request session1
                           |> AsyncHttpResult.thenValue
-            let! lobby2 = LobbyService.createLobby request session2
+            let! game2 = LobbyService.createGame request session2
                           |> AsyncHttpResult.thenValue
 
             let playerRequest = { getCreatePlayerRequest with userId = Some 1 }
-            let! _ = PlayerService.addPlayerToLobby (lobby1.id, playerRequest) adminSession
+            let! _ = PlayerService.addPlayer (game1.id, playerRequest) adminSession
 
             let query = { GamesQuery.empty with playerUserId = Some 1 }
 
             //Act
-            let! result = LobbyService.getLobbies query adminSession
+            let! result = LobbyService.getGames query adminSession
                           |> AsyncHttpResult.thenValue
 
             //Assert
-            result |> shouldExist (fun l -> l.id = lobby1.id)
-            result |> shouldNotExist (fun l -> l.id = lobby2.id)
+            result |> shouldExist (fun l -> l.id = game1.id)
+            result |> shouldNotExist (fun l -> l.id = game2.id)
         }
 
     [<Fact>]
-    let ``Get lobbies should filter non-public lobbies current user is not in, if not admin``() =
+    let ``Get games should filter non-public games current user is not in, if not admin``() =
         task {
             //Arrange
-            let request = getCreateLobbyRequest()
+            let request = getCreateGameRequest()
             let session1 = getSessionForUser 1
             let session2 = getSessionForUser 2
 
-            let! lobby1 = LobbyService.createLobby request session1
+            let! game1 = LobbyService.createGame request session1
                           |> AsyncHttpResult.thenValue
-            let! lobby2 = LobbyService.createLobby request session2
+            let! game2 = LobbyService.createGame request session2
                           |> AsyncHttpResult.thenValue
-            let! lobby3 = LobbyService.createLobby { request with isPublic = true } session2
+            let! game3 = LobbyService.createGame { request with isPublic = true } session2
                           |> AsyncHttpResult.thenValue
 
             let playerRequest = { getCreatePlayerRequest with userId = Some 1 }
-            let! _ = PlayerService.addPlayerToLobby (lobby1.id, playerRequest) session1
+            let! _ = PlayerService.addPlayer (game1.id, playerRequest) session1
 
             let query = GamesQuery.empty
 
             //Act
-            let! result = LobbyService.getLobbies query session1
+            let! result = LobbyService.getGames query session1
                           |> AsyncHttpResult.thenValue
 
             //Assert
-            result |> shouldExist (fun l -> l.id = lobby1.id)
-            result |> shouldNotExist (fun l -> l.id = lobby2.id)
-            result |> shouldExist (fun l -> l.id = lobby3.id)
+            result |> shouldExist (fun l -> l.id = game1.id)
+            result |> shouldNotExist (fun l -> l.id = game2.id)
+            result |> shouldExist (fun l -> l.id = game3.id)
         }

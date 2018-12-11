@@ -5,43 +5,40 @@ open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Db.Repositories
 open Djambi.Api.Model
 
-let createLobby (request : CreateLobbyRequest) (session : Session) : GameParameters AsyncHttpResult =
-    LobbyRepository.createLobby (request, session.userId)
+let createGame (request : CreateGameRequest) (session : Session) : Game AsyncHttpResult =
+    GameRepository.createGame (request, session.userId)
 
-let deleteLobby (lobbyId : int) (session : Session) : Unit AsyncHttpResult =
+let deleteGame (gameId : int) (session : Session) : Unit AsyncHttpResult =
     if session.isAdmin
     then okTask ()
     else
-        LobbyRepository.getLobby lobbyId
-        |> thenBind (fun lobby ->
-            if lobby.createdByUserId = session.userId
+        GameRepository.getGame gameId
+        |> thenBind (fun game ->
+            if game.createdByUserId = session.userId
             then Ok ()
-            else Error <| HttpException(403, "Cannot delete a lobby created by another user.")
+            else Error <| HttpException(403, "Cannot delete a game created by another user.")
         )
-    |> thenBindAsync (fun _ -> LobbyRepository.deleteLobby lobbyId)
+    |> thenBindAsync (fun _ -> GameRepository.deleteGame gameId)
 
-let getLobbies (query : GamesQuery) (session : Session) : GameParameters list AsyncHttpResult =
-    let isViewableByActiveUser (lobby : GameParameters) : bool =
-        lobby.isPublic
-        || lobby.createdByUserId = session.userId
+let getGames (query : GamesQuery) (session : Session) : Game list AsyncHttpResult =
+    let isViewableByActiveUser (game : Game) : bool =
+        game.parameters.isPublic
+        || game.createdByUserId = session.userId
 
-    LobbyRepository.getLobbies query
-    |> thenMap (fun lobbies ->
+    GameRepository.getGames query
+    |> thenMap (fun games ->
         if session.isAdmin
-        then lobbies
-        else lobbies |> List.filter isViewableByActiveUser
+        then games
+        else games |> List.filter isViewableByActiveUser
     )
 
-let getLobby (lobbyId : int) (session : Session) : LobbyWithPlayers AsyncHttpResult =
-    LobbyRepository.getLobby lobbyId
-    |> thenBindAsync (fun lobby ->
-        PlayerRepository.getPlayersForLobby lobbyId
-        |> thenBind (fun players ->
-            if (lobby.isPublic
-                || lobby.createdByUserId = session.userId
-                || players |> List.exists(fun p -> p.userId.IsSome
-                                                && p.userId.Value = session.userId))
-            then Ok <| lobby.addPlayers players
-            else Error <| HttpException(404, "Lobby not found.")
-        )
+let getGame (gameId : int) (session : Session) : Game AsyncHttpResult =
+    GameRepository.getGame gameId
+    |> thenBind (fun game ->
+        if (game.parameters.isPublic
+            || game.createdByUserId = session.userId
+            || game.players |> List.exists(fun p -> p.userId.IsSome
+                                                 && p.userId.Value = session.userId))
+        then Ok <| game
+        else Error <| HttpException(404, "Game not found.")        
     )

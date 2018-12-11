@@ -22,8 +22,9 @@ BEGIN
 
 	ELSE IF @GameIds IS NOT NULL
 	BEGIN
-		INSERT INTO #GameIds
-		SELECT value FROM STRING_SPLIT(@GameIds, ',') --TODO: Vendor dependency
+		SELECT value
+		INTO #GameIds
+		FROM STRING_SPLIT(@GameIds, ',') --TODO: Vendor dependency
 
 		SELECT p.GameId,
 			p.PlayerId,
@@ -35,7 +36,7 @@ BEGIN
 			p.StartingRegion,
 			p.StartingTurnNumber
 		FROM Players p
-			INNER JOIN #Games g
+			INNER JOIN #GameIds g
 				ON p.GameId = g.value
 	END
 	ELSE

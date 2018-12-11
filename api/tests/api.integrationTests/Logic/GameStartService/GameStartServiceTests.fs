@@ -18,22 +18,21 @@ type GameStartServiceTests() =
         task {
             //Arrange
             let session = getSessionForUser 1
-            let lobbyRequest = getCreateLobbyRequest()
-            let! lobby = LobbyRepository.createLobby (lobbyRequest, session.userId) |> thenValue
-            let! players = PlayerRepository.getPlayersForLobby lobby.id
-                            |> thenBindAsync (PlayerService.fillEmptyPlayerSlots lobby)
-                            |> thenValue
+            let gameRequest = getCreateGameRequest()
+            let! game = GameRepository.createGame (gameRequest, session.userId)
+                        |> thenBindAsync PlayerService.fillEmptyPlayerSlots
+                        |> thenValue
 
             //Act
-            let startingConditions = GameStartService.getStartingConditions players
+            let playersWithStartConditions = GameStartService.assignStartingConditions game.players
 
             //Assert
-            Assert.Equal(lobby.regionCount, startingConditions.Length)
+            Assert.Equal(game.parameters.regionCount, playersWithStartConditions.Length)
 
-            let regions = startingConditions |> List.map (fun cond -> cond.region) |> List.sort
-            regions |> shouldBe [0..(lobby.regionCount-1)]
+            let regions = playersWithStartConditions |> List.map (fun p -> p.startingRegion.Value) |> List.sort
+            regions |> shouldBe [0..(game.parameters.regionCount-1)]
 
-            let colors = startingConditions |> List.map (fun cond -> cond.colorId)
+            let colors = playersWithStartConditions |> List.map (fun cond -> cond.colorId.Value)
             Assert.All(colors, fun c -> Assert.True(c >= 0 && c < Constants.maxRegions))
         }
 
@@ -42,22 +41,21 @@ type GameStartServiceTests() =
         task {
             //Arrange
             let session = getSessionForUser 1
-            let lobbyRequest = getCreateLobbyRequest()
-            let! lobby = LobbyRepository.createLobby (lobbyRequest, session.userId) |> thenValue
-            let! players = PlayerRepository.getPlayersForLobby lobby.id
-                            |> thenBindAsync (PlayerService.fillEmptyPlayerSlots lobby)
-                            |> thenValue
-            let startingConditions = GameStartService.getStartingConditions players
-            let board = BoardModelUtility.getBoardMetadata(lobby.regionCount)
+            let gameRequest = getCreateGameRequest()
+            let! game = GameRepository.createGame (gameRequest, session.userId) 
+                        |> thenBindAsync PlayerService.fillEmptyPlayerSlots
+                        |> thenValue
+            let playersWithStartConditions = GameStartService.assignStartingConditions game.players
+            let board = BoardModelUtility.getBoardMetadata(game.parameters.regionCount)
 
             //Act
-            let pieces = GameStartService.createPieces(board, startingConditions)
+            let pieces = GameStartService.createPieces(board, playersWithStartConditions)
 
             //Assert
-            Assert.Equal(lobby.regionCount * Constants.piecesPerPlayer, pieces.Length)
+            Assert.Equal(game.parameters.regionCount * Constants.piecesPerPlayer, pieces.Length)
 
             let groupByPlayer = pieces |> List.groupBy (fun p -> p.originalPlayerId)
-            Assert.Equal(lobby.regionCount, groupByPlayer.Length)
+            Assert.Equal(game.parameters.regionCount, groupByPlayer.Length)
 
             for (_, grp) in groupByPlayer do
                 Assert.Single<Piece>(grp, (fun p -> p.kind = Chief)) |> ignore
@@ -72,35 +70,38 @@ type GameStartServiceTests() =
     let ``Start game should work``() =
         task {
             //Arrange
-            let! (user, session, lobby) = createUserSessionAndLobby(true) |> thenValue
+            let! (user, session, game) = createuserSessionAndGame(true) |> thenValue
 
             let playerRequest = CreatePlayerRequest.guest (user.id, "test")
 
-            let! _ = PlayerService.addPlayerToLobby (lobby.id, playerRequest) session |> thenValue
+            let! _ = PlayerService.addPlayer (game.id, playerRequest) session |> thenValue
 
             //Act
-            let! result = GameStartService.startGame lobby.id session
+            let! result = GameStartService.startGame game.id session
 
             //Assert
             result |> Result.isOk |> shouldBeTrue
 
-            let! lobbyError = LobbyRepository.getLobby lobby.id |> thenError
-            Assert.Equal(404, lobbyError.statusCode)
+            let updatedGame = result |> Result.value
+
+            updatedGame.status |> shouldBe GameStatus.Started
+            updatedGame.players.Length |> shouldBe game.parameters.regionCount
+            updatedGame.pieces.Length |> shouldBe (9 * game.parameters.regionCount)
         }
 
     [<Fact>]
     let ``Start game should fail if only one non-neutral player``() =
         task {
              //Arrange
-            let! (user, session, lobby) = createUserSessionAndLobby(true) |> thenValue
+            let! (user, session, game) = createuserSessionAndGame(true) |> thenValue
 
             //Act
-            let! result = GameStartService.startGame lobby.id session
+            let! result = GameStartService.startGame game.id session
 
             //Assert
             result |> shouldBeError 400 "Cannot start game with only one player."
 
-            let! lobbyResult = LobbyRepository.getLobby lobby.id
+            let! lobbyResult = GameRepository.getGame game.id
             lobbyResult |> Result.isOk |> shouldBeTrue
         }
 
@@ -108,17 +109,17 @@ type GameStartServiceTests() =
     let ``Neutral players should not be in the turn cycle``() =
         task {
             //Arrange
-            let! (user, session, lobby) = createUserSessionAndLobby(true) |> thenValue
+            let! (user, session, game) = createuserSessionAndGame(true) |> thenValue
 
             let playerRequest = CreatePlayerRequest.guest (user.id, "test")
 
-            let! _ = PlayerService.addPlayerToLobby (lobby.id, playerRequest) session |> thenValue
+            let! _ = PlayerService.addPlayer (game.id, playerRequest) session |> thenValue
 
             //Act
-            let! gameStartResponse = GameStartService.startGame lobby.id session |> thenValue
+            let! updatedGame = GameStartService.startGame game.id session |> thenValue
 
             //Assert
-            let! players = PlayerService.getGamePlayers gameStartResponse.gameId session |> thenValue
+            let! players = PlayerService.getGamePlayers updatedGame.id session |> thenValue
 
             let neutralPlayerIds =
                 players
@@ -126,7 +127,7 @@ type GameStartServiceTests() =
                 |> List.map (fun p -> p.id)
                 |> Set.ofList
 
-            gameStartResponse.gameState.turnCycle
+            updatedGame.turnCycle
             |> Set.ofList
             |> Set.intersect neutralPlayerIds
             |> Set.count
