@@ -5,11 +5,11 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT UserId, 
-		[Name], 
+	SELECT UserId,
+		[Name],
 		IsAdmin,
-		[Password], 
-		FailedLoginAttempts, 
+		[Password],
+		FailedLoginAttempts,
 		LastFailedLoginAttemptOn
 	FROM Users
 	WHERE (@UserId IS NULL OR @UserId = UserId)
