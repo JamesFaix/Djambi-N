@@ -14,11 +14,11 @@ type CreateGameTests() =
     let ``Create game should work``() =
         task {
             //Arrange
-            let request = getCreateGameRequest()
+            let request = getGameParameters()
             let session = getSessionForUser 1
 
             //Act
-            let! game = LobbyService.createGame request session
+            let! game = GameCrudService.createGame request session
                           |> AsyncHttpResult.thenValue
 
             //Assert
@@ -34,11 +34,11 @@ type CreateGameTests() =
     let ``Create game should add self as player``() =
         task {
             //Arrange
-            let request = getCreateGameRequest()
+            let request = getGameParameters()
             let session = getSessionForUser 1
 
             //Act
-            let! game = LobbyService.createGame request session
+            let! game = GameCrudService.createGame request session
                          |> AsyncHttpResult.thenValue
 
             //Assert

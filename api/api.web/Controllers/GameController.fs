@@ -20,7 +20,7 @@ let getGame(gameId : int) : HttpHandler =
 
 let createGame : HttpHandler =
     let func ctx =
-        getSessionAndModelFromContext<CreateGameRequest> ctx
+        getSessionAndModelFromContext<GameParameters> ctx
         |> thenBindAsync (fun (request, session) -> GameManager.createGame request session)
     handle func
 
@@ -28,6 +28,12 @@ let deleteGame(gameId : int) =
     let func ctx =
         getSessionFromContext ctx
         |> thenBindAsync (GameManager.deleteGame gameId)
+    handle func
+
+let updateGameParameters (gameId : int) =
+    let func ctx =
+        getSessionAndModelFromContext<GameParameters> ctx
+        |> thenBindAsync (fun (request, session) -> GameManager.updateGameParameters gameId request session)
     handle func
 
 let startGame(gameId: int) =

@@ -12,18 +12,18 @@ let ``Create game should work``() =
     task {
         //Arrange
         let! (_, token) = SetupUtility.createUserAndSignIn()
-        let request = RequestFactory.createGameRequest()
+        let parameters = RequestFactory.gameParameters()
 
         //Act
-        let! response = GameClient.createGame(request, token)
+        let! response = GameClient.createGame(parameters, token)
 
         //Assert
         response |> shouldHaveStatus HttpStatusCode.OK
 
         let game = response.bodyValue
         game.id |> shouldNotBe 0
-        game.parameters.description |> shouldBe request.description
-        game.parameters.regionCount |> shouldBe request.regionCount
+        game.parameters.description |> shouldBe parameters.description
+        game.parameters.regionCount |> shouldBe parameters.regionCount
     } :> Task
 
 [<Test>]
@@ -31,8 +31,8 @@ let ``Delete game should work``() =
     task {
         //Arrange
         let! (_, token) = SetupUtility.createUserAndSignIn()
-        let createGameRequest = RequestFactory.createGameRequest()
-        let! gameResponse = GameClient.createGame(createGameRequest, token)
+        let parameters = RequestFactory.gameParameters()
+        let! gameResponse = GameClient.createGame(parameters, token)
         let game = gameResponse.bodyValue
 
         //Act
@@ -50,9 +50,9 @@ let ``Get games should work``() =
     task {
         //Arrange
         let! (_, token) = SetupUtility.createUserAndSignIn()
-        let request = RequestFactory.createGameRequest()
-        let! game1 = GameClient.createGame(request, token) |> AsyncResponse.bodyValue
-        let! game2 = GameClient.createGame(request, token) |> AsyncResponse.bodyValue
+        let parameters = RequestFactory.gameParameters()
+        let! game1 = GameClient.createGame(parameters, token) |> AsyncResponse.bodyValue
+        let! game2 = GameClient.createGame(parameters, token) |> AsyncResponse.bodyValue
 
         //Act
         let! response = GameClient.getGames(GamesQuery.empty, token)

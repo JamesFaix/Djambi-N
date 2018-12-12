@@ -2,7 +2,7 @@
 	@SessionId INT,
 	@ExpiresOn DATETIME2
 AS
-BEGIN		
+BEGIN
 	IF NOT EXISTS(SELECT 1 FROM Sessions WHERE SessionId = @SessionId)
 		THROW 50404, 'Session not found.', 1
 

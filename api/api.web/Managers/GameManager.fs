@@ -5,17 +5,20 @@ open Djambi.Api.Common
 open Djambi.Api.Model
 
 let getGames (query : GamesQuery) (session : Session) : Game list AsyncHttpResult =
-    LobbyService.getGames query session
+    GameCrudService.getGames query session
 
 let getGame (gameId : int) (session : Session) : Game AsyncHttpResult =
-    LobbyService.getGame gameId session
+    GameCrudService.getGame gameId session
 
-let createGame (request : CreateGameRequest) (session : Session) : Game AsyncHttpResult =
-    LobbyService.createGame request session
+let createGame (parameters : GameParameters) (session : Session) : Game AsyncHttpResult =
+    GameCrudService.createGame parameters session
 
 let deleteGame (gameId : int) (session : Session) : Unit AsyncHttpResult =
-    LobbyService.deleteGame gameId session
+    GameCrudService.deleteGame gameId session
  
+let updateGameParameters (gameId : int) (parameters : GameParameters) (session : Session) : Game AsyncHttpResult =
+    GameCrudService.updateGameParameters (gameId, parameters) session
+
 let addPlayer (request : CreatePlayerRequest, gameId : int) (session : Session) : Player AsyncHttpResult =
     PlayerService.addPlayer (gameId, request) session
 

@@ -4,9 +4,9 @@ open Djambi.Api.WebClient.Model
 open Djambi.Api.WebClient.WebUtility
 open Djambi.Api.Model
 
-let createGame (request : CreateGameRequest, token : string) : Game AsyncResponse =
+let createGame (parameters : GameParameters, token : string) : Game AsyncResponse =
     sendRequest(POST, "/games", 
-        Some request,
+        Some parameters,
         Some token)
 
 let deleteGame (gameId : int, token : string) : Unit AsyncResponse =

@@ -6,7 +6,7 @@ BEGIN
 
 	IF NOT EXISTS(SELECT 1 FROM Users WHERE UserId = @UserId)
 		THROW 50404, 'User not found.', 1
-        
+
 	BEGIN TRAN
 
 		--TODO: Delete Players

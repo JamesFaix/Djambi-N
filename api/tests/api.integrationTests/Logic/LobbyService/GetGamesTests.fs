@@ -14,20 +14,20 @@ type GetGamesTests() =
     let ``Get games should filter on createdByUserId``() =
         task {
             //Arrange
-            let request = getCreateGameRequest()
+            let request = getGameParameters()
             let session1 = getSessionForUser 1
             let session2 = getSessionForUser 2
             let adminSession = { getSessionForUser 3 with isAdmin = true }
 
-            let! game1 = LobbyService.createGame request session1
+            let! game1 = GameCrudService.createGame request session1
                           |> AsyncHttpResult.thenValue
-            let! game2 = LobbyService.createGame request session2
+            let! game2 = GameCrudService.createGame request session2
                           |> AsyncHttpResult.thenValue
 
             let query = { GamesQuery.empty with createdByUserId = Some 1 }
 
             //Act
-            let! result = LobbyService.getGames query adminSession
+            let! result = GameCrudService.getGames query adminSession
                           |> AsyncHttpResult.thenValue
 
             //Assert
@@ -39,20 +39,20 @@ type GetGamesTests() =
     let ``Get games should filter on allowGuests``() =
         task {
             //Arrange
-            let request = getCreateGameRequest()
+            let request = getGameParameters()
             let session1 = getSessionForUser 1
             let session2 = getSessionForUser 2
             let adminSession = { getSessionForUser 3 with isAdmin = true }
 
-            let! game1 = LobbyService.createGame request session1
+            let! game1 = GameCrudService.createGame request session1
                           |> AsyncHttpResult.thenValue
-            let! game2 = LobbyService.createGame { request with allowGuests = true } session2
+            let! game2 = GameCrudService.createGame { request with allowGuests = true } session2
                           |> AsyncHttpResult.thenValue
 
             let query = { GamesQuery.empty with allowGuests = Some true }
 
             //Act
-            let! result = LobbyService.getGames query adminSession
+            let! result = GameCrudService.getGames query adminSession
                           |> AsyncHttpResult.thenValue
 
             //Assert
@@ -64,20 +64,20 @@ type GetGamesTests() =
     let ``Get games should filter on isPublic``() =
         task {
             //Arrange
-            let request = getCreateGameRequest()
+            let request = getGameParameters()
             let session1 = getSessionForUser 1
             let session2 = getSessionForUser 2
             let adminSession = { getSessionForUser 3 with isAdmin = true }
 
-            let! game1 = LobbyService.createGame request session1
+            let! game1 = GameCrudService.createGame request session1
                           |> AsyncHttpResult.thenValue
-            let! game2 = LobbyService.createGame { request with isPublic = true } session2
+            let! game2 = GameCrudService.createGame { request with isPublic = true } session2
                           |> AsyncHttpResult.thenValue
 
             let query = { GamesQuery.empty with isPublic = Some true }
 
             //Act
-            let! result = LobbyService.getGames query adminSession
+            let! result = GameCrudService.getGames query adminSession
                           |> AsyncHttpResult.thenValue
 
             //Assert
@@ -89,14 +89,14 @@ type GetGamesTests() =
     let ``Get games should filter on playerUserId``() =
         task {
             //Arrange
-            let request = getCreateGameRequest()
+            let request = getGameParameters()
             let session1 = getSessionForUser 1
             let session2 = getSessionForUser 2
             let adminSession = { getSessionForUser 3 with isAdmin = true }
 
-            let! game1 = LobbyService.createGame request session1
+            let! game1 = GameCrudService.createGame request session1
                           |> AsyncHttpResult.thenValue
-            let! game2 = LobbyService.createGame request session2
+            let! game2 = GameCrudService.createGame request session2
                           |> AsyncHttpResult.thenValue
 
             let playerRequest = { getCreatePlayerRequest with userId = Some 1 }
@@ -105,7 +105,7 @@ type GetGamesTests() =
             let query = { GamesQuery.empty with playerUserId = Some 1 }
 
             //Act
-            let! result = LobbyService.getGames query adminSession
+            let! result = GameCrudService.getGames query adminSession
                           |> AsyncHttpResult.thenValue
 
             //Assert
@@ -117,15 +117,15 @@ type GetGamesTests() =
     let ``Get games should filter non-public games current user is not in, if not admin``() =
         task {
             //Arrange
-            let request = getCreateGameRequest()
+            let request = getGameParameters()
             let session1 = getSessionForUser 1
             let session2 = getSessionForUser 2
 
-            let! game1 = LobbyService.createGame request session1
+            let! game1 = GameCrudService.createGame request session1
                           |> AsyncHttpResult.thenValue
-            let! game2 = LobbyService.createGame request session2
+            let! game2 = GameCrudService.createGame request session2
                           |> AsyncHttpResult.thenValue
-            let! game3 = LobbyService.createGame { request with isPublic = true } session2
+            let! game3 = GameCrudService.createGame { request with isPublic = true } session2
                           |> AsyncHttpResult.thenValue
 
             let playerRequest = { getCreatePlayerRequest with userId = Some 1 }
@@ -134,7 +134,7 @@ type GetGamesTests() =
             let query = GamesQuery.empty
 
             //Act
-            let! result = LobbyService.getGames query session1
+            let! result = GameCrudService.getGames query session1
                           |> AsyncHttpResult.thenValue
 
             //Assert

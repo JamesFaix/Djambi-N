@@ -123,7 +123,8 @@ type GameStatus =
     | Started
     | Aborted
     | Finished
-
+    
+[<CLIMutable>]
 type GameParameters =
     {
         description : string option
