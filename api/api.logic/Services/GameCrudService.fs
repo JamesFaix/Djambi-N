@@ -50,3 +50,13 @@ let getGame (gameId : int) (session : Session) : Game AsyncHttpResult =
         then Ok <| game
         else Error <| HttpException(404, "Game not found.")        
     )
+
+let updateGameParameters (gameId : int, parameters : GameParameters) (session : Session) : Game AsyncHttpResult =
+    GameRepository.getGame gameId
+    |> thenBindAsync (fun game -> 
+        if not (session.isAdmin || session.userId = game.createdByUserId)
+        then errorTask <| HttpException(403, "Cannot change game parameters of game created by another user.")
+        else 
+            GameRepository.updateGameParameters gameId parameters
+            |> thenBindAsync (fun _ -> GameRepository.getGame gameId)    
+    )

@@ -31,6 +31,7 @@ module Routing =
                     POST >=> route "/games" >=> GameController.createGame
                     GET >=> routef "/games/%i" GameController.getGame
                     DELETE >=> routef "/games/%i" GameController.deleteGame
+                    PUT >=> routef "/games/%i/parameters" GameController.updateGameParameters
 
                     POST >=> routef "/games/%i/players" GameController.addPlayer
                     DELETE >=> routef "/games/%i/players/%i" GameController.removePlayer

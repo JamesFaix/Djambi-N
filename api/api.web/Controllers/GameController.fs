@@ -30,6 +30,12 @@ let deleteGame(gameId : int) =
         |> thenBindAsync (GameManager.deleteGame gameId)
     handle func
 
+let updateGameParameters (gameId : int) =
+    let func ctx =
+        getSessionAndModelFromContext<GameParameters> ctx
+        |> thenBindAsync (fun (request, session) -> GameManager.updateGameParameters gameId request session)
+    handle func
+
 let startGame(gameId: int) =
     let func ctx =
         getSessionFromContext ctx
