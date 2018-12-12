@@ -14,7 +14,7 @@ type CreateGameTests() =
     let ``Create game should work``() =
         task {
             //Arrange
-            let request = getCreateGameRequest()
+            let request = getGameParameters()
             let session = getSessionForUser 1
 
             //Act
@@ -34,7 +34,7 @@ type CreateGameTests() =
     let ``Create game should add self as player``() =
         task {
             //Arrange
-            let request = getCreateGameRequest()
+            let request = getGameParameters()
             let session = getSessionForUser 1
 
             //Act

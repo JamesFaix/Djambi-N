@@ -10,8 +10,8 @@ let getGames (query : GamesQuery) (session : Session) : Game list AsyncHttpResul
 let getGame (gameId : int) (session : Session) : Game AsyncHttpResult =
     GameCrudService.getGame gameId session
 
-let createGame (request : CreateGameRequest) (session : Session) : Game AsyncHttpResult =
-    GameCrudService.createGame request session
+let createGame (parameters : GameParameters) (session : Session) : Game AsyncHttpResult =
+    GameCrudService.createGame parameters session
 
 let deleteGame (gameId : int) (session : Session) : Unit AsyncHttpResult =
     GameCrudService.deleteGame gameId session

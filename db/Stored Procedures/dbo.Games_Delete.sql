@@ -11,5 +11,7 @@ BEGIN
 		DELETE FROM Players WHERE GameId = @GameId
 
 		DELETE FROM Games WHERE GameId = @GameId
+
+		--TODO: Handle other cascading deletes here
 	COMMIT
 END

@@ -31,7 +31,7 @@ let getLoginRequest(userRequest : CreateUserRequest) : LoginRequest =
         password = userRequest.password
     }
 
-let getCreateGameRequest() : CreateGameRequest =
+let getGameParameters() : GameParameters =
     {
         regionCount = 3
         description = Some "Test"
@@ -68,8 +68,8 @@ let createuserSessionAndGame(allowGuests : bool) : (UserDetails * Session * Game
 
         let session = getSessionForUser user.id
 
-        let gameRequest = { getCreateGameRequest() with allowGuests = allowGuests }
-        let! game = GameCrudService.createGame gameRequest session
+        let parameters = { getGameParameters() with allowGuests = allowGuests }
+        let! game = GameCrudService.createGame parameters session
                      |> AsyncHttpResult.thenValue
 
         return Ok <| (user, session, game)

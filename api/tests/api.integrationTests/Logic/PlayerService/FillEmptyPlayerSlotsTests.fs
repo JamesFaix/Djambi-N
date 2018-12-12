@@ -15,7 +15,7 @@ type FillEmptyPlayerSlotsTests() =
     let ``Fill empty player slots should work``() =
         //Arrange
         let session = getSessionForUser 1
-        let gameRequest = getCreateGameRequest()
+        let gameRequest = getGameParameters()
         task {
             let! game = GameCrudService.createGame gameRequest session |> thenValue
 

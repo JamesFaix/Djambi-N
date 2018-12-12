@@ -5,9 +5,9 @@ open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Db.Repositories
 open Djambi.Api.Model
 
-let createGame (request : CreateGameRequest) (session : Session) : Game AsyncHttpResult =
+let createGame (parameters : GameParameters) (session : Session) : Game AsyncHttpResult =
     //Create game
-    GameRepository.createGame (request, session.userId)
+    GameRepository.createGame (parameters, session.userId)
     |> thenBindAsync (fun gameId ->
         //Add self as first player
         let playerRequest = CreatePlayerRequest.user session.userId

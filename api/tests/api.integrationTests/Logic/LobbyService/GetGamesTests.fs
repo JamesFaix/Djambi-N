@@ -14,7 +14,7 @@ type GetGamesTests() =
     let ``Get games should filter on createdByUserId``() =
         task {
             //Arrange
-            let request = getCreateGameRequest()
+            let request = getGameParameters()
             let session1 = getSessionForUser 1
             let session2 = getSessionForUser 2
             let adminSession = { getSessionForUser 3 with isAdmin = true }
@@ -39,7 +39,7 @@ type GetGamesTests() =
     let ``Get games should filter on allowGuests``() =
         task {
             //Arrange
-            let request = getCreateGameRequest()
+            let request = getGameParameters()
             let session1 = getSessionForUser 1
             let session2 = getSessionForUser 2
             let adminSession = { getSessionForUser 3 with isAdmin = true }
@@ -64,7 +64,7 @@ type GetGamesTests() =
     let ``Get games should filter on isPublic``() =
         task {
             //Arrange
-            let request = getCreateGameRequest()
+            let request = getGameParameters()
             let session1 = getSessionForUser 1
             let session2 = getSessionForUser 2
             let adminSession = { getSessionForUser 3 with isAdmin = true }
@@ -89,7 +89,7 @@ type GetGamesTests() =
     let ``Get games should filter on playerUserId``() =
         task {
             //Arrange
-            let request = getCreateGameRequest()
+            let request = getGameParameters()
             let session1 = getSessionForUser 1
             let session2 = getSessionForUser 2
             let adminSession = { getSessionForUser 3 with isAdmin = true }
@@ -117,7 +117,7 @@ type GetGamesTests() =
     let ``Get games should filter non-public games current user is not in, if not admin``() =
         task {
             //Arrange
-            let request = getCreateGameRequest()
+            let request = getGameParameters()
             let session1 = getSessionForUser 1
             let session2 = getSessionForUser 2
 

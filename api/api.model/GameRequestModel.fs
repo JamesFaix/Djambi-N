@@ -35,15 +35,6 @@ module CreatePlayerRequest =
         }   
         
 [<CLIMutable>]
-type CreateGameRequest =
-    {
-        description : string option
-        regionCount : int
-        isPublic : bool
-        allowGuests : bool
-    }
-
-[<CLIMutable>]
 type GamesQuery =
     {
         gameId : int option
@@ -131,15 +122,6 @@ module SessionQuery =
             token = None
             userId = Some userId
         }
-
-type UpdateGameParametersRequest = 
-    {
-        gameId : int
-        description : string option
-        allowGuests : bool
-        isPublic : bool
-        regionCount : int
-    }
 
 type UpdateGameStateRequest = 
     {

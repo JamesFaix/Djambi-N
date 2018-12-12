@@ -261,7 +261,7 @@ type RemovePlayerTests() =
             //Arrange
             let! (_, session, game1) = createuserSessionAndGame(false) |> thenValue
 
-            let gameRequest = getCreateGameRequest()
+            let gameRequest = getGameParameters()
             let! game2 = GameCrudService.createGame gameRequest session |> thenValue
 
             let! user = createUser() |> thenValue

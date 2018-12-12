@@ -14,7 +14,7 @@ type DeleteGameTests() =
     let ``Delete game should work if admin``() =
         task {
             //Arrange
-            let request = getCreateGameRequest()
+            let request = getGameParameters()
             let session = { getSessionForUser 1 with isAdmin = true }
             let! game = GameCrudService.createGame request session
                          |> AsyncHttpResult.thenValue
@@ -30,7 +30,7 @@ type DeleteGameTests() =
     let ``Delete game should work if creating user``() =
         task {
             //Arrange
-            let request = getCreateGameRequest()
+            let request = getGameParameters()
             let session = { getSessionForUser 1 with isAdmin = false }
             let! game = GameCrudService.createGame request session
                          |> AsyncHttpResult.thenValue
@@ -46,7 +46,7 @@ type DeleteGameTests() =
     let ``Delete game should fail if not admin or creating user``() =
         task {
             //Arrange
-            let request = getCreateGameRequest()
+            let request = getGameParameters()
             let createSession = getSessionForUser 1
             let! game = GameCrudService.createGame request createSession
                          |> AsyncHttpResult.thenValue

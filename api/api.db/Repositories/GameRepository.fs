@@ -88,13 +88,13 @@ let getGames (query : GamesQuery) : Game list AsyncHttpResult =
         )
     )
 
-let createGame (request : CreateGameRequest, createdByUserId : int) : int AsyncHttpResult =
+let createGame (parameters : GameParameters, createdByUserId : int) : int AsyncHttpResult =
     let param = DynamicParameters()
-                    .add("RegionCount", request.regionCount)
+                    .add("RegionCount", parameters.regionCount)
                     .add("CreatedByUserId", createdByUserId)
-                    .add("AllowGuests", request.allowGuests)
-                    .add("IsPublic", request.isPublic)
-                    .addOption("Description", request.description)
+                    .add("AllowGuests", parameters.allowGuests)
+                    .add("IsPublic", parameters.isPublic)
+                    .addOption("Description", parameters.description)
 
     let cmd = proc("Games_Create", param)
 
@@ -123,13 +123,13 @@ let getNeutralPlayerNames() : string list AsyncHttpResult =
     let cmd = proc("Players_GetNeutralNames", param)
     queryMany<string>(cmd, "Neutral player names")
     
-let updateGameParameters(request : UpdateGameParametersRequest) : Unit AsyncHttpResult =
+let updateGameParameters (gameId : int) (parameters : GameParameters) : Unit AsyncHttpResult =
     let param = DynamicParameters()
-                    .add("GameId", request.gameId)
-                    .addOption("Description", request.description)
-                    .add("AllowGuests", request.allowGuests)
-                    .add("IsPublic", request.isPublic)
-                    .add("RegionCount", request.regionCount)
+                    .add("GameId", gameId)
+                    .addOption("Description", parameters.description)
+                    .add("AllowGuests", parameters.allowGuests)
+                    .add("IsPublic", parameters.isPublic)
+                    .add("RegionCount", parameters.regionCount)
     let cmd = proc("Games_UpdateParameters", param)
     queryUnit(cmd, "Game")
     
