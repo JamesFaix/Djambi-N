@@ -32,9 +32,6 @@ let createGame (parameters : GameParameters) (session : Session) : StateAndEvent
     EventCalculator.createGame parameters session
     |> thenBindAsync (EventProcessor.processEvent None)
 
-let deleteGame (gameId : int) (session : Session) : Unit AsyncHttpResult =
-    GameCrudService.deleteGame gameId session
-
 //TODO: Requires integration tests
 let updateGameParameters (gameId : int) (parameters : GameParameters) (session : Session) : StateAndEventResponse AsyncHttpResult =
     GameService.getGame gameId session

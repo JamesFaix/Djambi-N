@@ -41,23 +41,6 @@ type GameRepositoryTests() =
         }
 
     [<Fact>]
-    let ``Delete game should work``() =
-        //Arrange
-        let userId = 1
-        let request = getCreateGameRequest(userId)
-        task {
-            let! gameId = GameRepository.createGame request |> thenValue
-
-            //Act
-            let! _ = GameRepository.deleteGame gameId |> thenValue
-
-            //Assert
-            let! getResult = GameRepository.getGame gameId
-            let error = getResult |> Result.error
-            Assert.Equal(404, error.statusCode)
-        }
-
-    [<Fact>]
     let ``Get games should work``() =
         //Arrange
         let userId = 1

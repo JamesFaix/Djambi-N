@@ -38,12 +38,6 @@ let getGameWithoutPlayers (gameId : int) : Game AsyncHttpResult =
     querySingle<GameSqlModel>(cmd, "Game")
     |> thenMap mapGameResponse
         
-let deleteGame (gameId : int) : Unit AsyncHttpResult =
-    let param = DynamicParameters()
-                    .add("GameId", gameId)
-    let cmd = proc("Games_Delete", param)
-    queryUnit(cmd, "Game")
-
 let getPlayersForGames (gameIds : int list) : Player List AsyncHttpResult =
     let param = DynamicParameters()
                     .add("GameIds", String.Join(',', gameIds))
