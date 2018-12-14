@@ -4,6 +4,8 @@ open System.Threading.Tasks
 open FSharp.Control.Tasks
 open Djambi.Api.Common.Task
 
+type HttpResult<'a> = Result<'a, HttpException>
+
 type AsyncHttpResult<'a> = Task<Result<'a, HttpException>>
 
 module AsyncHttpResult =

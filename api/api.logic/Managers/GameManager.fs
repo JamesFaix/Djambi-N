@@ -3,6 +3,7 @@
 open Djambi.Api.Logic.Services
 open Djambi.Api.Common
 open Djambi.Api.Model
+open Djambi.Api.Common.Result
 open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Db.Repositories
 
@@ -30,28 +31,28 @@ let getGame (gameId : int) (session : Session) : Game AsyncHttpResult =
 
 let createGame (parameters : GameParameters) (session : Session) : StateAndEventResponse AsyncHttpResult =
     EventCalculator.createGame parameters session
-    |> thenBindAsync (EventProcessor.processEvent None)
+    |> bindAsync (EventProcessor.processEvent None)
 
 //TODO: Requires integration tests
 let updateGameParameters (gameId : int) (parameters : GameParameters) (session : Session) : StateAndEventResponse AsyncHttpResult =
     GameService.getGame gameId session
     |> thenBindAsync (fun game -> 
-        EventCalculator.updateGameParameters (gameId, parameters) session
-        |> thenBindAsync (EventProcessor.processEvent (Some game))
+        EventCalculator.updateGameParameters (game, parameters) session
+        |> bindAsync (EventProcessor.processEvent (Some game))
     )
 
 let addPlayer (gameId : int) (request : CreatePlayerRequest) (session : Session) : StateAndEventResponse AsyncHttpResult =
     GameService.getGame gameId session
     |> thenBindAsync (fun game -> 
-        EventCalculator.addPlayer (gameId, request) session
-        |> thenBindAsync (EventProcessor.processEvent (Some game))
+        EventCalculator.addPlayer (game, request) session
+        |> bindAsync (EventProcessor.processEvent (Some game))
     )
 
 let removePlayer (gameId : int, playerId : int) (session : Session) : StateAndEventResponse AsyncHttpResult =
     GameService.getGame gameId session
     |> thenBindAsync (fun game -> 
-        EventCalculator.removePlayer (gameId, playerId) session
-        |> thenBindAsync (EventProcessor.processEvent (Some game))
+        EventCalculator.removePlayer (game, playerId) session
+        |> bindAsync (EventProcessor.processEvent (Some game))
     )
 
 let startGame (gameId: int) (session : Session) : Game AsyncHttpResult =
