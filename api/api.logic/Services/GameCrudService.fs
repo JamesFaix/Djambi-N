@@ -16,24 +16,3 @@ let deleteGame (gameId : int) (session : Session) : Unit AsyncHttpResult =
             else Error <| HttpException(403, "Cannot delete a game created by another user.")
         )
     |> thenBindAsync (fun _ -> GameRepository.deleteGame gameId)
-
-let private isGameViewableByActiveUser (session : Session) (game : Game) : bool =
-    game.parameters.isPublic
-    || game.createdByUserId = session.userId
-    || game.players |> List.exists(fun p -> p.userId = Some session.userId)
-
-let getGames (query : GamesQuery) (session : Session) : Game list AsyncHttpResult =
-    GameRepository.getGames query
-    |> thenMap (fun games ->
-        if session.isAdmin
-        then games
-        else games |> List.filter (isGameViewableByActiveUser session)
-    )
-
-let getGame (gameId : int) (session : Session) : Game AsyncHttpResult =
-    GameRepository.getGame gameId
-    |> thenBind (fun game ->
-        if isGameViewableByActiveUser session game
-        then Ok <| game
-        else Error <| HttpException(404, "Game not found.")        
-    )

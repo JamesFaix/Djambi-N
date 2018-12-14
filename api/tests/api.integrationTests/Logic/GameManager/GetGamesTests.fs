@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.IntegrationTests.Logic.LobbyService
+﻿namespace Djambi.Api.IntegrationTests.Logic.GameManager
 
 open FSharp.Control.Tasks
 open Xunit
@@ -28,7 +28,7 @@ type GetGamesTests() =
             let query = { GamesQuery.empty with createdByUserId = Some 1 }
 
             //Act
-            let! result = GameCrudService.getGames query adminSession
+            let! result = GameManager.getGames query adminSession
                           |> AsyncHttpResult.thenValue
 
             //Assert
@@ -53,7 +53,7 @@ type GetGamesTests() =
             let query = { GamesQuery.empty with allowGuests = Some true }
 
             //Act
-            let! result = GameCrudService.getGames query adminSession
+            let! result = GameManager.getGames query adminSession
                           |> AsyncHttpResult.thenValue
 
             //Assert
@@ -78,7 +78,7 @@ type GetGamesTests() =
             let query = { GamesQuery.empty with isPublic = Some true }
 
             //Act
-            let! result = GameCrudService.getGames query adminSession
+            let! result = GameManager.getGames query adminSession
                           |> AsyncHttpResult.thenValue
 
             //Assert
@@ -106,7 +106,7 @@ type GetGamesTests() =
             let query = { GamesQuery.empty with playerUserId = Some 1 }
 
             //Act
-            let! result = GameCrudService.getGames query adminSession
+            let! result = GameManager.getGames query adminSession
                           |> AsyncHttpResult.thenValue
 
             //Assert
@@ -135,7 +135,7 @@ type GetGamesTests() =
             let query = GamesQuery.empty
 
             //Act
-            let! result = GameCrudService.getGames query session1
+            let! result = GameManager.getGames query session1
                           |> AsyncHttpResult.thenValue
 
             //Assert
