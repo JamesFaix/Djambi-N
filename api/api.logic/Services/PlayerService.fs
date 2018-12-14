@@ -10,38 +10,6 @@ open Djambi.Api.Model
 let getGamePlayers (gameId : int) (session : Session) : Player list AsyncHttpResult =
     GameRepository.getPlayersForGames [gameId]
 
-let addPlayer (gameId : int, request : CreatePlayerRequest) (session : Session) : Player AsyncHttpResult =
-    GameRepository.getGame gameId
-    |> thenBind (fun game ->
-        if game.status <> GameStatus.Pending
-        then Error <| HttpException(400, "Can only add players to pending games.")
-        else
-            match request.kind with
-            | PlayerKind.User ->
-                if request.userId.IsNone
-                then Error <| HttpException(400, "UserID must be provided when adding a user player.")
-                elif request.name.IsSome
-                then Error <| HttpException(400, "Cannot provide name when adding a user player.")
-                elif not session.isAdmin && request.userId.Value <> session.userId
-                then Error <| HttpException(403, "Cannot add other users to a game.")
-                else Ok ()
-
-            | PlayerKind.Guest ->
-                if not game.parameters.allowGuests
-                then Error <| HttpException(400, "Game does not allow guest players.")
-                elif request.userId.IsNone
-                then Error <| HttpException(400, "UserID must be provided when adding a guest player.")
-                elif request.name.IsNone
-                then Error <| HttpException(400, "Must provide name when adding a guest player.")
-                elif not session.isAdmin && request.userId.Value <> session.userId
-                then Error <| HttpException(403, "Cannot add guests for other users to a game.")
-                else Ok ()
-
-            | PlayerKind.Neutral ->
-                Error <| HttpException(400, "Cannot directly add neutral players to a game.")
-    )
-    |> thenBindAsync (fun _ -> GameRepository.addPlayer (gameId, request))
-
 let removePlayer (gameId : int, playerId : int) (session : Session) : Unit AsyncHttpResult =
     GameRepository.getGame gameId //TODO: This will error if game already started, change to allow quitting
     |> thenBindAsync (fun game ->

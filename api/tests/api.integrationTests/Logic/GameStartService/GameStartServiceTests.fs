@@ -75,7 +75,7 @@ type GameStartServiceTests() =
 
             let playerRequest = CreatePlayerRequest.guest (user.id, "test")
 
-            let! _ = PlayerService.addPlayer (game.id, playerRequest) session |> thenValue
+            let! _ = GameManager.addPlayer game.id playerRequest session |> thenValue
 
             //Act
             let! result = GameStartService.startGame game.id session
@@ -114,7 +114,7 @@ type GameStartServiceTests() =
 
             let playerRequest = CreatePlayerRequest.guest (user.id, "test")
 
-            let! _ = PlayerService.addPlayer (game.id, playerRequest) session |> thenValue
+            let! _ = GameManager.addPlayer game.id playerRequest session |> thenValue
 
             //Act
             let! updatedGame = GameStartService.startGame game.id session |> thenValue

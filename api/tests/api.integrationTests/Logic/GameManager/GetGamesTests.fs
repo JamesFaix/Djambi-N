@@ -4,7 +4,6 @@ open FSharp.Control.Tasks
 open Xunit
 open Djambi.Api.Common
 open Djambi.Api.IntegrationTests
-open Djambi.Api.Logic.Services
 open Djambi.Api.Model
 open Djambi.Api.Logic.Managers
 
@@ -101,7 +100,7 @@ type GetGamesTests() =
                           |> AsyncHttpResult.thenValue
 
             let playerRequest = { getCreatePlayerRequest with userId = Some 1 }
-            let! _ = PlayerService.addPlayer (resp1.game.id, playerRequest) adminSession
+            let! _ = GameManager.addPlayer resp1.game.id playerRequest adminSession
 
             let query = { GamesQuery.empty with playerUserId = Some 1 }
 
@@ -130,7 +129,7 @@ type GetGamesTests() =
                           |> AsyncHttpResult.thenValue
 
             let playerRequest = { getCreatePlayerRequest with userId = Some 1 }
-            let! _ = PlayerService.addPlayer (resp1.game.id, playerRequest) session1
+            let! _ = GameManager.addPlayer resp1.game.id playerRequest session1
 
             let query = GamesQuery.empty
 

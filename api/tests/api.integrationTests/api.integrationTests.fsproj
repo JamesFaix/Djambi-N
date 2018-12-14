@@ -13,6 +13,7 @@
     <Compile Include="Assertions.fs" />
     <Compile Include="TestUtilities.fs" />
     <Compile Include="TestsBase.fs" />
+    <Compile Include="Logic\GameManager\AddPlayerTests.fs" />
     <Compile Include="Logic\GameManager\GetGamesTests.fs" />
     <Compile Include="Logic\GameManager\CreateGameTests.fs" />
     <Compile Include="Logic\UserService\CreateUserTests.fs" />
@@ -25,7 +26,6 @@
     <Compile Include="Db\UserRepositoryTests.fs" />
     <Compile Include="Db\GameRepositoryTests.fs" />
     <Compile Include="Logic\SessionService\RenewSessionTests.fs" />
-    <Compile Include="Logic\PlayerService\AddPlayerTests.fs" />
     <Compile Include="Logic\PlayerService\FillEmptyPlayerSlotsTests.fs" />
     <Compile Include="Logic\PlayerService\RemovePlayerTests.fs" />
     <Compile Include="Logic\GameStartService\GameStartServiceTests.fs" />

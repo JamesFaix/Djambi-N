@@ -40,8 +40,12 @@ let updateGameParameters (gameId : int) (parameters : GameParameters) (session :
         |> thenBindAsync (EventProcessor.processEvent (Some game))
     )
 
-let addPlayer (request : CreatePlayerRequest, gameId : int) (session : Session) : Player AsyncHttpResult =
-    PlayerService.addPlayer (gameId, request) session
+let addPlayer (gameId : int) (request : CreatePlayerRequest) (session : Session) : StateAndEventResponse AsyncHttpResult =
+    GameService.getGame gameId session
+    |> thenBindAsync (fun game -> 
+        EventCalculator.addPlayer (gameId, request) session
+        |> thenBindAsync (EventProcessor.processEvent (Some game))
+    )
 
 let removePlayer (gameId : int, playerId : int) (session : Session) : Unit AsyncHttpResult =
     PlayerService.removePlayer (gameId, playerId) session

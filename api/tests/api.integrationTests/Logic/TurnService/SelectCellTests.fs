@@ -8,6 +8,7 @@ open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.IntegrationTests
 open Djambi.Api.Logic.Services
 open Djambi.Api.Model
+open Djambi.Api.Logic.Managers
 
 type SelectCellTests() =
     inherit TestsBase()
@@ -19,7 +20,7 @@ type SelectCellTests() =
             let! (user, session, game) = createuserSessionAndGame(true) |> thenValue
 
             let guestRequest = CreatePlayerRequest.guest (user.id, "test")
-            let! _ = PlayerService.addPlayer (game.id, guestRequest) session |> thenValue
+            let! _ = GameManager.addPlayer game.id guestRequest session |> thenValue
 
             let! updatedGame = GameStartService.startGame game.id session |> thenValue
 
@@ -46,7 +47,9 @@ type SelectCellTests() =
             let! user2 = createUser() |> thenValue
             let session2 = getSessionForUser user2.id
             let playerRequest = CreatePlayerRequest.user user2.id
-            let! player2 = PlayerService.addPlayer (game.id, playerRequest) session2 |> thenValue
+            let! player2 = GameManager.addPlayer game.id playerRequest session2 
+                            |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
+                            |> thenValue
 
             let! updatedGame = GameStartService.startGame game.id session1 |> thenValue
 
@@ -73,7 +76,9 @@ type SelectCellTests() =
             let! user2 = createUser() |> thenValue
             let session2 = getSessionForUser user2.id
             let playerRequest = CreatePlayerRequest.user user2.id
-            let! player2 = PlayerService.addPlayer (game.id, playerRequest) session2 |> thenValue
+            let! player2 = GameManager.addPlayer game.id playerRequest session2 
+                            |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
+                            |> thenValue
 
             let! updatedGame = GameStartService.startGame game.id session1 |> thenValue
 
@@ -104,7 +109,7 @@ type SelectCellTests() =
             let! (user, session, game) = createuserSessionAndGame(true) |> thenValue
 
             let guestRequest = CreatePlayerRequest.guest (user.id, "test")
-            let! _ = PlayerService.addPlayer (game.id, guestRequest) session |> thenValue
+            let! _ = GameManager.addPlayer game.id guestRequest session |> thenValue
 
             let! updatedGame = GameStartService.startGame game.id session |> thenValue
 
@@ -124,7 +129,7 @@ type SelectCellTests() =
             let! (user, session, game) = createuserSessionAndGame(true) |> thenValue
 
             let guestRequest = CreatePlayerRequest.guest (user.id, "test")
-            let! _ = PlayerService.addPlayer (game.id, guestRequest) session |> thenValue
+            let! _ = GameManager.addPlayer game.id guestRequest session |> thenValue
 
             let! updatedGame = GameStartService.startGame game.id session |> thenValue
 
@@ -142,7 +147,7 @@ type SelectCellTests() =
             let! (user, session, game) = createuserSessionAndGame(true) |> thenValue
 
             let guestRequest = CreatePlayerRequest.guest (user.id, "test")
-            let! _ = PlayerService.addPlayer (game.id, guestRequest) session |> thenValue
+            let! _ = GameManager.addPlayer game.id guestRequest session |> thenValue
 
             let! updatedGame = GameStartService.startGame game.id session |> thenValue
 

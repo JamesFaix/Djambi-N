@@ -24,7 +24,8 @@ type RemovePlayerTests() =
             let session = getSessionForUser user.id
             let request = CreatePlayerRequest.user user.id
 
-            let! player = PlayerService.addPlayer (game.id, request) session
+            let! player = GameManager.addPlayer game.id request session
+                          |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                           |> thenValue
 
             //Act
@@ -46,7 +47,8 @@ type RemovePlayerTests() =
             let! (user, session, game) = createuserSessionAndGame(true) |> thenValue
             let request = CreatePlayerRequest.guest (user.id, "test")
 
-            let! player = PlayerService.addPlayer (game.id, request) session
+            let! player = GameManager.addPlayer game.id request session
+                          |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                           |> thenValue
 
             //Act
@@ -70,7 +72,8 @@ type RemovePlayerTests() =
             let! user = createUser() |> thenValue
             let request = CreatePlayerRequest.user user.id
 
-            let! player = PlayerService.addPlayer (game.id, request) { session with isAdmin = true }
+            let! player = GameManager.addPlayer game.id request { session with isAdmin = true }
+                          |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                           |> thenValue
 
             //Act
@@ -96,11 +99,13 @@ type RemovePlayerTests() =
             let guestPlayerRequest = CreatePlayerRequest.guest (user.id, "test")
 
             let! userPlayer =
-                PlayerService.addPlayer (game.id, userPlayerRequest) { session with isAdmin = true }
+                GameManager.addPlayer game.id userPlayerRequest { session with isAdmin = true }
+                |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                 |> thenValue
 
             let! guestPlayer =
-                PlayerService.addPlayer (game.id, guestPlayerRequest) { session with isAdmin = true }
+                GameManager.addPlayer game.id guestPlayerRequest { session with isAdmin = true }
+                |> thenMap (fun resp -> resp.game.players |> List.except (userPlayer :: game.players) |> List.head)
                 |> thenValue
 
             //Act
@@ -127,11 +132,13 @@ type RemovePlayerTests() =
             let guestPlayerRequest = CreatePlayerRequest.guest (user.id, "test")
 
             let! userPlayer =
-                PlayerService.addPlayer (game.id, userPlayerRequest) { session with isAdmin = true }
+                GameManager.addPlayer game.id userPlayerRequest { session with isAdmin = true }
+                |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                 |> thenValue
 
             let! guestPlayer =
-                PlayerService.addPlayer (game.id, guestPlayerRequest) { session with isAdmin = true }
+                GameManager.addPlayer game.id guestPlayerRequest { session with isAdmin = true }
+                |> thenMap (fun resp -> resp.game.players |> List.except (userPlayer :: game.players) |> List.head)
                 |> thenValue
 
             //Act
@@ -174,7 +181,8 @@ type RemovePlayerTests() =
             let! user = createUser() |> thenValue
             let request = CreatePlayerRequest.user user.id
             
-            let! player = PlayerService.addPlayer (game.id, request) { session with isAdmin = true }
+            let! player = GameManager.addPlayer game.id request { session with isAdmin = true }
+                          |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                           |> thenValue
 
             //Act
@@ -198,7 +206,8 @@ type RemovePlayerTests() =
             let! user = createUser() |> thenValue
             let request = CreatePlayerRequest.user user.id
 
-            let! player = PlayerService.addPlayer (game.id, request) { session with isAdmin = true }
+            let! player = GameManager.addPlayer game.id request { session with isAdmin = true }
+                          |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                           |> thenValue
 
             //Act
@@ -222,7 +231,8 @@ type RemovePlayerTests() =
             let! user = createUser() |> thenValue
             let request = CreatePlayerRequest.guest (user.id, "test")
 
-            let! player = PlayerService.addPlayer (game.id, request) { session with isAdmin = true }
+            let! player = GameManager.addPlayer game.id request { session with isAdmin = true }
+                          |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                           |> thenValue
 
             //Act
@@ -269,7 +279,8 @@ type RemovePlayerTests() =
             let! user = createUser() |> thenValue
             let request = CreatePlayerRequest.user user.id
 
-            let! player = PlayerService.addPlayer (game1.id, request) { session with isAdmin = true }
+            let! player = GameManager.addPlayer game1.id request { session with isAdmin = true }
+                          |> thenMap (fun resp -> resp.game.players |> List.except game1.players |> List.head)
                           |> thenValue
 
             //Act
@@ -293,7 +304,8 @@ type RemovePlayerTests() =
             let! user = createUser() |> thenValue
             let request = CreatePlayerRequest.user user.id
 
-            let! player = PlayerService.addPlayer (game.id, request) { session with isAdmin = true }
+            let! player = GameManager.addPlayer game.id request { session with isAdmin = true }
+                          |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                           |> thenValue
 
             //Act
@@ -317,7 +329,8 @@ type RemovePlayerTests() =
             let! user = createUser() |> thenValue
             let request = CreatePlayerRequest.user user.id
 
-            let! player = PlayerService.addPlayer (game.id, request) { session with isAdmin = true }
+            let! player = GameManager.addPlayer game.id request { session with isAdmin = true }
+                          |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                           |> thenValue
 
             //Act
@@ -341,7 +354,8 @@ type RemovePlayerTests() =
             let! user = createUser() |> thenValue
             let request = CreatePlayerRequest.user user.id
 
-            let! player = PlayerService.addPlayer (game.id, request) { session with isAdmin = true }
+            let! player = GameManager.addPlayer game.id request { session with isAdmin = true }
+                          |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                           |> thenValue
 
             let! _ = GameStartService.startGame game.id session |> thenValue

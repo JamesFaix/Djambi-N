@@ -39,7 +39,7 @@ let startGame(gameId: int) =
 let addPlayer(gameId : int) =
     let func ctx =
         getSessionAndModelFromContext<CreatePlayerRequest> ctx
-        |> thenBindAsync (fun (request, session) -> GameManager.addPlayer(request, gameId) session)
+        |> thenBindAsync (fun (request, session) -> GameManager.addPlayer gameId request session)
     handle func
 
 let removePlayer(gameId : int, playerId : int) =
