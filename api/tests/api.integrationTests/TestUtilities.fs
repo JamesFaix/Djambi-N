@@ -8,6 +8,7 @@ open Djambi.Api.Model
 open Djambi.Utilities
 open Djambi.Api.Common
 open Djambi.Api.Logic.Services
+open Djambi.Api.Logic.Managers
 
 let private config =
     ConfigurationBuilder()
@@ -75,8 +76,8 @@ let createuserSessionAndGame(allowGuests : bool) : (UserDetails * Session * Game
         let session = getSessionForUser user.id
 
         let parameters = { getGameParameters() with allowGuests = allowGuests }
-        let! game = GameCrudService.createGame parameters session
+        let! resp = GameManager.createGame parameters session
                      |> AsyncHttpResult.thenValue
 
-        return Ok <| (user, session, game)
+        return Ok <| (user, session, resp.game)
     }

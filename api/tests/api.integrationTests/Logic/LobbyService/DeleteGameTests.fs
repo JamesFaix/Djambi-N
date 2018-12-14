@@ -6,6 +6,7 @@ open Xunit
 open Djambi.Api.Common
 open Djambi.Api.IntegrationTests
 open Djambi.Api.Logic.Services
+open Djambi.Api.Logic.Managers
 
 type DeleteGameTests() =
     inherit TestsBase()
@@ -16,11 +17,11 @@ type DeleteGameTests() =
             //Arrange
             let request = getGameParameters()
             let session = { getSessionForUser 1 with isAdmin = true }
-            let! game = GameCrudService.createGame request session
+            let! resp = GameManager.createGame request session
                          |> AsyncHttpResult.thenValue
 
             //Act
-            let! result = GameCrudService.deleteGame game.id session
+            let! result = GameCrudService.deleteGame resp.game.id session
 
             //Assert
             result |> Result.isOk |> shouldBeTrue
@@ -32,11 +33,11 @@ type DeleteGameTests() =
             //Arrange
             let request = getGameParameters()
             let session = { getSessionForUser 1 with isAdmin = false }
-            let! game = GameCrudService.createGame request session
+            let! resp = GameManager.createGame request session
                          |> AsyncHttpResult.thenValue
 
             //Act
-            let! result = GameCrudService.deleteGame game.id session
+            let! result = GameCrudService.deleteGame resp.game.id session
 
             //Assert
             result |> Result.isOk |> shouldBeTrue
@@ -48,13 +49,13 @@ type DeleteGameTests() =
             //Arrange
             let request = getGameParameters()
             let createSession = getSessionForUser 1
-            let! game = GameCrudService.createGame request createSession
+            let! resp = GameManager.createGame request createSession
                          |> AsyncHttpResult.thenValue
 
             let deleteSession = { getSessionForUser 2 with isAdmin = false }
 
             //Act
-            let! result = GameCrudService.deleteGame game.id deleteSession
+            let! result = GameCrudService.deleteGame resp.game.id deleteSession
 
             //Assert
             result |> shouldBeError 403 "Cannot delete a game created by another user."

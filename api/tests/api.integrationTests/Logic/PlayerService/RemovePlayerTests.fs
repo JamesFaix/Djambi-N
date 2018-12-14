@@ -9,6 +9,7 @@ open Djambi.Api.Logic.Services
 open Djambi.Api.Model
 open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
+open Djambi.Api.Logic.Managers
 
 type RemovePlayerTests() =
     inherit TestsBase()
@@ -262,7 +263,8 @@ type RemovePlayerTests() =
             let! (_, session, game1) = createuserSessionAndGame(false) |> thenValue
 
             let gameRequest = getGameParameters()
-            let! game2 = GameCrudService.createGame gameRequest session |> thenValue
+            let! resp2 = GameManager.createGame gameRequest session |> thenValue
+            let game2 = resp2.game
 
             let! user = createUser() |> thenValue
             let request = CreatePlayerRequest.user user.id

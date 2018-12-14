@@ -4,25 +4,6 @@ open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Db.Repositories
 open Djambi.Api.Model
-open System
-
-[<Obsolete>]
-let createGame (parameters : GameParameters) (session : Session) : Game AsyncHttpResult =
-    let gameRequest =   
-        {
-            parameters = parameters
-            createdByUserId = session.userId
-        }
-
-    //Create game
-    GameRepository.createGame gameRequest
-    |> thenBindAsync (fun gameId ->
-        //Add self as first player
-        let playerRequest = CreatePlayerRequest.user session.userId
-        GameRepository.addPlayer (gameId, playerRequest)
-        //Return game
-        |> thenBindAsync (fun _ -> GameRepository.getGame gameId)
-    )
 
 let deleteGame (gameId : int) (session : Session) : Unit AsyncHttpResult =
     if session.isAdmin

@@ -6,6 +6,7 @@ open Djambi.Api.Common
 open Djambi.Api.IntegrationTests
 open Djambi.Api.Logic.Services
 open Djambi.Api.Model
+open Djambi.Api.Logic.Managers
 
 type GetGamesTests() =
     inherit TestsBase()
@@ -19,9 +20,9 @@ type GetGamesTests() =
             let session2 = getSessionForUser 2
             let adminSession = { getSessionForUser 3 with isAdmin = true }
 
-            let! game1 = GameCrudService.createGame request session1
+            let! resp1 = GameManager.createGame request session1
                           |> AsyncHttpResult.thenValue
-            let! game2 = GameCrudService.createGame request session2
+            let! resp2 = GameManager.createGame request session2
                           |> AsyncHttpResult.thenValue
 
             let query = { GamesQuery.empty with createdByUserId = Some 1 }
@@ -31,8 +32,8 @@ type GetGamesTests() =
                           |> AsyncHttpResult.thenValue
 
             //Assert
-            result |> shouldExist (fun l -> l.id = game1.id)
-            result |> shouldNotExist (fun l -> l.id = game2.id)
+            result |> shouldExist (fun l -> l.id = resp1.game.id)
+            result |> shouldNotExist (fun l -> l.id = resp2.game.id)
         }
 
     [<Fact>]
@@ -44,9 +45,9 @@ type GetGamesTests() =
             let session2 = getSessionForUser 2
             let adminSession = { getSessionForUser 3 with isAdmin = true }
 
-            let! game1 = GameCrudService.createGame request session1
+            let! resp1 = GameManager.createGame request session1
                           |> AsyncHttpResult.thenValue
-            let! game2 = GameCrudService.createGame { request with allowGuests = true } session2
+            let! resp2 = GameManager.createGame { request with allowGuests = true } session2
                           |> AsyncHttpResult.thenValue
 
             let query = { GamesQuery.empty with allowGuests = Some true }
@@ -56,8 +57,8 @@ type GetGamesTests() =
                           |> AsyncHttpResult.thenValue
 
             //Assert
-            result |> shouldNotExist (fun l -> l.id = game1.id)
-            result |> shouldExist (fun l -> l.id = game2.id)
+            result |> shouldNotExist (fun l -> l.id = resp1.game.id)
+            result |> shouldExist (fun l -> l.id = resp2.game.id)
         }
 
     [<Fact>]
@@ -69,9 +70,9 @@ type GetGamesTests() =
             let session2 = getSessionForUser 2
             let adminSession = { getSessionForUser 3 with isAdmin = true }
 
-            let! game1 = GameCrudService.createGame request session1
+            let! resp1 = GameManager.createGame request session1
                           |> AsyncHttpResult.thenValue
-            let! game2 = GameCrudService.createGame { request with isPublic = true } session2
+            let! resp2 = GameManager.createGame { request with isPublic = true } session2
                           |> AsyncHttpResult.thenValue
 
             let query = { GamesQuery.empty with isPublic = Some true }
@@ -81,8 +82,8 @@ type GetGamesTests() =
                           |> AsyncHttpResult.thenValue
 
             //Assert
-            result |> shouldNotExist (fun l -> l.id = game1.id)
-            result |> shouldExist (fun l -> l.id = game2.id)
+            result |> shouldNotExist (fun l -> l.id = resp1.game.id)
+            result |> shouldExist (fun l -> l.id = resp2.game.id)
         }
 
     [<Fact>]
@@ -94,13 +95,13 @@ type GetGamesTests() =
             let session2 = getSessionForUser 2
             let adminSession = { getSessionForUser 3 with isAdmin = true }
 
-            let! game1 = GameCrudService.createGame request session1
+            let! resp1 = GameManager.createGame request session1
                           |> AsyncHttpResult.thenValue
-            let! game2 = GameCrudService.createGame request session2
+            let! resp2 = GameManager.createGame request session2
                           |> AsyncHttpResult.thenValue
 
             let playerRequest = { getCreatePlayerRequest with userId = Some 1 }
-            let! _ = PlayerService.addPlayer (game1.id, playerRequest) adminSession
+            let! _ = PlayerService.addPlayer (resp1.game.id, playerRequest) adminSession
 
             let query = { GamesQuery.empty with playerUserId = Some 1 }
 
@@ -109,8 +110,8 @@ type GetGamesTests() =
                           |> AsyncHttpResult.thenValue
 
             //Assert
-            result |> shouldExist (fun l -> l.id = game1.id)
-            result |> shouldNotExist (fun l -> l.id = game2.id)
+            result |> shouldExist (fun l -> l.id = resp1.game.id)
+            result |> shouldNotExist (fun l -> l.id = resp2.game.id)
         }
 
     [<Fact>]
@@ -121,15 +122,15 @@ type GetGamesTests() =
             let session1 = getSessionForUser 1
             let session2 = getSessionForUser 2
 
-            let! game1 = GameCrudService.createGame request session1
+            let! resp1 = GameManager.createGame request session1
                           |> AsyncHttpResult.thenValue
-            let! game2 = GameCrudService.createGame request session2
+            let! resp2 = GameManager.createGame request session2
                           |> AsyncHttpResult.thenValue
-            let! game3 = GameCrudService.createGame { request with isPublic = true } session2
+            let! resp3 = GameManager.createGame { request with isPublic = true } session2
                           |> AsyncHttpResult.thenValue
 
             let playerRequest = { getCreatePlayerRequest with userId = Some 1 }
-            let! _ = PlayerService.addPlayer (game1.id, playerRequest) session1
+            let! _ = PlayerService.addPlayer (resp1.game.id, playerRequest) session1
 
             let query = GamesQuery.empty
 
@@ -138,7 +139,7 @@ type GetGamesTests() =
                           |> AsyncHttpResult.thenValue
 
             //Assert
-            result |> shouldExist (fun l -> l.id = game1.id)
-            result |> shouldNotExist (fun l -> l.id = game2.id)
-            result |> shouldExist (fun l -> l.id = game3.id)
+            result |> shouldExist (fun l -> l.id = resp1.game.id)
+            result |> shouldNotExist (fun l -> l.id = resp2.game.id)
+            result |> shouldExist (fun l -> l.id = resp3.game.id)
         }
