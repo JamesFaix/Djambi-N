@@ -47,8 +47,12 @@ let addPlayer (gameId : int) (request : CreatePlayerRequest) (session : Session)
         |> thenBindAsync (EventProcessor.processEvent (Some game))
     )
 
-let removePlayer (gameId : int, playerId : int) (session : Session) : Unit AsyncHttpResult =
-    PlayerService.removePlayer (gameId, playerId) session
+let removePlayer (gameId : int, playerId : int) (session : Session) : StateAndEventResponse AsyncHttpResult =
+    GameService.getGame gameId session
+    |> thenBindAsync (fun game -> 
+        EventCalculator.removePlayer (gameId, playerId) session
+        |> thenBindAsync (EventProcessor.processEvent (Some game))
+    )
 
 let startGame (gameId: int) (session : Session) : Game AsyncHttpResult =
     GameStartService.startGame gameId session

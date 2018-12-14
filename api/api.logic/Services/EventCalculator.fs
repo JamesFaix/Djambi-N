@@ -89,3 +89,48 @@ let addPlayer (gameId : int, request : CreatePlayerRequest) (session : Session) 
                 Error <| HttpException(400, "Cannot directly add neutral players to a game.")
     )
     |> thenMap (fun _ -> Event.playerJoined request)
+
+//TODO: Add integration tests
+let removePlayer (gameId : int, playerId : int) (session : Session) : Event AsyncHttpResult =
+    GameRepository.getGame gameId
+    |> thenBind (fun game ->
+        match game.status with
+        | Aborted | AbortedWhilePending | Finished -> 
+            Error <| HttpException(400, "Cannot remove players from finished or aborted games.")
+        | _ ->
+            match game.players |> List.tryFind (fun p -> p.id = playerId) with
+            | None -> Error <| HttpException(404, "Player not found.")
+            | Some player ->
+                match player.userId with
+                | None -> Error <| HttpException(400, "Cannot remove neutral players from game.")
+                | Some x ->
+                    if not <| (session.isAdmin
+                        || game.createdByUserId = session.userId
+                        || x = session.userId)
+                    then Error <| HttpException(403, "Cannot remove other users from game.")        
+                    else 
+                        let effects = new ArrayList<EventEffect>()
+
+                        let playerIdsToRemove =
+                            match player.kind with 
+                            | User -> 
+                                game.players 
+                                |> List.filter (fun p -> p.userId = player.userId) 
+                                |> List.map (fun p -> p.id)
+                            | Guest -> [playerId]
+                            | _ -> List.empty //Already eliminated this case in validation above
+
+                        effects.Add(EventEffect.playersRemoved(playerIdsToRemove))
+
+                        //Cancel game if Pending and creator quit
+                        if game.status = GameStatus.Pending
+                            && game.createdByUserId = player.userId.Value
+                            && player.kind = PlayerKind.User
+                        then 
+                            effects.Add(EventEffect.gameStatusChanged(GameStatus.Pending, GameStatus.AbortedWhilePending))
+                        else ()
+
+                        if player.userId = Some session.userId
+                        then Ok <| Event.playerQuit(effects |> Seq.toList)
+                        else Ok <| Event.playerEjected(effects |> Seq.toList)
+    )

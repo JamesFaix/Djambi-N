@@ -198,11 +198,11 @@ module Event =
             effects = [ EventEffect.playerAdded(player) ]
         }
 
-    let playerEjected (playerAndGuestIds) =
+    let playerEjected (effects) =
         Event.PlayerEjected {
             kind = EventKind.PlayerEjected
             timestamp = DateTime.UtcNow
-            effects = [ EventEffect.playersRemoved(playerAndGuestIds) ]
+            effects = effects
         }
 
     let playerQuit (effects) =

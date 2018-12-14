@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.IntegrationTests.Logic.PlayerService
+﻿namespace Djambi.Api.IntegrationTests.Logic.GameManager
 
 open System
 open FSharp.Control.Tasks
@@ -7,7 +7,6 @@ open Djambi.Api.Common
 open Djambi.Api.IntegrationTests
 open Djambi.Api.Logic.Services
 open Djambi.Api.Model
-open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Logic.Managers
 
@@ -29,15 +28,11 @@ type RemovePlayerTests() =
                           |> thenValue
 
             //Act
-            let! result = PlayerService.removePlayer (game.id, player.id) session
+            let! resp = GameManager.removePlayer (game.id, player.id) session
+                        |> thenValue
 
             //Assert
-            result |> Result.isOk |> shouldBeTrue
-
-            let! players = PlayerService.getGamePlayers game.id session
-                           |> thenValue
-
-            players |> shouldNotExist (fun p -> p.id = player.id)
+            resp.game.players |> shouldNotExist (fun p -> p.id = player.id)
         }
 
     [<Fact>]
@@ -52,15 +47,11 @@ type RemovePlayerTests() =
                           |> thenValue
 
             //Act
-            let! result = PlayerService.removePlayer (game.id, player.id) session
+            let! resp = GameManager.removePlayer (game.id, player.id) session
+                        |> thenValue
 
             //Assert
-            result |> Result.isOk |> shouldBeTrue
-
-            let! players = PlayerService.getGamePlayers game.id session
-                           |> thenValue
-
-            players |> shouldNotExist (fun p -> p.id = player.id)
+            resp.game.players |> shouldNotExist (fun p -> p.id = player.id)
         }
 
     [<Fact>]
@@ -77,15 +68,11 @@ type RemovePlayerTests() =
                           |> thenValue
 
             //Act
-            let! result = PlayerService.removePlayer (game.id, player.id) { session with isAdmin = true; userId = Int32.MinValue }
+            let! resp = GameManager.removePlayer (game.id, player.id) { session with isAdmin = true; userId = Int32.MinValue }
+                        |> thenValue
 
             //Assert
-            result |> Result.isOk |> shouldBeTrue
-
-            let! players = PlayerService.getGamePlayers game.id session
-                           |> thenValue
-
-            players |> shouldNotExist (fun p -> p.id = player.id)
+            resp.game.players |> shouldNotExist (fun p -> p.id = player.id)
         }
 
     [<Fact>]
@@ -109,16 +96,12 @@ type RemovePlayerTests() =
                 |> thenValue
 
             //Act
-            let! result = PlayerService.removePlayer (game.id, userPlayer.id) { session with isAdmin = true }
+            let! resp = GameManager.removePlayer (game.id, userPlayer.id) { session with isAdmin = true }
+                        |> thenValue
 
             //Assert
-            result |> Result.isOk |> shouldBeTrue
-
-            let! players = PlayerService.getGamePlayers game.id session
-                           |> thenValue
-
-            players |> shouldNotExist (fun p -> p.id = userPlayer.id)
-            players |> shouldNotExist (fun p -> p.id = guestPlayer.id)
+            resp.game.players |> shouldNotExist (fun p -> p.id = userPlayer.id)
+            resp.game.players |> shouldNotExist (fun p -> p.id = guestPlayer.id)
         }
 
     [<Fact>]
@@ -142,16 +125,12 @@ type RemovePlayerTests() =
                 |> thenValue
 
             //Act
-            let! result = PlayerService.removePlayer (game.id, guestPlayer.id) { session with isAdmin = true }
+            let! resp = GameManager.removePlayer (game.id, guestPlayer.id) { session with isAdmin = true }
+                        |> thenValue
 
             //Assert
-            result |> Result.isOk |> shouldBeTrue
-
-            let! players = PlayerService.getGamePlayers game.id session
-                           |> thenValue
-
-            players |> shouldExist (fun p -> p.id = userPlayer.id)
-            players |> shouldNotExist (fun p -> p.id = guestPlayer.id)
+            resp.game.players |> shouldExist (fun p -> p.id = userPlayer.id)
+            resp.game.players |> shouldNotExist (fun p -> p.id = guestPlayer.id)
         }
 
     [<Fact>]
@@ -163,13 +142,11 @@ type RemovePlayerTests() =
             let creator = players |> List.head
 
             //Act
-            let! result = PlayerService.removePlayer (game.id, creator.id) session
+            let! resp = GameManager.removePlayer (game.id, creator.id) session
+                        |> thenValue
 
             //Assert
-            result |> Result.isOk |> shouldBeTrue
-
-            let! game = GameService.getGame game.id session |> thenValue
-            game.status |> shouldBe GameStatus.AbortedWhilePending
+            resp.game.status |> shouldBe GameStatus.AbortedWhilePending
         }
 
     [<Fact>]
@@ -186,15 +163,11 @@ type RemovePlayerTests() =
                           |> thenValue
 
             //Act
-            let! result = PlayerService.removePlayer (game.id, player.id) { session with isAdmin = false }
+            let! resp = GameManager.removePlayer (game.id, player.id) { session with isAdmin = false }
+                        |> thenValue
 
             //Assert
-            result |> Result.isOk |> shouldBeTrue
-
-            let! players = PlayerService.getGamePlayers game.id session
-                           |> thenValue
-
-            players |> shouldNotExist (fun p -> p.id = player.id)
+            resp.game.players |> shouldNotExist (fun p -> p.id = player.id)
         }
 
     [<Fact>]
@@ -211,7 +184,7 @@ type RemovePlayerTests() =
                           |> thenValue
 
             //Act
-            let! error = PlayerService.removePlayer (game.id, player.id) { session with isAdmin = false; userId = Int32.MinValue }
+            let! error = GameManager.removePlayer (game.id, player.id) { session with isAdmin = false; userId = Int32.MinValue }
 
             //Assert
             error |> shouldBeError 403 "Cannot remove other users from game."
@@ -236,7 +209,7 @@ type RemovePlayerTests() =
                           |> thenValue
 
             //Act
-            let! error = PlayerService.removePlayer (game.id, player.id) { session with isAdmin = false; userId = Int32.MinValue }
+            let! error = GameManager.removePlayer (game.id, player.id) { session with isAdmin = false; userId = Int32.MinValue }
 
             //Assert
             error |> shouldBeError 403 "Cannot remove other users from game."
@@ -260,7 +233,7 @@ type RemovePlayerTests() =
                                 |> List.head
 
             //Act
-            let! error = PlayerService.removePlayer (game.id, neutralPlayer.id) session
+            let! error = GameManager.removePlayer (game.id, neutralPlayer.id) session
 
             //Assert
             error |> shouldBeError 400 "Cannot remove neutral players from game."
@@ -284,7 +257,7 @@ type RemovePlayerTests() =
                           |> thenValue
 
             //Act
-            let! error = PlayerService.removePlayer (game2.id, player.id) { session with isAdmin = true }
+            let! error = GameManager.removePlayer (game2.id, player.id) { session with isAdmin = true }
 
             //Assert
             error |> shouldBeError 404 "Player not found."
@@ -309,7 +282,7 @@ type RemovePlayerTests() =
                           |> thenValue
 
             //Act
-            let! error = PlayerService.removePlayer (Int32.MinValue, player.id) { session with isAdmin = true }
+            let! error = GameManager.removePlayer (Int32.MinValue, player.id) { session with isAdmin = true }
 
             //Assert
             error |> shouldBeError 404 "Game not found."
@@ -334,7 +307,7 @@ type RemovePlayerTests() =
                           |> thenValue
 
             //Act
-            let! error = PlayerService.removePlayer (game.id, Int32.MinValue) { session with isAdmin = true }
+            let! error = GameManager.removePlayer (game.id, Int32.MinValue) { session with isAdmin = true }
 
             //Assert
             error |> shouldBeError 404 "Player not found."
@@ -345,6 +318,7 @@ type RemovePlayerTests() =
             players |> shouldExist (fun p -> p.id = player.id)
         }
 
+    //TODO: This should be changed when player statuses are added
     [<Fact>]
     let ``Remove player should work if game already started``() =
         task {
@@ -361,7 +335,7 @@ type RemovePlayerTests() =
             let! _ = GameStartService.startGame game.id session |> thenValue
 
             //Act
-            let! result = PlayerService.removePlayer (game.id, player.id) { session with isAdmin = true }
+            let! result = GameManager.removePlayer (game.id, player.id) { session with isAdmin = true }
 
             //Assert
             result |> Result.isOk |> shouldBeTrue
