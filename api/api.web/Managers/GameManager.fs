@@ -3,6 +3,7 @@
 open Djambi.Api.Logic.Services
 open Djambi.Api.Common
 open Djambi.Api.Model
+open Djambi.Api.Common.AsyncHttpResult
 
 let getGames (query : GamesQuery) (session : Session) : Game list AsyncHttpResult =
     GameCrudService.getGames query session
@@ -10,14 +11,19 @@ let getGames (query : GamesQuery) (session : Session) : Game list AsyncHttpResul
 let getGame (gameId : int) (session : Session) : Game AsyncHttpResult =
     GameCrudService.getGame gameId session
 
-let createGame (parameters : GameParameters) (session : Session) : Game AsyncHttpResult =
-    GameCrudService.createGame parameters session
+let createGame (parameters : GameParameters) (session : Session) : StateAndEventResponse AsyncHttpResult =
+    EventCalculator.createGame parameters session
+    |> thenBindAsync (EventProcessor.processEvent None)
 
 let deleteGame (gameId : int) (session : Session) : Unit AsyncHttpResult =
     GameCrudService.deleteGame gameId session
- 
-let updateGameParameters (gameId : int) (parameters : GameParameters) (session : Session) : Game AsyncHttpResult =
-    GameCrudService.updateGameParameters (gameId, parameters) session
+
+let updateGameParameters (gameId : int) (parameters : GameParameters) (session : Session) : StateAndEventResponse AsyncHttpResult =
+    GameService.getGame gameId session
+    |> thenBindAsync (fun game -> 
+        EventCalculator.updateGameParameters (gameId, parameters) session
+        |> thenBindAsync (EventProcessor.processEvent (Some game))
+    )
 
 let addPlayer (request : CreatePlayerRequest, gameId : int) (session : Session) : Player AsyncHttpResult =
     PlayerService.addPlayer (gameId, request) session

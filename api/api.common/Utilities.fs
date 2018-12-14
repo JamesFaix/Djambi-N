@@ -30,6 +30,22 @@ let shuffle<'a> (xs : 'a seq) : 'a seq =
         list.[n] <- value
     list :> 'a seq
 
+let replaceIf<'a> (predicate : 'a -> bool) (replace : 'a -> 'a) (list : 'a list) : 'a list =
+    list
+    |> List.map (fun x -> 
+        if predicate x
+        then replace x
+        else x
+    )
+
+let exceptWithKey<'a, 'key when 'key : equality> (keySelector : 'a -> 'key) (keyList : 'key list) (list : 'a list) : 'a list =
+    list 
+    |> List.filter (fun x -> 
+        let key = keySelector x
+        keyList |> List.contains key |> not
+    )
+ 
+
 let nullableToOption<'a when 'a : struct
                 and 'a :> ValueType
                 and 'a : (new: Unit -> 'a)>

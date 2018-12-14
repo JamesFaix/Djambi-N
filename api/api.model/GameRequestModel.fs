@@ -139,3 +139,9 @@ type SetPlayerStartConditionsRequest =
         startingRegion : int
         startingTurnNumber : int option
     }
+
+type CreateGameRequest =
+    {
+        parameters : GameParameters
+        createdByUserId : int
+    }

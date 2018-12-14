@@ -4,10 +4,18 @@ open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Db.Repositories
 open Djambi.Api.Model
+open System
 
+[<Obsolete>]
 let createGame (parameters : GameParameters) (session : Session) : Game AsyncHttpResult =
+    let gameRequest =   
+        {
+            parameters = parameters
+            createdByUserId = session.userId
+        }
+
     //Create game
-    GameRepository.createGame (parameters, session.userId)
+    GameRepository.createGame gameRequest
     |> thenBindAsync (fun gameId ->
         //Add self as first player
         let playerRequest = CreatePlayerRequest.user session.userId
@@ -28,35 +36,23 @@ let deleteGame (gameId : int) (session : Session) : Unit AsyncHttpResult =
         )
     |> thenBindAsync (fun _ -> GameRepository.deleteGame gameId)
 
-let getGames (query : GamesQuery) (session : Session) : Game list AsyncHttpResult =
-    let isViewableByActiveUser (game : Game) : bool =
-        game.parameters.isPublic
-        || game.createdByUserId = session.userId
+let private isGameViewableByActiveUser (session : Session) (game : Game) : bool =
+    game.parameters.isPublic
+    || game.createdByUserId = session.userId
+    || game.players |> List.exists(fun p -> p.userId = Some session.userId)
 
+let getGames (query : GamesQuery) (session : Session) : Game list AsyncHttpResult =
     GameRepository.getGames query
     |> thenMap (fun games ->
         if session.isAdmin
         then games
-        else games |> List.filter isViewableByActiveUser
+        else games |> List.filter (isGameViewableByActiveUser session)
     )
 
 let getGame (gameId : int) (session : Session) : Game AsyncHttpResult =
     GameRepository.getGame gameId
     |> thenBind (fun game ->
-        if (game.parameters.isPublic
-            || game.createdByUserId = session.userId
-            || game.players |> List.exists(fun p -> p.userId.IsSome
-                                                 && p.userId.Value = session.userId))
+        if isGameViewableByActiveUser session game
         then Ok <| game
         else Error <| HttpException(404, "Game not found.")        
-    )
-
-let updateGameParameters (gameId : int, parameters : GameParameters) (session : Session) : Game AsyncHttpResult =
-    GameRepository.getGame gameId
-    |> thenBindAsync (fun game -> 
-        if not (session.isAdmin || session.userId = game.createdByUserId)
-        then errorTask <| HttpException(403, "Cannot change game parameters of game created by another user.")
-        else 
-            GameRepository.updateGameParameters gameId parameters
-            |> thenBindAsync (fun _ -> GameRepository.getGame gameId)    
     )

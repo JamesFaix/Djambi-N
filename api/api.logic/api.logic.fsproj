@@ -17,6 +17,8 @@
     <Compile Include="Services\GameStartService.fs" />
     <Compile Include="Services\TurnService.fs" />
     <Compile Include="Services\GameService.fs" />
+    <Compile Include="Services\EventCalculator.fs" />
+    <Compile Include="Services\EventProcessor.fs" />
   </ItemGroup>
 
   <ItemGroup>

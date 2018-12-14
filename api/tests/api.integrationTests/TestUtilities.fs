@@ -39,6 +39,12 @@ let getGameParameters() : GameParameters =
         allowGuests = false
     }
 
+let getCreateGameRequest (userId : int) : CreateGameRequest =
+    {
+        parameters = getGameParameters()
+        createdByUserId = userId
+    }
+
 let getCreatePlayerRequest : CreatePlayerRequest =
     {
         kind = PlayerKind.User

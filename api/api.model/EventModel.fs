@@ -4,6 +4,7 @@ module Djambi.Api.Model.EventModel
 open System
 
 type EffectKind =
+    | GameCreated
     | GameStatusChanged
     | PlayerEliminated
     | PiecesOwnershipChanged
@@ -37,6 +38,7 @@ type DiffWithContextEffect<'a, 'b> =
     }
 
 type EventEffect =
+    | GameCreated of ScalarEffect<CreateGameRequest>
     | GameStatusChanged of DiffEffect<GameStatus>
     | TurnCycleChanged of DiffEffect<int list>
     | ParametersChanged of DiffEffect<GameParameters>
@@ -45,11 +47,17 @@ type EventEffect =
     | PieceKilled of ScalarEffect<int>
     | PlayersRemoved of ScalarEffect<int list>
     | PlayerOutOfMoves of ScalarEffect<int>
-    | PlayerAdded of ScalarEffect<Player>
-    | PiecesOwnershipChanged of DiffWithContextEffect<int list, int>
+    | PlayerAdded of ScalarEffect<CreatePlayerRequest>
+    | PiecesOwnershipChanged of DiffWithContextEffect<int option, int list>
     | PieceMoved of DiffWithContextEffect<int, int>
 
 module EventEffect =
+    let gameCreated (request) =
+        EventEffect.GameCreated {
+            kind = EffectKind.GameCreated
+            value = request
+        }
+
     let gameStatusChanged (oldValue, newValue) =
         EventEffect.GameStatusChanged {
             kind = EffectKind.GameStatusChanged
@@ -77,10 +85,10 @@ module EventEffect =
             value = playerId
         }
 
-    let playerAdded (player) =
+    let playerAdded (request) =
         EventEffect.PlayerAdded {
             kind = EffectKind.PlayerAdded
-            value = player
+            value = request
         }
 
     let playerOutOfMoves (playerId) =
@@ -148,58 +156,81 @@ type Event =
     | PlayerJoined of BasicEvent
     | PlayerEjected of BasicEvent
     | PlayerQuit of BasicEvent
-    | GameCreated of EventWithContext<Game>
-    | GameStarted of EventWithContext<Game>
+    | GameCreated of BasicEvent
+    | GameStarted of BasicEvent
     | TurnCommitted of EventWithContext<Turn>
 
+type Event with
+    member x.getEffects() =
+        match x with            
+        | GameParametersChanged e 
+        | GameCanceled e 
+        | PlayerJoined e
+        | PlayerEjected e
+        | PlayerQuit e ->
+            e.effects
+        | GameCreated e 
+        | GameStarted e -> 
+            e.effects
+        | TurnCommitted e ->
+            e.effects
+            
+
 module Event =
-    let gameParametersChanged (timestamp, oldParameters, newParameters) =
+    let gameParametersChanged (effects) =
         Event.GameParametersChanged {
             kind = EventKind.GameParametersChanged
-            timestamp = timestamp
-            effects = [ EventEffect.parametersChanged(oldParameters, newParameters) ]
-        }
-
-    let gameCanceled (timestamp) =
-        Event.GameCanceled {
-            kind = EventKind.GameCanceled
-            timestamp = timestamp
-            effects = [ EventEffect.gameStatusChanged(GameStatus.Pending, GameStatus.AbortedWhilePending) ]
-        }
-
-    let playerJoined (timestamp, player) =
-        Event.PlayerJoined {
-            kind = EventKind.PlayerJoined
-            timestamp = timestamp
-            effects = [ EventEffect.playerAdded(player) ]
-        }
-
-    let playerEjected (timestamp, playerAndGuestIds) =
-        Event.PlayerEjected {
-            kind = EventKind.PlayerEjected
-            timestamp = timestamp
-            effects = [ EventEffect.PlayersRemoved(playerAndGuestIds) ]
-        }
-
-    let playerQuit (timestamp, effects) =
-        Event.PlayerQuit {
-            kind = EventKind.PlayerQuit
-            timestamp = timestamp
+            timestamp = DateTime.UtcNow
             effects = effects
         }
 
-    let gameCreated (timestamp, game) =
-        Event.GameCreated {
-            kind = EventKind.GameCreated
-            timestamp = timestamp
-            effects = []
-            context = game
+    let gameCanceled () =
+        Event.GameCanceled {
+            kind = EventKind.GameCanceled
+            timestamp = DateTime.UtcNow
+            effects = [ EventEffect.gameStatusChanged(GameStatus.Pending, GameStatus.AbortedWhilePending) ]
         }
 
-    let gameStarted (timestamp, game) =
+    let playerJoined (player) =
+        Event.PlayerJoined {
+            kind = EventKind.PlayerJoined
+            timestamp = DateTime.UtcNow
+            effects = [ EventEffect.playerAdded(player) ]
+        }
+
+    let playerEjected (playerAndGuestIds) =
+        Event.PlayerEjected {
+            kind = EventKind.PlayerEjected
+            timestamp = DateTime.UtcNow
+            effects = [ EventEffect.playersRemoved(playerAndGuestIds) ]
+        }
+
+    let playerQuit (effects) =
+        Event.PlayerQuit {
+            kind = EventKind.PlayerQuit
+            timestamp = DateTime.UtcNow
+            effects = effects
+        }
+
+    let gameCreated (gameRequest, playerRequest) =
+        Event.GameCreated {
+            kind = EventKind.GameCreated
+            timestamp = DateTime.UtcNow
+            effects = [
+                EventEffect.gameCreated(gameRequest)
+                EventEffect.playerAdded(playerRequest)
+            ]
+        }
+
+    let gameStarted () =
         Event.GameStarted {
             kind = EventKind.GameStarted
-            timestamp = timestamp
+            timestamp = DateTime.UtcNow
             effects = [ EventEffect.gameStatusChanged(GameStatus.Pending, GameStatus.Started) ]
-            context = game
         }
+
+type StateAndEventResponse =    
+    {
+        game : Game
+        event : Event
+    }

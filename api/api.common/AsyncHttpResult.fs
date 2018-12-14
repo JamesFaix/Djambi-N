@@ -73,6 +73,28 @@ module AsyncHttpResult =
 
         t |> thenBindAsync doEachAsync
 
+    let applyEachAsync<'a>
+        (projections : seq<'a -> 'a AsyncHttpResult>)
+        (seed : 'a)
+        : 'a AsyncHttpResult =
+        task {
+            let mutable result = Ok seed
+            let mutable stop = false
+            
+            use e = projections.GetEnumerator()
+            while not stop && e.MoveNext() do
+                let projection = e.Current
+                let input = result |> Result.value
+                let! res = projection input
+                result <- res
+
+                if Result.isError res 
+                then stop <- true
+                else ()
+
+            return result        
+        }
+
     let thenReplaceError
         (statusCode : int)
         (newException : HttpException)
