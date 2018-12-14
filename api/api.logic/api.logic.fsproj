@@ -19,6 +19,10 @@
     <Compile Include="Services\GameService.fs" />
     <Compile Include="Services\EventCalculator.fs" />
     <Compile Include="Services\EventProcessor.fs" />
+    <Compile Include="Managers\BoardManager.fs" />
+    <Compile Include="Managers\GameManager.fs" />
+    <Compile Include="Managers\SessionManager.fs" />
+    <Compile Include="Managers\UserManager.fs" />
   </ItemGroup>
 
   <ItemGroup>

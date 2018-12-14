@@ -1,4 +1,4 @@
-﻿module Djambi.Api.Web.Managers.SessionManager
+﻿module Djambi.Api.Logic.Managers.SessionManager
 
 open System
 open Djambi.Api.Common

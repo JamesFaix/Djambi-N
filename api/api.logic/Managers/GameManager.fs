@@ -1,4 +1,4 @@
-﻿module Djambi.Api.Web.Managers.GameManager
+﻿module Djambi.Api.Logic.Managers.GameManager
 
 open Djambi.Api.Logic.Services
 open Djambi.Api.Common

@@ -6,7 +6,7 @@ open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Common.Utilities
 open Djambi.Api.Web
 open Djambi.Api.Web.HttpUtility
-open Djambi.Api.Web.Managers
+open Djambi.Api.Logic.Managers
 open Djambi.Api.Model.SessionModel
 
 let appendCookie (ctx : HttpContext) (sessionToken : string, expiration : DateTime) =
