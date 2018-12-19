@@ -222,11 +222,11 @@ module Event =
             ]
         }
 
-    let gameStarted () =
+    let gameStarted (effects) =
         Event.GameStarted {
             kind = EventKind.GameStarted
             timestamp = DateTime.UtcNow
-            effects = [ EventEffect.gameStatusChanged(GameStatus.Pending, GameStatus.Started) ]
+            effects = effects
         }
 
 type StateAndEventResponse =    

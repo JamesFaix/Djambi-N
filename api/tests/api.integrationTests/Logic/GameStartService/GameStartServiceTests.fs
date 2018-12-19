@@ -4,7 +4,6 @@ open FSharp.Control.Tasks
 open Xunit
 open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
-open Djambi.Api.Db.Repositories
 open Djambi.Api.IntegrationTests
 open Djambi.Api.Logic.ModelExtensions
 open Djambi.Api.Logic.Services
@@ -21,7 +20,7 @@ type GameStartServiceTests() =
             let session = getSessionForUser 1
             let parameters = getGameParameters()
             let! game = GameManager.createGame parameters session
-                        |> thenBindAsync (fun resp -> PlayerService.fillEmptyPlayerSlots resp.game)
+                        |> thenBindAsync (fun resp -> TestUtilities.fillEmptyPlayerSlots resp.game)
                         |> thenValue
 
             //Act
@@ -44,7 +43,7 @@ type GameStartServiceTests() =
             let session = getSessionForUser 1
             let parameters = getGameParameters()
             let! game = GameManager.createGame parameters session 
-                        |> thenBindAsync (fun resp -> PlayerService.fillEmptyPlayerSlots resp.game)
+                        |> thenBindAsync (fun resp -> TestUtilities.fillEmptyPlayerSlots resp.game)
                         |> thenValue
             let playersWithStartConditions = GameStartService.assignStartingConditions game.players
             let board = BoardModelUtility.getBoardMetadata(game.parameters.regionCount)
@@ -68,45 +67,6 @@ type GameStartServiceTests() =
         }
 
     [<Fact>]
-    let ``Start game should work``() =
-        task {
-            //Arrange
-            let! (user, session, game) = createuserSessionAndGame(true) |> thenValue
-
-            let playerRequest = CreatePlayerRequest.guest (user.id, "test")
-
-            let! _ = GameManager.addPlayer game.id playerRequest session |> thenValue
-
-            //Act
-            let! result = GameStartService.startGame game.id session
-
-            //Assert
-            result |> Result.isOk |> shouldBeTrue
-
-            let updatedGame = result |> Result.value
-
-            updatedGame.status |> shouldBe GameStatus.Started
-            updatedGame.players.Length |> shouldBe game.parameters.regionCount
-            updatedGame.pieces.Length |> shouldBe (9 * game.parameters.regionCount)
-        }
-
-    [<Fact>]
-    let ``Start game should fail if only one non-neutral player``() =
-        task {
-             //Arrange
-            let! (user, session, game) = createuserSessionAndGame(true) |> thenValue
-
-            //Act
-            let! result = GameStartService.startGame game.id session
-
-            //Assert
-            result |> shouldBeError 400 "Cannot start game with only one player."
-
-            let! lobbyResult = GameRepository.getGame game.id
-            lobbyResult |> Result.isOk |> shouldBeTrue
-        }
-
-    [<Fact>]
     let ``Neutral players should not be in the turn cycle``() =
         task {
             //Arrange
@@ -117,13 +77,11 @@ type GameStartServiceTests() =
             let! _ = GameManager.addPlayer game.id playerRequest session |> thenValue
 
             //Act
-            let! updatedGame = GameStartService.startGame game.id session |> thenValue
+            let! updatedGame = GameStartService.startGame game |> thenValue
 
             //Assert
-            let! players = PlayerService.getGamePlayers updatedGame.id session |> thenValue
-
             let neutralPlayerIds =
-                players
+                updatedGame.players
                 |> List.filter (fun p -> p.kind = PlayerKind.Neutral)
                 |> List.map (fun p -> p.id)
                 |> Set.ofList

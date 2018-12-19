@@ -9,6 +9,7 @@ open Djambi.Api.Logic.Services
 open Djambi.Api.Model
 open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Logic.Managers
+open Djambi.Api.Db.Repositories
 
 type RemovePlayerTests() =
     inherit TestsBase()
@@ -138,8 +139,7 @@ type RemovePlayerTests() =
         task {
             //Arrange
             let! (_, session, game) = createuserSessionAndGame(false) |> thenValue
-            let! players = PlayerService.getGamePlayers game.id session |> thenValue
-            let creator = players |> List.head
+            let creator = game.players |> List.head
 
             //Act
             let! resp = GameManager.removePlayer (game.id, creator.id) session
@@ -189,10 +189,8 @@ type RemovePlayerTests() =
             //Assert
             error |> shouldBeError 403 "Cannot remove other users from game."
 
-            let! players = PlayerService.getGamePlayers game.id session
-                           |> thenValue
-
-            players |> shouldExist (fun p -> p.id = player.id)
+            let! game = GameManager.getGame game.id session |> thenValue
+            game.players |> shouldExist (fun p -> p.id = player.id)
         }
 
     [<Fact>]
@@ -214,10 +212,8 @@ type RemovePlayerTests() =
             //Assert
             error |> shouldBeError 403 "Cannot remove other users from game."
 
-            let! players = PlayerService.getGamePlayers game.id session
-                           |> thenValue
-
-            players |> shouldExist (fun p -> p.id = player.id)
+            let! game = GameManager.getGame game.id session |> thenValue
+            game.players |> shouldExist (fun p -> p.id = player.id)
         }
 
     [<Fact>]
@@ -226,11 +222,13 @@ type RemovePlayerTests() =
             //Arrange
             let! (_, session, game) = createuserSessionAndGame(false) |> thenValue
 
-            let! _ = PlayerService.fillEmptyPlayerSlots game |> thenValue
-            let! updatedPlayers = PlayerService.getGamePlayers game.id session |> thenValue
-            let neutralPlayer = updatedPlayers
-                                |> List.filter(fun p -> p.kind = PlayerKind.Neutral)
-                                |> List.head
+            let request = 
+                {
+                    kind = PlayerKind.Neutral
+                    name = Some "test"
+                    userId = None
+                }
+            let! neutralPlayer = GameRepository.addPlayer(game.id, request) |> thenValue
 
             //Act
             let! error = GameManager.removePlayer (game.id, neutralPlayer.id) session
@@ -262,10 +260,8 @@ type RemovePlayerTests() =
             //Assert
             error |> shouldBeError 404 "Player not found."
 
-            let! players = PlayerService.getGamePlayers game1.id session
-                           |> thenValue
-
-            players |> shouldExist (fun p -> p.id = player.id)
+            let! game = GameManager.getGame game1.id session |> thenValue
+            game.players |> shouldExist (fun p -> p.id = player.id)
         }
 
     [<Fact>]
@@ -286,11 +282,9 @@ type RemovePlayerTests() =
 
             //Assert
             error |> shouldBeError 404 "Game not found."
-
-            let! players = PlayerService.getGamePlayers game.id session
-                           |> thenValue
-
-            players |> shouldExist (fun p -> p.id = player.id)
+            
+            let! game = GameManager.getGame game.id session |> thenValue
+            game.players |> shouldExist (fun p -> p.id = player.id)
         }
 
     [<Fact>]
@@ -312,10 +306,8 @@ type RemovePlayerTests() =
             //Assert
             error |> shouldBeError 404 "Player not found."
 
-            let! players = PlayerService.getGamePlayers game.id session
-                           |> thenValue
-
-            players |> shouldExist (fun p -> p.id = player.id)
+            let! game = GameManager.getGame game.id session |> thenValue
+            game.players |> shouldExist (fun p -> p.id = player.id)
         }
 
     //TODO: This should be changed when player statuses are added
@@ -332,7 +324,7 @@ type RemovePlayerTests() =
                           |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                           |> thenValue
 
-            let! _ = GameStartService.startGame game.id session |> thenValue
+            let! _ = GameStartService.startGame game |> thenValue
 
             //Act
             let! result = GameManager.removePlayer (game.id, player.id) { session with isAdmin = true }

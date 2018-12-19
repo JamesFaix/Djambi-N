@@ -356,7 +356,7 @@ type AddPlayerTests() =
             let request2 = { request1 with name = Some "test2" }
 
             let! _ = GameManager.addPlayer game.id request1 session |> thenValue
-            let! _ = GameStartService.startGame game.id session |> thenValue
+            let! _ = GameStartService.startGame game |> thenValue
 
             //Act
             let! error = GameManager.addPlayer game.id request2 session

@@ -5,7 +5,6 @@ open Xunit
 open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Db.Repositories
 open Djambi.Api.IntegrationTests
-open Djambi.Api.Logic.Services
 open Djambi.Api.Model
 open Djambi.Api.Logic.Managers
 
@@ -22,7 +21,7 @@ type FillEmptyPlayerSlotsTests() =
             let game = resp.game
 
             //Act
-            let! updatedGame = PlayerService.fillEmptyPlayerSlots game |> thenValue
+            let! updatedGame = TestUtilities.fillEmptyPlayerSlots game |> thenValue
 
             //Assert
             let! doubleCheck = GameRepository.getGame game.id |> thenValue

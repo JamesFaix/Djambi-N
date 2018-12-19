@@ -13,6 +13,8 @@
     <Compile Include="Assertions.fs" />
     <Compile Include="TestUtilities.fs" />
     <Compile Include="TestsBase.fs" />
+    <Compile Include="Logic\EventCalculator\FillEmptyPlayerSlotsTests.fs" />
+    <Compile Include="Logic\GameManager\StartGameTests.fs" />
     <Compile Include="Logic\GameManager\RemovePlayerTests.fs" />
     <Compile Include="Logic\GameManager\AddPlayerTests.fs" />
     <Compile Include="Logic\GameManager\GetGamesTests.fs" />

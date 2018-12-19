@@ -4,7 +4,6 @@ open FSharp.Control.Tasks
 open Xunit
 open Djambi.Api.Common
 open Djambi.Api.IntegrationTests
-open Djambi.Api.Logic.Services
 open Djambi.Api.Model
 open Djambi.Api.Logic.Managers
 
@@ -60,8 +59,7 @@ type CreateGameTests() =
                          |> AsyncHttpResult.thenValue
 
             //Assert
-            let! players = PlayerService.getGamePlayers resp.game.id session
-                           |> AsyncHttpResult.thenValue
+            let players = resp.game.players
 
             players.Length |> shouldBe 1
             players |> shouldExist (fun p -> p.userId = Some session.userId

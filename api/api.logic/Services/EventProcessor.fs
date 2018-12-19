@@ -20,15 +20,20 @@ let private processEffect (effect : EventEffect) (game : Game) : Game AsyncHttpR
         failwith "Must process game created separately because a game does not yet exist."
 
     | EventEffect.GameStatusChanged e ->
-        let request : UpdateGameStateRequest = {
-            gameId = game.id
-            status = e.newValue
-            pieces = game.pieces
-            turnCycle = game.turnCycle
-            currentTurn = game.currentTurn
-        }
-        GameRepository.updateGameState request
-        |> thenMap (fun _ -> { game with status = e.newValue })
+        match (e.oldValue, e.newValue) with
+        | (Pending, Started) ->
+            //This case is a lot more complicated
+            GameStartService.startGame game
+        | _ ->
+            let request : UpdateGameStateRequest = {
+                gameId = game.id
+                status = e.newValue
+                pieces = game.pieces
+                turnCycle = game.turnCycle
+                currentTurn = game.currentTurn
+            }
+            GameRepository.updateGameState request
+            |> thenMap (fun _ -> { game with status = e.newValue })
 
     | EventEffect.TurnCycleChanged e ->
         let request : UpdateGameStateRequest = {

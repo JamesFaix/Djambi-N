@@ -55,8 +55,12 @@ let removePlayer (gameId : int, playerId : int) (session : Session) : StateAndEv
         |> bindAsync (EventProcessor.processEvent (Some game))
     )
 
-let startGame (gameId: int) (session : Session) : Game AsyncHttpResult =
-    GameStartService.startGame gameId session
+let startGame (gameId: int) (session : Session) : StateAndEventResponse AsyncHttpResult =
+    GameService.getGame gameId session
+    |> thenBindAsync (fun game -> 
+        EventCalculator.startGame game session
+        |> thenBindAsync (EventProcessor.processEvent (Some game))
+    )
 
 let selectCell (gameId : int, cellId : int) (session : Session) : Turn AsyncHttpResult =
     TurnService.selectCell (gameId, cellId) session
