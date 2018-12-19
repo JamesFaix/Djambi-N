@@ -14,27 +14,27 @@
     <Compile Include="TestUtilities.fs" />
     <Compile Include="TestsBase.fs" />
     <Compile Include="Logic\EventCalculator\FillEmptyPlayerSlotsTests.fs" />
-    <Compile Include="Logic\GameManager\StartGameTests.fs" />
-    <Compile Include="Logic\GameManager\RemovePlayerTests.fs" />
     <Compile Include="Logic\GameManager\AddPlayerTests.fs" />
-    <Compile Include="Logic\GameManager\GetGamesTests.fs" />
     <Compile Include="Logic\GameManager\CreateGameTests.fs" />
+    <Compile Include="Logic\GameManager\GetGameTests.fs" />
+    <Compile Include="Logic\GameManager\GetGamesTests.fs" />
+    <Compile Include="Logic\GameManager\RemovePlayerTests.fs" />
+    <Compile Include="Logic\GameManager\StartGameTests.fs" />
+    <Compile Include="Logic\GameStartService\GameStartServiceTests.fs" />
+    <Compile Include="Logic\PlayerService\FillEmptyPlayerSlotsTests.fs" />
+    <Compile Include="Logic\SessionService\CloseSessionTests.fs" />
+    <Compile Include="Logic\SessionService\CreateSessionTests.fs" />
+    <Compile Include="Logic\SessionService\GetSessionTests.fs" />
+    <Compile Include="Logic\SessionService\RenewSessionTests.fs" />
+    <None Include="Logic\TurnService\CommitTurnTests.fs" />
+    <Compile Include="Logic\TurnService\ResetTurnTests.fs" />
+    <Compile Include="Logic\TurnService\SelectCellTests.fs" />
     <Compile Include="Logic\UserService\CreateUserTests.fs" />
     <Compile Include="Logic\UserService\DeleteUserTests.fs" />
     <Compile Include="Logic\UserService\GetUserTests.fs" />
     <Compile Include="Logic\UserService\GetUsersTests.fs" />
-    <Compile Include="Logic\SessionService\CreateSessionTests.fs" />
-    <Compile Include="Logic\SessionService\CloseSessionTests.fs" />
-    <Compile Include="Logic\SessionService\GetSessionTests.fs" />
-    <Compile Include="Db\UserRepositoryTests.fs" />
     <Compile Include="Db\GameRepositoryTests.fs" />
-    <Compile Include="Logic\SessionService\RenewSessionTests.fs" />
-    <Compile Include="Logic\PlayerService\FillEmptyPlayerSlotsTests.fs" />
-    <Compile Include="Logic\GameStartService\GameStartServiceTests.fs" />
-    <Compile Include="Logic\TurnService\SelectCellTests.fs" />
-    <None Include="Logic\TurnService\CommitTurnTests.fs" />
-    <Compile Include="Logic\TurnService\ResetTurnTests.fs" />
-    <Compile Include="Logic\GameService\GetGameStateTests.fs" />
+    <Compile Include="Db\UserRepositoryTests.fs" />
   </ItemGroup>
 
   <ItemGroup>
