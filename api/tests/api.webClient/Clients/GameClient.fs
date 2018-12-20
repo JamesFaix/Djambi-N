@@ -8,12 +8,7 @@ let createGame (parameters : GameParameters, token : string) : Game AsyncRespons
     sendRequest(POST, "/games", 
         Some parameters,
         Some token)
-
-let deleteGame (gameId : int, token : string) : Unit AsyncResponse =
-    sendRequest(DELETE, sprintf "/games/%i" gameId, 
-        None,
-        Some token)
-        
+                
 let getGames (query : GamesQuery, token : string) : Game list AsyncResponse =
     sendRequest(POST, "/games/query", 
         Some query,

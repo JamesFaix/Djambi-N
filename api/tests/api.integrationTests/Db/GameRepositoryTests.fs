@@ -2,7 +2,6 @@
 
 open FSharp.Control.Tasks
 open Xunit
-open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Db.Repositories
 open Djambi.Api.IntegrationTests
@@ -39,7 +38,7 @@ type GameRepositoryTests() =
             Assert.Equal(gameId, game.id)
             Assert.Equal(request.parameters, game.parameters)
         }
-
+        
     [<Fact>]
     let ``Get games should work``() =
         //Arrange
