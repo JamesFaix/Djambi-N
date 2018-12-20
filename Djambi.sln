@@ -8,6 +8,9 @@ EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.host", "api\api.host\api.host.fsproj", "{3664C02D-2B0E-4C1B-AE20-CCDEC13105F8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Api", "Api", "{2FAF11B4-A2BA-48CF-8E4D-766CB7B26A3A}"
+	ProjectSection(SolutionItems) = preProject
+		api\api.logic\Readme.md = api\api.logic\Readme.md
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utils", "Utils", "{12EE890F-7CFC-4DA3-A880-F94AF30F5F34}"
 EndProject
