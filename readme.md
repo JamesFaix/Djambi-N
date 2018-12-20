@@ -1,18 +1,32 @@
-# Djambi-N
-<img src="docs/djambi6.png">
+ # api.common
 
-Djambi-N is a variation of the Chess-inspired board game, [Djambi][1], by Jean Anesto.
+Contains utilities that can be used at all layers of the application.
 
-Complete rules for Djambi and Djambi-N can be found [here][2]. Basically Djambi-N is _kind of_ like Chess except:
-1. It is designed for 3 to 8 players. You can play with 2 players if you want, but it's less fun.
-2. Pieces never leave the board. You can kill can enemy piece, but its corpse still takes up space on the board.
-3. The board is always made out of squares, but the board itself isn't always square.
+# api.db
 
-Current progress on Djambi-N can be found [here][3].
+Contains modules for communicating with SQL.
 
-Developer setup instructions can be found [here][4].
+- **Model** module contains data types that correspond to result set rows from different SQL queries.
+- **Mapping** module contains logic for mapping from `Djambi.Api.Db.Model` namespace and the `Djambi.Api.Model` namespace.
+- **Repository** modules contain the logic for executing SQL commands. 
 
-[1]: https://en.wikipedia.org/wiki/Djambi
-[2]: docs/Rules.md
-[3]: docs/Progress.md
-[4]: docs/DevSetup.md
+# api.host
+
+Application entry point. Most configuration logic.
+
+# api.logic
+
+Core business logic of application.
+
+- **Service** modules contain complicated business logic that may used by 1 or more endpoints. **Services** can use **Repositories** or other **Services**.
+- **Manager** modules are the top of the business logic layer. Public methods on a manager should each execute the operation for a specific API endpoint by composing together the functionality of **Services** and **Repositories**, without any HTTP-related details.
+
+# api.model
+
+Business logic data model.
+
+# api.web
+
+Contains logic for working with the HTTP protocol.
+
+- **Controller** modules are the top layer of all endpoints. Public methods on a manager should each gather context from the HTTP request, call business logic in a **Manager** and then create an HTTP response.

@@ -1,4 +1,4 @@
-﻿module Djambi.Api.Web.Managers.UserManager
+﻿module Djambi.Api.Logic.Managers.UserManager
 
 open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Logic.Services

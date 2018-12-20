@@ -1,4 +1,4 @@
-﻿module Djambi.Api.Web.Managers.BoardManager
+﻿module Djambi.Api.Logic.Managers.BoardManager
 
 open Djambi.Api.Logic.Services
 open Djambi.Api.Model
