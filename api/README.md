@@ -1,31 +1,32 @@
-# web_server_f
+ # api.common
 
-A [Giraffe](https://github.com/giraffe-fsharp/Giraffe) web application, which has been created via the `dotnet new giraffe` command.
+Contains utilities that can be used at all layers of the application.
 
-## Build and test the application
+# api.db
 
-### Windows
+Contains modules for communicating with SQL.
 
-Run the `build.bat` script in order to restore, build and test (if you've selected to include tests) the application:
+- **Model** module contains data types that correspond to result set rows from different SQL queries.
+- **Mapping** module contains logic for mapping from `Djambi.Api.Db.Model` namespace and the `Djambi.Api.Model` namespace.
+- **Repository** modules contain the logic for executing SQL commands. 
 
-```
-> ./build.bat
-```
+# api.host
 
-### Linux/macOS
+Application entry point. Most configuration logic.
 
-Run the `build.sh` script in order to restore, build and test (if you've selected to include tests) the application:
+# api.logic
 
-```
-$ ./build.sh
-```
+Core business logic of application.
 
-## Run the application
+- **Service** modules contain complicated business logic that may used by 1 or more endpoints. **Services** can use **Repositories** or other **Services**.
+- **Manager** modules are the top of the business logic layer. Public methods on a manager should each execute the operation for a specific API endpoint by composing together the functionality of **Services** and **Repositories**, without any HTTP-related details.
 
-After a successful build you can start the web application by executing the following command in your terminal:
+# api.model
 
-```
-dotnet run src/web_server_f
-```
+Business logic data model.
 
-After the application has started visit [http://localhost:5000](http://localhost:5000) in your preferred browser.
+# api.web
+
+Contains logic for working with the HTTP protocol.
+
+- **Controller** modules are the top layer of all endpoints. Public methods on a manager should each gather context from the HTTP request, call business logic in a **Manager** and then create an HTTP response.
