@@ -16,18 +16,6 @@ let createGame (parameters : GameParameters) (session : Session) : Game AsyncHtt
         |> thenBindAsync (fun _ -> GameRepository.getGame gameId)
     )
 
-let deleteGame (gameId : int) (session : Session) : Unit AsyncHttpResult =
-    if session.isAdmin
-    then okTask ()
-    else
-        GameRepository.getGame gameId
-        |> thenBind (fun game ->
-            if game.createdByUserId = session.userId
-            then Ok ()
-            else Error <| HttpException(403, "Cannot delete a game created by another user.")
-        )
-    |> thenBindAsync (fun _ -> GameRepository.deleteGame gameId)
-
 let getGames (query : GamesQuery) (session : Session) : Game list AsyncHttpResult =
     let isViewableByActiveUser (game : Game) : bool =
         game.parameters.isPublic
