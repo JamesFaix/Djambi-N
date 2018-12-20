@@ -4,9 +4,9 @@ open FSharp.Control.Tasks
 open Xunit
 open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.IntegrationTests
-open Djambi.Api.Model
 open Djambi.Api.Logic.Managers
 open Djambi.Api.Logic.Services
+open Djambi.Api.Model
 
 type FillEmptyPlayerSlotsTests() =
     inherit TestsBase()
@@ -21,7 +21,7 @@ type FillEmptyPlayerSlotsTests() =
             let game = resp.game
 
             //Act
-            let! effects = EventCalculator.fillEmptyPlayerSlots game |> thenValue
+            let! effects = PlayerService.fillEmptyPlayerSlots game |> thenValue
 
             //Assert
             effects.Length |> shouldBe 2

@@ -1,5 +1,4 @@
-﻿//This module determines the event + effects to be processed based on a request
-module Djambi.Api.Logic.Services.EventCalculator
+﻿module Djambi.Api.Logic.Services.PlayerService
 
 open System
 open System.Linq
@@ -11,53 +10,7 @@ open Djambi.Api.Db.Repositories
 type ArrayList<'a> = System.Collections.Generic.List<'a>
     
 //TODO: Add integration tests
-let createGame (parameters : GameParameters) (session : Session) : Event HttpResult =
-    let gameRequest = 
-        {
-            parameters = parameters
-            createdByUserId = session.userId
-        }
-    let playerRequest = CreatePlayerRequest.user session.userId
-    Ok <| Event.gameCreated (gameRequest, playerRequest)
-
-//TODO: Add integration tests
-let updateGameParameters (game : Game, parameters : GameParameters) (session : Session) : Event HttpResult =
-    if game.status <> GameStatus.Pending
-    then Error <| HttpException (400, "Cannot change game parameters unless game is Pending.")
-    elif not (session.isAdmin || session.userId = game.createdByUserId)
-    then Error <| HttpException(403, "Cannot change game parameters of game created by another user.")
-    else 
-        let effects = new ArrayList<EventEffect>()
-
-        effects.Add(EventEffect.parametersChanged(game.parameters, parameters))
-
-        //If lowering region count, extra players are ejected
-        let truncatedPlayers = 
-            game.players 
-            |> Seq.skip parameters.regionCount 
-
-        //If disabling AllowGuests, guests are ejected
-        let ejectedGuests =
-            if parameters.allowGuests = false
-            then game.players
-                |> Seq.filter (fun p -> p.kind = PlayerKind.Guest)
-            else Seq.empty
-
-        let removedPlayerIds = 
-            truncatedPlayers 
-            |> Seq.append ejectedGuests 
-            |> Seq.map (fun p -> p.id)
-            |> Seq.distinct
-            |> Seq.toList
-
-        if removedPlayerIds.Length > 0
-        then effects.Add(EventEffect.playersRemoved removedPlayerIds)
-        else ()
-
-        Ok <| Event.gameParametersChanged (effects |> Seq.toList)
-
-//TODO: Add integration tests
-let addPlayer (game : Game, request : CreatePlayerRequest) (session : Session) : Event HttpResult =
+let getAddPlayerEvent (game : Game, request : CreatePlayerRequest) (session : Session) : Event HttpResult =
     if game.status <> GameStatus.Pending
     then Error <| HttpException(400, "Can only add players to pending games.")
     else
@@ -87,7 +40,7 @@ let addPlayer (game : Game, request : CreatePlayerRequest) (session : Session) :
     |> Result.map (fun _ -> Event.playerJoined request)
 
 //TODO: Add integration tests
-let removePlayer (game : Game, playerId : int) (session : Session) : Event HttpResult =
+let getRemovePlayerEvent (game : Game, playerId : int) (session : Session) : Event HttpResult =
     match game.status with
     | Aborted | AbortedWhilePending | Finished -> 
         Error <| HttpException(400, "Cannot remove players from finished or aborted games.")
@@ -147,25 +100,3 @@ let fillEmptyPlayerSlots (game : Game) : EventEffect list AsyncHttpResult =
         |> thenMap getNeutralPlayerNamesToUse
         |> thenMap (Seq.map (EventEffect.playerAdded << CreatePlayerRequest.neutral))    
         |> thenMap Seq.toList
-
-//TODO: Add integration tests
-let startGame (game : Game) (session : Session) : Event AsyncHttpResult =    
-    if session.isAdmin || session.userId = game.createdByUserId
-    then okTask game
-    else errorTask <| HttpException(403, "Cannot start game created by another user.")
-    |> thenBindAsync (fun _ ->
-        if game.players
-            |> List.filter (fun p -> p.kind <> PlayerKind.Neutral)
-            |> List.length = 1
-        then errorTask <| HttpException(400, "Cannot start game with only one player.")
-        else 
-            fillEmptyPlayerSlots game
-            |> thenMap (fun addNeutralPlayerEffects ->
-                let effects =
-                    //The order is very important for effect processing. Neutral players must be created before the game start.                    
-                    List.append 
-                        addNeutralPlayerEffects 
-                        [EventEffect.gameStatusChanged(GameStatus.Pending, GameStatus.Started)]
-                Event.gameStarted(effects)
-            )
-    )

@@ -30,35 +30,35 @@ let getGame (gameId : int) (session : Session) : Game AsyncHttpResult =
     )
 
 let createGame (parameters : GameParameters) (session : Session) : StateAndEventResponse AsyncHttpResult =
-    EventCalculator.createGame parameters session
+    GameCrudService.getCreateGameEvent parameters session
     |> bindAsync (EventProcessor.processEvent None)
 
 //TODO: Requires integration tests
 let updateGameParameters (gameId : int) (parameters : GameParameters) (session : Session) : StateAndEventResponse AsyncHttpResult =
     GameRepository.getGame gameId
     |> thenBindAsync (fun game -> 
-        EventCalculator.updateGameParameters (game, parameters) session
+        GameCrudService.getUpdateGameParametersEvent (game, parameters) session
         |> bindAsync (EventProcessor.processEvent (Some game))
     )
 
 let addPlayer (gameId : int) (request : CreatePlayerRequest) (session : Session) : StateAndEventResponse AsyncHttpResult =
     GameRepository.getGame gameId
     |> thenBindAsync (fun game -> 
-        EventCalculator.addPlayer (game, request) session
+        PlayerService.getAddPlayerEvent (game, request) session
         |> bindAsync (EventProcessor.processEvent (Some game))
     )
 
 let removePlayer (gameId : int, playerId : int) (session : Session) : StateAndEventResponse AsyncHttpResult =
     GameRepository.getGame gameId
     |> thenBindAsync (fun game -> 
-        EventCalculator.removePlayer (game, playerId) session
+        PlayerService.getRemovePlayerEvent (game, playerId) session
         |> bindAsync (EventProcessor.processEvent (Some game))
     )
 
 let startGame (gameId: int) (session : Session) : StateAndEventResponse AsyncHttpResult =
     GameRepository.getGame gameId
     |> thenBindAsync (fun game -> 
-        EventCalculator.startGame game session
+        GameStartService.getGameStartEvent game session
         |> thenBindAsync (EventProcessor.processEvent (Some game))
     )
 

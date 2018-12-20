@@ -9,6 +9,30 @@ open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
 open Djambi.Api.Model
 open Djambi.Api.Logic.Services
 
+type ArrayList<'a> = System.Collections.Generic.List<'a>
+ 
+//TODO: Add integration tests
+let getGameStartEvent (game : Game) (session : Session) : Event AsyncHttpResult =    
+    if session.isAdmin || session.userId = game.createdByUserId
+    then okTask game
+    else errorTask <| HttpException(403, "Cannot start game created by another user.")
+    |> thenBindAsync (fun _ ->
+        if game.players
+            |> List.filter (fun p -> p.kind <> PlayerKind.Neutral)
+            |> List.length = 1
+        then errorTask <| HttpException(400, "Cannot start game with only one player.")
+        else 
+           PlayerService.fillEmptyPlayerSlots game
+            |> thenMap (fun addNeutralPlayerEffects ->
+                let effects =
+                    //The order is very important for effect processing. Neutral players must be created before the game start.                    
+                    List.append 
+                        addNeutralPlayerEffects 
+                        [EventEffect.gameStatusChanged(GameStatus.Pending, GameStatus.Started)]
+                Event.gameStarted(effects)
+            )
+    )
+
 let assignStartingConditions(players : Player list) : Player list =
     let colorIds = [0..(Constants.maxRegions-1)] |> Utilities.shuffle |> Seq.take players.Length
     let regions = [0..(players.Length-1)] |> Utilities.shuffle
@@ -124,3 +148,4 @@ let startGame (game : Game) : Game AsyncHttpResult =
         GameRepository.updateGameState request
     )
     |> thenMap (fun _ -> game)
+   
