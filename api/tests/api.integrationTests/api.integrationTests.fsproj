@@ -24,7 +24,6 @@
     <Compile Include="Db\GameRepositoryTests.fs" />
     <Compile Include="Logic\SessionService\RenewSessionTests.fs" />
     <Compile Include="Logic\LobbyService\CreateGameTests.fs" />
-    <Compile Include="Logic\LobbyService\DeleteGameTests.fs" />
     <Compile Include="Logic\LobbyService\GetGamesTests.fs" />
     <Compile Include="Logic\PlayerService\AddPlayerTests.fs" />
     <Compile Include="Logic\PlayerService\FillEmptyPlayerSlotsTests.fs" />

@@ -2,7 +2,6 @@
 
 open FSharp.Control.Tasks
 open Xunit
-open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Db.Repositories
 open Djambi.Api.IntegrationTests
@@ -39,24 +38,7 @@ type GameRepositoryTests() =
             Assert.Equal(gameId, game.id)
             Assert.Equal(parameters, game.parameters)
         }
-
-    [<Fact>]
-    let ``Delete game should work``() =
-        //Arrange
-        let userId = 1
-        let parameters = getGameParameters()
-        task {
-            let! gameId = GameRepository.createGame (parameters, userId) |> thenValue
-
-            //Act
-            let! _ = GameRepository.deleteGame gameId |> thenValue
-
-            //Assert
-            let! getResult = GameRepository.getGame gameId
-            let error = getResult |> Result.error
-            Assert.Equal(404, error.statusCode)
-        }
-
+        
     [<Fact>]
     let ``Get games should work``() =
         //Arrange

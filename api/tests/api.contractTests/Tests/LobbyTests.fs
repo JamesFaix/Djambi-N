@@ -27,25 +27,6 @@ let ``Create game should work``() =
     } :> Task
 
 [<Test>]
-let ``Delete game should work``() =
-    task {
-        //Arrange
-        let! (_, token) = SetupUtility.createUserAndSignIn()
-        let parameters = RequestFactory.gameParameters()
-        let! gameResponse = GameClient.createGame(parameters, token)
-        let game = gameResponse.bodyValue
-
-        //Act
-        let! response = GameClient.deleteGame(game.id, token)
-
-        //Assert
-        response |> shouldHaveStatus HttpStatusCode.OK
-
-        let! games = GameClient.getGames(GamesQuery.empty, token) |> AsyncResponse.bodyValue
-        games |> List.exists (fun g -> g.id = game.id) |> shouldBeFalse
-    } :> Task
-
-[<Test>]
 let ``Get games should work``() =
     task {
         //Arrange
