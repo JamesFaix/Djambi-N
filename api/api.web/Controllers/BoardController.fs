@@ -2,7 +2,7 @@
 
 open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Web.HttpUtility
-open Djambi.Api.Web.Managers
+open Djambi.Api.Logic.Managers
 
 let getBoard(regionCount : int) =
     let func ctx =

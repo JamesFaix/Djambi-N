@@ -5,10 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Managers\UserManager.fs" />
-    <Compile Include="Managers\SessionManager.fs" />
-    <Compile Include="Managers\BoardManager.fs" />
-    <Compile Include="Managers\GameManager.fs" />
     <Compile Include="HttpUtility.fs" />
     <Compile Include="Controllers\UserController.fs" />
     <Compile Include="Controllers\SessionController.fs" />

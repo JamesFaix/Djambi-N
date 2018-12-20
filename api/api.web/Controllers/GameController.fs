@@ -3,7 +3,7 @@
 open Giraffe
 open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Web.HttpUtility
-open Djambi.Api.Web.Managers
+open Djambi.Api.Logic.Managers
 open Djambi.Api.Model
 
 let getGames : HttpHandler =
