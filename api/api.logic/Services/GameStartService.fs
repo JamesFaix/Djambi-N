@@ -29,7 +29,7 @@ let getGameStartEvent (game : Game) (session : Session) : Event AsyncHttpResult 
                     List.append 
                         addNeutralPlayerEffects 
                         [EventEffect.gameStatusChanged(GameStatus.Pending, GameStatus.Started)]
-                Event.gameStarted(effects)
+                Event.create(EventKind.GameStarted, effects)
             )
     )
 

@@ -135,96 +135,17 @@ type EventKind =
     | GameStarted
     | TurnCommitted
 
-type BasicEvent =
+type Event =
     {
         kind : EventKind
         timestamp : DateTime
         effects : EventEffect list
-    }
-
-type EventWithContext<'a> = 
-    { 
-        kind : EventKind
-        timestamp : DateTime
-        effects : EventEffect list
-        context : 'a
-    }
-
-type Event = 
-    | GameParametersChanged of BasicEvent
-    | GameCanceled of BasicEvent
-    | PlayerJoined of BasicEvent
-    | PlayerEjected of BasicEvent
-    | PlayerQuit of BasicEvent
-    | GameCreated of BasicEvent
-    | GameStarted of BasicEvent
-    | TurnCommitted of EventWithContext<Turn>
-
-type Event with
-    member x.getEffects() =
-        match x with            
-        | GameParametersChanged e 
-        | GameCanceled e 
-        | PlayerJoined e
-        | PlayerEjected e
-        | PlayerQuit e ->
-            e.effects
-        | GameCreated e 
-        | GameStarted e -> 
-            e.effects
-        | TurnCommitted e ->
-            e.effects
-            
+    }           
 
 module Event =
-    let gameParametersChanged (effects) =
-        Event.GameParametersChanged {
-            kind = EventKind.GameParametersChanged
-            timestamp = DateTime.UtcNow
-            effects = effects
-        }
-
-    let gameCanceled () =
-        Event.GameCanceled {
-            kind = EventKind.GameCanceled
-            timestamp = DateTime.UtcNow
-            effects = [ EventEffect.gameStatusChanged(GameStatus.Pending, GameStatus.AbortedWhilePending) ]
-        }
-
-    let playerJoined (player) =
-        Event.PlayerJoined {
-            kind = EventKind.PlayerJoined
-            timestamp = DateTime.UtcNow
-            effects = [ EventEffect.playerAdded(player) ]
-        }
-
-    let playerEjected (effects) =
-        Event.PlayerEjected {
-            kind = EventKind.PlayerEjected
-            timestamp = DateTime.UtcNow
-            effects = effects
-        }
-
-    let playerQuit (effects) =
-        Event.PlayerQuit {
-            kind = EventKind.PlayerQuit
-            timestamp = DateTime.UtcNow
-            effects = effects
-        }
-
-    let gameCreated (gameRequest, playerRequest) =
-        Event.GameCreated {
-            kind = EventKind.GameCreated
-            timestamp = DateTime.UtcNow
-            effects = [
-                EventEffect.gameCreated(gameRequest)
-                EventEffect.playerAdded(playerRequest)
-            ]
-        }
-
-    let gameStarted (effects) =
-        Event.GameStarted {
-            kind = EventKind.GameStarted
+    let create (kind, effects) : Event =
+        {
+            kind = kind
             timestamp = DateTime.UtcNow
             effects = effects
         }

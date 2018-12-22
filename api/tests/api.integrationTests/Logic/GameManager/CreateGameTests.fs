@@ -30,21 +30,17 @@ type CreateGameTests() =
             game.parameters.regionCount |> shouldBe parameters.regionCount
             game.createdByUserId |> shouldBe session.userId
 
-            match resp.event with
-            | GameCreated e ->
-                e.effects.Length |> shouldBe 2
-                match (e.effects.[0], e.effects.[1]) with
-                | (EventEffect.GameCreated e1, EventEffect.PlayerAdded e2) ->
-                    e1.value.parameters |> shouldBe parameters
-                    e1.value.createdByUserId |> shouldBe session.userId
+            
+            resp.event.effects.Length |> shouldBe 2
+            match (resp.event.effects.[0], resp.event.effects.[1]) with
+            | (EventEffect.GameCreated e1, EventEffect.PlayerAdded e2) ->
+                e1.value.parameters |> shouldBe parameters
+                e1.value.createdByUserId |> shouldBe session.userId
 
-                    e2.value.userId |> shouldBe (Some session.userId)
-                    e2.value.kind |> shouldBe PlayerKind.User
+                e2.value.userId |> shouldBe (Some session.userId)
+                e2.value.kind |> shouldBe PlayerKind.User
 
-                | _ -> failwith "Incorrect event effects"
-
-                ()
-            | _ -> failwith "Incorrect event type"            
+            | _ -> failwith "Incorrect event effects"
         }
 
     [<Fact>]

@@ -13,7 +13,10 @@ let getCreateGameEvent (parameters : GameParameters) (session : Session) : Event
             createdByUserId = session.userId
         }
     let playerRequest = CreatePlayerRequest.user session.userId
-    Ok <| Event.gameCreated (gameRequest, playerRequest)
+    Ok <| Event.create(EventKind.GameCreated, [
+        EventEffect.gameCreated gameRequest
+        EventEffect.playerAdded playerRequest
+        ])
 
 //TODO: Add integration tests
 let getUpdateGameParametersEvent (game : Game, parameters : GameParameters) (session : Session) : Event HttpResult =
@@ -49,4 +52,4 @@ let getUpdateGameParametersEvent (game : Game, parameters : GameParameters) (ses
         then effects.Add(EventEffect.playersRemoved removedPlayerIds)
         else ()
 
-        Ok <| Event.gameParametersChanged (effects |> Seq.toList)
+        Ok <| Event.create(EventKind.GameParametersChanged, (effects |> Seq.toList))

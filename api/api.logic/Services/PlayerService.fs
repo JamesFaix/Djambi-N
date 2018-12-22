@@ -37,7 +37,7 @@ let getAddPlayerEvent (game : Game, request : CreatePlayerRequest) (session : Se
 
         | PlayerKind.Neutral ->
             Error <| HttpException(400, "Cannot directly add neutral players to a game.")
-    |> Result.map (fun _ -> Event.playerJoined request)
+    |> Result.map (fun _ -> Event.create(EventKind.PlayerJoined, [EventEffect.playerAdded request]))
 
 //TODO: Add integration tests
 let getRemovePlayerEvent (game : Game, playerId : int) (session : Session) : Event HttpResult =
@@ -77,9 +77,12 @@ let getRemovePlayerEvent (game : Game, playerId : int) (session : Session) : Eve
                         effects.Add(EventEffect.gameStatusChanged(GameStatus.Pending, GameStatus.AbortedWhilePending))
                     else ()
 
-                    if player.userId = Some session.userId
-                    then Ok <| Event.playerQuit(effects |> Seq.toList)
-                    else Ok <| Event.playerEjected(effects |> Seq.toList)
+                    let kind = 
+                        if player.userId = Some session.userId
+                        then EventKind.PlayerQuit
+                        else EventKind.PlayerEjected
+
+                    Ok <| Event.create(kind, (effects |> Seq.toList))
 
 //TOOD: Add integration tests
 let fillEmptyPlayerSlots (game : Game) : EventEffect list AsyncHttpResult =

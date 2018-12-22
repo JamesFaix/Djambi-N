@@ -129,7 +129,7 @@ let private processEffect (effect : EventEffect) (game : Game) : Game AsyncHttpR
 let processEvent (game : Game option) (event : Event) : StateAndEventResponse AsyncHttpResult =
 
     match (game, event) with
-    | (None, GameCreated e) ->
+    | (None, e) when e.kind = EventKind.GameCreated ->
         match (e.effects.[0], e.effects.[1]) with
         | (EventEffect.GameCreated createGameEffect, EventEffect.PlayerAdded addPlayerEffect) ->
             GameRepository.createGame createGameEffect.value
@@ -141,14 +141,11 @@ let processEvent (game : Game option) (event : Event) : StateAndEventResponse As
     | (None, _) ->
         failwith "Only GameCreated event can be processed without a game."
 
-    | (Some _, GameCreated e) ->
+    | (Some _, e) when e.kind = EventKind.GameCreated ->
         failwith "GameCreated event must be processed without a game."
 
     | (Some g, _) ->
-        let projections = 
-            event.getEffects() 
-            |> Seq.map processEffect
-
+        let projections = event.effects |> Seq.map processEffect
         applyEachAsync projections g
         
     |> thenMap (fun g -> 
