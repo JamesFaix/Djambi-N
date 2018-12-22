@@ -37,7 +37,7 @@ type DiffWithContextEffect<'a, 'b> =
         context : 'b
     }
 
-type EventEffect =
+type Effect =
     | GameCreated of ScalarEffect<CreateGameRequest>
     | GameStatusChanged of DiffEffect<GameStatus>
     | TurnCycleChanged of DiffEffect<int list>
@@ -51,66 +51,66 @@ type EventEffect =
     | PiecesOwnershipChanged of DiffWithContextEffect<int option, int list>
     | PieceMoved of DiffWithContextEffect<int, int>
 
-module EventEffect =
+module Effect =
     let gameCreated (request) =
-        EventEffect.GameCreated {
+        Effect.GameCreated {
             kind = EffectKind.GameCreated
             value = request
         }
 
     let gameStatusChanged (oldValue, newValue) =
-        EventEffect.GameStatusChanged {
+        Effect.GameStatusChanged {
             kind = EffectKind.GameStatusChanged
             oldValue = oldValue
             newValue = newValue
         }
 
     let turnCycleChanged (oldValue, newValue) =
-        EventEffect.TurnCycleChanged {
+        Effect.TurnCycleChanged {
             kind = EffectKind.TurnCycleChanged
             oldValue = oldValue
             newValue = newValue
         }
 
     let parametersChanged (oldValue, newValue) =
-        EventEffect.ParametersChanged {
+        Effect.ParametersChanged {
             kind = EffectKind.ParametersChanged
             oldValue = oldValue
             newValue = newValue
         }
 
     let playerEliminated (playerId) =
-        EventEffect.PlayerEliminated {
+        Effect.PlayerEliminated {
             kind = EffectKind.PlayerEliminated
             value = playerId
         }
 
     let playerAdded (request) =
-        EventEffect.PlayerAdded {
+        Effect.PlayerAdded {
             kind = EffectKind.PlayerAdded
             value = request
         }
 
     let playerOutOfMoves (playerId) =
-        EventEffect.PlayerOutOfMoves {
+        Effect.PlayerOutOfMoves {
             kind = EffectKind.PlayerOutOfMoves
             value = playerId
         }
 
     let pieceKilled (pieceId) = 
-        EventEffect.PieceKilled {
+        Effect.PieceKilled {
             kind = EffectKind.PieceKilled
             value = pieceId
         }
 
     let playersRemoved (playerIds) =
-        EventEffect.PlayersRemoved {
+        Effect.PlayersRemoved {
             kind = EffectKind.PlayersRemoved
             value = playerIds
         }
 
     let piecesOwnershipChanged (pieceIds, oldPlayerId, newPlayerId) =
-        EventEffect.PiecesOwnershipChanged {
+        Effect.PiecesOwnershipChanged {
             kind = EffectKind.PiecesOwnershipChanged
             context = pieceIds
             oldValue = oldPlayerId
@@ -118,7 +118,7 @@ module EventEffect =
         }
 
     let pieceMoved (pieceId, oldCellId, newCellId) =
-        EventEffect.PieceMoved {
+        Effect.PieceMoved {
             kind = EffectKind.PieceMoved
             context = pieceId
             oldValue = oldCellId
@@ -139,7 +139,7 @@ type Event =
     {
         kind : EventKind
         timestamp : DateTime
-        effects : EventEffect list
+        effects : Effect list
     }           
 
 module Event =

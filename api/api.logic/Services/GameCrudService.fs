@@ -14,8 +14,8 @@ let getCreateGameEvent (parameters : GameParameters) (session : Session) : Event
         }
     let playerRequest = CreatePlayerRequest.user session.userId
     Ok <| Event.create(EventKind.GameCreated, [
-        EventEffect.gameCreated gameRequest
-        EventEffect.playerAdded playerRequest
+        Effect.gameCreated gameRequest
+        Effect.playerAdded playerRequest
         ])
 
 //TODO: Add integration tests
@@ -25,9 +25,9 @@ let getUpdateGameParametersEvent (game : Game, parameters : GameParameters) (ses
     elif not (session.isAdmin || session.userId = game.createdByUserId)
     then Error <| HttpException(403, "Cannot change game parameters of game created by another user.")
     else 
-        let effects = new ArrayList<EventEffect>()
+        let effects = new ArrayList<Effect>()
 
-        effects.Add(EventEffect.parametersChanged(game.parameters, parameters))
+        effects.Add(Effect.parametersChanged(game.parameters, parameters))
 
         //If lowering region count, extra players are ejected
         let truncatedPlayers = 
@@ -49,7 +49,7 @@ let getUpdateGameParametersEvent (game : Game, parameters : GameParameters) (ses
             |> Seq.toList
 
         if removedPlayerIds.Length > 0
-        then effects.Add(EventEffect.playersRemoved removedPlayerIds)
+        then effects.Add(Effect.playersRemoved removedPlayerIds)
         else ()
 
         Ok <| Event.create(EventKind.GameParametersChanged, (effects |> Seq.toList))

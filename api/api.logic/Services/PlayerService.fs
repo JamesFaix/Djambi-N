@@ -37,7 +37,7 @@ let getAddPlayerEvent (game : Game, request : CreatePlayerRequest) (session : Se
 
         | PlayerKind.Neutral ->
             Error <| HttpException(400, "Cannot directly add neutral players to a game.")
-    |> Result.map (fun _ -> Event.create(EventKind.PlayerJoined, [EventEffect.playerAdded request]))
+    |> Result.map (fun _ -> Event.create(EventKind.PlayerJoined, [Effect.playerAdded request]))
 
 //TODO: Add integration tests
 let getRemovePlayerEvent (game : Game, playerId : int) (session : Session) : Event HttpResult =
@@ -56,7 +56,7 @@ let getRemovePlayerEvent (game : Game, playerId : int) (session : Session) : Eve
                     || x = session.userId)
                 then Error <| HttpException(403, "Cannot remove other users from game.")        
                 else 
-                    let effects = new ArrayList<EventEffect>()
+                    let effects = new ArrayList<Effect>()
 
                     let playerIdsToRemove =
                         match player.kind with 
@@ -67,14 +67,14 @@ let getRemovePlayerEvent (game : Game, playerId : int) (session : Session) : Eve
                         | Guest -> [playerId]
                         | _ -> List.empty //Already eliminated this case in validation above
 
-                    effects.Add(EventEffect.playersRemoved(playerIdsToRemove))
+                    effects.Add(Effect.playersRemoved(playerIdsToRemove))
 
                     //Cancel game if Pending and creator quit
                     if game.status = GameStatus.Pending
                         && game.createdByUserId = player.userId.Value
                         && player.kind = PlayerKind.User
                     then 
-                        effects.Add(EventEffect.gameStatusChanged(GameStatus.Pending, GameStatus.AbortedWhilePending))
+                        effects.Add(Effect.gameStatusChanged(GameStatus.Pending, GameStatus.AbortedWhilePending))
                     else ()
 
                     let kind = 
@@ -85,7 +85,7 @@ let getRemovePlayerEvent (game : Game, playerId : int) (session : Session) : Eve
                     Ok <| Event.create(kind, (effects |> Seq.toList))
 
 //TOOD: Add integration tests
-let fillEmptyPlayerSlots (game : Game) : EventEffect list AsyncHttpResult =
+let fillEmptyPlayerSlots (game : Game) : Effect list AsyncHttpResult =
     let missingPlayerCount = game.parameters.regionCount - game.players.Length
 
     let getNeutralPlayerNamesToUse (possibleNames : string list) =
@@ -101,5 +101,5 @@ let fillEmptyPlayerSlots (game : Game) : EventEffect list AsyncHttpResult =
     else
         GameRepository.getNeutralPlayerNames()
         |> thenMap getNeutralPlayerNamesToUse
-        |> thenMap (Seq.map (EventEffect.playerAdded << CreatePlayerRequest.neutral))    
+        |> thenMap (Seq.map (Effect.playerAdded << CreatePlayerRequest.neutral))    
         |> thenMap Seq.toList

@@ -37,7 +37,7 @@ type AddPlayerTests() =
             player.kind |> shouldBe PlayerKind.User
 
             resp.event.effects.Length |> shouldBe 1
-            resp.event.effects.[0] |> shouldBe (EventEffect.playerAdded request)
+            resp.event.effects.[0] |> shouldBe (Effect.playerAdded request)
         }
 
     [<Fact>]
@@ -61,7 +61,7 @@ type AddPlayerTests() =
             player.kind |> shouldBe PlayerKind.User
             
             resp.event.effects.Length |> shouldBe 1
-            resp.event.effects.[0] |> shouldBe (EventEffect.playerAdded request)
+            resp.event.effects.[0] |> shouldBe (Effect.playerAdded request)
         }
 
     [<Fact>]
@@ -159,7 +159,7 @@ type AddPlayerTests() =
             player.kind |> shouldBe PlayerKind.Guest
             
             resp.event.effects.Length |> shouldBe 1
-            resp.event.effects.[0] |> shouldBe (EventEffect.playerAdded request)
+            resp.event.effects.[0] |> shouldBe (Effect.playerAdded request)
         }
 
     [<Fact>]
@@ -184,7 +184,7 @@ type AddPlayerTests() =
             player.kind |> shouldBe PlayerKind.Guest
  
             resp.event.effects.Length |> shouldBe 1
-            resp.event.effects.[0] |> shouldBe (EventEffect.playerAdded request)
+            resp.event.effects.[0] |> shouldBe (Effect.playerAdded request)
         }
 
     [<Fact>]

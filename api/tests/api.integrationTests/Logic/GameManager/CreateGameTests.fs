@@ -33,7 +33,7 @@ type CreateGameTests() =
             
             resp.event.effects.Length |> shouldBe 2
             match (resp.event.effects.[0], resp.event.effects.[1]) with
-            | (EventEffect.GameCreated e1, EventEffect.PlayerAdded e2) ->
+            | (Effect.GameCreated e1, Effect.PlayerAdded e2) ->
                 e1.value.parameters |> shouldBe parameters
                 e1.value.createdByUserId |> shouldBe session.userId
 
