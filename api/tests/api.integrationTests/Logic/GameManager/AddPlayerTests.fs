@@ -36,14 +36,8 @@ type AddPlayerTests() =
             player.userId |> shouldBe (Some user.id)
             player.kind |> shouldBe PlayerKind.User
 
-            match resp.event with
-            | Event.PlayerJoined e ->
-                e.effects.Length |> shouldBe 1
-                match e.effects.[0] with
-                | EventEffect.PlayerAdded ef ->
-                    ef.value |> shouldBe request
-                | _ -> failwith "Incorrect effects."
-            | _ -> failwith "Incorrect event type."
+            resp.event.effects.Length |> shouldBe 1
+            resp.event.effects.[0] |> shouldBe (Effect.playerAdded request)
         }
 
     [<Fact>]
@@ -65,15 +59,9 @@ type AddPlayerTests() =
             player.name |> shouldBe user.name
             player.userId |> shouldBe (Some user.id)
             player.kind |> shouldBe PlayerKind.User
-
-            match resp.event with
-            | Event.PlayerJoined e ->
-                e.effects.Length |> shouldBe 1
-                match e.effects.[0] with
-                | EventEffect.PlayerAdded ef ->
-                    ef.value |> shouldBe request
-                | _ -> failwith "Incorrect effects."
-            | _ -> failwith "Incorrect event type."
+            
+            resp.event.effects.Length |> shouldBe 1
+            resp.event.effects.[0] |> shouldBe (Effect.playerAdded request)
         }
 
     [<Fact>]
@@ -169,15 +157,9 @@ type AddPlayerTests() =
             player.name |> shouldBe request.name.Value
             player.userId |> shouldBe (Some user.id)
             player.kind |> shouldBe PlayerKind.Guest
-
-            match resp.event with
-            | Event.PlayerJoined e ->
-                e.effects.Length |> shouldBe 1
-                match e.effects.[0] with
-                | EventEffect.PlayerAdded ef ->
-                    ef.value |> shouldBe request
-                | _ -> failwith "Incorrect effects."
-            | _ -> failwith "Incorrect event type."
+            
+            resp.event.effects.Length |> shouldBe 1
+            resp.event.effects.[0] |> shouldBe (Effect.playerAdded request)
         }
 
     [<Fact>]
@@ -201,14 +183,8 @@ type AddPlayerTests() =
             player.userId |> shouldBe (Some user.id)
             player.kind |> shouldBe PlayerKind.Guest
  
-            match resp.event with
-            | Event.PlayerJoined e ->
-                e.effects.Length |> shouldBe 1
-                match e.effects.[0] with
-                | EventEffect.PlayerAdded ef ->
-                    ef.value |> shouldBe request
-                | _ -> failwith "Incorrect effects."
-            | _ -> failwith "Incorrect event type."
+            resp.event.effects.Length |> shouldBe 1
+            resp.event.effects.[0] |> shouldBe (Effect.playerAdded request)
         }
 
     [<Fact>]

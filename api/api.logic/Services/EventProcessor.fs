@@ -13,13 +13,13 @@ let private processAddPlayerEffect (effect : ScalarEffect<CreatePlayerRequest>, 
     )
 
 //TODO: Add integration tests
-let private processEffect (effect : EventEffect) (game : Game) : Game AsyncHttpResult =
+let private processEffect (effect : Effect) (game : Game) : Game AsyncHttpResult =
         
     match effect with 
-    | EventEffect.GameCreated e ->
+    | Effect.GameCreated e ->
         failwith "Must process game created separately because a game does not yet exist."
 
-    | EventEffect.GameStatusChanged e ->
+    | Effect.GameStatusChanged e ->
         match (e.oldValue, e.newValue) with
         | (Pending, Started) ->
             //This case is a lot more complicated
@@ -35,7 +35,7 @@ let private processEffect (effect : EventEffect) (game : Game) : Game AsyncHttpR
             GameRepository.updateGameState request
             |> thenMap (fun _ -> { game with status = e.newValue })
 
-    | EventEffect.TurnCycleChanged e ->
+    | Effect.TurnCycleChanged e ->
         let request : UpdateGameStateRequest = {
             gameId = game.id
             status = game.status
@@ -46,11 +46,11 @@ let private processEffect (effect : EventEffect) (game : Game) : Game AsyncHttpR
         GameRepository.updateGameState request
         |> thenMap (fun _ -> { game with turnCycle = e.newValue })
 
-    | EventEffect.ParametersChanged e ->
+    | Effect.ParametersChanged e ->
         GameRepository.updateGameParameters game.id e.newValue
         |> thenMap (fun _ -> { game with parameters = e.newValue })
 
-    | EventEffect.PlayerEliminated e ->
+    | Effect.PlayerEliminated e ->
         GameRepository.killPlayer e.value
         |> thenMap (fun _ -> 
             { game with 
@@ -60,7 +60,7 @@ let private processEffect (effect : EventEffect) (game : Game) : Game AsyncHttpR
             }
         )
 
-    | EventEffect.PieceKilled e ->
+    | Effect.PieceKilled e ->
         let updatedPieces = 
             game.pieces |> Utilities.replaceIf
                 (fun p -> p.id = e.value) 
@@ -77,7 +77,7 @@ let private processEffect (effect : EventEffect) (game : Game) : Game AsyncHttpR
         GameRepository.updateGameState request
         |> thenMap (fun _ -> { game with pieces = updatedPieces })
 
-    | EventEffect.PlayersRemoved e ->
+    | Effect.PlayersRemoved e ->
         okTask (e.value |> Seq.ofList)
         |> thenDoEachAsync (fun pId -> GameRepository.removePlayer pId)
         |> thenMap (fun _ -> 
@@ -86,15 +86,15 @@ let private processEffect (effect : EventEffect) (game : Game) : Game AsyncHttpR
             { game with players = updatedPlayers }
         )
 
-    | EventEffect.PlayerOutOfMoves _ ->
+    | Effect.PlayerOutOfMoves _ ->
         //This effect is just to communicate what happened,
         //the same event should also create a PlayerEliminated and PiecesOwnershipChanged effect
         okTask game
 
-    | EventEffect.PlayerAdded e -> 
+    | Effect.PlayerAdded e -> 
         processAddPlayerEffect (e, game)
 
-    | EventEffect.PiecesOwnershipChanged e ->
+    | Effect.PiecesOwnershipChanged e ->
         let updatedPieces = 
             game.pieces |> Utilities.replaceIf
                 (fun p -> e.context |> List.contains p.id)
@@ -110,7 +110,7 @@ let private processEffect (effect : EventEffect) (game : Game) : Game AsyncHttpR
         GameRepository.updateGameState request
         |> thenMap (fun _ -> { game with pieces = updatedPieces })
 
-    | EventEffect.PieceMoved e ->
+    | Effect.PieceMoved e ->
         let updatedPieces =
             game.pieces |> Utilities.replaceIf
                 (fun p -> e.context = p.id)
@@ -129,9 +129,9 @@ let private processEffect (effect : EventEffect) (game : Game) : Game AsyncHttpR
 let processEvent (game : Game option) (event : Event) : StateAndEventResponse AsyncHttpResult =
 
     match (game, event) with
-    | (None, GameCreated e) ->
+    | (None, e) when e.kind = EventKind.GameCreated ->
         match (e.effects.[0], e.effects.[1]) with
-        | (EventEffect.GameCreated createGameEffect, EventEffect.PlayerAdded addPlayerEffect) ->
+        | (Effect.GameCreated createGameEffect, Effect.PlayerAdded addPlayerEffect) ->
             GameRepository.createGame createGameEffect.value
             |> thenBindAsync GameRepository.getGame
             |> thenBindAsync (fun g -> processAddPlayerEffect (addPlayerEffect, g))
@@ -141,14 +141,11 @@ let processEvent (game : Game option) (event : Event) : StateAndEventResponse As
     | (None, _) ->
         failwith "Only GameCreated event can be processed without a game."
 
-    | (Some _, GameCreated e) ->
+    | (Some _, e) when e.kind = EventKind.GameCreated ->
         failwith "GameCreated event must be processed without a game."
 
     | (Some g, _) ->
-        let projections = 
-            event.getEffects() 
-            |> Seq.map processEffect
-
+        let projections = event.effects |> Seq.map processEffect
         applyEachAsync projections g
         
     |> thenMap (fun g -> 

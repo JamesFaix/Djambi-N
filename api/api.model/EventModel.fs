@@ -37,7 +37,7 @@ type DiffWithContextEffect<'a, 'b> =
         context : 'b
     }
 
-type EventEffect =
+type Effect =
     | GameCreated of ScalarEffect<CreateGameRequest>
     | GameStatusChanged of DiffEffect<GameStatus>
     | TurnCycleChanged of DiffEffect<int list>
@@ -51,66 +51,66 @@ type EventEffect =
     | PiecesOwnershipChanged of DiffWithContextEffect<int option, int list>
     | PieceMoved of DiffWithContextEffect<int, int>
 
-module EventEffect =
+module Effect =
     let gameCreated (request) =
-        EventEffect.GameCreated {
+        Effect.GameCreated {
             kind = EffectKind.GameCreated
             value = request
         }
 
     let gameStatusChanged (oldValue, newValue) =
-        EventEffect.GameStatusChanged {
+        Effect.GameStatusChanged {
             kind = EffectKind.GameStatusChanged
             oldValue = oldValue
             newValue = newValue
         }
 
     let turnCycleChanged (oldValue, newValue) =
-        EventEffect.TurnCycleChanged {
+        Effect.TurnCycleChanged {
             kind = EffectKind.TurnCycleChanged
             oldValue = oldValue
             newValue = newValue
         }
 
     let parametersChanged (oldValue, newValue) =
-        EventEffect.ParametersChanged {
+        Effect.ParametersChanged {
             kind = EffectKind.ParametersChanged
             oldValue = oldValue
             newValue = newValue
         }
 
     let playerEliminated (playerId) =
-        EventEffect.PlayerEliminated {
+        Effect.PlayerEliminated {
             kind = EffectKind.PlayerEliminated
             value = playerId
         }
 
     let playerAdded (request) =
-        EventEffect.PlayerAdded {
+        Effect.PlayerAdded {
             kind = EffectKind.PlayerAdded
             value = request
         }
 
     let playerOutOfMoves (playerId) =
-        EventEffect.PlayerOutOfMoves {
+        Effect.PlayerOutOfMoves {
             kind = EffectKind.PlayerOutOfMoves
             value = playerId
         }
 
     let pieceKilled (pieceId) = 
-        EventEffect.PieceKilled {
+        Effect.PieceKilled {
             kind = EffectKind.PieceKilled
             value = pieceId
         }
 
     let playersRemoved (playerIds) =
-        EventEffect.PlayersRemoved {
+        Effect.PlayersRemoved {
             kind = EffectKind.PlayersRemoved
             value = playerIds
         }
 
     let piecesOwnershipChanged (pieceIds, oldPlayerId, newPlayerId) =
-        EventEffect.PiecesOwnershipChanged {
+        Effect.PiecesOwnershipChanged {
             kind = EffectKind.PiecesOwnershipChanged
             context = pieceIds
             oldValue = oldPlayerId
@@ -118,7 +118,7 @@ module EventEffect =
         }
 
     let pieceMoved (pieceId, oldCellId, newCellId) =
-        EventEffect.PieceMoved {
+        Effect.PieceMoved {
             kind = EffectKind.PieceMoved
             context = pieceId
             oldValue = oldCellId
@@ -135,96 +135,17 @@ type EventKind =
     | GameStarted
     | TurnCommitted
 
-type BasicEvent =
+type Event =
     {
         kind : EventKind
         timestamp : DateTime
-        effects : EventEffect list
-    }
-
-type EventWithContext<'a> = 
-    { 
-        kind : EventKind
-        timestamp : DateTime
-        effects : EventEffect list
-        context : 'a
-    }
-
-type Event = 
-    | GameParametersChanged of BasicEvent
-    | GameCanceled of BasicEvent
-    | PlayerJoined of BasicEvent
-    | PlayerEjected of BasicEvent
-    | PlayerQuit of BasicEvent
-    | GameCreated of BasicEvent
-    | GameStarted of BasicEvent
-    | TurnCommitted of EventWithContext<Turn>
-
-type Event with
-    member x.getEffects() =
-        match x with            
-        | GameParametersChanged e 
-        | GameCanceled e 
-        | PlayerJoined e
-        | PlayerEjected e
-        | PlayerQuit e ->
-            e.effects
-        | GameCreated e 
-        | GameStarted e -> 
-            e.effects
-        | TurnCommitted e ->
-            e.effects
-            
+        effects : Effect list
+    }           
 
 module Event =
-    let gameParametersChanged (effects) =
-        Event.GameParametersChanged {
-            kind = EventKind.GameParametersChanged
-            timestamp = DateTime.UtcNow
-            effects = effects
-        }
-
-    let gameCanceled () =
-        Event.GameCanceled {
-            kind = EventKind.GameCanceled
-            timestamp = DateTime.UtcNow
-            effects = [ EventEffect.gameStatusChanged(GameStatus.Pending, GameStatus.AbortedWhilePending) ]
-        }
-
-    let playerJoined (player) =
-        Event.PlayerJoined {
-            kind = EventKind.PlayerJoined
-            timestamp = DateTime.UtcNow
-            effects = [ EventEffect.playerAdded(player) ]
-        }
-
-    let playerEjected (effects) =
-        Event.PlayerEjected {
-            kind = EventKind.PlayerEjected
-            timestamp = DateTime.UtcNow
-            effects = effects
-        }
-
-    let playerQuit (effects) =
-        Event.PlayerQuit {
-            kind = EventKind.PlayerQuit
-            timestamp = DateTime.UtcNow
-            effects = effects
-        }
-
-    let gameCreated (gameRequest, playerRequest) =
-        Event.GameCreated {
-            kind = EventKind.GameCreated
-            timestamp = DateTime.UtcNow
-            effects = [
-                EventEffect.gameCreated(gameRequest)
-                EventEffect.playerAdded(playerRequest)
-            ]
-        }
-
-    let gameStarted (effects) =
-        Event.GameStarted {
-            kind = EventKind.GameStarted
+    let create (kind, effects) : Event =
+        {
+            kind = kind
             timestamp = DateTime.UtcNow
             effects = effects
         }
