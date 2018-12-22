@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.IntegrationTests.Logic.GameService
+﻿namespace Djambi.Api.IntegrationTests.Logic.GameManager
 
 open System
 open FSharp.Control.Tasks
@@ -9,7 +9,7 @@ open Djambi.Api.IntegrationTests
 open Djambi.Api.Logic.Services
 open Djambi.Api.Model
 
-type GetGameStateTests() =
+type GetGameTests() =
     inherit TestsBase()
 
 //TODO: Get game state should work

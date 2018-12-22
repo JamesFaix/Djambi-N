@@ -1,50 +1,52 @@
 ﻿module Djambi.Api.Logic.Services.GameCrudService
 
-open Djambi.Api.Common
-open Djambi.Api.Common.AsyncHttpResult
-open Djambi.Api.Db.Repositories
 open Djambi.Api.Model
+open Djambi.Api.Common
 
-let createGame (parameters : GameParameters) (session : Session) : Game AsyncHttpResult =
-    //Create game
-    GameRepository.createGame (parameters, session.userId)
-    |> thenBindAsync (fun gameId ->
-        //Add self as first player
-        let playerRequest = CreatePlayerRequest.user session.userId
-        GameRepository.addPlayer (gameId, playerRequest)
-        //Return game
-        |> thenBindAsync (fun _ -> GameRepository.getGame gameId)
-    )
+type ArrayList<'a> = System.Collections.Generic.List<'a>
+    
+//TODO: Add integration tests
+let getCreateGameEvent (parameters : GameParameters) (session : Session) : Event HttpResult =
+    let gameRequest = 
+        {
+            parameters = parameters
+            createdByUserId = session.userId
+        }
+    let playerRequest = CreatePlayerRequest.user session.userId
+    Ok <| Event.gameCreated (gameRequest, playerRequest)
 
-let getGames (query : GamesQuery) (session : Session) : Game list AsyncHttpResult =
-    let isViewableByActiveUser (game : Game) : bool =
-        game.parameters.isPublic
-        || game.createdByUserId = session.userId
+//TODO: Add integration tests
+let getUpdateGameParametersEvent (game : Game, parameters : GameParameters) (session : Session) : Event HttpResult =
+    if game.status <> GameStatus.Pending
+    then Error <| HttpException (400, "Cannot change game parameters unless game is Pending.")
+    elif not (session.isAdmin || session.userId = game.createdByUserId)
+    then Error <| HttpException(403, "Cannot change game parameters of game created by another user.")
+    else 
+        let effects = new ArrayList<EventEffect>()
 
-    GameRepository.getGames query
-    |> thenMap (fun games ->
-        if session.isAdmin
-        then games
-        else games |> List.filter isViewableByActiveUser
-    )
+        effects.Add(EventEffect.parametersChanged(game.parameters, parameters))
 
-let getGame (gameId : int) (session : Session) : Game AsyncHttpResult =
-    GameRepository.getGame gameId
-    |> thenBind (fun game ->
-        if (game.parameters.isPublic
-            || game.createdByUserId = session.userId
-            || game.players |> List.exists(fun p -> p.userId.IsSome
-                                                 && p.userId.Value = session.userId))
-        then Ok <| game
-        else Error <| HttpException(404, "Game not found.")        
-    )
+        //If lowering region count, extra players are ejected
+        let truncatedPlayers = 
+            game.players 
+            |> Seq.skip parameters.regionCount 
 
-let updateGameParameters (gameId : int, parameters : GameParameters) (session : Session) : Game AsyncHttpResult =
-    GameRepository.getGame gameId
-    |> thenBindAsync (fun game -> 
-        if not (session.isAdmin || session.userId = game.createdByUserId)
-        then errorTask <| HttpException(403, "Cannot change game parameters of game created by another user.")
-        else 
-            GameRepository.updateGameParameters gameId parameters
-            |> thenBindAsync (fun _ -> GameRepository.getGame gameId)    
-    )
+        //If disabling AllowGuests, guests are ejected
+        let ejectedGuests =
+            if parameters.allowGuests = false
+            then game.players
+                |> Seq.filter (fun p -> p.kind = PlayerKind.Guest)
+            else Seq.empty
+
+        let removedPlayerIds = 
+            truncatedPlayers 
+            |> Seq.append ejectedGuests 
+            |> Seq.map (fun p -> p.id)
+            |> Seq.distinct
+            |> Seq.toList
+
+        if removedPlayerIds.Length > 0
+        then effects.Add(EventEffect.playersRemoved removedPlayerIds)
+        else ()
+
+        Ok <| Event.gameParametersChanged (effects |> Seq.toList)

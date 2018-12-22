@@ -14,10 +14,10 @@ type GameRepositoryTests() =
     let ``Create game should work``() =
         //Arrange
         let userId = 1
-        let parameters = getGameParameters()
+        let request = getCreateGameRequest(userId)
         task {
             //Act
-            let! gameId = GameRepository.createGame (parameters, userId) |> thenValue
+            let! gameId = GameRepository.createGame request |> thenValue
 
             //Assert
             Assert.NotEqual(0, gameId)
@@ -27,25 +27,25 @@ type GameRepositoryTests() =
     let ``Get game should work`` () =
         //Arrange
         let userId = 1
-        let parameters = getGameParameters()
+        let request = getCreateGameRequest(userId)
         task {
-            let! gameId = GameRepository.createGame (parameters, userId) |> thenValue
+            let! gameId = GameRepository.createGame request |> thenValue
 
             //Act
             let! game = GameRepository.getGame gameId |> thenValue
 
             //Assert
             Assert.Equal(gameId, game.id)
-            Assert.Equal(parameters, game.parameters)
+            Assert.Equal(request.parameters, game.parameters)
         }
         
     [<Fact>]
     let ``Get games should work``() =
         //Arrange
         let userId = 1
-        let parameters = getGameParameters()
+        let request = getCreateGameRequest(userId)
         task {
-            let! gameId = GameRepository.createGame (parameters, userId) |> thenValue
+            let! gameId = GameRepository.createGame request |> thenValue
             let query = GamesQuery.empty
 
             //Act
@@ -60,10 +60,10 @@ type GameRepositoryTests() =
     let ``Add user player should work``() =
         //Arrange
         let userId = 1
-        let parameters = getGameParameters()
+        let gameRequest = getCreateGameRequest(userId)
         let userRequest = getCreateUserRequest()
         task {
-            let! gameId = GameRepository.createGame (parameters, userId) |> thenValue
+            let! gameId = GameRepository.createGame gameRequest |> thenValue
             let! user = UserRepository.createUser userRequest |> thenValue
             let request = CreatePlayerRequest.user user.id
 
@@ -83,9 +83,9 @@ type GameRepositoryTests() =
     let ``Add neutral player should work``() =
         //Arrange
         let userId = 1
-        let parameters = getGameParameters()
+        let gameRequest = getCreateGameRequest(userId)
         task {
-            let! gameId = GameRepository.createGame (parameters, userId) |> thenValue
+            let! gameId = GameRepository.createGame gameRequest |> thenValue
             let request = CreatePlayerRequest.neutral "test"
 
             //Act
@@ -104,10 +104,10 @@ type GameRepositoryTests() =
     let ``Add guest player should work``() =
         //Arrange
         let userId = 1
-        let parameters = getGameParameters()
+        let gameRequest = getCreateGameRequest(userId)
         let userRequest = getCreateUserRequest()
         task {
-            let! gameId = GameRepository.createGame (parameters, userId) |> thenValue
+            let! gameId = GameRepository.createGame gameRequest |> thenValue
             let! user = UserRepository.createUser userRequest |> thenValue
             let request = CreatePlayerRequest.guest (user.id, "test")
 
@@ -127,10 +127,10 @@ type GameRepositoryTests() =
     let ``Remove player should work``() =
         //Arrange
         let userId = 1
-        let parameters = getGameParameters()
+        let gameRequest = getCreateGameRequest(userId)
         let userRequest = getCreateUserRequest()
         task {
-            let! gameId = GameRepository.createGame (parameters, userId) |> thenValue
+            let! gameId = GameRepository.createGame gameRequest |> thenValue
             let! user = UserRepository.createUser userRequest |> thenValue
             let playerRequest = CreatePlayerRequest.user user.id
             let! player = GameRepository.addPlayer (gameId, playerRequest) |> thenValue

@@ -2,12 +2,16 @@
 module Djambi.Api.IntegrationTests.TestUtilities
 
 open System
+open System.Linq
 open FSharp.Control.Tasks
 open Microsoft.Extensions.Configuration
 open Djambi.Api.Model
 open Djambi.Utilities
 open Djambi.Api.Common
+open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Logic.Services
+open Djambi.Api.Logic.Managers
+open Djambi.Api.Db.Repositories
 
 let private config =
     ConfigurationBuilder()
@@ -39,6 +43,12 @@ let getGameParameters() : GameParameters =
         allowGuests = false
     }
 
+let getCreateGameRequest (userId : int) : CreateGameRequest =
+    {
+        parameters = getGameParameters()
+        createdByUserId = userId
+    }
+
 let getCreatePlayerRequest : CreatePlayerRequest =
     {
         kind = PlayerKind.User
@@ -64,13 +74,25 @@ let createUser() : UserDetails AsyncHttpResult =
 
 let createuserSessionAndGame(allowGuests : bool) : (UserDetails * Session * Game) AsyncHttpResult =
     task {
-        let! user = createUser() |> AsyncHttpResult.thenValue
+        let! user = createUser() |> thenValue
 
         let session = getSessionForUser user.id
 
         let parameters = { getGameParameters() with allowGuests = allowGuests }
-        let! game = GameCrudService.createGame parameters session
-                     |> AsyncHttpResult.thenValue
+        let! resp = GameManager.createGame parameters session
+                     |> thenValue
 
-        return Ok <| (user, session, game)
+        return Ok <| (user, session, resp.game)
+    }
+
+let fillEmptyPlayerSlots (game : Game) : Game AsyncHttpResult =
+    task {
+        let missingPlayerCount = game.parameters.regionCount - game.players.Length        
+        for i in Enumerable.Range(0, missingPlayerCount) do
+            let name = sprintf "neutral%i" (i+1)
+            let request = CreatePlayerRequest.neutral name
+            let! _ = GameRepository.addPlayer (game.id, request) |> thenValue
+            ()
+        
+        return! GameRepository.getGame game.id
     }

@@ -3,27 +3,64 @@
 open Djambi.Api.Logic.Services
 open Djambi.Api.Common
 open Djambi.Api.Model
+open Djambi.Api.Common.Result
+open Djambi.Api.Common.AsyncHttpResult
+open Djambi.Api.Db.Repositories
+
+let private isGameViewableByActiveUser (session : Session) (game : Game) : bool =
+    game.parameters.isPublic
+    || game.createdByUserId = session.userId
+    || game.players |> List.exists(fun p -> p.userId = Some session.userId)
 
 let getGames (query : GamesQuery) (session : Session) : Game list AsyncHttpResult =
-    GameCrudService.getGames query session
+    GameRepository.getGames query
+    |> thenMap (fun games ->
+        if session.isAdmin
+        then games
+        else games |> List.filter (isGameViewableByActiveUser session)
+    )
 
+//TODO: Requires integration tests
 let getGame (gameId : int) (session : Session) : Game AsyncHttpResult =
-    GameCrudService.getGame gameId session
+    GameRepository.getGame gameId
+    |> thenBind (fun game ->
+        if isGameViewableByActiveUser session game
+        then Ok <| game
+        else Error <| HttpException(404, "Game not found.")        
+    )
 
-let createGame (parameters : GameParameters) (session : Session) : Game AsyncHttpResult =
-    GameCrudService.createGame parameters session
+let createGame (parameters : GameParameters) (session : Session) : StateAndEventResponse AsyncHttpResult =
+    GameCrudService.getCreateGameEvent parameters session
+    |> bindAsync (EventProcessor.processEvent None)
 
-let updateGameParameters (gameId : int) (parameters : GameParameters) (session : Session) : Game AsyncHttpResult =
-    GameCrudService.updateGameParameters (gameId, parameters) session
+//TODO: Requires integration tests
+let updateGameParameters (gameId : int) (parameters : GameParameters) (session : Session) : StateAndEventResponse AsyncHttpResult =
+    GameRepository.getGame gameId
+    |> thenBindAsync (fun game -> 
+        GameCrudService.getUpdateGameParametersEvent (game, parameters) session
+        |> bindAsync (EventProcessor.processEvent (Some game))
+    )
 
-let addPlayer (request : CreatePlayerRequest, gameId : int) (session : Session) : Player AsyncHttpResult =
-    PlayerService.addPlayer (gameId, request) session
+let addPlayer (gameId : int) (request : CreatePlayerRequest) (session : Session) : StateAndEventResponse AsyncHttpResult =
+    GameRepository.getGame gameId
+    |> thenBindAsync (fun game -> 
+        PlayerService.getAddPlayerEvent (game, request) session
+        |> bindAsync (EventProcessor.processEvent (Some game))
+    )
 
-let removePlayer (gameId : int, playerId : int) (session : Session) : Unit AsyncHttpResult =
-    PlayerService.removePlayer (gameId, playerId) session
+let removePlayer (gameId : int, playerId : int) (session : Session) : StateAndEventResponse AsyncHttpResult =
+    GameRepository.getGame gameId
+    |> thenBindAsync (fun game -> 
+        PlayerService.getRemovePlayerEvent (game, playerId) session
+        |> bindAsync (EventProcessor.processEvent (Some game))
+    )
 
-let startGame (gameId: int) (session : Session) : Game AsyncHttpResult =
-    GameStartService.startGame gameId session
+let startGame (gameId: int) (session : Session) : StateAndEventResponse AsyncHttpResult =
+    GameRepository.getGame gameId
+    |> thenBindAsync (fun game -> 
+        GameStartService.getGameStartEvent game session
+        |> thenBindAsync (EventProcessor.processEvent (Some game))
+    )
 
 let selectCell (gameId : int, cellId : int) (session : Session) : Turn AsyncHttpResult =
     TurnService.selectCell (gameId, cellId) session

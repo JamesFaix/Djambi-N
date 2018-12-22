@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.IntegrationTests.Logic.PlayerService
+﻿namespace Djambi.Api.IntegrationTests.Logic.GameManager
 
 open System
 open FSharp.Control.Tasks
@@ -8,6 +8,7 @@ open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.IntegrationTests
 open Djambi.Api.Logic.Services
 open Djambi.Api.Model
+open Djambi.Api.Logic.Managers
 
 type AddPlayerTests() =
     inherit TestsBase()
@@ -25,14 +26,24 @@ type AddPlayerTests() =
             let request = CreatePlayerRequest.user user.id
 
             //Act
-            let! player = PlayerService.addPlayer (game.id, request) session |> thenValue
+            let! resp = GameManager.addPlayer game.id request session |> thenValue
 
             //Assert
+            let player = resp.game.players |> List.except game.players |> List.head
             player.id |> shouldNotBe 0
             player.gameId |> shouldBe game.id
             player.name |> shouldBe user.name
             player.userId |> shouldBe (Some user.id)
             player.kind |> shouldBe PlayerKind.User
+
+            match resp.event with
+            | Event.PlayerJoined e ->
+                e.effects.Length |> shouldBe 1
+                match e.effects.[0] with
+                | EventEffect.PlayerAdded ef ->
+                    ef.value |> shouldBe request
+                | _ -> failwith "Incorrect effects."
+            | _ -> failwith "Incorrect event type."
         }
 
     [<Fact>]
@@ -45,14 +56,24 @@ type AddPlayerTests() =
             let request = CreatePlayerRequest.user user.id
 
             //Act
-            let! player = PlayerService.addPlayer (game.id, request) { session with isAdmin = true } |> thenValue
+            let! resp = GameManager.addPlayer game.id request { session with isAdmin = true } |> thenValue
 
             //Assert
+            let player = resp.game.players |> List.except game.players |> List.head
             player.id |> shouldNotBe 0
             player.gameId |> shouldBe game.id
             player.name |> shouldBe user.name
             player.userId |> shouldBe (Some user.id)
             player.kind |> shouldBe PlayerKind.User
+
+            match resp.event with
+            | Event.PlayerJoined e ->
+                e.effects.Length |> shouldBe 1
+                match e.effects.[0] with
+                | EventEffect.PlayerAdded ef ->
+                    ef.value |> shouldBe request
+                | _ -> failwith "Incorrect effects."
+            | _ -> failwith "Incorrect event type."
         }
 
     [<Fact>]
@@ -65,7 +86,7 @@ type AddPlayerTests() =
             let request = CreatePlayerRequest.user user.id
 
             //Act
-            let! error = PlayerService.addPlayer (game.id, request) { session with isAdmin = false }
+            let! error = GameManager.addPlayer game.id request { session with isAdmin = false }
 
             //Assert
             error |> shouldBeError 403 "Cannot add other users to a game."
@@ -87,7 +108,7 @@ type AddPlayerTests() =
                 }
 
             //Act
-            let! error = PlayerService.addPlayer (game.id, request) { session with isAdmin = true }
+            let! error = GameManager.addPlayer game.id request { session with isAdmin = true }
 
             //Assert
             error |> shouldBeError 400 "UserID must be provided when adding a user player."
@@ -109,7 +130,7 @@ type AddPlayerTests() =
                 }
 
             //Act
-            let! error = PlayerService.addPlayer (game.id, request) { session with isAdmin = true }
+            let! error = GameManager.addPlayer game.id request { session with isAdmin = true }
 
             //Assert
             error |> shouldBeError 400 "Cannot provide name when adding a user player."
@@ -123,7 +144,7 @@ type AddPlayerTests() =
             let request = CreatePlayerRequest.user user.id
 
             //Act
-            let! error = PlayerService.addPlayer (game.id, request) { session with isAdmin = true }
+            let! error = GameManager.addPlayer game.id request { session with isAdmin = true }
 
             //Assert
             error |> shouldBeError 409 "Conflict when attempting to write Player."
@@ -139,14 +160,24 @@ type AddPlayerTests() =
             let request = CreatePlayerRequest.guest (user.id, "test")
 
             //Act
-            let! player = PlayerService.addPlayer (game.id, request) session |> thenValue
+            let! resp = GameManager.addPlayer game.id request session |> thenValue
 
             //Assert
+            let player = resp.game.players |> List.except game.players |> List.head
             player.id |> shouldNotBe 0
             player.gameId |> shouldBe game.id
             player.name |> shouldBe request.name.Value
             player.userId |> shouldBe (Some user.id)
             player.kind |> shouldBe PlayerKind.Guest
+
+            match resp.event with
+            | Event.PlayerJoined e ->
+                e.effects.Length |> shouldBe 1
+                match e.effects.[0] with
+                | EventEffect.PlayerAdded ef ->
+                    ef.value |> shouldBe request
+                | _ -> failwith "Incorrect effects."
+            | _ -> failwith "Incorrect event type."
         }
 
     [<Fact>]
@@ -159,15 +190,25 @@ type AddPlayerTests() =
             let request = CreatePlayerRequest.guest (user.id, "test")
 
             //Act
-            let! player = PlayerService.addPlayer (game.id, request) { session with isAdmin = true }
+            let! resp = GameManager.addPlayer game.id request { session with isAdmin = true }
                           |> thenValue
 
-            //Assert
+            //Assert            
+            let player = resp.game.players |> List.except game.players |> List.head
             player.id |> shouldNotBe 0
             player.gameId |> shouldBe game.id
             player.name |> shouldBe request.name.Value
             player.userId |> shouldBe (Some user.id)
             player.kind |> shouldBe PlayerKind.Guest
+ 
+            match resp.event with
+            | Event.PlayerJoined e ->
+                e.effects.Length |> shouldBe 1
+                match e.effects.[0] with
+                | EventEffect.PlayerAdded ef ->
+                    ef.value |> shouldBe request
+                | _ -> failwith "Incorrect effects."
+            | _ -> failwith "Incorrect event type."
         }
 
     [<Fact>]
@@ -180,7 +221,7 @@ type AddPlayerTests() =
             let request = CreatePlayerRequest.guest (user.id, "test")
 
             //Act
-            let! error = PlayerService.addPlayer (game.id, request) { session with isAdmin = false }
+            let! error = GameManager.addPlayer game.id request { session with isAdmin = false }
 
             //Assert
             error |> shouldBeError 403 "Cannot add guests for other users to a game."
@@ -200,7 +241,7 @@ type AddPlayerTests() =
                 }
 
             //Act
-            let! error = PlayerService.addPlayer (game.id, request) session
+            let! error = GameManager.addPlayer game.id request session
 
             //Assert
             error |> shouldBeError 400 "UserID must be provided when adding a guest player."
@@ -220,7 +261,7 @@ type AddPlayerTests() =
                 }
 
             //Act
-            let! error = PlayerService.addPlayer (game.id, request) session
+            let! error = GameManager.addPlayer game.id request session
 
             //Assert
             error |> shouldBeError 400 "Must provide name when adding a guest player."
@@ -234,7 +275,7 @@ type AddPlayerTests() =
             let request = CreatePlayerRequest.guest (user.id, user.name)
 
             //Act
-            let! error = PlayerService.addPlayer (game.id, request) session
+            let! error = GameManager.addPlayer game.id request session
 
             //Assert
             error |> shouldBeError 409 "Conflict when attempting to write Player."
@@ -248,7 +289,7 @@ type AddPlayerTests() =
             let request = CreatePlayerRequest.guest (user.id, "test")
 
             //Act
-            let! error = PlayerService.addPlayer (game.id, request) session
+            let! error = GameManager.addPlayer game.id request session
 
             //Assert
             error |> shouldBeError 400 "Game does not allow guest players."
@@ -264,7 +305,7 @@ type AddPlayerTests() =
             let request = CreatePlayerRequest.neutral ("test")
 
             //Act
-            let! error = PlayerService.addPlayer (game.id, request) { session with isAdmin = true }
+            let! error = GameManager.addPlayer game.id request { session with isAdmin = true }
 
             //Assert
             error |> shouldBeError 400 "Cannot directly add neutral players to a game."
@@ -280,7 +321,7 @@ type AddPlayerTests() =
             let request = CreatePlayerRequest.guest (user.id, "test")
 
             //Act
-            let! error = PlayerService.addPlayer (Int32.MinValue, request) { session with isAdmin = true }
+            let! error = GameManager.addPlayer Int32.MinValue request { session with isAdmin = true }
 
             //Assert
             error |> shouldBeError 404 "Game not found."
@@ -296,11 +337,11 @@ type AddPlayerTests() =
             let request2 = { request1 with name = Some "test2" }
             let request3 = { request1 with name = Some "test3" }
 
-            let! _ = PlayerService.addPlayer (game.id, request1) session |> thenValue
-            let! _ = PlayerService.addPlayer (game.id, request2) session |> thenValue
+            let! _ = GameManager.addPlayer game.id request1 session |> thenValue
+            let! _ = GameManager.addPlayer game.id request2 session |> thenValue
 
             //Act
-            let! error = PlayerService.addPlayer (game.id, request3) session
+            let! error = GameManager.addPlayer game.id request3 session
 
             //Assert
             error |> shouldBeError 400 "Max player count reached."
@@ -314,11 +355,11 @@ type AddPlayerTests() =
             let request1 = CreatePlayerRequest.guest (user.id, "test")
             let request2 = { request1 with name = Some "test2" }
 
-            let! _ = PlayerService.addPlayer (game.id, request1) session |> thenValue
-            let! _ = GameStartService.startGame game.id session |> thenValue
+            let! _ = GameManager.addPlayer game.id request1 session |> thenValue
+            let! _ = GameStartService.startGame game |> thenValue
 
             //Act
-            let! error = PlayerService.addPlayer (game.id, request2) session
+            let! error = GameManager.addPlayer game.id request2 session
 
             //Assert
             error |> shouldBeError 400 "Can only add players to pending games."

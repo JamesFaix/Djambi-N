@@ -82,13 +82,13 @@ let getGames (query : GamesQuery) : Game list AsyncHttpResult =
         )
     )
 
-let createGame (parameters : GameParameters, createdByUserId : int) : int AsyncHttpResult =
+let createGame (request : CreateGameRequest) : int AsyncHttpResult =
     let param = DynamicParameters()
-                    .add("RegionCount", parameters.regionCount)
-                    .add("CreatedByUserId", createdByUserId)
-                    .add("AllowGuests", parameters.allowGuests)
-                    .add("IsPublic", parameters.isPublic)
-                    .addOption("Description", parameters.description)
+                    .add("RegionCount", request.parameters.regionCount)
+                    .add("CreatedByUserId", request.createdByUserId)
+                    .add("AllowGuests", request.parameters.allowGuests)
+                    .add("IsPublic", request.parameters.isPublic)
+                    .addOption("Description", request.parameters.description)
 
     let cmd = proc("Games_Create", param)
 
