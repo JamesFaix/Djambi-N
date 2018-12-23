@@ -3,7 +3,7 @@
 open System
 open Djambi.Api.Db.Model
 open Djambi.Api.Model
-open Djambi.Api.Common
+open Djambi.Api.Common.Json
 open Djambi.Api.Common.Utilities
 
 let mapUserResponse (sqlModel : UserSqlModel) : UserDetails =

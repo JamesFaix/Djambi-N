@@ -8,7 +8,7 @@ open Microsoft.AspNetCore.Http
 open Newtonsoft.Json
 open Djambi.Api.Common
 open Djambi.Api.Common.AsyncHttpResult
-open Djambi.Api.Common.JsonConverters
+open Djambi.Api.Common.Json
 open Djambi.Api.Logic.Services
 open Djambi.Api.Model.SessionModel
 

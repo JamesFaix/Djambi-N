@@ -13,7 +13,7 @@ open Newtonsoft.Json
 open Djambi.Api.Db
 open Djambi.Api.Http
 open Djambi.Utilities
-open Djambi.Api.Common.JsonConverters
+open Djambi.Api.Common.Json
 
 // ---------------------------------
 // Error handler

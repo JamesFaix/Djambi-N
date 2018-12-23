@@ -9,7 +9,7 @@ open Microsoft.Extensions.Configuration
 open Newtonsoft.Json
 open Djambi.Api.WebClient.Model
 open Djambi.Utilities
-open Djambi.Api.Common.JsonConverters
+open Djambi.Api.Common.Json
 
 let converters =
     [|

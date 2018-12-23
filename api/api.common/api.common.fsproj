@@ -5,8 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="JsonUtility.fs" />
-    <Compile Include="JsonConverters.fs" />
+    <Compile Include="Json\DiscriminationUnionJsonConverter.fs" />
+    <Compile Include="Json\JsonUtility.fs" />
+    <Compile Include="Json\OptionJsonConverter.fs" />
+    <Compile Include="Json\TupleArrayJsonConverter.fs" />
     <Compile Include="Result.fs" />
     <Compile Include="Constants.fs" />
     <Compile Include="HttpException.fs" />
