@@ -5,14 +5,20 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="JsonUtility.fs" />
-    <Compile Include="JsonConverters.fs" />
-    <Compile Include="Result.fs" />
+    <Compile Include="Control\Result.fs" />
+    <Compile Include="Control\Task.fs" />
+    <Compile Include="Control\HttpException.fs" />
+    <Compile Include="Control\AsyncHttpResult.fs" />
+    <Compile Include="Json\DiscriminationUnionJsonConverter.fs" />
+    <Compile Include="Json\JsonUtility.fs" />
+    <Compile Include="Json\OptionJsonConverter.fs" />
+    <Compile Include="Json\TupleArrayJsonConverter.fs" />
+    <Compile Include="Collections.fs" />
     <Compile Include="Constants.fs" />
-    <Compile Include="HttpException.fs" />
-    <Compile Include="Task.fs" />
-    <Compile Include="AsyncHttpResult.fs" />
-    <Compile Include="Utilities.fs" />
+    <Compile Include="Enum.fs" />
+    <Compile Include="Function.fs" />
+    <Compile Include="Nullable.fs" />
+    <Compile Include="Option.fs" />
   </ItemGroup>
 
   <ItemGroup>

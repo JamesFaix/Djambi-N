@@ -1,7 +1,7 @@
 module Djambi.Api.UnitTests.BoardModelExtensionTests
 
 open Xunit
-open Djambi.Api.Common.Utilities
+open Djambi.Api.Common
 open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
 open Djambi.Api.Model.BoardModel
 
@@ -68,6 +68,6 @@ let ``Utilities GetValues Directions returns expected output``() =
             Directions.UpLeft
         ]
 
-    let actual = GetValues<Directions>()
+    let actual = Enum.getValues<Directions>()
 
     Assert.Equal<list<Directions>>(expected, actual)

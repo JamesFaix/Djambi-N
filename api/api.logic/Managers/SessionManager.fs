@@ -1,8 +1,8 @@
 ﻿module Djambi.Api.Logic.Managers.SessionManager
 
 open System
-open Djambi.Api.Common
-open Djambi.Api.Common.AsyncHttpResult
+open Djambi.Api.Common.Control
+open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Logic.Services
 open Djambi.Api.Model
 

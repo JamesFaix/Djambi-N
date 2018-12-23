@@ -1,10 +1,9 @@
 ﻿module Djambi.Api.Logic.Managers.GameManager
 
 open Djambi.Api.Logic.Services
-open Djambi.Api.Common
+open Djambi.Api.Common.Control
+open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Model
-open Djambi.Api.Common.Result
-open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Db.Repositories
 
 let private isGameViewableByActiveUser (session : Session) (game : Game) : bool =
@@ -31,28 +30,28 @@ let getGame (gameId : int) (session : Session) : Game AsyncHttpResult =
 
 let createGame (parameters : GameParameters) (session : Session) : StateAndEventResponse AsyncHttpResult =
     GameCrudService.getCreateGameEvent parameters session
-    |> bindAsync (EventProcessor.processEvent None)
+    |> Result.bindAsync (EventProcessor.processEvent None)
 
 //TODO: Requires integration tests
 let updateGameParameters (gameId : int) (parameters : GameParameters) (session : Session) : StateAndEventResponse AsyncHttpResult =
     GameRepository.getGame gameId
     |> thenBindAsync (fun game -> 
         GameCrudService.getUpdateGameParametersEvent (game, parameters) session
-        |> bindAsync (EventProcessor.processEvent (Some game))
+        |> Result.bindAsync (EventProcessor.processEvent (Some game))
     )
 
 let addPlayer (gameId : int) (request : CreatePlayerRequest) (session : Session) : StateAndEventResponse AsyncHttpResult =
     GameRepository.getGame gameId
     |> thenBindAsync (fun game -> 
         PlayerService.getAddPlayerEvent (game, request) session
-        |> bindAsync (EventProcessor.processEvent (Some game))
+        |> Result.bindAsync (EventProcessor.processEvent (Some game))
     )
 
 let removePlayer (gameId : int, playerId : int) (session : Session) : StateAndEventResponse AsyncHttpResult =
     GameRepository.getGame gameId
     |> thenBindAsync (fun game -> 
         PlayerService.getRemovePlayerEvent (game, playerId) session
-        |> bindAsync (EventProcessor.processEvent (Some game))
+        |> Result.bindAsync (EventProcessor.processEvent (Some game))
     )
 
 let startGame (gameId: int) (session : Session) : StateAndEventResponse AsyncHttpResult =

@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.Common
+﻿namespace Djambi.Api.Common.Control
 
 open System
 

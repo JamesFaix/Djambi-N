@@ -2,8 +2,8 @@
 
 open FSharp.Control.Tasks
 open Xunit
-open Djambi.Api.Common
-open Djambi.Api.Common.AsyncHttpResult
+open Djambi.Api.Common.Control
+open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Db.Repositories
 open Djambi.Api.IntegrationTests
 

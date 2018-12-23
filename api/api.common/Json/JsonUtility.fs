@@ -1,5 +1,7 @@
-﻿module Djambi.Api.Common.JsonUtility
+﻿[<AutoOpen>]
+module Djambi.Api.Common.Json.JsonUtility
 
+open System
 open Newtonsoft.Json
 
 let deserializeList<'a> (json : string) : 'a list =

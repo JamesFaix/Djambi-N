@@ -2,8 +2,9 @@
 module Djambi.Api.Logic.Services.EventProcessor
 
 open Djambi.Api.Model
-open Djambi.Api.Common.AsyncHttpResult
-open Djambi.Api.Common
+open Djambi.Api.Common.Collections
+open Djambi.Api.Common.Control
+open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Db.Repositories
 
 let private processAddPlayerEffect (effect : ScalarEffect<CreatePlayerRequest>, game : Game) : Game AsyncHttpResult =
@@ -54,7 +55,7 @@ let private processEffect (effect : Effect) (game : Game) : Game AsyncHttpResult
         GameRepository.killPlayer e.value
         |> thenMap (fun _ -> 
             { game with 
-                players = game.players |> Utilities.replaceIf 
+                players = game.players |> List.replaceIf 
                     (fun p -> p.id = e.value) 
                     (fun p -> { p with isAlive = Some false })
             }
@@ -62,7 +63,7 @@ let private processEffect (effect : Effect) (game : Game) : Game AsyncHttpResult
 
     | Effect.PieceKilled e ->
         let updatedPieces = 
-            game.pieces |> Utilities.replaceIf
+            game.pieces |> List.replaceIf
                 (fun p -> p.id = e.value) 
                 (fun p -> { p with kind = PieceKind.Corpse; playerId = None })
 
@@ -82,7 +83,7 @@ let private processEffect (effect : Effect) (game : Game) : Game AsyncHttpResult
         |> thenDoEachAsync (fun pId -> GameRepository.removePlayer pId)
         |> thenMap (fun _ -> 
             let updatedPlayers = 
-                game.players |> Utilities.exceptWithKey (fun p -> p.id) e.value
+                game.players |> List.exceptWithKey (fun p -> p.id) e.value
             { game with players = updatedPlayers }
         )
 
@@ -96,7 +97,7 @@ let private processEffect (effect : Effect) (game : Game) : Game AsyncHttpResult
 
     | Effect.PiecesOwnershipChanged e ->
         let updatedPieces = 
-            game.pieces |> Utilities.replaceIf
+            game.pieces |> List.replaceIf
                 (fun p -> e.context |> List.contains p.id)
                 (fun p -> { p with playerId = e.newValue })
         let request : UpdateGameStateRequest =
@@ -112,7 +113,7 @@ let private processEffect (effect : Effect) (game : Game) : Game AsyncHttpResult
 
     | Effect.PieceMoved e ->
         let updatedPieces =
-            game.pieces |> Utilities.replaceIf
+            game.pieces |> List.replaceIf
                 (fun p -> e.context = p.id)
                 (fun p -> { p with cellId = e.newValue })
         let request : UpdateGameStateRequest =

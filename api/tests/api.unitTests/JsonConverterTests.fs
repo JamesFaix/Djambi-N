@@ -2,7 +2,7 @@
 
 open Newtonsoft.Json
 open Xunit
-open Djambi.Api.Common.JsonConverters
+open Djambi.Api.Common.Json
 
 //---Option---
 

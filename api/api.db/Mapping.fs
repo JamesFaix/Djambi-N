@@ -1,10 +1,10 @@
 ﻿module Djambi.Api.Db.Mapping
 
 open System
+open Djambi.Api.Common
+open Djambi.Api.Common.Json
 open Djambi.Api.Db.Model
 open Djambi.Api.Model
-open Djambi.Api.Common
-open Djambi.Api.Common.Utilities
 
 let mapUserResponse (sqlModel : UserSqlModel) : UserDetails =
     {
@@ -13,7 +13,7 @@ let mapUserResponse (sqlModel : UserSqlModel) : UserDetails =
         isAdmin = sqlModel.isAdmin
         password = sqlModel.password
         failedLoginAttempts = int sqlModel.failedLoginAttempts
-        lastFailedLoginAttemptOn = sqlModel.lastFailedLoginAttemptOn |> nullableToOption
+        lastFailedLoginAttemptOn = sqlModel.lastFailedLoginAttemptOn |> Option.ofNullable
     }
 
 let mapSessionResponse (sqlModel : SessionSqlModel) : Session =
@@ -43,13 +43,13 @@ let mapPlayerResponse (sqlModel : PlayerSqlModel) : Player =
     {
         id = sqlModel.playerId
         gameId = sqlModel.gameId
-        userId = sqlModel.userId |> nullableToOption
+        userId = sqlModel.userId |> Option.ofNullable
         kind = mapPlayerKindId sqlModel.playerKindId
         name = sqlModel.name
-        isAlive = sqlModel.isAlive |> nullableToOption
-        colorId = sqlModel.colorId |> nullableToOption |> Option.map int
-        startingRegion = sqlModel.startingRegion |> nullableToOption |> Option.map int
-        startingTurnNumber = sqlModel.startingTurnNumber |> nullableToOption |> Option.map int
+        isAlive = sqlModel.isAlive |> Option.ofNullable
+        colorId = sqlModel.colorId |> Option.ofNullable |> Option.map int
+        startingRegion = sqlModel.startingRegion |> Option.ofNullable |> Option.map int
+        startingTurnNumber = sqlModel.startingTurnNumber |> Option.ofNullable |> Option.map int
     }
 
 let mapGameStatusId (gameStatusId : byte) : GameStatus =
@@ -78,7 +78,7 @@ let mapGameResponse(sqlModel : GameSqlModel) : Game =
         parameters = 
             {
                 regionCount = sqlModel.regionCount
-                description = sqlModel.description |> referenceToOption
+                description = sqlModel.description |> Option.ofReference
                 isPublic = sqlModel.isPublic
                 allowGuests = sqlModel.allowGuests
             }

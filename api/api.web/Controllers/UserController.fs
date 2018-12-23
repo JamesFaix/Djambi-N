@@ -3,7 +3,7 @@
 open System.Threading.Tasks
 open Giraffe
 open Microsoft.AspNetCore.Http
-open Djambi.Api.Common.AsyncHttpResult
+open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Web.HttpUtility
 open Djambi.Api.Logic.Managers
 open Djambi.Api.Model

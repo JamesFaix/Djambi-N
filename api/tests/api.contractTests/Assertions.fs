@@ -3,7 +3,7 @@ module Djambi.Api.ContractTests.Assertions
 
 open System.Net
 open NUnit.Framework
-open Djambi.Api.Common
+open Djambi.Api.Common.Control
 open Djambi.Api.WebClient
 
 let shouldBe<'a> (expected : 'a) (actual : 'a) =

@@ -2,12 +2,14 @@
 
 open System.Linq
 open Djambi.Api.Common
-open Djambi.Api.Common.AsyncHttpResult
+open Djambi.Api.Common.Collections
+open Djambi.Api.Common.Control
+open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Db.Repositories
 open Djambi.Api.Logic.ModelExtensions
 open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
-open Djambi.Api.Model
 open Djambi.Api.Logic.Services
+open Djambi.Api.Model
 
 type ArrayList<'a> = System.Collections.Generic.List<'a>
  
@@ -34,8 +36,8 @@ let getGameStartEvent (game : Game) (session : Session) : Event AsyncHttpResult 
     )
 
 let assignStartingConditions(players : Player list) : Player list =
-    let colorIds = [0..(Constants.maxRegions-1)] |> Utilities.shuffle |> Seq.take players.Length
-    let regions = [0..(players.Length-1)] |> Utilities.shuffle
+    let colorIds = [0..(Constants.maxRegions-1)] |> List.shuffle |> Seq.take players.Length
+    let regions = [0..(players.Length-1)] |> List.shuffle
 
     let playersWithAssignments =
         players
@@ -54,7 +56,7 @@ let assignStartingConditions(players : Player list) : Player list =
     let nonNeutralPlayers =
         players
         |> List.filter (fun p -> p.kind <> PlayerKind.Neutral)
-        |> Utilities.shuffle
+        |> List.shuffle
         |> Seq.mapi (fun i p -> (i, p))
 
     for (i, p) in nonNeutralPlayers do

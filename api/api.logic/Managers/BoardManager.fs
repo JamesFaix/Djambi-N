@@ -2,7 +2,7 @@
 
 open Djambi.Api.Logic.Services
 open Djambi.Api.Model
-open Djambi.Api.Common
+open Djambi.Api.Common.Control
 
 let getBoard (regionCount : int) (session : Session) : Board AsyncHttpResult =
     BoardService.getBoard regionCount session

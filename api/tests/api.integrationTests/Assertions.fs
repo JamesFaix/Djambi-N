@@ -2,7 +2,7 @@
 module Djambi.Api.IntegrationTests.Assertions
 
 open Xunit
-open Djambi.Api.Common
+open Djambi.Api.Common.Control
 
 let shouldBe<'a> (expected : 'a) (actual : 'a) =
     Assert.Equal(expected, actual)

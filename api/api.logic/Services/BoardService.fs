@@ -1,7 +1,7 @@
 ﻿module Djambi.Api.Logic.Services.BoardService
 
-open Djambi.Api.Common
-open Djambi.Api.Common.AsyncHttpResult
+open Djambi.Api.Common.Control
+open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Logic.ModelExtensions
 open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
 open Djambi.Api.Model
