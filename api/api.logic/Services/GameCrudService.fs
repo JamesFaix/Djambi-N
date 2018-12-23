@@ -1,9 +1,8 @@
 ﻿module Djambi.Api.Logic.Services.GameCrudService
 
-open Djambi.Api.Model
+open Djambi.Api.Common.Collections
 open Djambi.Api.Common.Control
-
-type ArrayList<'a> = System.Collections.Generic.List<'a>
+open Djambi.Api.Model
     
 //TODO: Add integration tests
 let getCreateGameEvent (parameters : GameParameters) (session : Session) : Event HttpResult =

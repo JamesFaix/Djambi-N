@@ -2,7 +2,7 @@
 
 open System
 open System.Linq
-open Djambi.Api.Common
+open Djambi.Api.Common.Collections
 open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Db.Repositories
@@ -94,7 +94,8 @@ let fillEmptyPlayerSlots (game : Game) : Effect list AsyncHttpResult =
             possibleNames,
             game.players |> Seq.map (fun p -> p.name),
             StringComparer.OrdinalIgnoreCase)
-        |> Utilities.shuffle
+        |> List.ofSeq
+        |> List.shuffle
         |> Seq.take missingPlayerCount
 
     if missingPlayerCount = 0
