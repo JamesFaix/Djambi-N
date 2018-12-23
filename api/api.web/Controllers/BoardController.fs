@@ -1,6 +1,6 @@
 ﻿module Djambi.Api.Web.Controllers.BoardController
 
-open Djambi.Api.Common.AsyncHttpResult
+open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Web.HttpUtility
 open Djambi.Api.Logic.Managers
 

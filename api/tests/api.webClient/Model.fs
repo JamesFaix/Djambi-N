@@ -4,7 +4,7 @@ module Djambi.Api.WebClient.Model
 open System.Net
 open System.Text.RegularExpressions
 open System.Threading.Tasks
-open Djambi.Api.Common
+open Djambi.Api.Common.Control
 
 type Response<'a> =
     {

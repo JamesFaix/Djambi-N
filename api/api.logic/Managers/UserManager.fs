@@ -1,8 +1,8 @@
 ﻿module Djambi.Api.Logic.Managers.UserManager
 
-open Djambi.Api.Common.AsyncHttpResult
+open Djambi.Api.Common.Control  
+open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Logic.Services
-open Djambi.Api.Common
 open Djambi.Api.Model
 
 let createUser (request : CreateUserRequest) (sessionOption : Session option) : User AsyncHttpResult =

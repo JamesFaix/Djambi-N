@@ -7,8 +7,8 @@ open FSharp.Control.Tasks
 open Microsoft.Extensions.Configuration
 open Djambi.Api.Model
 open Djambi.Utilities
-open Djambi.Api.Common
-open Djambi.Api.Common.AsyncHttpResult
+open Djambi.Api.Common.Control
+open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Logic.Services
 open Djambi.Api.Logic.Managers
 open Djambi.Api.Db.Repositories

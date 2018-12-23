@@ -2,7 +2,7 @@
 
 open System
 open Microsoft.AspNetCore.Http
-open Djambi.Api.Common.AsyncHttpResult
+open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Common.Utilities
 open Djambi.Api.Web
 open Djambi.Api.Web.HttpUtility

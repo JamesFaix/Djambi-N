@@ -1,4 +1,5 @@
-﻿module Djambi.Api.Common.Task
+﻿//Intentionally not AutoOpen
+module Djambi.Api.Common.Control.Task
 
 open System.Threading.Tasks
 open FSharp.Control.Tasks

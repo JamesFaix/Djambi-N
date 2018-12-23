@@ -1,7 +1,7 @@
 ﻿module Djambi.Api.Logic.Services.GameCrudService
 
 open Djambi.Api.Model
-open Djambi.Api.Common
+open Djambi.Api.Common.Control
 
 type ArrayList<'a> = System.Collections.Generic.List<'a>
     

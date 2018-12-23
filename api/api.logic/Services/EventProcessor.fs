@@ -2,8 +2,9 @@
 module Djambi.Api.Logic.Services.EventProcessor
 
 open Djambi.Api.Model
-open Djambi.Api.Common.AsyncHttpResult
 open Djambi.Api.Common
+open Djambi.Api.Common.Control
+open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Db.Repositories
 
 let private processAddPlayerEffect (effect : ScalarEffect<CreatePlayerRequest>, game : Game) : Game AsyncHttpResult =

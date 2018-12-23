@@ -1,13 +1,13 @@
-﻿namespace Djambi.Api.Common
+﻿namespace Djambi.Api.Common.Control
 
 open System.Threading.Tasks
 open FSharp.Control.Tasks
-open Djambi.Api.Common.Task
 
 type HttpResult<'a> = Result<'a, HttpException>
 
-type AsyncHttpResult<'a> = Task<Result<'a, HttpException>>
+type AsyncHttpResult<'a> = Task<HttpResult<'a>>
 
+//Intentionally not AutoOpen
 module AsyncHttpResult =
 
     let thenMap
@@ -15,14 +15,14 @@ module AsyncHttpResult =
         (t : 'a AsyncHttpResult)
         : 'b AsyncHttpResult =
 
-        t |> map (Result.map projection)
+        t |> Task.map (Result.map projection)
 
     let thenBind
         (projection : 'a -> Result<'b, HttpException>)
         (t : 'a AsyncHttpResult)
         : 'b AsyncHttpResult =
 
-        t |> map (Result.bind projection)
+        t |> Task.map (Result.bind projection)
 
     let thenBindAsync
         (projection : 'a -> 'b AsyncHttpResult)
@@ -34,7 +34,7 @@ module AsyncHttpResult =
             | Ok x -> projection x
             | Error x -> Task.FromResult(Error x)
 
-        t |> bind projectIfValue
+        t |> Task.bind projectIfValue
 
     let thenDoAsync
         (action : 'a -> _ AsyncHttpResult)
@@ -108,7 +108,7 @@ module AsyncHttpResult =
             | ex when ex.statusCode = statusCode -> newException
             | _ -> oldException
 
-        t |> map (Result.mapError mapIfMatch)
+        t |> Task.map (Result.mapError mapIfMatch)
 
     let thenBindError
         (statusCode : int)
@@ -139,10 +139,10 @@ module AsyncHttpResult =
         }
 
     let thenValue (t : 'a AsyncHttpResult) : 'a Task =
-        t |> map Result.value
+        t |> Task.map Result.value
 
     let thenError (t : 'a AsyncHttpResult) : HttpException Task =
-        t |> map Result.error
+        t |> Task.map Result.error
 
     let okTask (value : 'a): 'a AsyncHttpResult =
         value |> Ok |> Task.FromResult

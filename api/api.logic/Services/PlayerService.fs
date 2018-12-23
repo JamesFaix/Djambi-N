@@ -2,10 +2,11 @@
 
 open System
 open System.Linq
-open Djambi.Api.Common.AsyncHttpResult
-open Djambi.Api.Model
 open Djambi.Api.Common
+open Djambi.Api.Common.Control
+open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Db.Repositories
+open Djambi.Api.Model
 
 type ArrayList<'a> = System.Collections.Generic.List<'a>
     

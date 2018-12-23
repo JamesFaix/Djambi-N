@@ -6,8 +6,8 @@ open System.Data.SqlClient
 open System.Text.RegularExpressions
 open Dapper
 open FSharp.Control.Tasks
-open Djambi.Api.Common
-open Djambi.Api.Common.AsyncHttpResult
+open Djambi.Api.Common.Control
+open Djambi.Api.Common.Control.AsyncHttpResult
 
 let mutable connectionString = null
 

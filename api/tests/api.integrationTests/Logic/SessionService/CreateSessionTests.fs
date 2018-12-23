@@ -5,7 +5,7 @@ open Xunit
 open Djambi.Api.Common
 open Djambi.Api.IntegrationTests
 open Djambi.Api.Logic.Services
-open Djambi.Api.Common.AsyncHttpResult;
+open Djambi.Api.Common.Control.AsyncHttpResult;
 
 type CreateSessionTests() =
     inherit TestsBase()
