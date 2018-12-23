@@ -2,7 +2,7 @@
 
 open System.Collections.Generic
 open System.Linq
-open Djambi.Api.Common.Utilities
+open Djambi.Api.Common
 open Djambi.Api.Model
 
 module BoardModelExtensions =
@@ -110,7 +110,7 @@ module BoardModelExtensions =
 
                 cells |> Seq.toList
 
-            memoize cellsInner this
+            Function.memoize cellsInner this
 
         member this.cell(cellId : int) : Cell option =
             this.cells() |> List.tryFind(fun c -> c.id = cellId)
@@ -120,7 +120,7 @@ module BoardModelExtensions =
                 landscape.cells()
                 |> Seq.find (fun c -> c.locations |> Seq.contains loc)
 
-            let memoized = memoize cellAtInner this
+            let memoized = Function.memoize cellAtInner this
             memoized location
 
         member this.nextLocation(from : Location, direction : Directions) : Location option =
@@ -159,7 +159,7 @@ module BoardModelExtensions =
                         { region = r; x = 1; y = 1 }
                         { region = r; x = 1; y = 0 }
                     ])
-            else GetValues<Directions>()
+            else Enum.getValues<Directions>()
                  |> Seq.map (fun d -> this.nextLocation(cell.locations.Head, d))
                  |> Seq.filter (fun o -> o.IsSome)
                  |> Seq.map (fun o -> o.Value)
@@ -248,7 +248,7 @@ module BoardModelExtensions =
                                 yield this.cellAt(loc1)
                             }
                         |> Seq.toList))
-            else GetValues<Directions>()
+            else Enum.getValues<Directions>()
                  |> List.map(fun d ->
                     let mutable dir = d
                     let mutable loc1 = cell.locations.Head

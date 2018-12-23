@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Collections\Module.fs" />
     <Compile Include="Control\Result.fs" />
     <Compile Include="Control\Task.fs" />
     <Compile Include="Control\HttpException.fs" />
@@ -14,8 +13,12 @@
     <Compile Include="Json\JsonUtility.fs" />
     <Compile Include="Json\OptionJsonConverter.fs" />
     <Compile Include="Json\TupleArrayJsonConverter.fs" />
+    <Compile Include="Collections.fs" />
     <Compile Include="Constants.fs" />
-    <Compile Include="Utilities.fs" />
+    <Compile Include="Enum.fs" />
+    <Compile Include="Function.fs" />
+    <Compile Include="Nullable.fs" />
+    <Compile Include="Option.fs" />
   </ItemGroup>
 
   <ItemGroup>

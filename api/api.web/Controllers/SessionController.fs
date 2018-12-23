@@ -2,12 +2,12 @@
 
 open System
 open Microsoft.AspNetCore.Http
+open Djambi.Api.Common
 open Djambi.Api.Common.Control.AsyncHttpResult
-open Djambi.Api.Common.Utilities
-open Djambi.Api.Web
-open Djambi.Api.Web.HttpUtility
 open Djambi.Api.Logic.Managers
 open Djambi.Api.Model.SessionModel
+open Djambi.Api.Web
+open Djambi.Api.Web.HttpUtility
 
 let appendCookie (ctx : HttpContext) (sessionToken : string, expiration : DateTime) =
     let cookieOptions = new CookieOptions()
@@ -15,7 +15,7 @@ let appendCookie (ctx : HttpContext) (sessionToken : string, expiration : DateTi
     cookieOptions.Path <- "/"
     cookieOptions.Secure <- false
     cookieOptions.HttpOnly <- true
-    cookieOptions.Expires <-  DateTimeOffset(expiration) |> toNullable
+    cookieOptions.Expires <-  DateTimeOffset(expiration) |> Nullable.ofValue
     ctx.Response.Cookies.Append(cookieName, sessionToken, cookieOptions);
 
 let openSession : HttpHandler =
