@@ -19,6 +19,7 @@
     <Compile Include="Logic\GameManager\GetGameTests.fs" />
     <Compile Include="Logic\GameManager\GetGamesTests.fs" />
     <Compile Include="Logic\GameManager\RemovePlayerTests.fs" />
+    <Compile Include="Logic\GameManager\SelectCellTests.fs" />
     <Compile Include="Logic\GameManager\StartGameTests.fs" />
     <Compile Include="Logic\GameStartService\GameStartServiceTests.fs" />
     <Compile Include="Logic\PlayerService\FillEmptyPlayerSlotsTests.fs" />
@@ -28,7 +29,6 @@
     <Compile Include="Logic\SessionService\RenewSessionTests.fs" />
     <None Include="Logic\TurnService\CommitTurnTests.fs" />
     <Compile Include="Logic\TurnService\ResetTurnTests.fs" />
-    <Compile Include="Logic\TurnService\SelectCellTests.fs" />
     <Compile Include="Logic\UserService\CreateUserTests.fs" />
     <Compile Include="Logic\UserService\DeleteUserTests.fs" />
     <Compile Include="Logic\UserService\GetUserTests.fs" />

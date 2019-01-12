@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.IntegrationTests.Logic.TurnService
+﻿namespace Djambi.Api.IntegrationTests.Logic.GameManager
 
 open System
 open FSharp.Control.Tasks
@@ -27,12 +27,13 @@ type SelectCellTests() =
             let cellId = updatedGame.currentTurn.Value.selectionOptions.Head
 
             //Act
-            let! result = TurnService.selectCell (updatedGame.id, cellId) session
+            let! result = GameManager.selectCell (updatedGame.id, cellId) session
 
             //Assert
             result |> Result.isOk |> shouldBeTrue
 
-            let turn = result |> Result.value
+            let response = result |> Result.value
+            let turn = response.game.currentTurn.Value
             turn.selections.Length |> shouldBe 1
             turn.selections.Head.cellId |> shouldBe cellId
             turn.selectionOptions |> shouldNotExist (fun cId -> cId = cellId)
@@ -61,7 +62,7 @@ type SelectCellTests() =
                 | _ -> session2
 
             //Act
-            let! result = TurnService.selectCell (updatedGame.id, cellId) sessionWithoutActivePlayer
+            let! result = GameManager.selectCell (updatedGame.id, cellId) sessionWithoutActivePlayer
 
             //Assert
             result |> shouldBeError 400 "Cannot perform this action during another player's turn."
@@ -90,13 +91,13 @@ type SelectCellTests() =
                 | _ -> session2
 
             //Act
-            let! result = TurnService.selectCell (updatedGame.id, cellId)
+            let! result = GameManager.selectCell (updatedGame.id, cellId)
                                                  { sessionWithoutActivePlayer with isAdmin = true }
 
             //Assert
             result |> Result.isOk |> shouldBeTrue
-
-            let turn = result |> Result.value
+            let response = result |> Result.value
+            let turn = response.game.currentTurn.Value
             turn.selections.Length |> shouldBe 1
             turn.selections.Head.cellId |> shouldBe cellId
             turn.selectionOptions |> shouldNotExist (fun cId -> cId = cellId)
@@ -116,7 +117,7 @@ type SelectCellTests() =
             let cellId = updatedGame.currentTurn.Value.selectionOptions.Head
 
             //Act
-            let! result = TurnService.selectCell (Int32.MinValue, cellId) session
+            let! result = GameManager.selectCell (Int32.MinValue, cellId) session
 
             //Assert
             result |> shouldBeError 404 "Game not found."
@@ -134,7 +135,7 @@ type SelectCellTests() =
             let! updatedGame = GameStartService.startGame game |> thenValue
 
             //Act
-            let! result = TurnService.selectCell (updatedGame.id, Int32.MinValue) session
+            let! result = GameManager.selectCell (updatedGame.id, Int32.MinValue) session
 
             //Assert
             result |> shouldBeError 404 "Cell not found."
@@ -157,7 +158,7 @@ type SelectCellTests() =
                                        |> (not << List.exists (fun cId -> cId = n)))
 
             //Act
-            let! result = TurnService.selectCell (updatedGame.id, cellId) session
+            let! result = GameManager.selectCell (updatedGame.id, cellId) session
 
             //Assert
             result |> shouldBeError 400 (sprintf "Cell %i is not currently selectable." cellId)

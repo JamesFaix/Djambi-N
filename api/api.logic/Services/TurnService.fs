@@ -23,10 +23,9 @@ let private ensureSessionIsAdminOrContainsCurrentPlayer (session : Session) (gam
             | _ -> Error <| HttpException(400, "Cannot perform this action during another player's turn.")
         )
 
-let selectCell(gameId : int, cellId : int) (session: Session) : Turn AsyncHttpResult =
-    GameRepository.getGame gameId
-    |> thenBindAsync (ensureSessionIsAdminOrContainsCurrentPlayer session)
-    |> thenBindAsync (fun game ->
+let getCellSelectedEvent(game : Game, cellId : int) (session: Session) : Event AsyncHttpResult =
+    ensureSessionIsAdminOrContainsCurrentPlayer session game
+    |> thenBindAsync (fun _ ->
         let board = BoardModelUtility.getBoardMetadata game.parameters.regionCount
         match board.cell cellId with
         | Some _ -> okTask game
@@ -91,11 +90,15 @@ let selectCell(gameId : int, cellId : int) (session: Session) : Turn AsyncHttpRe
                     let updatedGame = { game with currentTurn = Some turnWithNewSelection }
                     let (selectionOptions, requiredSelectionType) = SelectionOptionsService.getSelectableCellsFromState updatedGame
 
-                    {
-                        turnWithNewSelection with
+                    let updatedTurn = 
+                        { turnWithNewSelection with
                             selectionOptions = selectionOptions
                             requiredSelectionKind = requiredSelectionType
-                    }))
+                        }
+                    
+                    let effects = [Effect.currentTurnChanged(game.currentTurn, Some updatedTurn)]
+                    Event.create(EventKind.CellSelected, effects)
+                    ))
 
 let private applyTurnToPieces(game : Game) : (Piece list * Effect list) =
     let pieces = game.pieces.ToDictionary(fun p -> p.id)

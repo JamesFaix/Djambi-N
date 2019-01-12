@@ -144,6 +144,7 @@ type EventKind =
     | GameStarted
     | TurnCommitted
     | TurnReset
+    | CellSelected
 
 type Event =
     {
