@@ -226,9 +226,10 @@ let private killCurrentPlayer(game : Game) : (Game * Effect list) =
     let turns = game.turnCycle
                 |> List.filter (fun t -> t <> playerId)
                 |> removeSequentialDuplicates
-    
+
     let effects = new ArrayList<Effect>()
     effects.Add(Effect.playerOutOfMoves(playerId))
+    effects.Add(Effect.turnCycleChanged(game.turnCycle, turns))
 
     let abandonedPieces = game.pieces |> List.filter (fun p -> p.playerId = Some playerId) |> List.map(fun p -> p.id)
     if abandonedPieces.IsEmpty |> not 
@@ -290,19 +291,13 @@ let getCommitTurnEvent(game : Game) (session : Session) : Event AsyncHttpResult 
 
         //TODO: If only 1 player, game over
 
-        let request : UpdateGameStateRequest =
-            {
-                gameId = game.id
-                status = game.status
-                pieces = updatedGame.pieces
-                turnCycle = updatedGame.turnCycle
-                currentTurn = Some 
-                    { Turn.empty with
-                        selectionOptions = selectionOptions
-                        requiredSelectionKind = requiredSelectionType
-                    }
+        let updatedTurn =  
+            { Turn.empty with
+                selectionOptions = selectionOptions
+                requiredSelectionKind = requiredSelectionType
             }
-        //TODO: Provide way to pass selection options in event
+
+        effects.Add(Effect.currentTurnChanged(game.currentTurn, Some updatedTurn))
 
         Event.create(EventKind.TurnCommitted, effects |> Seq.toList)
     )

@@ -127,6 +127,18 @@ let private processEffect (effect : Effect) (game : Game) : Game AsyncHttpResult
         GameRepository.updateGameState request
         |> thenMap (fun _ -> { game with pieces = updatedPieces })
 
+    | Effect.CurrentTurnChanged e ->
+        let request : UpdateGameStateRequest = 
+            {
+                gameId = game.id
+                status = game.status
+                pieces = game.pieces
+                turnCycle = game.turnCycle
+                currentTurn = e.newValue
+            }
+        GameRepository.updateGameState request
+        |> thenMap (fun _ -> { game with currentTurn = e.newValue })
+
 let processEvent (game : Game option) (event : Event) : StateAndEventResponse AsyncHttpResult =
 
     match (game, event) with
