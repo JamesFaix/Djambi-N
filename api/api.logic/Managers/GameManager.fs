@@ -67,5 +67,9 @@ let selectCell (gameId : int, cellId : int) (session : Session) : Turn AsyncHttp
 let resetTurn (gameId : int) (session : Session) : Turn AsyncHttpResult =
     TurnService.resetTurn gameId session
 
-let commitTurn (gameId : int) (session : Session) : Game AsyncHttpResult =
-    TurnService.commitTurn gameId session
+let commitTurn (gameId : int) (session : Session) : StateAndEventResponse AsyncHttpResult =
+    GameRepository.getGame gameId
+    |> thenBindAsync (fun game -> 
+        TurnService.getCommitTurnEvent game session
+        |> thenBindAsync (EventProcessor.processEvent (Some game))
+    )
