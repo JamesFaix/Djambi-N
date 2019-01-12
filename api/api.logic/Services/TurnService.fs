@@ -302,10 +302,9 @@ let getCommitTurnEvent(game : Game) (session : Session) : Event AsyncHttpResult 
         Event.create(EventKind.TurnCommitted, effects |> Seq.toList)
     )
 
-let resetTurn(gameId : int) (session : Session) : Turn AsyncHttpResult =
-    GameRepository.getGame gameId
-    |> thenBindAsync (ensureSessionIsAdminOrContainsCurrentPlayer session)
-    |> thenBindAsync (fun game ->
+let getResetTurnEvent(game : Game) (session : Session) : Event AsyncHttpResult =
+    ensureSessionIsAdminOrContainsCurrentPlayer session game
+    |> thenMap (fun _ ->
         let updatedGame = { game with currentTurn = Some Turn.empty }
         let (selectionOptions, requiredSelectionType) = SelectionOptionsService.getSelectableCellsFromState updatedGame
         let turn = 
@@ -314,16 +313,7 @@ let resetTurn(gameId : int) (session : Session) : Turn AsyncHttpResult =
                     selectionOptions = selectionOptions
                     requiredSelectionKind = requiredSelectionType
             }
- 
-        let request : UpdateGameStateRequest =
-            {
-                gameId = game.id
-                status = game.status
-                pieces = game.pieces
-                turnCycle = game.turnCycle
-                currentTurn = Some turn
-            }
 
-        GameRepository.updateGameState request 
-        |> thenMap (fun _ -> turn)
+        let effects = [ Effect.currentTurnChanged(game.currentTurn, Some turn) ]
+        Event.create(EventKind.TurnReset, effects)
     )

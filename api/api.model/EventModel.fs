@@ -143,6 +143,7 @@ type EventKind =
     | PlayerQuit
     | GameStarted
     | TurnCommitted
+    | TurnReset
 
 type Event =
     {
