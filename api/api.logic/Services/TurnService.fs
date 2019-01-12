@@ -2,6 +2,7 @@
 
 open System.Collections.Generic
 open System.Linq
+open Djambi.Api.Common.Collections
 open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Db.Repositories
@@ -22,10 +23,9 @@ let private ensureSessionIsAdminOrContainsCurrentPlayer (session : Session) (gam
             | _ -> Error <| HttpException(400, "Cannot perform this action during another player's turn.")
         )
 
-let selectCell(gameId : int, cellId : int) (session: Session) : Turn AsyncHttpResult =
-    GameRepository.getGame gameId
-    |> thenBindAsync (ensureSessionIsAdminOrContainsCurrentPlayer session)
-    |> thenBindAsync (fun game ->
+let getCellSelectedEvent(game : Game, cellId : int) (session: Session) : Event AsyncHttpResult =
+    ensureSessionIsAdminOrContainsCurrentPlayer session game
+    |> thenBindAsync (fun _ ->
         let board = BoardModelUtility.getBoardMetadata game.parameters.regionCount
         match board.cell cellId with
         | Some _ -> okTask game
@@ -90,48 +90,71 @@ let selectCell(gameId : int, cellId : int) (session: Session) : Turn AsyncHttpRe
                     let updatedGame = { game with currentTurn = Some turnWithNewSelection }
                     let (selectionOptions, requiredSelectionType) = SelectionOptionsService.getSelectableCellsFromState updatedGame
 
-                    {
-                        turnWithNewSelection with
+                    let updatedTurn = 
+                        { turnWithNewSelection with
                             selectionOptions = selectionOptions
                             requiredSelectionKind = requiredSelectionType
-                    }))
+                        }
+                    
+                    let effects = [Effect.currentTurnChanged(game.currentTurn, Some updatedTurn)]
+                    Event.create(EventKind.CellSelected, effects)
+                    ))
 
-let private applyTurnToPieces(game : Game) : Piece list =
+let private applyTurnToPieces(game : Game) : (Piece list * Effect list) =
     let pieces = game.pieces.ToDictionary(fun p -> p.id)
     let currentTurn = game.currentTurn.Value
+
+    let effects = new ArrayList<Effect>()
 
     match (currentTurn.subjectPiece game, currentTurn.destinationCell game.parameters.regionCount) with
     | (None, _)
     | (_, None) -> raise (HttpException(500, "Cannot commit turn without subject and destination selected."))
     | (Some subject, Some destination) ->
-        let origin = subject.cellId
+        let originCellId = subject.cellId
 
         //Move subject to destination or vacate cell
         match currentTurn.vacateCellId with
-        | None ->        pieces.[subject.id] <- subject.moveTo destination.id
-        | Some vacate -> pieces.[subject.id] <- subject.moveTo vacate
+        | None ->        
+            pieces.[subject.id] <- subject.moveTo destination.id
+            effects.Add(Effect.pieceMoved(subject.id, subject.cellId, destination.id))
+        | Some vacateCellId -> 
+            pieces.[subject.id] <- subject.moveTo vacateCellId
+            effects.Add(Effect.pieceMoved(subject.id, destination.id, vacateCellId))
 
         match currentTurn.targetPiece game with
         | None -> ()
         | Some target ->
             //Kill target
             if subject.isKiller
-            then pieces.[target.id] <- target.kill
+            then 
+                pieces.[target.id] <- target.kill
+                effects.Add(Effect.pieceKilled(target.id))
 
             //Enlist players pieces if killing chief
             if subject.isKiller && target.kind = Chief
-            then for p in game.piecesControlledBy target.playerId.Value do
+            then 
+                let enlistedPieces = game.piecesControlledBy target.playerId.Value
+                for p in enlistedPieces do
                     pieces.[p.id] <- pieces.[p.id].enlistBy subject.playerId.Value
+
+                effects.Add(Effect.piecesOwnershipChanged(
+                                enlistedPieces |> List.map(fun p -> p.id), 
+                                target.playerId, 
+                                subject.playerId))
 
             //Drop target if drop cell exists
             match currentTurn.dropCellId with
-            | Some drop ->  pieces.[target.id] <- pieces.[target.id].moveTo drop
+            | Some dropCellId ->  
+                pieces.[target.id] <- pieces.[target.id].moveTo dropCellId
+                effects.Add(Effect.pieceMoved(target.id, target.cellId, dropCellId))
             | None -> ()
 
             //Move target back to origin if subject is assassin
             if subject.kind = Assassin
-            then pieces.[target.id] <- pieces.[target.id].moveTo origin
-        pieces.Values |> Seq.toList
+            then 
+                pieces.[target.id] <- pieces.[target.id].moveTo originCellId
+                effects.Add(Effect.pieceMoved(target.id, target.cellId, originCellId))
+        (pieces.Values |> Seq.toList, effects |> Seq.toList)
 
 let private removeSequentialDuplicates(turnCycle : int list) : int list =
     let list = turnCycle.ToList()
@@ -140,7 +163,7 @@ let private removeSequentialDuplicates(turnCycle : int list) : int list =
         then list.RemoveAt(i)
     list |> Seq.toList
 
-let private applyTurnToTurnCycle(game : Game) : int list =
+let private applyTurnToTurnCycle(game : Game) : (int list * Effect list) =
     let mutable turns = game.turnCycle
     let currentTurn = game.currentTurn.Value
     let regions = game.parameters.regionCount
@@ -192,9 +215,10 @@ let private applyTurnToTurnCycle(game : Game) : int list =
     //Cycle turn queue
     turns <- List.append turns.Tail [turns.Head]
 
-    turns
+    let effect = Effect.turnCycleChanged(game.turnCycle, turns)
+    (turns, [effect])
 
-let private killCurrentPlayer(game : Game) : Game =
+let private killCurrentPlayer(game : Game) : (Game * Effect list) =
     let playerId = game.turnCycle.Head
 
     let pieces = game.pieces
@@ -205,76 +229,85 @@ let private killCurrentPlayer(game : Game) : Game =
     let turns = game.turnCycle
                 |> List.filter (fun t -> t <> playerId)
                 |> removeSequentialDuplicates
-    
-    { game with
-        pieces = pieces
-        players = players
-        turnCycle = turns
-        currentTurn = Some Turn.empty
-    }
 
-let commitTurn(gameId : int) (session : Session) : Game AsyncHttpResult =
-    GameRepository.getGame gameId
-    |> thenBindAsync (ensureSessionIsAdminOrContainsCurrentPlayer session)
-    |> thenBindAsync (fun game ->
-        let turnCycle = applyTurnToTurnCycle game
-        let pieces = applyTurnToPieces game
+    let effects = new ArrayList<Effect>()
+    effects.Add(Effect.playerOutOfMoves(playerId))
+    effects.Add(Effect.turnCycleChanged(game.turnCycle, turns))
+
+    let abandonedPieces = game.pieces |> List.filter (fun p -> p.playerId = Some playerId) |> List.map(fun p -> p.id)
+    if abandonedPieces.IsEmpty |> not 
+    then 
+        effects.Add(Effect.piecesOwnershipChanged(abandonedPieces, Some playerId, None))
+
+    let updatedGame =
+        { game with
+            pieces = pieces
+            players = players
+            turnCycle = turns
+            currentTurn = Some Turn.empty
+        }
+
+    (updatedGame, effects |> Seq.toList)
+
+let getCommitTurnEvent(game : Game) (session : Session) : Event AsyncHttpResult =
+    ensureSessionIsAdminOrContainsCurrentPlayer session game
+    |> thenMap (fun _ ->
+        let effects = new ArrayList<Effect>()
+        
+        let (turnCycle, turnEffects) = applyTurnToTurnCycle game
+        effects.AddRange(turnEffects)
+
+        let (pieces, pieceEffects) = applyTurnToPieces game
+        effects.AddRange(pieceEffects)
+
         let currentTurn = game.currentTurn.Value
+        
         let mutable players = game.players
 
         //Kill player if chief killed
         match (currentTurn.subjectPiece game, currentTurn.targetPiece game) with
         | (Some subject, Some target) 
             when subject.isKiller && target.kind = Chief ->
-                GameRepository.killPlayer target.playerId.Value
-                |> thenDoAsync (fun _ -> 
-                    players <- players |> List.map (fun p -> if p.id = target.playerId.Value then p.kill else p)
-                    okTask ()
-                )
-        | _ -> okTask ()
-        |> thenBindAsync (fun _ ->
-            let mutable updatedGame : Game =
-                { game with 
-                    pieces = pieces
-                    turnCycle = turnCycle
-                    players = players
-                }
+                effects.Add(Effect.playerEliminated(target.playerId.Value))
+                players <- players |> List.map (fun p -> if p.id = target.playerId.Value then p.kill else p)
+        | _ -> ()
 
-            //While next player has no moves, kill chief and abandon all pieces
-            let (options, reqSelType) = SelectionOptionsService.getSelectableCellsFromState updatedGame
-            let mutable selectionOptions = options
-            let mutable requiredSelectionType = reqSelType
+        let mutable updatedGame : Game =
+            { game with 
+                pieces = pieces
+                turnCycle = turnCycle
+                players = players
+            }
 
-            while selectionOptions.IsEmpty && updatedGame.turnCycle.Length > 1 do
-                updatedGame <- killCurrentPlayer updatedGame
-                let (opt, rst) = SelectionOptionsService.getSelectableCellsFromState updatedGame
-                selectionOptions <- opt
-                requiredSelectionType <- rst
+        //While next player has no moves, kill chief and abandon all pieces
+        let (options, reqSelType) = SelectionOptionsService.getSelectableCellsFromState updatedGame
+        let mutable selectionOptions = options
+        let mutable requiredSelectionType = reqSelType
 
-            //TODO: If only 1 player, game over
+        while selectionOptions.IsEmpty && updatedGame.turnCycle.Length > 1 do
+            let (g, fx) = killCurrentPlayer updatedGame
+            effects.AddRange(fx)
+            updatedGame <- g
+            let (opt, rst) = SelectionOptionsService.getSelectableCellsFromState updatedGame
+            selectionOptions <- opt
+            requiredSelectionType <- rst
 
-            let request : UpdateGameStateRequest =
-                {
-                    gameId = game.id
-                    status = game.status
-                    pieces = updatedGame.pieces
-                    turnCycle = updatedGame.turnCycle
-                    currentTurn = Some 
-                        { Turn.empty with
-                            selectionOptions = selectionOptions
-                            requiredSelectionKind = requiredSelectionType
-                        }
-                }
+        //TODO: If only 1 player, game over
 
-            GameRepository.updateGameState request        
-        )        
+        let updatedTurn =  
+            { Turn.empty with
+                selectionOptions = selectionOptions
+                requiredSelectionKind = requiredSelectionType
+            }
+
+        effects.Add(Effect.currentTurnChanged(game.currentTurn, Some updatedTurn))
+
+        Event.create(EventKind.TurnCommitted, effects |> Seq.toList)
     )
-    |> thenBindAsync (fun _ -> GameRepository.getGame gameId)
 
-let resetTurn(gameId : int) (session : Session) : Turn AsyncHttpResult =
-    GameRepository.getGame gameId
-    |> thenBindAsync (ensureSessionIsAdminOrContainsCurrentPlayer session)
-    |> thenBindAsync (fun game ->
+let getResetTurnEvent(game : Game) (session : Session) : Event AsyncHttpResult =
+    ensureSessionIsAdminOrContainsCurrentPlayer session game
+    |> thenMap (fun _ ->
         let updatedGame = { game with currentTurn = Some Turn.empty }
         let (selectionOptions, requiredSelectionType) = SelectionOptionsService.getSelectableCellsFromState updatedGame
         let turn = 
@@ -283,16 +316,7 @@ let resetTurn(gameId : int) (session : Session) : Turn AsyncHttpResult =
                     selectionOptions = selectionOptions
                     requiredSelectionKind = requiredSelectionType
             }
- 
-        let request : UpdateGameStateRequest =
-            {
-                gameId = game.id
-                status = game.status
-                pieces = game.pieces
-                turnCycle = game.turnCycle
-                currentTurn = Some turn
-            }
 
-        GameRepository.updateGameState request 
-        |> thenMap (fun _ -> turn)
+        let effects = [ Effect.currentTurnChanged(game.currentTurn, Some turn) ]
+        Event.create(EventKind.TurnReset, effects)
     )

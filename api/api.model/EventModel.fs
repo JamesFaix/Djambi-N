@@ -15,6 +15,7 @@ type EffectKind =
     | PlayerAdded
     | PlayersRemoved
     | ParametersChanged
+    | CurrentTurnChanged
 
 type DiffEffect<'a> =
     {
@@ -50,6 +51,7 @@ type Effect =
     | PlayerAdded of ScalarEffect<CreatePlayerRequest>
     | PiecesOwnershipChanged of DiffWithContextEffect<int option, int list>
     | PieceMoved of DiffWithContextEffect<int, int>
+    | CurrentTurnChanged of DiffEffect<Turn option>
 
 module Effect =
     let gameCreated (request) =
@@ -125,6 +127,13 @@ module Effect =
             newValue = newCellId
         }
 
+    let currentTurnChanged (oldTurn, newTurn) =
+        Effect.CurrentTurnChanged {
+            kind = EffectKind.CurrentTurnChanged
+            oldValue = oldTurn
+            newValue = newTurn
+        }
+
 type EventKind =
     | GameCreated
     | GameParametersChanged
@@ -134,6 +143,8 @@ type EventKind =
     | PlayerQuit
     | GameStarted
     | TurnCommitted
+    | TurnReset
+    | CellSelected
 
 type Event =
     {
