@@ -85,7 +85,7 @@ let processAddPlayerEffect (effect : ScalarEffect<CreatePlayerRequest>) (game : 
         { game with players = List.append game.players [player] }
     )
 
-let private processPiecesOwnershipChangedEffect (effect : DiffWithContextEffect<int option, int list>) (game : Game) : Game AsyncHttpResult = 
+let processPiecesOwnershipChangedEffect (effect : DiffWithContextEffect<int option, int list>) (game : Game) : Game AsyncHttpResult = 
     let updatedPieces = 
         game.pieces |> List.replaceIf
             (fun p -> effect.context |> List.contains p.id)
@@ -101,7 +101,7 @@ let private processPiecesOwnershipChangedEffect (effect : DiffWithContextEffect<
     GameRepository.updateGameState request
     |> thenMap (fun _ -> { game with pieces = updatedPieces })
 
-let private processPieceMovedEffect (effect : DiffWithContextEffect<int, int>) (game : Game) : Game AsyncHttpResult =
+let processPieceMovedEffect (effect : DiffWithContextEffect<int, int>) (game : Game) : Game AsyncHttpResult =
     let updatedPieces =
         game.pieces |> List.replaceIf
             (fun p -> effect.context = p.id)
@@ -117,7 +117,7 @@ let private processPieceMovedEffect (effect : DiffWithContextEffect<int, int>) (
     GameRepository.updateGameState request
     |> thenMap (fun _ -> { game with pieces = updatedPieces })
 
-let private processCurrentTurnChangedEffect (effect : DiffEffect<Turn option>) (game : Game) : Game AsyncHttpResult =
+let processCurrentTurnChangedEffect (effect : DiffEffect<Turn option>) (game : Game) : Game AsyncHttpResult =
     let request : UpdateGameStateRequest = 
         {
             gameId = game.id
@@ -129,11 +129,10 @@ let private processCurrentTurnChangedEffect (effect : DiffEffect<Turn option>) (
     GameRepository.updateGameState request
     |> thenMap (fun _ -> { game with currentTurn = effect.newValue })
 
-let private processGameCreatedEffect (effect : ScalarEffect<CreateGameRequest>) : Game AsyncHttpResult =
+let processGameCreatedEffect (effect : ScalarEffect<CreateGameRequest>) : Game AsyncHttpResult =
     GameRepository.createGame effect.value
     |> thenBindAsync GameRepository.getGame
 
-//TODO: Add integration tests
 let private processEffect (effect : Effect) (game : Game) : Game AsyncHttpResult =
         
     match effect with 
