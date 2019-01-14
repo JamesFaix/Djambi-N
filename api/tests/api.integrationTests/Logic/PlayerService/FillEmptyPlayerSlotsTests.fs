@@ -7,7 +7,9 @@ open Djambi.Api.Db.Repositories
 open Djambi.Api.IntegrationTests
 open Djambi.Api.Model
 open Djambi.Api.Logic.Managers
+open Djambi.Api.Logic.Services
 
+//TODO: Audit test class
 type FillEmptyPlayerSlotsTests() =
     inherit TestsBase()
 
@@ -34,4 +36,28 @@ type FillEmptyPlayerSlotsTests() =
             |> List.filter (fun p -> p.kind = PlayerKind.Neutral)
             |> List.length
             |> shouldBe (updatedGame.players.Length - 1)
+        }
+
+    [<Fact>]
+    let ``Fill empty player slots should return effect for each neutral player``() =
+        //Arrange
+        let session = getSessionForUser 1
+        let gameRequest = getGameParameters()
+        task {
+            let! resp = GameManager.createGame gameRequest session |> thenValue
+            let game = resp.game
+
+            //Act
+            let! effects = PlayerService.fillEmptyPlayerSlots game |> thenValue
+
+            //Assert
+            effects.Length |> shouldBe 2
+
+            match (effects.[0], effects.[1]) with
+            | (Effect.PlayerAdded p2, Effect.PlayerAdded p3) ->
+                p2.value.kind |> shouldBe PlayerKind.Neutral
+                p2.value.userId |> shouldBe None
+                p3.value.kind |> shouldBe PlayerKind.Neutral
+                p3.value.userId |> shouldBe None                
+            | _ -> failwith "Invalid effects."
         }
