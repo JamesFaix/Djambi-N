@@ -8,7 +8,7 @@ open Djambi.Api.IntegrationTests
 open Djambi.Api.Model
 open Djambi.Api.Logic.Services
 
-type ProcessTurnCycleChangedEffect() =
+type ProcessPlayersRemovedEffectTests() =
     inherit TestsBase()
     
     [<Fact>]
@@ -18,26 +18,21 @@ type ProcessTurnCycleChangedEffect() =
             let! (user, _, game) = TestUtilities.createuserSessionAndGame(true) |> thenValue
 
             let player2request = CreatePlayerRequest.guest(user.id, "p2")
-            let! _ = GameRepository.addPlayer(game.id, player2request) |> thenValue
+            let! player2 = GameRepository.addPlayer(game.id, player2request) |> thenValue
 
-            let player3request = CreatePlayerRequest.guest(user.id, "p3")
-            let! _ = GameRepository.addPlayer(game.id, player3request) |> thenValue
-
-            let! game = GameRepository.getGame game.id |> thenValue
-            let! game = GameStartService.startGame game |> thenValue
-
-            let newCycle = game.turnCycle |> List.rev
-            let effect = Effect.turnCycleChanged(game.turnCycle, newCycle)
+            let! game = GameRepository.getGame game.id |> thenValue           
+            game.players |> shouldExist (fun p -> p.id = player2.id)
+ 
+            let effect = Effect.playersRemoved([player2.id])
 
             match effect with
-            | Effect.TurnCycleChanged e ->
+            | Effect.PlayersRemoved e ->
 
                 //Act
-                let! updatedGame = EventProcessor.processTurnCycleChangedEffect e game |> thenValue
+                let! updatedGame = EventProcessor.processPlayersRemovedEffect e game |> thenValue
 
                 //Assert
-
-                updatedGame |> shouldBe { game with turnCycle = newCycle }
+                updatedGame.players |> shouldNotExist (fun p -> p.id = player2.id)
 
                 let! persistedGame = GameRepository.getGame game.id |> thenValue
                 persistedGame |> shouldBe updatedGame

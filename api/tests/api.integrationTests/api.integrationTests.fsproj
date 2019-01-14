@@ -13,9 +13,13 @@
     <Compile Include="Assertions.fs" />
     <Compile Include="TestUtilities.fs" />
     <Compile Include="TestsBase.fs" />
-    <Compile Include="Logic\EventProcessor\ProcessParametersChangedEffectTests.fs" />
-    <Compile Include="Logic\EventProcessor\ProcessTurnCycleChangedEffect.fs" />
+    <Compile Include="Logic\EventProcessor\ProcessAddPlayerEffectTests.fs" />
     <Compile Include="Logic\EventProcessor\ProcessGameStatusChangedEffectTests.fs" />
+    <Compile Include="Logic\EventProcessor\ProcessParametersChangedEffectTests.fs" />
+    <Compile Include="Logic\EventProcessor\ProcessPieceKilledEffectTests.fs" />
+    <Compile Include="Logic\EventProcessor\ProcessPlayerEliminatedEffectTests.fs" />
+    <Compile Include="Logic\EventProcessor\ProcessPlayersRemovedEffectTests.fs" />
+    <Compile Include="Logic\EventProcessor\ProcessTurnCycleChangedEffectTests.fs" />
     <Compile Include="Logic\GameManager\AddPlayerTests.fs" />
     <Compile Include="Logic\GameManager\CreateGameTests.fs" />
     <Compile Include="Logic\GameManager\GetGameTests.fs" />

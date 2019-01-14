@@ -38,6 +38,7 @@ BEGIN
 		FROM Players p
 			INNER JOIN #GameIds g
 				ON p.GameId = g.value
+		ORDER BY p.PlayerId
 	END
 	ELSE
 		THROW 50500, 'Invalid parameters for player query.', 1

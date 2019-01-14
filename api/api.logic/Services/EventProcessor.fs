@@ -38,7 +38,7 @@ let processParameterChangedEffect (effect : DiffEffect<GameParameters>) (game : 
     GameRepository.updateGameParameters game.id effect.newValue
     |> thenMap (fun _ -> { game with parameters = effect.newValue })
 
-let private processPlayerEliminatedEffect (effect : ScalarEffect<int>) (game : Game) : Game AsyncHttpResult =
+let processPlayerEliminatedEffect (effect : ScalarEffect<int>) (game : Game) : Game AsyncHttpResult =
     GameRepository.killPlayer effect.value
     |> thenMap (fun _ -> 
         { game with 
@@ -48,7 +48,7 @@ let private processPlayerEliminatedEffect (effect : ScalarEffect<int>) (game : G
         }
     )
 
-let private processPieceKilledEffect (effect : ScalarEffect<int>) (game : Game) : Game AsyncHttpResult =
+let processPieceKilledEffect (effect : ScalarEffect<int>) (game : Game) : Game AsyncHttpResult =
     let updatedPieces = 
         game.pieces |> List.replaceIf
             (fun p -> p.id = effect.value) 
@@ -65,7 +65,7 @@ let private processPieceKilledEffect (effect : ScalarEffect<int>) (game : Game) 
     GameRepository.updateGameState request
     |> thenMap (fun _ -> { game with pieces = updatedPieces })
 
-let private processPlayersRemovedEffect (effect : ScalarEffect<int list>) (game : Game) : Game AsyncHttpResult =
+let processPlayersRemovedEffect (effect : ScalarEffect<int list>) (game : Game) : Game AsyncHttpResult =
     okTask (effect.value |> Seq.ofList)
     |> thenDoEachAsync (fun pId -> GameRepository.removePlayer pId)
     |> thenMap (fun _ -> 
@@ -79,10 +79,10 @@ let private processPlayerOutOfMovesEffect (effect : ScalarEffect<int>) (game : G
     //the same event should also create a PlayerEliminated and PiecesOwnershipChanged effect
     okTask game
 
-let private processAddPlayerEffect (effect : ScalarEffect<CreatePlayerRequest>) (game : Game) : Game AsyncHttpResult =
+let processAddPlayerEffect (effect : ScalarEffect<CreatePlayerRequest>) (game : Game) : Game AsyncHttpResult =
     GameRepository.addPlayer (game.id, effect.value)
     |> thenMap (fun player -> 
-        { game with players = player :: game.players }
+        { game with players = List.append game.players [player] }
     )
 
 let private processPiecesOwnershipChangedEffect (effect : DiffWithContextEffect<int option, int list>) (game : Game) : Game AsyncHttpResult = 
