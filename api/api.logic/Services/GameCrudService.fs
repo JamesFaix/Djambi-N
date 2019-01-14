@@ -16,7 +16,6 @@ let getCreateGameEvent (parameters : GameParameters) (session : Session) : Event
         Effect.playerAdded playerRequest
         ])
 
-//TODO: Add integration tests
 let getUpdateGameParametersEvent (game : Game, parameters : GameParameters) (session : Session) : Event HttpResult =
     if game.status <> GameStatus.Pending
     then Error <| HttpException (400, "Cannot change game parameters unless game is Pending.")
