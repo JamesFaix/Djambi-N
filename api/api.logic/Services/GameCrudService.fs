@@ -4,7 +4,6 @@ open Djambi.Api.Common.Collections
 open Djambi.Api.Common.Control
 open Djambi.Api.Model
     
-//TODO: Add integration tests
 let getCreateGameEvent (parameters : GameParameters) (session : Session) : Event HttpResult =
     let gameRequest = 
         {
@@ -31,7 +30,7 @@ let getUpdateGameParametersEvent (game : Game, parameters : GameParameters) (ses
         //If lowering region count, extra players are ejected
         let truncatedPlayers = 
             game.players 
-            |> Seq.skip parameters.regionCount 
+            |> List.skipSafe parameters.regionCount 
 
         //If disabling AllowGuests, guests are ejected
         let ejectedGuests =
