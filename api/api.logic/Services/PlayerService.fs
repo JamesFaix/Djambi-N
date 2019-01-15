@@ -46,7 +46,6 @@ let getAddPlayerEvent (game : Game, request : CreatePlayerRequest) (session : Se
             Error <| HttpException(400, "Cannot directly add neutral players to a game.")
     |> Result.map (fun _ -> Event.create(EventKind.PlayerJoined, [Effect.playerAdded request]))
 
-//TODO: Add integration tests
 let getRemovePlayerEvent (game : Game, playerId : int) (session : Session) : Event HttpResult =
     match game.status with
     | Aborted | AbortedWhilePending | Finished -> 
@@ -91,7 +90,6 @@ let getRemovePlayerEvent (game : Game, playerId : int) (session : Session) : Eve
 
                     Ok <| Event.create(kind, (effects |> Seq.toList))
 
-//TOOD: Add integration tests
 let fillEmptyPlayerSlots (game : Game) : Effect list AsyncHttpResult =
     let missingPlayerCount = game.parameters.regionCount - game.players.Length
 

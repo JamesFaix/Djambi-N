@@ -33,6 +33,7 @@
     <Compile Include="Logic\GameManager\RemovePlayerTests.fs" />
     <Compile Include="Logic\GameManager\SelectCellTests.fs" />
     <Compile Include="Logic\GameManager\StartGameTests.fs" />
+    <Compile Include="Logic\GameStartService\GetGameStartEventTests.fs" />
     <Compile Include="Logic\GameStartService\GameStartServiceTests.fs" />
     <Compile Include="Logic\PlayerService\FillEmptyPlayerSlotsTests.fs" />
     <Compile Include="Logic\PlayerService\GetAddPlayerEventTests.fs" />
