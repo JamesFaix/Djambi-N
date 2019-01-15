@@ -10,7 +10,6 @@ open Djambi.Api.Model
 
 type ArrayList<'a> = System.Collections.Generic.List<'a>
     
-//TODO: Add integration tests
 let getAddPlayerEvent (game : Game, request : CreatePlayerRequest) (session : Session) : Event HttpResult =
     if game.status <> GameStatus.Pending
     then Error <| HttpException(400, "Can only add players to pending games.")
