@@ -10,17 +10,23 @@ open Djambi.Api.Model
 
 type ArrayList<'a> = System.Collections.Generic.List<'a>
     
-//TODO: Add integration tests
 let getAddPlayerEvent (game : Game, request : CreatePlayerRequest) (session : Session) : Event HttpResult =
     if game.status <> GameStatus.Pending
     then Error <| HttpException(400, "Can only add players to pending games.")
-    else
+    elif request.name.IsSome 
+        && game.players |> List.exists (fun p -> String.Equals(p.name, request.name.Value, StringComparison.OrdinalIgnoreCase))
+    then Error <| HttpException(409, "A player with that name already exists.")
+    elif game.players.Length >= game.parameters.regionCount
+    then Error <| HttpException(400, "Max player count reached.")
+      else
         match request.kind with
         | PlayerKind.User ->
             if request.userId.IsNone
             then Error <| HttpException(400, "UserID must be provided when adding a user player.")
             elif request.name.IsSome
             then Error <| HttpException(400, "Cannot provide name when adding a user player.")
+            elif game.players |> List.exists (fun p -> p.kind = PlayerKind.User && p.userId = request.userId)
+            then Error <| HttpException(409, "User is already a player.")
             elif not session.isAdmin && request.userId.Value <> session.userId
             then Error <| HttpException(403, "Cannot add other users to a game.")
             else Ok ()
@@ -40,7 +46,6 @@ let getAddPlayerEvent (game : Game, request : CreatePlayerRequest) (session : Se
             Error <| HttpException(400, "Cannot directly add neutral players to a game.")
     |> Result.map (fun _ -> Event.create(EventKind.PlayerJoined, [Effect.playerAdded request]))
 
-//TODO: Add integration tests
 let getRemovePlayerEvent (game : Game, playerId : int) (session : Session) : Event HttpResult =
     match game.status with
     | Aborted | AbortedWhilePending | Finished -> 
@@ -85,7 +90,6 @@ let getRemovePlayerEvent (game : Game, playerId : int) (session : Session) : Eve
 
                     Ok <| Event.create(kind, (effects |> Seq.toList))
 
-//TOOD: Add integration tests
 let fillEmptyPlayerSlots (game : Game) : Effect list AsyncHttpResult =
     let missingPlayerCount = game.parameters.regionCount - game.players.Length
 

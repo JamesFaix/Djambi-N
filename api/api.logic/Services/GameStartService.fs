@@ -13,7 +13,6 @@ open Djambi.Api.Model
 
 type ArrayList<'a> = System.Collections.Generic.List<'a>
  
-//TODO: Add integration tests
 let getGameStartEvent (game : Game) (session : Session) : Event AsyncHttpResult =    
     if session.isAdmin || session.userId = game.createdByUserId
     then okTask game

@@ -34,3 +34,8 @@ module List =
             let key = keySelector x
             keyList |> List.contains key |> not
         )
+
+    let skipSafe<'a> (count : int) (xs : 'a list) : 'a list =
+        if count > xs.Length
+        then List.empty
+        else xs |> List.skip count
