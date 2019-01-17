@@ -1,7 +1,7 @@
 import * as React from 'react';
 import '../../index.css';
 import PageTitle from '../pageTitle';
-import { UserResponse, CreateLobbyRequest } from '../../api/model';
+import { User, GameParameters } from '../../api/model';
 import ApiClient from '../../api/client';
 import { Redirect } from 'react-router';
 import LinkButton from '../linkButton';
@@ -9,28 +9,28 @@ import LabeledInput from '../labeledInput';
 import ActionButton from '../actionButton';
 import Constants, { InputTypes } from '../../constants';
 
-export interface CreateLobbyPageProps {
-    user : UserResponse,
+export interface CreateGamePageProps {
+    user : User,
     api : ApiClient
 }
 
-export interface CreateLobbyPageState {
+export interface CreateGamePageState {
     regionCount : number,
     description : string,
     allowGuests : boolean,
     isPublic : boolean,
-    lobbyId : number
+    gameId : number
 }
 
-export default class CreateLobbyPage extends React.Component<CreateLobbyPageProps, CreateLobbyPageState> {
-    constructor(props : CreateLobbyPageProps){
+export default class CreateGamePage extends React.Component<CreateGamePageProps, CreateGamePageState> {
+    constructor(props : CreateGamePageProps){
         super(props);
         this.state = {
             regionCount : 3,
             description : "",
             allowGuests : true,
             isPublic : true,
-            lobbyId : null
+            gameId : null
         }
     }
 
@@ -59,7 +59,7 @@ export default class CreateLobbyPage extends React.Component<CreateLobbyPageProp
     }
 
     private submitOnClick() {
-        const request : CreateLobbyRequest = {
+        const request : GameParameters = {
             regionCount: this.state.regionCount,
             description: this.state.description,
             allowGuests: this.state.allowGuests,
@@ -67,8 +67,8 @@ export default class CreateLobbyPage extends React.Component<CreateLobbyPageProp
         };
 
         this.props.api
-            .createLobby(request)
-            .then(lobby => {
+            .createGame(request)
+            .then(stateAndEvent => {
                 this.setState({
                     regionCount : 3,
                     description : "",
@@ -76,10 +76,10 @@ export default class CreateLobbyPage extends React.Component<CreateLobbyPageProp
                     isPublic : true
                 });
 
-                this.setState({lobbyId : lobby.id});
+                this.setState({gameId : stateAndEvent.game.id});
             })
             .catch(reason => {
-                alert("Create lobby failed because " + reason);
+                alert("Create game failed because " + reason);
             });
     }
 
@@ -90,8 +90,8 @@ export default class CreateLobbyPage extends React.Component<CreateLobbyPageProp
         }
 
         //If lobby created, redirect to that lobby
-        if (this.state.lobbyId !== null) {
-            return <Redirect to={'/lobby/' + this.state.lobbyId}/>;
+        if (this.state.gameId !== null) {
+            return <Redirect to={'/lobby/' + this.state.gameId}/>;
         }
 
         return (

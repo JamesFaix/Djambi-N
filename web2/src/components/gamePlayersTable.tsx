@@ -1,16 +1,16 @@
 import * as React from 'react';
-import { LobbyWithPlayersResponse, PlayerResponse, UserResponse, PlayerKind, CreatePlayerRequest } from '../api/model';
+import { User, Game, Player, PlayerKind, CreatePlayerRequest, GameStatus } from '../api/model';
 import ActionButton from './actionButton';
 import ApiClient from '../api/client';
 
-export interface LobbyPlayersTableProps {
+export interface GamePlayersTableProps {
     api : ApiClient,
-    user : UserResponse,
-    lobby : LobbyWithPlayersResponse,
-    updateLobby(lobby: LobbyWithPlayersResponse) : void
+    user : User,
+    game : Game,
+    updateGame(game: Game) : void
 }
 
-export interface LobbyPlayersTableState {
+export interface GamePlayersTableState {
     guestName : string
 }
 
@@ -22,28 +22,28 @@ enum SeatActionType {
 }
 
 interface Seat {
-    player : PlayerResponse,
+    player : Player,
     note : string,
     action : SeatActionType
 }
 
-export default class LobbyPlayersTable extends React.Component<LobbyPlayersTableProps, LobbyPlayersTableState> {
-    constructor(props : LobbyPlayersTableProps) {
+export default class GamePlayersTable extends React.Component<GamePlayersTableProps, GamePlayersTableState> {
+    constructor(props : GamePlayersTableProps) {
         super(props);
         this.state = {
             guestName: ""
         };
     }
 
-    private getSeats(lobby : LobbyWithPlayersResponse) : Seat[] {
-        if (lobby === null) {
+    private getSeats(game : Game) : Seat[] {
+        if (game === null) {
             return [];
         }
 
         const self = this.props.user;
 
         //Get player seats first
-        const seats = lobby.players
+        const seats = game.players
             .map(p => {
                 console.log(p);
 
@@ -54,12 +54,12 @@ export default class LobbyPlayersTable extends React.Component<LobbyPlayersTable
                 };
 
                 if (p.kind === PlayerKind.User
-                    && p.userId === lobby.createdByUserId) {
+                    && p.userId === game.createdByUserId) {
                     seat.note = "Host";
                 }
 
                 if (p.kind === PlayerKind.Guest) {
-                    const host = lobby.players
+                    const host = game.players
                         .find(h => h.userId === p.userId
                             && h.kind === PlayerKind.User);
 
@@ -67,7 +67,7 @@ export default class LobbyPlayersTable extends React.Component<LobbyPlayersTable
                 }
 
                 if (self.isAdmin
-                    || lobby.createdByUserId === self.id
+                    || game.createdByUserId === self.id
                     || seat.player.name === self.name
                     || (seat.player.kind === PlayerKind.Guest
                         && seat.player.userId === self.id)) {
@@ -79,14 +79,14 @@ export default class LobbyPlayersTable extends React.Component<LobbyPlayersTable
             });
 
         //If self is not a player, add "Join" seat
-        if (!this.isSelfAPlayer(lobby)) {
+        if (!this.isSelfAPlayer(game)) {
             seats.push({
                 player : null,
                 note : "",
                 action : SeatActionType.Join
             })
         //If self is a player and guests allowed, add "Add Guest" seat
-        } else if (lobby.allowGuests) {
+        } else if (game.parameters.allowGuests) {
             seats.push({
                 player : null,
                 note : "",
@@ -95,7 +95,7 @@ export default class LobbyPlayersTable extends React.Component<LobbyPlayersTable
         }
 
         //Add empty seats until regionCount
-        while (seats.length < lobby.regionCount) {
+        while (seats.length < game.parameters.regionCount) {
             seats.push({
                 player : null,
                 note : "",
@@ -106,8 +106,8 @@ export default class LobbyPlayersTable extends React.Component<LobbyPlayersTable
         return seats;
     }
 
-    private isSelfAPlayer(lobby : LobbyWithPlayersResponse) : boolean {
-        return lobby.players.find(p => p.userId === this.props.user.id) !== undefined;
+    private isSelfAPlayer(game : Game) : boolean {
+        return game.players.find(p => p.userId === this.props.user.id) !== undefined;
     }
 
     private isSeatSelf(seat : Seat) : boolean {
@@ -121,25 +121,13 @@ export default class LobbyPlayersTable extends React.Component<LobbyPlayersTable
         const request : CreatePlayerRequest = {
             userId: this.props.user.id,
             name: null,
-            type: PlayerKind.User
+            kind: PlayerKind.User
         };
 
         this.props.api
-            .addPlayer(this.props.lobby.id, request)
-            .then(newPlayer => {
-                const oldLobby = this.props.lobby;
-                const newLobby : LobbyWithPlayersResponse = {
-                    id: oldLobby.id,
-                    regionCount: oldLobby.regionCount,
-                    description: oldLobby.description,
-                    allowGuests: oldLobby.allowGuests,
-                    isPublic: oldLobby.isPublic,
-                    createdByUserId: oldLobby.createdByUserId,
-                    createdOn: oldLobby.createdOn,
-                    players: oldLobby.players.concat(newPlayer)
-                };
-
-                this.props.updateLobby(newLobby);
+            .addPlayer(this.props.game.id, request)
+            .then(stateAndEvent => {
+                this.props.updateGame(stateAndEvent.game);
             })
             .catch(reason => {
                 alert("Add player failed because " + reason);
@@ -150,28 +138,16 @@ export default class LobbyPlayersTable extends React.Component<LobbyPlayersTable
         const request : CreatePlayerRequest = {
             userId: this.props.user.id,
             name: this.state.guestName,
-            type: PlayerKind.Guest
+            kind: PlayerKind.Guest
         };
 
         this.props.api
-            .addPlayer(this.props.lobby.id, request)
-            .then(newPlayer => {
-                const oldLobby = this.props.lobby;
-                const newLobby : LobbyWithPlayersResponse = {
-                    id: oldLobby.id,
-                    regionCount: oldLobby.regionCount,
-                    description: oldLobby.description,
-                    allowGuests: oldLobby.allowGuests,
-                    isPublic: oldLobby.isPublic,
-                    createdByUserId: oldLobby.createdByUserId,
-                    createdOn: oldLobby.createdOn,
-                    players: oldLobby.players.concat(newPlayer)
-                };
-
+            .addPlayer(this.props.game.id, request)
+            .then(stateAndEvent => {
                 this.setState({
                         guestName : ""
                     },
-                    () => this.props.updateLobby(newLobby));
+                    () => this.props.updateGame(stateAndEvent.game));
             })
             .catch(reason => {
                 alert("Add player failed because " + reason);
@@ -185,30 +161,16 @@ export default class LobbyPlayersTable extends React.Component<LobbyPlayersTable
 
     private removeOnClick(playerId : number) : void {
         this.props.api
-            .removePlayer(this.props.lobby.id, playerId)
-            .then(_ => {
-                const oldLobby = this.props.lobby;
-                const removedPlayer = oldLobby.players.find(p => p.id === playerId);
+            .removePlayer(this.props.game.id, playerId)
+            .then(stateAndEvent => {
+                const game = stateAndEvent.game;
 
-                //Lobby is closed when creator is removed
-                if (removedPlayer.kind === PlayerKind.User
-                    && removedPlayer.userId === oldLobby.createdByUserId) {
-                    this.props.updateLobby(null);
+                //Game is closed when creator is removed
+                if (game.status === GameStatus.Aborted || game.status === GameStatus.AbortedWhilePending) {
+                    this.props.updateGame(null);
                 }
-                //Otherwise, remove player and all guests
                 else {
-                    const newLobby : LobbyWithPlayersResponse = {
-                        id: oldLobby.id,
-                        regionCount: oldLobby.regionCount,
-                        description: oldLobby.description,
-                        allowGuests: oldLobby.allowGuests,
-                        isPublic: oldLobby.isPublic,
-                        createdByUserId: oldLobby.createdByUserId,
-                        createdOn: oldLobby.createdOn,
-                        players: oldLobby.players.filter(p => p.userId !== removedPlayer.userId)
-                    };
-
-                    this.props.updateLobby(newLobby);
+                    this.props.updateGame(game);
                 }
             })
             .catch(reason => {
@@ -305,11 +267,11 @@ export default class LobbyPlayersTable extends React.Component<LobbyPlayersTable
     }
 
     render() {
-        if (this.props.lobby === null) {
+        if (this.props.game === null) {
             return "";
         }
 
-        const seats = this.getSeats(this.props.lobby);
+        const seats = this.getSeats(this.props.game);
 
         return (
             <div>

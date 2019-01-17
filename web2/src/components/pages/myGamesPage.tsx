@@ -1,26 +1,26 @@
 import * as React from 'react';
 import '../../index.css';
 import PageTitle from '../pageTitle';
-import { UserResponse, LobbyResponse, LobbiesQueryRequest } from '../../api/model';
+import { User, Game, GamesQuery } from '../../api/model';
 import ApiClient from '../../api/client';
 import { Redirect } from 'react-router';
 import LinkButton from '../linkButton';
 import LobbiesTable from '../lobbiesTable';
 
 export interface MyGamesPageProps {
-    user : UserResponse,
+    user : User,
     api : ApiClient,
 }
 
 export interface MyGamesPageState {
-    lobbies : LobbyResponse[],
+    games : Game[],
 }
 
 export default class MyGamesPage extends React.Component<MyGamesPageProps, MyGamesPageState> {
     constructor(props : MyGamesPageProps) {
         super(props);
         this.state = {
-            lobbies : []
+            games : []
         };
     }
 
@@ -29,7 +29,8 @@ export default class MyGamesPage extends React.Component<MyGamesPageProps, MyGam
     }
 
     private refreshResults() {
-        const query : LobbiesQueryRequest = {
+        const query : GamesQuery = {
+            gameId: null,
             createdByUserId: null,
             playerUserId: this.props.user.id,
             isPublic: null,
@@ -38,12 +39,12 @@ export default class MyGamesPage extends React.Component<MyGamesPageProps, MyGam
         }
 
         this.props.api
-            .getLobbies(query)
-            .then(lobbies => {
-                this.setState({lobbies : lobbies});
+            .getGames(query)
+            .then(games => {
+                this.setState({games : games});
             })
             .catch(reason => {
-                alert("Get lobby failed because " + reason);
+                alert("Get games failed because " + reason);
             });
     }
 
@@ -64,7 +65,7 @@ export default class MyGamesPage extends React.Component<MyGamesPageProps, MyGam
                 </div>
                 <br/>
                 <LobbiesTable
-                    lobbies={this.state.lobbies}
+                    games={this.state.games}
                 />
             </div>
         );

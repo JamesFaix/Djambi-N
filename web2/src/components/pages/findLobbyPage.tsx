@@ -1,7 +1,7 @@
 import * as React from 'react';
 import '../../index.css';
 import PageTitle from '../pageTitle';
-import { UserResponse, LobbyResponse, LobbiesQueryRequest } from '../../api/model';
+import { User, Game, GamesQuery } from '../../api/model';
 import ApiClient from '../../api/client';
 import { Redirect } from 'react-router';
 import LinkButton from '../linkButton';
@@ -13,12 +13,12 @@ import Util from '../../util';
 import LobbiesTable from '../lobbiesTable';
 
 export interface FindLobbyPageProps {
-    user : UserResponse,
+    user : User,
     api : ApiClient,
 }
 
 export interface FindLobbyPageState {
-    lobbies : LobbyResponse[],
+    games : Game[],
     createdByUserIdFilter : number,
     playerUserIdFilter : number,
     isPublicFilter : boolean,
@@ -30,7 +30,7 @@ export default class FindLobbyPage extends React.Component<FindLobbyPageProps, F
     constructor(props : FindLobbyPageProps) {
         super(props);
         this.state = {
-            lobbies : [],
+            games : [],
             createdByUserIdFilter: null,
             playerUserIdFilter: null,
             isPublicFilter: null,
@@ -44,7 +44,8 @@ export default class FindLobbyPage extends React.Component<FindLobbyPageProps, F
     }
 
     private refreshResults() {
-        const query : LobbiesQueryRequest = {
+        const query : GamesQuery = {
+            gameId : null,
             createdByUserId: this.state.createdByUserIdFilter,
             playerUserId: this.state.playerUserIdFilter,
             isPublic: this.state.isPublicFilter,
@@ -53,12 +54,12 @@ export default class FindLobbyPage extends React.Component<FindLobbyPageProps, F
         }
 
         this.props.api
-            .getLobbies(query)
-            .then(lobbies => {
-                this.setState({lobbies : lobbies});
+            .getGames(query)
+            .then(games => {
+                this.setState({games : games});
             })
             .catch(reason => {
-                alert("Get lobby failed because " + reason);
+                alert("Get games failed because " + reason);
             });
     }
 
@@ -167,7 +168,7 @@ export default class FindLobbyPage extends React.Component<FindLobbyPageProps, F
                 {this.renderQueryFilters()}
                 <br/>
                 <LobbiesTable
-                    lobbies={this.state.lobbies}
+                    games={this.state.games}
                 />
             </div>
         );

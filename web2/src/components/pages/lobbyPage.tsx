@@ -1,23 +1,23 @@
 import * as React from 'react';
 import '../../index.css';
 import PageTitle from '../pageTitle';
-import { UserResponse, LobbyWithPlayersResponse } from '../../api/model';
+import { User, Game } from '../../api/model';
 import ApiClient from '../../api/client';
 import { Redirect } from 'react-router';
 import LinkButton from '../linkButton';
 import ActionButton from '../actionButton';
-import LobbyPlayersTable from '../lobbyPlayersTable';
+import GamePlayersTable from '../gamePlayersTable';
 
 export interface LobbyPageProps {
-    user : UserResponse,
+    user : User,
     api : ApiClient,
-    lobbyId : number
+    gameId : number
 }
 
 export interface LobbyPageState {
-    lobby : LobbyWithPlayersResponse,
+    game : Game,
     guestName : string,
-    lobbyId : number
+    gameId : number
 }
 
 export default class LobbyPage extends React.Component<LobbyPageProps, LobbyPageState> {
@@ -25,17 +25,17 @@ export default class LobbyPage extends React.Component<LobbyPageProps, LobbyPage
     constructor(props : LobbyPageProps) {
         super(props);
         this.state = {
-            lobby : null,
+            game : null,
             guestName : "",
-            lobbyId : props.lobbyId
+            gameId : props.gameId
         };
     }
 
     componentDidMount() {
         this.props.api
-            .getLobby(this.props.lobbyId)
-            .then(lobbyWithPlayers => {
-                this.setState({lobby : lobbyWithPlayers});
+            .getGame(this.props.gameId)
+            .then(game => {
+                this.setState({game : game});
             })
             .catch(reason => {
                 alert("Get lobby failed because " + reason);
@@ -44,17 +44,17 @@ export default class LobbyPage extends React.Component<LobbyPageProps, LobbyPage
 
 //---Event handlers---
 
-    private playerTableUpdateLobby(newLobby : LobbyWithPlayersResponse) {
-        if (newLobby === null) {
-            this.setState({lobbyId : null});
+    private playerTableUpdateGame(newGame : Game) {
+        if (newGame === null) {
+            this.setState({gameId : null});
         } else {
-            this.setState({lobby : newLobby});
+            this.setState({game : newGame});
         }
     }
 
     private startOnClick() {
         this.props.api
-            .startGame(this.state.lobby.id)
+            .startGame(this.state.game.id)
             .then(gameStart => {
                 alert("Game started");
             })
@@ -65,54 +65,54 @@ export default class LobbyPage extends React.Component<LobbyPageProps, LobbyPage
 
 //---Rendering---
 
-    private renderLobbyDetails(lobby : LobbyWithPlayersResponse) {
-        if (lobby === null){
+    private renderLobbyDetails(game : Game) {
+        if (game === null){
             return "";
         }
 
         return (
             <div className="lobbyDetailsContainer">
                 <div className="centeredContainer">
-                    {this.renderLobbyDescription(lobby)}
-                    {this.renderLobbyOptions(lobby)}
-                    <p>{lobby.regionCount + " regions"}</p>
+                    {this.renderLobbyDescription(game)}
+                    {this.renderLobbyOptions(game)}
+                    <p>{game.parameters.regionCount + " regions"}</p>
                 </div>
             </div>
         );
     }
 
-    private renderLobbyDescription(lobby : LobbyWithPlayersResponse) {
-        if (lobby.description === null) {
+    private renderLobbyDescription(game : Game) {
+        if (game.parameters.description === null) {
             return "";
         } else {
-            return <p>{lobby.description}</p>;
+            return <p>{game.parameters.description}</p>;
         }
     }
 
-    private renderLobbyOptions(lobby : LobbyWithPlayersResponse) {
-        if (lobby.isPublic && lobby.allowGuests) {
+    private renderLobbyOptions(game : Game) {
+        if (game.parameters.isPublic && game.parameters.allowGuests) {
             return <p>{"Public, guests allowed"}</p>;
-        } else if (lobby.isPublic) {
+        } else if (game.parameters.isPublic) {
             return <p>{"Public"}</p>;
-        } else if (lobby.allowGuests) {
+        } else if (game.parameters.allowGuests) {
             return <p>{"Guests allowed"}</p>;
         } else {
             return "";
         }
     }
 
-    private renderStartButton(lobby: LobbyWithPlayersResponse){
-        if (lobby === null) {
+    private renderStartButton(game: Game){
+        if (game === null) {
             return "";
         }
 
         //Only creator can start
-        if (this.props.user.id !== lobby.createdByUserId) {
+        if (this.props.user.id !== game.createdByUserId) {
             return "";
         }
 
         //Can only start with at least 2 players
-        if (lobby.players.length < 2){
+        if (game.players.length < 2){
             return "";
         }
 
@@ -133,7 +133,7 @@ export default class LobbyPage extends React.Component<LobbyPageProps, LobbyPage
         }
 
         //LobbyId is set to null when lobby closed
-        if (this.state.lobbyId === null) {
+        if (this.state.gameId === null) {
             return <Redirect to='/'/>;
         }
 
@@ -147,15 +147,15 @@ export default class LobbyPage extends React.Component<LobbyPageProps, LobbyPage
                     <LinkButton label="Create Game" to="/createGame"/>
                     <LinkButton label="Find Game" to="/findGame"/>
                 </div>
-                {this.renderLobbyDetails(this.state.lobby)}
-                <LobbyPlayersTable
+                {this.renderLobbyDetails(this.state.game)}
+                <GamePlayersTable
                     user={this.props.user}
                     api={this.props.api}
-                    lobby={this.state.lobby}
-                    updateLobby={newLobby => this.playerTableUpdateLobby(newLobby)}
+                    game={this.state.game}
+                    updateGame={newGame => this.playerTableUpdateGame(newGame)}
                 />
                 <br/>
-                {this.renderStartButton(this.state.lobby)}
+                {this.renderStartButton(this.state.game)}
             </div>
         );
     }

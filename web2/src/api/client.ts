@@ -1,222 +1,105 @@
 import * as Model from './model';
-import * as $ from 'jquery';
 import Environment from "../environment";
+
+enum HttpMethod {
+    Get = "GET",
+    Put = "PUT",
+    Post = "POST",
+    Delete = "DELETE"
+}
 
 export default class ApiClient {
 
-    async getCurrentUser() : Promise<Model.UserResponse> {
-        let result : Model.UserResponse;
-        return await $.ajax({
-            type : "GET",
-            url: Environment.apiAddress() + "/users/current",
-            dataType : "json",
-            success: (data, status, xhr) => {
-                console.log("Get current user succeeded");
-                result = data;
-            },
-            error : () => {
-                console.log("Get current user failed");
-            },
-            crossDomain : true,
-            xhrFields : {
-                withCredentials: true
-            }
-        })
-        .then(_ => result);
+    private async sendRequest<TBody, TResponse>(
+        method : HttpMethod,
+        route : string,
+        body : TBody = null)
+        : Promise<TResponse> {
+
+        const url = Environment.apiAddress() + route;
+        const endpointDescription = method.toString() + " " + route
+
+        const fetchParams : RequestInit = {
+            method: method.toString(),
+            credentials: "include",
+            mode: "cors"
+        };
+
+        if (body !== null) {
+            fetchParams.headers=  {
+                "Content-Type": "application/json",
+            };
+            fetchParams.body = JSON.stringify(body);
+        }
+
+        return await fetch(url, fetchParams)
+            .then(response => {
+                if (response.status > 399){
+                    console.log(endpointDescription + " failed");
+                    return response.json()
+                        .then(errorMessage => {
+                            throw new Error(errorMessage);
+                        });
+                } else {
+                    console.log(endpointDescription + " succeeded");
+                    return response.json();
+                }
+            })
+            .catch(reason => {
+                console.log(reason);
+            });
     }
 
-    async createUser(request : Model.CreateUserRequest) : Promise<Model.UserResponse> {
-        let result : Model.UserResponse;
-
-        return await $.ajax({
-            type : "POST",
-            url: Environment.apiAddress() + "/users",
-            dataType : "json",
-            data: request,
-            success: (data, status, xhr) => {
-                console.log("Create user succeeded");
-                result = data;
-            },
-            error : () => {
-                console.log("Create user failed");
-            },
-            crossDomain : true,
-            xhrFields : {
-                withCredentials: true
-            }
-        })
-        .then(_ => result);
+    //Users
+    async getCurrentUser() : Promise<Model.User> {
+        return await this.sendRequest<{}, Model.User>(
+            HttpMethod.Get, "/users/current");
     }
 
-    async login(request : Model.LoginRequest) : Promise<Model.UserResponse> {
-        let result : Model.UserResponse;
-
-        return await $.ajax({
-            type : "POST",
-            url: Environment.apiAddress() + "/sessions",
-            dataType : "json",
-            data: request,
-            success: (data, status, xhr) => {
-                console.log("Create session succeeded");
-                result = data;
-            },
-            error : () => {
-                console.log("Create session failed");
-            },
-            crossDomain : true,
-            xhrFields : {
-                withCredentials: true
-            }
-        })
-        .then(_ => result);
+    async createUser(request : Model.CreateUserRequest) : Promise<Model.User> {
+        return await this.sendRequest<Model.CreateUserRequest, Model.User>(
+            HttpMethod.Post, "/users", request);
     }
 
-    async logout() : Promise<void> {
-        return await $.ajax({
-            type : "DELETE",
-            url: Environment.apiAddress() + "/sessions",
-            dataType : "json",
-            success: (data, status, xhr) => {
-                console.log("Close session succeeded");
-            },
-            error : x => {
-                console.log(x);
-                console.log("Close session failed");
-            },
-            crossDomain : true,
-            xhrFields : {
-                withCredentials: true
-            }
-        });
+    //Session
+    async login(request : Model.LoginRequest) : Promise<Model.User> {
+        return await this.sendRequest<Model.LoginRequest, Model.User>(
+            HttpMethod.Post, "/sessions", request);
     }
 
-    async createLobby(request : Model.CreateLobbyRequest) : Promise<Model.LobbyResponse> {
-        let result : Model.LobbyResponse;
-
-        return await $.ajax({
-            type : "POST",
-            url: Environment.apiAddress() + "/lobbies",
-            dataType : "json",
-            data: request,
-            success: (data, status, xhr) => {
-                console.log("Create lobby succeeded");
-                result = data;
-            },
-            error : () => {
-                console.log("Create lobby failed");
-            },
-            crossDomain : true,
-            xhrFields : {
-                withCredentials: true
-            }
-        })
-        .then(_ => result);
+    async logout() : Promise<{}> {
+        return await this.sendRequest<{}, {}>(
+            HttpMethod.Delete, "/sessions");
     }
 
-    async getLobby(lobbyId : number) : Promise<Model.LobbyWithPlayersResponse> {
-        let result : Model.LobbyWithPlayersResponse;
-
-        return await $.ajax({
-            type : "GET",
-            url: Environment.apiAddress() + "/lobbies/" + lobbyId,
-            dataType : "json",
-            success: (data, status, xhr) => {
-                console.log("Get lobby succeeded");
-                result = data;
-            },
-            error : () => {
-                console.log("Get lobby failed");
-            },
-            crossDomain : true,
-            xhrFields : {
-                withCredentials: true
-            }
-        })
-        .then(_ => result);
+    //Game
+    async createGame(request : Model.GameParameters) : Promise<Model.StateAndEventResponse> {
+        return await this.sendRequest<Model.GameParameters, Model.StateAndEventResponse>(
+            HttpMethod.Post, "/games", request);
     }
 
-    async getLobbies(query : Model.LobbiesQueryRequest) : Promise<Model.LobbyResponse[]> {
-        let result : Model.LobbyResponse[];
-
-        return await $.ajax({
-            type : "POST",
-            url: Environment.apiAddress() + "/lobbies/query",
-            data: query,
-            dataType : "json",
-            success: (data, status, xhr) => {
-                console.log("Get lobbies succeeded");
-                result = data;
-            },
-            error : () => {
-                console.log("Get lobbies failed");
-            },
-            crossDomain : true,
-            xhrFields : {
-                withCredentials: true
-            }
-        })
-        .then(_ => result);
+    async getGame(gameId : number) : Promise<Model.Game> {
+        return await this.sendRequest<{}, Model.Game>(
+            HttpMethod.Get, "/games/" + gameId);
     }
 
-    async removePlayer(lobbyId : number, playerId : number) : Promise<void> {
-        return await $.ajax({
-            type : "DELETE",
-            url: Environment.apiAddress() + "/lobbies/" + lobbyId + "/players/" + playerId,
-            success: (data, status, xhr) => {
-                console.log("Remove player succeeded");
-            },
-            error : () => {
-                console.log("Remove player failed");
-            },
-            crossDomain : true,
-            xhrFields : {
-                withCredentials: true
-            }
-        })
+    async getGames(query : Model.GamesQuery) : Promise<Model.Game[]> {
+        return await this.sendRequest<Model.GamesQuery, Model.Game[]>(
+            HttpMethod.Post, "/games/query", query);
     }
 
-    async addPlayer(lobbyId : number, request : Model.CreatePlayerRequest) : Promise<Model.PlayerResponse> {
-        let result : Model.PlayerResponse;
-
-        return await $.ajax({
-            type : "POST",
-            url: Environment.apiAddress() + "/lobbies/" + lobbyId + "/players",
-            dataType : "json",
-            data: request,
-            success: (data, status, xhr) => {
-                console.log("Add player succeeded");
-                result = data;
-            },
-            error : () => {
-                console.log("Add player failed");
-            },
-            crossDomain : true,
-            xhrFields : {
-                withCredentials: true
-            }
-        })
-        .then(_ => result);
+    async removePlayer(gameId : number, playerId : number) : Promise<Model.StateAndEventResponse> {
+        return await this.sendRequest<{}, Model.StateAndEventResponse>(
+            HttpMethod.Delete, "/games/" + gameId + "/players/" + playerId);
     }
 
-    async startGame(lobbyId : number) : Promise<Model.GameStartResponse> {
-        let result : Model.GameStartResponse;
+    async addPlayer(gameId : number, request : Model.CreatePlayerRequest) : Promise<Model.StateAndEventResponse> {
+        return await this.sendRequest<Model.CreatePlayerRequest, Model.StateAndEventResponse>(
+            HttpMethod.Post, "/games/" + gameId + "/players", request);
+    }
 
-        return await $.ajax({
-            type : "POST",
-            url: Environment.apiAddress() + "/lobbies/" + lobbyId + "/start-request",
-            dataType : "json",
-            success: (data, status, xhr) => {
-                console.log("Start game succeeded");
-                result = data;
-            },
-            error : () => {
-                console.log("Start game failed");
-            },
-            crossDomain : true,
-            xhrFields : {
-                withCredentials: true
-            }
-        })
-        .then(_ => result);
+    async startGame(gameId : number) : Promise<Model.StateAndEventResponse> {
+        return await this.sendRequest<{}, Model.StateAndEventResponse>(
+            HttpMethod.Post, "/games/" + gameId + "/start-request");
     }
 }

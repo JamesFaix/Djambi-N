@@ -1,16 +1,16 @@
 import * as React from 'react';
 import '../../index.css';
 import PageTitle from '../pageTitle';
-import { UserResponse } from '../../api/model';
+import { User } from '../../api/model';
 import ApiClient from '../../api/client';
 import { Redirect } from 'react-router';
 import ActionButton from '../actionButton';
 import LinkButton from '../linkButton';
 
 export interface DashboardPageProps {
-    user : UserResponse,
+    user : User,
     api : ApiClient,
-    setUser(user: UserResponse) : void,
+    setUser(user: User) : void,
     rulesUrl : string
 }
 
