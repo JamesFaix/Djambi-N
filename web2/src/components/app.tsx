@@ -8,10 +8,10 @@ import SignupPage from './pages/signupPage';
 import DashboardPage from './pages/dashboardPage';
 
 import TopMenu from './topMenu';
-import { UserResponse } from '../api/model';
+import { User } from '../api/model';
 import ApiClient from '../api/client';
 import MyGamesPage from './pages/myGamesPage';
-import CreateLobbyPage from './pages/createLobbyPage';
+import CreateGamePage from './pages/createGamePage';
 import FindLobbyPage from './pages/findLobbyPage';
 import LobbyPage from './pages/lobbyPage';
 
@@ -20,7 +20,7 @@ export interface AppProps {
 }
 
 export interface AppState {
-    user : UserResponse,
+    user : User,
     api : ApiClient
 }
 
@@ -94,7 +94,7 @@ export default class App extends React.Component<AppProps, AppState> {
                     <Route
                         path='/createGame'
                         render={_ =>
-                            <CreateLobbyPage
+                            <CreateGamePage
                                 user={this.state.user}
                                 api={this.state.api}
                             />
@@ -115,7 +115,7 @@ export default class App extends React.Component<AppProps, AppState> {
                             <LobbyPage
                                 user={this.state.user}
                                 api={this.state.api}
-                                lobbyId={props.match.params.lobbyId}
+                                gameId={props.match.params.lobbyId}
                             />
                         }
                     />

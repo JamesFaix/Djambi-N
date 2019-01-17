@@ -2,7 +2,7 @@ import * as React from 'react';
 import '../../index.css';
 import PageTitle from '../pageTitle';
 import ApiClient from '../../api/client';
-import { CreateUserRequest, UserResponse, LoginRequest } from '../../api/model';
+import { CreateUserRequest, User, LoginRequest } from '../../api/model';
 import LabeledInput from '../labeledInput';
 import { Redirect } from 'react-router';
 import LinkButton from '../linkButton';
@@ -11,8 +11,8 @@ import { InputTypes } from '../../constants';
 
 export interface SignupPageProps {
     api : ApiClient,
-    user : UserResponse,
-    setUser(user : UserResponse) : void
+    user : User,
+    setUser(user : User) : void
 }
 
 export interface SignupPageState {

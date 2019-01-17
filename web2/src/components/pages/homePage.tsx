@@ -2,15 +2,15 @@ import * as React from 'react';
 import '../../index.css';
 import PageTitle from '../pageTitle';
 import { Redirect } from 'react-router';
-import { UserResponse } from '../../api/model';
+import { User } from '../../api/model';
 import ApiClient from '../../api/client';
 import LinkButton from '../linkButton';
 import ActionButton from '../actionButton';
 
 export interface HomePageProps {
-    user : UserResponse,
+    user : User,
     api : ApiClient,
-    setUser(user : UserResponse) : void,
+    setUser(user : User) : void,
     rulesUrl : string
 }
 

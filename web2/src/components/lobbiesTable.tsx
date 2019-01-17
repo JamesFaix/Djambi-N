@@ -1,45 +1,45 @@
-import { LobbyResponse } from "../api/model";
+import { Game } from "../api/model";
 import * as React from 'react';
 import LinkButton from "./linkButton";
 import moment = require("moment");
 
 export interface LobbiesTableProps {
-    lobbies : LobbyResponse[]
+    games : Game[]
 }
 
 export default class LobbiesTable extends React.Component<LobbiesTableProps> {
 
-    renderLobbyRow(lobby : LobbyResponse, rowNumber : number) {
+    renderLobbyRow(game : Game, rowNumber : number) {
         return (
             <tr key={"row" + rowNumber}>
                 <td>
                     <LinkButton
                         label="Go"
-                        to={"/lobby/" + lobby.id}
+                        to={"/lobby/" + game.id}
                     />
                 </td>
                 <td>
-                    {moment(lobby.createdOn).format('MM/DD/YY hh:mm a')}
+                    {moment(game.createdOn).format('MM/DD/YY hh:mm a')}
                 </td>
-                <td>{lobby.createdByUserId}</td>
+                <td>{game.createdByUserId}</td>
                 <td className="centeredContainer">
-                    {lobby.regionCount}
+                    {game.parameters.regionCount}
                 </td>
                 <td className="centeredContainer">
                     <input
                         type="checkbox"
-                        checked={lobby.isPublic}
+                        checked={game.parameters.isPublic}
                         disabled={true}
                     />
                 </td>
                 <td className="centeredContainer">
                     <input
                         type="checkbox"
-                        checked={lobby.allowGuests}
+                        checked={game.parameters.allowGuests}
                         disabled={true}
                     />
                 </td>
-                <td>{lobby.description}</td>
+                <td>{game.parameters.description}</td>
             </tr>
         );
     }
@@ -58,7 +58,7 @@ export default class LobbiesTable extends React.Component<LobbiesTableProps> {
                             <th>Guests allowed</th>
                             <th>Description</th>
                         </tr>
-                        {this.props.lobbies.map((lobby, i) => this.renderLobbyRow(lobby, i))}
+                        {this.props.games.map((lobby, i) => this.renderLobbyRow(lobby, i))}
                     </tbody>
                 </table>
             </div>
