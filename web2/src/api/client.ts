@@ -1,13 +1,11 @@
 import * as Model from './model';
-import * as $ from 'jquery';
 import Environment from "../environment";
-import { any } from 'prop-types';
 
 enum HttpMethod {
-    Get,
-    Put,
-    Post,
-    Delete
+    Get = "GET",
+    Put = "PUT",
+    Post = "POST",
+    Delete = "DELETE"
 }
 
 export default class ApiClient {
@@ -18,32 +16,38 @@ export default class ApiClient {
         body : TBody = null)
         : Promise<TResponse> {
 
-        const endpoint = method.toString().toUpperCase() + route
-        let result : TResponse;
+        const url = Environment.apiAddress() + route;
+        const endpointDescription = method.toString() + " " + route
 
-        const ajaxSettings : JQuery.AjaxSettings<any> = {
-            type : method.toString(),
-            url: Environment.apiAddress() + route,
-            dataType : "json",
-            success: (data : TResponse, status : JQuery.Ajax.SuccessTextStatus, xhr : JQuery.jqXHR<any>) => {
-                console.log(endpoint + " succeeded");
-                result = data;
-            },
-            error : () => {
-                console.log(endpoint + " failed");
-            },
-            crossDomain : true,
-            xhrFields : {
-                withCredentials: true
-            }
+        const fetchParams : RequestInit = {
+            method: method.toString(),
+            credentials: "include",
+            mode: "cors"
+        };
+
+        if (body !== null) {
+            fetchParams.headers=  {
+                "Content-Type": "application/json",
+            };
+            fetchParams.body = JSON.stringify(body);
         }
 
-        if (body) {
-           ajaxSettings.data = body;
-        }
-
-        return await $.ajax(ajaxSettings)
-            .then(_ => result);
+        return await fetch(url, fetchParams)
+            .then(response => {
+                if (response.status > 399){
+                    console.log(endpointDescription + " failed");
+                    return response.json()
+                        .then(errorMessage => {
+                            throw new Error(errorMessage);
+                        });
+                } else {
+                    console.log(endpointDescription + " succeeded");
+                    return response.json();
+                }
+            })
+            .catch(reason => {
+                console.log(reason);
+            });
     }
 
     //Users
