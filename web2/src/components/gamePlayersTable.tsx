@@ -121,7 +121,7 @@ export default class GamePlayersTable extends React.Component<GamePlayersTablePr
         const request : CreatePlayerRequest = {
             userId: this.props.user.id,
             name: null,
-            type: PlayerKind.User
+            kind: PlayerKind.User
         };
 
         this.props.api
@@ -138,7 +138,7 @@ export default class GamePlayersTable extends React.Component<GamePlayersTablePr
         const request : CreatePlayerRequest = {
             userId: this.props.user.id,
             name: this.state.guestName,
-            type: PlayerKind.Guest
+            kind: PlayerKind.Guest
         };
 
         this.props.api

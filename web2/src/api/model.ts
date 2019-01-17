@@ -56,7 +56,7 @@ export interface Player {
 export interface CreatePlayerRequest {
     userId : number,
     name : string,
-    type : PlayerKind
+    kind : PlayerKind
 }
 
 //Pieces
