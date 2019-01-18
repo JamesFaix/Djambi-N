@@ -150,3 +150,36 @@ let startGame (game : Game) : Game AsyncHttpResult =
     )
     |> thenMap (fun _ -> game)
    
+
+let applyStartGame (game : Game) : Game =
+    let board = BoardModelUtility.getBoardMetadata game.parameters.regionCount
+    let players = assignStartingConditions game.players
+
+    let game = 
+        { 
+            game with 
+                status = GameStatus.Started
+                pieces = createPieces(board, players) //Starting conditions must first be assigned
+                players = players
+                turnCycle = players //Starting conditions must first be assigned
+                    |> List.filter (fun p -> p.startingTurnNumber.IsSome)
+                    |> List.sortBy (fun p -> p.startingTurnNumber.Value)
+                    |> List.map (fun p -> p.id)
+                currentTurn = 
+                    Some {
+                        status = AwaitingSelection
+                        selections = List.empty
+                        selectionOptions = List.empty
+                        requiredSelectionKind = Some Subject
+                    }
+        }
+
+    let (selectionOptions, _) = SelectionOptionsService.getSelectableCellsFromState game
+        
+    { 
+        game with 
+            currentTurn = 
+                Some {
+                    game.currentTurn.Value with selectionOptions = selectionOptions
+                }        
+    }   
