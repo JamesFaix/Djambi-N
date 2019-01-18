@@ -129,16 +129,8 @@ let processCurrentTurnChangedEffect (effect : DiffEffect<Turn option>) (game : G
     GameRepository.updateGameState request
     |> thenMap (fun _ -> { game with currentTurn = effect.newValue })
 
-let processGameCreatedEffect (effect : ScalarEffect<CreateGameRequest>) : Game AsyncHttpResult =
-    GameRepository.createGame effect.value
-    |> thenBindAsync GameRepository.getGame
-
-let private processEffect (effect : Effect) (game : Game) : Game AsyncHttpResult =
-        
+let private processEffect (effect : Effect) (game : Game) : Game AsyncHttpResult =        
     match effect with 
-    | Effect.GameCreated e ->
-        failwith "Must process game created separately because a game does not yet exist."
-
     | Effect.GameStatusChanged e -> processGameStatusChangedEffect e game
     | Effect.TurnCycleChanged e -> processTurnCycleChangedEffect e game
     | Effect.ParametersChanged e -> processParameterChangedEffect e game
@@ -151,27 +143,9 @@ let private processEffect (effect : Effect) (game : Game) : Game AsyncHttpResult
     | Effect.PieceMoved e -> processPieceMovedEffect e game
     | Effect.CurrentTurnChanged e -> processCurrentTurnChangedEffect e game
 
-let processEvent (game : Game option) (event : Event) : StateAndEventResponse AsyncHttpResult =
-
-    match (game, event) with
-    | (None, e) when e.kind = EventKind.GameCreated ->
-        match (e.effects.[0], e.effects.[1]) with
-        | (Effect.GameCreated createGameEffect, Effect.PlayerAdded addPlayerEffect) ->
-            processGameCreatedEffect createGameEffect
-            |> thenBindAsync (processAddPlayerEffect addPlayerEffect)
-        | _ -> 
-            failwith "Invalid GameCreated event effects."
-    
-    | (None, _) ->
-        failwith "Only GameCreated event can be processed without a game."
-
-    | (Some _, e) when e.kind = EventKind.GameCreated ->
-        failwith "GameCreated event must be processed without a game."
-
-    | (Some g, _) ->
-        let projections = event.effects |> Seq.map processEffect
-        applyEachAsync projections g
-        
+let processEvent (game : Game) (event : Event) : StateAndEventResponse AsyncHttpResult =    
+    let projections = event.effects |> Seq.map processEffect
+    applyEachAsync projections game        
     |> thenMap (fun g -> 
         {
             game = g

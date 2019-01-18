@@ -39,6 +39,7 @@ export default class ApiClient {
                         .then(errorMessage => {
                             console.log(endpointDescription + " failed (" + errorMessage + ")");
                             return null;
+
                         });
                 } else {
                     console.log(endpointDescription + " succeeded");
@@ -73,8 +74,8 @@ export default class ApiClient {
     }
 
     //Game
-    async createGame(request : Model.GameParameters) : Promise<Model.StateAndEventResponse> {
-        return await this.sendRequest<Model.GameParameters, Model.StateAndEventResponse>(
+    async createGame(request : Model.GameParameters) : Promise<Model.Game> {
+        return await this.sendRequest<Model.GameParameters, Model.Game>(
             HttpMethod.Post, "/games", request);
     }
 

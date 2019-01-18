@@ -2,19 +2,30 @@
 
 open Djambi.Api.Common.Collections
 open Djambi.Api.Common.Control
+open Djambi.Api.Common.Control.AsyncHttpResult
+open Djambi.Api.Db.Repositories
 open Djambi.Api.Model
     
-let getCreateGameEvent (parameters : GameParameters) (session : Session) : Event HttpResult =
-    let gameRequest = 
+let createGame (parameters : GameParameters) (session : Session) : Game AsyncHttpResult =
+    let gameRequest : CreateGameRequest =   
         {
             parameters = parameters
             createdByUserId = session.userId
         }
-    let playerRequest = CreatePlayerRequest.user session.userId
-    Ok <| Event.create(EventKind.GameCreated, [
-        Effect.gameCreated gameRequest
-        Effect.playerAdded playerRequest
-        ])
+
+    let playerRequest : CreatePlayerRequest =
+        {
+            kind = PlayerKind.User
+            userId = Some session.userId
+            name = None
+        }
+
+    //TODO: Make this transactional
+    GameRepository.createGame gameRequest
+    |> thenBindAsync (fun gameId -> 
+        GameRepository.addPlayer(gameId, playerRequest)
+        |> thenBindAsync (fun _ -> GameRepository.getGame gameId)
+    )
 
 let getUpdateGameParametersEvent (game : Game, parameters : GameParameters) (session : Session) : Event HttpResult =
     if game.status <> GameStatus.Pending

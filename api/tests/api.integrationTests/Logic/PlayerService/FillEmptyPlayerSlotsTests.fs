@@ -19,8 +19,7 @@ type FillEmptyPlayerSlotsTests() =
         let session = getSessionForUser 1
         let gameRequest = getGameParameters()
         task {
-            let! resp = GameManager.createGame gameRequest session |> thenValue
-            let game = resp.game
+            let! game = GameManager.createGame gameRequest session |> thenValue
 
             //Act
             let! updatedGame = TestUtilities.fillEmptyPlayerSlots game |> thenValue
@@ -44,8 +43,7 @@ type FillEmptyPlayerSlotsTests() =
         let session = getSessionForUser 1
         let gameRequest = getGameParameters()
         task {
-            let! resp = GameManager.createGame gameRequest session |> thenValue
-            let game = resp.game
+            let! game = GameManager.createGame gameRequest session |> thenValue
 
             //Act
             let! effects = PlayerService.fillEmptyPlayerSlots game |> thenValue
