@@ -33,16 +33,16 @@ export default class ApiClient {
         }
 
         return await fetch(url, fetchParams)
-            .then(response => {
-                if (response.status > 399){
-                    console.log(endpointDescription + " failed");
+            .then(async response => {
+                if (!response.ok){
                     return response.json()
                         .then(errorMessage => {
-                            throw new Error(errorMessage);
+                            console.log(endpointDescription + " failed (" + errorMessage + ")");
+                            return null;
                         });
                 } else {
                     console.log(endpointDescription + " succeeded");
-                    return response.json();
+                    return await response.json();
                 }
             })
             .catch(reason => {
