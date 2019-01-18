@@ -153,7 +153,6 @@ export interface CreateGameRequest {
 }
 
 export enum EffectKind {
-    GameCreated = "GameCreated",
     GameStatusChanged = "GameStatusChanged",
     PlayerEliminated = "PlayerEliminated",
     PiecesOwnershipChanged = "PiecesOwnershipChanged",
@@ -186,7 +185,6 @@ export type DiffWithContextEffect<T, U> = {
 }
 
 export type Effect =
-    ScalarEffect<CreateGameRequest> |
     DiffEffect<GameStatus> |
     DiffEffect<number[]> |
     DiffEffect<GameParameters> |
@@ -198,7 +196,6 @@ export type Effect =
     DiffEffect<Turn>
 
 export enum EventKind {
-    GameCreated = "GameCreated",
     GameParametersChanged = "GameParametersChanged",
     GameCanceled = "GameCanceled",
     PlayerJoined = "PlayerJoined",
