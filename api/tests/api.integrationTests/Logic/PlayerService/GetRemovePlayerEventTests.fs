@@ -23,8 +23,7 @@ type GetRemovePlayerEventTests() =
             let! (_, session, game1) = createuserSessionAndGame(false) |> thenValue
 
             let gameRequest = getGameParameters()
-            let! resp2 = GameManager.createGame gameRequest session |> thenValue
-            let game2 = resp2.game
+            let! game2 = GameManager.createGame gameRequest session |> thenValue
 
             let! user = createUser() |> thenValue
             let request = CreatePlayerRequest.user user.id

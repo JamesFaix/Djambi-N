@@ -28,56 +28,41 @@ let getGame (gameId : int) (session : Session) : Game AsyncHttpResult =
         else Error <| HttpException(404, "Game not found.")        
     )
 
-let createGame (parameters : GameParameters) (session : Session) : StateAndEventResponse AsyncHttpResult =
-    GameCrudService.getCreateGameEvent parameters session
-    |> Result.bindAsync (EventProcessor.processEvent None)
+let createGame (parameters : GameParameters) (session : Session) : Game AsyncHttpResult =
+    GameCrudService.createGame parameters session
+
+let private processEvent (gameId : int) (getEvent : Game -> Event HttpResult) : StateAndEventResponse AsyncHttpResult = 
+    GameRepository.getGame gameId
+    |> thenBindAsync (fun game -> 
+        getEvent game
+        |> Result.bindAsync (EventProcessor.processEvent game)
+    )
+    
+let private processEventAsync (gameId : int) (getEvent : Game -> Event AsyncHttpResult) : StateAndEventResponse AsyncHttpResult = 
+    GameRepository.getGame gameId
+    |> thenBindAsync (fun game -> 
+        getEvent game
+        |> thenBindAsync (EventProcessor.processEvent game)
+    )
 
 //TODO: Requires integration tests
 let updateGameParameters (gameId : int) (parameters : GameParameters) (session : Session) : StateAndEventResponse AsyncHttpResult =
-    GameRepository.getGame gameId
-    |> thenBindAsync (fun game -> 
-        GameCrudService.getUpdateGameParametersEvent (game, parameters) session
-        |> Result.bindAsync (EventProcessor.processEvent (Some game))
-    )
+    processEvent gameId (fun game -> GameCrudService.getUpdateGameParametersEvent (game, parameters) session)
 
 let addPlayer (gameId : int) (request : CreatePlayerRequest) (session : Session) : StateAndEventResponse AsyncHttpResult =
-    GameRepository.getGame gameId
-    |> thenBindAsync (fun game -> 
-        PlayerService.getAddPlayerEvent (game, request) session
-        |> Result.bindAsync (EventProcessor.processEvent (Some game))
-    )
+    processEvent gameId (fun game -> PlayerService.getAddPlayerEvent (game, request) session)
 
 let removePlayer (gameId : int, playerId : int) (session : Session) : StateAndEventResponse AsyncHttpResult =
-    GameRepository.getGame gameId
-    |> thenBindAsync (fun game -> 
-        PlayerService.getRemovePlayerEvent (game, playerId) session
-        |> Result.bindAsync (EventProcessor.processEvent (Some game))
-    )
+    processEvent gameId (fun game -> PlayerService.getRemovePlayerEvent (game, playerId) session)
 
 let startGame (gameId: int) (session : Session) : StateAndEventResponse AsyncHttpResult =
-    GameRepository.getGame gameId
-    |> thenBindAsync (fun game -> 
-        GameStartService.getGameStartEvent game session
-        |> thenBindAsync (EventProcessor.processEvent (Some game))
-    )
+    processEventAsync gameId (fun game -> GameStartService.getGameStartEvent game session)
 
 let selectCell (gameId : int, cellId : int) (session : Session) : StateAndEventResponse AsyncHttpResult =
-    GameRepository.getGame gameId
-    |> thenBindAsync (fun game -> 
-        TurnService.getCellSelectedEvent (game, cellId) session
-        |> thenBindAsync (EventProcessor.processEvent (Some game))
-    )
+    processEventAsync gameId (fun game -> TurnService.getCellSelectedEvent (game, cellId) session)
 
 let resetTurn (gameId : int) (session : Session) : StateAndEventResponse AsyncHttpResult =
-    GameRepository.getGame gameId
-    |> thenBindAsync (fun game -> 
-        TurnService.getResetTurnEvent game session
-        |> thenBindAsync (EventProcessor.processEvent (Some game))
-    )
+    processEventAsync gameId (fun game -> TurnService.getResetTurnEvent game session)
 
 let commitTurn (gameId : int) (session : Session) : StateAndEventResponse AsyncHttpResult =
-    GameRepository.getGame gameId
-    |> thenBindAsync (fun game -> 
-        TurnService.getCommitTurnEvent game session
-        |> thenBindAsync (EventProcessor.processEvent (Some game))
-    )
+    processEventAsync gameId (fun game -> TurnService.getCommitTurnEvent game session)

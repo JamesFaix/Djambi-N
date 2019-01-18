@@ -79,10 +79,10 @@ let createuserSessionAndGame(allowGuests : bool) : (UserDetails * Session * Game
         let session = getSessionForUser user.id
 
         let parameters = { getGameParameters() with allowGuests = allowGuests }
-        let! resp = GameManager.createGame parameters session
+        let! game = GameManager.createGame parameters session
                      |> thenValue
 
-        return Ok <| (user, session, resp.game)
+        return Ok <| (user, session, game)
     }
 
 let fillEmptyPlayerSlots (game : Game) : Game AsyncHttpResult =

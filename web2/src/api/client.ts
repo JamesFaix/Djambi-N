@@ -33,16 +33,17 @@ export default class ApiClient {
         }
 
         return await fetch(url, fetchParams)
-            .then(response => {
-                if (response.status > 399){
-                    console.log(endpointDescription + " failed");
+            .then(async response => {
+                if (!response.ok){
                     return response.json()
                         .then(errorMessage => {
-                            throw new Error(errorMessage);
+                            console.log(endpointDescription + " failed (" + errorMessage + ")");
+                            return null;
+
                         });
                 } else {
                     console.log(endpointDescription + " succeeded");
-                    return response.json();
+                    return await response.json();
                 }
             })
             .catch(reason => {
@@ -73,8 +74,8 @@ export default class ApiClient {
     }
 
     //Game
-    async createGame(request : Model.GameParameters) : Promise<Model.StateAndEventResponse> {
-        return await this.sendRequest<Model.GameParameters, Model.StateAndEventResponse>(
+    async createGame(request : Model.GameParameters) : Promise<Model.Game> {
+        return await this.sendRequest<Model.GameParameters, Model.Game>(
             HttpMethod.Post, "/games", request);
     }
 

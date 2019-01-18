@@ -68,7 +68,7 @@ export default class CreateGamePage extends React.Component<CreateGamePageProps,
 
         this.props.api
             .createGame(request)
-            .then(stateAndEvent => {
+            .then(game => {
                 this.setState({
                     regionCount : 3,
                     description : "",
@@ -76,7 +76,7 @@ export default class CreateGamePage extends React.Component<CreateGamePageProps,
                     isPublic : true
                 });
 
-                this.setState({gameId : stateAndEvent.game.id});
+                this.setState({gameId : game.id});
             })
             .catch(reason => {
                 alert("Create game failed because " + reason);
