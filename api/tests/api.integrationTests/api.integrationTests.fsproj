@@ -13,11 +13,9 @@
     <Compile Include="Assertions.fs" />
     <Compile Include="TestUtilities.fs" />
     <Compile Include="TestsBase.fs" />
-    <Compile Include="Logic\GameCrudServiceTests\GetCreateGameEventTests.fs" />
     <Compile Include="Logic\GameCrudServiceTests\GetUpdateGameParametersEventTests.fs" />
     <Compile Include="Logic\EventProcessor\ProcessAddPlayerEffectTests.fs" />
     <Compile Include="Logic\EventProcessor\ProcessCurrentTurnChangedEffectTests.fs" />
-    <Compile Include="Logic\EventProcessor\ProcessGameCreatedEffectTests.fs" />
     <Compile Include="Logic\EventProcessor\ProcessGameStatusChangedEffectTests.fs" />
     <Compile Include="Logic\EventProcessor\ProcessParametersChangedEffectTests.fs" />
     <Compile Include="Logic\EventProcessor\ProcessPieceKilledEffectTests.fs" />

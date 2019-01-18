@@ -4,7 +4,6 @@ module Djambi.Api.Model.EventModel
 open System
 
 type EffectKind =
-    | GameCreated
     | GameStatusChanged
     | PlayerEliminated
     | PiecesOwnershipChanged
@@ -39,7 +38,6 @@ type DiffWithContextEffect<'a, 'b> =
     }
 
 type Effect =
-    | GameCreated of ScalarEffect<CreateGameRequest>
     | GameStatusChanged of DiffEffect<GameStatus>
     | TurnCycleChanged of DiffEffect<int list>
     | ParametersChanged of DiffEffect<GameParameters>
@@ -54,12 +52,6 @@ type Effect =
     | CurrentTurnChanged of DiffEffect<Turn option>
 
 module Effect =
-    let gameCreated (request) =
-        Effect.GameCreated {
-            kind = EffectKind.GameCreated
-            value = request
-        }
-
     let gameStatusChanged (oldValue, newValue) =
         Effect.GameStatusChanged {
             kind = EffectKind.GameStatusChanged
@@ -135,7 +127,6 @@ module Effect =
         }
 
 type EventKind =
-    | GameCreated
     | GameParametersChanged
     | GameCanceled 
     | PlayerJoined

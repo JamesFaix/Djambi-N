@@ -20,7 +20,7 @@ type GameStartServiceTests() =
             let session = getSessionForUser 1
             let parameters = getGameParameters()
             let! game = GameManager.createGame parameters session
-                        |> thenBindAsync (fun resp -> TestUtilities.fillEmptyPlayerSlots resp.game)
+                        |> thenBindAsync TestUtilities.fillEmptyPlayerSlots
                         |> thenValue
 
             //Act
@@ -43,7 +43,7 @@ type GameStartServiceTests() =
             let session = getSessionForUser 1
             let parameters = getGameParameters()
             let! game = GameManager.createGame parameters session 
-                        |> thenBindAsync (fun resp -> TestUtilities.fillEmptyPlayerSlots resp.game)
+                        |> thenBindAsync TestUtilities.fillEmptyPlayerSlots
                         |> thenValue
             let playersWithStartConditions = GameStartService.assignStartingConditions game.players
             let board = BoardModelUtility.getBoardMetadata(game.parameters.regionCount)
