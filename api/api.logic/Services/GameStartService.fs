@@ -1,5 +1,6 @@
 ﻿module Djambi.Api.Logic.Services.GameStartService
 
+open System
 open System.Linq
 open Djambi.Api.Common
 open Djambi.Api.Common.Collections
@@ -92,6 +93,7 @@ let createPieces(board : BoardMetadata, players : Player list) : Piece list =
     |> List.mapi (fun i cond -> createPlayerPieces(board, cond, i*Constants.piecesPerPlayer))
     |> List.collect id
 
+[<Obsolete("Use applyStartGame")>]
 let startGame (game : Game) : Game AsyncHttpResult =
     let board = BoardModelUtility.getBoardMetadata game.parameters.regionCount
     let players = assignStartingConditions game.players

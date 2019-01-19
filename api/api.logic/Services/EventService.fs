@@ -4,7 +4,7 @@ open System
 open Djambi.Api.Model
 open Djambi.Api.Common.Collections
 
-let applyGameStatusChangedEffect (effect : DiffEffect<GameStatus>) (game : Game) : Game =
+let private applyGameStatusChangedEffect (effect : DiffEffect<GameStatus>) (game : Game) : Game =
     match (effect.oldValue, effect.newValue) with
     | (Pending, Started) ->
         //This case is a lot more complicated
@@ -12,27 +12,27 @@ let applyGameStatusChangedEffect (effect : DiffEffect<GameStatus>) (game : Game)
     | _ ->
         { game with status = effect.newValue }
 
-let applyTurnCycleChangedEffect (effect : DiffEffect<int list>) (game : Game) : Game =
+let private applyTurnCycleChangedEffect (effect : DiffEffect<int list>) (game : Game) : Game =
     { game with turnCycle = effect.newValue }
 
-let applyParameterChangedEffect (effect : DiffEffect<GameParameters>) (game : Game) : Game =
+let private applyParameterChangedEffect (effect : DiffEffect<GameParameters>) (game : Game) : Game =
     { game with parameters = effect.newValue }
 
-let applyPlayerEliminatedEffect (effect : ScalarEffect<int>) (game : Game) : Game =
+let private applyPlayerEliminatedEffect (effect : ScalarEffect<int>) (game : Game) : Game =
     { game with 
         players = game.players |> List.replaceIf 
             (fun p -> p.id = effect.value) 
             (fun p -> { p with isAlive = Some false })
     }
 
-let applyPieceKilledEffect (effect : ScalarEffect<int>) (game : Game) : Game =
+let private applyPieceKilledEffect (effect : ScalarEffect<int>) (game : Game) : Game =
     { game with 
         pieces = game.pieces |> List.replaceIf
             (fun p -> p.id = effect.value) 
             (fun p -> { p with kind = PieceKind.Corpse; playerId = None }) 
     }
 
-let applyPlayersRemovedEffect (effect : ScalarEffect<int list>) (game : Game) : Game =
+let private applyPlayersRemovedEffect (effect : ScalarEffect<int list>) (game : Game) : Game =
     { game with 
         players = game.players 
             |> List.exceptWithKey (fun p -> p.id) effect.value 
@@ -43,7 +43,7 @@ let private applyPlayerOutOfMovesEffect (effect : ScalarEffect<int>) (game : Gam
     //the same event should also create a PlayerEliminated and PiecesOwnershipChanged effect
     game
 
-let applyAddPlayerEffect (effect : ScalarEffect<CreatePlayerRequest>) (game : Game) : Game =
+let private applyAddPlayerEffect (effect : ScalarEffect<CreatePlayerRequest>) (game : Game) : Game =
     let player : Player = 
         {
             id = 0
@@ -59,24 +59,24 @@ let applyAddPlayerEffect (effect : ScalarEffect<CreatePlayerRequest>) (game : Ga
 
     { game with players = List.append game.players [player] }
 
-let applyPiecesOwnershipChangedEffect (effect : DiffWithContextEffect<int option, int list>) (game : Game) : Game = 
+let private applyPiecesOwnershipChangedEffect (effect : DiffWithContextEffect<int option, int list>) (game : Game) : Game = 
     { game with 
         pieces = game.pieces |> List.replaceIf
             (fun p -> effect.context |> List.contains p.id)
             (fun p -> { p with playerId = effect.newValue })
     }
 
-let applyPieceMovedEffect (effect : DiffWithContextEffect<int, int>) (game : Game) : Game =
+let private applyPieceMovedEffect (effect : DiffWithContextEffect<int, int>) (game : Game) : Game =
     { game with 
         pieces = game.pieces |> List.replaceIf
             (fun p -> effect.context = p.id)
             (fun p -> { p with cellId = effect.newValue }) 
     }
 
-let applyCurrentTurnChangedEffect (effect : DiffEffect<Turn option>) (game : Game) : Game =
+let private applyCurrentTurnChangedEffect (effect : DiffEffect<Turn option>) (game : Game) : Game =
     { game with currentTurn = effect.newValue }
 
-let applyGameCreatedEffect (effect : ScalarEffect<CreateGameRequest>) : Game =
+let private applyGameCreatedEffect (effect : ScalarEffect<CreateGameRequest>) : Game =
     {
         id = 0
         status = GameStatus.Pending
