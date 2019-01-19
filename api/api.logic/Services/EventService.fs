@@ -3,7 +3,6 @@
 open System
 open Djambi.Api.Model
 open Djambi.Api.Common.Collections
-open Djambi.Api.Common.Control
 
 let applyGameStatusChangedEffect (effect : DiffEffect<GameStatus>) (game : Game) : Game =
     match (effect.oldValue, effect.newValue) with
@@ -90,33 +89,22 @@ let applyGameCreatedEffect (effect : ScalarEffect<CreateGameRequest>) : Game =
         currentTurn = None
     }
 
-let private applyEffect (effect : Effect) (game : Game) : Game HttpResult =
+let private applyEffect (effect : Effect) (game : Game) : Game =
     match effect with 
-    | Effect.GameStatusChanged e -> Ok <| applyGameStatusChangedEffect e game
-    | Effect.TurnCycleChanged e -> Ok <| applyTurnCycleChangedEffect e game
-    | Effect.ParametersChanged e -> Ok <| applyParameterChangedEffect e game
-    | Effect.PlayerEliminated e -> Ok <| applyPlayerEliminatedEffect e game
-    | Effect.PieceKilled e -> Ok <| applyPieceKilledEffect e game       
-    | Effect.PlayersRemoved e -> Ok <| applyPlayersRemovedEffect e game
-    | Effect.PlayerOutOfMoves e -> Ok <| applyPlayerOutOfMovesEffect e game
-    | Effect.PlayerAdded e -> Ok <| applyAddPlayerEffect e game
-    | Effect.PiecesOwnershipChanged e -> Ok <| applyPiecesOwnershipChangedEffect e game
-    | Effect.PieceMoved e -> Ok <| applyPieceMovedEffect e game
-    | Effect.CurrentTurnChanged e -> Ok <| applyCurrentTurnChangedEffect e game
+    | Effect.GameStatusChanged e -> applyGameStatusChangedEffect e game
+    | Effect.TurnCycleChanged e -> applyTurnCycleChangedEffect e game
+    | Effect.ParametersChanged e -> applyParameterChangedEffect e game
+    | Effect.PlayerEliminated e -> applyPlayerEliminatedEffect e game
+    | Effect.PieceKilled e -> applyPieceKilledEffect e game       
+    | Effect.PlayersRemoved e -> applyPlayersRemovedEffect e game
+    | Effect.PlayerOutOfMoves e -> applyPlayerOutOfMovesEffect e game
+    | Effect.PlayerAdded e -> applyAddPlayerEffect e game
+    | Effect.PiecesOwnershipChanged e -> applyPiecesOwnershipChangedEffect e game
+    | Effect.PieceMoved e -> applyPieceMovedEffect e game
+    | Effect.CurrentTurnChanged e -> applyCurrentTurnChangedEffect e game
 
-let applyEvent (game : Game) (event : Event) : Game HttpResult =
-
-    let mutable effects = event.effects
+let applyEvent (game : Game) (event : Event) : Game =
     let mutable game = game
-    let mutable result = Ok game
-    let mutable stop = false
-
-    while effects.Length > 0 && not stop do
-        result <- applyEffect effects.Head game
-        effects <- effects.Tail
-            
-        if result |> Result.isError 
-        then stop <- true 
-        else ()
-
-    result  
+    for ef in event.effects do
+        game <- applyEffect ef game
+    game

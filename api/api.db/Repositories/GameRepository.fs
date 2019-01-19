@@ -150,7 +150,7 @@ let updateGame(game : Game) : Unit AsyncHttpResult =
                     .add("PiecesJson", JsonConvert.SerializeObject(game.pieces))
                     .add("CurrentTurnJson", JsonConvert.SerializeObject(game.currentTurn))
                     .add("TurnCycleJson", JsonConvert.SerializeObject(game.turnCycle))
-    let cmd = proc("Games_UpdateState", param)
+    let cmd = proc("Games_Update", param)
     queryUnit(cmd, "Game")
 
 [<Obsolete("Deprecate this and use updatePlayer")>]
