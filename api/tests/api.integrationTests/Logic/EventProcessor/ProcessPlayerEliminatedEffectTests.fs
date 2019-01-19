@@ -28,22 +28,19 @@ type ProcessPlayerEliminatedEffectTests() =
             game.turnCycle |> shouldExist (fun pId -> pId = player2.id)
 
             let effect = Effect.playerEliminated(player2.id)
+            let event = TestUtilities.createEvent([effect])
 
-            match effect with
-            | Effect.PlayerEliminated e ->
+            //Act
+            let! resp = EventProcessor.processEvent game event |> thenValue
 
-                //Act
-                let! updatedGame = EventProcessor.processPlayerEliminatedEffect e game |> thenValue
+            //Assert
+            let updatedGame = resp.game
+            (updatedGame.players |> List.find(fun p -> p.id = player2.id)).isAlive |> shouldBe (Some false)
 
-                //Assert
-                (updatedGame.players |> List.find(fun p -> p.id = player2.id)).isAlive |> shouldBe (Some false)
+            //This event does not update pieces or the turn cycle
+            updatedGame.pieces |> List.filter (fun p -> p.playerId = Some player2.id) |> List.length |> shouldBe 9
+            updatedGame.turnCycle |> shouldExist (fun pId -> pId = player2.id)
 
-                //This event does not update pieces or the turn cycle
-                updatedGame.pieces |> List.filter (fun p -> p.playerId = Some player2.id) |> List.length |> shouldBe 9
-                updatedGame.turnCycle |> shouldExist (fun pId -> pId = player2.id)
-
-                let! persistedGame = GameRepository.getGame game.id |> thenValue
-                persistedGame |> shouldBe updatedGame
-
-            | _ -> failwith "Incorrect effect type"
+            let! persistedGame = GameRepository.getGame game.id |> thenValue
+            persistedGame |> shouldBe updatedGame
         }

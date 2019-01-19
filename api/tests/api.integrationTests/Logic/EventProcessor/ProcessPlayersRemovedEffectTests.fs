@@ -24,18 +24,15 @@ type ProcessPlayersRemovedEffectTests() =
             game.players |> shouldExist (fun p -> p.id = player2.id)
  
             let effect = Effect.playersRemoved([player2.id])
+            let event = TestUtilities.createEvent([effect])
 
-            match effect with
-            | Effect.PlayersRemoved e ->
+            //Act
+            let! resp = EventProcessor.processEvent game event |> thenValue
 
-                //Act
-                let! updatedGame = EventProcessor.processPlayersRemovedEffect e game |> thenValue
+            //Assert
+            let updatedGame = resp.game
+            updatedGame.players |> shouldNotExist (fun p -> p.id = player2.id)
 
-                //Assert
-                updatedGame.players |> shouldNotExist (fun p -> p.id = player2.id)
-
-                let! persistedGame = GameRepository.getGame game.id |> thenValue
-                persistedGame |> shouldBe updatedGame
-
-            | _ -> failwith "Incorrect effect type"
+            let! persistedGame = GameRepository.getGame game.id |> thenValue
+            persistedGame |> shouldBe updatedGame
         }

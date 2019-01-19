@@ -27,23 +27,20 @@ type ProcessPieceMovedEffectTests() =
             let newCellId = otherPiece.cellId
 
             let effect = Effect.pieceMoved(piece.id, piece.cellId, newCellId)
+            let event = TestUtilities.createEvent([effect])
 
-            match effect with
-            | Effect.PieceMoved e ->
+            //Act
+            let! resp = EventProcessor.processEvent game event |> thenValue
 
-                //Act
-                let! updatedGame = EventProcessor.processPieceMovedEffect e game |> thenValue
+            //Assert
+            let updatedGame = resp.game
+            let updatedPiece = updatedGame.pieces |> List.find (fun p -> p.id = piece.id)
+            updatedPiece.cellId |> shouldBe newCellId
 
-                //Assert
-                let updatedPiece = updatedGame.pieces |> List.find (fun p -> p.id = piece.id)
-                updatedPiece.cellId |> shouldBe newCellId
+            //Doesn't validate that multiple pieces aren't in the same cell
+            let updatedOtherPiece = updatedGame.pieces |> List.find (fun p -> p.id = otherPiece.id)
+            updatedOtherPiece.cellId |> shouldBe newCellId
 
-                //Doesn't validate that multiple pieces aren't in the same cell
-                let updatedOtherPiece = updatedGame.pieces |> List.find (fun p -> p.id = otherPiece.id)
-                updatedOtherPiece.cellId |> shouldBe newCellId
-
-                let! persistedGame = GameRepository.getGame game.id |> thenValue
-                persistedGame |> shouldBe updatedGame
-
-            | _ -> failwith "Incorrect effect type"
+            let! persistedGame = GameRepository.getGame game.id |> thenValue
+            persistedGame |> shouldBe updatedGame
         }

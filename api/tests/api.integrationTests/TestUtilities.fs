@@ -96,3 +96,10 @@ let fillEmptyPlayerSlots (game : Game) : Game AsyncHttpResult =
         
         return! GameRepository.getGame game.id
     }
+
+let createEvent (effects : Effect list) : Event =
+    {
+        kind = Unchecked.defaultof<EventKind>
+        timestamp = Unchecked.defaultof<DateTime>
+        effects = effects
+    }

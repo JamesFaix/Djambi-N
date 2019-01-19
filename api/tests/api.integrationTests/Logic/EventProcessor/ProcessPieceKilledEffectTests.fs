@@ -24,21 +24,18 @@ type ProcessPieceKilledEffectTests() =
             piece.playerId |> shouldBe (Some piece.originalPlayerId)
 
             let effect = Effect.pieceKilled(piece.id)
+            let event = TestUtilities.createEvent([effect])
 
-            match effect with
-            | Effect.PieceKilled e ->
+            //Act
+            let! resp = EventProcessor.processEvent game event |> thenValue
 
-                //Act
-                let! updatedGame = EventProcessor.processPieceKilledEffect e game |> thenValue
+            //Assert
+            let updatedGame = resp.game
+            let updatedPiece = updatedGame.pieces |> List.find (fun p -> p.id = piece.id)
+            updatedPiece.kind |> shouldBe PieceKind.Corpse
+            updatedPiece.playerId |> shouldBe None
+            updatedPiece.originalPlayerId |> shouldBe piece.originalPlayerId
 
-                //Assert
-                let updatedPiece = updatedGame.pieces |> List.find (fun p -> p.id = piece.id)
-                updatedPiece.kind |> shouldBe PieceKind.Corpse
-                updatedPiece.playerId |> shouldBe None
-                updatedPiece.originalPlayerId |> shouldBe piece.originalPlayerId
-
-                let! persistedGame = GameRepository.getGame game.id |> thenValue
-                persistedGame |> shouldBe updatedGame
-
-            | _ -> failwith "Incorrect effect type"
+            let! persistedGame = GameRepository.getGame game.id |> thenValue
+            persistedGame |> shouldBe updatedGame
         }

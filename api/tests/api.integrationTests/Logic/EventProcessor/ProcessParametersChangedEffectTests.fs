@@ -31,19 +31,15 @@ type ProcessParametersChangedEffectTests() =
                 }
 
             let effect = Effect.parametersChanged(game.parameters, newParameters)
+            let event = TestUtilities.createEvent([effect])
 
-            match effect with
-            | Effect.ParametersChanged e ->
+            //Act
+            let! resp = EventProcessor.processEvent game event |> thenValue
 
-                //Act
-                let! updatedGame = EventProcessor.processParameterChangedEffect e game |> thenValue
+            //Assert
+            let updatedGame = resp.game
+            updatedGame |> shouldBe { game with parameters = newParameters }
 
-                //Assert
-
-                updatedGame |> shouldBe { game with parameters = newParameters }
-
-                let! persistedGame = GameRepository.getGame game.id |> thenValue
-                persistedGame |> shouldBe updatedGame
-
-            | _ -> failwith "Incorrect effect type"
+            let! persistedGame = GameRepository.getGame game.id |> thenValue
+            persistedGame |> shouldBe updatedGame
         }

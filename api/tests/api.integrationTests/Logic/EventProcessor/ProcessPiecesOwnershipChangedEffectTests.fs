@@ -24,19 +24,16 @@ type ProcessPiecesOwnershipChangedEffectTests() =
             piece.playerId |> shouldBe (Some player1Id)
 
             let effect = Effect.piecesOwnershipChanged([piece.id], Some player1Id, None)
+            let event = TestUtilities.createEvent([effect])
 
-            match effect with
-            | Effect.PiecesOwnershipChanged e ->
+            //Act
+            let! resp = EventProcessor.processEvent game event |> thenValue
 
-                //Act
-                let! updatedGame = EventProcessor.processPiecesOwnershipChangedEffect e game |> thenValue
+            //Assert
+            let updatedGame = resp.game
+            let updatedPiece = updatedGame.pieces |> List.find (fun p -> p.id = piece.id)
+            updatedPiece |> shouldBe { piece with playerId = None }
 
-                //Assert
-                let updatedPiece = updatedGame.pieces |> List.find (fun p -> p.id = piece.id)
-                updatedPiece |> shouldBe { piece with playerId = None }
-
-                let! persistedGame = GameRepository.getGame game.id |> thenValue
-                persistedGame |> shouldBe updatedGame
-
-            | _ -> failwith "Incorrect effect type"
+            let! persistedGame = GameRepository.getGame game.id |> thenValue
+            persistedGame |> shouldBe updatedGame
         }

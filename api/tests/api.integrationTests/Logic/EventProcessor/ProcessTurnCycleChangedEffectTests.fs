@@ -28,19 +28,15 @@ type ProcessTurnCycleChangedEffectTests() =
 
             let newCycle = game.turnCycle |> List.rev
             let effect = Effect.turnCycleChanged(game.turnCycle, newCycle)
+            let event = TestUtilities.createEvent([effect])
 
-            match effect with
-            | Effect.TurnCycleChanged e ->
+            //Act
+            let! resp = EventProcessor.processEvent game event |> thenValue
 
-                //Act
-                let! updatedGame = EventProcessor.processTurnCycleChangedEffect e game |> thenValue
+            //Assert
+            let updatedGame = resp.game
+            updatedGame |> shouldBe { game with turnCycle = newCycle }
 
-                //Assert
-
-                updatedGame |> shouldBe { game with turnCycle = newCycle }
-
-                let! persistedGame = GameRepository.getGame game.id |> thenValue
-                persistedGame |> shouldBe updatedGame
-
-            | _ -> failwith "Incorrect effect type"
+            let! persistedGame = GameRepository.getGame game.id |> thenValue
+            persistedGame |> shouldBe updatedGame
         }

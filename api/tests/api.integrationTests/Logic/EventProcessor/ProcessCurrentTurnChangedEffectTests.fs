@@ -30,18 +30,15 @@ type ProcessCurrentTurnChangedEffectTests() =
                 }
 
             let effect = Effect.currentTurnChanged(game.currentTurn, Some updatedTurn)
+            let event = TestUtilities.createEvent([effect])
 
-            match effect with
-            | Effect.CurrentTurnChanged e ->
+            //Act
+            let! resp = EventProcessor.processEvent game event |> thenValue
 
-                //Act
-                let! updatedGame = EventProcessor.processCurrentTurnChangedEffect e game |> thenValue
+            //Assert
+            let updatedGame = resp.game
+            updatedGame.currentTurn |> shouldBe (Some updatedTurn)
 
-                //Assert
-                updatedGame.currentTurn |> shouldBe (Some updatedTurn)
-
-                let! persistedGame = GameRepository.getGame game.id |> thenValue
-                persistedGame |> shouldBe updatedGame
-
-            | _ -> failwith "Incorrect effect type"
+            let! persistedGame = GameRepository.getGame game.id |> thenValue
+            persistedGame |> shouldBe updatedGame
         }
