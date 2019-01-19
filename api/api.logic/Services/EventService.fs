@@ -90,64 +90,33 @@ let applyGameCreatedEffect (effect : ScalarEffect<CreateGameRequest>) : Game =
         currentTurn = None
     }
 
-let private applyEffect (effect : Effect) (game : Game option) : Game HttpResult =
-    
-    match game with 
-    | Some g ->
-        match effect with 
-        | Effect.GameCreated _ -> Error <| HttpException(500, "Cannot process GameCreated effect with an existing Game.")
-        | Effect.GameStatusChanged e -> Ok <| applyGameStatusChangedEffect e g
-        | Effect.TurnCycleChanged e -> Ok <| applyTurnCycleChangedEffect e g
-        | Effect.ParametersChanged e -> Ok <| applyParameterChangedEffect e g
-        | Effect.PlayerEliminated e -> Ok <| applyPlayerEliminatedEffect e g
-        | Effect.PieceKilled e -> Ok <| applyPieceKilledEffect e g        
-        | Effect.PlayersRemoved e -> Ok <| applyPlayersRemovedEffect e g
-        | Effect.PlayerOutOfMoves e -> Ok <| applyPlayerOutOfMovesEffect e g
-        | Effect.PlayerAdded e -> Ok <| applyAddPlayerEffect e g
-        | Effect.PiecesOwnershipChanged e -> Ok <| applyPiecesOwnershipChangedEffect e g
-        | Effect.PieceMoved e -> Ok <| applyPieceMovedEffect e g
-        | Effect.CurrentTurnChanged e -> Ok <| applyCurrentTurnChangedEffect e g
-    | None -> 
-        match effect with 
-        | Effect.GameCreated e -> Ok <| applyGameCreatedEffect e
-        | _ -> Error <| HttpException(500, "All effects except GameCreated require an existing Game.")
+let private applyEffect (effect : Effect) (game : Game) : Game HttpResult =
+    match effect with 
+    | Effect.GameStatusChanged e -> Ok <| applyGameStatusChangedEffect e game
+    | Effect.TurnCycleChanged e -> Ok <| applyTurnCycleChangedEffect e game
+    | Effect.ParametersChanged e -> Ok <| applyParameterChangedEffect e game
+    | Effect.PlayerEliminated e -> Ok <| applyPlayerEliminatedEffect e game
+    | Effect.PieceKilled e -> Ok <| applyPieceKilledEffect e game       
+    | Effect.PlayersRemoved e -> Ok <| applyPlayersRemovedEffect e game
+    | Effect.PlayerOutOfMoves e -> Ok <| applyPlayerOutOfMovesEffect e game
+    | Effect.PlayerAdded e -> Ok <| applyAddPlayerEffect e game
+    | Effect.PiecesOwnershipChanged e -> Ok <| applyPiecesOwnershipChangedEffect e game
+    | Effect.PieceMoved e -> Ok <| applyPieceMovedEffect e game
+    | Effect.CurrentTurnChanged e -> Ok <| applyCurrentTurnChangedEffect e game
 
-let applyEvent (game : Game option) (event : Event) : Game HttpResult =
+let applyEvent (game : Game) (event : Event) : Game HttpResult =
 
     let mutable effects = event.effects
     let mutable game = game
+    let mutable result = Ok game
+    let mutable stop = false
 
-    //The start game effect is not based on an existing game, so it requires special treatment
-    match (game, event) with
-    | (None, e) when e.kind = EventKind.GameCreated ->
-        match (e.effects.[0]) with
-        | Effect.GameCreated ef ->
-            game <- Some <| applyGameCreatedEffect ef
-            effects <- effects.Tail
-            Ok ()
-        | _ -> 
-            Error <| HttpException(500, "Invalid GameCreated event effects.")
-    
-    | (None, _) -> 
-        Error <| HttpException(500, "Only GameCreated event can be processed without a game.")
-
-    | (Some _, e) when e.kind = EventKind.GameCreated ->
-        Error <| HttpException(500, "GameCreated event must be processed without a game.")
-
-    | _ -> 
-        Ok ()
-
-    |> Result.bind (fun _ ->
-        let mutable result = Ok <| game.Value
-        let mutable stop = false
-
-        while effects.Length > 0 && not stop do
-            result <- applyEffect effects.Head game
-            effects <- effects.Tail
+    while effects.Length > 0 && not stop do
+        result <- applyEffect effects.Head game
+        effects <- effects.Tail
             
-            if result |> Result.isError 
-            then stop <- true 
-            else ()
+        if result |> Result.isError 
+        then stop <- true 
+        else ()
 
-        result            
-    )
+    result  
