@@ -1,3 +1,4 @@
+--TODO: Deprecate this and use Games_Update
 CREATE PROCEDURE [dbo].[Games_UpdateParameters]
 	@GameId INT,
     @RegionCount INT,

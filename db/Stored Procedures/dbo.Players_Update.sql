@@ -1,6 +1,6 @@
---TODO: Deprecate this and use Players_Update
-CREATE PROCEDURE [dbo].[Players_SetStartConditions]
+CREATE PROCEDURE [dbo].[Players_Update]
     @PlayerId INT,
+    @IsAlive BIT,
     @ColorId TINYINT,
     @StartingRegion TINYINT,
     @StartingTurnNumber TINYINT
@@ -15,6 +15,6 @@ BEGIN
     SET ColorId = @ColorId,
         StartingRegion = @StartingRegion,
         StartingTurnNumber = @StartingTurnNumber,
-        IsAlive = 1
+        IsAlive = @IsAlive
     WHERE PlayerId = @PlayerId
 END

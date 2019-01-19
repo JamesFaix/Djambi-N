@@ -117,6 +117,7 @@ let getNeutralPlayerNames() : string list AsyncHttpResult =
     let cmd = proc("Players_GetNeutralNames", param)
     queryMany<string>(cmd, "Neutral player names")
     
+[<Obsolete("Deprecate this and use updateGame")>]
 let updateGameParameters (gameId : int) (parameters : GameParameters) : Unit AsyncHttpResult =
     let param = DynamicParameters()
                     .add("GameId", gameId)
@@ -127,6 +128,7 @@ let updateGameParameters (gameId : int) (parameters : GameParameters) : Unit Asy
     let cmd = proc("Games_UpdateParameters", param)
     queryUnit(cmd, "Game")
     
+[<Obsolete("Deprecate this and use updateGame")>]
 let updateGameState(request : UpdateGameStateRequest) : Unit AsyncHttpResult =
     let param = DynamicParameters()
                     .add("GameId", request.gameId)
@@ -137,6 +139,21 @@ let updateGameState(request : UpdateGameStateRequest) : Unit AsyncHttpResult =
     let cmd = proc("Games_UpdateState", param)
     queryUnit(cmd, "Game")
             
+let updateGame(game : Game) : Unit AsyncHttpResult =
+    let param = DynamicParameters()
+                    .add("GameId", game.id)
+                    .addOption("Description", game.parameters.description)
+                    .add("AllowGuests", game.parameters.allowGuests)
+                    .add("IsPublic", game.parameters.isPublic)
+                    .add("RegionCount", game.parameters.regionCount)
+                    .add("GameStatusId", game.status |> mapGameStatusToId)
+                    .add("PiecesJson", JsonConvert.SerializeObject(game.pieces))
+                    .add("CurrentTurnJson", JsonConvert.SerializeObject(game.currentTurn))
+                    .add("TurnCycleJson", JsonConvert.SerializeObject(game.turnCycle))
+    let cmd = proc("Games_UpdateState", param)
+    queryUnit(cmd, "Game")
+
+[<Obsolete("Deprecate this and use updatePlayer")>]
 let setPlayerStartConditions(request : SetPlayerStartConditionsRequest) : Unit AsyncHttpResult =
     let param = DynamicParameters()
                     .add("PlayerId", request.playerId)
@@ -146,8 +163,19 @@ let setPlayerStartConditions(request : SetPlayerStartConditionsRequest) : Unit A
     let cmd = proc("Players_SetStartConditions", param)
     queryUnit(cmd, "Player")
 
+[<Obsolete("Deprecate this and use updatePlayer")>]
 let killPlayer(playerId : int) : Unit AsyncHttpResult =
     let param = DynamicParameters()
                     .add("PlayerId", playerId)
     let cmd = proc("Players_Kill", param)
+    queryUnit(cmd, "Player")
+
+let updatePlayer(player : Player) : Unit AsyncHttpResult =
+    let param = DynamicParameters()
+                    .add("PlayerId", player.id)
+                    .addOption("ColorId", player.colorId)
+                    .addOption("StartingTurnNumber", player.startingTurnNumber)
+                    .addOption("StartingRegion", player.startingRegion)
+                    .addOption("IsAlive", player.isAlive)
+    let cmd = proc("Players_Update", param)
     queryUnit(cmd, "Player")

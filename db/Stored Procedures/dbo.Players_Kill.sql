@@ -1,3 +1,4 @@
+--TODO: Deprecate this and use Players_Update
 CREATE PROCEDURE [dbo].[Players_Kill]
     @PlayerId INT
 AS
