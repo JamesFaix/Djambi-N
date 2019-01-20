@@ -103,3 +103,22 @@ let createEvent (effects : Effect list) : Event =
         timestamp = Unchecked.defaultof<DateTime>
         effects = effects
     }
+
+let defaultGame : Game = 
+    {
+        id = 0
+        status = GameStatus.Pending
+        createdOn = DateTime.MinValue
+        createdByUserId = 0
+        parameters = 
+            {
+                allowGuests = false
+                description = None
+                isPublic = false
+                regionCount = 0
+            }
+        players = List.empty
+        pieces = List.empty
+        turnCycle = List.empty
+        currentTurn = None
+    }

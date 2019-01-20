@@ -13,6 +13,7 @@
     <Compile Include="Assertions.fs" />
     <Compile Include="TestUtilities.fs" />
     <Compile Include="TestsBase.fs" />
+    <Compile Include="Logic\EventServiceTests\EventServiceTests.fs" />
     <Compile Include="Logic\GameCrudServiceTests\GetUpdateGameParametersEventTests.fs" />
     <Compile Include="Logic\EventProcessor\ProcessAddPlayerEffectTests.fs" />
     <Compile Include="Logic\EventProcessor\ProcessCurrentTurnChangedEffectTests.fs" />
