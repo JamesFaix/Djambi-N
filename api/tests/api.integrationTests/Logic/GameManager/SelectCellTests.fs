@@ -22,7 +22,8 @@ type SelectCellTests() =
             let guestRequest = CreatePlayerRequest.guest (user.id, "test")
             let! _ = GameManager.addPlayer game.id guestRequest session |> thenValue
 
-            let! updatedGame = GameStartService.startGame game |> thenValue
+            let! resp = GameManager.startGame game.id session |> thenValue
+            let updatedGame = resp.game
 
             let cellId = updatedGame.currentTurn.Value.selectionOptions.Head
 
@@ -51,8 +52,9 @@ type SelectCellTests() =
             let! player2 = GameManager.addPlayer game.id playerRequest session2 
                             |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                             |> thenValue
-
-            let! updatedGame = GameStartService.startGame game |> thenValue
+                                        
+            let! resp = GameManager.startGame game.id session1 |> thenValue
+            let updatedGame = resp.game
 
             let cellId = updatedGame.currentTurn.Value.selectionOptions.Head
 
@@ -80,8 +82,9 @@ type SelectCellTests() =
             let! player2 = GameManager.addPlayer game.id playerRequest session2 
                             |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                             |> thenValue
-
-            let! updatedGame = GameStartService.startGame game |> thenValue
+                            
+            let! resp = GameManager.startGame game.id session1 |> thenValue
+            let updatedGame = resp.game
 
             let cellId = updatedGame.currentTurn.Value.selectionOptions.Head
 
@@ -111,8 +114,9 @@ type SelectCellTests() =
 
             let guestRequest = CreatePlayerRequest.guest (user.id, "test")
             let! _ = GameManager.addPlayer game.id guestRequest session |> thenValue
-
-            let! updatedGame = GameStartService.startGame game |> thenValue
+            
+            let! resp = GameManager.startGame game.id session |> thenValue
+            let updatedGame = resp.game
 
             let cellId = updatedGame.currentTurn.Value.selectionOptions.Head
 
@@ -131,8 +135,9 @@ type SelectCellTests() =
 
             let guestRequest = CreatePlayerRequest.guest (user.id, "test")
             let! _ = GameManager.addPlayer game.id guestRequest session |> thenValue
-
-            let! updatedGame = GameStartService.startGame game |> thenValue
+            
+            let! resp = GameManager.startGame game.id session |> thenValue
+            let updatedGame = resp.game
 
             //Act
             let! result = GameManager.selectCell (updatedGame.id, Int32.MinValue) session
@@ -149,8 +154,9 @@ type SelectCellTests() =
 
             let guestRequest = CreatePlayerRequest.guest (user.id, "test")
             let! _ = GameManager.addPlayer game.id guestRequest session |> thenValue
-
-            let! updatedGame = GameStartService.startGame game |> thenValue
+            
+            let! resp = GameManager.startGame game.id session |> thenValue
+            let updatedGame = resp.game
 
             let cellId =
                 [1..100]

@@ -261,23 +261,29 @@ type GetRemovePlayerEventTests() =
     let ``Should not abort game if creating user and game is started``() =
         task {
             //Arrange
-            let! (user, session, game) = createuserSessionAndGame(false) |> thenValue
-            let player = game.players.Head
+            let! (user, session, game) = createuserSessionAndGame(true) |> thenValue
 
-            let! game = 
-                GameRepository.getGame game.id 
-                |> thenBindAsync GameStartService.startGame
-                |> thenValue
+            let p2Request = 
+                {
+                    userId = Some user.id
+                    kind = PlayerKind.Guest
+                    name = Some "p2"
+                }
+
+            let! _ = GameManager.addPlayer game.id p2Request session |> thenValue
+
+            let! resp = GameManager.startGame game.id session |> thenValue
+            let game = resp.game
 
             //Act
-            let event = PlayerService.getRemovePlayerEvent (game, player.id) session |> Result.value
+            let event = PlayerService.getRemovePlayerEvent (game, game.players.[0].id) session |> Result.value
 
             //Assert
             event.kind |> shouldBe EventKind.PlayerQuit
             event.effects.Length |> shouldBe 1
             match event.effects.[0] with 
             | Effect.PlayersRemoved f ->
-                f.value |> shouldBe [player.id]
+                f.value |> shouldBe [game.players.[0].id; game.players.[1].id]
 
             | _ -> failwith "Incorrect effects"
         }

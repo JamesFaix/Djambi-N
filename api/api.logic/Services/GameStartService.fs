@@ -5,7 +5,6 @@ open Djambi.Api.Common
 open Djambi.Api.Common.Collections
 open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
-open Djambi.Api.Db.Repositories
 open Djambi.Api.Logic.ModelExtensions
 open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
 open Djambi.Api.Logic.Services
@@ -91,8 +90,8 @@ let createPieces(board : BoardMetadata, players : Player list) : Piece list =
     players
     |> List.mapi (fun i cond -> createPlayerPieces(board, cond, i*Constants.piecesPerPlayer))
     |> List.collect id
-
-let startGame (game : Game) : Game AsyncHttpResult =
+    
+let applyStartGame (game : Game) : Game =
     let board = BoardModelUtility.getBoardMetadata game.parameters.regionCount
     let players = assignStartingConditions game.players
 
@@ -116,37 +115,11 @@ let startGame (game : Game) : Game AsyncHttpResult =
         }
 
     let (selectionOptions, _) = SelectionOptionsService.getSelectableCellsFromState game
-
-    let game = 
-        { 
-            game with 
-                currentTurn = 
-                    Some {
-                        game.currentTurn.Value with selectionOptions = selectionOptions
-                    }        
-        }
-
-    game.players |> Seq.ofList |> okTask
-    |> thenDoEachAsync (fun p -> 
-        let request : SetPlayerStartConditionsRequest = 
-            {
-                playerId = p.id
-                colorId = p.colorId.Value
-                startingRegion = p.startingRegion.Value
-                startingTurnNumber = p.startingTurnNumber
-            }
-        GameRepository.setPlayerStartConditions request        
-    )
-    |> thenBindAsync (fun _ ->
-        let request : UpdateGameStateRequest = 
-            {
-                gameId = game.id
-                status = game.status
-                pieces = game.pieces
-                currentTurn = game.currentTurn
-                turnCycle = game.turnCycle
-            }
-        GameRepository.updateGameState request
-    )
-    |> thenMap (fun _ -> game)
-   
+        
+    { 
+        game with 
+            currentTurn = 
+                Some {
+                    game.currentTurn.Value with selectionOptions = selectionOptions
+                }        
+    }   

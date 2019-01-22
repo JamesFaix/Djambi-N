@@ -77,7 +77,7 @@ type GameStartServiceTests() =
             let! _ = GameManager.addPlayer game.id playerRequest session |> thenValue
 
             //Act
-            let! updatedGame = GameStartService.startGame game |> thenValue
+            let updatedGame = GameStartService.applyStartGame game
 
             //Assert
             let neutralPlayerIds =

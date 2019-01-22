@@ -11,6 +11,7 @@
     <Compile Include="Repositories\UserRepository.fs" />
     <Compile Include="Repositories\SessionRepository.fs" />
     <Compile Include="Repositories\GameRepository.fs" />
+    <Compile Include="Repositories\EventRepository.fs" />
   </ItemGroup>
 
   <ItemGroup>

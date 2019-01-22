@@ -1,5 +1,9 @@
-CREATE PROCEDURE [dbo].[Games_UpdateState]
+CREATE PROCEDURE [dbo].[Games_Update]
 	@GameId INT,
+    @RegionCount TINYINT,
+    @Description NVARCHAR(100),
+    @AllowGuests BIT,
+    @IsPublic BIT,
     @GameStatusId TINYINT,
     @TurnCycleJson NVARCHAR(MAX),
     @PiecesJson NVARCHAR(MAX),
@@ -12,7 +16,11 @@ BEGIN
         THROW 50404, 'Game not found.', 1
 
     UPDATE Games
-    SET GameStatusId = @GameStatusId,
+    SET RegionCount = @RegionCount,
+        [Description] = @Description,
+        AllowGuests = @AllowGuests,
+        IsPublic = @IsPublic,
+        GameStatusId = @GameStatusId,
         TurnCycleJson = @TurnCycleJson,
         PiecesJson = @PiecesJson,
         CurrentTurnJson = @CurrentTurnJson

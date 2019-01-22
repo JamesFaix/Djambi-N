@@ -13,17 +13,8 @@
     <Compile Include="Assertions.fs" />
     <Compile Include="TestUtilities.fs" />
     <Compile Include="TestsBase.fs" />
+    <Compile Include="Logic\EventServiceTests\EventServiceTests.fs" />
     <Compile Include="Logic\GameCrudServiceTests\GetUpdateGameParametersEventTests.fs" />
-    <Compile Include="Logic\EventProcessor\ProcessAddPlayerEffectTests.fs" />
-    <Compile Include="Logic\EventProcessor\ProcessCurrentTurnChangedEffectTests.fs" />
-    <Compile Include="Logic\EventProcessor\ProcessGameStatusChangedEffectTests.fs" />
-    <Compile Include="Logic\EventProcessor\ProcessParametersChangedEffectTests.fs" />
-    <Compile Include="Logic\EventProcessor\ProcessPieceKilledEffectTests.fs" />
-    <Compile Include="Logic\EventProcessor\ProcessPieceMovedEffectTests.fs" />
-    <Compile Include="Logic\EventProcessor\ProcessPiecesOwnershipChangedEffectTests.fs" />
-    <Compile Include="Logic\EventProcessor\ProcessPlayerEliminatedEffectTests.fs" />
-    <Compile Include="Logic\EventProcessor\ProcessPlayersRemovedEffectTests.fs" />
-    <Compile Include="Logic\EventProcessor\ProcessTurnCycleChangedEffectTests.fs" />
     <Compile Include="Logic\GameManager\AddPlayerTests.fs" />
     <Compile Include="Logic\GameManager\CreateGameTests.fs" />
     <Compile Include="Logic\GameManager\GetGameTests.fs" />
@@ -46,6 +37,7 @@
     <Compile Include="Logic\UserService\DeleteUserTests.fs" />
     <Compile Include="Logic\UserService\GetUserTests.fs" />
     <Compile Include="Logic\UserService\GetUsersTests.fs" />
+    <Compile Include="Db\EventRepositoryTests.fs" />
     <Compile Include="Db\GameRepositoryTests.fs" />
     <Compile Include="Db\UserRepositoryTests.fs" />
   </ItemGroup>

@@ -117,37 +117,26 @@ let getNeutralPlayerNames() : string list AsyncHttpResult =
     let cmd = proc("Players_GetNeutralNames", param)
     queryMany<string>(cmd, "Neutral player names")
     
-let updateGameParameters (gameId : int) (parameters : GameParameters) : Unit AsyncHttpResult =
+let updateGame(game : Game) : Unit AsyncHttpResult =
     let param = DynamicParameters()
-                    .add("GameId", gameId)
-                    .addOption("Description", parameters.description)
-                    .add("AllowGuests", parameters.allowGuests)
-                    .add("IsPublic", parameters.isPublic)
-                    .add("RegionCount", parameters.regionCount)
-    let cmd = proc("Games_UpdateParameters", param)
+                    .add("GameId", game.id)
+                    .addOption("Description", game.parameters.description)
+                    .add("AllowGuests", game.parameters.allowGuests)
+                    .add("IsPublic", game.parameters.isPublic)
+                    .add("RegionCount", game.parameters.regionCount)
+                    .add("GameStatusId", game.status |> mapGameStatusToId)
+                    .add("PiecesJson", JsonConvert.SerializeObject(game.pieces))
+                    .add("CurrentTurnJson", JsonConvert.SerializeObject(game.currentTurn))
+                    .add("TurnCycleJson", JsonConvert.SerializeObject(game.turnCycle))
+    let cmd = proc("Games_Update", param)
     queryUnit(cmd, "Game")
     
-let updateGameState(request : UpdateGameStateRequest) : Unit AsyncHttpResult =
+let updatePlayer(player : Player) : Unit AsyncHttpResult =
     let param = DynamicParameters()
-                    .add("GameId", request.gameId)
-                    .add("GameStatusId", request.status |> mapGameStatusToId)
-                    .add("PiecesJson", JsonConvert.SerializeObject(request.pieces))
-                    .add("CurrentTurnJson", JsonConvert.SerializeObject(request.currentTurn))
-                    .add("TurnCycleJson", JsonConvert.SerializeObject(request.turnCycle))
-    let cmd = proc("Games_UpdateState", param)
-    queryUnit(cmd, "Game")
-            
-let setPlayerStartConditions(request : SetPlayerStartConditionsRequest) : Unit AsyncHttpResult =
-    let param = DynamicParameters()
-                    .add("PlayerId", request.playerId)
-                    .add("ColorId", byte request.colorId)
-                    .add("StartingRegion", byte request.startingRegion)
-                    .addOption("StartingTurnNumber", request.startingTurnNumber |> Option.map byte)
-    let cmd = proc("Players_SetStartConditions", param)
-    queryUnit(cmd, "Player")
-
-let killPlayer(playerId : int) : Unit AsyncHttpResult =
-    let param = DynamicParameters()
-                    .add("PlayerId", playerId)
-    let cmd = proc("Players_Kill", param)
+                    .add("PlayerId", player.id)
+                    .addOption("ColorId", player.colorId)
+                    .addOption("StartingTurnNumber", player.startingTurnNumber)
+                    .addOption("StartingRegion", player.startingRegion)
+                    .addOption("IsAlive", player.isAlive)
+    let cmd = proc("Players_Update", param)
     queryUnit(cmd, "Player")
