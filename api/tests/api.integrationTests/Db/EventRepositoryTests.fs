@@ -5,6 +5,7 @@ open Xunit
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Db.Repositories
 open Djambi.Api.IntegrationTests
+open Djambi.Api.Logic.Services
 open Djambi.Api.Model
 
 type EventRepositoryTests() =
@@ -168,4 +169,38 @@ type EventRepositoryTests() =
             persistedGame |> shouldBe newGame
         }
 
-    //TODO: Should rollback transactionally
+    [<Fact>]
+    let ``Should rollback all effects if any errors``() =
+        task {
+            //Arrange
+            let! (_, _, game) = TestUtilities.createuserSessionAndGame(true) |> thenValue
+
+            //Attempt to add 2 players with the same name
+            //This will violate a unique index in SQL and fail the second player
+
+            let playerRequest = 
+                {
+                    userId = None
+                    name = Some "test"
+                    kind = PlayerKind.Neutral
+                }
+
+            let effects = 
+                [
+                    Effect.playerAdded playerRequest
+                    Effect.playerAdded playerRequest
+                ]
+            let event = Event.create(EventKind.GameStarted, effects) //EventKind doesn't matter
+
+            let newGame = EventService.applyEvent game event
+            
+            //Act
+            let! result = EventRepository.persistEvent (game, newGame)
+
+            //Assert
+            result |> shouldBeError 409 "Conflict when attempting to write Player."
+
+            let! persistedGame = GameRepository.getGame game.id |> thenValue
+            persistedGame.players.Length |> shouldBe 1 //Just the creator
+            persistedGame.players |> shouldNotExist (fun p -> p.name = playerRequest.name.Value)
+        }
