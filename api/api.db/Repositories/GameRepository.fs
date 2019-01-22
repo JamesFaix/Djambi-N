@@ -2,7 +2,6 @@
 
 open System
 open Dapper
-open Newtonsoft.Json
 open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Db.Mapping
@@ -116,27 +115,3 @@ let getNeutralPlayerNames() : string list AsyncHttpResult =
     let param = DynamicParameters()
     let cmd = proc("Players_GetNeutralNames", param)
     queryMany<string>(cmd, "Neutral player names")
-    
-let updateGame(game : Game) : Unit AsyncHttpResult =
-    let param = DynamicParameters()
-                    .add("GameId", game.id)
-                    .addOption("Description", game.parameters.description)
-                    .add("AllowGuests", game.parameters.allowGuests)
-                    .add("IsPublic", game.parameters.isPublic)
-                    .add("RegionCount", game.parameters.regionCount)
-                    .add("GameStatusId", game.status |> mapGameStatusToId)
-                    .add("PiecesJson", JsonConvert.SerializeObject(game.pieces))
-                    .add("CurrentTurnJson", JsonConvert.SerializeObject(game.currentTurn))
-                    .add("TurnCycleJson", JsonConvert.SerializeObject(game.turnCycle))
-    let cmd = proc("Games_Update", param)
-    queryUnit(cmd, "Game")
-    
-let updatePlayer(player : Player) : Unit AsyncHttpResult =
-    let param = DynamicParameters()
-                    .add("PlayerId", player.id)
-                    .addOption("ColorId", player.colorId)
-                    .addOption("StartingTurnNumber", player.startingTurnNumber)
-                    .addOption("StartingRegion", player.startingRegion)
-                    .addOption("IsAlive", player.isAlive)
-    let cmd = proc("Players_Update", param)
-    queryUnit(cmd, "Player")

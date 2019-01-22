@@ -1,10 +1,39 @@
 ﻿module Djambi.Api.Db.Repositories.EventRepository
 
 open System.Linq
+open System.Transactions
+open Dapper
+open Newtonsoft.Json
 open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
+open Djambi.Api.Db.Mapping
+open Djambi.Api.Db.SqlUtility
 open Djambi.Api.Model
+        
+let updateGame(game : Game) : Unit AsyncHttpResult =
+    let param = DynamicParameters()
+                    .add("GameId", game.id)
+                    .addOption("Description", game.parameters.description)
+                    .add("AllowGuests", game.parameters.allowGuests)
+                    .add("IsPublic", game.parameters.isPublic)
+                    .add("RegionCount", game.parameters.regionCount)
+                    .add("GameStatusId", game.status |> mapGameStatusToId)
+                    .add("PiecesJson", JsonConvert.SerializeObject(game.pieces))
+                    .add("CurrentTurnJson", JsonConvert.SerializeObject(game.currentTurn))
+                    .add("TurnCycleJson", JsonConvert.SerializeObject(game.turnCycle))
+    let cmd = proc("Games_Update", param)
+    queryUnit(cmd, "Game")
     
+let updatePlayer(player : Player) : Unit AsyncHttpResult =
+    let param = DynamicParameters()
+                    .add("PlayerId", player.id)
+                    .addOption("ColorId", player.colorId)
+                    .addOption("StartingTurnNumber", player.startingTurnNumber)
+                    .addOption("StartingRegion", player.startingRegion)
+                    .addOption("IsAlive", player.isAlive)
+    let cmd = proc("Players_Update", param)
+    queryUnit(cmd, "Player")
+
 let persistEvent (oldGame : Game, newGame : Game) : Game AsyncHttpResult =
     
     //TODO: open transaction
@@ -55,7 +84,7 @@ let persistEvent (oldGame : Game, newGame : Game) : Game AsyncHttpResult =
             )
 
         okTask modifiedPlayers
-        |> thenDoEachAsync GameRepository.updatePlayer
+        |> thenDoEachAsync updatePlayer
     )
 
     //update game
@@ -65,7 +94,7 @@ let persistEvent (oldGame : Game, newGame : Game) : Game AsyncHttpResult =
             || oldGame.pieces <> newGame.pieces
             || oldGame.turnCycle <> newGame.turnCycle
             || oldGame.status <> newGame.status
-        then GameRepository.updateGame newGame
+        then updateGame newGame
         else okTask ()
     )
 
