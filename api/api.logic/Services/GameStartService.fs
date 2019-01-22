@@ -1,12 +1,10 @@
 ﻿module Djambi.Api.Logic.Services.GameStartService
 
-open System
 open System.Linq
 open Djambi.Api.Common
 open Djambi.Api.Common.Collections
 open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
-open Djambi.Api.Db.Repositories
 open Djambi.Api.Logic.ModelExtensions
 open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
 open Djambi.Api.Logic.Services
@@ -92,67 +90,7 @@ let createPieces(board : BoardMetadata, players : Player list) : Piece list =
     players
     |> List.mapi (fun i cond -> createPlayerPieces(board, cond, i*Constants.piecesPerPlayer))
     |> List.collect id
-
-[<Obsolete("Use applyStartGame")>]
-let startGame (game : Game) : Game AsyncHttpResult =
-    let board = BoardModelUtility.getBoardMetadata game.parameters.regionCount
-    let players = assignStartingConditions game.players
-
-    let game = 
-        { 
-            game with 
-                status = GameStatus.Started
-                pieces = createPieces(board, players) //Starting conditions must first be assigned
-                players = players
-                turnCycle = players //Starting conditions must first be assigned
-                    |> List.filter (fun p -> p.startingTurnNumber.IsSome)
-                    |> List.sortBy (fun p -> p.startingTurnNumber.Value)
-                    |> List.map (fun p -> p.id)
-                currentTurn = 
-                    Some {
-                        status = AwaitingSelection
-                        selections = List.empty
-                        selectionOptions = List.empty
-                        requiredSelectionKind = Some Subject
-                    }
-        }
-
-    let (selectionOptions, _) = SelectionOptionsService.getSelectableCellsFromState game
-
-    let game = 
-        { 
-            game with 
-                currentTurn = 
-                    Some {
-                        game.currentTurn.Value with selectionOptions = selectionOptions
-                    }        
-        }
-
-    game.players |> Seq.ofList |> okTask
-    |> thenDoEachAsync (fun p -> 
-        let request : SetPlayerStartConditionsRequest = 
-            {
-                playerId = p.id
-                colorId = p.colorId.Value
-                startingRegion = p.startingRegion.Value
-                startingTurnNumber = p.startingTurnNumber
-            }
-        GameRepository.setPlayerStartConditions request        
-    )
-    |> thenBindAsync (fun _ ->
-        let request : UpdateGameStateRequest = 
-            {
-                gameId = game.id
-                status = game.status
-                pieces = game.pieces
-                currentTurn = game.currentTurn
-                turnCycle = game.turnCycle
-            }
-        GameRepository.updateGameState request
-    )
-    |> thenMap (fun _ -> game)
-   
-
+    
 let applyStartGame (game : Game) : Game =
     let board = BoardModelUtility.getBoardMetadata game.parameters.regionCount
     let players = assignStartingConditions game.players

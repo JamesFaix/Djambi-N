@@ -48,7 +48,12 @@ type GetUpdateGameParametersEventTests() =
             //Arrange
             let! (user, session, game) = TestUtilities.createuserSessionAndGame(true) |> thenValue
 
-            let! _ = GameRepository.updateGameParameters game.id { game.parameters with regionCount = 4 } |> thenValue
+            let newGame = 
+                { game with parameters = 
+                            { game.parameters with regionCount = 4 } 
+                }
+
+            let! _ = GameRepository.updateGame newGame |> thenValue
 
             for n in [2..4] do
                 let playerRequest = 
@@ -121,19 +126,9 @@ type GetUpdateGameParametersEventTests() =
         task {
             //Arrange
             let! (_, session, game) = TestUtilities.createuserSessionAndGame(true) |> thenValue
-
-            let request : UpdateGameStateRequest =
-                {
-                    gameId = game.id
-                    status = GameStatus.Started
-                    pieces = game.pieces
-                    currentTurn = game.currentTurn
-                    turnCycle = game.turnCycle
-                }
-
-            let! _ = GameRepository.updateGameState request |> thenValue
+            let newGame = { game with status = GameStatus.Started }
+            let! _ = GameRepository.updateGame newGame |> thenValue
             let! game = GameRepository.getGame game.id |> thenValue
-
             let newParameters = game.parameters
 
             //Act

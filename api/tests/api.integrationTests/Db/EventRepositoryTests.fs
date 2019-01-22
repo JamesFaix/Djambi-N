@@ -137,10 +137,7 @@ type EventRepositoryTests() =
             game.currentTurn |> shouldBe None
             game.turnCycle |> shouldBe List.empty
             game.pieces |> shouldBe List.empty
-
-            //check original state of game
-            //create newgame
-
+            
             let newGame = 
                 { game with
                     status = GameStatus.Aborted
