@@ -35,14 +35,22 @@ let private processEvent (gameId : int) (getEvent : Game -> Event HttpResult) : 
     GameRepository.getGame gameId
     |> thenBindAsync (fun game -> 
         getEvent game
-        |> Result.bindAsync (EventProcessor.processEvent game)
+        |> Result.bindAsync (fun event -> 
+            let newGame = EventService.applyEvent game event
+            EventRepository.persistEvent (game, newGame)
+            |> thenMap (fun game -> { game = game; event = event })
+        )
     )
     
 let private processEventAsync (gameId : int) (getEvent : Game -> Event AsyncHttpResult) : StateAndEventResponse AsyncHttpResult = 
     GameRepository.getGame gameId
     |> thenBindAsync (fun game -> 
         getEvent game
-        |> thenBindAsync (EventProcessor.processEvent game)
+        |> thenBindAsync (fun event -> 
+            let newGame = EventService.applyEvent game event
+            EventRepository.persistEvent (game, newGame)
+            |> thenMap (fun game -> { game = game; event = event })
+        )
     )
 
 //TODO: Requires integration tests

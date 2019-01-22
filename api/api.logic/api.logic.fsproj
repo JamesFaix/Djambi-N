@@ -17,7 +17,6 @@
     <Compile Include="Services\GameStartService.fs" />
     <Compile Include="Services\TurnService.fs" />
     <Compile Include="Services\EventService.fs" />
-    <Compile Include="Services\EventProcessor.fs" />
     <Compile Include="Managers\BoardManager.fs" />
     <Compile Include="Managers\GameManager.fs" />
     <Compile Include="Managers\SessionManager.fs" />
