@@ -76,7 +76,7 @@ let persistEvent (oldGame : Game, newGame : Game) : Game AsyncHttpResult =
     
         try 
             for cmd in commands do
-                let _ = conn.Execute(cmd)
+                let! _ = conn.ExecuteAsync cmd
                 ()
             tran.Commit()
             return Ok ()

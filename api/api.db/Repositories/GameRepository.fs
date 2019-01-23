@@ -164,10 +164,10 @@ let createGameAndAddPlayer (gameRequest : CreateGameRequest, playerRequest : Cre
         try 
             let cmd = getCreateGameCommand gameRequest
                       |> CommandDefinition.withTransaction tran
-            let gameId = conn.QuerySingle cmd
+            let! gameId = conn.QuerySingleAsync<int> cmd
             let cmd = getAddPlayerCommand (gameId, playerRequest)
                       |> CommandDefinition.withTransaction tran
-            let _ = conn.Execute cmd
+            let! _ = conn.ExecuteAsync cmd
             tran.Commit()
             return Ok gameId
         with 
