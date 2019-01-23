@@ -4,10 +4,12 @@ open System
 open System.Data
 open System.Linq
 open Dapper
+open FSharp.Control.Tasks
 open Djambi.Api.Common.Collections
 open Djambi.Api.Common.Control
 open Djambi.Api.Model
 open Djambi.Api.Db
+open Djambi.Api.Common.Control
         
 let private getCommands (oldGame : Game, newGame : Game, transaction : IDbTransaction) : CommandDefinition seq = 
     let commands = new ArrayList<CommandDefinition>()
@@ -89,18 +91,19 @@ let private getCommands (oldGame : Game, newGame : Game, transaction : IDbTransa
     commands |> Enumerable.AsEnumerable
 
 let persistEvent (oldGame : Game, newGame : Game) : Game AsyncHttpResult =
-    use conn = SqlUtility.getConnection()
-    use tran = conn.BeginTransaction()
-    let commands = getCommands (oldGame, newGame, tran)   
+    task {
+        use conn = SqlUtility.getConnection()
+        use tran = conn.BeginTransaction()
+        let commands = getCommands (oldGame, newGame, tran)   
     
-    try 
-        for cmd in commands do
-            let _ = conn.Execute(cmd)
-            ()
-        tran.Commit()
-        Ok ()
-    with 
-    | _ as ex -> Error <| (SqlUtility.catchSqlException ex "Effect")
-    |> Result.bindAsync (fun _ ->
-        GameRepository.getGame newGame.id
-    )
+        try 
+            for cmd in commands do
+                let _ = conn.Execute(cmd)
+                ()
+            tran.Commit()
+            return Ok ()
+        with 
+        | _ as ex -> return Error <| (SqlUtility.catchSqlException ex "Effect")
+    }
+    |> AsyncHttpResult.thenBindAsync (fun _ -> GameRepository.getGame newGame.id)
+    
