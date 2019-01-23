@@ -1,32 +1,32 @@
-import { SelectionResponse, GameStateResponse, PieceResponse, PieceType, SelectionType } from "../api/model";
+import { Selection, Game, Piece, PieceKind, SelectionKind } from "../api/model";
 
 export interface Theme {
-    getPieceEmoji(piece : PieceResponse) : string;
+    getPieceEmoji(piece : Piece) : string;
 
     getPlayerColor(colorId : number) : string;
 
-    getRequiredSelectionPrompt(requiredSelectionType : SelectionType) : string;
+    getRequiredSelectionPrompt(requiredSelectionKind : SelectionKind) : string;
 
-    getPieceTypeName(pieceType : PieceType) : string;
+    getPieceTypeName(pieceType : PieceKind) : string;
 
     getCenterName() : string;
 
-    getSelectionDescription(selection: SelectionResponse, gameState: GameStateResponse) : string;
+    getSelectionDescription(selection: Selection, game: Game) : string;
 }
 
 class DefaultTheme {
     constructor() {}
 
-    getPieceEmoji(piece : PieceResponse) : string {
-        switch (piece.type) {
-            case PieceType.Chief : return "&#x1F451";
-            case PieceType.Assassin : return "&#x1F5E1";
-            case PieceType.Diplomat : return "&#x1F54A";
-            case PieceType.Reporter : return "&#x1F4F0";
-            case PieceType.Gravedigger : return "&#x26CF";
-            case PieceType.Thug : return "&#x270A";
-            case PieceType.Corpse : return "&#x1F480";
-            default: throw "Invalid piece type '" +  piece.type + "'";
+    getPieceEmoji(piece : Piece) : string {
+        switch (piece.kind) {
+            case PieceKind.Chief : return "&#x1F451";
+            case PieceKind.Assassin : return "&#x1F5E1";
+            case PieceKind.Diplomat : return "&#x1F54A";
+            case PieceKind.Reporter : return "&#x1F4F0";
+            case PieceKind.Gravedigger : return "&#x26CF";
+            case PieceKind.Thug : return "&#x270A";
+            case PieceKind.Corpse : return "&#x1F480";
+            default: throw "Invalid piece kind '" +  piece.kind + "'";
         }
     }
 
@@ -44,28 +44,28 @@ class DefaultTheme {
         }
     }
 
-    getRequiredSelectionPrompt(requiredSelectionType : SelectionType) : string {
-        switch (requiredSelectionType){
+    getRequiredSelectionPrompt(requiredSelectionKind : SelectionKind) : string {
+        switch (requiredSelectionKind){
             case null: return "(Click Done or Reset)";
-            case SelectionType.Subject: return "Select a piece to move";
-            case SelectionType.Move: return "Select a cell to move to";
-            case SelectionType.Target: return "Select a piece to target";
-            case SelectionType.Drop: return "Select a cell to drop the target piece in";
-            case SelectionType.Vacate: return "Select a cell to vacate to";
-            default: throw "Invalid selection type";
+            case SelectionKind.Subject: return "Select a piece to move";
+            case SelectionKind.Move: return "Select a cell to move to";
+            case SelectionKind.Target: return "Select a piece to target";
+            case SelectionKind.Drop: return "Select a cell to drop the target piece in";
+            case SelectionKind.Vacate: return "Select a cell to vacate to";
+            default: throw "Invalid selection kind";
         }
     }
 
-    getPieceTypeName(pieceType : PieceType) : string {
-        switch (pieceType) {
-            case PieceType.Assassin: return "Assassin";
-            case PieceType.Chief: return "Chief";
-            case PieceType.Corpse: return "Corpse";
-            case PieceType.Diplomat: return "Diplomat";
-            case PieceType.Gravedigger: return "Gravedigger";
-            case PieceType.Reporter: return "Reporter";
-            case PieceType.Thug: return "Thug";
-            default: throw "Invalid piece type";
+    getPieceTypeName(pieceKind : PieceKind) : string {
+        switch (pieceKind) {
+            case PieceKind.Assassin: return "Assassin";
+            case PieceKind.Chief: return "Chief";
+            case PieceKind.Corpse: return "Corpse";
+            case PieceKind.Diplomat: return "Diplomat";
+            case PieceKind.Gravedigger: return "Gravedigger";
+            case PieceKind.Reporter: return "Reporter";
+            case PieceKind.Thug: return "Thug";
+            default: throw "Invalid piece kind";
         }
     }
 
@@ -73,34 +73,34 @@ class DefaultTheme {
         return "The Seat";
     }
 
-    getSelectionDescription(selection: SelectionResponse, gameState: GameStateResponse) : string {
+    getSelectionDescription(selection: Selection, game: Game) : string {
 
         const piece = selection.pieceId === null
             ? null
-            : gameState.pieces.find(p => p.id === selection.pieceId);
+            : game.pieces.find(p => p.id === selection.pieceId);
 
         //TODO: Add support for printing cell coordinates, not IDs
 
-        switch (selection.type) {
-            case SelectionType.Subject:
-                return "Move " + this.getPieceTypeName(piece.type);
+        switch (selection.kind) {
+            case SelectionKind.Subject:
+                return "Move " + this.getPieceTypeName(piece.kind);
 
-            case SelectionType.Move:
+            case SelectionKind.Move:
                 return piece === null
                     ? " to cell " + selection.cellId
-                    : " to cell " + selection.cellId + " and target " + this.getPieceTypeName(piece.type);
+                    : " to cell " + selection.cellId + " and target " + this.getPieceTypeName(piece.kind);
 
-            case SelectionType.Target:
-                return " and target " + this.getPieceTypeName(piece.type) + " at cell " + selection.cellId;
+            case SelectionKind.Target:
+                return " and target " + this.getPieceTypeName(piece.kind) + " at cell " + selection.cellId;
 
-            case SelectionType.Drop:
+            case SelectionKind.Drop:
                 return ", then drop target piece at cell " + selection.cellId;
 
-            case SelectionType.Vacate:
+            case SelectionKind.Vacate:
                 return ", finally vacate " + this.getCenterName() + " to cell " + selection.cellId;
 
             default:
-                throw "Invalid selection type";
+                throw "Invalid selection kind";
         }
     }
 }
@@ -109,16 +109,16 @@ class HotDogTownTheme {
     private readonly baseTheme = new DefaultTheme();
     constructor() {}
 
-    getPieceEmoji(piece : PieceResponse) : string {
-        switch (piece.type) {
-            case PieceType.Chief : return "&#x1F96B";
-            case PieceType.Assassin : return "&#x1F374";
-            case PieceType.Diplomat : return "&#x1F917";
-            case PieceType.Reporter : return "&#x1F4A8";
-            case PieceType.Gravedigger : return "&#x1F924";
-            case PieceType.Thug : return "&#x1F35F";
-            case PieceType.Corpse : return "&#x1F32D";
-            default: throw "Invalid piece type '" +  piece.type + "'";
+    getPieceEmoji(piece : Piece) : string {
+        switch (piece.kind) {
+            case PieceKind.Chief : return "&#x1F96B";
+            case PieceKind.Assassin : return "&#x1F374";
+            case PieceKind.Diplomat : return "&#x1F917";
+            case PieceKind.Reporter : return "&#x1F4A8";
+            case PieceKind.Gravedigger : return "&#x1F924";
+            case PieceKind.Thug : return "&#x1F35F";
+            case PieceKind.Corpse : return "&#x1F32D";
+            default: throw "Invalid piece kind '" +  piece.kind + "'";
         }
     }
 
@@ -126,20 +126,20 @@ class HotDogTownTheme {
         return this.baseTheme.getPlayerColor(colorId);
     }
 
-    getRequiredSelectionPrompt(requiredSelectionType : SelectionType) : string {
-        return this.baseTheme.getRequiredSelectionPrompt(requiredSelectionType);
+    getRequiredSelectionPrompt(requiredSelectionKind : SelectionKind) : string {
+        return this.baseTheme.getRequiredSelectionPrompt(requiredSelectionKind);
     }
 
-    getPieceTypeName(pieceType : PieceType) : string {
-        switch (pieceType) {
-            case PieceType.Assassin: return "Fork";
-            case PieceType.Chief: return "Sauce";
-            case PieceType.Corpse: return "Hotdog";
-            case PieceType.Diplomat: return "Hugger";
-            case PieceType.Gravedigger: return "Eater";
-            case PieceType.Reporter: return "Fart";
-            case PieceType.Thug: return "Fries";
-            default: throw "Invalid piece type";
+    getPieceTypeName(pieceKind : PieceKind) : string {
+        switch (pieceKind) {
+            case PieceKind.Assassin: return "Fork";
+            case PieceKind.Chief: return "Sauce";
+            case PieceKind.Corpse: return "Hotdog";
+            case PieceKind.Diplomat: return "Hugger";
+            case PieceKind.Gravedigger: return "Eater";
+            case PieceKind.Reporter: return "Fart";
+            case PieceKind.Thug: return "Fries";
+            default: throw "Invalid piece kind";
         }
     }
 
@@ -147,29 +147,29 @@ class HotDogTownTheme {
         return "The Booth";
     }
 
-    getSelectionDescription(selection: SelectionResponse, gameState: GameStateResponse) : string {
+    getSelectionDescription(selection: Selection, game: Game) : string {
         const piece = selection.pieceId === null
             ? null
-            : gameState.pieces.find(p => p.id === selection.pieceId);
+            : game.pieces.find(p => p.id === selection.pieceId);
 
         //TODO: Add support for printing cell coordinates, not IDs
 
-        switch (selection.type) {
-            case SelectionType.Subject:
-                return "Move " + this.getPieceTypeName(piece.type);
+        switch (selection.kind) {
+            case SelectionKind.Subject:
+                return "Move " + this.getPieceTypeName(piece.kind);
 
-            case SelectionType.Move:
+            case SelectionKind.Move:
                 return piece === null
                     ? " to cell " + selection.cellId
-                    : " to cell " + selection.cellId + " and target " + this.getPieceTypeName(piece.type);
+                    : " to cell " + selection.cellId + " and target " + this.getPieceTypeName(piece.kind);
 
-            case SelectionType.Target:
-                return " and target " + this.getPieceTypeName(piece.type) + " at cell " + selection.cellId;
+            case SelectionKind.Target:
+                return " and target " + this.getPieceTypeName(piece.kind) + " at cell " + selection.cellId;
 
-            case SelectionType.Drop:
+            case SelectionKind.Drop:
                 return ", then drop target piece at cell " + selection.cellId;
 
-            case SelectionType.Vacate:
+            case SelectionKind.Vacate:
                 return ", finally vacate " + this.getCenterName() + " to cell " + selection.cellId;
 
             default:

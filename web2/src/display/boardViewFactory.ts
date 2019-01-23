@@ -2,7 +2,7 @@ import BoardView from "./boardView";
 import CellView from "./cellView";
 import Polygon from "../geometry/polygon";
 import Line from "../geometry/line";
-import { LocationResponse, BoardResponse } from "../api/model";
+import { Location, Board } from "../api/model";
 import Transforms from "../geometry/transforms";
 import Point from "../geometry/point";
 import Color from "./color";
@@ -12,7 +12,7 @@ export default class BoardViewFactory {
 
     }
 
-    static createBoard(board : BoardResponse, cellSize : number): BoardView {
+    static createBoard(board : Board, cellSize : number): BoardView {
 
         const cellCountPerSide = (board.regionSize * 2) - 1;
         const sideLength = cellCountPerSide * cellSize;
@@ -65,7 +65,7 @@ export default class BoardViewFactory {
                     lowerFraction = getFraction(col, true);
                     upperFraction = getFraction(col, false);
 
-                    const location : LocationResponse = {
+                    const location : Location = {
                         x: col,
                         y: row,
                         region: i
@@ -107,7 +107,7 @@ export default class BoardViewFactory {
         return new BoardView(board.regionCount, cellSize, visualCells);
     }
 
-    private static locationEquals(a : LocationResponse, b : LocationResponse) : boolean {
+    private static locationEquals(a : Location, b : Location) : boolean {
         return a.x === b.x
             && a.y === b.y
             && a.region === b.region;
