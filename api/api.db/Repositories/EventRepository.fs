@@ -18,12 +18,10 @@ let private getCommands (oldGame : Game, newGame : Game, transaction : IDbTransa
         |> Seq.filter (fun oldP -> 
             newGame.players 
             |> (not << Seq.exists (fun newP -> oldP.id = newP.id )))
-
+            
     for p in removedPlayers do
-        let cmd = GameRepository.getRemovePlayerCommand p.id
-                  |> CommandDefinition.withTransaction transaction
-        commands.Add(cmd)
-        
+        commands.Add (GameRepository.getRemovePlayerCommand p.id)
+
     //add players
     let addedPlayers = 
         newGame.players
@@ -38,9 +36,8 @@ let private getCommands (oldGame : Game, newGame : Game, transaction : IDbTransa
                 userId = p.userId
                 name = if p.kind = PlayerKind.User then None else Some p.name
             }       
-        let cmd = GameRepository.getAddPlayerCommand(oldGame.id, playerRequest)
-                  |> CommandDefinition.withTransaction transaction
-        commands.Add(cmd)
+        commands.Add (GameRepository.getAddPlayerCommand(oldGame.id, playerRequest))
+
     //update players
     let modifiedPlayers =
         Enumerable.Join(
@@ -48,11 +45,9 @@ let private getCommands (oldGame : Game, newGame : Game, transaction : IDbTransa
             (fun p -> p.id), (fun p -> p.id),
             (fun _ newP -> newP)
         )
-
+        
     for p in modifiedPlayers do
-        let cmd = GameRepository.getUpdatePlayerCommand p
-                  |> CommandDefinition.withTransaction transaction
-        commands.Add(cmd)
+        commands.Add (GameRepository.getUpdatePlayerCommand p)
  
     //update game
     if oldGame.parameters <> newGame.parameters
@@ -61,12 +56,12 @@ let private getCommands (oldGame : Game, newGame : Game, transaction : IDbTransa
         || oldGame.turnCycle <> newGame.turnCycle
         || oldGame.status <> newGame.status
     then
-        let cmd = GameRepository.getUpdateGameCommand newGame
-                  |> CommandDefinition.withTransaction transaction
-        commands.Add(cmd) 
+        commands.Add (GameRepository.getUpdateGameCommand newGame) 
     else ()
 
-    commands |> Enumerable.AsEnumerable
+    commands 
+    |> Enumerable.AsEnumerable 
+    |> Seq.map (CommandDefinition.withTransaction transaction)
 
 let persistEvent (oldGame : Game, newGame : Game) : Game AsyncHttpResult =
     task {
