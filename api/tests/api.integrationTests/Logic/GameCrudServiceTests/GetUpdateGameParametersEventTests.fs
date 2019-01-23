@@ -53,7 +53,7 @@ type GetUpdateGameParametersEventTests() =
                             { game.parameters with regionCount = 4 } 
                 }
 
-            let! _ = EventRepository.updateGame newGame |> thenValue
+            let! _ = GameRepository.updateGame newGame |> thenValue
 
             for n in [2..4] do
                 let playerRequest = 
@@ -127,7 +127,7 @@ type GetUpdateGameParametersEventTests() =
             //Arrange
             let! (_, session, game) = TestUtilities.createuserSessionAndGame(true) |> thenValue
             let newGame = { game with status = GameStatus.Started }
-            let! _ = EventRepository.updateGame newGame |> thenValue
+            let! _ = GameRepository.updateGame newGame |> thenValue
             let! game = GameRepository.getGame game.id |> thenValue
             let newParameters = game.parameters
 

@@ -198,7 +198,7 @@ type EventRepositoryTests() =
             let! result = EventRepository.persistEvent (game, newGame)
 
             //Assert
-            result |> shouldBeError 409 "Conflict when attempting to write Player."
+            result |> shouldBeError 409 "Conflict when attempting to write Effect."
 
             let! persistedGame = GameRepository.getGame game.id |> thenValue
             persistedGame.players.Length |> shouldBe 1 //Just the creator
