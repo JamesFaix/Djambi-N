@@ -1,6 +1,5 @@
 ﻿module Djambi.Api.Db.Repositories.EventRepository
 
-open System
 open System.Data
 open System.Linq
 open Dapper
@@ -9,7 +8,6 @@ open Djambi.Api.Common.Collections
 open Djambi.Api.Common.Control
 open Djambi.Api.Model
 open Djambi.Api.Db
-open Djambi.Api.Common.Control
         
 let private getCommands (oldGame : Game, newGame : Game, transaction : IDbTransaction) : CommandDefinition seq = 
     let commands = new ArrayList<CommandDefinition>()
@@ -23,12 +21,7 @@ let private getCommands (oldGame : Game, newGame : Game, transaction : IDbTransa
 
     for p in removedPlayers do
         let cmd = GameRepository.getRemovePlayerCommand p.id
-        let cmd = new CommandDefinition(
-                    cmd.CommandText,
-                    cmd.Parameters,
-                    transaction, 
-                    new Nullable<int>(), 
-                    new Nullable<CommandType>(CommandType.StoredProcedure))
+                  |> CommandDefinition.withTransaction transaction
         commands.Add(cmd)
         
     //add players
@@ -46,12 +39,7 @@ let private getCommands (oldGame : Game, newGame : Game, transaction : IDbTransa
                 name = if p.kind = PlayerKind.User then None else Some p.name
             }       
         let cmd = GameRepository.getAddPlayerCommand(oldGame.id, playerRequest)
-        let cmd = new CommandDefinition(
-                    cmd.CommandText,
-                    cmd.Parameters,
-                    transaction, 
-                    new Nullable<int>(), 
-                    new Nullable<CommandType>(CommandType.StoredProcedure))
+                  |> CommandDefinition.withTransaction transaction
         commands.Add(cmd)
     //update players
     let modifiedPlayers =
@@ -63,12 +51,7 @@ let private getCommands (oldGame : Game, newGame : Game, transaction : IDbTransa
 
     for p in modifiedPlayers do
         let cmd = GameRepository.getUpdatePlayerCommand p
-        let cmd = new CommandDefinition(
-                    cmd.CommandText,
-                    cmd.Parameters,
-                    transaction, 
-                    new Nullable<int>(), 
-                    new Nullable<CommandType>(CommandType.StoredProcedure))
+                  |> CommandDefinition.withTransaction transaction
         commands.Add(cmd)
  
     //update game
@@ -79,12 +62,7 @@ let private getCommands (oldGame : Game, newGame : Game, transaction : IDbTransa
         || oldGame.status <> newGame.status
     then
         let cmd = GameRepository.getUpdateGameCommand newGame
-        let cmd = new CommandDefinition(
-                    cmd.CommandText,
-                    cmd.Parameters,
-                    transaction, 
-                    new Nullable<int>(), 
-                    new Nullable<CommandType>(CommandType.StoredProcedure))
+                  |> CommandDefinition.withTransaction transaction
         commands.Add(cmd) 
     else ()
 

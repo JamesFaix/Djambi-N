@@ -1,17 +1,16 @@
 ﻿module Djambi.Api.Db.Repositories.GameRepository
 
 open System
-open System.Linq
-open System.Transactions
 open Dapper
+open FSharp.Control.Tasks
 open Newtonsoft.Json
 open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
+open Djambi.Api.Db
 open Djambi.Api.Db.Mapping
 open Djambi.Api.Db.Model
 open Djambi.Api.Db.SqlUtility
 open Djambi.Api.Model
-open System.Data
     
 let getGamesWithoutPlayers (query : GamesQuery) : Game List AsyncHttpResult =
     let param = DynamicParameters()
@@ -85,16 +84,17 @@ let getGames (query : GamesQuery) : Game list AsyncHttpResult =
         )
     )
 
-let createGame (request : CreateGameRequest) : int AsyncHttpResult =
+let getCreateGameCommand (request : CreateGameRequest) : CommandDefinition =
     let param = DynamicParameters()
                     .add("RegionCount", request.parameters.regionCount)
                     .add("CreatedByUserId", request.createdByUserId)
                     .add("AllowGuests", request.parameters.allowGuests)
                     .add("IsPublic", request.parameters.isPublic)
                     .addOption("Description", request.parameters.description)
+    proc("Games_Create", param)
 
-    let cmd = proc("Games_Create", param)
-
+let createGame (request : CreateGameRequest) : int AsyncHttpResult =
+    let cmd = getCreateGameCommand request
     querySingle<int>(cmd, "Game")
 
 let getAddPlayerCommand (gameId : int, request : CreatePlayerRequest) : CommandDefinition =
@@ -155,3 +155,21 @@ let getUpdatePlayerCommand (player : Player) : CommandDefinition =
 let updatePlayer(player : Player) : Unit AsyncHttpResult =
     let cmd = getUpdatePlayerCommand player
     queryUnit(cmd, "Player")
+
+let createGameAndAddPlayer (gameRequest : CreateGameRequest, playerRequest : CreatePlayerRequest) : int AsyncHttpResult =
+    task {
+        use conn = SqlUtility.getConnection()
+        use tran = conn.BeginTransaction()
+       
+        try 
+            let cmd = getCreateGameCommand gameRequest
+                      |> CommandDefinition.withTransaction tran
+            let gameId = conn.QuerySingle cmd
+            let cmd = getAddPlayerCommand (gameId, playerRequest)
+                      |> CommandDefinition.withTransaction tran
+            let _ = conn.Execute cmd
+            tran.Commit()
+            return Ok gameId
+        with 
+        | _ as ex -> return Error <| (SqlUtility.catchSqlException ex "Effect")
+    }
