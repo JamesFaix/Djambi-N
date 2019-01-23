@@ -5,7 +5,6 @@ import { Redirect } from 'react-router';
 import { User } from '../../api/model';
 import ApiClient from '../../api/client';
 import LinkButton from '../linkButton';
-import ActionButton from '../actionButton';
 
 export interface HomePageProps {
     user : User,
@@ -15,11 +14,6 @@ export interface HomePageProps {
 }
 
 export default class HomePage extends React.Component<HomePageProps> {
-
-    private rulesOnClick() : void {
-        const win = window.open(this.props.rulesUrl, '_blank');
-        win.focus();
-    }
 
     render() {
         //Go straight to dashboard if already logged in
@@ -42,7 +36,7 @@ export default class HomePage extends React.Component<HomePageProps> {
                 <div className="centeredContainer">
                     <LinkButton to="/signup" label="Sign up"/>
                     <LinkButton to="/login" label="Login"/>
-                    <ActionButton label="Rules" onClick={() => this.rulesOnClick()}/>
+                    <LinkButton label="Rules" to={this.props.rulesUrl} newWindow={true}/>
                 </div>
                 <br/>
                 <br/>

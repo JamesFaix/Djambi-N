@@ -73,6 +73,12 @@ export default class ApiClient {
             HttpMethod.Delete, "/sessions");
     }
 
+    //Board
+    async getBoard(regionCount : number) : Promise<Model.Board> {
+        return await this.sendRequest<{}, Model.Board>(
+            HttpMethod.Get, "/boards/" + regionCount);
+    }
+
     //Game
     async createGame(request : Model.GameParameters) : Promise<Model.Game> {
         return await this.sendRequest<Model.GameParameters, Model.Game>(
