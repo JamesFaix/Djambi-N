@@ -20,12 +20,8 @@ let createGame (parameters : GameParameters) (session : Session) : Game AsyncHtt
             name = None
         }
 
-    //TODO: Make this transactional
-    GameRepository.createGame gameRequest
-    |> thenBindAsync (fun gameId -> 
-        GameRepository.addPlayer(gameId, playerRequest)
-        |> thenBindAsync (fun _ -> GameRepository.getGame gameId)
-    )
+    GameRepository.createGameAndAddPlayer (gameRequest, playerRequest)
+    |> thenBindAsync GameRepository.getGame
 
 let getUpdateGameParametersEvent (game : Game, parameters : GameParameters) (session : Session) : Event HttpResult =
     if game.status <> GameStatus.Pending

@@ -2,9 +2,11 @@
 
 open System
 open Dapper
+open FSharp.Control.Tasks
 open Newtonsoft.Json
 open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
+open Djambi.Api.Db
 open Djambi.Api.Db.Mapping
 open Djambi.Api.Db.Model
 open Djambi.Api.Db.SqlUtility
@@ -82,42 +84,47 @@ let getGames (query : GamesQuery) : Game list AsyncHttpResult =
         )
     )
 
-let createGame (request : CreateGameRequest) : int AsyncHttpResult =
+let getCreateGameCommand (request : CreateGameRequest) : CommandDefinition =
     let param = DynamicParameters()
                     .add("RegionCount", request.parameters.regionCount)
                     .add("CreatedByUserId", request.createdByUserId)
                     .add("AllowGuests", request.parameters.allowGuests)
                     .add("IsPublic", request.parameters.isPublic)
                     .addOption("Description", request.parameters.description)
+    proc("Games_Create", param)
 
-    let cmd = proc("Games_Create", param)
-
+let createGame (request : CreateGameRequest) : int AsyncHttpResult =
+    let cmd = getCreateGameCommand request
     querySingle<int>(cmd, "Game")
 
-let addPlayer (gameId : int, request : CreatePlayerRequest) : Player AsyncHttpResult =
+let getAddPlayerCommand (gameId : int, request : CreatePlayerRequest) : CommandDefinition =
     let param = DynamicParameters()
                     .add("GameId", gameId)
                     .add("PlayerKindId", mapPlayerKindToId request.kind)
                     .addOption("UserId", request.userId)
                     .addOption("Name", request.name)
+    proc("Players_Add", param)
 
-    let cmd = proc("Players_Add", param)
-
+let addPlayer (gameId : int, request : CreatePlayerRequest) : Player AsyncHttpResult =
+    let cmd = getAddPlayerCommand (gameId, request)
     querySingle<int>(cmd, "Player")
     |> thenBindAsync getPlayer
 
-let removePlayer(playerId : int) : Unit AsyncHttpResult =
+let getRemovePlayerCommand (playerId : int) : CommandDefinition = 
     let param = DynamicParameters()
                     .add("PlayerId", playerId)
-    let cmd = proc("Players_Remove", param)
+    proc("Players_Remove", param)
+
+let removePlayer(playerId : int) : Unit AsyncHttpResult =
+    let cmd = getRemovePlayerCommand playerId
     queryUnit(cmd, "Player")
 
 let getNeutralPlayerNames() : string list AsyncHttpResult =
     let param = DynamicParameters()
     let cmd = proc("Players_GetNeutralNames", param)
     queryMany<string>(cmd, "Neutral player names")
-    
-let updateGame(game : Game) : Unit AsyncHttpResult =
+
+let getUpdateGameCommand (game : Game) : CommandDefinition =
     let param = DynamicParameters()
                     .add("GameId", game.id)
                     .addOption("Description", game.parameters.description)
@@ -128,15 +135,41 @@ let updateGame(game : Game) : Unit AsyncHttpResult =
                     .add("PiecesJson", JsonConvert.SerializeObject(game.pieces))
                     .add("CurrentTurnJson", JsonConvert.SerializeObject(game.currentTurn))
                     .add("TurnCycleJson", JsonConvert.SerializeObject(game.turnCycle))
-    let cmd = proc("Games_Update", param)
-    queryUnit(cmd, "Game")
+    proc("Games_Update", param)
     
-let updatePlayer(player : Player) : Unit AsyncHttpResult =
+//Exposed for test setup
+let updateGame(game : Game) : Unit AsyncHttpResult =
+    let cmd = getUpdateGameCommand game
+    queryUnit(cmd, "Game")
+
+let getUpdatePlayerCommand (player : Player) : CommandDefinition =
     let param = DynamicParameters()
                     .add("PlayerId", player.id)
                     .addOption("ColorId", player.colorId)
                     .addOption("StartingTurnNumber", player.startingTurnNumber)
                     .addOption("StartingRegion", player.startingRegion)
                     .addOption("IsAlive", player.isAlive)
-    let cmd = proc("Players_Update", param)
+    proc("Players_Update", param)
+    
+//Exposed for test setup
+let updatePlayer(player : Player) : Unit AsyncHttpResult =
+    let cmd = getUpdatePlayerCommand player
     queryUnit(cmd, "Player")
+
+let createGameAndAddPlayer (gameRequest : CreateGameRequest, playerRequest : CreatePlayerRequest) : int AsyncHttpResult =
+    task {
+        use conn = SqlUtility.getConnection()
+        use tran = conn.BeginTransaction()
+       
+        try 
+            let cmd = getCreateGameCommand gameRequest
+                      |> CommandDefinition.withTransaction tran
+            let! gameId = conn.QuerySingleAsync<int> cmd
+            let cmd = getAddPlayerCommand (gameId, playerRequest)
+                      |> CommandDefinition.withTransaction tran
+            let! _ = conn.ExecuteAsync cmd
+            tran.Commit()
+            return Ok gameId
+        with 
+        | _ as ex -> return Error <| (SqlUtility.catchSqlException ex "Effect")
+    }

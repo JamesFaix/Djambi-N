@@ -23,20 +23,25 @@ let proc(name : string, param : obj) =
                           new Nullable<int>(),
                           new Nullable<CommandType>(CommandType.StoredProcedure))
 
+let catchSqlException<'a> (ex : Exception) (entityType : string) : HttpException =
+    match ex with
+    | :? SqlException as ex when ex.Number >= 50400 && ex.Number <= 50599 ->
+        HttpException(ex.Number % 50000, ex.Message)
+    | :? SqlException as ex when Regex.IsMatch(ex.Message, "Violation of.*constraint.*") ->
+        HttpException(409, sprintf "Conflict when attempting to write %s." entityType)
+    | _ -> 
+        HttpException(500, ex.Message)
+
 let queryMany<'a>(command : CommandDefinition, entityType : string) : 'a list AsyncHttpResult =
     task {
-        use connection = getConnection()
-
         try
+            use connection = getConnection()
             return! SqlMapper.QueryAsync<'a>(connection, command)
                     |> Task.map (Seq.toList >> Ok)
         with
-        | :? SqlException as ex when ex.Number >= 50400 && ex.Number <= 50599 ->
-            return Error <| HttpException(ex.Number % 50000, ex.Message)
-        | :? SqlException as ex when Regex.IsMatch(ex.Message, "Violation of.*constraint.*") ->
-            return Error <| HttpException(409, sprintf "Conflict when attempting to write %s." entityType)
+        | _ as ex -> return Error <| (catchSqlException ex entityType)
     }
-
+  
 let querySingle<'a>(command : CommandDefinition, entityType : string) : 'a AsyncHttpResult =
     let singleOrError (xs : 'a list) =
         match xs.Length with
