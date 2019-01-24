@@ -148,7 +148,7 @@ let getUpdatePlayerCommand (player : Player) : CommandDefinition =
                     .addOption("ColorId", player.colorId)
                     .addOption("StartingTurnNumber", player.startingTurnNumber)
                     .addOption("StartingRegion", player.startingRegion)
-                    .addOption("IsAlive", player.isAlive)
+                    .add("PlayerStatusId", player.status |> mapPlayerStatusToId)
     proc("Players_Update", param)
     
 //Exposed for test setup
