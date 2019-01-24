@@ -1,6 +1,6 @@
 CREATE PROCEDURE [dbo].[Players_Update]
     @PlayerId INT,
-    @IsAlive BIT,
+    @PlayerStatusId TINYINT,
     @ColorId TINYINT,
     @StartingRegion TINYINT,
     @StartingTurnNumber TINYINT
@@ -15,6 +15,6 @@ BEGIN
     SET ColorId = @ColorId,
         StartingRegion = @StartingRegion,
         StartingTurnNumber = @StartingTurnNumber,
-        IsAlive = @IsAlive
+        PlayerStatusId = @PlayerStatusId
     WHERE PlayerId = @PlayerId
 END
