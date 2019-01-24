@@ -15,13 +15,21 @@ let appendCookie (ctx : HttpContext) (sessionToken : string, expiration : DateTi
     cookieOptions.Path <- "/"
     cookieOptions.Secure <- false
     cookieOptions.HttpOnly <- true
-    cookieOptions.Expires <-  DateTimeOffset(expiration) |> Nullable.ofValue
+    cookieOptions.Expires <- DateTimeOffset(expiration) |> Nullable.ofValue
     ctx.Response.Cookies.Append(cookieName, sessionToken, cookieOptions);
 
 let openSession : HttpHandler =
     let func (ctx : HttpContext) =
-        ensureNotSignedInAndGetModel<LoginRequest> ctx
-        |> thenBindAsync (fun jsonModel -> SessionManager.openSession(jsonModel, appendCookie ctx))
+        getSessionOptionAndModelFromContext<LoginRequest> ctx
+        |> thenBindAsync (fun (request, session) -> 
+            match session with
+            | Some s -> SessionManager.closeSession s
+            | None -> okTask ()
+    
+            |> thenBindAsync (fun _ -> 
+                SessionManager.openSession(request, appendCookie ctx)
+            )
+        )
     handle func
 
 let closeSession : HttpHandler =
