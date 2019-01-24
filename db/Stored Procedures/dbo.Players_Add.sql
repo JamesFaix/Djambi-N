@@ -24,7 +24,7 @@ BEGIN
 		UserId,
 		PlayerKindId,
 		[Name],
-		IsAlive,
+		PlayerStatusId,
 		ColorId,
 		StartingRegion,
 		StartingTurnNumber)
@@ -33,7 +33,7 @@ BEGIN
 		@UserId,
 		@PlayerKindId,
 		@Name,
-		NULL,
+		1, --Pending
 		NULL,
 		NULL,
 		NULL)

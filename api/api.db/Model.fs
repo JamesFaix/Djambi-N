@@ -32,7 +32,7 @@ type PlayerSqlModel =
         userId : int Nullable
         name : string
         playerKindId : byte
-        isAlive : bool Nullable
+        playerStatusId : byte
         colorId : byte Nullable
         startingRegion : byte Nullable
         startingTurnNumber : byte Nullable

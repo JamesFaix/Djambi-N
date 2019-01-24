@@ -39,6 +39,19 @@ let mapPlayerKindToId (kind : PlayerKind) : byte =
     | PlayerKind.Guest -> 2uy
     | PlayerKind.Neutral -> 3uy
 
+let mapPlayerStatusId (playerStatusId : byte) : PlayerStatus =
+    match playerStatusId with
+    | 1uy -> PlayerStatus.Pending
+    | 2uy -> PlayerStatus.Alive
+    | 3uy -> PlayerStatus.Eliminated
+    | _ -> raise <| Exception("Invalid player status")
+
+let mapPlayerStatusToId (status : PlayerStatus) : byte =
+    match status with
+    | PlayerStatus.Pending -> 1uy
+    | PlayerStatus.Alive -> 2uy
+    | PlayerStatus.Eliminated -> 3uy
+
 let mapPlayerResponse (sqlModel : PlayerSqlModel) : Player =
     {
         id = sqlModel.playerId
@@ -46,7 +59,7 @@ let mapPlayerResponse (sqlModel : PlayerSqlModel) : Player =
         userId = sqlModel.userId |> Option.ofNullable
         kind = mapPlayerKindId sqlModel.playerKindId
         name = sqlModel.name
-        isAlive = sqlModel.isAlive |> Option.ofNullable
+        status = sqlModel.playerStatusId |> mapPlayerStatusId
         colorId = sqlModel.colorId |> Option.ofNullable |> Option.map int
         startingRegion = sqlModel.startingRegion |> Option.ofNullable |> Option.map int
         startingTurnNumber = sqlModel.startingTurnNumber |> Option.ofNullable |> Option.map int

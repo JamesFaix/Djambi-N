@@ -8,6 +8,11 @@ type PlayerKind =
     | Guest
     | Neutral
 
+type PlayerStatus =
+    | Pending
+    | Alive
+    | Eliminated
+
 type Player =
     {
         id : int
@@ -15,7 +20,7 @@ type Player =
         userId : int option
         kind : PlayerKind
         name : string
-        isAlive : bool option
+        status : PlayerStatus
         colorId : int option
         startingRegion : int option
         startingTurnNumber : int option

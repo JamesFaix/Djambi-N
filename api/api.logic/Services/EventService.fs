@@ -22,7 +22,7 @@ let private applyPlayerEliminatedEffect (effect : ScalarEffect<int>) (game : Gam
     { game with 
         players = game.players |> List.replaceIf 
             (fun p -> p.id = effect.value) 
-            (fun p -> { p with isAlive = Some false })
+            (fun p -> { p with status = PlayerStatus.Eliminated })
     }
 
 let private applyPieceKilledEffect (effect : ScalarEffect<int>) (game : Game) : Game =
@@ -51,7 +51,7 @@ let private applyAddPlayerEffect (effect : ScalarEffect<CreatePlayerRequest>) (g
             userId = effect.value.userId
             kind = effect.value.kind
             name = match effect.value.name with Some x -> x | None -> ""
-            isAlive = None
+            status = PlayerStatus.Pending
             colorId = None
             startingRegion = None
             startingTurnNumber = None

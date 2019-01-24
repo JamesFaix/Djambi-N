@@ -41,13 +41,19 @@ export enum PlayerKind {
     Neutral = "Neutral"
 }
 
+export enum PlayerStatus {
+    Pending = "Pending",
+    Alive = "Alive",
+    Eliminated = "Eliminated"
+}
+
 export interface Player {
     id : number,
     gameId : number,
     userId : number,
     kind : PlayerKind,
     name : string,
-    isAlive : boolean,
+    status : PlayerStatus,
     colorId : number,
     startingRegion : number,
     startingTurnNumber : number

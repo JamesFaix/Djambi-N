@@ -24,7 +24,7 @@ type EventRepositoryTests() =
                     userId = Some user.id
                     kind = PlayerKind.Guest
                     name = "p2"
-                    isAlive = None
+                    status = PlayerStatus.Pending
                     colorId = None
                     startingRegion = None
                     startingTurnNumber = None
@@ -89,14 +89,14 @@ type EventRepositoryTests() =
             let! game = GameRepository.getGame game.id |> thenValue
 
             let oldP2 = game.players.[1]
-            oldP2.isAlive |> shouldBe None
+            oldP2.status |> shouldBe PlayerStatus.Pending
             oldP2.startingRegion |> shouldBe None
             oldP2.startingTurnNumber |> shouldBe None
             oldP2.colorId |> shouldBe None
 
             let newP2 = 
                 { oldP2 with
-                    isAlive = Some true
+                    status = PlayerStatus.Alive
                     startingRegion = Some 1
                     startingTurnNumber = Some 1
                     colorId = Some 1

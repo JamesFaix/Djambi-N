@@ -61,7 +61,7 @@ let assignStartingConditions(players : Player list) : Player list =
         dict.[p.id] <- { dict.[p.id] with startingTurnNumber = Some i }
 
     dict.Values 
-    |> Seq.map (fun p -> { p with isAlive = Some true })
+    |> Seq.map (fun p -> { p with status = PlayerStatus.Alive })
     |> Seq.toList
 
 let createPieces(board : BoardMetadata, players : Player list) : Piece list =

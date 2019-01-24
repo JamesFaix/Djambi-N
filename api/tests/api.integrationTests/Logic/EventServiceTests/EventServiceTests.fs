@@ -56,7 +56,7 @@ type EventServiceTests() =
         p.name |> shouldBe "" //This is pulled from the db for User players
         
         //These are assigned at game start
-        p.isAlive |> shouldBe None
+        p.status |> shouldBe PlayerStatus.Pending
         p.colorId |> shouldBe None
         p.startingRegion |> shouldBe None
         p.startingTurnNumber |> shouldBe None
@@ -235,7 +235,7 @@ type EventServiceTests() =
                 name = "test"
                 gameId = 0
                 userId = None
-                isAlive = None
+                status = PlayerStatus.Pending
                 colorId = None
                 startingRegion = None
                 startingTurnNumber = None
@@ -253,7 +253,7 @@ type EventServiceTests() =
         newGame.players.Length |> shouldBe 1
         
         let newPlayer = newGame.players.Head
-        newPlayer |> shouldBe { player with isAlive = Some false }
+        newPlayer |> shouldBe { player with status = PlayerStatus.Eliminated }
 
     [<Fact>]
     let ``Should apply PlayersRemoved effect``() =
@@ -266,7 +266,7 @@ type EventServiceTests() =
                     name = "p1"
                     gameId = 0
                     userId = None
-                    isAlive = None
+                    status = PlayerStatus.Pending
                     colorId = None
                     startingRegion = None
                     startingTurnNumber = None
@@ -277,7 +277,7 @@ type EventServiceTests() =
                     name = "p2"
                     gameId = 0
                     userId = None
-                    isAlive = None
+                    status = PlayerStatus.Pending
                     colorId = None
                     startingRegion = None
                     startingTurnNumber = None
@@ -288,7 +288,7 @@ type EventServiceTests() =
                     name = "p3"
                     gameId = 0
                     userId = None
-                    isAlive = None
+                    status = PlayerStatus.Pending
                     colorId = None
                     startingRegion = None
                     startingTurnNumber = None

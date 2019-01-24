@@ -12,7 +12,7 @@ BEGIN
 			UserId,
 			PlayerKindId,
 			[Name],
-			IsAlive,
+			PlayerStatusId,
 			ColorId,
 			StartingRegion,
 			StartingTurnNumber
@@ -31,7 +31,7 @@ BEGIN
 			p.UserId,
 			p.PlayerKindId,
 			p.[Name],
-			p.IsAlive,
+			p.PlayerStatusId,
 			p.ColorId,
 			p.StartingRegion,
 			p.StartingTurnNumber
