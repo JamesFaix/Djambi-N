@@ -10,7 +10,7 @@ open Djambi.Api.Model
 
 type ArrayList<'a> = System.Collections.Generic.List<'a>
     
-let getAddPlayerEvent (game : Game, request : CreatePlayerRequest) (session : Session) : Event HttpResult =
+let getAddPlayerEvent (game : Game, request : CreatePlayerRequest) (session : Session) : CreateEventRequest HttpResult =
     if game.status <> GameStatus.Pending
     then Error <| HttpException(400, "Can only add players to pending games.")
     elif request.name.IsSome 
@@ -44,9 +44,15 @@ let getAddPlayerEvent (game : Game, request : CreatePlayerRequest) (session : Se
 
         | PlayerKind.Neutral ->
             Error <| HttpException(400, "Cannot directly add neutral players to a game.")
-    |> Result.map (fun _ -> Event.create(EventKind.PlayerJoined, [Effect.playerAdded request]))
+    |> Result.map (fun _ -> 
+        {
+            kind = EventKind.PlayerJoined
+            effects = [ Effect.playerAdded request ]
+            createdByUserId = session.userId
+        }
+    )
 
-let getRemovePlayerEvent (game : Game, playerId : int) (session : Session) : Event HttpResult =
+let getRemovePlayerEvent (game : Game, playerId : int) (session : Session) : CreateEventRequest HttpResult =
     match game.status with
     | Aborted | AbortedWhilePending | Finished -> 
         Error <| HttpException(400, "Cannot remove players from finished or aborted games.")
@@ -88,7 +94,12 @@ let getRemovePlayerEvent (game : Game, playerId : int) (session : Session) : Eve
                         then EventKind.PlayerQuit
                         else EventKind.PlayerEjected
 
-                    Ok <| Event.create(kind, (effects |> Seq.toList))
+                    {
+                        kind = kind
+                        effects = effects |> Seq.toList
+                        createdByUserId = session.userId
+                    }
+                    |> Ok
 
 let fillEmptyPlayerSlots (game : Game) : Effect list AsyncHttpResult =
     let missingPlayerCount = game.parameters.regionCount - game.players.Length

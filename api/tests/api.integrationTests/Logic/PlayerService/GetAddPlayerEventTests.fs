@@ -15,11 +15,11 @@ type GetAddPlayerEventTests() =
 
     //USER PLAYER
 
-    let assertSuccess (event : Event) (request : CreatePlayerRequest) : unit =        
-        event.kind |> shouldBe EventKind.PlayerJoined
-        event.effects.Length |> shouldBe 1
+    let assertSuccess (eventRequest : CreateEventRequest) (request : CreatePlayerRequest) : unit =        
+        eventRequest.kind |> shouldBe EventKind.PlayerJoined
+        eventRequest.effects.Length |> shouldBe 1
 
-        match event.effects.[0] with
+        match eventRequest.effects.[0] with
         | Effect.PlayerAdded f ->
             f.value |> shouldBe request
 
@@ -36,10 +36,10 @@ type GetAddPlayerEventTests() =
             let request = CreatePlayerRequest.user user.id
 
             //Act
-            let event = PlayerService.getAddPlayerEvent (game, request) session |> Result.value
+            let eventRequest = PlayerService.getAddPlayerEvent (game, request) session |> Result.value
 
             //Assert
-            assertSuccess event request
+            assertSuccess eventRequest request
         }
 
     [<Fact>]
@@ -52,10 +52,10 @@ type GetAddPlayerEventTests() =
             let request = CreatePlayerRequest.user user.id
             
             //Act
-            let event = PlayerService.getAddPlayerEvent (game, request) { session with isAdmin = true } |> Result.value
+            let eventRequest = PlayerService.getAddPlayerEvent (game, request) { session with isAdmin = true } |> Result.value
 
             //Assert
-            assertSuccess event request
+            assertSuccess eventRequest request
         }
 
     [<Fact>]
@@ -142,10 +142,10 @@ type GetAddPlayerEventTests() =
             let request = CreatePlayerRequest.guest (user.id, "test")
                         
             //Act
-            let event = PlayerService.getAddPlayerEvent (game, request) session |> Result.value
+            let eventRequest = PlayerService.getAddPlayerEvent (game, request) session |> Result.value
 
             //Assert
-            assertSuccess event request
+            assertSuccess eventRequest request
         }
 
     [<Fact>]
@@ -158,10 +158,10 @@ type GetAddPlayerEventTests() =
             let request = CreatePlayerRequest.guest (user.id, "test")
                         
             //Act
-            let event = PlayerService.getAddPlayerEvent (game, request) { session with isAdmin = true } |> Result.value
+            let eventRequest = PlayerService.getAddPlayerEvent (game, request) { session with isAdmin = true } |> Result.value
 
             //Assert
-            assertSuccess event request
+            assertSuccess eventRequest request
         }
 
     [<Fact>]

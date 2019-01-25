@@ -97,12 +97,15 @@ let fillEmptyPlayerSlots (game : Game) : Game AsyncHttpResult =
         return! GameRepository.getGame game.id
     }
 
-let createEvent (effects : Effect list) : Event =
+let emptyEventRequest : CreateEventRequest =
     {
-        kind = Unchecked.defaultof<EventKind>
-        timestamp = Unchecked.defaultof<DateTime>
-        effects = effects
+        kind = EventKind.CellSelected //Kind shouldn't matter
+        effects = List.empty
+        createdByUserId = 1
     }
+
+let createEventRequest (effects : Effect list) : CreateEventRequest =
+    { emptyEventRequest with effects = effects }
 
 let defaultGame : Game = 
     {

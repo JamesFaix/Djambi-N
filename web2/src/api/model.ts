@@ -214,8 +214,10 @@ export enum EventKind {
 }
 
 export interface Event {
+    id : number
+    createdOn : Date,
+    createdByUserId : number
     kind : EventKind,
-    timestamp : Date,
     effects : Effect[]
 }
 
