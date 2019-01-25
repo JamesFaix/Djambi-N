@@ -94,14 +94,12 @@ let getRemovePlayerEvent (game : Game, playerId : int) (session : Session) : Cre
                         then EventKind.PlayerQuit
                         else EventKind.PlayerEjected
 
-                    let request = 
-                        {
-                            kind = kind
-                            effects = effects |> Seq.toList
-                            createdByUserId = session.userId
-                        }
-
-                    Ok request
+                    {
+                        kind = kind
+                        effects = effects |> Seq.toList
+                        createdByUserId = session.userId
+                    }
+                    |> Ok
 
 let fillEmptyPlayerSlots (game : Game) : Effect list AsyncHttpResult =
     let missingPlayerCount = game.parameters.regionCount - game.players.Length

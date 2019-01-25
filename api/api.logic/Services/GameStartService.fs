@@ -29,15 +29,11 @@ let getGameStartEvent (game : Game) (session : Session) : CreateEventRequest Asy
                     List.append 
                         addNeutralPlayerEffects 
                         [Effect.gameStatusChanged(GameStatus.Pending, GameStatus.Started)]
-
-                let request : CreateEventRequest =
-                    {
-                        kind = EventKind.GameStarted
-                        effects = effects
-                        createdByUserId = session.userId
-                    }
-
-                request
+                {
+                    kind = EventKind.GameStarted
+                    effects = effects
+                    createdByUserId = session.userId
+                }
             )
     )
 

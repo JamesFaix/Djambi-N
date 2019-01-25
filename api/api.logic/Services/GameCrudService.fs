@@ -56,11 +56,9 @@ let getUpdateGameParametersEvent (game : Game, parameters : GameParameters) (ses
         then effects.Add(Effect.playersRemoved removedPlayerIds)
         else ()
 
-        let request : CreateEventRequest = 
-            {
-                kind = EventKind.GameParametersChanged
-                effects = effects |> Seq.toList
-                createdByUserId = session.userId
-            }
-
-        Ok request
+        {
+            kind = EventKind.GameParametersChanged
+            effects = effects |> Seq.toList
+            createdByUserId = session.userId
+        }
+        |> Ok
