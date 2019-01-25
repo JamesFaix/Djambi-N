@@ -15,9 +15,9 @@ open Djambi.Api.Db.SqlUtility
 open Djambi.Api.Model
 open Djambi.Api.Db.Model
         
-let getEvents (query : EventsQuery) : Event list AsyncHttpResult =
+let getEvents (gameId : int, query : EventsQuery) : Event list AsyncHttpResult =
     let param = DynamicParameters()
-                    .add("GameId", query.gameId)
+                    .add("GameId", gameId)
                     .add("Ascending", query.direction |> mapResultsDirectionToAscendingBool)
                     .addOption("MaxResults", query.maxResults)
                     .addOption("ThresholdTime", query.thresholdTime)

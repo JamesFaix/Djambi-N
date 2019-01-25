@@ -70,7 +70,6 @@ type ResultsDirection =
 [<CLIMutable>]
 type EventsQuery =
     {
-        gameId : int
         maxResults : int option
         direction : ResultsDirection
         thresholdTime : DateTime option
@@ -78,9 +77,8 @@ type EventsQuery =
     }
 
 module EventsQuery =
-    let forGame (gameId : int) : EventsQuery =
+    let empty : EventsQuery =
         {
-            gameId = gameId
             maxResults = None
             direction = ResultsDirection.Ascending
             thresholdTime = None
