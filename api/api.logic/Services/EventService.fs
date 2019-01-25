@@ -103,8 +103,8 @@ let private applyEffect (effect : Effect) (game : Game) : Game =
     | Effect.PieceMoved e -> applyPieceMovedEffect e game
     | Effect.CurrentTurnChanged e -> applyCurrentTurnChangedEffect e game
 
-let applyEvent (game : Game) (event : Event) : Game =
+let applyEvent (game : Game) (eventRequest : CreateEventRequest) : Game =
     let mutable game = game
-    for ef in event.effects do
+    for ef in eventRequest.effects do
         game <- applyEffect ef game
     game

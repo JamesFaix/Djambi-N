@@ -137,20 +137,21 @@ type EventKind =
     | TurnReset
     | CellSelected
 
-type Event =
+type CreateEventRequest =
     {
         kind : EventKind
-        timestamp : DateTime
         effects : Effect list
+        createdByUserId : int
     }           
-
-module Event =
-    let create (kind, effects) : Event =
-        {
-            kind = kind
-            timestamp = DateTime.UtcNow
-            effects = effects
-        }
+    
+type Event =
+    {
+        id : int
+        createdByUserId : int
+        createdOn : DateTime
+        kind : EventKind
+        effects : Effect list
+    }
 
 type StateAndEventResponse =    
     {

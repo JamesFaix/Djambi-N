@@ -100,3 +100,29 @@ let mapGameResponse(sqlModel : GameSqlModel) : Game =
         turnCycle = JsonUtility.deserializeList sqlModel.turnCycleJson
         currentTurn = JsonUtility.deserializeOption sqlModel.currentTurnJson
     }
+
+let mapEventKindToId (kind : EventKind) : byte =
+    match kind with
+    | EventKind.GameParametersChanged -> 1uy
+    | EventKind.GameCanceled -> 2uy
+    | EventKind.PlayerJoined -> 3uy
+    | EventKind.PlayerEjected -> 4uy
+    | EventKind.PlayerQuit -> 5uy
+    | EventKind.GameStarted -> 6uy
+    | EventKind.TurnCommitted -> 7uy
+    | EventKind.TurnReset -> 8uy
+    | EventKind.CellSelected -> 9uy
+
+    
+let mapEventKindId (eventKindId : byte) : EventKind =
+    match eventKindId with
+    | 1uy -> EventKind.GameParametersChanged
+    | 2uy -> EventKind.GameCanceled
+    | 3uy -> EventKind.PlayerJoined
+    | 4uy -> EventKind.PlayerEjected
+    | 5uy -> EventKind.PlayerQuit
+    | 6uy -> EventKind.GameStarted
+    | 7uy -> EventKind.TurnCommitted
+    | 8uy -> EventKind.TurnReset
+    | 9uy -> EventKind.CellSelected
+    | _ -> failwith "Invalid event kind"

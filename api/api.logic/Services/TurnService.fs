@@ -23,7 +23,7 @@ let private ensureSessionIsAdminOrContainsCurrentPlayer (session : Session) (gam
             | _ -> Error <| HttpException(400, "Cannot perform this action during another player's turn.")
         )
 
-let getCellSelectedEvent(game : Game, cellId : int) (session: Session) : Event AsyncHttpResult =
+let getCellSelectedEvent(game : Game, cellId : int) (session: Session) : CreateEventRequest AsyncHttpResult =
     ensureSessionIsAdminOrContainsCurrentPlayer session game
     |> thenBindAsync (fun _ ->
         let board = BoardModelUtility.getBoardMetadata game.parameters.regionCount
@@ -96,8 +96,11 @@ let getCellSelectedEvent(game : Game, cellId : int) (session: Session) : Event A
                             requiredSelectionKind = requiredSelectionType
                         }
                     
-                    let effects = [Effect.currentTurnChanged(game.currentTurn, Some updatedTurn)]
-                    Event.create(EventKind.CellSelected, effects)
+                    {
+                        kind = EventKind.CellSelected
+                        effects = [Effect.currentTurnChanged(game.currentTurn, Some updatedTurn)]
+                        createdByUserId = session.userId                    
+                    }
                     ))
 
 let private applyTurnToPieces(game : Game) : (Piece list * Effect list) =
@@ -249,7 +252,7 @@ let private killCurrentPlayer(game : Game) : (Game * Effect list) =
 
     (updatedGame, effects |> Seq.toList)
 
-let getCommitTurnEvent(game : Game) (session : Session) : Event AsyncHttpResult =
+let getCommitTurnEvent(game : Game) (session : Session) : CreateEventRequest AsyncHttpResult =
     ensureSessionIsAdminOrContainsCurrentPlayer session game
     |> thenMap (fun _ ->
         let effects = new ArrayList<Effect>()
@@ -302,10 +305,14 @@ let getCommitTurnEvent(game : Game) (session : Session) : Event AsyncHttpResult 
 
         effects.Add(Effect.currentTurnChanged(game.currentTurn, Some updatedTurn))
 
-        Event.create(EventKind.TurnCommitted, effects |> Seq.toList)
+        {
+            kind = EventKind.TurnCommitted
+            effects = effects |> Seq.toList
+            createdByUserId = session.userId
+        }
     )
 
-let getResetTurnEvent(game : Game) (session : Session) : Event AsyncHttpResult =
+let getResetTurnEvent(game : Game) (session : Session) : CreateEventRequest AsyncHttpResult =
     ensureSessionIsAdminOrContainsCurrentPlayer session game
     |> thenMap (fun _ ->
         let updatedGame = { game with currentTurn = Some Turn.empty }
@@ -316,7 +323,9 @@ let getResetTurnEvent(game : Game) (session : Session) : Event AsyncHttpResult =
                     selectionOptions = selectionOptions
                     requiredSelectionKind = requiredSelectionType
             }
-
-        let effects = [ Effect.currentTurnChanged(game.currentTurn, Some turn) ]
-        Event.create(EventKind.TurnReset, effects)
+        {
+            kind = EventKind.TurnReset
+            effects = [ Effect.currentTurnChanged(game.currentTurn, Some turn) ]
+            createdByUserId = session.userId
+        }
     )

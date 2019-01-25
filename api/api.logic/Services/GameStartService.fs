@@ -12,7 +12,7 @@ open Djambi.Api.Model
 
 type ArrayList<'a> = System.Collections.Generic.List<'a>
  
-let getGameStartEvent (game : Game) (session : Session) : Event AsyncHttpResult =    
+let getGameStartEvent (game : Game) (session : Session) : CreateEventRequest AsyncHttpResult =    
     if session.isAdmin || session.userId = game.createdByUserId
     then okTask game
     else errorTask <| HttpException(403, "Cannot start game created by another user.")
@@ -29,7 +29,15 @@ let getGameStartEvent (game : Game) (session : Session) : Event AsyncHttpResult 
                     List.append 
                         addNeutralPlayerEffects 
                         [Effect.gameStatusChanged(GameStatus.Pending, GameStatus.Started)]
-                Event.create(EventKind.GameStarted, effects)
+
+                let request : CreateEventRequest =
+                    {
+                        kind = EventKind.GameStarted
+                        effects = effects
+                        createdByUserId = session.userId
+                    }
+
+                request
             )
     )
 

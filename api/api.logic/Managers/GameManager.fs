@@ -31,25 +31,23 @@ let getGame (gameId : int) (session : Session) : Game AsyncHttpResult =
 let createGame (parameters : GameParameters) (session : Session) : Game AsyncHttpResult =
     GameCrudService.createGame parameters session
 
-let private processEvent (gameId : int) (getEvent : Game -> Event HttpResult) : StateAndEventResponse AsyncHttpResult = 
+let private processEvent (gameId : int) (getCreateEventRequest : Game -> CreateEventRequest HttpResult) : StateAndEventResponse AsyncHttpResult = 
     GameRepository.getGame gameId
     |> thenBindAsync (fun game -> 
-        getEvent game
-        |> Result.bindAsync (fun event -> 
-            let newGame = EventService.applyEvent game event
-            EventRepository.persistEvent (game, newGame)
-            |> thenMap (fun game -> { game = game; event = event })
+        getCreateEventRequest game
+        |> Result.bindAsync (fun eventRequest -> 
+            let newGame = EventService.applyEvent game eventRequest
+            EventRepository.persistEvent (eventRequest, game, newGame)
         )
     )
     
-let private processEventAsync (gameId : int) (getEvent : Game -> Event AsyncHttpResult) : StateAndEventResponse AsyncHttpResult = 
+let private processEventAsync (gameId : int) (getCreateEventRequest : Game -> CreateEventRequest AsyncHttpResult): StateAndEventResponse AsyncHttpResult = 
     GameRepository.getGame gameId
     |> thenBindAsync (fun game -> 
-        getEvent game
-        |> thenBindAsync (fun event -> 
-            let newGame = EventService.applyEvent game event
-            EventRepository.persistEvent (game, newGame)
-            |> thenMap (fun game -> { game = game; event = event })
+        getCreateEventRequest game
+        |> thenBindAsync (fun eventRequest -> 
+            let newGame = EventService.applyEvent game eventRequest
+            EventRepository.persistEvent (eventRequest, game, newGame)
         )
     )
 

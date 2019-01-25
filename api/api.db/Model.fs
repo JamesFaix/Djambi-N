@@ -55,3 +55,14 @@ type GameSqlModel =
         piecesJson : string
         currentTurnJson : string
     }
+
+[<CLIMutable>]
+type EventSqlModel =
+    {
+        eventId : int
+        gameId : int
+        createdByUserId : int
+        createdOn : DateTime
+        eventKindId : byte
+        effectsJson : string
+    }
