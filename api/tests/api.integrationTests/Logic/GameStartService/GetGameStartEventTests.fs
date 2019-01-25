@@ -43,7 +43,7 @@ type GetGameStartEventTests() =
             let! result = GameStartService.getGameStartEvent game session
 
             //Assert
-            result |> shouldBeError 403 "Cannot start game created by another user."
+            result |> shouldBeError 403 SecurityService.notAdminOrCreatorErrorMessage
         }
         
     [<Fact>]

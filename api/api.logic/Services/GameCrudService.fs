@@ -26,9 +26,9 @@ let createGame (parameters : GameParameters) (session : Session) : Game AsyncHtt
 let getUpdateGameParametersEvent (game : Game, parameters : GameParameters) (session : Session) : CreateEventRequest HttpResult =
     if game.status <> GameStatus.Pending
     then Error <| HttpException (400, "Cannot change game parameters unless game is Pending.")
-    elif not (session.isAdmin || session.userId = game.createdByUserId)
-    then Error <| HttpException(403, "Cannot change game parameters of game created by another user.")
-    else 
+    else Ok ()
+    |> Result.bind (fun _ -> SecurityService.ensureAdminOrCreator session game)
+    |> Result.map (fun _ ->
         let effects = new ArrayList<Effect>()
 
         effects.Add(Effect.parametersChanged(game.parameters, parameters))
@@ -61,4 +61,4 @@ let getUpdateGameParametersEvent (game : Game, parameters : GameParameters) (ses
             effects = effects |> Seq.toList
             createdByUserId = session.userId
         }
-        |> Ok
+    )

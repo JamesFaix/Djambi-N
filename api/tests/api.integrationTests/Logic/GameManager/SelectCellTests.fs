@@ -67,7 +67,7 @@ type SelectCellTests() =
             let! result = GameManager.selectCell (updatedGame.id, cellId) sessionWithoutActivePlayer
 
             //Assert
-            result |> shouldBeError 400 "Cannot perform this action during another player's turn."
+            result |> shouldBeError 403 SecurityService.notAdminOrCurrentPlayerErrorMessage
         }
 
     [<Fact>]
