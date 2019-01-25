@@ -103,4 +103,9 @@ export default class ApiClient {
         return await this.sendRequest<{}, Model.StateAndEventResponse>(
             HttpMethod.Post, "/games/" + gameId + "/start-request");
     }
+
+    async getEvents(gameId : number, query : Model.EventsQuery) : Promise<Model.Event[]> {
+        return await this.sendRequest<Model.EventsQuery, Model.Event[]>(
+            HttpMethod.Post, "/games/" + gameId + "/events/query", query);
+    }
 }

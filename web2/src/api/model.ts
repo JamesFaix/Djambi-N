@@ -225,3 +225,15 @@ export interface StateAndEventResponse {
     game : Game,
     event : Event
 }
+
+export enum ResultsDirection {
+    Ascending = "Ascending",
+    Descending = "Descending"
+}
+
+export interface EventsQuery {
+    maxResults : number,
+    direction : ResultsDirection,
+    thresholdTime : Date,
+    thresholdEventId : number
+}
