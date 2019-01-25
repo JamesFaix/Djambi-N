@@ -136,13 +136,6 @@ type EventKind =
     | TurnCommitted
     | TurnReset
     | CellSelected
-
-type CreateEventRequest =
-    {
-        kind : EventKind
-        effects : Effect list
-        createdByUserId : int
-    }           
     
 type Event =
     {
@@ -157,4 +150,12 @@ type StateAndEventResponse =
     {
         game : Game
         event : Event
+    }
+    
+//Internal request
+type CreateEventRequest =
+    {
+        kind : EventKind
+        effects : Effect list
+        createdByUserId : int
     }

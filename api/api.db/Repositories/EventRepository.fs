@@ -13,7 +13,20 @@ open Djambi.Api.Db
 open Djambi.Api.Db.Mapping
 open Djambi.Api.Db.SqlUtility
 open Djambi.Api.Model
+open Djambi.Api.Db.Model
         
+let getEvents (query : EventsQuery) : Event list AsyncHttpResult =
+    let param = DynamicParameters()
+                    .add("GameId", query.gameId)
+                    .add("Ascending", query.direction |> mapResultsDirectionToAscendingBool)
+                    .addOption("MaxResults", query.maxResults)
+                    .addOption("ThresholdTime", query.thresholdTime)
+                    .addOption("ThresholdEventId", query.thresholdEventId)
+    let cmd = proc("Events_Get", param)
+
+    queryMany<EventSqlModel>(cmd, "Event")
+    |> thenMap (List.map mapEventResponse)
+   
 let private getCreateEventCommand (gameId : int, request : CreateEventRequest) : CommandDefinition = 
     let param = DynamicParameters()
                     .add("GameId", gameId)

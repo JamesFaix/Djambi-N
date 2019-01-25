@@ -4,6 +4,7 @@ open Djambi.Api.Common
 open Djambi.Api.Common.Json
 open Djambi.Api.Db.Model
 open Djambi.Api.Model
+open Newtonsoft.Json
 
 let private findRight<'a, 'b when 'a : equality> (map : ('a * 'b) list) (key : 'a) : 'b =
     let result = map |> List.tryFind(fun (a, _) -> a = key)
@@ -129,3 +130,15 @@ let mapGameResponse(sqlModel : GameSqlModel) : Game =
         turnCycle = JsonUtility.deserializeList sqlModel.turnCycleJson
         currentTurn = JsonUtility.deserializeOption sqlModel.currentTurnJson
     }
+
+let mapEventResponse (sqlModel : EventSqlModel) : Event =
+    {
+        id = sqlModel.eventId
+        kind = sqlModel.eventKindId |> mapEventKindId
+        createdByUserId = sqlModel.createdByUserId
+        createdOn = sqlModel.createdOn
+        effects = sqlModel.effectsJson |> JsonConvert.DeserializeObject<Effect list>
+    }
+
+let mapResultsDirectionToAscendingBool (direction : ResultsDirection) : bool =
+    direction = ResultsDirection.Ascending

@@ -63,6 +63,30 @@ type SelectionRequest =
         cellId : int
     }
 
+type ResultsDirection = 
+    | Ascending
+    | Descending
+
+[<CLIMutable>]
+type EventsQuery =
+    {
+        gameId : int
+        maxResults : int option
+        direction : ResultsDirection
+        thresholdTime : DateTime option
+        thresholdEventId : int option
+    }
+
+module EventsQuery =
+    let forGame (gameId : int) : EventsQuery =
+        {
+            gameId = gameId
+            maxResults = None
+            direction = ResultsDirection.Ascending
+            thresholdTime = None
+            thresholdEventId = None
+        }
+
 //---Internal requests
 
 type UpdateFailedLoginsRequest =
