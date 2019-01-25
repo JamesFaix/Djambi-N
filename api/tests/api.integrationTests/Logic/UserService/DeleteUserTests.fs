@@ -59,7 +59,7 @@ type DeleteUserTests() =
             let! response = UserService.deleteUser user.id session
 
             //Assert
-            response |> shouldBeError 403 "Cannot delete other users."
+            response |> shouldBeError 403 SecurityService.notAdminOrSelfErrorMessage
         }
 
     [<Fact>]

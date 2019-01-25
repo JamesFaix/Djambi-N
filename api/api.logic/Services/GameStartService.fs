@@ -13,10 +13,8 @@ open Djambi.Api.Model
 type ArrayList<'a> = System.Collections.Generic.List<'a>
  
 let getGameStartEvent (game : Game) (session : Session) : CreateEventRequest AsyncHttpResult =    
-    if session.isAdmin || session.userId = game.createdByUserId
-    then okTask game
-    else errorTask <| HttpException(403, "Cannot start game created by another user.")
-    |> thenBindAsync (fun _ ->
+    SecurityService.ensureAdminOrCreator session game
+    |> Result.bindAsync (fun _ ->    
         if game.players
             |> List.filter (fun p -> p.kind <> PlayerKind.Neutral)
             |> List.length = 1
