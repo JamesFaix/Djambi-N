@@ -147,8 +147,8 @@ export interface Game {
 export interface GamesQuery {
     gameId : number,
     descriptionContains : string,
-    createdByUserId : number,
-    playerUserId : number,
+    createdByUserName : string,
+    playerUserName : string,
     isPublic : boolean,
     allowGuests : boolean
 }

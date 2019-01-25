@@ -19,8 +19,8 @@ export interface FindLobbyPageProps {
 
 export interface FindLobbyPageState {
     games : Game[],
-    createdByUserIdFilter : number,
-    playerUserIdFilter : number,
+    createdByUserNameFilter : string,
+    playerUserNameFilter : string,
     isPublicFilter : boolean,
     allowGuestsFilter : boolean,
     descriptionContainsFilter : string
@@ -31,8 +31,8 @@ export default class FindLobbyPage extends React.Component<FindLobbyPageProps, F
         super(props);
         this.state = {
             games : [],
-            createdByUserIdFilter: null,
-            playerUserIdFilter: null,
+            createdByUserNameFilter: null,
+            playerUserNameFilter: null,
             isPublicFilter: null,
             allowGuestsFilter: null,
             descriptionContainsFilter: null
@@ -46,8 +46,8 @@ export default class FindLobbyPage extends React.Component<FindLobbyPageProps, F
     private refreshResults() {
         const query : GamesQuery = {
             gameId : null,
-            createdByUserId: this.state.createdByUserIdFilter,
-            playerUserId: this.state.playerUserIdFilter,
+            createdByUserName: this.state.createdByUserNameFilter,
+            playerUserName: this.state.playerUserNameFilter,
             isPublic: this.state.isPublicFilter,
             allowGuests: this.state.allowGuestsFilter,
             descriptionContains: this.state.descriptionContainsFilter
@@ -67,8 +67,8 @@ export default class FindLobbyPage extends React.Component<FindLobbyPageProps, F
 
     private resetOnClick() {
         this.setState({
-                createdByUserIdFilter: null,
-                playerUserIdFilter: null,
+                createdByUserNameFilter: null,
+                playerUserNameFilter: null,
                 isPublicFilter: null,
                 allowGuestsFilter: null,
                 descriptionContainsFilter: null
@@ -88,8 +88,8 @@ export default class FindLobbyPage extends React.Component<FindLobbyPageProps, F
                                 <LabeledInput
                                     label="Created by"
                                     type={InputTypes.Text}
-                                    value={Util.toStringSafe(this.state.createdByUserIdFilter)}
-                                    onChange={e => this.setState({ createdByUserIdFilter: Number(e.target.value) })}
+                                    value={Util.toStringSafe(this.state.createdByUserNameFilter)}
+                                    onChange={e => this.setState({ createdByUserNameFilter: e.target.value })}
                                 />
                             </td>
                             <td className="borderless">
@@ -105,8 +105,8 @@ export default class FindLobbyPage extends React.Component<FindLobbyPageProps, F
                                 <LabeledInput
                                     label="Has user"
                                     type={InputTypes.Text}
-                                    value={Util.toStringSafe(this.state.playerUserIdFilter)}
-                                    onChange={e => this.setState({ playerUserIdFilter: Number(e.target.value) })}
+                                    value={Util.toStringSafe(this.state.playerUserNameFilter)}
+                                    onChange={e => this.setState({ playerUserNameFilter: e.target.value })}
                                 />
                             </td>
                             <td className="borderless">

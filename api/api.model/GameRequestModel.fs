@@ -39,8 +39,8 @@ type GamesQuery =
     {
         gameId : int option
         descriptionContains : string option
-        createdByUserId : int option
-        playerUserId : int option
+        createdByUserName : string option
+        playerUserName : string option
         isPublic : bool option
         allowGuests : bool option
     }
@@ -51,8 +51,8 @@ module GamesQuery =
         {
             gameId = None
             descriptionContains = None
-            createdByUserId = None
-            playerUserId = None
+            createdByUserName = None
+            playerUserName = None
             isPublic = None
             allowGuests = None
         }

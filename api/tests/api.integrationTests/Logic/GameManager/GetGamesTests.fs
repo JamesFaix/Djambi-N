@@ -3,6 +3,7 @@
 open FSharp.Control.Tasks
 open Xunit
 open Djambi.Api.Common.Control
+open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.IntegrationTests
 open Djambi.Api.Model
 open Djambi.Api.Logic.Managers
@@ -11,20 +12,13 @@ type GetGamesTests() =
     inherit TestsBase()
 
     [<Fact>]
-    let ``Get games should filter on createdByUserId``() =
+    let ``Get games should filter on createdByUserName``() =
         task {
             //Arrange
-            let request = getGameParameters()
-            let session1 = getSessionForUser 1
-            let session2 = getSessionForUser 2
+            let! (user1, _, game1) = TestUtilities.createuserSessionAndGame(false) |> thenValue
+            let! (_, _, game2) = TestUtilities.createuserSessionAndGame(false) |> thenValue
             let adminSession = { getSessionForUser 3 with isAdmin = true }
-
-            let! game1 = GameManager.createGame request session1
-                          |> AsyncHttpResult.thenValue
-            let! game2 = GameManager.createGame request session2
-                          |> AsyncHttpResult.thenValue
-
-            let query = { GamesQuery.empty with createdByUserId = Some 1 }
+            let query = { GamesQuery.empty with createdByUserName = Some user1.name }
 
             //Act
             let! result = GameManager.getGames query adminSession
@@ -86,23 +80,17 @@ type GetGamesTests() =
         }
 
     [<Fact>]
-    let ``Get games should filter on playerUserId``() =
+    let ``Get games should filter on playerUserName``() =
         task {
             //Arrange
-            let request = getGameParameters()
-            let session1 = getSessionForUser 1
-            let session2 = getSessionForUser 2
+            let! (user1, _, game1) = TestUtilities.createuserSessionAndGame(false) |> thenValue
+            let! (user2, _, game2) = TestUtilities.createuserSessionAndGame(false) |> thenValue
             let adminSession = { getSessionForUser 3 with isAdmin = true }
 
-            let! game1 = GameManager.createGame request session1
-                          |> AsyncHttpResult.thenValue
-            let! game2 = GameManager.createGame request session2
-                          |> AsyncHttpResult.thenValue
-
-            let playerRequest = { getCreatePlayerRequest with userId = Some 1 }
+            let playerRequest = { getCreatePlayerRequest with userId = Some user2.id }
             let! _ = GameManager.addPlayer game1.id playerRequest adminSession
 
-            let query = { GamesQuery.empty with playerUserId = Some 1 }
+            let query = { GamesQuery.empty with playerUserName = Some user2.name }
 
             //Act
             let! result = GameManager.getGames query adminSession
@@ -110,7 +98,7 @@ type GetGamesTests() =
 
             //Assert
             result |> shouldExist (fun l -> l.id = game1.id)
-            result |> shouldNotExist (fun l -> l.id = game2.id)
+            result |> shouldExist (fun l -> l.id = game2.id)
         }
 
     [<Fact>]

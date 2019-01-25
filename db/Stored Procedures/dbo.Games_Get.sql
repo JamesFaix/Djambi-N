@@ -1,8 +1,8 @@
 CREATE PROCEDURE [dbo].[Games_Get]
 	@GameId INT,
 	@DescriptionContains NVARCHAR(100),
-	@CreatedByUserId INT,
-	@PlayerUserId INT,
+	@CreatedByUserName NVARCHAR(50),
+	@PlayerUserName NVARCHAR(50),
 	@IsPublic BIT,
 	@AllowGuests BIT
 AS
@@ -24,9 +24,24 @@ BEGIN
 
 	WHERE (@GameId IS NULL OR @GameId = g.GameId)
 		AND (@DescriptionContains IS NULL OR g.[Description] LIKE '%' + @DescriptionContains + '%')
-		AND (@CreatedByUserId IS NULL OR @CreatedByUserId = g.CreatedByUserId)
-		AND (@PlayerUserId IS NULL OR EXISTS(
-			SELECT 1 FROM Players p WHERE p.GameId = g.GameId AND p.UserId = @PlayerUserId))
+		AND (@CreatedByUserName IS NULL
+			OR EXISTS(
+				SELECT 1
+				FROM Users u
+				WHERE u.Name = @CreatedByUserName
+					AND u.UserId = g.CreatedByUserId
+			)
+		)
+		AND (@PlayerUserName IS NULL
+			OR EXISTS(
+				SELECT 1
+				FROM Players p
+					INNER JOIN Users u
+						ON p.UserId = u.UserId
+				WHERE p.GameId = g.GameId
+					AND u.Name = @PlayerUserName
+			)
+		)
 		AND (@IsPublic IS NULL OR @IsPublic = g.IsPublic)
 		AND (@AllowGuests IS NULL OR @AllowGuests = g.AllowGuests)
 END
