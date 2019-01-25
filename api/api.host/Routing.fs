@@ -41,5 +41,6 @@ module Routing =
                     POST >=> routef "/games/%i/current-turn/reset-request" GameController.resetTurn
                     POST >=> routef "/games/%i/current-turn/commit-request" GameController.commitTurn
 
+                    POST >=> routef "/games/%i/events/query" GameController.getEvents
                 ])
             setStatusCode 404 >=> text "Not Found" ]

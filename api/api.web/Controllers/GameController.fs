@@ -65,3 +65,11 @@ let commitTurn(gameId : int) =
         getSessionFromContext ctx
         |> thenBindAsync (GameManager.commitTurn gameId)
     handle func
+
+let getEvents(gameId : int) =
+    let func ctx =
+        getSessionAndModelFromContext<EventsQuery> ctx
+        |> thenBindAsync (fun (query, session) -> 
+            GameManager.getEvents (gameId, query) session
+        )
+    handle func

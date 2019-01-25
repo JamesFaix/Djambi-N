@@ -31,6 +31,16 @@ let getGame (gameId : int) (session : Session) : Game AsyncHttpResult =
 let createGame (parameters : GameParameters) (session : Session) : Game AsyncHttpResult =
     GameCrudService.createGame parameters session
 
+let getEvents (gameId : int, query : EventsQuery) (session : Session) : Event list AsyncHttpResult =
+    GameRepository.getGame gameId
+    |> thenBindAsync (fun game ->
+        SecurityService.ensureAdminOrPlayer session game
+        |> Result.bindAsync (fun _ -> 
+            let query = { query with gameId = gameId }
+            EventRepository.getEvents query
+        )
+    )
+
 let private processEvent (gameId : int) (getCreateEventRequest : Game -> CreateEventRequest HttpResult) : StateAndEventResponse AsyncHttpResult = 
     GameRepository.getGame gameId
     |> thenBindAsync (fun game -> 
