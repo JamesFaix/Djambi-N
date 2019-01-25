@@ -7,7 +7,7 @@ BEGIN
     SELECT
         EventId,
         GameId,
-        CreatedByPlayerid,
+        CreatedByUserId,
         CreatedOn,
         EventKindId,
         EffectsJson

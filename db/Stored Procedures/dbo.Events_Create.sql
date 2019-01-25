@@ -1,6 +1,6 @@
 CREATE PROCEDURE [dbo].[Events_Create]
     @GameId INT,
-    @CreatedByPlayerId INT,
+    @CreatedByUserId INT,
     @EventKindId TINYINT,
     @EffectsJson NVARCHAR(MAX)
 AS
@@ -9,13 +9,13 @@ BEGIN
 
 	INSERT INTO Events (
         GameId,
-        CreatedByPlayerId,
+        CreatedByUserId,
         CreatedOn,
         EventKindId,
         EffectsJson)
 	VALUES (
 		@GameId,
-        @CreatedByPlayerId,
+        @CreatedByUserId,
         GETUTCDATE(),
         @EventKindId,
         @EffectsJson)
