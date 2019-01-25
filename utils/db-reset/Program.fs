@@ -60,12 +60,14 @@ let getFilesInOrder : string seq =
             "PlayerKinds"
             "NeutralPlayerNames"
             "PlayerStatuses"
+            "EventKinds"
 
             //Then entities
             "Users"
             "Sessions"
             "Games"
             "Players"
+            "Events"
         ]
 
         yield! tables |> Seq.map (fun name -> sprintf "Tables\\dbo.%s.sql" name)
