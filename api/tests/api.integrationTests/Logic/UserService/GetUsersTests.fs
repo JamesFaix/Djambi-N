@@ -39,5 +39,5 @@ type GetUsersTests() =
             let! error = UserService.getUsers session
 
             //Assert
-            error |> shouldBeError 403 "Requires admin privileges."
+            error |> shouldBeError 403 SecurityService.notAdminErrorMessage
         }

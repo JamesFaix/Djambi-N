@@ -150,5 +150,5 @@ type GetUpdateGameParametersEventTests() =
             let result = GameCrudService.getUpdateGameParametersEvent (game, newParameters) { session with userId = session.userId + 1 }
 
             //Assert
-            result |> shouldBeError 403 "Cannot change game parameters of game created by another user."
+            result |> shouldBeError 403 SecurityService.notAdminOrCreatorErrorMessage
         }

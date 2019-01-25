@@ -65,10 +65,10 @@ let startGame (gameId: int) (session : Session) : StateAndEventResponse AsyncHtt
     processEventAsync gameId (fun game -> GameStartService.getGameStartEvent game session)
 
 let selectCell (gameId : int, cellId : int) (session : Session) : StateAndEventResponse AsyncHttpResult =
-    processEventAsync gameId (fun game -> TurnService.getCellSelectedEvent (game, cellId) session)
+    processEvent gameId (fun game -> TurnService.getCellSelectedEvent (game, cellId) session)
 
 let resetTurn (gameId : int) (session : Session) : StateAndEventResponse AsyncHttpResult =
-    processEventAsync gameId (fun game -> TurnService.getResetTurnEvent game session)
+    processEvent gameId (fun game -> TurnService.getResetTurnEvent game session)
 
 let commitTurn (gameId : int) (session : Session) : StateAndEventResponse AsyncHttpResult =
-    processEventAsync gameId (fun game -> TurnService.getCommitTurnEvent game session)
+    processEvent gameId (fun game -> TurnService.getCommitTurnEvent game session)
