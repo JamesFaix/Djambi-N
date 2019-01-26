@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Marker.fs" />
     <Compile Include="ModelExtensions\BoardModelExtensions.fs" />
     <Compile Include="ModelExtensions\BoardModelUtility.fs" />
     <Compile Include="ModelExtensions\GameModelExtensions.fs" />
@@ -29,6 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\client-generator.annotations\client-generator.annotations.fsproj" />
     <ProjectReference Include="..\api.common\api.common.fsproj" />
     <ProjectReference Include="..\api.db\api.db.fsproj" />
     <ProjectReference Include="..\api.model\api.model.fsproj" />

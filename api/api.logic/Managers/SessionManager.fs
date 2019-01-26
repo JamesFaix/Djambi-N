@@ -5,8 +5,10 @@ open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Logic.Services
 open Djambi.Api.Model
+open Djambi.ClientGenerator.Annotations
 
-let openSession (request : LoginRequest, appendCookie : string * DateTime -> Unit) : User AsyncHttpResult=
+//TODO: Make this a ClientFunction
+let login (request : LoginRequest, appendCookie : string * DateTime -> Unit) : User AsyncHttpResult=
     SessionService.openSession request
     |> thenBindAsync (fun session ->
         appendCookie (session.token, session.expiresOn)
@@ -15,6 +17,7 @@ let openSession (request : LoginRequest, appendCookie : string * DateTime -> Uni
     |> thenMap UserDetails.hideDetails
     |> thenReplaceError 409 (HttpException(409, "Already signed in."))
 
-let closeSession (session : Session) : Unit AsyncHttpResult =
+[<ClientFunction(HttpMethod.Delete, "/sessions")>]
+let logout (session : Session) : Unit AsyncHttpResult =
     SessionService.closeSession session
     |> thenMap ignore
