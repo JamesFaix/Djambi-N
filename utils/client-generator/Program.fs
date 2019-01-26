@@ -1,6 +1,5 @@
 ﻿module Djambi.ClientGenerator.Program
 
-open System
 open System.IO
 open System.Linq
 open System.Reflection
@@ -46,7 +45,5 @@ let main argv =
     File.WriteAllText(typeScriptModelOutputPath, fullText)
 
     printfn "Done"
-
-    Console.Read() |> ignore
-
+    
     0 // return an integer exit code
