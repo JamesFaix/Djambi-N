@@ -2,8 +2,10 @@
 
 open System
 open System.IO
+open System.Linq
 open System.Reflection
 open Microsoft.Extensions.Configuration
+open Djambi.ClientGenerator.Annotations
 open Djambi.Utilities
 
 [<EntryPoint>]
@@ -23,7 +25,17 @@ let main argv =
     let typeScriptModelOutputPath = Path.Combine(root, config.["TypeScriptModelOutputPath"])
     
     let assembly = Assembly.LoadFile modelAssemblyPath
-    let types = assembly.GetTypes() |> Seq.toList
+    
+    let types = 
+        assembly.GetTypes() 
+        //Filter out types not marked with ClientTypeAttribute
+        |> Seq.filter (fun t -> 
+            t.GetCustomAttributes() 
+            |> Enumerable.OfType<ClientTypeAttribute> 
+            |> (not << Seq.isEmpty) 
+        )
+        |> Seq.toList
+    
     let fullText = renderer.renderTypes types
 
     File.WriteAllText(typeScriptModelOutputPath, fullText)

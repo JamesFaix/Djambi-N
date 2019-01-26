@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
     <RootNamespace>client_generator</RootNamespace>
   </PropertyGroup>
 
@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\client-generator.annotations\client-generator.annotations.fsproj" />
     <ProjectReference Include="..\environment\environment.fsproj" />
   </ItemGroup>
 

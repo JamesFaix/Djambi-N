@@ -2,7 +2,9 @@
 module Djambi.Api.Model.EventModel
 
 open System
+open Djambi.ClientGenerator.Annotations
 
+[<ClientType>]
 type EffectKind =
     | GameStatusChanged
     | PlayerEliminated
@@ -15,20 +17,23 @@ type EffectKind =
     | PlayersRemoved
     | ParametersChanged
     | CurrentTurnChanged
-
+    
+[<ClientType>]
 type DiffEffect<'a> =
     {
         kind : EffectKind
         oldValue : 'a
         newValue : 'a
     }
-
+    
+[<ClientType>]
 type ScalarEffect<'a> =
     {
         kind : EffectKind
         value : 'a
     }
-
+    
+[<ClientType>]
 type DiffWithContextEffect<'a, 'b> =
     {
         kind : EffectKind
@@ -36,7 +41,8 @@ type DiffWithContextEffect<'a, 'b> =
         newValue : 'a
         context : 'b
     }
-
+    
+[<ClientType>]
 type Effect =
     | GameStatusChanged of DiffEffect<GameStatus>
     | TurnCycleChanged of DiffEffect<int list>
@@ -126,6 +132,7 @@ module Effect =
             newValue = newTurn
         }
 
+[<ClientType>]
 type EventKind =
     | GameParametersChanged
     | GameCanceled 
@@ -136,7 +143,7 @@ type EventKind =
     | TurnCommitted
     | TurnReset
     | CellSelected
-
+    
 type CreateEventRequest =
     {
         kind : EventKind
@@ -144,6 +151,7 @@ type CreateEventRequest =
         createdByUserId : int
     }           
     
+[<ClientType>]
 type Event =
     {
         id : int
@@ -152,7 +160,8 @@ type Event =
         kind : EventKind
         effects : Effect list
     }
-
+    
+[<ClientType>]
 type StateAndEventResponse =    
     {
         game : Game

@@ -1,6 +1,8 @@
 [<AutoOpen>]
 module Djambi.Api.Model.BoardModel
 
+open Djambi.ClientGenerator.Annotations
+
 type Directions =
     | Up = 1
     | UpRight = 2
@@ -14,14 +16,16 @@ type Directions =
 type RadialDirections =
     | Clockwise = 1
     | CounterClockwise = 2
-
+    
+[<ClientType>]
 type Location =
     {
         region : int
         x : int
         y : int
     }
-
+    
+[<ClientType>]
 type Cell =
     {
         id : int
@@ -33,7 +37,8 @@ type BoardMetadata =
         regionCount : int
         regionSize : int
     }
-
+    
+[<ClientType>]
 type Board =
     {
         regionCount : int

@@ -2,17 +2,21 @@
 module Djambi.Api.Model.GameModel
 
 open System
+open Djambi.ClientGenerator.Annotations
 
+[<ClientType>]
 type PlayerKind =
     | User
     | Guest
     | Neutral
-
+    
+[<ClientType>]
 type PlayerStatus =
     | Pending
     | Alive
     | Eliminated
-
+    
+[<ClientType>]
 type Player =
     {
         id : int
@@ -25,7 +29,8 @@ type Player =
         startingRegion : int option
         startingTurnNumber : int option
     }
-
+    
+[<ClientType>]
 type PieceKind =
     | Chief
     | Thug
@@ -35,6 +40,7 @@ type PieceKind =
     | Gravedigger
     | Corpse
 
+[<ClientType>]
 type Piece =
     {
         id : int
@@ -43,14 +49,16 @@ type Piece =
         originalPlayerId : int
         cellId : int
     }
-
+    
+[<ClientType>]
 type SelectionKind =
     | Subject
     | Move
     | Target
     | Drop
     | Vacate
-
+    
+[<ClientType>]
 type Selection =
     {
         kind : SelectionKind
@@ -101,10 +109,12 @@ module Selection =
             pieceId = None
         }
 
+[<ClientType>]
 type TurnStatus =
     | AwaitingSelection
     | AwaitingConfirmation
 
+[<ClientType>]
 type Turn =
     {
         status : TurnStatus
@@ -122,6 +132,7 @@ module Turn =
             requiredSelectionKind = Some Subject
         }
 
+[<ClientType>]
 type GameStatus =
     | Pending
     | AbortedWhilePending
@@ -130,6 +141,7 @@ type GameStatus =
     | Finished
     
 [<CLIMutable>]
+[<ClientType>]
 type GameParameters =
     {
         description : string option
@@ -137,7 +149,8 @@ type GameParameters =
         isPublic : bool
         allowGuests : bool
     }
-
+    
+[<ClientType>]
 type Game =
     {
         id : int
