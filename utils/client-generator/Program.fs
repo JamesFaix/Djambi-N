@@ -11,6 +11,9 @@ open Djambi.Utilities
 [<EntryPoint>]
 let main argv =    
    
+    printfn "Djambi API Client Generator"
+    printfn "---------------------------"
+
     let depthFromRoot = 5
     
     let root = Environment.rootDirectory(depthFromRoot)
@@ -19,11 +22,11 @@ let main argv =
                     .AddJsonFile(Environment.environmentConfigPath(depthFromRoot), false)
                     .Build()
                     
-    let renderer = TypeScriptRenderer() :> IRenderer
-
     let modelAssemblyPath = Path.Combine(root, config.["ModelAssemblyPath"])
     let typeScriptModelOutputPath = Path.Combine(root, config.["TypeScriptModelOutputPath"])
     
+    printfn "Loading types..."
+
     let assembly = Assembly.LoadFile modelAssemblyPath
     
     let types = 
@@ -36,10 +39,13 @@ let main argv =
         )
         |> Seq.toList
     
-    let fullText = renderer.renderTypes types
+    printfn "Rendering TypeScript client..."
 
+    let renderer = TypeScriptRenderer() :> IRenderer
+    let fullText = renderer.renderTypes types
     File.WriteAllText(typeScriptModelOutputPath, fullText)
-    Console.Write fullText
+
+    printfn "Done"
 
     Console.Read() |> ignore
 
