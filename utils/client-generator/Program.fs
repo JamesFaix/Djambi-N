@@ -3,7 +3,6 @@
 open System
 open System.IO
 open System.Reflection
-open System.Text
 open Microsoft.Extensions.Configuration
 open Djambi.Utilities
 
@@ -24,22 +23,8 @@ let main argv =
     let typeScriptModelOutputPath = Path.Combine(root, config.["TypeScriptModelOutputPath"])
     
     let assembly = Assembly.LoadFile modelAssemblyPath
-    
-    let typesAndKinds = 
-        assembly.GetTypes()
-        |> Seq.map(fun t -> 
-            let kind = TypeKind.fromType t
-            (t, kind)
-        )
-        |> Seq.filter (fun (_, kind) -> kind <> TypeKind.Unsupported)
-
-    let sb = StringBuilder()
-
-    for (t, _) in typesAndKinds do
-        let text = renderer.renderType t
-        sb.AppendLine text |> ignore
-    
-    let fullText = sb.ToString()
+    let types = assembly.GetTypes() |> Seq.toList
+    let fullText = renderer.renderTypes types
 
     File.WriteAllText(typeScriptModelOutputPath, fullText)
     Console.Write fullText

@@ -3,4 +3,4 @@
 open System
 
 type IRenderer =
-    abstract member renderType : Type -> string
+    abstract member renderTypes : Type list -> string

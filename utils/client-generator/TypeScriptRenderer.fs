@@ -2,6 +2,7 @@
 
 open System
 open System.Text
+open FSharp.Reflection
 
 type TypeScriptRenderer() =
     
@@ -47,7 +48,9 @@ type TypeScriptRenderer() =
     let renderRecord (t : Type) : string =
         let sb = StringBuilder()
 
-        sb.AppendLine(sprintf "export interface %s {" t.Name) |> ignore
+        let typeName = renderTypeName t
+
+        sb.AppendLine(sprintf "export interface %s {" typeName) |> ignore
 
         let props = t.GetProperties()
         for p in props do
@@ -63,7 +66,21 @@ type TypeScriptRenderer() =
 
     let renderUnion (t : Type) : string =
         let sb = StringBuilder()
-        sb.AppendLine(sprintf "// %s - Union types not yet supported" t.Name) |> ignore
+        
+        let typeName = renderTypeName t
+        sb.AppendLine(sprintf "export type %s =" typeName) |> ignore
+
+        let cases = FSharpType.GetUnionCases t
+        let caseTypes = 
+            cases 
+            |> Seq.map (fun c ->
+                let field = c.GetFields().[0]
+                renderTypeName field.PropertyType
+            )
+        let casesList = String.Join(" |\n\t", caseTypes)
+
+        sb.AppendLine(sprintf "\t%s" casesList) |> ignore
+
         sb.ToString()
 
     let renderEnum (t : Type) : string =
@@ -83,12 +100,36 @@ type TypeScriptRenderer() =
         sb.AppendLine("}") |> ignore
 
         sb.ToString()
+        
+    let renderType (t : Type) : string =
+        match TypeKind.fromType t with
+        | TypeKind.Record -> renderRecord t
+        | TypeKind.Union -> renderUnion t
+        | TypeKind.Enum -> renderEnum t
+        | _ -> failwith "Unsupported type"
 
     interface IRenderer with
 
-        member this.renderType (t : Type) : string =
-            match TypeKind.fromType t with
-            | TypeKind.Record -> renderRecord t
-            | TypeKind.Union -> renderUnion t
-            | TypeKind.Enum -> renderEnum t
-            | _ -> failwith "Unsupported type"
+        member this.renderTypes (types : Type list) : string =
+            let sb = StringBuilder()
+
+            sb.AppendLine("/*") |> ignore
+            sb.AppendLine(" * This file was generated with the Client Generator utility.") |> ignore
+            sb.AppendLine(" * Do not manually edit.") |> ignore
+            sb.AppendLine(" */") |> ignore
+
+            let typesWithKinds = 
+                types
+                |> Seq.map (fun t -> 
+                    let kind = TypeKind.fromType t
+                    (t, kind)
+                )
+                |> Seq.filter (fun (_, kind) -> kind <> TypeKind.Unsupported)
+                |> Seq.sortBy (fun (t, _) -> t.Name)
+                |> Seq.toList
+                
+            for (t, _) in typesWithKinds do
+                let text = renderType t
+                sb.AppendLine(text) |> ignore
+
+            sb.ToString()
