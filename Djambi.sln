@@ -36,6 +36,8 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.integrationTests", "api
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.webClient", "api\tests\api.webClient\api.webClient.fsproj", "{89DE769C-74A3-4988-A5CD-363FA91430A1}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "client-generator", "utils\client-generator\client-generator.fsproj", "{99226CA6-C2A2-47F7-8ED7-DE34189AF634}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -90,6 +92,10 @@ Global
 		{89DE769C-74A3-4988-A5CD-363FA91430A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{89DE769C-74A3-4988-A5CD-363FA91430A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{89DE769C-74A3-4988-A5CD-363FA91430A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{99226CA6-C2A2-47F7-8ED7-DE34189AF634}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99226CA6-C2A2-47F7-8ED7-DE34189AF634}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99226CA6-C2A2-47F7-8ED7-DE34189AF634}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99226CA6-C2A2-47F7-8ED7-DE34189AF634}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -108,6 +114,7 @@ Global
 		{4B12AF84-7BA7-4E12-9BF2-137FFB87C6C8} = {1A1C3DF9-1667-4BA8-88E9-B6A731A25300}
 		{955D3C4D-6DD5-4C38-80B0-58E3781E7D21} = {1A1C3DF9-1667-4BA8-88E9-B6A731A25300}
 		{89DE769C-74A3-4988-A5CD-363FA91430A1} = {1A1C3DF9-1667-4BA8-88E9-B6A731A25300}
+		{99226CA6-C2A2-47F7-8ED7-DE34189AF634} = {12EE890F-7CFC-4DA3-A880-F94AF30F5F34}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5C5837E5-44E0-4D02-8AD3-DCFB9460E497}
