@@ -31,6 +31,11 @@ type StartGameTests() =
             updatedGame.status |> shouldBe GameStatus.Started
             updatedGame.players.Length |> shouldBe game.parameters.regionCount
             updatedGame.pieces.Length |> shouldBe (9 * game.parameters.regionCount)
+
+            for p in updatedGame.players do
+                p.colorId |> shouldNotBe None
+                p.startingRegion |> shouldNotBe None
+                p.status |> shouldBe PlayerStatus.Alive
         }
 
     [<Fact>]
