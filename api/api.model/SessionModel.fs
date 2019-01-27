@@ -13,10 +13,6 @@ type Session =
         expiresOn : DateTime
     }
 
-type Session with
-    member this.isAdmin() =
-        this.user.isAdmin
-
 [<CLIMutable>]
 type LoginRequest =
     {

@@ -15,7 +15,7 @@ let private isGameViewableByActiveUser (session : Session) (game : Game) : bool 
 let getGames (query : GamesQuery) (session : Session) : Game list AsyncHttpResult =
     GameRepository.getGames query
     |> thenMap (fun games ->
-        if session.isAdmin()
+        if session.user.isAdmin
         then games
         else games |> List.filter (isGameViewableByActiveUser session)
     )
