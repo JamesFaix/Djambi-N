@@ -1,11 +1,11 @@
 import * as React from 'react';
 import ApiClient from '../api/client';
-import { User } from '../api/model';
+import { User, Game } from '../api/model';
 
  export interface GameBoardProps {
     user : User,
     api : ApiClient,
-    gameId : number
+    game : Game
 }
 
  export interface GameBoardState {
@@ -20,11 +20,14 @@ import { User } from '../api/model';
          };
     }
 
-     render() {
+    render() {
         return (
             <div>
+                        Game board
+                <canvas id="board">
 
-             </div>
+                </canvas>
+            </div>
         );
     }
 }

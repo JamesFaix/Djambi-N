@@ -17,7 +17,8 @@ export interface LobbyPageProps {
 export interface LobbyPageState {
     game : Game,
     guestName : string,
-    gameId : number
+    gameId : number,
+    redirectToGame : boolean
 }
 
 export default class LobbyPage extends React.Component<LobbyPageProps, LobbyPageState> {
@@ -27,7 +28,8 @@ export default class LobbyPage extends React.Component<LobbyPageProps, LobbyPage
         this.state = {
             game : null,
             guestName : "",
-            gameId : props.gameId
+            gameId : props.gameId,
+            redirectToGame : false
         };
     }
 
@@ -38,7 +40,7 @@ export default class LobbyPage extends React.Component<LobbyPageProps, LobbyPage
                 this.setState({game : game});
             })
             .catch(reason => {
-                alert("Get lobby failed because " + reason);
+                alert("Get game failed because " + reason);
             });
     }
 
@@ -55,8 +57,8 @@ export default class LobbyPage extends React.Component<LobbyPageProps, LobbyPage
     private startOnClick() {
         this.props.api
             .startGame(this.state.game.id)
-            .then(gameStart => {
-                alert("Game started");
+            .then(_ => {
+                this.setState({ redirectToGame : true });
             })
             .catch(reason => {
                 alert("Game start failed because " + reason);
@@ -135,6 +137,10 @@ export default class LobbyPage extends React.Component<LobbyPageProps, LobbyPage
         //LobbyId is set to null when lobby closed
         if (this.state.gameId === null) {
             return <Redirect to='/'/>;
+        }
+
+        if (this.state.redirectToGame) {
+            return <Redirect to={'/games/' + this.state.gameId}/>;
         }
 
         return (
