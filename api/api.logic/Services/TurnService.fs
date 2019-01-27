@@ -85,7 +85,7 @@ let getCellSelectedEvent(game : Game, cellId : int) (session: Session) : CreateE
                     {
                         kind = EventKind.CellSelected
                         effects = [Effect.currentTurnChanged(game.currentTurn, Some updatedTurn)]
-                        createdByUserId = session.userId                    
+                        createdByUserId = session.user.id                    
                     }
                     ))
 
@@ -294,7 +294,7 @@ let getCommitTurnEvent(game : Game) (session : Session) : CreateEventRequest Htt
         {
             kind = EventKind.TurnCommitted
             effects = effects |> Seq.toList
-            createdByUserId = session.userId
+            createdByUserId = session.user.id
         }
     )
 
@@ -312,6 +312,6 @@ let getResetTurnEvent(game : Game) (session : Session) : CreateEventRequest Http
         {
             kind = EventKind.TurnReset
             effects = [ Effect.currentTurnChanged(game.currentTurn, Some turn) ]
-            createdByUserId = session.userId
+            createdByUserId = session.user.id
         }
     )

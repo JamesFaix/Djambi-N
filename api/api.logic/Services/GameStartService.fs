@@ -9,8 +9,6 @@ open Djambi.Api.Logic.ModelExtensions
 open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
 open Djambi.Api.Logic.Services
 open Djambi.Api.Model
-
-type ArrayList<'a> = System.Collections.Generic.List<'a>
  
 let getGameStartEvent (game : Game) (session : Session) : CreateEventRequest AsyncHttpResult =    
     SecurityService.ensureAdminOrCreator session game
@@ -30,7 +28,7 @@ let getGameStartEvent (game : Game) (session : Session) : CreateEventRequest Asy
                 {
                     kind = EventKind.GameStarted
                     effects = effects
-                    createdByUserId = session.userId
+                    createdByUserId = session.user.id
                 }
             )
     )

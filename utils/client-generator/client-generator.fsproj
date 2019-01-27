@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <RootNamespace>client_generator</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Compile Include="TypeKind.fs" />
+    <Compile Include="IRenderer.fs" />
+    <Compile Include="TypeScriptRenderer.fs" />
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\api\api.logic\api.logic.fsproj" />
+    <ProjectReference Include="..\..\api\api.model\api.model.fsproj" />
+    <ProjectReference Include="..\client-generator.annotations\client-generator.annotations.fsproj" />
+    <ProjectReference Include="..\environment\environment.fsproj" />
+  </ItemGroup>
+
+</Project>

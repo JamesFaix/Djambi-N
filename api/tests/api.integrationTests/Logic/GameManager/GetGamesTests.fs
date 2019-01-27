@@ -17,7 +17,7 @@ type GetGamesTests() =
             //Arrange
             let! (user1, _, game1) = TestUtilities.createuserSessionAndGame(false) |> thenValue
             let! (_, _, game2) = TestUtilities.createuserSessionAndGame(false) |> thenValue
-            let adminSession = { getSessionForUser 3 with isAdmin = true }
+            let adminSession = getSessionForUser 3 |> TestUtilities.setSessionIsAdmin true
             let query = { GamesQuery.empty with createdByUserName = Some user1.name }
 
             //Act
@@ -36,7 +36,7 @@ type GetGamesTests() =
             let request = getGameParameters()
             let session1 = getSessionForUser 1
             let session2 = getSessionForUser 2
-            let adminSession = { getSessionForUser 3 with isAdmin = true }
+            let adminSession = getSessionForUser 3 |> TestUtilities.setSessionIsAdmin true
 
             let! game1 = GameManager.createGame request session1
                           |> AsyncHttpResult.thenValue
@@ -61,7 +61,7 @@ type GetGamesTests() =
             let request = getGameParameters()
             let session1 = getSessionForUser 1
             let session2 = getSessionForUser 2
-            let adminSession = { getSessionForUser 3 with isAdmin = true }
+            let adminSession = getSessionForUser 3 |> TestUtilities.setSessionIsAdmin true
 
             let! game1 = GameManager.createGame request session1
                           |> AsyncHttpResult.thenValue
@@ -85,7 +85,7 @@ type GetGamesTests() =
             //Arrange
             let! (user1, _, game1) = TestUtilities.createuserSessionAndGame(false) |> thenValue
             let! (user2, _, game2) = TestUtilities.createuserSessionAndGame(false) |> thenValue
-            let adminSession = { getSessionForUser 3 with isAdmin = true }
+            let adminSession = getSessionForUser 3 |> TestUtilities.setSessionIsAdmin true
 
             let playerRequest = { getCreatePlayerRequest with userId = Some user2.id }
             let! _ = GameManager.addPlayer game1.id playerRequest adminSession

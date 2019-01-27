@@ -2,7 +2,9 @@
 module Djambi.Api.Model.UserModel
 
 open System
+open Djambi.ClientGenerator.Annotations
 
+[<ClientType(ClientSection.User)>]
 type User =
     {
         id : int
@@ -28,7 +30,8 @@ module UserDetails =
             isAdmin = user.isAdmin
         }
 
-[<CLIMutable>]        
+[<CLIMutable>]  
+[<ClientType(ClientSection.User)>]      
 type CreateUserRequest =
     {
         name : string

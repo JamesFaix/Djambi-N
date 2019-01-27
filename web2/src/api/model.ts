@@ -1,239 +1,244 @@
-//Users
-export interface User {
-    id : number,
-    name : string,
-    isAdmin : boolean
-}
+/*
+ * This file was generated with the Client Generator utility.
+ * Do not manually edit.
+ */
+
+//-------- USER --------
 
 export interface CreateUserRequest {
-    name : string,
-    password : string
+	name : string,
+	password : string,
 }
 
-//Session
+export interface User {
+	id : number,
+	name : string,
+	isAdmin : boolean,
+}
+
+//-------- SESSION --------
+
 export interface LoginRequest {
-    username : string,
-    password : string
+	username : string,
+	password : string,
 }
 
-//Board
-export interface Location {
-    region : number,
-    x : number,
-    y : number
+export interface Session {
+	id : number,
+	user : User,
+	token : string,
+	createdOn : Date,
+	expiresOn : Date,
+}
+
+//-------- BOARD --------
+
+export interface Board {
+	regionCount : number,
+	regionSize : number,
+	cells : Cell[],
 }
 
 export interface Cell {
-    id : number,
-    locations : Location[]
+	id : number,
+	locations : Location[],
 }
 
-export interface Board {
-    regionCount : number,
-    regionSize : number,
-    cells : Cell[]
+export interface Location {
+	region : number,
+	x : number,
+	y : number,
 }
 
-//Players
-export enum PlayerKind {
-    User = "User",
-    Guest = "Guest",
-    Neutral = "Neutral"
-}
+//-------- GAME --------
 
-export enum PlayerStatus {
-    Pending = "Pending",
-    Alive = "Alive",
-    Eliminated = "Eliminated"
-}
-
-export interface Player {
-    id : number,
-    gameId : number,
-    userId : number,
-    kind : PlayerKind,
-    name : string,
-    status : PlayerStatus,
-    colorId : number,
-    startingRegion : number,
-    startingTurnNumber : number
-}
-
-export interface CreatePlayerRequest {
-    userId : number,
-    name : string,
-    kind : PlayerKind
-}
-
-//Pieces
-export enum PieceKind {
-    Chief = "Chief",
-    Thug = "Thug",
-    Reporter = "Reporter",
-    Assassin = "Assassin",
-    Diplomat = "Diplomat",
-    Gravedigger = "Gravedigger",
-    Corpse = "Corpse"
-}
-
-export interface Piece {
-    id : number,
-    kind : PieceKind,
-    playerId : number,
-    originalPlayerId : number,
-    cellId : number
-}
-
-//Selections
-export enum SelectionKind {
-    Subject = "Subject",
-    Move = "Move",
-    Target = "Target",
-    Drop = "Drop",
-    Vacate = "Vacate"
-}
-
-export interface Selection {
-    kind : SelectionKind,
-    cellId : number,
-    pieceId : number
-}
-
-export interface SelectionRequest {
-    cellId : number
-}
-
-//Turns
-export enum TurnStatus {
-    AwaitingConfirmation = "AwaitingConfirmation",
-    AwaitingSelection = "AwaitingSelection"
-}
-
-export interface Turn {
-    status : TurnStatus,
-    selections : Selection[],
-    selectionOptions : number[],
-    requiredSelectionKind : SelectionKind
-}
-
-//Game
-export enum GameStatus {
-    Pending = "Pending",
-    AbortedWhilePending = "AbortedWhilePending",
-    Started = "Started",
-    Aborted = "Aborted",
-    Finished = "Finished"
+export interface Game {
+	id : number,
+	createdOn : Date,
+	createdByUserId : number,
+	parameters : GameParameters,
+	status : GameStatus,
+	players : Player[],
+	pieces : Piece[],
+	turnCycle : number[],
+	currentTurn : Turn,
 }
 
 export interface GameParameters {
-    regionCount : number,
-    description: string,
-    allowGuests : boolean,
-    isPublic : boolean
+	description : string,
+	regionCount : number,
+	isPublic : boolean,
+	allowGuests : boolean,
 }
 
-export interface Game {
-    id : number,
-    createdByUserId : number,
-    createdOn : Date,
-    parameters : GameParameters,
-    status : GameStatus,
-    players : Player[],
-    pieces : Piece[],
-    turnCycle : number[],
-    currentTurn : Turn
+export enum GameStatus {
+	Pending = "Pending",
+	AbortedWhilePending = "AbortedWhilePending",
+	Started = "Started",
+	Aborted = "Aborted",
+	Finished = "Finished",
 }
 
 export interface GamesQuery {
-    gameId : number,
-    descriptionContains : string,
-    createdByUserName : string,
-    playerUserName : string,
-    isPublic : boolean,
-    allowGuests : boolean
+	gameId : number,
+	descriptionContains : string,
+	createdByUserName : string,
+	playerUserName : string,
+	isPublic : boolean,
+	allowGuests : boolean,
 }
 
-export interface CreateGameRequest {
-    parameters : GameParameters,
-    createdByUserId : number
+export interface Piece {
+	id : number,
+	kind : PieceKind,
+	playerId : number,
+	originalPlayerId : number,
+	cellId : number,
 }
 
-export enum EffectKind {
-    GameStatusChanged = "GameStatusChanged",
-    PlayerEliminated = "PlayerEliminated",
-    PiecesOwnershipChanged = "PiecesOwnershipChanged",
-    PieceMoved = "PieceMoved",
-    PieceKilled = "PieceKilled",
-    TurnCycleChanged = "TurnCycleChanged",
-    PlayerOutOfMoves = "PlayerOutOfMoves",
-    PlayerAdded = "PlayerAdded",
-    PlayersRemoved = "PlayersRemoved",
-    ParametersChanged = "ParametersChanged",
-    CurrentTurnChanged = "CurrentTurnChanged"
+export enum PieceKind {
+	Chief = "Chief",
+	Thug = "Thug",
+	Reporter = "Reporter",
+	Assassin = "Assassin",
+	Diplomat = "Diplomat",
+	Gravedigger = "Gravedigger",
+	Corpse = "Corpse",
 }
 
-export type DiffEffect<T> = {
-    kind : EffectKind,
-    oldValue : T,
-    newValue : T
+//-------- PLAYER --------
+
+export interface CreatePlayerRequest {
+	kind : PlayerKind,
+	userId : number,
+	name : string,
 }
 
-export type ScalarEffect<T> = {
-    kind : EffectKind,
-    value : T
+export interface Player {
+	id : number,
+	gameId : number,
+	userId : number,
+	kind : PlayerKind,
+	name : string,
+	status : PlayerStatus,
+	colorId : number,
+	startingRegion : number,
+	startingTurnNumber : number,
 }
 
-export type DiffWithContextEffect<T, U> = {
-    kind : EffectKind,
-    oldValue : T,
-    newValue : T,
-    context : U
+export enum PlayerKind {
+	User = "User",
+	Guest = "Guest",
+	Neutral = "Neutral",
+}
+
+export enum PlayerStatus {
+	Pending = "Pending",
+	Alive = "Alive",
+	Eliminated = "Eliminated",
+}
+
+//-------- TURN --------
+
+export interface Selection {
+	kind : SelectionKind,
+	cellId : number,
+	pieceId : number,
+}
+
+export enum SelectionKind {
+	Subject = "Subject",
+	Move = "Move",
+	Target = "Target",
+	Drop = "Drop",
+	Vacate = "Vacate",
+}
+
+export interface SelectionRequest {
+	cellId : number,
+}
+
+export interface Turn {
+	status : TurnStatus,
+	selections : Selection[],
+	selectionOptions : number[],
+	requiredSelectionKind : SelectionKind,
+}
+
+export enum TurnStatus {
+	AwaitingSelection = "AwaitingSelection",
+	AwaitingConfirmation = "AwaitingConfirmation",
+}
+
+//-------- EVENTS --------
+
+export interface DiffEffect<a> {
+	kind : EffectKind,
+	oldValue : a,
+	newValue : a,
+}
+
+export interface DiffWithContextEffect<a, b> {
+	kind : EffectKind,
+	oldValue : a,
+	newValue : a,
+	context : b,
 }
 
 export type Effect =
-    DiffEffect<GameStatus> |
-    DiffEffect<number[]> |
-    DiffEffect<GameParameters> |
-    ScalarEffect<number> |
-    ScalarEffect<number[]> |
-    ScalarEffect<CreatePlayerRequest> |
-    DiffWithContextEffect<number, number[]> |
-    DiffWithContextEffect<number, number> |
-    DiffEffect<Turn>
+	DiffEffect<GameStatus> |
+	DiffEffect<number[]> |
+	DiffEffect<GameParameters> |
+	ScalarEffect<number> |
+	ScalarEffect<number> |
+	ScalarEffect<number[]> |
+	ScalarEffect<number> |
+	ScalarEffect<CreatePlayerRequest> |
+	DiffWithContextEffect<number, number[]> |
+	DiffWithContextEffect<number, number> |
+	DiffEffect<Turn>
 
-export enum EventKind {
-    GameParametersChanged = "GameParametersChanged",
-    GameCanceled = "GameCanceled",
-    PlayerJoined = "PlayerJoined",
-    PlayerEjected = "PlayerEjected",
-    PlayerQuit = "PlayerQuit",
-    GameStarted = "GameStarted",
-    TurnCommitted = "TurnCommitted",
-    TurnReset = "TurnReset",
-    CellSelected = "CellSelected"
+export enum EffectKind {
+	GameStatusChanged = "GameStatusChanged",
+	PlayerEliminated = "PlayerEliminated",
+	PiecesOwnershipChanged = "PiecesOwnershipChanged",
+	PieceMoved = "PieceMoved",
+	PieceKilled = "PieceKilled",
+	TurnCycleChanged = "TurnCycleChanged",
+	PlayerOutOfMoves = "PlayerOutOfMoves",
+	PlayerAdded = "PlayerAdded",
+	PlayersRemoved = "PlayersRemoved",
+	ParametersChanged = "ParametersChanged",
+	CurrentTurnChanged = "CurrentTurnChanged",
 }
 
 export interface Event {
-    id : number
-    createdOn : Date,
-    createdByUserId : number
-    kind : EventKind,
-    effects : Effect[]
+	id : number,
+	createdByUserId : number,
+	createdOn : Date,
+	kind : EventKind,
+	effects : Effect[],
+}
+
+export enum EventKind {
+	GameParametersChanged = "GameParametersChanged",
+	GameCanceled = "GameCanceled",
+	PlayerJoined = "PlayerJoined",
+	PlayerEjected = "PlayerEjected",
+	PlayerQuit = "PlayerQuit",
+	GameStarted = "GameStarted",
+	TurnCommitted = "TurnCommitted",
+	TurnReset = "TurnReset",
+	CellSelected = "CellSelected",
+}
+
+export interface ScalarEffect<a> {
+	kind : EffectKind,
+	value : a,
 }
 
 export interface StateAndEventResponse {
-    game : Game,
-    event : Event
+	game : Game,
+	event : Event,
 }
 
-export enum ResultsDirection {
-    Ascending = "Ascending",
-    Descending = "Descending"
-}
-
-export interface EventsQuery {
-    maxResults : number,
-    direction : ResultsDirection,
-    thresholdTime : Date,
-    thresholdEventId : number
-}
