@@ -7,14 +7,15 @@ open Djambi.Api.Model
 open Djambi.Api.Db.Repositories
 
 let private isGameViewableByActiveUser (session : Session) (game : Game) : bool =
+    let self = session.user
     game.parameters.isPublic
-    || game.createdByUserId = session.userId
-    || game.players |> List.exists(fun p -> p.userId = Some session.userId)
+    || game.createdByUserId = self.id
+    || game.players |> List.exists(fun p -> p.userId = Some self.id)
 
 let getGames (query : GamesQuery) (session : Session) : Game list AsyncHttpResult =
     GameRepository.getGames query
     |> thenMap (fun games ->
-        if session.isAdmin
+        if session.isAdmin()
         then games
         else games |> List.filter (isGameViewableByActiveUser session)
     )

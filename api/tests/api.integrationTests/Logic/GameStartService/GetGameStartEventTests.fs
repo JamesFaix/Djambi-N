@@ -36,8 +36,7 @@ type GetGameStartEventTests() =
         task {
             //Arrange            
             let! (user, session, game) = createUserSessionAndGameWith3Players() |> thenValue
-
-            let session = { session with userId = user.id+1 }
+            let session = session |> TestUtilities.setSessionUserId (session.user.id+1)
 
             //Act
             let! result = GameStartService.getGameStartEvent game session
@@ -64,8 +63,8 @@ type GetGameStartEventTests() =
         task {
             //Arrange
             let! (user, session, game) = createUserSessionAndGameWith3Players() |> thenValue
-            
-            let session = { session with userId = user.id+1; isAdmin = true }
+            let session = session |> TestUtilities.setSessionUserId (session.user.id+1)
+                                  |> TestUtilities.setSessionIsAdmin true
 
             //Act
             let! event = GameStartService.getGameStartEvent game session |> thenValue
@@ -86,8 +85,6 @@ type GetGameStartEventTests() =
         task {
             //Arrange
             let! (user, session, game) = createUserSessionAndGameWith3Players() |> thenValue
-            
-            let session = { session with userId = user.id }
 
             //Act
             let! event = GameStartService.getGameStartEvent game session |> thenValue

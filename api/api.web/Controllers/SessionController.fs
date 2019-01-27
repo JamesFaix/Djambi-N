@@ -9,14 +9,14 @@ open Djambi.Api.Model.SessionModel
 open Djambi.Api.Web
 open Djambi.Api.Web.HttpUtility
 
-let appendCookie (ctx : HttpContext) (sessionToken : string, expiration : DateTime) =
+let appendCookie (ctx : HttpContext) (token : string, expiration : DateTime) =
     let cookieOptions = new CookieOptions()
     cookieOptions.Domain <- "localhost" //TODO: Move this to a config file
     cookieOptions.Path <- "/"
     cookieOptions.Secure <- false
     cookieOptions.HttpOnly <- true
     cookieOptions.Expires <- DateTimeOffset(expiration) |> Nullable.ofValue
-    ctx.Response.Cookies.Append(cookieName, sessionToken, cookieOptions);
+    ctx.Response.Cookies.Append(cookieName, token, cookieOptions);
 
 let openSession : HttpHandler =
     let func (ctx : HttpContext) =
@@ -26,9 +26,8 @@ let openSession : HttpHandler =
             | Some s -> SessionManager.closeSession s
             | None -> okTask ()
     
-            |> thenBindAsync (fun _ -> 
-                SessionManager.openSession(request, appendCookie ctx)
-            )
+            |> thenBindAsync (fun _ -> SessionManager.openSession request)
+            |> thenDo (fun session -> appendCookie ctx (session.token, session.expiresOn))
         )
     handle func
 

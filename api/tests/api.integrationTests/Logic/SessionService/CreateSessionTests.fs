@@ -25,7 +25,7 @@ type CreateSessionTests() =
                            |> thenValue
 
             //Assert
-            session.userId |> shouldBe user.id
+            session.user.id |> shouldBe user.id
             session.id |> shouldNotBe 0
             session.token.Length |> shouldBeAtLeast 1
         }

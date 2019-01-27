@@ -24,6 +24,20 @@ module AsyncHttpResult =
 
         t |> Task.map (Result.bind projection)
 
+    let thenDo
+        (action : 'a -> Unit)
+        (t : 'a AsyncHttpResult) 
+        : 'a AsyncHttpResult =
+
+        task {
+            let! result = t
+            match result with
+            | Ok x -> 
+                action x
+                return result
+            | _ -> return result
+        }
+
     let thenBindAsync
         (projection : 'a -> 'b AsyncHttpResult)
         (t : 'a AsyncHttpResult)

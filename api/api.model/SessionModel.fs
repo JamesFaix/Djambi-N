@@ -2,16 +2,20 @@
 module Djambi.Api.Model.SessionModel
 
 open System
-    
+open Djambi.Api.Model
+
 type Session =
     {
         id : int
-        userId : int
+        user : User
         token : string
         createdOn : DateTime
         expiresOn : DateTime
-        isAdmin : bool
     }
+
+type Session with
+    member this.isAdmin() =
+        this.user.isAdmin
 
 [<CLIMutable>]
 type LoginRequest =

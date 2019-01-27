@@ -21,5 +21,5 @@ let getUsers (session : Session) : User list AsyncHttpResult =
     |> thenMap (List.map UserDetails.hideDetails)
 
 let getCurrentUser (session : Session) : User AsyncHttpResult =
-    UserService.getUser session.userId session
+    UserService.getUser session.user.id session
     |> thenMap UserDetails.hideDetails
