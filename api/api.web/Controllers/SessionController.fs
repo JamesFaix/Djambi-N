@@ -21,12 +21,12 @@ let appendCookie (ctx : HttpContext) (token : string, expiration : DateTime) =
 let openSession : HttpHandler =
     let func (ctx : HttpContext) =
         getSessionOptionAndModelFromContext<LoginRequest> ctx
-        |> thenBindAsync (fun (request, session) -> 
+        |> thenBindAsync (fun (request, session) ->
             match session with
-            | Some s -> SessionManager.closeSession s
+            | Some s -> SessionManager.logout s
             | None -> okTask ()
-    
-            |> thenBindAsync (fun _ -> SessionManager.openSession request)
+
+            |> thenBindAsync (fun _ -> SessionManager.login request)
             |> thenDo (fun session -> appendCookie ctx (session.token, session.expiresOn))
         )
     handle func
@@ -37,6 +37,6 @@ let closeSession : HttpHandler =
         appendCookie ctx ("", DateTime.MinValue)
 
         getSessionFromContext ctx
-        |> thenBindAsync SessionManager.closeSession
+        |> thenBindAsync SessionManager.logout
 
     handle func

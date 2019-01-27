@@ -4,11 +4,14 @@ open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Logic.Services
 open Djambi.Api.Model
+open Djambi.ClientGenerator.Annotations
 
-let openSession (request : LoginRequest) : Session AsyncHttpResult =
+[<ClientFunction(HttpMethod.Post, "/sessions", ClientSection.Session)>]
+let login (request : LoginRequest) : Session AsyncHttpResult =
     SessionService.openSession request
     |> thenReplaceError 409 (HttpException(409, "Already signed in."))
 
-let closeSession (session : Session) : Unit AsyncHttpResult =
+[<ClientFunction(HttpMethod.Delete, "/sessions", ClientSection.Session)>]
+let logout (session : Session) : Unit AsyncHttpResult =
     SessionService.closeSession session
     |> thenMap ignore

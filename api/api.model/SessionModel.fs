@@ -3,7 +3,9 @@ module Djambi.Api.Model.SessionModel
 
 open System
 open Djambi.Api.Model
+open Djambi.ClientGenerator.Annotations
 
+[<ClientType(ClientSection.Session)>]
 type Session =
     {
         id : int
@@ -14,6 +16,7 @@ type Session =
     }
 
 [<CLIMutable>]
+[<ClientType(ClientSection.Session)>]
 type LoginRequest =
     {
         username : string

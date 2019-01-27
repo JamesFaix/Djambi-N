@@ -1,106 +1,137 @@
-import * as Model from './model';
-import Environment from "../environment";
+/*
+ * This file was generated with the Client Generator utility.
+ * Do not manually edit.
+ */
 
-enum HttpMethod {
-    Get = "GET",
-    Put = "PUT",
-    Post = "POST",
-    Delete = "DELETE"
-}
+import * as Model from './model';
+import {ApiClientCore, HttpMethod} from './clientCore';
 
 export default class ApiClient {
 
-    private async sendRequest<TBody, TResponse>(
-        method : HttpMethod,
-        route : string,
-        body : TBody = null)
-        : Promise<TResponse> {
+//-------- USER --------
 
-        const url = Environment.apiAddress() + route;
-        const endpointDescription = method.toString() + " " + route
+	async createUser(request : Model.CreateUserRequest) : Promise<Model.User> {
+		const route = "/users";
+		return await ApiClientCore.sendRequest<Model.CreateUserRequest, Model.User>(
+			HttpMethod.Post, route, request);
+	}
 
-        const fetchParams : RequestInit = {
-            method: method.toString(),
-            credentials: "include",
-            mode: "cors"
-        };
+	async deleteUser(userId : number) : Promise<{}> {
+		const route = "/users/" + userId + "";
+		return await ApiClientCore.sendRequest<{}, {}>(
+			HttpMethod.Delete, route);
+	}
 
-        if (body !== null) {
-            fetchParams.headers=  {
-                "Content-Type": "application/json",
-            };
-            fetchParams.body = JSON.stringify(body);
-        }
+	async getCurrentUser() : Promise<Model.User> {
+		const route = "/users/current";
+		return await ApiClientCore.sendRequest<{}, Model.User>(
+			HttpMethod.Get, route);
+	}
 
-        return await fetch(url, fetchParams)
-            .then(async response => {
-                if (!response.ok){
-                    return response.json()
-                        .then(errorMessage => {
-                            console.log(endpointDescription + " failed (" + errorMessage + ")");
-                            return null;
+	async getUser(userId : number) : Promise<Model.User> {
+		const route = "/users/" + userId + "";
+		return await ApiClientCore.sendRequest<{}, Model.User>(
+			HttpMethod.Get, route);
+	}
 
-                        });
-                } else {
-                    console.log(endpointDescription + " succeeded");
-                    return await response.json();
-                }
-            })
-            .catch(reason => {
-                console.log(reason);
-            });
-    }
+	async getUsers() : Promise<Model.User[]> {
+		const route = "/users";
+		return await ApiClientCore.sendRequest<{}, Model.User[]>(
+			HttpMethod.Get, route);
+	}
 
-    //Users
-    async getCurrentUser() : Promise<Model.User> {
-        return await this.sendRequest<{}, Model.User>(
-            HttpMethod.Get, "/users/current");
-    }
+//-------- SESSION --------
 
-    async createUser(request : Model.CreateUserRequest) : Promise<Model.User> {
-        return await this.sendRequest<Model.CreateUserRequest, Model.User>(
-            HttpMethod.Post, "/users", request);
-    }
+	async login(request : Model.LoginRequest) : Promise<Model.Session> {
+		const route = "/sessions";
+		return await ApiClientCore.sendRequest<Model.LoginRequest, Model.Session>(
+			HttpMethod.Post, route, request);
+	}
 
-    //Session
-    async login(request : Model.LoginRequest) : Promise<Model.Session> {
-        return await this.sendRequest<Model.LoginRequest, Model.Session>(
-            HttpMethod.Post, "/sessions", request);
-    }
+	async logout() : Promise<{}> {
+		const route = "/sessions";
+		return await ApiClientCore.sendRequest<{}, {}>(
+			HttpMethod.Delete, route);
+	}
 
-    async logout() : Promise<{}> {
-        return await this.sendRequest<{}, {}>(
-            HttpMethod.Delete, "/sessions");
-    }
+//-------- GAME --------
 
-    //Game
-    async createGame(request : Model.GameParameters) : Promise<Model.Game> {
-        return await this.sendRequest<Model.GameParameters, Model.Game>(
-            HttpMethod.Post, "/games", request);
-    }
+	async createGame(parameters : Model.GameParameters) : Promise<Model.Game> {
+		const route = "/games";
+		return await ApiClientCore.sendRequest<Model.GameParameters, Model.Game>(
+			HttpMethod.Post, route, parameters);
+	}
 
-    async getGame(gameId : number) : Promise<Model.Game> {
-        return await this.sendRequest<{}, Model.Game>(
-            HttpMethod.Get, "/games/" + gameId);
-    }
+	async getGame(gameId : number) : Promise<Model.Game> {
+		const route = "/games/" + gameId + "";
+		return await ApiClientCore.sendRequest<{}, Model.Game>(
+			HttpMethod.Get, route);
+	}
 
-    async getGames(query : Model.GamesQuery) : Promise<Model.Game[]> {
-        return await this.sendRequest<Model.GamesQuery, Model.Game[]>(
-            HttpMethod.Post, "/games/query", query);
-    }
+	async getGames(query : Model.GamesQuery) : Promise<Model.Game[]> {
+		const route = "/games/query";
+		return await ApiClientCore.sendRequest<Model.GamesQuery, Model.Game[]>(
+			HttpMethod.Post, route, query);
+	}
 
-    async removePlayer(gameId : number, playerId : number) : Promise<Model.StateAndEventResponse> {
-        return await this.sendRequest<{}, Model.StateAndEventResponse>(
-            HttpMethod.Delete, "/games/" + gameId + "/players/" + playerId);
-    }
+	async startGame(gameId : number) : Promise<Model.StateAndEventResponse> {
+		const route = "/games/" + gameId + "/start-request";
+		return await ApiClientCore.sendRequest<{}, Model.StateAndEventResponse>(
+			HttpMethod.Post, route);
+	}
 
-    async addPlayer(gameId : number, request : Model.CreatePlayerRequest) : Promise<Model.StateAndEventResponse> {
-        return await this.sendRequest<Model.CreatePlayerRequest, Model.StateAndEventResponse>(
-            HttpMethod.Post, "/games/" + gameId + "/players", request);
-    }
+	async updateGameParameters(gameId : number, parameters : Model.GameParameters) : Promise<Model.StateAndEventResponse> {
+		const route = "/games/" + gameId + "/parameters";
+		return await ApiClientCore.sendRequest<Model.GameParameters, Model.StateAndEventResponse>(
+			HttpMethod.Put, route, parameters);
+	}
 
-    async startGame(gameId : number) : Promise<Model.StateAndEventResponse> {
-        return await this.sendRequest<{}, Model.StateAndEventResponse>(
-            HttpMethod.Post, "/games/" + gameId + "/start-request");
-    }
+//-------- PLAYER --------
+
+	async addPlayer(gameId : number, request : Model.CreatePlayerRequest) : Promise<Model.StateAndEventResponse> {
+		const route = "/games/" + gameId + "/players";
+		return await ApiClientCore.sendRequest<Model.CreatePlayerRequest, Model.StateAndEventResponse>(
+			HttpMethod.Post, route, request);
+	}
+
+	async removePlayer(gameId : number, playerId : number) : Promise<Model.StateAndEventResponse> {
+		const route = "/games/" + gameId + "/players/" + playerId + "";
+		return await ApiClientCore.sendRequest<{}, Model.StateAndEventResponse>(
+			HttpMethod.Delete, route);
+	}
+
+//-------- TURN --------
+
+	async commitTurn(gameId : number) : Promise<Model.StateAndEventResponse> {
+		const route = "/games/" + gameId + "/current-turn/commit-request";
+		return await ApiClientCore.sendRequest<{}, Model.StateAndEventResponse>(
+			HttpMethod.Post, route);
+	}
+
+	async resetTurn(gameId : number) : Promise<Model.StateAndEventResponse> {
+		const route = "/games/" + gameId + "/current-turn/reset-request";
+		return await ApiClientCore.sendRequest<{}, Model.StateAndEventResponse>(
+			HttpMethod.Post, route);
+	}
+
+	async selectCell(gameId : number, cellId : number) : Promise<Model.StateAndEventResponse> {
+		const route = "/games/" + gameId + "/current-turn/selection-request";
+		return await ApiClientCore.sendRequest<number, Model.StateAndEventResponse>(
+			HttpMethod.Post, route, cellId);
+	}
+
+//-------- BOARD --------
+
+	async getBoard(regionCount : number) : Promise<Model.Board> {
+		const route = "/boards/" + regionCount + "";
+		return await ApiClientCore.sendRequest<{}, Model.Board>(
+			HttpMethod.Get, route);
+	}
+
+	async getCellPaths(regionCount : number, cellId : number) : Promise<number[][]> {
+		const route = "/boards/" + regionCount + "/cells/" + cellId + "/paths";
+		return await ApiClientCore.sendRequest<{}, number[][]>(
+			HttpMethod.Get, route);
+	}
+
 }
