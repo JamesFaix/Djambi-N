@@ -4,19 +4,19 @@ module Djambi.Api.Model.GameModel
 open System
 open Djambi.ClientGenerator.Annotations
 
-[<ClientType>]
+[<ClientType(ClientSection.Player)>]
 type PlayerKind =
     | User
     | Guest
     | Neutral
     
-[<ClientType>]
+[<ClientType(ClientSection.Player)>]
 type PlayerStatus =
     | Pending
     | Alive
     | Eliminated
     
-[<ClientType>]
+[<ClientType(ClientSection.Player)>]
 type Player =
     {
         id : int
@@ -30,7 +30,7 @@ type Player =
         startingTurnNumber : int option
     }
     
-[<ClientType>]
+[<ClientType(ClientSection.Game)>]
 type PieceKind =
     | Chief
     | Thug
@@ -40,7 +40,7 @@ type PieceKind =
     | Gravedigger
     | Corpse
 
-[<ClientType>]
+[<ClientType(ClientSection.Game)>]
 type Piece =
     {
         id : int
@@ -50,7 +50,7 @@ type Piece =
         cellId : int
     }
     
-[<ClientType>]
+[<ClientType(ClientSection.Turn)>]
 type SelectionKind =
     | Subject
     | Move
@@ -58,7 +58,7 @@ type SelectionKind =
     | Drop
     | Vacate
     
-[<ClientType>]
+[<ClientType(ClientSection.Turn)>]
 type Selection =
     {
         kind : SelectionKind
@@ -109,12 +109,12 @@ module Selection =
             pieceId = None
         }
 
-[<ClientType>]
+[<ClientType(ClientSection.Turn)>]
 type TurnStatus =
     | AwaitingSelection
     | AwaitingConfirmation
 
-[<ClientType>]
+[<ClientType(ClientSection.Turn)>]
 type Turn =
     {
         status : TurnStatus
@@ -132,7 +132,7 @@ module Turn =
             requiredSelectionKind = Some Subject
         }
 
-[<ClientType>]
+[<ClientType(ClientSection.Game)>]
 type GameStatus =
     | Pending
     | AbortedWhilePending
@@ -141,7 +141,7 @@ type GameStatus =
     | Finished
     
 [<CLIMutable>]
-[<ClientType>]
+[<ClientType(ClientSection.Game)>]
 type GameParameters =
     {
         description : string option
@@ -150,7 +150,7 @@ type GameParameters =
         allowGuests : bool
     }
     
-[<ClientType>]
+[<ClientType(ClientSection.Game)>]
 type Game =
     {
         id : int

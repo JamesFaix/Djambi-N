@@ -5,7 +5,7 @@ open System
 open Djambi.ClientGenerator.Annotations
 
 [<CLIMutable>]
-[<ClientType>]
+[<ClientType(ClientSection.Player)>]
 type CreatePlayerRequest = 
     {
         kind : PlayerKind
@@ -37,7 +37,7 @@ module CreatePlayerRequest =
         }   
         
 [<CLIMutable>]
-[<ClientType>]
+[<ClientType(ClientSection.Game)>]
 type GamesQuery =
     {
         gameId : int option
@@ -61,7 +61,7 @@ module GamesQuery =
         }
 
 [<CLIMutable>]
-[<ClientType>]
+[<ClientType(ClientSection.Turn)>]
 type SelectionRequest =
     {
         cellId : int

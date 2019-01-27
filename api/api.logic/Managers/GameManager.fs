@@ -13,7 +13,7 @@ let private isGameViewableByActiveUser (session : Session) (game : Game) : bool 
     || game.createdByUserId = self.id
     || game.players |> List.exists(fun p -> p.userId = Some self.id)
 
-[<ClientFunction(HttpMethod.Post, "/games/query")>]
+[<ClientFunction(HttpMethod.Post, "/games/query", ClientSection.Game)>]
 let getGames (query : GamesQuery) (session : Session) : Game list AsyncHttpResult =
     GameRepository.getGames query
     |> thenMap (fun games ->
@@ -23,7 +23,7 @@ let getGames (query : GamesQuery) (session : Session) : Game list AsyncHttpResul
     )
 
 //TODO: Requires integration tests
-[<ClientFunction(HttpMethod.Get, "/games/%i")>]
+[<ClientFunction(HttpMethod.Get, "/games/%i", ClientSection.Game)>]
 let getGame (gameId : int) (session : Session) : Game AsyncHttpResult =
     GameRepository.getGame gameId
     |> thenBind (fun game ->
@@ -32,7 +32,7 @@ let getGame (gameId : int) (session : Session) : Game AsyncHttpResult =
         else Error <| HttpException(404, "Game not found.")        
     )
     
-[<ClientFunction(HttpMethod.Post, "/games")>]
+[<ClientFunction(HttpMethod.Post, "/games", ClientSection.Game)>]
 let createGame (parameters : GameParameters) (session : Session) : Game AsyncHttpResult =
     GameCrudService.createGame parameters session
 
@@ -57,30 +57,30 @@ let private processEventAsync (gameId : int) (getCreateEventRequest : Game -> Cr
     )
 
 //TODO: Requires integration tests
-[<ClientFunction(HttpMethod.Put, "/games/%i/parameters")>]
+[<ClientFunction(HttpMethod.Put, "/games/%i/parameters", ClientSection.Game)>]
 let updateGameParameters (gameId : int) (parameters : GameParameters) (session : Session) : StateAndEventResponse AsyncHttpResult =
     processEvent gameId (fun game -> GameCrudService.getUpdateGameParametersEvent (game, parameters) session)
     
-[<ClientFunction(HttpMethod.Post, "/games/%i/players")>]
+[<ClientFunction(HttpMethod.Post, "/games/%i/players", ClientSection.Player)>]
 let addPlayer (gameId : int) (request : CreatePlayerRequest) (session : Session) : StateAndEventResponse AsyncHttpResult =
     processEvent gameId (fun game -> PlayerService.getAddPlayerEvent (game, request) session)
 
-[<ClientFunction(HttpMethod.Delete, "/games/%i/players/%i")>]
+[<ClientFunction(HttpMethod.Delete, "/games/%i/players/%i", ClientSection.Player)>]
 let removePlayer (gameId : int, playerId : int) (session : Session) : StateAndEventResponse AsyncHttpResult =
     processEvent gameId (fun game -> PlayerService.getRemovePlayerEvent (game, playerId) session)
 
-[<ClientFunction(HttpMethod.Post, "/games/%i/start-request")>]
+[<ClientFunction(HttpMethod.Post, "/games/%i/start-request", ClientSection.Game)>]
 let startGame (gameId: int) (session : Session) : StateAndEventResponse AsyncHttpResult =
     processEventAsync gameId (fun game -> GameStartService.getGameStartEvent game session)
 
-[<ClientFunction(HttpMethod.Post, "/games/%i/current-turn/selection-request")>]
+[<ClientFunction(HttpMethod.Post, "/games/%i/current-turn/selection-request", ClientSection.Turn)>]
 let selectCell (gameId : int, cellId : int) (session : Session) : StateAndEventResponse AsyncHttpResult =
     processEvent gameId (fun game -> TurnService.getCellSelectedEvent (game, cellId) session)
 
-[<ClientFunction(HttpMethod.Post, "/games/%i/current-turn/reset-request")>]
+[<ClientFunction(HttpMethod.Post, "/games/%i/current-turn/reset-request", ClientSection.Turn)>]
 let resetTurn (gameId : int) (session : Session) : StateAndEventResponse AsyncHttpResult =
     processEvent gameId (fun game -> TurnService.getResetTurnEvent game session)
 
-[<ClientFunction(HttpMethod.Post, "/games/%i/current-turn/commit-request")>]
+[<ClientFunction(HttpMethod.Post, "/games/%i/current-turn/commit-request", ClientSection.Turn)>]
 let commitTurn (gameId : int) (session : Session) : StateAndEventResponse AsyncHttpResult =
     processEvent gameId (fun game -> TurnService.getCommitTurnEvent game session)

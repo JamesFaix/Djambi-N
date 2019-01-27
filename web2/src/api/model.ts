@@ -3,6 +3,36 @@
  * Do not manually edit.
  */
 
+//-------- USER --------
+
+export interface CreateUserRequest {
+	name : string,
+	password : string,
+}
+
+export interface User {
+	id : number,
+	name : string,
+	isAdmin : boolean,
+}
+
+//-------- SESSION --------
+
+export interface LoginRequest {
+	username : string,
+	password : string,
+}
+
+export interface Session {
+	id : number,
+	user : User,
+	token : string,
+	createdOn : Date,
+	expiresOn : Date,
+}
+
+//-------- BOARD --------
+
 export interface Board {
 	regionCount : number,
 	regionSize : number,
@@ -14,16 +44,133 @@ export interface Cell {
 	locations : Location[],
 }
 
+export interface Location {
+	region : number,
+	x : number,
+	y : number,
+}
+
+//-------- GAME --------
+
+export interface Game {
+	id : number,
+	createdOn : Date,
+	createdByUserId : number,
+	parameters : GameParameters,
+	status : GameStatus,
+	players : Player[],
+	pieces : Piece[],
+	turnCycle : number[],
+	currentTurn : Turn,
+}
+
+export interface GameParameters {
+	description : string,
+	regionCount : number,
+	isPublic : boolean,
+	allowGuests : boolean,
+}
+
+export enum GameStatus {
+	Pending = "Pending",
+	AbortedWhilePending = "AbortedWhilePending",
+	Started = "Started",
+	Aborted = "Aborted",
+	Finished = "Finished",
+}
+
+export interface GamesQuery {
+	gameId : number,
+	descriptionContains : string,
+	createdByUserName : string,
+	playerUserName : string,
+	isPublic : boolean,
+	allowGuests : boolean,
+}
+
+export interface Piece {
+	id : number,
+	kind : PieceKind,
+	playerId : number,
+	originalPlayerId : number,
+	cellId : number,
+}
+
+export enum PieceKind {
+	Chief = "Chief",
+	Thug = "Thug",
+	Reporter = "Reporter",
+	Assassin = "Assassin",
+	Diplomat = "Diplomat",
+	Gravedigger = "Gravedigger",
+	Corpse = "Corpse",
+}
+
+//-------- PLAYER --------
+
 export interface CreatePlayerRequest {
 	kind : PlayerKind,
 	userId : number,
 	name : string,
 }
 
-export interface CreateUserRequest {
+export interface Player {
+	id : number,
+	gameId : number,
+	userId : number,
+	kind : PlayerKind,
 	name : string,
-	password : string,
+	status : PlayerStatus,
+	colorId : number,
+	startingRegion : number,
+	startingTurnNumber : number,
 }
+
+export enum PlayerKind {
+	User = "User",
+	Guest = "Guest",
+	Neutral = "Neutral",
+}
+
+export enum PlayerStatus {
+	Pending = "Pending",
+	Alive = "Alive",
+	Eliminated = "Eliminated",
+}
+
+//-------- TURN --------
+
+export interface Selection {
+	kind : SelectionKind,
+	cellId : number,
+	pieceId : number,
+}
+
+export enum SelectionKind {
+	Subject = "Subject",
+	Move = "Move",
+	Target = "Target",
+	Drop = "Drop",
+	Vacate = "Vacate",
+}
+
+export interface SelectionRequest {
+	cellId : number,
+}
+
+export interface Turn {
+	status : TurnStatus,
+	selections : Selection[],
+	selectionOptions : number[],
+	requiredSelectionKind : SelectionKind,
+}
+
+export enum TurnStatus {
+	AwaitingSelection = "AwaitingSelection",
+	AwaitingConfirmation = "AwaitingConfirmation",
+}
+
+//-------- EVENTS --------
 
 export interface DiffEffect<a> {
 	kind : EffectKind,
@@ -85,146 +232,13 @@ export enum EventKind {
 	CellSelected = "CellSelected",
 }
 
-export interface Game {
-	id : number,
-	createdOn : Date,
-	createdByUserId : number,
-	parameters : GameParameters,
-	status : GameStatus,
-	players : Player[],
-	pieces : Piece[],
-	turnCycle : number[],
-	currentTurn : Turn,
-}
-
-export interface GameParameters {
-	description : string,
-	regionCount : number,
-	isPublic : boolean,
-	allowGuests : boolean,
-}
-
-export enum GameStatus {
-	Pending = "Pending",
-	AbortedWhilePending = "AbortedWhilePending",
-	Started = "Started",
-	Aborted = "Aborted",
-	Finished = "Finished",
-}
-
-export interface GamesQuery {
-	gameId : number,
-	descriptionContains : string,
-	createdByUserName : string,
-	playerUserName : string,
-	isPublic : boolean,
-	allowGuests : boolean,
-}
-
-export interface Location {
-	region : number,
-	x : number,
-	y : number,
-}
-
-export interface LoginRequest {
-	username : string,
-	password : string,
-}
-
-export interface Piece {
-	id : number,
-	kind : PieceKind,
-	playerId : number,
-	originalPlayerId : number,
-	cellId : number,
-}
-
-export enum PieceKind {
-	Chief = "Chief",
-	Thug = "Thug",
-	Reporter = "Reporter",
-	Assassin = "Assassin",
-	Diplomat = "Diplomat",
-	Gravedigger = "Gravedigger",
-	Corpse = "Corpse",
-}
-
-export interface Player {
-	id : number,
-	gameId : number,
-	userId : number,
-	kind : PlayerKind,
-	name : string,
-	status : PlayerStatus,
-	colorId : number,
-	startingRegion : number,
-	startingTurnNumber : number,
-}
-
-export enum PlayerKind {
-	User = "User",
-	Guest = "Guest",
-	Neutral = "Neutral",
-}
-
-export enum PlayerStatus {
-	Pending = "Pending",
-	Alive = "Alive",
-	Eliminated = "Eliminated",
-}
-
 export interface ScalarEffect<a> {
 	kind : EffectKind,
 	value : a,
 }
 
-export interface Selection {
-	kind : SelectionKind,
-	cellId : number,
-	pieceId : number,
-}
-
-export enum SelectionKind {
-	Subject = "Subject",
-	Move = "Move",
-	Target = "Target",
-	Drop = "Drop",
-	Vacate = "Vacate",
-}
-
-export interface SelectionRequest {
-	cellId : number,
-}
-
-export interface Session {
-	id : number,
-	user : User,
-	token : string,
-	createdOn : Date,
-	expiresOn : Date,
-}
-
 export interface StateAndEventResponse {
 	game : Game,
 	event : Event,
-}
-
-export interface Turn {
-	status : TurnStatus,
-	selections : Selection[],
-	selectionOptions : number[],
-	requiredSelectionKind : SelectionKind,
-}
-
-export enum TurnStatus {
-	AwaitingSelection = "AwaitingSelection",
-	AwaitingConfirmation = "AwaitingConfirmation",
-}
-
-export interface User {
-	id : number,
-	name : string,
-	isAdmin : boolean,
 }
 

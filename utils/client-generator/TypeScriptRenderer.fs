@@ -186,6 +186,11 @@ type TypeScriptRenderer() =
           .AppendLine(" * Do not manually edit.")
           .AppendLine(" */") |> ignore
 
+    let addSectionHeader (sb : StringBuilder) (section : ClientSection) : Unit =
+        sb.AppendLine(sprintf "//-------- %s --------" (section.ToString().ToUpper()))
+          .AppendLine("")
+          |> ignore
+
     interface IRenderer with
     
         member this.name
@@ -203,19 +208,29 @@ type TypeScriptRenderer() =
 
             sb.AppendLine() |> ignore
 
-            let typesWithKinds = 
+            let typesGroupedBySection =
                 types
-                |> Seq.map (fun t -> 
+                |> Seq.map (fun t ->
                     let kind = TypeKind.fromType t
-                    (t, kind)
+                    let attr = t.GetCustomAttribute<ClientTypeAttribute>()
+                    (t, attr, kind)
                 )
-                |> Seq.filter (fun (_, kind) -> kind <> TypeKind.Unsupported)
-                |> Seq.sortBy (fun (t, _) -> t.Name)
-                |> Seq.toList
+                |> Seq.filter (fun (_, _, kind) -> kind <> TypeKind.UnionCase) //Exclude the derieved types of union cases
+                |> Seq.groupBy (fun (_, attr, _) -> attr.section)
+                |> Seq.sortBy (fun (sec, _) -> sec)
+                |> Seq.map (fun (sec, tups) -> 
+                    let types =  
+                        tups 
+                        |> Seq.map (fun (t, _, _) -> t) 
+                        |> Seq.sortBy (fun t -> t.Name)                        
+                    (sec, types)
+                )
                 
-            for (t, _) in typesWithKinds do
-                let text = renderTypeDeclaration t
-                sb.AppendLine(text) |> ignore
+            for (section, types) in typesGroupedBySection do
+                addSectionHeader sb section
+                for t in types do
+                    let text = renderTypeDeclaration t
+                    sb.AppendLine(text) |> ignore
 
             sb.ToString()
 
@@ -231,11 +246,26 @@ type TypeScriptRenderer() =
               .AppendLine()
               |> ignore
 
-            let methods = methods |> Seq.sortBy (fun m -> m.Name)
+            let methodsGroupedBySection =
+                methods
+                |> Seq.map (fun m -> 
+                    let attr = m.GetCustomAttribute<ClientFunctionAttribute>()
+                    (m, attr)
+                )
+                |> Seq.groupBy (fun (m, attr) -> attr.section)
+                |> Seq.map (fun (sec, tups) -> 
+                    let methods = 
+                        tups
+                        |> Seq.map (fun (m, _) -> m)
+                        |> Seq.sortBy (fun m -> m.Name)
+                    (sec, methods)
+                )
 
-            for m in methods do
-                let text = renderMethod m
-                sb.AppendLine(text) |> ignore
+            for (section, methods) in methodsGroupedBySection do
+                addSectionHeader sb section
+                for m in methods do
+                    let text = renderMethod m
+                    sb.AppendLine(text) |> ignore
 
             sb.AppendLine("}")
               .ToString()

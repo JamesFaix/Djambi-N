@@ -7,6 +7,7 @@ type TypeKind =
     | Record
     | Enum
     | Union
+    | UnionCase
     | Unsupported
 
 module TypeKind =
@@ -31,6 +32,6 @@ module TypeKind =
             if casesAndFields |> List.forall (fun (_, fields) -> fields |> Seq.isEmpty)
             then TypeKind.Enum
             elif t.IsAbstract then TypeKind.Union //This will only count the union base class
-            else TypeKind.Unsupported //This excludes each case's derived class
+            else TypeKind.UnionCase //This allows excluding each case's derived class
 
         else TypeKind.Unsupported
