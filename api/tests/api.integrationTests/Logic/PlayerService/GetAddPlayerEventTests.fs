@@ -47,12 +47,12 @@ type GetAddPlayerEventTests() =
         task {
             //Arrange
             let! (_, session, game) = createuserSessionAndGame(false) |> thenValue
-
+            let session = session |> TestUtilities.setSessionIsAdmin true
             let! user = createUser() |> thenValue
             let request = CreatePlayerRequest.user user.id
             
             //Act
-            let eventRequest = PlayerService.getAddPlayerEvent (game, request) { session with isAdmin = true } |> Result.value
+            let eventRequest = PlayerService.getAddPlayerEvent (game, request) session |> Result.value
 
             //Assert
             assertSuccess eventRequest request
@@ -63,12 +63,13 @@ type GetAddPlayerEventTests() =
         task {
             //Arrange
             let! (_, session, game) = createuserSessionAndGame(false) |> thenValue
+            let session = session |> TestUtilities.setSessionIsAdmin false
 
             let! user = createUser() |> thenValue
             let request = CreatePlayerRequest.user user.id
 
             //Act
-            let error = PlayerService.getAddPlayerEvent (game, request) { session with isAdmin = false }
+            let error = PlayerService.getAddPlayerEvent (game, request) session
 
             //Assert
             error |> shouldBeError 403 "Cannot add other users to a game."
@@ -79,6 +80,7 @@ type GetAddPlayerEventTests() =
         task {
             //Arrange
             let! (_, session, game) = createuserSessionAndGame(false) |> thenValue
+            let session = session |> TestUtilities.setSessionIsAdmin true
 
             let! user = createUser() |> thenValue
 
@@ -90,7 +92,7 @@ type GetAddPlayerEventTests() =
                 }
 
             //Act
-            let error = PlayerService.getAddPlayerEvent (game, request) { session with isAdmin = true }
+            let error = PlayerService.getAddPlayerEvent (game, request) session
 
             //Assert
             error |> shouldBeError 400 "UserID must be provided when adding a user player."
@@ -101,6 +103,7 @@ type GetAddPlayerEventTests() =
         task {
             //Arrange
             let! (_, session, game) = createuserSessionAndGame(false) |> thenValue
+            let session = session |> TestUtilities.setSessionIsAdmin true
 
             let! user = createUser() |> thenValue
 
@@ -112,7 +115,7 @@ type GetAddPlayerEventTests() =
                 }
 
             //Act
-            let error = PlayerService.getAddPlayerEvent (game, request) { session with isAdmin = true }
+            let error = PlayerService.getAddPlayerEvent (game, request) session
 
             //Assert
             error |> shouldBeError 400 "Cannot provide name when adding a user player."
@@ -123,10 +126,11 @@ type GetAddPlayerEventTests() =
         task {
             //Arrange
             let! (user, session, game) = createuserSessionAndGame(false) |> thenValue
+            let session = session |> TestUtilities.setSessionIsAdmin true
             let request = CreatePlayerRequest.user user.id
 
             //Act
-            let error = PlayerService.getAddPlayerEvent (game, request) { session with isAdmin = true }
+            let error = PlayerService.getAddPlayerEvent (game, request) session
 
             //Assert
             error |> shouldBeError 409 "User is already a player."
@@ -153,12 +157,13 @@ type GetAddPlayerEventTests() =
         task {
             //Arrange
             let! (_, session, game) = createuserSessionAndGame(true) |> thenValue
+            let session = session |> TestUtilities.setSessionIsAdmin true
 
             let! user = createUser() |> thenValue
             let request = CreatePlayerRequest.guest (user.id, "test")
                         
             //Act
-            let eventRequest = PlayerService.getAddPlayerEvent (game, request) { session with isAdmin = true } |> Result.value
+            let eventRequest = PlayerService.getAddPlayerEvent (game, request) session |> Result.value
 
             //Assert
             assertSuccess eventRequest request
@@ -169,12 +174,13 @@ type GetAddPlayerEventTests() =
         task {
             //Arrange
             let! (_, session, game) = createuserSessionAndGame(true) |> thenValue
+            let session = session |> TestUtilities.setSessionIsAdmin false
 
             let! user = createUser() |> thenValue
             let request = CreatePlayerRequest.guest (user.id, "test")
 
             //Act
-            let error = PlayerService.getAddPlayerEvent (game, request) { session with isAdmin = false }
+            let error = PlayerService.getAddPlayerEvent (game, request) session
 
             //Assert
             error |> shouldBeError 403 "Cannot add guests for other users to a game."
@@ -255,10 +261,11 @@ type GetAddPlayerEventTests() =
         task {
             //Arrange
             let! (_, session, game) = createuserSessionAndGame(false) |> thenValue
+            let session = session |> TestUtilities.setSessionIsAdmin true
             let request = CreatePlayerRequest.neutral ("test")
 
             //Act
-            let error = PlayerService.getAddPlayerEvent (game, request) { session with isAdmin = true }
+            let error = PlayerService.getAddPlayerEvent (game, request) session
 
             //Assert
             error |> shouldBeError 400 "Cannot directly add neutral players to a game."

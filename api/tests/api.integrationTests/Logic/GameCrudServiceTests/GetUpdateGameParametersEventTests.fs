@@ -146,8 +146,10 @@ type GetUpdateGameParametersEventTests() =
 
             let newParameters = game.parameters
 
+            let otherSession = session |> TestUtilities.setSessionUserId (session.user.id + 1)
+
             //Act
-            let result = GameCrudService.getUpdateGameParametersEvent (game, newParameters) { session with userId = session.userId + 1 }
+            let result = GameCrudService.getUpdateGameParametersEvent (game, newParameters) otherSession
 
             //Assert
             result |> shouldBeError 403 SecurityService.notAdminOrCreatorErrorMessage

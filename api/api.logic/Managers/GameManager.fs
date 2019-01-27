@@ -8,15 +8,16 @@ open Djambi.Api.Db.Repositories
 open Djambi.ClientGenerator.Annotations
 
 let private isGameViewableByActiveUser (session : Session) (game : Game) : bool =
+    let self = session.user
     game.parameters.isPublic
-    || game.createdByUserId = session.userId
-    || game.players |> List.exists(fun p -> p.userId = Some session.userId)
+    || game.createdByUserId = self.id
+    || game.players |> List.exists(fun p -> p.userId = Some self.id)
 
 [<ClientFunction(HttpMethod.Post, "/games/query")>]
 let getGames (query : GamesQuery) (session : Session) : Game list AsyncHttpResult =
     GameRepository.getGames query
     |> thenMap (fun games ->
-        if session.isAdmin
+        if session.user.isAdmin
         then games
         else games |> List.filter (isGameViewableByActiveUser session)
     )

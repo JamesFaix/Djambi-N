@@ -7,16 +7,17 @@ open Djambi.Api.Db.Repositories
 open Djambi.Api.Model
     
 let createGame (parameters : GameParameters) (session : Session) : Game AsyncHttpResult =
+    let self = session.user
     let gameRequest : CreateGameRequest =   
         {
             parameters = parameters
-            createdByUserId = session.userId
+            createdByUserId = self.id
         }
 
     let playerRequest : CreatePlayerRequest =
         {
             kind = PlayerKind.User
-            userId = Some session.userId
+            userId = Some self.id
             name = None
         }
 
@@ -59,6 +60,6 @@ let getUpdateGameParametersEvent (game : Game, parameters : GameParameters) (ses
         {
             kind = EventKind.GameParametersChanged
             effects = effects |> Seq.toList
-            createdByUserId = session.userId
+            createdByUserId = session.user.id
         }
     )

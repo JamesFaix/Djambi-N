@@ -27,5 +27,5 @@ let getUsers (session : Session) : User list AsyncHttpResult =
     
 [<ClientFunction(HttpMethod.Get, "/users/current")>]
 let getCurrentUser (session : Session) : User AsyncHttpResult =
-    UserService.getUser session.userId session
+    UserService.getUser session.user.id session
     |> thenMap UserDetails.hideDetails

@@ -41,13 +41,14 @@ type RemovePlayerTests() =
 
             let! user = createUser() |> thenValue
             let request = CreatePlayerRequest.user user.id
+            let session = session |> TestUtilities.setSessionIsAdmin true
 
-            let! player = GameManager.addPlayer game.id request { session with isAdmin = true }
+            let! player = GameManager.addPlayer game.id request session
                           |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                           |> thenValue
 
             //Act
-            let! error = GameManager.removePlayer (Int32.MinValue, player.id) { session with isAdmin = true }
+            let! error = GameManager.removePlayer (Int32.MinValue, player.id) session
 
             //Assert
             error |> shouldBeError 404 "Game not found."

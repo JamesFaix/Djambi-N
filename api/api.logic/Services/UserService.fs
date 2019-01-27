@@ -8,7 +8,7 @@ open Djambi.Api.Model
 
 let createUser (request : CreateUserRequest) (session : Session option) : UserDetails AsyncHttpResult =
     match session with
-    | Some s when not s.isAdmin -> errorTask <| HttpException(403, "Cannot create user if logged in.")
+    | Some s when not s.user.isAdmin -> errorTask <| HttpException(403, "Cannot create user if logged in.")
     | _ -> UserRepository.createUser request
 
 let deleteUser (userId : int) (session : Session) : Unit AsyncHttpResult =

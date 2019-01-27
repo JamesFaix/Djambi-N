@@ -7,10 +7,9 @@ open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Db.Repositories
 open Djambi.Api.Model
-
-type ArrayList<'a> = System.Collections.Generic.List<'a>
     
 let getAddPlayerEvent (game : Game, request : CreatePlayerRequest) (session : Session) : CreateEventRequest HttpResult =
+    let self = session.user
     if game.status <> GameStatus.Pending
     then Error <| HttpException(400, "Can only add players to pending games.")
     elif request.name.IsSome 
@@ -27,7 +26,7 @@ let getAddPlayerEvent (game : Game, request : CreatePlayerRequest) (session : Se
             then Error <| HttpException(400, "Cannot provide name when adding a user player.")
             elif game.players |> List.exists (fun p -> p.kind = PlayerKind.User && p.userId = request.userId)
             then Error <| HttpException(409, "User is already a player.")
-            elif not session.isAdmin && request.userId.Value <> session.userId
+            elif not self.isAdmin && request.userId.Value <> self.id
             then Error <| HttpException(403, "Cannot add other users to a game.")
             else Ok ()
 
@@ -38,7 +37,7 @@ let getAddPlayerEvent (game : Game, request : CreatePlayerRequest) (session : Se
             then Error <| HttpException(400, "UserID must be provided when adding a guest player.")
             elif request.name.IsNone
             then Error <| HttpException(400, "Must provide name when adding a guest player.")
-            elif not session.isAdmin && request.userId.Value <> session.userId
+            elif not self.isAdmin && request.userId.Value <> self.id
             then Error <| HttpException(403, "Cannot add guests for other users to a game.")
             else Ok ()
 
@@ -48,11 +47,12 @@ let getAddPlayerEvent (game : Game, request : CreatePlayerRequest) (session : Se
         {
             kind = EventKind.PlayerJoined
             effects = [ Effect.playerAdded request ]
-            createdByUserId = session.userId
+            createdByUserId = self.id
         }
     )
 
 let getRemovePlayerEvent (game : Game, playerId : int) (session : Session) : CreateEventRequest HttpResult =
+    let self = session.user
     match game.status with
     | Aborted | AbortedWhilePending | Finished -> 
         Error <| HttpException(400, "Cannot remove players from finished or aborted games.")
@@ -63,9 +63,9 @@ let getRemovePlayerEvent (game : Game, playerId : int) (session : Session) : Cre
             match player.userId with
             | None -> Error <| HttpException(400, "Cannot remove neutral players from game.")
             | Some x ->
-                if not <| (session.isAdmin
-                    || game.createdByUserId = session.userId
-                    || x = session.userId)
+                if not <| (self.isAdmin
+                    || game.createdByUserId = self.id
+                    || x = self.id)
                 then Error <| HttpException(403, "Cannot remove other users from game.")        
                 else 
                     let effects = new ArrayList<Effect>()
@@ -90,14 +90,14 @@ let getRemovePlayerEvent (game : Game, playerId : int) (session : Session) : Cre
                     else ()
 
                     let kind = 
-                        if player.userId = Some session.userId
+                        if player.userId = Some self.id
                         then EventKind.PlayerQuit
                         else EventKind.PlayerEjected
 
                     {
                         kind = kind
                         effects = effects |> Seq.toList
-                        createdByUserId = session.userId
+                        createdByUserId = self.id
                     }
                     |> Ok
 

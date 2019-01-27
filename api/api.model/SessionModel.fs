@@ -2,16 +2,17 @@
 module Djambi.Api.Model.SessionModel
 
 open System
+open Djambi.Api.Model
 open Djambi.ClientGenerator.Annotations
 
+[<ClientType>]
 type Session =
     {
         id : int
-        userId : int
+        user : User
         token : string
         createdOn : DateTime
         expiresOn : DateTime
-        isAdmin : bool
     }
 
 [<CLIMutable>]

@@ -44,9 +44,9 @@ type AddPlayerTests() =
             //Arrange
             let! (user, session, _) = createuserSessionAndGame(true) |> thenValue
             let request = CreatePlayerRequest.guest (user.id, "test")
-
+            let session = session |> TestUtilities.setSessionIsAdmin true
             //Act
-            let! error = GameManager.addPlayer Int32.MinValue request { session with isAdmin = true }
+            let! error = GameManager.addPlayer Int32.MinValue request session
 
             //Assert
             error |> shouldBeError 404 "Game not found."
