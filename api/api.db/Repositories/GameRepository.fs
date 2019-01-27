@@ -110,6 +110,18 @@ let addPlayer (gameId : int, request : CreatePlayerRequest) : Player AsyncHttpRe
     querySingle<int>(cmd, "Player")
     |> thenBindAsync getPlayer
 
+let getAddFullPlayerCommand (player : Player) : CommandDefinition =
+    let param = DynamicParameters()
+                    .add("GameId", player.gameId)
+                    .add("PlayerKindId", mapPlayerKindToId player.kind)
+                    .addOption("UserId", player.userId)
+                    .addOption("Name", if player.kind = PlayerKind.User then None else Some player.name)
+                    .add("PlayerStatusId", mapPlayerStatusToId player.status)
+                    .addOption("ColorId", player.colorId)
+                    .addOption("StartingRegion", player.startingRegion)
+                    .addOption("StartingTurnNumber", player.startingTurnNumber)
+    proc("Players_Add", param)
+
 let getRemovePlayerCommand (playerId : int) : CommandDefinition = 
     let param = DynamicParameters()
                     .add("PlayerId", playerId)

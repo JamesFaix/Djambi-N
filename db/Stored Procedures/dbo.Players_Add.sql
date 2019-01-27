@@ -2,7 +2,14 @@ CREATE PROCEDURE [dbo].[Players_Add]
 	@GameId INT,
 	@UserId INT,
 	@PlayerKindId TINYINT,
-	@Name NVARCHAR(50)
+	@Name NVARCHAR(50),
+
+	--Default values all assume a player is being added in lobby
+	--Custom values must be set when adding a full neutral player during game start
+	@PlayerStatusId TINYINT = 1, --Pending
+	@ColorId TINYINT = NULL,
+	@StartingRegion TINYINT = NULL,
+	@StartingTurnNumber TINYINT = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -11,12 +18,13 @@ BEGIN
 	 = (SELECT RegionCount FROM Games WHERE GameId = @GameId)
 		THROW 50400, 'Max player count reached.', 1
 
+
 	IF @PlayerKindId = 1 --User
 	BEGIN
-		IF @Name IS NOT NULL
+		DECLARE @UserName NVARCHAR(50) = (SELECT [Name] FROM Users WHERE UserId = @UserId)
+		IF @Name IS NOT NULL AND @Name <> @UserName
 			THROW 50400, 'Cannot set player name if player kind is User.', 1
-
-		SET @Name = (SELECT [Name] FROM Users WHERE UserId = @UserId)
+		SET @Name = @UserName
 	END
 
 	INSERT INTO Players (
@@ -33,10 +41,10 @@ BEGIN
 		@UserId,
 		@PlayerKindId,
 		@Name,
-		1, --Pending
-		NULL,
-		NULL,
-		NULL)
+		@PlayerStatusId,
+		@ColorId,
+		@StartingRegion,
+		@StartingTurnNumber)
 
 	SELECT SCOPE_IDENTITY()
 END
