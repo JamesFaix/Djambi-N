@@ -1,7 +1,6 @@
 ﻿module Djambi.ClientGenerator.Program
 
 open System.IO
-open System.Linq
 open System.Reflection
 open Microsoft.Extensions.Configuration
 open Djambi.ClientGenerator.Annotations
@@ -13,13 +12,9 @@ let renderModel (renderers : IRenderer list, config : IConfigurationRoot, rootPa
 
     let types = 
         assembly.GetTypes()
-        |> Seq.filter (fun t -> 
-            t.GetCustomAttributes()
-            |> Enumerable.OfType<ClientTypeAttribute>
-            |> Enumerable.Any
-        )
+        |> Seq.filter (fun t -> t.GetCustomAttribute<ClientTypeAttribute>() <> null)
         |> Seq.toList
-    
+
     for r in renderers do
         printfn "Rendering %s model..." r.name
         let fullText = r.renderModel types
