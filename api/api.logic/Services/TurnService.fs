@@ -4,34 +4,20 @@ open System.Collections.Generic
 open System.Linq
 open Djambi.Api.Common.Collections
 open Djambi.Api.Common.Control
-open Djambi.Api.Common.Control.AsyncHttpResult
-open Djambi.Api.Db.Repositories
 open Djambi.Api.Logic.ModelExtensions
 open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
 open Djambi.Api.Logic.ModelExtensions.GameModelExtensions
 open Djambi.Api.Model
 
-let private ensureSessionIsAdminOrContainsCurrentPlayer (session : Session) (game : Game) : Game AsyncHttpResult =
-    if session.isAdmin
-    then okTask <| game
-    else
-        GameRepository.getPlayersForGames [game.id]
-        |> thenBind (fun players ->
-            let currentPlayer = players |> List.find (fun p -> p.id = game.turnCycle.Head)
-            match currentPlayer.userId with
-            | Some uId when uId = session.userId -> Ok game
-            | _ -> Error <| HttpException(400, "Cannot perform this action during another player's turn.")
-        )
-
-let getCellSelectedEvent(game : Game, cellId : int) (session: Session) : Event AsyncHttpResult =
-    ensureSessionIsAdminOrContainsCurrentPlayer session game
-    |> thenBindAsync (fun _ ->
+let getCellSelectedEvent(game : Game, cellId : int) (session: Session) : CreateEventRequest HttpResult =
+    SecurityService.ensureAdminOrCurrentPlayer session game
+    |> Result.bind (fun _ ->
         let board = BoardModelUtility.getBoardMetadata game.parameters.regionCount
         match board.cell cellId with
-        | Some _ -> okTask game
-        | None -> errorTask <| HttpException(404, "Cell not found.")
+        | Some _ -> Ok ()
+        | None -> Error <| HttpException(404, "Cell not found.")
     )
-    |> thenBind (fun game ->
+    |> Result.bind (fun _ ->
         let currentTurn = game.currentTurn.Value
         if currentTurn.selectionOptions |> List.contains cellId |> not
         then Error <| HttpException(400, (sprintf "Cell %i is not currently selectable." cellId))
@@ -96,8 +82,11 @@ let getCellSelectedEvent(game : Game, cellId : int) (session: Session) : Event A
                             requiredSelectionKind = requiredSelectionType
                         }
                     
-                    let effects = [Effect.currentTurnChanged(game.currentTurn, Some updatedTurn)]
-                    Event.create(EventKind.CellSelected, effects)
+                    {
+                        kind = EventKind.CellSelected
+                        effects = [Effect.currentTurnChanged(game.currentTurn, Some updatedTurn)]
+                        createdByUserId = session.user.id                    
+                    }
                     ))
 
 let private applyTurnToPieces(game : Game) : (Piece list * Effect list) =
@@ -249,9 +238,9 @@ let private killCurrentPlayer(game : Game) : (Game * Effect list) =
 
     (updatedGame, effects |> Seq.toList)
 
-let getCommitTurnEvent(game : Game) (session : Session) : Event AsyncHttpResult =
-    ensureSessionIsAdminOrContainsCurrentPlayer session game
-    |> thenMap (fun _ ->
+let getCommitTurnEvent(game : Game) (session : Session) : CreateEventRequest HttpResult =
+    SecurityService.ensureAdminOrCurrentPlayer session game
+    |> Result.map (fun _ ->
         let effects = new ArrayList<Effect>()
         
         let (turnCycle, turnEffects) = applyTurnToTurnCycle game
@@ -302,12 +291,16 @@ let getCommitTurnEvent(game : Game) (session : Session) : Event AsyncHttpResult 
 
         effects.Add(Effect.currentTurnChanged(game.currentTurn, Some updatedTurn))
 
-        Event.create(EventKind.TurnCommitted, effects |> Seq.toList)
+        {
+            kind = EventKind.TurnCommitted
+            effects = effects |> Seq.toList
+            createdByUserId = session.user.id
+        }
     )
 
-let getResetTurnEvent(game : Game) (session : Session) : Event AsyncHttpResult =
-    ensureSessionIsAdminOrContainsCurrentPlayer session game
-    |> thenMap (fun _ ->
+let getResetTurnEvent(game : Game) (session : Session) : CreateEventRequest HttpResult =
+    SecurityService.ensureAdminOrCurrentPlayer session game
+    |> Result.map (fun _ ->
         let updatedGame = { game with currentTurn = Some Turn.empty }
         let (selectionOptions, requiredSelectionType) = SelectionOptionsService.getSelectableCellsFromState updatedGame
         let turn = 
@@ -316,7 +309,9 @@ let getResetTurnEvent(game : Game) (session : Session) : Event AsyncHttpResult =
                     selectionOptions = selectionOptions
                     requiredSelectionKind = requiredSelectionType
             }
-
-        let effects = [ Effect.currentTurnChanged(game.currentTurn, Some turn) ]
-        Event.create(EventKind.TurnReset, effects)
+        {
+            kind = EventKind.TurnReset
+            effects = [ Effect.currentTurnChanged(game.currentTurn, Some turn) ]
+            createdByUserId = session.user.id
+        }
     )

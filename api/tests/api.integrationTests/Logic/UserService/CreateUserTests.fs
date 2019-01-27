@@ -43,7 +43,7 @@ type CreateUserTests() =
         task {
             //Arrange
             let request = getCreateUserRequest()
-            let session = { getSessionForUser 1 with isAdmin = false }
+            let session = getSessionForUser 1 |> TestUtilities.setSessionIsAdmin false
 
             //Act
             let! error = UserService.createUser request (Some session)
@@ -57,7 +57,7 @@ type CreateUserTests() =
         task {
             //Arrange
             let request = getCreateUserRequest()
-            let session = { getSessionForUser 1 with isAdmin = true }
+            let session = getSessionForUser 1 |> TestUtilities.setSessionIsAdmin true
 
             //Act
             let! user = UserService.createUser request (Some session)

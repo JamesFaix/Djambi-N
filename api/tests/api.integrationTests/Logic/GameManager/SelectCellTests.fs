@@ -67,7 +67,7 @@ type SelectCellTests() =
             let! result = GameManager.selectCell (updatedGame.id, cellId) sessionWithoutActivePlayer
 
             //Assert
-            result |> shouldBeError 400 "Cannot perform this action during another player's turn."
+            result |> shouldBeError 403 SecurityService.notAdminOrCurrentPlayerErrorMessage
         }
 
     [<Fact>]
@@ -92,10 +92,10 @@ type SelectCellTests() =
                 match updatedGame.turnCycle.Head with
                 | x when x = player2.id -> session1
                 | _ -> session2
+                |> TestUtilities.setSessionIsAdmin true
 
             //Act
-            let! result = GameManager.selectCell (updatedGame.id, cellId)
-                                                 { sessionWithoutActivePlayer with isAdmin = true }
+            let! result = GameManager.selectCell (updatedGame.id, cellId) sessionWithoutActivePlayer
 
             //Assert
             result |> Result.isOk |> shouldBeTrue

@@ -18,7 +18,7 @@ type GetUserTests() =
             let! user = UserService.createUser request None
                         |> AsyncHttpResult.thenValue
 
-            let session = { getSessionForUser 1 with isAdmin = true }
+            let session = getSessionForUser 1 |> TestUtilities.setSessionIsAdmin true
 
             //Act
             let! userResponse = UserService.getUser user.id session
@@ -37,13 +37,13 @@ type GetUserTests() =
             let! user = UserService.createUser request None
                         |> AsyncHttpResult.thenValue
 
-            let session = { getSessionForUser 1 with isAdmin = false }
+            let session = getSessionForUser 1 |> TestUtilities.setSessionIsAdmin false
 
             //Act
             let! error = UserService.getUser user.id session
 
             //Assert
-            error |> shouldBeError 403 "Requires admin privileges."
+            error |> shouldBeError 403 SecurityService.notAdminOrSelfErrorMessage
         }
 
     [<Fact>]
@@ -51,7 +51,7 @@ type GetUserTests() =
         task {
             //Arrange
             let request = getCreateUserRequest()
-            let session = { getSessionForUser 1 with isAdmin = true }
+            let session = getSessionForUser 1 |> TestUtilities.setSessionIsAdmin true
 
             //Act
             let! error = UserService.getUser Int32.MinValue session

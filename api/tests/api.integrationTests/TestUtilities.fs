@@ -60,8 +60,12 @@ let adminUserId = 1
 
 let getSessionForUser (userId : int) : Session =
     {
-        userId = userId
-        isAdmin = false
+        user = 
+            {
+                id = userId
+                name = ""
+                isAdmin = false
+            }
         id = 0
         token = ""
         createdOn = DateTime.MinValue
@@ -97,12 +101,15 @@ let fillEmptyPlayerSlots (game : Game) : Game AsyncHttpResult =
         return! GameRepository.getGame game.id
     }
 
-let createEvent (effects : Effect list) : Event =
+let emptyEventRequest : CreateEventRequest =
     {
-        kind = Unchecked.defaultof<EventKind>
-        timestamp = Unchecked.defaultof<DateTime>
-        effects = effects
+        kind = EventKind.CellSelected //Kind shouldn't matter
+        effects = List.empty
+        createdByUserId = 1
     }
+
+let createEventRequest (effects : Effect list) : CreateEventRequest =
+    { emptyEventRequest with effects = effects }
 
 let defaultGame : Game = 
     {
@@ -121,4 +128,18 @@ let defaultGame : Game =
         pieces = List.empty
         turnCycle = List.empty
         currentTurn = None
+    }
+
+let setSessionUserId (userId : int) (session : Session) : Session=
+    { session with
+        user = { session.user with
+                    id = userId
+               }
+    }
+    
+let setSessionIsAdmin (isAdmin : bool) (session : Session) : Session =
+    { session with
+        user = { session.user with
+                    isAdmin = isAdmin
+               }
     }

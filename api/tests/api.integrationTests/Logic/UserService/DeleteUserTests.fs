@@ -19,7 +19,7 @@ type DeleteUserTests() =
             let! user = UserService.createUser request None
                         |> AsyncHttpResult.thenValue
 
-            let session = { getSessionForUser user.id with isAdmin = isAdmin }
+            let session = getSessionForUser user.id |> TestUtilities.setSessionIsAdmin isAdmin
 
             //Act
             let! response = UserService.deleteUser user.id session
@@ -36,7 +36,7 @@ type DeleteUserTests() =
             let! user = UserService.createUser request None
                         |> AsyncHttpResult.thenValue
 
-            let session = { getSessionForUser (user.id + 1) with isAdmin = true }
+            let session = getSessionForUser (user.id + 1) |> TestUtilities.setSessionIsAdmin true
 
             //Act
             let! response = UserService.deleteUser user.id session
@@ -53,13 +53,13 @@ type DeleteUserTests() =
             let! user = UserService.createUser request None
                         |> AsyncHttpResult.thenValue
 
-            let session = { getSessionForUser (user.id + 1) with isAdmin = false }
+            let session = getSessionForUser (user.id + 1) |> TestUtilities.setSessionIsAdmin false
 
             //Act
             let! response = UserService.deleteUser user.id session
 
             //Assert
-            response |> shouldBeError 403 "Cannot delete other users."
+            response |> shouldBeError 403 SecurityService.notAdminOrSelfErrorMessage
         }
 
     [<Fact>]
@@ -70,7 +70,7 @@ type DeleteUserTests() =
             let! user = UserService.createUser request None
                         |> AsyncHttpResult.thenValue
 
-            let session = { getSessionForUser 1 with isAdmin = true }
+            let session = getSessionForUser 1 |> TestUtilities.setSessionIsAdmin true
 
             let! _ = UserService.deleteUser user.id session
 

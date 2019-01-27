@@ -2,8 +2,10 @@
 module Djambi.Api.Model.GameRequestModel
 
 open System
+open Djambi.ClientGenerator.Annotations
 
 [<CLIMutable>]
+[<ClientType(ClientSection.Player)>]
 type CreatePlayerRequest = 
     {
         kind : PlayerKind
@@ -35,12 +37,13 @@ module CreatePlayerRequest =
         }   
         
 [<CLIMutable>]
+[<ClientType(ClientSection.Game)>]
 type GamesQuery =
     {
         gameId : int option
         descriptionContains : string option
-        createdByUserId : int option
-        playerUserId : int option
+        createdByUserName : string option
+        playerUserName : string option
         isPublic : bool option
         allowGuests : bool option
     }
@@ -51,17 +54,42 @@ module GamesQuery =
         {
             gameId = None
             descriptionContains = None
-            createdByUserId = None
-            playerUserId = None
+            createdByUserName = None
+            playerUserName = None
             isPublic = None
             allowGuests = None
         }
 
 [<CLIMutable>]
+[<ClientType(ClientSection.Turn)>]
 type SelectionRequest =
     {
         cellId : int
     }
+
+[<ClientType(ClientSection.Misc)>]
+type ResultsDirection = 
+    | Ascending
+    | Descending
+
+[<CLIMutable>]
+[<ClientType(ClientSection.Events)>]
+type EventsQuery =
+    {
+        maxResults : int option
+        direction : ResultsDirection
+        thresholdTime : DateTime option
+        thresholdEventId : int option
+    }
+
+module EventsQuery =
+    let empty : EventsQuery =
+        {
+            maxResults = None
+            direction = ResultsDirection.Ascending
+            thresholdTime = None
+            thresholdEventId = None
+        }
 
 //---Internal requests
 

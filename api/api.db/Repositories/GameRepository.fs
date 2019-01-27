@@ -16,8 +16,8 @@ let getGamesWithoutPlayers (query : GamesQuery) : Game List AsyncHttpResult =
     let param = DynamicParameters()
                     .addOption("GameId", query.gameId)
                     .addOption("DescriptionContains", query.descriptionContains)
-                    .addOption("CreatedByUserId", query.createdByUserId)
-                    .addOption("PlayerUserId", query.playerUserId)
+                    .addOption("CreatedByUserName", query.createdByUserName)
+                    .addOption("PlayerUserName", query.playerUserName)
                     .addOption("IsPublic", query.isPublic)
                     .addOption("AllowGuests", query.allowGuests)
 
@@ -30,8 +30,8 @@ let getGameWithoutPlayers (gameId : int) : Game AsyncHttpResult =
     let param = DynamicParameters()
                     .add("GameId", gameId)
                     .add("DescriptionContains", null)
-                    .add("CreatedByUserId", null)
-                    .add("PlayerUserId",  null)
+                    .add("CreatedByUserName", null)
+                    .add("PlayerUserName",  null)
                     .add("IsPublic", null)
                     .add("AllowGuests", null)
 
@@ -148,7 +148,7 @@ let getUpdatePlayerCommand (player : Player) : CommandDefinition =
                     .addOption("ColorId", player.colorId)
                     .addOption("StartingTurnNumber", player.startingTurnNumber)
                     .addOption("StartingRegion", player.startingRegion)
-                    .addOption("IsAlive", player.isAlive)
+                    .add("PlayerStatusId", player.status |> mapPlayerStatusToId)
     proc("Players_Update", param)
     
 //Exposed for test setup

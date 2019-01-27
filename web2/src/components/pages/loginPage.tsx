@@ -53,12 +53,12 @@ export default class LoginPage extends React.Component<LoginPageProps, LoginPage
 
         this.props.api
             .login(request)
-            .then(user => {
+            .then(session => {
                 this.setState({
                     username: "",
                     password: ""
                 });
-                this.props.setUser(user);
+                this.props.setUser(session.user);
             })
             .catch(reason => {
                 alert("Login failed because " + reason);

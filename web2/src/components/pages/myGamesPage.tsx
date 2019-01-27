@@ -31,8 +31,8 @@ export default class MyGamesPage extends React.Component<MyGamesPageProps, MyGam
     private refreshResults() {
         const query : GamesQuery = {
             gameId: null,
-            createdByUserId: null,
-            playerUserId: this.props.user.id,
+            createdByUserName: null,
+            playerUserName: this.props.user.name,
             isPublic: null,
             allowGuests: null,
             descriptionContains: null

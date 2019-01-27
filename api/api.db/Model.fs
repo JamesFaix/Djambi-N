@@ -18,10 +18,11 @@ type SessionSqlModel =
     {
         sessionId : int
         userId : int
+        userName : string
+        isAdmin : bool
         token : string
         createdOn : DateTime
         expiresOn : DateTime
-        isAdmin : bool
     }
     
 [<CLIMutable>]
@@ -32,7 +33,7 @@ type PlayerSqlModel =
         userId : int Nullable
         name : string
         playerKindId : byte
-        isAlive : bool Nullable
+        playerStatusId : byte
         colorId : byte Nullable
         startingRegion : byte Nullable
         startingTurnNumber : byte Nullable
@@ -54,4 +55,15 @@ type GameSqlModel =
         turnCycleJson : string
         piecesJson : string
         currentTurnJson : string
+    }
+
+[<CLIMutable>]
+type EventSqlModel =
+    {
+        eventId : int
+        gameId : int
+        createdByUserId : int
+        createdOn : DateTime
+        eventKindId : byte
+        effectsJson : string
     }

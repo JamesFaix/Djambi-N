@@ -2,12 +2,21 @@
 module Djambi.Api.Model.GameModel
 
 open System
+open Djambi.ClientGenerator.Annotations
 
+[<ClientType(ClientSection.Player)>]
 type PlayerKind =
     | User
     | Guest
     | Neutral
-
+    
+[<ClientType(ClientSection.Player)>]
+type PlayerStatus =
+    | Pending
+    | Alive
+    | Eliminated
+    
+[<ClientType(ClientSection.Player)>]
 type Player =
     {
         id : int
@@ -15,12 +24,13 @@ type Player =
         userId : int option
         kind : PlayerKind
         name : string
-        isAlive : bool option
+        status : PlayerStatus
         colorId : int option
         startingRegion : int option
         startingTurnNumber : int option
     }
-
+    
+[<ClientType(ClientSection.Game)>]
 type PieceKind =
     | Chief
     | Thug
@@ -30,6 +40,7 @@ type PieceKind =
     | Gravedigger
     | Corpse
 
+[<ClientType(ClientSection.Game)>]
 type Piece =
     {
         id : int
@@ -38,14 +49,16 @@ type Piece =
         originalPlayerId : int
         cellId : int
     }
-
+    
+[<ClientType(ClientSection.Turn)>]
 type SelectionKind =
     | Subject
     | Move
     | Target
     | Drop
     | Vacate
-
+    
+[<ClientType(ClientSection.Turn)>]
 type Selection =
     {
         kind : SelectionKind
@@ -96,10 +109,12 @@ module Selection =
             pieceId = None
         }
 
+[<ClientType(ClientSection.Turn)>]
 type TurnStatus =
     | AwaitingSelection
     | AwaitingConfirmation
 
+[<ClientType(ClientSection.Turn)>]
 type Turn =
     {
         status : TurnStatus
@@ -117,6 +132,7 @@ module Turn =
             requiredSelectionKind = Some Subject
         }
 
+[<ClientType(ClientSection.Game)>]
 type GameStatus =
     | Pending
     | AbortedWhilePending
@@ -125,6 +141,7 @@ type GameStatus =
     | Finished
     
 [<CLIMutable>]
+[<ClientType(ClientSection.Game)>]
 type GameParameters =
     {
         description : string option
@@ -132,7 +149,8 @@ type GameParameters =
         isPublic : bool
         allowGuests : bool
     }
-
+    
+[<ClientType(ClientSection.Game)>]
 type Game =
     {
         id : int

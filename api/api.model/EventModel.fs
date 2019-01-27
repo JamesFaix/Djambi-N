@@ -2,7 +2,9 @@
 module Djambi.Api.Model.EventModel
 
 open System
+open Djambi.ClientGenerator.Annotations
 
+[<ClientType(ClientSection.Events)>]
 type EffectKind =
     | GameStatusChanged
     | PlayerEliminated
@@ -16,6 +18,7 @@ type EffectKind =
     | ParametersChanged
     | CurrentTurnChanged
 
+[<ClientType(ClientSection.Events)>]
 type DiffEffect<'a> =
     {
         kind : EffectKind
@@ -23,12 +26,14 @@ type DiffEffect<'a> =
         newValue : 'a
     }
 
+[<ClientType(ClientSection.Events)>]
 type ScalarEffect<'a> =
     {
         kind : EffectKind
         value : 'a
     }
 
+[<ClientType(ClientSection.Events)>]
 type DiffWithContextEffect<'a, 'b> =
     {
         kind : EffectKind
@@ -37,6 +42,7 @@ type DiffWithContextEffect<'a, 'b> =
         context : 'b
     }
 
+[<ClientType(ClientSection.Events)>]
 type Effect =
     | GameStatusChanged of DiffEffect<GameStatus>
     | TurnCycleChanged of DiffEffect<int list>
@@ -91,7 +97,7 @@ module Effect =
             value = playerId
         }
 
-    let pieceKilled (pieceId) = 
+    let pieceKilled (pieceId) =
         Effect.PieceKilled {
             kind = EffectKind.PieceKilled
             value = pieceId
@@ -126,9 +132,10 @@ module Effect =
             newValue = newTurn
         }
 
+[<ClientType(ClientSection.Events)>]
 type EventKind =
     | GameParametersChanged
-    | GameCanceled 
+    | GameCanceled
     | PlayerJoined
     | PlayerEjected
     | PlayerQuit
@@ -137,23 +144,27 @@ type EventKind =
     | TurnReset
     | CellSelected
 
+[<ClientType(ClientSection.Events)>]
 type Event =
     {
+        id : int
+        createdByUserId : int
+        createdOn : DateTime
         kind : EventKind
-        timestamp : DateTime
         effects : Effect list
-    }           
+    }
 
-module Event =
-    let create (kind, effects) : Event =
-        {
-            kind = kind
-            timestamp = DateTime.UtcNow
-            effects = effects
-        }
-
-type StateAndEventResponse =    
+[<ClientType(ClientSection.Events)>]
+type StateAndEventResponse =
     {
         game : Game
         event : Event
+    }
+
+//Internal request
+type CreateEventRequest =
+    {
+        kind : EventKind
+        effects : Effect list
+        createdByUserId : int
     }

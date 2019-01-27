@@ -18,7 +18,7 @@ type GetUsersTests() =
             let! user2 = UserService.createUser (getCreateUserRequest()) None
                          |> AsyncHttpResult.thenValue
 
-            let session = { getSessionForUser 1 with isAdmin = true }
+            let session = getSessionForUser 1 |> TestUtilities.setSessionIsAdmin true
 
             //Act
             let! usersResponse = UserService.getUsers session
@@ -33,11 +33,11 @@ type GetUsersTests() =
     let ``Get users should fail if not admin`` () =
         task {
             //Arrange
-            let session = { getSessionForUser 1 with isAdmin = false }
+            let session = getSessionForUser 1 |> TestUtilities.setSessionIsAdmin false
 
             //Act
             let! error = UserService.getUsers session
 
             //Assert
-            error |> shouldBeError 403 "Requires admin privileges."
+            error |> shouldBeError 403 SecurityService.notAdminErrorMessage
         }

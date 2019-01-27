@@ -9,14 +9,10 @@ open Djambi.Api.Logic.ModelExtensions
 open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
 open Djambi.Api.Logic.Services
 open Djambi.Api.Model
-
-type ArrayList<'a> = System.Collections.Generic.List<'a>
  
-let getGameStartEvent (game : Game) (session : Session) : Event AsyncHttpResult =    
-    if session.isAdmin || session.userId = game.createdByUserId
-    then okTask game
-    else errorTask <| HttpException(403, "Cannot start game created by another user.")
-    |> thenBindAsync (fun _ ->
+let getGameStartEvent (game : Game) (session : Session) : CreateEventRequest AsyncHttpResult =    
+    SecurityService.ensureAdminOrCreator session game
+    |> Result.bindAsync (fun _ ->    
         if game.players
             |> List.filter (fun p -> p.kind <> PlayerKind.Neutral)
             |> List.length = 1
@@ -29,7 +25,11 @@ let getGameStartEvent (game : Game) (session : Session) : Event AsyncHttpResult 
                     List.append 
                         addNeutralPlayerEffects 
                         [Effect.gameStatusChanged(GameStatus.Pending, GameStatus.Started)]
-                Event.create(EventKind.GameStarted, effects)
+                {
+                    kind = EventKind.GameStarted
+                    effects = effects
+                    createdByUserId = session.user.id
+                }
             )
     )
 
@@ -61,7 +61,7 @@ let assignStartingConditions(players : Player list) : Player list =
         dict.[p.id] <- { dict.[p.id] with startingTurnNumber = Some i }
 
     dict.Values 
-    |> Seq.map (fun p -> { p with isAlive = Some true })
+    |> Seq.map (fun p -> { p with status = PlayerStatus.Alive })
     |> Seq.toList
 
 let createPieces(board : BoardMetadata, players : Player list) : Piece list =

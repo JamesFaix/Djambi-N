@@ -21,11 +21,10 @@ type EventServiceTests() =
                 Effect.gameStatusChanged(GameStatus.Pending, GameStatus.AbortedWhilePending)
                 Effect.gameStatusChanged(GameStatus.AbortedWhilePending, GameStatus.Aborted)
             ]
-
-        let event = Event.create(EventKind.GameStarted, effects) //Doesn't matter what kind
+        let eventRequest = TestUtilities.createEventRequest(effects) //Kind doesn't matter
         
         //Act
-        let newGame = EventService.applyEvent game event
+        let newGame = EventService.applyEvent game eventRequest
 
         //Assert
         newGame.status |> shouldBe GameStatus.Aborted
@@ -36,13 +35,13 @@ type EventServiceTests() =
         let game = { TestUtilities.defaultGame with id = 5 }
         let userId = 1
         let playerRequest = CreatePlayerRequest.user(userId)
-        let effect = Effect.playerAdded(playerRequest)
-        let event = Event.create(EventKind.GameStarted, [effect])
-
+        let effect = Effect.playerAdded(playerRequest)   
+        let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
+        
         game.players.Length |> shouldBe 0
 
         //Act
-        let newGame = EventService.applyEvent game event
+        let newGame = EventService.applyEvent game eventRequest
 
         //Assert
         { game with players = newGame.players } |> shouldBe newGame
@@ -56,7 +55,7 @@ type EventServiceTests() =
         p.name |> shouldBe "" //This is pulled from the db for User players
         
         //These are assigned at game start
-        p.isAlive |> shouldBe None
+        p.status |> shouldBe PlayerStatus.Pending
         p.colorId |> shouldBe None
         p.startingRegion |> shouldBe None
         p.startingTurnNumber |> shouldBe None
@@ -67,12 +66,12 @@ type EventServiceTests() =
         let game = TestUtilities.defaultGame
         let newTurn = Some Turn.empty
         let effect = Effect.currentTurnChanged(game.currentTurn, newTurn)
-        let event = Event.create(EventKind.GameStarted, [effect]) //Kind doesn't matter
+        let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
 
         game.currentTurn |> shouldBe None
 
         //Act
-        let newGame = EventService.applyEvent game event
+        let newGame = EventService.applyEvent game eventRequest
 
         //Assert
         { game with currentTurn = newGame.currentTurn } |> shouldBe newGame
@@ -85,12 +84,12 @@ type EventServiceTests() =
         let game = TestUtilities.defaultGame
         let newStatus = GameStatus.AbortedWhilePending //Can't use Started here because that case is more complicated
         let effect = Effect.gameStatusChanged(game.status, newStatus)
-        let event = Event.create(EventKind.GameStarted, [effect]) //Kind doesn't matter
-
+        let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
+        
         game.status |> shouldBe GameStatus.Pending
 
         //Act
-        let newGame = EventService.applyEvent game event
+        let newGame = EventService.applyEvent game eventRequest
 
         //Assert
         { game with status = newGame.status } |> shouldBe newGame
@@ -109,7 +108,7 @@ type EventServiceTests() =
                 regionCount = 8
             }
         let effect = Effect.parametersChanged(game.parameters, newParameters)
-        let event = Event.create(EventKind.GameStarted, [effect]) //Kind doesn't matter
+        let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
 
         game.parameters |> shouldBe 
             {
@@ -120,7 +119,7 @@ type EventServiceTests() =
             }
 
         //Act
-        let newGame = EventService.applyEvent game event
+        let newGame = EventService.applyEvent game eventRequest
 
         //Assert
         { game with parameters = newGame.parameters } |> shouldBe newGame
@@ -141,10 +140,10 @@ type EventServiceTests() =
         let game = { TestUtilities.defaultGame with pieces = [piece]}
 
         let effect = Effect.pieceKilled(piece.id)
-        let event = Event.create(EventKind.GameStarted, [effect]) //Kind doesn't matter
+        let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
 
         //Act
-        let newGame = EventService.applyEvent game event
+        let newGame = EventService.applyEvent game eventRequest
 
         //Assert
         { game with pieces = newGame.pieces } |> shouldBe newGame
@@ -168,10 +167,10 @@ type EventServiceTests() =
         let game = { TestUtilities.defaultGame with pieces = [piece]}
         let newCellId = 3
         let effect = Effect.pieceMoved(piece.id, piece.cellId, newCellId)
-        let event = Event.create(EventKind.GameStarted, [effect]) //Kind doesn't matter
+        let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
 
         //Act
-        let newGame = EventService.applyEvent game event
+        let newGame = EventService.applyEvent game eventRequest
 
         //Assert
         { game with pieces = newGame.pieces } |> shouldBe newGame
@@ -211,10 +210,10 @@ type EventServiceTests() =
         let game = { TestUtilities.defaultGame with pieces = pieces}
         let newPlayerId = Some 1
         let effect = Effect.piecesOwnershipChanged([1;2], pieces.[0].playerId, newPlayerId)
-        let event = Event.create(EventKind.GameStarted, [effect]) //Kind doesn't matter
+        let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
 
         //Act
-        let newGame = EventService.applyEvent game event
+        let newGame = EventService.applyEvent game eventRequest
 
         //Assert
         { game with pieces = newGame.pieces } |> shouldBe newGame
@@ -235,17 +234,17 @@ type EventServiceTests() =
                 name = "test"
                 gameId = 0
                 userId = None
-                isAlive = None
+                status = PlayerStatus.Pending
                 colorId = None
                 startingRegion = None
                 startingTurnNumber = None
             }
         let game = { TestUtilities.defaultGame with players = [player] }
         let effect = Effect.playerEliminated(player.id)
-        let event = Event.create(EventKind.GameStarted, [effect]) //Kind doesn't matter
+        let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
 
         //Act
-        let newGame = EventService.applyEvent game event
+        let newGame = EventService.applyEvent game eventRequest
 
         //Assert
         { game with players = newGame.players } |> shouldBe newGame
@@ -253,7 +252,7 @@ type EventServiceTests() =
         newGame.players.Length |> shouldBe 1
         
         let newPlayer = newGame.players.Head
-        newPlayer |> shouldBe { player with isAlive = Some false }
+        newPlayer |> shouldBe { player with status = PlayerStatus.Eliminated }
 
     [<Fact>]
     let ``Should apply PlayersRemoved effect``() =
@@ -266,7 +265,7 @@ type EventServiceTests() =
                     name = "p1"
                     gameId = 0
                     userId = None
-                    isAlive = None
+                    status = PlayerStatus.Pending
                     colorId = None
                     startingRegion = None
                     startingTurnNumber = None
@@ -277,7 +276,7 @@ type EventServiceTests() =
                     name = "p2"
                     gameId = 0
                     userId = None
-                    isAlive = None
+                    status = PlayerStatus.Pending
                     colorId = None
                     startingRegion = None
                     startingTurnNumber = None
@@ -288,7 +287,7 @@ type EventServiceTests() =
                     name = "p3"
                     gameId = 0
                     userId = None
-                    isAlive = None
+                    status = PlayerStatus.Pending
                     colorId = None
                     startingRegion = None
                     startingTurnNumber = None
@@ -296,10 +295,10 @@ type EventServiceTests() =
             ]
         let game = { TestUtilities.defaultGame with players = players}
         let effect = Effect.playersRemoved([1;2])
-        let event = Event.create(EventKind.GameStarted, [effect]) //Kind doesn't matter
+        let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
 
         //Act
-        let newGame = EventService.applyEvent game event
+        let newGame = EventService.applyEvent game eventRequest
 
         //Assert
         { game with players = newGame.players } |> shouldBe newGame
@@ -313,12 +312,12 @@ type EventServiceTests() =
         let game = TestUtilities.defaultGame
         let newCycle = [1;2;3]
         let effect = Effect.turnCycleChanged(game.turnCycle, newCycle)
-        let event = Event.create(EventKind.GameStarted, [effect]) //Kind doesn't matter
+        let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
 
         game.turnCycle |> shouldBe List.empty
 
         //Act
-        let newGame = EventService.applyEvent game event
+        let newGame = EventService.applyEvent game eventRequest
 
         //Assert
         { game with turnCycle = newGame.turnCycle } |> shouldBe newGame

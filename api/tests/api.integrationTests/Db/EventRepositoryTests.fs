@@ -24,7 +24,7 @@ type EventRepositoryTests() =
                     userId = Some user.id
                     kind = PlayerKind.Guest
                     name = "p2"
-                    isAlive = None
+                    status = PlayerStatus.Pending
                     colorId = None
                     startingRegion = None
                     startingTurnNumber = None
@@ -33,9 +33,11 @@ type EventRepositoryTests() =
             let newGame = { game with players = [player] }
 
             //Act
-            let! persistedGame = EventRepository.persistEvent (game, newGame) |> thenValue
+            let! resp = EventRepository.persistEvent (TestUtilities.emptyEventRequest, game, newGame) |> thenValue
 
             //Assert
+            let persistedGame = resp.game
+
             { newGame with players = persistedGame.players } |> shouldBe persistedGame
 
             persistedGame.players.Length |> shouldBe 1
@@ -64,9 +66,11 @@ type EventRepositoryTests() =
             let newGame = { game with players = List.empty }
 
             //Act
-            let! persistedGame = EventRepository.persistEvent (game, newGame) |> thenValue
+            let! resp = EventRepository.persistEvent (TestUtilities.emptyEventRequest, game, newGame) |> thenValue
 
             //Assert
+            let persistedGame = resp.game
+
             { newGame with players = persistedGame.players } |> shouldBe persistedGame
 
             persistedGame.players.Length |> shouldBe 0
@@ -89,14 +93,14 @@ type EventRepositoryTests() =
             let! game = GameRepository.getGame game.id |> thenValue
 
             let oldP2 = game.players.[1]
-            oldP2.isAlive |> shouldBe None
+            oldP2.status |> shouldBe PlayerStatus.Pending
             oldP2.startingRegion |> shouldBe None
             oldP2.startingTurnNumber |> shouldBe None
             oldP2.colorId |> shouldBe None
 
             let newP2 = 
                 { oldP2 with
-                    isAlive = Some true
+                    status = PlayerStatus.Alive
                     startingRegion = Some 1
                     startingTurnNumber = Some 1
                     colorId = Some 1
@@ -111,9 +115,11 @@ type EventRepositoryTests() =
                 }
 
             //Act
-            let! persistedGame = EventRepository.persistEvent (game, newGame) |> thenValue
+            let! resp = EventRepository.persistEvent (TestUtilities.emptyEventRequest, game, newGame) |> thenValue
 
             //Assert
+            let persistedGame = resp.game
+
             { newGame with players = persistedGame.players } |> shouldBe persistedGame
 
             persistedGame.players.Length |> shouldBe 2
@@ -163,9 +169,10 @@ type EventRepositoryTests() =
                 }
 
             //Act
-            let! persistedGame = EventRepository.persistEvent (game, newGame) |> thenValue
+            let! resp = EventRepository.persistEvent (TestUtilities.emptyEventRequest, game, newGame) |> thenValue
 
             //Assert
+            let persistedGame = resp.game
             persistedGame |> shouldBe newGame
         }
 
@@ -190,12 +197,12 @@ type EventRepositoryTests() =
                     Effect.playerAdded playerRequest
                     Effect.playerAdded playerRequest
                 ]
-            let event = Event.create(EventKind.GameStarted, effects) //EventKind doesn't matter
+            let event = TestUtilities.createEventRequest(effects) //EventKind doesn't matter
 
             let newGame = EventService.applyEvent game event
             
             //Act
-            let! result = EventRepository.persistEvent (game, newGame)
+            let! result = EventRepository.persistEvent (TestUtilities.emptyEventRequest, game, newGame)
 
             //Assert
             result |> shouldBeError 409 "Conflict when attempting to write Effect."

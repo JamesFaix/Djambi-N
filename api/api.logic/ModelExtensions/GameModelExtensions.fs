@@ -30,7 +30,7 @@ module GameModelExtensions =
 
     type Player with
         member this.kill : Player =
-            { this with isAlive = Some false }
+            { this with status = PlayerStatus.Eliminated }
 
     type Turn with
 
