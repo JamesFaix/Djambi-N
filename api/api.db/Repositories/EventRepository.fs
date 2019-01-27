@@ -56,13 +56,7 @@ let private getCommands (oldGame : Game, newGame : Game, transaction : IDbTransa
             |> (not << Seq.exists (fun oldP -> oldP.id = newP.id)))
 
     for p in addedPlayers do
-        let playerRequest = 
-            {
-                kind = p.kind
-                userId = p.userId
-                name = if p.kind = PlayerKind.User then None else Some p.name
-            }       
-        commands.Add (GameRepository.getAddPlayerCommand(oldGame.id, playerRequest))
+        commands.Add (GameRepository.getAddFullPlayerCommand p)
 
     //update players
     let modifiedPlayers =
