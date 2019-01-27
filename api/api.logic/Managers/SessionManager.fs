@@ -6,7 +6,7 @@ open Djambi.Api.Logic.Services
 open Djambi.Api.Model
 open Djambi.ClientGenerator.Annotations
 
-[<CLientFunction(HttpMethod.Post, "/sessions")>]
+[<ClientFunction(HttpMethod.Post, "/sessions")>]
 let login (request : LoginRequest) : Session AsyncHttpResult =
     SessionService.openSession request
     |> thenReplaceError 409 (HttpException(409, "Already signed in."))

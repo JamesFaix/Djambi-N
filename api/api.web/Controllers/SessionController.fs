@@ -26,7 +26,7 @@ let openSession : HttpHandler =
             | Some s -> SessionManager.logout s
             | None -> okTask ()
 
-            |> thenBindAsync (fun _ -> SessionManager.openSession request)
+            |> thenBindAsync (fun _ -> SessionManager.login request)
             |> thenDo (fun session -> appendCookie ctx (session.token, session.expiresOn))
         )
     handle func

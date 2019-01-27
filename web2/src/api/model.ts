@@ -2,6 +2,7 @@
  * This file was generated with the Client Generator utility.
  * Do not manually edit.
  */
+
 export interface Board {
 	regionCount : number,
 	regionSize : number,
@@ -22,21 +23,6 @@ export interface CreatePlayerRequest {
 export interface CreateUserRequest {
 	name : string,
 	password : string,
-}
-
-export interface Session {
-    user : User,
-    id : number,
-    token : string,
-    expiresOn : Date,
-    createdOn : Date
-}
-
-//Board
-export interface Location {
-    region : number,
-    x : number,
-    y : number
 }
 
 export interface DiffEffect<a> {
@@ -209,6 +195,14 @@ export enum SelectionKind {
 
 export interface SelectionRequest {
 	cellId : number,
+}
+
+export interface Session {
+	id : number,
+	user : User,
+	token : string,
+	createdOn : Date,
+	expiresOn : Date,
 }
 
 export interface StateAndEventResponse {
