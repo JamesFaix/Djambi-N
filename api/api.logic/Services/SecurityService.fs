@@ -14,37 +14,41 @@ let notAdminOrCurrentPlayerErrorMessage = "You must have admin privileges or be 
 let notAdminOrSelfErrorMessage = "You must have admin privileges or be the target user to complete the requested action."
 
 let ensureAdmin (session : Session) : Unit HttpResult =
-    if session.isAdmin
+    if session.user.isAdmin
     then Ok ()
     else Error <| HttpException(403, notAdminErrorMessage)
 
 let ensureAdminOrCreator (session : Session) (game : Game) : Unit HttpResult =
-    if session.isAdmin 
-        || session.userId = game.createdByUserId
+    let self = session.user
+    if self.isAdmin 
+        || self.id = game.createdByUserId
     then Ok ()
     else Error <| HttpException(403, notAdminOrCreatorErrorMessage)
 
 let ensureAdminOrPlayer (session : Session) (game : Game) : Unit HttpResult =
-    if session.isAdmin
-        || game.players |> List.exists (fun p -> p.userId = Some session.userId)
+    let self = session.user
+    if self.isAdmin
+        || game.players |> List.exists (fun p -> p.userId = Some self.id)
     then Ok ()
     else Error <| HttpException(403, notAdminOrPlayerErrorMessage)
 
 let ensureAdminOrCurrentPlayer (session : Session) (game : Game) : Unit HttpResult =
+    let self = session.user
     let pass = 
-        if session.isAdmin
+        if self.isAdmin
         then true
         elif not game.turnCycle.IsEmpty
         then         
             let currentPlayer = game.players |> List.find (fun p -> p.id = game.turnCycle.Head)
-            currentPlayer.userId = Some session.userId
+            currentPlayer.userId = Some self.id
         else false
 
     if pass then Ok ()
     else Error <| HttpException(403, notAdminOrCurrentPlayerErrorMessage)
 
 let ensureAdminOrSelf (session : Session) (userId : int) : Unit HttpResult =
-    if session.isAdmin
-        || session.userId = userId
+    let self = session.user
+    if self.isAdmin
+        || self.id = userId
     then Ok ()
     else Error <| HttpException(403, notAdminOrSelfErrorMessage)

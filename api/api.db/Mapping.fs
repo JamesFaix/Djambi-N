@@ -91,11 +91,15 @@ let mapUserResponse (sqlModel : UserSqlModel) : UserDetails =
 let mapSessionResponse (sqlModel : SessionSqlModel) : Session =
     {
         id = sqlModel.sessionId
-        userId = sqlModel.userId
         token = sqlModel.token
         createdOn = sqlModel.createdOn
         expiresOn = sqlModel.expiresOn
-        isAdmin = sqlModel.isAdmin
+        user = 
+            {
+                id = sqlModel.userId
+                name = sqlModel.userName
+                isAdmin = sqlModel.isAdmin
+            }
     }
 
 let mapPlayerResponse (sqlModel : PlayerSqlModel) : Player =

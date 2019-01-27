@@ -63,8 +63,8 @@ export default class ApiClient {
     }
 
     //Session
-    async login(request : Model.LoginRequest) : Promise<Model.User> {
-        return await this.sendRequest<Model.LoginRequest, Model.User>(
+    async login(request : Model.LoginRequest) : Promise<Model.Session> {
+        return await this.sendRequest<Model.LoginRequest, Model.Session>(
             HttpMethod.Post, "/sessions", request);
     }
 

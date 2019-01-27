@@ -30,7 +30,7 @@ let getGameStartEvent (game : Game) (session : Session) : CreateEventRequest Asy
                 {
                     kind = EventKind.GameStarted
                     effects = effects
-                    createdByUserId = session.userId
+                    createdByUserId = session.user.id
                 }
             )
     )

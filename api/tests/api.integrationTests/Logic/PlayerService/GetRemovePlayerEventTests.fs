@@ -21,6 +21,7 @@ type GetRemovePlayerEventTests() =
         task {
             //Arrange
             let! (_, session, game1) = createuserSessionAndGame(false) |> thenValue
+            let session = session |> TestUtilities.setSessionIsAdmin true
 
             let gameRequest = getGameParameters()
             let! game2 = GameManager.createGame gameRequest session |> thenValue
@@ -28,12 +29,12 @@ type GetRemovePlayerEventTests() =
             let! user = createUser() |> thenValue
             let request = CreatePlayerRequest.user user.id
 
-            let! player = GameManager.addPlayer game1.id request { session with isAdmin = true }
+            let! player = GameManager.addPlayer game1.id request session
                           |> thenMap (fun resp -> resp.game.players |> List.except game1.players |> List.head)
                           |> thenValue
 
             //Act
-            let error = PlayerService.getRemovePlayerEvent (game2, player.id) { session with isAdmin = true }
+            let error = PlayerService.getRemovePlayerEvent (game2, player.id) session
 
             //Assert
             error |> shouldBeError 404 "Player not found."
@@ -66,18 +67,22 @@ type GetRemovePlayerEventTests() =
         task {
             //Arrange
             let! (_, session, game) = createuserSessionAndGame(false) |> thenValue
+            let adminSession = session |> TestUtilities.setSessionIsAdmin true
 
             let! user = createUser() |> thenValue
             let request = CreatePlayerRequest.user user.id
+                        
+            let session = session |> TestUtilities.setSessionIsAdmin false
+                                  |> TestUtilities.setSessionUserId Int32.MinValue
 
-            let! player = GameManager.addPlayer game.id request { session with isAdmin = true }
+            let! player = GameManager.addPlayer game.id request adminSession
                           |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                           |> thenValue
 
             let! game = GameRepository.getGame game.id |> thenValue
 
             //Act
-            let error = PlayerService.getRemovePlayerEvent (game, player.id) { session with isAdmin = false; userId = Int32.MinValue }
+            let error = PlayerService.getRemovePlayerEvent (game, player.id) session
 
             //Assert
             error |> shouldBeError 403 "Cannot remove other users from game."
@@ -114,11 +119,12 @@ type GetRemovePlayerEventTests() =
         task {
             //Arrange
             let! (_, session, game) = createuserSessionAndGame(false) |> thenValue
+            let session = session |> TestUtilities.setSessionIsAdmin true
 
             let! user = createUser() |> thenValue
             let request = CreatePlayerRequest.user user.id
 
-            let! player = GameManager.addPlayer game.id request { session with isAdmin = true }
+            let! player = GameManager.addPlayer game.id request session
                           |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                           |> thenValue
 
@@ -146,7 +152,8 @@ type GetRemovePlayerEventTests() =
             let! user = createUser() |> thenValue
             let request = CreatePlayerRequest.user user.id
             
-            let! player = GameManager.addPlayer game.id request { session with isAdmin = true }
+            let adminSession = session |> TestUtilities.setSessionIsAdmin true
+            let! player = GameManager.addPlayer game.id request adminSession
                           |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                           |> thenValue
 
@@ -175,13 +182,15 @@ type GetRemovePlayerEventTests() =
             let userPlayerRequest = CreatePlayerRequest.user user.id
             let guestPlayerRequest = CreatePlayerRequest.guest (user.id, "test")
 
+            let adminSession = session |> TestUtilities.setSessionIsAdmin true
+
             let! userPlayer =
-                GameManager.addPlayer game.id userPlayerRequest { session with isAdmin = true }
+                GameManager.addPlayer game.id userPlayerRequest adminSession
                 |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                 |> thenValue
 
             let! guestPlayer =
-                GameManager.addPlayer game.id guestPlayerRequest { session with isAdmin = true }
+                GameManager.addPlayer game.id guestPlayerRequest adminSession
                 |> thenMap (fun resp -> resp.game.players |> List.except (userPlayer :: game.players) |> List.head)
                 |> thenValue
 
@@ -208,14 +217,16 @@ type GetRemovePlayerEventTests() =
             let! user = createUser() |> thenValue
             let userPlayerRequest = CreatePlayerRequest.user user.id
             let guestPlayerRequest = CreatePlayerRequest.guest (user.id, "test")
+            
+            let adminSession = session |> TestUtilities.setSessionIsAdmin true
 
             let! userPlayer =
-                GameManager.addPlayer game.id userPlayerRequest { session with isAdmin = true }
+                GameManager.addPlayer game.id userPlayerRequest adminSession
                 |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                 |> thenValue
 
             let! guestPlayer =
-                GameManager.addPlayer game.id guestPlayerRequest { session with isAdmin = true }
+                GameManager.addPlayer game.id guestPlayerRequest adminSession
                 |> thenMap (fun resp -> resp.game.players |> List.except (userPlayer :: game.players) |> List.head)
                 |> thenValue
 

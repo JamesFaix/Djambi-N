@@ -27,7 +27,7 @@ type CreateGameTests() =
             game.parameters.description |> shouldBe parameters.description
             game.parameters.isPublic |> shouldBe parameters.isPublic
             game.parameters.regionCount |> shouldBe parameters.regionCount
-            game.createdByUserId |> shouldBe session.userId
+            game.createdByUserId |> shouldBe session.user.id
         }
 
     [<Fact>]
@@ -44,7 +44,7 @@ type CreateGameTests() =
             //Assert
             let players = game.players
             players.Length |> shouldBe 1
-            players |> shouldExist (fun p -> p.userId = Some session.userId
+            players |> shouldExist (fun p -> p.userId = Some session.user.id
                                           && p.kind = PlayerKind.User)
         }
 

@@ -7,11 +7,12 @@ BEGIN
 	SET NOCOUNT ON;
 
 	SELECT s.SessionId,
-		s.UserId,
+		u.UserId,
+		u.Name AS UserName,
+		u.IsAdmin,
 		s.Token,
 		s.CreatedOn,
-		s.ExpiresOn,
-		u.IsAdmin
+		s.ExpiresOn
 	FROM [Sessions] s
 		INNER JOIN Users u
 			ON u.UserId = s.UserId
