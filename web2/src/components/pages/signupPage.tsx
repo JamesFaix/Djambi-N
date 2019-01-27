@@ -67,8 +67,8 @@ export default class SignupPage extends React.Component<SignupPageProps, SignupP
                 return this.props.api
                     .login(loginRequest);
             })
-            .then(user => {
-                this.props.setUser(user);
+            .then(session => {
+                this.props.setUser(session.user);
             })
             .catch(reason => {
                 alert("User creation failed because " + reason);

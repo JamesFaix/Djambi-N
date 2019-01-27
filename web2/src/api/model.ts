@@ -16,6 +16,14 @@ export interface LoginRequest {
     password : string
 }
 
+export interface Session {
+    user : User,
+    id : number,
+    token : string,
+    expiresOn : Date,
+    createdOn : Date
+}
+
 //Board
 export interface Location {
     region : number,
