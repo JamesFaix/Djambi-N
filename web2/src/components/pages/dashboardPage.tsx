@@ -27,11 +27,6 @@ export default class DashboardPage extends React.Component<DashboardPageProps> {
             });
     }
 
-    private rulesOnClick() : void {
-        const win = window.open(this.props.rulesUrl, '_blank');
-        win.focus();
-    }
-
     render() {
         //Go to home if not logged in
         if (this.props.user === null) {
@@ -46,7 +41,7 @@ export default class DashboardPage extends React.Component<DashboardPageProps> {
                     <LinkButton label="My Games" to="/myGames"/>
                     <LinkButton label="Create Game" to="/createGame"/>
                     <LinkButton label="Find Game" to="/findGame"/>
-                    <ActionButton label="Rules" onClick={() => this.rulesOnClick()}/>
+                    <LinkButton label="Rules" to={this.props.rulesUrl} newWindow={true}/>
                     <ActionButton label="Log out" onClick={() => this.logoutOnClick()}/>
                 </div>
             </div>
