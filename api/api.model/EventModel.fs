@@ -17,7 +17,7 @@ type EffectKind =
     | PlayersRemoved
     | ParametersChanged
     | CurrentTurnChanged
-    
+
 [<ClientType(ClientSection.Events)>]
 type DiffEffect<'a> =
     {
@@ -25,14 +25,14 @@ type DiffEffect<'a> =
         oldValue : 'a
         newValue : 'a
     }
-    
+
 [<ClientType(ClientSection.Events)>]
 type ScalarEffect<'a> =
     {
         kind : EffectKind
         value : 'a
     }
-    
+
 [<ClientType(ClientSection.Events)>]
 type DiffWithContextEffect<'a, 'b> =
     {
@@ -41,7 +41,7 @@ type DiffWithContextEffect<'a, 'b> =
         newValue : 'a
         context : 'b
     }
-    
+
 [<ClientType(ClientSection.Events)>]
 type Effect =
     | GameStatusChanged of DiffEffect<GameStatus>
@@ -97,7 +97,7 @@ module Effect =
             value = playerId
         }
 
-    let pieceKilled (pieceId) = 
+    let pieceKilled (pieceId) =
         Effect.PieceKilled {
             kind = EffectKind.PieceKilled
             value = pieceId
@@ -135,7 +135,7 @@ module Effect =
 [<ClientType(ClientSection.Events)>]
 type EventKind =
     | GameParametersChanged
-    | GameCanceled 
+    | GameCanceled
     | PlayerJoined
     | PlayerEjected
     | PlayerQuit
@@ -143,14 +143,7 @@ type EventKind =
     | TurnCommitted
     | TurnReset
     | CellSelected
-    
-type CreateEventRequest =
-    {
-        kind : EventKind
-        effects : Effect list
-        createdByUserId : int
-    }           
-    
+
 [<ClientType(ClientSection.Events)>]
 type Event =
     {
@@ -160,10 +153,18 @@ type Event =
         kind : EventKind
         effects : Effect list
     }
-    
+
 [<ClientType(ClientSection.Events)>]
-type StateAndEventResponse =    
+type StateAndEventResponse =
     {
         game : Game
         event : Event
+    }
+
+//Internal request
+type CreateEventRequest =
+    {
+        kind : EventKind
+        effects : Effect list
+        createdByUserId : int
     }

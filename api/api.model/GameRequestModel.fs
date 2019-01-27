@@ -67,6 +67,30 @@ type SelectionRequest =
         cellId : int
     }
 
+[<ClientType(ClientSection.Misc)>]
+type ResultsDirection = 
+    | Ascending
+    | Descending
+
+[<CLIMutable>]
+[<ClientType(ClientSection.Events)>]
+type EventsQuery =
+    {
+        maxResults : int option
+        direction : ResultsDirection
+        thresholdTime : DateTime option
+        thresholdEventId : int option
+    }
+
+module EventsQuery =
+    let empty : EventsQuery =
+        {
+            maxResults = None
+            direction = ResultsDirection.Ascending
+            thresholdTime = None
+            thresholdEventId = None
+        }
+
 //---Internal requests
 
 type UpdateFailedLoginsRequest =

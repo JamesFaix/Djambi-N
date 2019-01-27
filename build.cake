@@ -37,7 +37,7 @@ Task(task_buildDotNet)
 Task(task_buildWeb)
     .Does(() =>
     {
-        var dir = root + Directory("web\\");
+        var dir = root + Directory("web2\\");
 
         NpmInstall(new NpmInstallSettings
         {
