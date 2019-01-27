@@ -38,7 +38,7 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.webClient", "api\tests\
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "client-generator", "utils\client-generator\client-generator.fsproj", "{99226CA6-C2A2-47F7-8ED7-DE34189AF634}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "client-generator.annotations", "client-generator.annotations\client-generator.annotations.fsproj", "{FBF36546-A313-4771-97CD-CC4CE3768C1A}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "client-generator.annotations", "utils\client-generator.annotations\client-generator.annotations.fsproj", "{FBF36546-A313-4771-97CD-CC4CE3768C1A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
