@@ -86,6 +86,14 @@ export default class ApiClient {
 			HttpMethod.Put, route, parameters);
 	}
 
+//-------- EVENTS --------
+
+	async getEvents(gameId : number, query : Model.EventsQuery) : Promise<Model.Event[]> {
+		const route = "/events/query";
+		return await ApiClientCore.sendRequest<Model.EventsQuery, Model.Event[]>(
+			HttpMethod.Post, route, query);
+	}
+
 //-------- PLAYER --------
 
 	async addPlayer(gameId : number, request : Model.CreatePlayerRequest) : Promise<Model.StateAndEventResponse> {

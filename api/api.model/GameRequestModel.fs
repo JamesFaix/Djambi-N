@@ -67,11 +67,13 @@ type SelectionRequest =
         cellId : int
     }
 
+[<ClientType(ClientSection.Misc)>]
 type ResultsDirection = 
     | Ascending
     | Descending
 
 [<CLIMutable>]
+[<ClientType(ClientSection.Events)>]
 type EventsQuery =
     {
         maxResults : int option

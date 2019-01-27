@@ -232,6 +232,13 @@ export enum EventKind {
 	CellSelected = "CellSelected",
 }
 
+export interface EventsQuery {
+	maxResults : number,
+	direction : ResultsDirection,
+	thresholdTime : Date,
+	thresholdEventId : number,
+}
+
 export interface ScalarEffect<a> {
 	kind : EffectKind,
 	value : a,
@@ -240,5 +247,12 @@ export interface ScalarEffect<a> {
 export interface StateAndEventResponse {
 	game : Game,
 	event : Event,
+}
+
+//-------- MISC --------
+
+export enum ResultsDirection {
+	Ascending = "Ascending",
+	Descending = "Descending",
 }
 
