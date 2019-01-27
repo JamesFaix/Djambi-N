@@ -23,7 +23,7 @@ let getGames (query : GamesQuery) (session : Session) : Game list AsyncHttpResul
     )
 
 //TODO: Requires integration tests
-[<ClientFunction(HttpMethod.Get, "/games")>]
+[<ClientFunction(HttpMethod.Get, "/games/%i")>]
 let getGame (gameId : int) (session : Session) : Game AsyncHttpResult =
     GameRepository.getGame gameId
     |> thenBind (fun game ->
