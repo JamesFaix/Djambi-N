@@ -50,10 +50,12 @@ BEGIN
     -- Limit result count
 
     DECLARE @MaxSupportedResults INT = 100000 --It seems very unlikely that a game would ever have this many events
-    SET @MaxResults = MIN(IFNULL(@MaxResults, @MaxSupportedResults), @MaxSupportedResults)
+    SET @MaxResults = ISNULL(@MaxResults, @MaxSupportedResults)
+    IF @MaxResults > @MaxSupportedResults
+        SET @MaxResults = @MaxSupportedResults
 
     IF @Ascending = 1
-        SELECT TOP @MaxResults * FROM #events ORDER BY EventID ASC
+        SELECT TOP (@MaxResults) * FROM #events ORDER BY EventID ASC
     ELSE
-        SELECT TOP @MaxResults * FROM #events ORDER BY EventID DESC
+        SELECT TOP (@MaxResults) * FROM #events ORDER BY EventID DESC
 END
