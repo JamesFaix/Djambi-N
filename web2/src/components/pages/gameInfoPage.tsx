@@ -1,7 +1,7 @@
 import * as React from 'react';
 import '../../index.css';
 import PageTitle from '../pageTitle';
-import { User, Game } from '../../api/model';
+import { User, Game, GameStatus } from '../../api/model';
 import ApiClient from '../../api/client';
 import { Redirect } from 'react-router';
 import LinkButton from '../linkButton';
@@ -103,7 +103,7 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
         }
     }
 
-    private renderStartButton(game: Game){
+    private renderActionButton(game: Game){
         if (game === null) {
             return "";
         }
@@ -118,14 +118,43 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
             return "";
         }
 
-        return (
-            <div className="centeredContainer">
-                <ActionButton
-                    label="Start"
-                    onClick={() => this.startOnClick()}
-                />
-            </div>
-        );
+        switch (game.status) {
+            case GameStatus.Pending:
+                return (
+                    <div className="centeredContainer">
+                        Pending
+                        <ActionButton
+                            label="Start"
+                            onClick={() => this.startOnClick()}
+                        />
+                    </div>
+                );
+
+            case GameStatus.Started:
+                return (
+                    <div className="centeredContainer">
+                        Started
+                        <LinkButton
+                            label="Enter"
+                            to={"/games/" + this.props.gameId}
+                        />
+                    </div>
+                );
+
+            case GameStatus.Finished:
+                return (
+                    <div className="centeredContainer">
+                        Finished
+                    </div>
+                );
+            case GameStatus.Aborted:
+            case GameStatus.AbortedWhilePending:
+                return (
+                    <div className="centeredContainer">
+                        Aborted
+                    </div>
+                );
+        }
     }
 
     render() {
@@ -145,7 +174,7 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
 
         return (
             <div>
-                <PageTitle label={"Lobby"}/>
+                <PageTitle label={"Game Info"}/>
                 <br/>
                 <div className="centeredContainer">
                     <LinkButton label="Home" to="/dashboard"/>
@@ -161,7 +190,7 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
                     updateGame={newGame => this.playerTableUpdateGame(newGame)}
                 />
                 <br/>
-                {this.renderStartButton(this.state.game)}
+                {this.renderActionButton(this.state.game)}
             </div>
         );
     }

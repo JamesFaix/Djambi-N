@@ -1,7 +1,12 @@
 import * as React from 'react';
 import { User, Game, Player, PlayerKind, CreatePlayerRequest, GameStatus } from '../api/model';
-import ActionButton from './actionButton';
 import ApiClient from '../api/client';
+import HintCell from './tables/hintCell';
+import EmptyCell from './tables/emptyCell';
+import TextCell from './tables/textCell';
+import EmphasizedTextCell from './tables/emphasizedTextCell';
+import TextFieldCell from './tables/textFieldCell';
+import ActionButtonCell from './tables/actionButtonCell';
 
 export interface GamePlayersTableProps {
     api : ApiClient,
@@ -185,21 +190,17 @@ export default class GamePlayersTable extends React.Component<GamePlayersTablePr
                 if (seat.player === null) {
                     return (
                         <tr key={"row" + rowNumber}>
-                            <td className="lightText lobbyPlayersTableTextCell">
-                                (Empty)
-                            </td>
-                            <td></td>
-                            <td></td>
+                            <HintCell text="(Empty)" />
+                            <EmptyCell/>
+                            <EmptyCell/>
                         </tr>
                     );
                 } else {
                     return (
                         <tr key={"row" + rowNumber}>
-                            <td className="lobbyPlayersTableTextCell">
-                                {seat.player.name}
-                            </td>
-                            <td>{seat.note}</td>
-                            <td></td>
+                            <EmphasizedTextCell text={seat.player.name}/>
+                            <TextCell text={seat.note} />
+                            <EmptyCell/>
                         </tr>
                     );
                 }
@@ -207,55 +208,39 @@ export default class GamePlayersTable extends React.Component<GamePlayersTablePr
             case SeatActionType.Join:
                 return (
                     <tr key={"row" + rowNumber}>
-                        <td className="lightText lobbyPlayersTableTextCell">
-                            (Empty)
-                        </td>
-                        <td></td>
-                        <td className="centeredContainer">
-                            <ActionButton
-                                label="Join"
-                                onClick={() => this.addSelfOnClick()}
-                            />
-                        </td>
+                        <HintCell text="(Empty)" />
+                        <EmptyCell/>
+                        <ActionButtonCell
+                            label="Join"
+                            onClick={() => this.addSelfOnClick()}
+                        />
                     </tr>
                 );
 
             case SeatActionType.AddGuest:
                 return (
                     <tr key={"row" + rowNumber}>
-                        <td>
-                            <input
-                                type="text"
-                                value={this.state.guestName}
-                                onChange={e => this.addGuestOnChanged(e)}
-                                className="fullWidth"
-                            />
-                        </td>
-                        <td></td>
-                        <td className="centeredContainer">
-                            <ActionButton
-                                label="Add Guest"
-                                onClick={() => this.addGuestOnClick()}
-                            />
-                        </td>
+                        <TextFieldCell
+                            value={this.state.guestName}
+                            onChange={e => this.addGuestOnChanged(e)}
+                        />
+                        <EmptyCell/>
+                        <ActionButtonCell
+                            label="Add Guest"
+                            onClick={() => this.addGuestOnClick()}
+                        />
                     </tr>
                 );
 
             case SeatActionType.Remove:
-                const label = this.isSeatSelf(seat) ? "Quit" : "Remove";
-
                 return (
                     <tr key={"row" + rowNumber}>
-                        <td className="lobbyPlayersTableTextCell">
-                            {seat.player.name}
-                        </td>
-                        <td>{seat.note}</td>
-                        <td className="centeredContainer">
-                            <ActionButton
-                                label={label}
-                                onClick={() => this.removeOnClick(seat.player.id)}
-                            />
-                        </td>
+                        <EmphasizedTextCell text={seat.player.name}/>
+                        <TextCell text={seat.note} />
+                        <ActionButtonCell
+                            label={this.isSeatSelf(seat) ? "Quit" : "Remove"}
+                            onClick={() => this.removeOnClick(seat.player.id)}
+                        />
                     </tr>
                 );
 
