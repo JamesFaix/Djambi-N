@@ -75,15 +75,16 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
         return (
             <div className="lobbyDetailsContainer">
                 <div className="centeredContainer">
-                    {this.renderLobbyDescription(game)}
-                    {this.renderLobbyOptions(game)}
+                    {this.renderGameDescription(game)}
+                    {this.renderGameOptions(game)}
                     <p>{game.parameters.regionCount + " regions"}</p>
+                    {this.renderGameStatus(game)}
                 </div>
             </div>
         );
     }
 
-    private renderLobbyDescription(game : Game) {
+    private renderGameDescription(game : Game) {
         if (game.parameters.description === null) {
             return "";
         } else {
@@ -91,7 +92,7 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
         }
     }
 
-    private renderLobbyOptions(game : Game) {
+    private renderGameOptions(game : Game) {
         if (game.parameters.isPublic && game.parameters.allowGuests) {
             return <p>{"Public, guests allowed"}</p>;
         } else if (game.parameters.isPublic) {
@@ -103,37 +104,32 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
         }
     }
 
-    private renderActionButton(game: Game){
+    private renderGameStatus(game: Game){
         if (game === null) {
-            return "";
-        }
-
-        //Only creator can start
-        if (this.props.user.id !== game.createdByUserId) {
-            return "";
-        }
-
-        //Can only start with at least 2 players
-        if (game.players.length < 2){
             return "";
         }
 
         switch (game.status) {
             case GameStatus.Pending:
                 return (
+                    //Only creator can start game, and only with > 1 players
                     <div className="centeredContainer">
-                        Pending
-                        <ActionButton
-                            label="Start"
-                            onClick={() => this.startOnClick()}
-                        />
+                        Pending 
+                        { this.props.user.id === game.createdByUserId
+                            && game.players.length >= 2
+                            ? <ActionButton
+                                label="Start"
+                                onClick={() => this.startOnClick()}
+                            />
+                            : ""
+                        }
                     </div>
                 );
 
             case GameStatus.Started:
                 return (
                     <div className="centeredContainer">
-                        Started
+                        Started 
                         <LinkButton
                             label="Enter"
                             to={"/games/" + this.props.gameId}
@@ -183,14 +179,13 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
                     <LinkButton label="Find Game" to="/games/find"/>
                 </div>
                 {this.renderLobbyDetails(this.state.game)}
+                <br/>
                 <GamePlayersTable
                     user={this.props.user}
                     api={this.props.api}
                     game={this.state.game}
                     updateGame={newGame => this.playerTableUpdateGame(newGame)}
                 />
-                <br/>
-                {this.renderActionButton(this.state.game)}
             </div>
         );
     }
