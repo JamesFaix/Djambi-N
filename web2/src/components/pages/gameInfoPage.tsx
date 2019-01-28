@@ -17,8 +17,7 @@ export interface GameInfoPageProps {
 export interface GameInfoPageState {
     game : Game,
     guestName : string,
-    gameId : number,
-    redirectToGame : boolean
+    redirectUrl : string
 }
 
 export default class GameInfoPage extends React.Component<GameInfoPageProps, GameInfoPageState> {
@@ -28,8 +27,7 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
         this.state = {
             game : null,
             guestName : "",
-            gameId : props.gameId,
-            redirectToGame : false
+            redirectUrl : null
         };
     }
 
@@ -45,10 +43,13 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
     }
 
 //---Event handlers---
-
     private playerTableUpdateGame(newGame : Game) {
-        if (newGame === null) {
-            this.setState({gameId : null});
+        if (newGame.status === GameStatus.Aborted
+            || newGame.status === GameStatus.AbortedWhilePending) {
+            this.setState({
+                game : newGame,
+                redirectUrl: '/'
+            });
         } else {
             this.setState({game : newGame});
         }
@@ -58,7 +59,7 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
         this.props.api
             .startGame(this.state.game.id)
             .then(_ => {
-                this.setState({ redirectToGame : true });
+                this.setState({ redirectUrl : "/games/" + this.state.game.id });
             })
             .catch(reason => {
                 alert("Game start failed because " + reason);
@@ -159,13 +160,8 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
             return <Redirect to='/'/>;
         }
 
-        //LobbyId is set to null when lobby closed
-        if (this.state.gameId === null) {
-            return <Redirect to='/'/>;
-        }
-
-        if (this.state.redirectToGame) {
-            return <Redirect to={'/games/' + this.state.gameId}/>;
+        if (this.state.redirectUrl !== null) {
+            return <Redirect to={this.state.redirectUrl}/>
         }
 
         return (

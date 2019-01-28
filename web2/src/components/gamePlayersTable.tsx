@@ -69,6 +69,10 @@ export default class GamePlayersTable extends React.Component<GamePlayersTablePr
                     seat.note = "Guest of " + host.name;
                 }
 
+                if (p.kind === PlayerKind.Neutral) {
+                    seat.note = "Neutral";
+                }
+
                 if (self.isAdmin
                     || game.createdByUserId === self.id
                     || seat.player.name === self.name
@@ -166,15 +170,7 @@ export default class GamePlayersTable extends React.Component<GamePlayersTablePr
         this.props.api
             .removePlayer(this.props.game.id, playerId)
             .then(stateAndEvent => {
-                const game = stateAndEvent.game;
-
-                //Game is closed when creator is removed
-                if (game.status === GameStatus.Aborted || game.status === GameStatus.AbortedWhilePending) {
-                    this.props.updateGame(null);
-                }
-                else {
-                    this.props.updateGame(game);
-                }
+                this.props.updateGame(stateAndEvent.game);
             })
             .catch(reason => {
                 alert("Remove player failed because " + reason);
