@@ -6,6 +6,7 @@ import HomePage from './pages/homePage';
 import LoginPage from './pages/loginPage';
 import SignupPage from './pages/signupPage';
 import DashboardPage from './pages/dashboardPage';
+import GamePage from './pages/gamePage';
 
 import TopMenu from './topMenu';
 import { User } from '../api/model';
@@ -116,6 +117,17 @@ export default class App extends React.Component<AppProps, AppState> {
                                 user={this.state.user}
                                 api={this.state.api}
                                 gameId={props.match.params.lobbyId}
+                            />
+                        }
+                    />
+                    <Route
+                        path='/games/:gameId'
+                        render={props =>
+                            <GamePage
+                                user={this.state.user}
+                                api={this.state.api}
+                                gameId={props.match.params.gameId}
+                                rulesUrl={this.rulesUrl}
                             />
                         }
                     />

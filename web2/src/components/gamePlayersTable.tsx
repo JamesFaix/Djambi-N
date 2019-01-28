@@ -45,8 +45,6 @@ export default class GamePlayersTable extends React.Component<GamePlayersTablePr
         //Get player seats first
         const seats = game.players
             .map(p => {
-                console.log(p);
-
                 const seat : Seat = {
                     player : p,
                     note : null,
@@ -74,7 +72,7 @@ export default class GamePlayersTable extends React.Component<GamePlayersTablePr
 
                     seat.action = SeatActionType.Remove;
                 }
-                console.log(seat);
+
                 return seat;
             });
 
