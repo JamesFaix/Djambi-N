@@ -23,8 +23,6 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
         };
     }
 
-    private cellSize = 10;
-
     componentDidMount() {
         this.props.api
             .getGame(this.props.gameId)
