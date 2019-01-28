@@ -7,6 +7,7 @@ import { Redirect } from 'react-router';
 import LinkButton from '../linkButton';
 import ActionButton from '../actionButton';
 import GamePlayersTable from '../gamePlayersTable';
+import Routes from '../../routes';
 
 export interface GameInfoPageProps {
     user : User,
@@ -48,7 +49,7 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
             || newGame.status === GameStatus.AbortedWhilePending) {
             this.setState({
                 game : newGame,
-                redirectUrl: '/'
+                redirectUrl: Routes.home()
             });
         } else {
             this.setState({game : newGame});
@@ -59,7 +60,7 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
         this.props.api
             .startGame(this.state.game.id)
             .then(_ => {
-                this.setState({ redirectUrl : "/games/" + this.state.game.id });
+                this.setState({ redirectUrl : Routes.game(this.state.game.id) });
             })
             .catch(reason => {
                 alert("Game start failed because " + reason);
@@ -131,10 +132,7 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
                 return (
                     <div className="centeredContainer">
                         Started 
-                        <LinkButton
-                            label="Enter"
-                            to={"/games/" + this.props.gameId}
-                        />
+                        <LinkButton label="Enter" to={Routes.game(this.state.game.id)} />
                     </div>
                 );
 
@@ -157,7 +155,7 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
     render() {
         //Go to home if not logged in
         if (this.props.user === null) {
-            return <Redirect to='/'/>;
+            return <Redirect to={Routes.home()}/>;
         }
 
         if (this.state.redirectUrl !== null) {
@@ -169,10 +167,10 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
                 <PageTitle label={"Game Info"}/>
                 <br/>
                 <div className="centeredContainer">
-                    <LinkButton label="Home" to="/dashboard"/>
-                    <LinkButton label="My Games" to="/games/my"/>
-                    <LinkButton label="Create Game" to="/games/create"/>
-                    <LinkButton label="Find Game" to="/games/find"/>
+                    <LinkButton label="Home" to={Routes.dashboard()}/>
+                    <LinkButton label="My Games" to={Routes.myGames()}/>
+                    <LinkButton label="Create Game" to={Routes.createGame()}/>
+                    <LinkButton label="Find Game" to={Routes.findGame()}/>
                 </div>
                 {this.renderLobbyDetails(this.state.game)}
                 <br/>

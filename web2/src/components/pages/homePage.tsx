@@ -5,12 +5,12 @@ import { Redirect } from 'react-router';
 import { User } from '../../api/model';
 import ApiClient from '../../api/client';
 import LinkButton from '../linkButton';
+import Routes from '../../routes';
 
 export interface HomePageProps {
     user : User,
     api : ApiClient,
-    setUser(user : User) : void,
-    rulesUrl : string
+    setUser(user : User) : void
 }
 
 export default class HomePage extends React.Component<HomePageProps> {
@@ -18,7 +18,7 @@ export default class HomePage extends React.Component<HomePageProps> {
     render() {
         //Go straight to dashboard if already logged in
         if (this.props.user !== null) {
-            return <Redirect to='/dashboard'/>
+            return <Redirect to={Routes.dashboard()}/>
         }
 
         this.props.api
@@ -34,9 +34,9 @@ export default class HomePage extends React.Component<HomePageProps> {
                 <PageTitle label="Greetings, visitor"/>
                 <br/>
                 <div className="centeredContainer">
-                    <LinkButton to="/signup" label="Sign up"/>
-                    <LinkButton to="/login" label="Login"/>
-                    <LinkButton label="Rules" to={this.props.rulesUrl} newWindow={true}/>
+                    <LinkButton label="Sign up" to={Routes.signup()}/>
+                    <LinkButton label="Login" to={Routes.login()}/>
+                    <LinkButton label="Rules" to={Routes.rules()} newWindow={true}/>
                 </div>
                 <br/>
                 <br/>

@@ -15,6 +15,7 @@ import MyGamesPage from './pages/myGamesPage';
 import CreateGamePage from './pages/createGamePage';
 import FindGamePage from './pages/findGamePage';
 import GameInfoPage from './pages/gameInfoPage';
+import Routes from '../routes';
 
 export interface AppProps {
 
@@ -34,26 +35,23 @@ export default class App extends React.Component<AppProps, AppState> {
         };
     }
 
-    private rulesUrl = "https://github.com/GamesFaix/Djambi3/blob/master/docs/Rules.md";
-
     render() {
         return (
             <main>
                 <TopMenu/>
                 <Switch>
                     <Route
-                        exact path='/'
+                        exact path={Routes.home()}
                         render={_ =>
                             <HomePage
                                 user={this.state.user}
                                 api={this.state.api}
                                 setUser={user => this.setState({user : user})}
-                                rulesUrl={this.rulesUrl}
                             />
                         }
                     />
                     <Route
-                        path='/signup'
+                        path={Routes.signup()}
                         render={_ =>
                             <SignupPage
                                 api={this.state.api}
@@ -63,7 +61,7 @@ export default class App extends React.Component<AppProps, AppState> {
                         }
                     />
                     <Route
-                        path='/login'
+                        path={Routes.login()}
                         render={_ =>
                             <LoginPage
                                 api={this.state.api}
@@ -73,18 +71,17 @@ export default class App extends React.Component<AppProps, AppState> {
                         }
                     />
                     <Route
-                        path='/dashboard'
+                        path={Routes.dashboard()}
                         render={_ =>
                             <DashboardPage
                                 user={this.state.user}
                                 api={this.state.api}
                                 setUser={user => this.setState({user : user})}
-                                rulesUrl={this.rulesUrl}
                             />
                         }
                     />
                     <Route
-                        path='/games/my'
+                        path={Routes.myGames()}
                         render={_ =>
                             <MyGamesPage
                                 user={this.state.user}
@@ -93,7 +90,7 @@ export default class App extends React.Component<AppProps, AppState> {
                         }
                     />
                     <Route
-                        path='/games/create'
+                        path={Routes.createGame()}
                         render={_ =>
                             <CreateGamePage
                                 user={this.state.user}
@@ -102,7 +99,7 @@ export default class App extends React.Component<AppProps, AppState> {
                         }
                     />
                     <Route
-                        path='/games/find'
+                        path={Routes.findGame()}
                         render={_ =>
                             <FindGamePage
                                 user={this.state.user}
@@ -111,7 +108,7 @@ export default class App extends React.Component<AppProps, AppState> {
                         }
                     />
                     <Route
-                        path='/games/:gameId/info'
+                        path={Routes.gameInfoTemplate()}
                         render={props =>
                             <GameInfoPage
                                 user={this.state.user}
@@ -121,13 +118,12 @@ export default class App extends React.Component<AppProps, AppState> {
                         }
                     />
                     <Route
-                        path='/games/:gameId'
+                        path={Routes.gameTemplate()}
                         render={props =>
                             <GamePage
                                 user={this.state.user}
                                 api={this.state.api}
                                 gameId={props.match.params.gameId}
-                                rulesUrl={this.rulesUrl}
                             />
                         }
                     />

@@ -3,12 +3,12 @@ import ApiClient from '../../api/client';
 import { User, Game } from '../../api/model';
 import LinkButton from '../linkButton';
 import PageTitle from '../pageTitle';
+import Routes from '../../routes';
 
 export interface GamePageProps {
     user : User,
     api : ApiClient,
-    gameId : number,
-    rulesUrl : string
+    gameId : number
 }
 
 export interface GamePageState {
@@ -48,8 +48,8 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                 <PageTitle label={"Game"}/>
                 <br/>
                 <div className="centeredContainer">
-                    <LinkButton label="Home" to="/dashboard"/>
-                    <LinkButton label="Rules" to={this.props.rulesUrl} newWindow={true}/>
+                    <LinkButton label="Home" to={Routes.dashboard()}/>
+                    <LinkButton label="Rules" to={Routes.rules()} newWindow={true}/>
                 </div>
                 <br/>
                 [Board]

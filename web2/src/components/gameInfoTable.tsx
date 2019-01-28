@@ -2,6 +2,7 @@ import { Game } from "../api/model";
 import * as React from 'react';
 import LinkButton from "./linkButton";
 import moment = require("moment");
+import Routes from "../routes";
 
 export interface GameInfoTableProps {
     games : Game[]
@@ -13,10 +14,7 @@ export default class GameInfoTable extends React.Component<GameInfoTableProps> {
         return (
             <tr key={"row" + rowNumber}>
                 <td>
-                    <LinkButton
-                        label="Go"
-                        to={"/games/" + game.id + "/info"}
-                    />
+                    <LinkButton label="Go" to={Routes.gameInfo(game.id)} />
                 </td>
                 <td>
                     {moment(game.createdOn).format('MM/DD/YY hh:mm a')}

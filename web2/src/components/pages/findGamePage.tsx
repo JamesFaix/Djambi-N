@@ -11,6 +11,7 @@ import LabeledTristateDropdown from '../labeledTristateDropdown';
 import ActionButton from '../actionButton';
 import Util from '../../util';
 import GameInfoTable from '../gameInfoTable';
+import Routes from '../../routes';
 
 export interface FindGamePageProps {
     user : User,
@@ -152,7 +153,7 @@ export default class FindGamePage extends React.Component<FindGamePageProps, Fin
     render() {
         //Go to home if not logged in
         if (this.props.user === null) {
-            return <Redirect to='/'/>
+            return <Redirect to={Routes.home()}/>
         }
 
         return (
@@ -160,9 +161,9 @@ export default class FindGamePage extends React.Component<FindGamePageProps, Fin
                 <PageTitle label={"Find Game"}/>
                 <br/>
                 <div className="centeredContainer">
-                    <LinkButton label="Home" to="/dashboard"/>
-                    <LinkButton label="My Games" to="/games/my"/>
-                    <LinkButton label="Create Game" to="/games/create"/>
+                    <LinkButton label="Home" to={Routes.dashboard()}/>
+                    <LinkButton label="My Games" to={Routes.myGames()}/>
+                    <LinkButton label="Create Game" to={Routes.createGame()}/>
                 </div>
                 <br/>
                 {this.renderQueryFilters()}
