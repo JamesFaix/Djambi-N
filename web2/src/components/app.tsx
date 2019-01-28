@@ -13,8 +13,9 @@ import { User } from '../api/model';
 import ApiClient from '../api/client';
 import MyGamesPage from './pages/myGamesPage';
 import CreateGamePage from './pages/createGamePage';
-import FindLobbyPage from './pages/findLobbyPage';
-import LobbyPage from './pages/lobbyPage';
+import FindGamePage from './pages/findGamePage';
+import GameInfoPage from './pages/gameInfoPage';
+import Routes from '../routes';
 
 export interface AppProps {
 
@@ -34,26 +35,23 @@ export default class App extends React.Component<AppProps, AppState> {
         };
     }
 
-    private rulesUrl = "https://github.com/GamesFaix/Djambi3/blob/master/docs/Rules.md";
-
     render() {
         return (
             <main>
                 <TopMenu/>
                 <Switch>
                     <Route
-                        exact path='/'
+                        exact path={Routes.home()}
                         render={_ =>
                             <HomePage
                                 user={this.state.user}
                                 api={this.state.api}
                                 setUser={user => this.setState({user : user})}
-                                rulesUrl={this.rulesUrl}
                             />
                         }
                     />
                     <Route
-                        path='/signup'
+                        path={Routes.signup()}
                         render={_ =>
                             <SignupPage
                                 api={this.state.api}
@@ -63,7 +61,7 @@ export default class App extends React.Component<AppProps, AppState> {
                         }
                     />
                     <Route
-                        path='/login'
+                        path={Routes.login()}
                         render={_ =>
                             <LoginPage
                                 api={this.state.api}
@@ -73,18 +71,17 @@ export default class App extends React.Component<AppProps, AppState> {
                         }
                     />
                     <Route
-                        path='/dashboard'
+                        path={Routes.dashboard()}
                         render={_ =>
                             <DashboardPage
                                 user={this.state.user}
                                 api={this.state.api}
                                 setUser={user => this.setState({user : user})}
-                                rulesUrl={this.rulesUrl}
                             />
                         }
                     />
                     <Route
-                        path='/myGames'
+                        path={Routes.myGames()}
                         render={_ =>
                             <MyGamesPage
                                 user={this.state.user}
@@ -93,7 +90,7 @@ export default class App extends React.Component<AppProps, AppState> {
                         }
                     />
                     <Route
-                        path='/createGame'
+                        path={Routes.createGame()}
                         render={_ =>
                             <CreateGamePage
                                 user={this.state.user}
@@ -102,21 +99,31 @@ export default class App extends React.Component<AppProps, AppState> {
                         }
                     />
                     <Route
-                        path='/findGame'
+                        path={Routes.findGame()}
                         render={_ =>
-                            <FindLobbyPage
+                            <FindGamePage
                                 user={this.state.user}
                                 api={this.state.api}
                             />
                         }
                     />
                     <Route
-                        path='/lobby/:lobbyId'
+                        path={Routes.gameInfoTemplate()}
                         render={props =>
-                            <LobbyPage
+                            <GameInfoPage
                                 user={this.state.user}
                                 api={this.state.api}
-                                gameId={props.match.params.lobbyId}
+                                gameId={props.match.params.gameId}
+                            />
+                        }
+                    />
+                    <Route
+                        path={Routes.gameTemplate()}
+                        render={props =>
+                            <GamePage
+                                user={this.state.user}
+                                api={this.state.api}
+                                gameId={props.match.params.gameId}
                             />
                         }
                     />
@@ -127,7 +134,6 @@ export default class App extends React.Component<AppProps, AppState> {
                                 user={this.state.user}
                                 api={this.state.api}
                                 gameId={props.match.params.gameId}
-                                rulesUrl={this.rulesUrl}
                             />
                         }
                     />

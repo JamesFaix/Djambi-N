@@ -8,6 +8,7 @@ import { Redirect } from 'react-router';
 import LinkButton from '../linkButton';
 import ActionButton from '../actionButton';
 import { InputTypes } from '../../constants';
+import Routes from '../../routes';
 
 export interface SignupPageProps {
     api : ApiClient,
@@ -78,7 +79,7 @@ export default class SignupPage extends React.Component<SignupPageProps, SignupP
     render() {
         //Go straight to dashboard if already logged in
         if (this.props.user !== null) {
-            return <Redirect to='/dashboard'/>
+            return <Redirect to={Routes.dashboard()}/>
         }
 
         return (
@@ -86,8 +87,8 @@ export default class SignupPage extends React.Component<SignupPageProps, SignupP
                 <PageTitle label="Sign up"/>
                 <br/>
                 <div className="centeredContainer">
-                    <LinkButton to="/" label="Home"/>
-                    <LinkButton to="/login" label="Login"/>
+                    <LinkButton label="Home" to={Routes.home()} />
+                    <LinkButton label="Login" to={Routes.login()} />
                 </div>
                 <br/>
                 <br/>

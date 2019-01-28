@@ -6,12 +6,12 @@ import PageTitle from '../pageTitle';
 import GameBoard from '../gameBoard';
 import BoardView from '../../display/boardView';
 import BoardViewFactory from '../../display/boardViewFactory';
+import Routes from '../../routes';
 
 export interface GamePageProps {
     user : User,
     api : ApiClient,
-    gameId : number,
-    rulesUrl : string
+    gameId : number
 }
 
 export interface GamePageState {
@@ -38,6 +38,7 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                 return this.props.api
                     .getBoard(game.parameters.regionCount)
                     .then(board => {
+                        console.log(board);
                         let boardView = BoardViewFactory.createBoard(board, this.cellSize);
                         this.setState({boardView : boardView});
                         console.log(boardView);
@@ -57,8 +58,8 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                 <PageTitle label={"Game"}/>
                 <br/>
                 <div className="centeredContainer">
-                    <LinkButton label="Home" to="/dashboard"/>
-                    <LinkButton label="Rules" to={this.props.rulesUrl} newWindow={true}/>
+                    <LinkButton label="Home" to={Routes.dashboard()}/>
+                    <LinkButton label="Rules" to={Routes.rules()} newWindow={true}/>
                 </div>
                 <br/>
                 <GameBoard

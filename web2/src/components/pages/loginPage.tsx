@@ -8,6 +8,7 @@ import { Redirect } from 'react-router';
 import LinkButton from '../linkButton';
 import ActionButton from '../actionButton';
 import { InputTypes } from '../../constants';
+import Routes from '../../routes';
 
 export interface LoginPageProps {
     api : ApiClient,
@@ -68,7 +69,7 @@ export default class LoginPage extends React.Component<LoginPageProps, LoginPage
     render() {
         //Go straight to dashboard if already logged in
         if (this.props.user !== null) {
-            return <Redirect to='/dashboard'/>
+            return <Redirect to={Routes.dashboard()}/>
         }
 
         return (
@@ -76,8 +77,8 @@ export default class LoginPage extends React.Component<LoginPageProps, LoginPage
                 <PageTitle label="Log in"/>
                 <br/>
                 <div className="centeredContainer">
-                    <LinkButton to="/" label="Home"/>
-                    <LinkButton to="/signup" label="Sign up"/>
+                    <LinkButton label="Home" to={Routes.home()} />
+                    <LinkButton label="Sign up" to={Routes.signup()} />
                 </div>
                 <br/>
                 <br/>

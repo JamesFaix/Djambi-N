@@ -127,7 +127,7 @@ td {
     color: #aaaaaa;
 }
 
-.lobbyPlayersTableTextCell {
+.paddedCell {
     padding: 10px;
 }
 

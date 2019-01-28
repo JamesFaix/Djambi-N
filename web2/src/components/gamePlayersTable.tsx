@@ -1,7 +1,12 @@
 import * as React from 'react';
 import { User, Game, Player, PlayerKind, CreatePlayerRequest, GameStatus } from '../api/model';
-import ActionButton from './actionButton';
 import ApiClient from '../api/client';
+import HintCell from './tables/hintCell';
+import EmptyCell from './tables/emptyCell';
+import TextCell from './tables/textCell';
+import EmphasizedTextCell from './tables/emphasizedTextCell';
+import TextFieldCell from './tables/textFieldCell';
+import ActionButtonCell from './tables/actionButtonCell';
 
 export interface GamePlayersTableProps {
     api : ApiClient,
@@ -64,6 +69,10 @@ export default class GamePlayersTable extends React.Component<GamePlayersTablePr
                     seat.note = "Guest of " + host.name;
                 }
 
+                if (p.kind === PlayerKind.Neutral) {
+                    seat.note = "Neutral";
+                }
+
                 if (self.isAdmin
                     || game.createdByUserId === self.id
                     || seat.player.name === self.name
@@ -72,6 +81,7 @@ export default class GamePlayersTable extends React.Component<GamePlayersTablePr
 
                     seat.action = SeatActionType.Remove;
                 }
+
                 return seat;
             });
 
@@ -160,15 +170,7 @@ export default class GamePlayersTable extends React.Component<GamePlayersTablePr
         this.props.api
             .removePlayer(this.props.game.id, playerId)
             .then(stateAndEvent => {
-                const game = stateAndEvent.game;
-
-                //Game is closed when creator is removed
-                if (game.status === GameStatus.Aborted || game.status === GameStatus.AbortedWhilePending) {
-                    this.props.updateGame(null);
-                }
-                else {
-                    this.props.updateGame(game);
-                }
+                this.props.updateGame(stateAndEvent.game);
             })
             .catch(reason => {
                 alert("Remove player failed because " + reason);
@@ -178,27 +180,23 @@ export default class GamePlayersTable extends React.Component<GamePlayersTablePr
 
     //---Rendering---
 
-    private renderPlayerRow(seat : Seat, rowNumber : number) {
+    private renderPlayerRow(status : GameStatus, seat : Seat, rowNumber : number) {
         switch (seat.action) {
             case SeatActionType.None:
                 if (seat.player === null) {
                     return (
                         <tr key={"row" + rowNumber}>
-                            <td className="lightText lobbyPlayersTableTextCell">
-                                (Empty)
-                            </td>
-                            <td></td>
-                            <td></td>
+                            <HintCell text="(Empty)" />
+                            <EmptyCell/>
+                            {status === GameStatus.Pending ? <EmptyCell/> : ""}
                         </tr>
                     );
                 } else {
                     return (
                         <tr key={"row" + rowNumber}>
-                            <td className="lobbyPlayersTableTextCell">
-                                {seat.player.name}
-                            </td>
-                            <td>{seat.note}</td>
-                            <td></td>
+                            <EmphasizedTextCell text={seat.player.name}/>
+                            <TextCell text={seat.note} />
+                            {status === GameStatus.Pending ? <EmptyCell/> : ""}
                         </tr>
                     );
                 }
@@ -206,55 +204,48 @@ export default class GamePlayersTable extends React.Component<GamePlayersTablePr
             case SeatActionType.Join:
                 return (
                     <tr key={"row" + rowNumber}>
-                        <td className="lightText lobbyPlayersTableTextCell">
-                            (Empty)
-                        </td>
-                        <td></td>
-                        <td className="centeredContainer">
-                            <ActionButton
+                        <HintCell text="(Empty)" />
+                        <EmptyCell/>
+                        {status === GameStatus.Pending ?
+                            <ActionButtonCell
                                 label="Join"
                                 onClick={() => this.addSelfOnClick()}
                             />
-                        </td>
+                            : ""
+                        }
                     </tr>
                 );
 
             case SeatActionType.AddGuest:
                 return (
                     <tr key={"row" + rowNumber}>
-                        <td>
-                            <input
-                                type="text"
-                                value={this.state.guestName}
-                                onChange={e => this.addGuestOnChanged(e)}
-                                className="fullWidth"
-                            />
-                        </td>
-                        <td></td>
-                        <td className="centeredContainer">
-                            <ActionButton
+                        <TextFieldCell
+                            value={this.state.guestName}
+                            onChange={e => this.addGuestOnChanged(e)}
+                        />
+                        <EmptyCell/>
+                        {status === GameStatus.Pending ?
+                            <ActionButtonCell
                                 label="Add Guest"
                                 onClick={() => this.addGuestOnClick()}
                             />
-                        </td>
+                            : ""
+                        }
                     </tr>
                 );
 
             case SeatActionType.Remove:
-                const label = this.isSeatSelf(seat) ? "Quit" : "Remove";
-
                 return (
                     <tr key={"row" + rowNumber}>
-                        <td className="lobbyPlayersTableTextCell">
-                            {seat.player.name}
-                        </td>
-                        <td>{seat.note}</td>
-                        <td className="centeredContainer">
-                            <ActionButton
-                                label={label}
+                        <EmphasizedTextCell text={seat.player.name}/>
+                        <TextCell text={seat.note} />
+                        {status === GameStatus.Pending ?
+                            <ActionButtonCell
+                                label={this.isSeatSelf(seat) ? "Quit" : "Remove"}
                                 onClick={() => this.removeOnClick(seat.player.id)}
                             />
-                        </td>
+                            : ""
+                        }
                     </tr>
                 );
 
@@ -283,7 +274,7 @@ export default class GamePlayersTable extends React.Component<GamePlayersTablePr
                 </table>
                 <table className="table">
                     <tbody>
-                        {seats.map((seat, i) => this.renderPlayerRow(seat, i))}
+                        {seats.map((seat, i) => this.renderPlayerRow(this.props.game.status, seat, i))}
                     </tbody>
                 </table>
             </div>

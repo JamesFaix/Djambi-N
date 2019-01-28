@@ -2,21 +2,19 @@ import { Game } from "../api/model";
 import * as React from 'react';
 import LinkButton from "./linkButton";
 import moment = require("moment");
+import Routes from "../routes";
 
-export interface LobbiesTableProps {
+export interface GameInfoTableProps {
     games : Game[]
 }
 
-export default class LobbiesTable extends React.Component<LobbiesTableProps> {
+export default class GameInfoTable extends React.Component<GameInfoTableProps> {
 
-    renderLobbyRow(game : Game, rowNumber : number) {
+    renderGameRow(game : Game, rowNumber : number) {
         return (
             <tr key={"row" + rowNumber}>
                 <td>
-                    <LinkButton
-                        label="Go"
-                        to={"/lobby/" + game.id}
-                    />
+                    <LinkButton label="Go" to={Routes.gameInfo(game.id)} />
                 </td>
                 <td>
                     {moment(game.createdOn).format('MM/DD/YY hh:mm a')}
@@ -58,7 +56,7 @@ export default class LobbiesTable extends React.Component<LobbiesTableProps> {
                             <th>Guests allowed</th>
                             <th>Description</th>
                         </tr>
-                        {this.props.games.map((lobby, i) => this.renderLobbyRow(lobby, i))}
+                        {this.props.games.map((game, i) => this.renderGameRow(game, i))}
                     </tbody>
                 </table>
             </div>

@@ -6,12 +6,12 @@ import ApiClient from '../../api/client';
 import { Redirect } from 'react-router';
 import ActionButton from '../actionButton';
 import LinkButton from '../linkButton';
+import Routes from '../../routes';
 
 export interface DashboardPageProps {
     user : User,
     api : ApiClient,
-    setUser(user: User) : void,
-    rulesUrl : string
+    setUser(user: User) : void
 }
 
 export default class DashboardPage extends React.Component<DashboardPageProps> {
@@ -30,7 +30,7 @@ export default class DashboardPage extends React.Component<DashboardPageProps> {
     render() {
         //Go to home if not logged in
         if (this.props.user === null) {
-            return <Redirect to='/'/>
+            return <Redirect to={Routes.home()}/>
         }
 
         return (
@@ -38,10 +38,10 @@ export default class DashboardPage extends React.Component<DashboardPageProps> {
                 <PageTitle label={"Welcome, " + this.props.user.name}/>
                 <br/>
                 <div className="centeredContainer">
-                    <LinkButton label="My Games" to="/myGames"/>
-                    <LinkButton label="Create Game" to="/createGame"/>
-                    <LinkButton label="Find Game" to="/findGame"/>
-                    <LinkButton label="Rules" to={this.props.rulesUrl} newWindow={true}/>
+                    <LinkButton label="My Games" to={Routes.myGames()}/>
+                    <LinkButton label="Create Game" to={Routes.createGame()}/>
+                    <LinkButton label="Find Game" to={Routes.findGame()}/>
+                    <LinkButton label="Rules" to={Routes.rules()} newWindow={true}/>
                     <ActionButton label="Log out" onClick={() => this.logoutOnClick()}/>
                 </div>
             </div>
