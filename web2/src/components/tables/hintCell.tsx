@@ -9,7 +9,7 @@ export default class HintCell extends React.Component<HintCellProps> {
 
     render() {
         return  (
-            <td className="lightText lobbyPlayersTableTextCell">
+            <td className="lightText paddedCell">
                 {this.props.text}
             </td>
         );

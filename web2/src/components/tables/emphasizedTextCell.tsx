@@ -9,7 +9,7 @@ export default class EmphasizedTextCell extends React.Component<EmphasizedTextCe
 
     render() {
         return  (
-            <td className="lobbyPlayersTableTextCell">
+            <td className="paddedCell">
                 {this.props.text}
             </td>
         );
