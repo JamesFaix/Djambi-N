@@ -127,16 +127,6 @@ export default class App extends React.Component<AppProps, AppState> {
                             />
                         }
                     />
-                    <Route
-                        path='/games/:gameId'
-                        render={props =>
-                            <GamePage
-                                user={this.state.user}
-                                api={this.state.api}
-                                gameId={props.match.params.gameId}
-                            />
-                        }
-                    />
                 </Switch>
             </main>
         );
