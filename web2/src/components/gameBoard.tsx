@@ -23,9 +23,13 @@ export default class GameBoard extends React.Component<GameBoardProps, GameBoard
 
     render() {
         return (
-            <div id="div_board">
-                [Game board]
-                <canvas id="canvas_board" className="board"/>
+            <div id="div_board" className="centeredContainer">
+                <canvas
+                    id="canvas_board"
+                    className="board"
+                    width="1000"
+                    height="1000"
+                />
             </div>
         );
     }

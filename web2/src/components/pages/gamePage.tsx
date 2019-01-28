@@ -28,7 +28,9 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
         };
     }
 
-    private cellSize = 10;
+    private getCellSize(regionCount : number) : number {
+        return Math.floor(160 * Math.pow(Math.E, (-0.2 * regionCount)));
+    }
 
     componentDidMount() {
         this.props.api
@@ -38,10 +40,9 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                 return this.props.api
                     .getBoard(game.parameters.regionCount)
                     .then(board => {
-                        console.log(board);
-                        let boardView = BoardViewFactory.createBoard(board, this.cellSize);
+                        const cellSize = this.getCellSize(board.regionCount);
+                        const boardView = BoardViewFactory.createBoard(board, cellSize);
                         this.setState({boardView : boardView});
-                        console.log(boardView);
                     })
                     .catch(reason => {
                         alert("Get board failed because " + reason);
