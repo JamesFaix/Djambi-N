@@ -184,7 +184,7 @@ export default class GamePlayersTable extends React.Component<GamePlayersTablePr
 
     //---Rendering---
 
-    private renderPlayerRow(seat : Seat, rowNumber : number) {
+    private renderPlayerRow(status : GameStatus, seat : Seat, rowNumber : number) {
         switch (seat.action) {
             case SeatActionType.None:
                 if (seat.player === null) {
@@ -192,7 +192,7 @@ export default class GamePlayersTable extends React.Component<GamePlayersTablePr
                         <tr key={"row" + rowNumber}>
                             <HintCell text="(Empty)" />
                             <EmptyCell/>
-                            <EmptyCell/>
+                            {status === GameStatus.Pending ? <EmptyCell/> : ""}
                         </tr>
                     );
                 } else {
@@ -200,7 +200,7 @@ export default class GamePlayersTable extends React.Component<GamePlayersTablePr
                         <tr key={"row" + rowNumber}>
                             <EmphasizedTextCell text={seat.player.name}/>
                             <TextCell text={seat.note} />
-                            <EmptyCell/>
+                            {status === GameStatus.Pending ? <EmptyCell/> : ""}
                         </tr>
                     );
                 }
@@ -210,10 +210,13 @@ export default class GamePlayersTable extends React.Component<GamePlayersTablePr
                     <tr key={"row" + rowNumber}>
                         <HintCell text="(Empty)" />
                         <EmptyCell/>
-                        <ActionButtonCell
-                            label="Join"
-                            onClick={() => this.addSelfOnClick()}
-                        />
+                        {status === GameStatus.Pending ?
+                            <ActionButtonCell
+                                label="Join"
+                                onClick={() => this.addSelfOnClick()}
+                            />
+                            : ""
+                        }
                     </tr>
                 );
 
@@ -225,10 +228,13 @@ export default class GamePlayersTable extends React.Component<GamePlayersTablePr
                             onChange={e => this.addGuestOnChanged(e)}
                         />
                         <EmptyCell/>
-                        <ActionButtonCell
-                            label="Add Guest"
-                            onClick={() => this.addGuestOnClick()}
-                        />
+                        {status === GameStatus.Pending ?
+                            <ActionButtonCell
+                                label="Add Guest"
+                                onClick={() => this.addGuestOnClick()}
+                            />
+                            : ""
+                        }
                     </tr>
                 );
 
@@ -237,10 +243,13 @@ export default class GamePlayersTable extends React.Component<GamePlayersTablePr
                     <tr key={"row" + rowNumber}>
                         <EmphasizedTextCell text={seat.player.name}/>
                         <TextCell text={seat.note} />
-                        <ActionButtonCell
-                            label={this.isSeatSelf(seat) ? "Quit" : "Remove"}
-                            onClick={() => this.removeOnClick(seat.player.id)}
-                        />
+                        {status === GameStatus.Pending ?
+                            <ActionButtonCell
+                                label={this.isSeatSelf(seat) ? "Quit" : "Remove"}
+                                onClick={() => this.removeOnClick(seat.player.id)}
+                            />
+                            : ""
+                        }
                     </tr>
                 );
 
@@ -269,7 +278,7 @@ export default class GamePlayersTable extends React.Component<GamePlayersTablePr
                 </table>
                 <table className="table">
                     <tbody>
-                        {seats.map((seat, i) => this.renderPlayerRow(seat, i))}
+                        {seats.map((seat, i) => this.renderPlayerRow(this.props.game.status, seat, i))}
                     </tbody>
                 </table>
             </div>
