@@ -8,6 +8,7 @@ import LinkButton from '../linkButton';
 import LabeledInput from '../labeledInput';
 import ActionButton from '../actionButton';
 import Constants, { InputTypes } from '../../constants';
+import Routes from '../../routes';
 
 export interface CreateGamePageProps {
     user : User,
@@ -86,12 +87,12 @@ export default class CreateGamePage extends React.Component<CreateGamePageProps,
     render() {
         //Go to home if not logged in
         if (this.props.user === null) {
-            return <Redirect to='/'/>;
+            return <Redirect to={Routes.home()}/>;
         }
 
-        //If lobby created, redirect to that lobby
+        //If game created, redirect to info page for that game
         if (this.state.gameId !== null) {
-            return <Redirect to={'/lobby/' + this.state.gameId}/>;
+            return <Redirect to={Routes.gameInfo(this.state.gameId)}/>;
         }
 
         return (
@@ -99,9 +100,9 @@ export default class CreateGamePage extends React.Component<CreateGamePageProps,
                 <PageTitle label={"Create Game"}/>
                 <br/>
                 <div className="centeredContainer">
-                    <LinkButton label="Home" to="/dashboard"/>
-                    <LinkButton label="My Games" to="/myGames"/>
-                    <LinkButton label="Find Game" to="/findGame"/>
+                    <LinkButton label="Home" to={Routes.dashboard()}/>
+                    <LinkButton label="My Games" to={Routes.myGames()}/>
+                    <LinkButton label="Find Game" to={Routes.findGame()}/>
                 </div>
                 <br/>
                 <br/>
