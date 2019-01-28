@@ -13,8 +13,8 @@ import { User } from '../api/model';
 import ApiClient from '../api/client';
 import MyGamesPage from './pages/myGamesPage';
 import CreateGamePage from './pages/createGamePage';
-import FindLobbyPage from './pages/findLobbyPage';
-import LobbyPage from './pages/lobbyPage';
+import FindGamePage from './pages/findGamePage';
+import GameInfoPage from './pages/gameInfoPage';
 
 export interface AppProps {
 
@@ -84,7 +84,7 @@ export default class App extends React.Component<AppProps, AppState> {
                         }
                     />
                     <Route
-                        path='/myGames'
+                        path='/games/my'
                         render={_ =>
                             <MyGamesPage
                                 user={this.state.user}
@@ -93,7 +93,7 @@ export default class App extends React.Component<AppProps, AppState> {
                         }
                     />
                     <Route
-                        path='/createGame'
+                        path='/games/create'
                         render={_ =>
                             <CreateGamePage
                                 user={this.state.user}
@@ -102,21 +102,21 @@ export default class App extends React.Component<AppProps, AppState> {
                         }
                     />
                     <Route
-                        path='/findGame'
+                        path='/games/find'
                         render={_ =>
-                            <FindLobbyPage
+                            <FindGamePage
                                 user={this.state.user}
                                 api={this.state.api}
                             />
                         }
                     />
                     <Route
-                        path='/lobby/:lobbyId'
+                        path='/games/:gameId/info'
                         render={props =>
-                            <LobbyPage
+                            <GameInfoPage
                                 user={this.state.user}
                                 api={this.state.api}
-                                gameId={props.match.params.lobbyId}
+                                gameId={props.match.params.gameId}
                             />
                         }
                     />

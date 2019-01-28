@@ -5,7 +5,7 @@ import { User, Game, GamesQuery } from '../../api/model';
 import ApiClient from '../../api/client';
 import { Redirect } from 'react-router';
 import LinkButton from '../linkButton';
-import LobbiesTable from '../lobbiesTable';
+import GameInfoTable from '../gameInfoTable';
 
 export interface MyGamesPageProps {
     user : User,
@@ -60,11 +60,11 @@ export default class MyGamesPage extends React.Component<MyGamesPageProps, MyGam
                 <br/>
                 <div className="centeredContainer">
                     <LinkButton label="Home" to="/dashboard"/>
-                    <LinkButton label="Create Game" to="/createGame"/>
-                    <LinkButton label="Find Game" to="/findGame"/>
+                    <LinkButton label="Create Game" to="/games/create"/>
+                    <LinkButton label="Find Game" to="/games/find"/>
                 </div>
                 <br/>
-                <LobbiesTable
+                <GameInfoTable
                     games={this.state.games}
                 />
             </div>

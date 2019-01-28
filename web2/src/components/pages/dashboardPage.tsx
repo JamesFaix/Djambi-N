@@ -38,9 +38,9 @@ export default class DashboardPage extends React.Component<DashboardPageProps> {
                 <PageTitle label={"Welcome, " + this.props.user.name}/>
                 <br/>
                 <div className="centeredContainer">
-                    <LinkButton label="My Games" to="/myGames"/>
-                    <LinkButton label="Create Game" to="/createGame"/>
-                    <LinkButton label="Find Game" to="/findGame"/>
+                    <LinkButton label="My Games" to="/games/my"/>
+                    <LinkButton label="Create Game" to="/games/create"/>
+                    <LinkButton label="Find Game" to="/games/find"/>
                     <LinkButton label="Rules" to={this.props.rulesUrl} newWindow={true}/>
                     <ActionButton label="Log out" onClick={() => this.logoutOnClick()}/>
                 </div>

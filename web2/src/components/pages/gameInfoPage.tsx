@@ -8,22 +8,22 @@ import LinkButton from '../linkButton';
 import ActionButton from '../actionButton';
 import GamePlayersTable from '../gamePlayersTable';
 
-export interface LobbyPageProps {
+export interface GameInfoPageProps {
     user : User,
     api : ApiClient,
     gameId : number
 }
 
-export interface LobbyPageState {
+export interface GameInfoPageState {
     game : Game,
     guestName : string,
     gameId : number,
     redirectToGame : boolean
 }
 
-export default class LobbyPage extends React.Component<LobbyPageProps, LobbyPageState> {
+export default class GameInfoPage extends React.Component<GameInfoPageProps, GameInfoPageState> {
 
-    constructor(props : LobbyPageProps) {
+    constructor(props : GameInfoPageProps) {
         super(props);
         this.state = {
             game : null,
@@ -149,9 +149,9 @@ export default class LobbyPage extends React.Component<LobbyPageProps, LobbyPage
                 <br/>
                 <div className="centeredContainer">
                     <LinkButton label="Home" to="/dashboard"/>
-                    <LinkButton label="My Games" to="/myGames"/>
-                    <LinkButton label="Create Game" to="/createGame"/>
-                    <LinkButton label="Find Game" to="/findGame"/>
+                    <LinkButton label="My Games" to="/games/my"/>
+                    <LinkButton label="Create Game" to="/games/create"/>
+                    <LinkButton label="Find Game" to="/games/find"/>
                 </div>
                 {this.renderLobbyDetails(this.state.game)}
                 <GamePlayersTable

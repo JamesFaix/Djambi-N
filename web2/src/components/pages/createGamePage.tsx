@@ -89,9 +89,9 @@ export default class CreateGamePage extends React.Component<CreateGamePageProps,
             return <Redirect to='/'/>;
         }
 
-        //If lobby created, redirect to that lobby
+        //If game created, redirect to info page for that game
         if (this.state.gameId !== null) {
-            return <Redirect to={'/lobby/' + this.state.gameId}/>;
+            return <Redirect to={'/games/' + this.state.gameId + "/info"}/>;
         }
 
         return (
@@ -100,8 +100,8 @@ export default class CreateGamePage extends React.Component<CreateGamePageProps,
                 <br/>
                 <div className="centeredContainer">
                     <LinkButton label="Home" to="/dashboard"/>
-                    <LinkButton label="My Games" to="/myGames"/>
-                    <LinkButton label="Find Game" to="/findGame"/>
+                    <LinkButton label="My Games" to="/games/my"/>
+                    <LinkButton label="Find Game" to="/games/find"/>
                 </div>
                 <br/>
                 <br/>

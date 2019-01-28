@@ -10,14 +10,14 @@ import { InputTypes } from '../../constants';
 import LabeledTristateDropdown from '../labeledTristateDropdown';
 import ActionButton from '../actionButton';
 import Util from '../../util';
-import LobbiesTable from '../lobbiesTable';
+import GameInfoTable from '../gameInfoTable';
 
-export interface FindLobbyPageProps {
+export interface FindGamePageProps {
     user : User,
     api : ApiClient,
 }
 
-export interface FindLobbyPageState {
+export interface FindGamePageState {
     games : Game[],
     createdByUserNameFilter : string,
     playerUserNameFilter : string,
@@ -26,8 +26,8 @@ export interface FindLobbyPageState {
     descriptionContainsFilter : string
 }
 
-export default class FindLobbyPage extends React.Component<FindLobbyPageProps, FindLobbyPageState> {
-    constructor(props : FindLobbyPageProps) {
+export default class FindGamePage extends React.Component<FindGamePageProps, FindGamePageState> {
+    constructor(props : FindGamePageProps) {
         super(props);
         this.state = {
             games : [],
@@ -161,13 +161,13 @@ export default class FindLobbyPage extends React.Component<FindLobbyPageProps, F
                 <br/>
                 <div className="centeredContainer">
                     <LinkButton label="Home" to="/dashboard"/>
-                    <LinkButton label="My Games" to="/myGames"/>
-                    <LinkButton label="Create Game" to="/createGame"/>
+                    <LinkButton label="My Games" to="/games/my"/>
+                    <LinkButton label="Create Game" to="/games/create"/>
                 </div>
                 <br/>
                 {this.renderQueryFilters()}
                 <br/>
-                <LobbiesTable
+                <GameInfoTable
                     games={this.state.games}
                 />
             </div>
