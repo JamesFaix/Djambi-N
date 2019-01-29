@@ -1,4 +1,3 @@
-import Color from "./color";
 import { Game, Turn } from "../api/model";
 import ThemeService from "../themes/themeService";
 import Geometry from "../geometry/geometry";
@@ -51,29 +50,7 @@ export default class BoardRenderer {
 
     private drawCell(cell : CellView) : void {
         var ctx = this.canvas.getContext("2d");
-
-        switch (cell.state)
-        {
-            case CellState.Default:
-                ctx.fillStyle = this.theme.getCellColor(cell.type);
-                break;
-
-            case CellState.Selected:
-                ctx.fillStyle = Color
-                    .fromHex(this.theme.getCellColor(cell.type))
-                    .lighten(0.75)
-                    .multiply(Color.greenHighlight())
-                    .toHex();
-                break;
-
-            case CellState.Selectable:
-                ctx.fillStyle = Color
-                    .fromHex(this.theme.getCellColor(cell.type))
-                    .lighten(0.50)
-                    .multiply(Color.yellowHighlight())
-                    .toHex();
-                break;
-        }
+        ctx.fillStyle = this.theme.getCellColor(cell.type, cell.state);
 
         cell.polygons.forEach(p => {
             ctx.beginPath();

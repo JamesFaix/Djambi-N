@@ -7,6 +7,11 @@ export default class ThemeFactory {
             cellColorCenter : "#828282",
             cellColorWhite : "#FFFFFF",
 
+            cellHighlightSelectedColor : "#6AC921", //Green
+            cellHighlightSelectedIntensity : 0.75,
+            cellHighlightSelectionOptionColor : "#E5E500", //Yellow
+            cellHighlightSelectionOptionIntensity : 0.5,
+
             centerCellName : "The Seat",
 
             pieceEmojiAssassin : "&#x1F5E1",
@@ -55,6 +60,11 @@ export default class ThemeFactory {
             cellColorBlack : null,
             cellColorCenter : null,
             cellColorWhite : null,
+
+            cellHighlightSelectedColor : null,
+            cellHighlightSelectedIntensity : null,
+            cellHighlightSelectionOptionColor : null,
+            cellHighlightSelectionOptionIntensity : null,
 
             centerCellName : "The Booth",
 

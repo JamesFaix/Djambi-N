@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { Group } from 'react-konva';
-import { CellView, CellState } from '../../boardRendering/model';
+import { CellView } from '../../boardRendering/model';
 import CanvasPolygon from './canvasPolygon';
 import ThemeService from '../../themes/themeService';
-import Color from '../../boardRendering/color';
 
 export interface CanvasCellProps {
     cell: CellView,
@@ -13,6 +12,8 @@ export interface CanvasCellProps {
 export default class CanvasCell extends React.Component<CanvasCellProps> {
 
     render() {
+        const color = this.props.theme.getCellColor(this.props.cell.type, this.props.cell.state);
+
         return (
             <Group>
                 {
@@ -20,33 +21,11 @@ export default class CanvasCell extends React.Component<CanvasCellProps> {
                         <CanvasPolygon
                             key={"polygon" + i}
                             polygon={p}
-                            fillColor={this.getCellColor(this.props.cell)}
+                            fillColor={color}
                         />
                     )
                 }
             </Group>
         );
-    }
-
-    private getCellColor(cell : CellView) : string {
-        const color = this.props.theme.getCellColor(cell.type);
-
-        switch (cell.state)
-        {
-            case CellState.Default:
-                return color;
-
-            case CellState.Selected:
-                return Color.fromHex(color)
-                    .lighten(0.75)
-                    .multiply(Color.greenHighlight())
-                    .toHex();
-
-            case CellState.Selectable:
-                return Color.fromHex(color)
-                    .lighten(0.50)
-                    .multiply(Color.yellowHighlight())
-                    .toHex();
-        }
     }
 }

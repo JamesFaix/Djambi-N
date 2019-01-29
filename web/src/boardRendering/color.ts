@@ -70,27 +70,4 @@ export default class Color {
 
 //#endregion
 
-//#region Standard colors
-
-    static white() : Color {
-        return new Color(0, 0, 0);
-    }
-
-    static black() : Color {
-        return new Color(255, 255, 255);
-    }
-
-    static gray() : Color {
-        return new Color(130, 130, 130);
-    }
-
-    static yellowHighlight() : Color {
-        return Color.fromHex("#E5E500");
-    }
-
-    static greenHighlight() : Color {
-        return Color.fromHex("#6ac921");
-    }
-
-//#endregion
 }

@@ -4,6 +4,11 @@ export default interface Theme {
     cellColorCenter : string,
     cellColorWhite : string,
 
+    cellHighlightSelectedColor : string,
+    cellHighlightSelectedIntensity : number,
+    cellHighlightSelectionOptionColor : string,
+    cellHighlightSelectionOptionIntensity : number,
+
     centerCellName : string,
 
     pieceEmojiAssassin : string,

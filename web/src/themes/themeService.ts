@@ -2,7 +2,8 @@ import { PieceKind, Selection, SelectionKind, Game } from "../api/model";
 import * as Sprintf from "sprintf-js";
 import Theme from "./theme";
 import ThemeFactory from "./themeFactory";
-import { CellType } from "../boardRendering/model";
+import { CellType, CellState } from "../boardRendering/model";
+import Color from "../boardRendering/color";
 
 export default class ThemeService {
     theme : Theme;
@@ -13,7 +14,7 @@ export default class ThemeService {
     }
 
     //Get the custom theme value if it exists, otherwise default value
-    private getValue(getProperty : (t : Theme) => string) : string {
+    private getValue<T>(getProperty : (t : Theme) => T) : T {
         if (this.theme){
             const value = getProperty(this.theme);
             if (value) {
@@ -24,12 +25,40 @@ export default class ThemeService {
         return getProperty(this.defaultTheme);
     }
 
-    public getCellColor(type : CellType) : string {
+    public getCellColor(type : CellType, state : CellState) : string {
+        let baseColor : string;
         switch(type) {
-            case CellType.Black: return this.getValue(t => t.cellColorBlack);
-            case CellType.Seat: return this.getValue(t => t.cellColorCenter);
-            case CellType.White: return this.getValue(t => t.cellColorWhite);
+            case CellType.Black:
+                baseColor = this.getValue(t => t.cellColorBlack);
+                break;
+
+            case CellType.Seat:
+                baseColor = this.getValue(t => t.cellColorCenter);
+                break;
+
+            case CellType.White:
+                baseColor = this.getValue(t => t.cellColorWhite);
+                break;
+
             default: throw "Invalid cell type.";
+        }
+
+        switch (state)
+        {
+            case CellState.Default:
+                return baseColor;
+
+            case CellState.Selected:
+                return Color.fromHex(baseColor)
+                    .lighten(this.getValue(t => t.cellHighlightSelectedIntensity))
+                    .multiply(Color.fromHex(this.getValue(t => t.cellHighlightSelectedColor)))
+                    .toHex();
+
+            case CellState.Selectable:
+                return Color.fromHex(baseColor)
+                    .lighten(this.getValue(t => t.cellHighlightSelectionOptionIntensity))
+                    .multiply(Color.fromHex(this.getValue(t => t.cellHighlightSelectionOptionColor)))
+                    .toHex();
         }
     }
 
