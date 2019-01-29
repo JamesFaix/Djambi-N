@@ -1,11 +1,9 @@
 import BoardView from "./boardView";
 import CellView from "./cellView";
-import Polygon from "../geometry/polygon";
-import Line from "../geometry/line";
 import { Location, Board } from "../api/model";
-import Transforms from "../geometry/transforms";
-import Point from "../geometry/point";
 import Color from "./color";
+import { Polygon, Line } from "../geometry/model";
+import Geometry from "../geometry/geometry";
 
 export default class BoardViewFactory {
     constructor(){
@@ -20,21 +18,21 @@ export default class BoardViewFactory {
         let visualCells : Array<CellView> = [];
 
         let boardPolygon = this.getBoardPolygon(board.regionCount, sideLength);
-        let boardEdges = boardPolygon.edges();
-        let boardCentroid = boardPolygon.centroid();
+        let boardEdges = Geometry.polygonEdges(boardPolygon);
+        let boardCentroid = Geometry.polygonCentroid(boardPolygon);
 
         //Loop over regions
         for (var i = 0; i < board.regionCount; i++) {
 
             const regionVertices = [
                 boardPolygon.vertices[i],
-                boardEdges[i].midpoint(),
+                Geometry.lineMidPoint(boardEdges[i]),
                 boardCentroid,
-                boardEdges[(i+(board.regionCount - 1))%board.regionCount].midpoint()
+                Geometry.lineMidPoint(boardEdges[(i+(board.regionCount - 1))%board.regionCount])
             ];
 
-            const region = new Polygon(regionVertices);
-            const regionEdges = region.edges();
+            const region : Polygon = { vertices: regionVertices };
+            const regionEdges = Geometry.polygonEdges(region);
 
             function getFraction(index : number, isLower : boolean) {
                 let result = 0;
@@ -56,9 +54,15 @@ export default class BoardViewFactory {
                 let lowerFraction = getFraction(row, true);
                 let upperFraction = getFraction(row, false);
 
-                const rowBorders = [
-                    new Line(regionEdges[3].fractionPoint(1-lowerFraction), regionEdges[1].fractionPoint(lowerFraction)),
-                    new Line(regionEdges[3].fractionPoint(1-upperFraction), regionEdges[1].fractionPoint(upperFraction)),
+                const rowBorders : Line[] = [
+                    {
+                        a: Geometry.lineFractionPoint(regionEdges[3], 1-lowerFraction),
+                        b: Geometry.lineFractionPoint(regionEdges[1], lowerFraction)
+                    },
+                    {
+                        a: Geometry.lineFractionPoint(regionEdges[3], 1-upperFraction),
+                        b: Geometry.lineFractionPoint(regionEdges[1], upperFraction)
+                    }
                 ];
 
                 for (var col = 0; col < board.regionSize; col++) {
@@ -71,13 +75,14 @@ export default class BoardViewFactory {
                         region: i
                     };
 
-                    const polygon = new Polygon(
-                        [
-                            rowBorders[0].fractionPoint(lowerFraction),
-                            rowBorders[0].fractionPoint(upperFraction),
-                            rowBorders[1].fractionPoint(upperFraction),
-                            rowBorders[1].fractionPoint(lowerFraction),
-                        ]);
+                    const polygon : Polygon = {
+                        vertices: [
+                            Geometry.lineFractionPoint(rowBorders[0], lowerFraction),
+                            Geometry.lineFractionPoint(rowBorders[0], upperFraction),
+                            Geometry.lineFractionPoint(rowBorders[1], upperFraction),
+                            Geometry.lineFractionPoint(rowBorders[1], lowerFraction),
+                        ]
+                    };
 
                     const cellId = board.cells
                         .find(c => c.locations
@@ -97,11 +102,11 @@ export default class BoardViewFactory {
 
         visualCells = this.coalesceColocatedCells(visualCells);
 
-        const transform = Transforms.rotation(360 / board.regionCount / 2);
+        const transform = Geometry.transformRotation(360 / board.regionCount / 2);
         visualCells = visualCells.map(c => c.transform(transform));
 
         const radius = this.getPolygonRadius(board.regionCount, sideLength);
-        const offset = new Point(radius, radius);
+        const offset = { x: radius, y: radius };
         visualCells = visualCells.map(c => c.translate(offset));
 
         return new BoardView(board.regionCount, cellSize, visualCells);
@@ -142,19 +147,19 @@ export default class BoardViewFactory {
     private static getBoardPolygon(sideCount : number, sideLength : number) : Polygon {
         const centralAngle = Math.PI * 2 / sideCount;
         const radius = this.getPolygonRadius(sideCount, sideLength);
-        const centroid = new Point(0, 0);
+        const centroid = { x: 0, y:0 };
 
         const vertices = [];
 
         for (var i = 0; i < sideCount; i++) {
-            let v = new Point(
-                centroid.x + (radius * Math.sin(centralAngle * i)),
-                centroid.y + (radius * Math.cos(centralAngle * i))
-            );
+            let v = {
+                x: centroid.x + (radius * Math.sin(centralAngle * i)),
+                y: centroid.y + (radius * Math.cos(centralAngle * i))
+            };
             vertices.push(v);
         }
 
-        return new Polygon(vertices);
+        return { vertices: vertices };
     }
 
     private static getPolygonRadius(sideCount : number, sideLength : number) : number {

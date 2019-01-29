@@ -1,13 +1,13 @@
 import { CellState } from "./cellState";
-import Polygon from "../geometry/polygon";
 import Color from "./color";
-import Point from "../geometry/point";
+import { Polygon, Point, TransformMatrix } from "../geometry/model";
+import Geometry from "../geometry/geometry";
 
 export default class CellView {
     state : CellState;
 
     constructor(
-        readonly polygons : Array<Polygon>,
+        readonly polygons : Polygon[],
         readonly id : number,
         readonly color : Color
     ) {
@@ -18,14 +18,14 @@ export default class CellView {
 
     translate(offset : Point) : CellView {
         return new CellView(
-            this.polygons.map(p => p.translate(offset)),
+            this.polygons.map(p => Geometry.polygonTranslate(p, offset)),
             this.id,
             this.color);
     }
 
-    transform(matrix : Array<Array<number>>) : CellView {
+    transform(matrix : TransformMatrix) : CellView {
         return new CellView(
-            this.polygons.map(p => p.transform(matrix)),
+            this.polygons.map(p => Geometry.polygonTransform(p, matrix)),
             this.id,
             this.color);
     }
@@ -33,7 +33,7 @@ export default class CellView {
     //#endregion
 
     contains(point : Point) : boolean {
-        return this.polygons.find(p => p.contains(point)) !== undefined;
+        return this.polygons.find(p => Geometry.polygonContains(p, point)) !== undefined;
     }
 
     toString() : string {
@@ -46,11 +46,11 @@ export default class CellView {
         let n = this.polygons.length;
 
         for (var i = 0; i < n; i++){
-            let c = this.polygons[i].centroid();
+            let c = Geometry.polygonCentroid(this.polygons[i]);
             sumX += c.x;
             sumY += c.y;
         }
 
-        return new Point(sumX/n, sumY/n);
+        return { x: sumX/n, y: sumY/n };
     }
 }

@@ -1,6 +1,5 @@
 import BoardRenderer from "./boardRenderer";
 import BoardView from "./boardView";
-import Point from "../geometry/point";
 import ApiClient from "../api/client";
 
 export class BoardClickHandler {
@@ -19,10 +18,10 @@ export class BoardClickHandler {
     }
 
     async clickOnBoard(e : MouseEvent) {
-        const point = new Point(
-            e.pageX - this.canvas.offsetLeft,
-            e.pageY - this.canvas.offsetTop
-        );
+        const point = {
+            x: e.pageX - this.canvas.offsetLeft,
+            y: e.pageY - this.canvas.offsetTop
+        };
 
         const cell = this.board.cellAtPoint(point);
         if (cell) {
