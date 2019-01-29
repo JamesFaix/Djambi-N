@@ -79,7 +79,7 @@ let removePlayer (gameId : int, playerId : int) (session : Session) : StateAndEv
 let startGame (gameId: int) (session : Session) : StateAndEventResponse AsyncHttpResult =
     processEventAsync gameId (fun game -> GameStartService.getGameStartEvent game session)
 
-[<ClientFunction(HttpMethod.Post, "/games/%i/current-turn/selection-request", ClientSection.Turn)>]
+[<ClientFunction(HttpMethod.Post, "/games/%i/current-turn/selection-request/%i", ClientSection.Turn)>]
 let selectCell (gameId : int, cellId : int) (session : Session) : StateAndEventResponse AsyncHttpResult =
     processEvent gameId (fun game -> TurnService.getCellSelectedEvent (game, cellId) session)
 
