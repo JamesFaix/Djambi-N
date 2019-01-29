@@ -2,9 +2,9 @@ import CellView from "./cellView";
 import { CellState } from "./cellState";
 import Color from "./color";
 import { Game, Turn } from "../api/model";
-import Point from "../geometry/point";
 import BoardView from "./boardView";
 import ThemeService from "../themes/themeService";
+import GeometryService from "../geometry/geometryService";
 
 export default class BoardRenderer {
     private lastGameState : Game;
@@ -106,8 +106,9 @@ export default class BoardRenderer {
 
         const emojiStyle = "position: absolute; top: -24px; left: -24px;";
 
-        let offset = new Point(-size/2, -size/2);
-        offset = offset.translate(new Point(this.canvas.offsetLeft, this.canvas.offsetTop));
+        let offset = { x: -size/2, y: -size/2 };
+        const canvasOffset = { x : this.canvas.offsetLeft, y: this.canvas.offsetTop };
+        offset = GeometryService.pointTranslate(offset, canvasOffset);
 
         const playerColorsHighlightStyles = new Map();
         for(var i = 0; i < game.players.length; i++) {
@@ -127,7 +128,7 @@ export default class BoardRenderer {
             let piece =  game.pieces[i];
 
             let cell = this.boardView.cells.find(c => c.id === piece.cellId);
-            let centroid = cell.centroid().translate(offset);
+            let centroid = GeometryService.pointTranslate(cell.centroid(), offset);
 
             let div = document.createElement("div");
             div.id = "div_board_piece" + piece.id

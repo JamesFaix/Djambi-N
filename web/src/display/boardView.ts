@@ -1,5 +1,5 @@
 import CellView from "./cellView";
-import Point from "../geometry/point";
+import { Point } from "../geometry/model";
 
 export default class BoardView {
     constructor (
