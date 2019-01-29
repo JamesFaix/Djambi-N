@@ -3,11 +3,11 @@ import ApiClient from '../../api/client';
 import { User, Game } from '../../api/model';
 import LinkButton from '../controls/linkButton';
 import PageTitle from '../pageTitle';
-import GameBoard from '../gameBoard';
 import BoardViewFactory from '../../boardRendering/boardViewFactory';
 import Routes from '../../routes';
 import ThemeService from '../../themes/themeService';
 import { BoardView } from '../../boardRendering/model';
+import CanvasBoard from '../board/canvasBoard';
 
 export interface GamePageProps {
     user : User,
@@ -65,13 +65,14 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                     <LinkButton label="Rules" to={Routes.rules()} newWindow={true}/>
                 </div>
                 <br/>
-                <GameBoard
-                    user={this.props.user}
-                    api={this.props.api}
-                    game={this.state.game}
-                    boardView={this.state.boardView}
-                    theme={this.props.theme}
-                />
+                {
+                    this.state.boardView
+                    ? <CanvasBoard
+                        board={this.state.boardView}
+                        theme={this.props.theme}
+                    />
+                    : ""
+                }
             </div>
         );
     }
