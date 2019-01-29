@@ -2,6 +2,7 @@ import { PieceKind, Selection, SelectionKind, Game } from "../api/model";
 import * as Sprintf from "sprintf-js";
 import Theme from "./theme";
 import ThemeFactory from "./themeFactory";
+import { CellType } from "../boardRendering/model";
 
 export default class ThemeService {
     theme : Theme;
@@ -21,6 +22,15 @@ export default class ThemeService {
         }
 
         return getProperty(this.defaultTheme);
+    }
+
+    public getCellColor(type : CellType) : string {
+        switch(type) {
+            case CellType.Black: return this.getValue(t => t.cellColorBlack);
+            case CellType.Seat: return this.getValue(t => t.cellColorCenter);
+            case CellType.White: return this.getValue(t => t.cellColorWhite);
+            default: throw "Invalid cell type.";
+        }
     }
 
     public getCenterCellName() : string {

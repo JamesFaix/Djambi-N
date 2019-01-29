@@ -1,6 +1,7 @@
 import BoardRenderer from "./boardRenderer";
-import BoardView from "./boardView";
 import ApiClient from "../api/client";
+import { BoardView } from "./model";
+import BoardGeometry from "./boardGeometry";
 
 export class BoardClickHandler {
     constructor(
@@ -23,7 +24,7 @@ export class BoardClickHandler {
             y: e.pageY - this.canvas.offsetTop
         };
 
-        const cell = this.board.cellAtPoint(point);
+        const cell = BoardGeometry.boardCellAtPoint(this.board, point);
         if (cell) {
             this.clickOnCell(this.gameId, cell.id);
         }

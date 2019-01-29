@@ -1,9 +1,8 @@
-import BoardView from "./boardView";
-import CellView from "./cellView";
 import { Location, Board } from "../api/model";
-import Color from "./color";
 import { Polygon, Line } from "../geometry/model";
 import Geometry from "../geometry/geometry";
+import { BoardView, CellView, CellType, CellState } from "./model";
+import BoardGeometry from "./boardGeometry";
 
 export default class BoardViewFactory {
     constructor(){
@@ -15,7 +14,7 @@ export default class BoardViewFactory {
         const cellCountPerSide = (board.regionSize * 2) - 1;
         const sideLength = cellCountPerSide * cellSize;
 
-        let visualCells : Array<CellView> = [];
+        let cellViews : Array<CellView> = [];
 
         let boardPolygon = this.getBoardPolygon(board.regionCount, sideLength);
         let boardEdges = Geometry.polygonEdges(boardPolygon);
@@ -90,26 +89,32 @@ export default class BoardViewFactory {
                             !== undefined)
                         .id;
 
-                    const visualCell = new CellView(
-                        [polygon],
-                        cellId,
-                        this.getCellColor(col, row));
+                    const cv = {
+                        id: cellId,
+                        type: this.getCellType(col, row),
+                        state: CellState.Default,
+                        polygons: [polygon]
+                    }
 
-                    visualCells.push(visualCell);
+                    cellViews.push(cv);
                 }
             }
         }
 
-        visualCells = this.coalesceColocatedCells(visualCells);
+        cellViews = this.coalesceColocatedCells(cellViews);
 
         const transform = Geometry.transformRotation(360 / board.regionCount / 2);
-        visualCells = visualCells.map(c => c.transform(transform));
+        cellViews = cellViews.map(c => BoardGeometry.cellTransform(c, transform));
 
         const radius = this.getPolygonRadius(board.regionCount, sideLength);
         const offset = { x: radius, y: radius };
-        visualCells = visualCells.map(c => c.translate(offset));
+        cellViews = cellViews.map(c =>  BoardGeometry.cellTranslate(c, offset));
 
-        return new BoardView(board.regionCount, cellSize, visualCells);
+        return {
+            regionCount: board.regionCount,
+            cellSize: cellSize,
+            cells: cellViews
+        };
     }
 
     private static locationEquals(a : Location, b : Location) : boolean {
@@ -132,12 +137,14 @@ export default class BoardViewFactory {
         });
 
         map.forEach(group => {
-            const coalesced = new CellView(
-                group.map((vc : CellView) => vc.polygons)
+            const coalesced : CellView = {
+                id: group[0].id,
+                type: group[0].type,
+                state: group[0].state,
+                polygons: group
+                    .map((vc : CellView) => vc.polygons)
                     .reduce((a : Polygon[], b : Polygon[]) => a.concat(b)),
-                group[0].id,
-                group[0].color
-            );
+            };
             results.push(coalesced);
         });
 
@@ -168,13 +175,13 @@ export default class BoardViewFactory {
         return sideLength * Math.sin(outerAngle) / Math.sin(centralAngle);
     }
 
-    private static getCellColor(col : number, row : number) : Color {
+    private static getCellType(col : number, row : number) : CellType {
         if (col === 0 && row === 0){
-            return Color.gray();
+            return CellType.Seat;
         }
         if ((col + row) % 2 === 1){
-            return Color.black();
+            return CellType.Black;
         }
-        return Color.white();
+        return CellType.White;
     }
 }

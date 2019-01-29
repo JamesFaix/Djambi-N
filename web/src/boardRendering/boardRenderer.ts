@@ -1,17 +1,16 @@
-import CellView from "./cellView";
-import { CellState } from "./cellState";
 import Color from "./color";
 import { Game, Turn } from "../api/model";
-import BoardView from "./boardView";
 import ThemeService from "../themes/themeService";
 import Geometry from "../geometry/geometry";
+import { BoardView, CellState, CellView } from "./model";
+import BoardGeometry from "./boardGeometry";
 
 export default class BoardRenderer {
     private lastGameState : Game;
     constructor(
         readonly canvas : HTMLCanvasElement,
         readonly boardView : BoardView,
-        readonly themeService : ThemeService){
+        readonly theme : ThemeService){
     }
 
     onPieceClicked : (gameId : number, cellId : number) => any;
@@ -56,19 +55,23 @@ export default class BoardRenderer {
         switch (cell.state)
         {
             case CellState.Default:
-                ctx.fillStyle = cell.color.toHex();
+                ctx.fillStyle = this.theme.getCellColor(cell.type);
                 break;
 
             case CellState.Selected:
-                ctx.fillStyle = cell.color.lighten(0.75)
-                                          .multiply(Color.greenHighlight())
-                                          .toHex();
+                ctx.fillStyle = Color
+                    .fromHex(this.theme.getCellColor(cell.type))
+                    .lighten(0.75)
+                    .multiply(Color.greenHighlight())
+                    .toHex();
                 break;
 
             case CellState.Selectable:
-                ctx.fillStyle = cell.color.lighten(0.50)
-                                          .multiply(Color.yellowHighlight())
-                                          .toHex();
+                ctx.fillStyle = Color
+                    .fromHex(this.theme.getCellColor(cell.type))
+                    .lighten(0.50)
+                    .multiply(Color.yellowHighlight())
+                    .toHex();
                 break;
         }
 
@@ -113,7 +116,7 @@ export default class BoardRenderer {
         const playerColorsHighlightStyles = new Map();
         for(var i = 0; i < game.players.length; i++) {
             const player = game.players[i];
-            const hexColor = this.themeService.getPlayerColor(player.colorId);
+            const hexColor = this.theme.getPlayerColor(player.colorId);
             const style = "text-shadow: 0px 0px 20px " + hexColor +
                                      ", 0px 0px 20px " + hexColor +
                                      ", 0px 0px 20px " + hexColor + ";"; //triple shadow to make it wide and dark
@@ -128,7 +131,7 @@ export default class BoardRenderer {
             let piece =  game.pieces[i];
 
             let cell = this.boardView.cells.find(c => c.id === piece.cellId);
-            let centroid = Geometry.pointTranslate(cell.centroid(), offset);
+            let centroid = Geometry.pointTranslate(BoardGeometry.cellCentroid(cell), offset);
 
             let div = document.createElement("div");
             div.id = "div_board_piece" + piece.id
@@ -142,7 +145,7 @@ export default class BoardRenderer {
 
             let innerDiv = document.createElement("div");
             innerDiv.setAttribute("style", emojiStyle);
-            innerDiv.innerHTML = this.themeService.getPieceEmoji(piece.kind);
+            innerDiv.innerHTML = this.theme.getPieceEmoji(piece.kind);
 
             div.appendChild(innerDiv);
             boardDiv.appendChild(div);

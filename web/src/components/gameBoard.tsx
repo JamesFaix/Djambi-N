@@ -1,10 +1,10 @@
 import * as React from 'react';
 import ApiClient from '../api/client';
 import { User, Game } from '../api/model';
-import BoardView from '../boardRendering/boardView';
 import BoardRenderer from '../boardRendering/boardRenderer';
 import { BoardClickHandler } from '../boardRendering/boardClickHandler';
 import ThemeService from '../themes/themeService';
+import { BoardView } from '../boardRendering/model';
 
 export interface GameBoardProps {
     user : User,

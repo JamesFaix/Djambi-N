@@ -3,6 +3,10 @@ import Theme from "./theme";
 export default class ThemeFactory {
     public static getDefaultTheme() : Theme {
         return {
+            cellColorBlack : "#000000",
+            cellColorCenter : "#828282",
+            cellColorWhite : "#FFFFFF",
+
             centerCellName : "The Seat",
 
             pieceEmojiAssassin : "&#x1F5E1",
@@ -48,6 +52,10 @@ export default class ThemeFactory {
 
     public static getHotDogTownTheme() : Theme {
         return {
+            cellColorBlack : null,
+            cellColorCenter : null,
+            cellColorWhite : null,
+
             centerCellName : "The Booth",
 
             pieceEmojiAssassin : "&#x1F374",

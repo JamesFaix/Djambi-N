@@ -1,5 +1,9 @@
 export default interface Theme {
 
+    cellColorBlack : string,
+    cellColorCenter : string,
+    cellColorWhite : string,
+
     centerCellName : string,
 
     pieceEmojiAssassin : string,
