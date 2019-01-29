@@ -49,7 +49,12 @@ let assignStartingConditions(players : Player list) : Player list =
             }
         )
 
-    let dict = Enumerable.ToDictionary (playersWithAssignments, (fun p -> p.id))
+    (* 
+        At this point, neutral players may still have ID = 0, because
+        they have not yet been persisted as part of the StartGame transaction.
+        Index on name instead of id.
+    *)
+    let dict = Enumerable.ToDictionary (playersWithAssignments, (fun p -> p.name))
 
     let nonNeutralPlayers =
         players
@@ -58,7 +63,7 @@ let assignStartingConditions(players : Player list) : Player list =
         |> Seq.mapi (fun i p -> (i, p))
 
     for (i, p) in nonNeutralPlayers do
-        dict.[p.id] <- { dict.[p.id] with startingTurnNumber = Some i }
+        dict.[p.name] <- { dict.[p.name] with startingTurnNumber = Some i }
 
     dict.Values 
     |> Seq.map (fun p -> { p with status = PlayerStatus.Alive })
