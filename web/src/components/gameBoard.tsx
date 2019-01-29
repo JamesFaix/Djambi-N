@@ -4,6 +4,7 @@ import { User, Game } from '../api/model';
 import BoardView from '../display/boardView';
 import BoardRenderer from '../display/boardRenderer';
 import { BoardClickHandler } from '../display/boardClickHandler';
+import ThemeService from '../themes/themeService';
 
 export interface GameBoardProps {
     user : User,
@@ -38,7 +39,8 @@ export default class GameBoard extends React.Component<GameBoardProps, GameBoard
     componentDidUpdate() {
         if (this.props.game && this.props.boardView) {
             const canvas = document.getElementById("canvas_board") as HTMLCanvasElement;
-            const renderer = new BoardRenderer(canvas, this.props.boardView);
+            const themeService = new ThemeService();
+            const renderer = new BoardRenderer(canvas, this.props.boardView, themeService);
             const clickHandler = new BoardClickHandler(renderer, canvas, this.props.boardView, this.props.api, this.props.game.id);
             canvas.onclick = (e) => clickHandler.clickOnBoard(e);
             renderer.onPieceClicked = (gameId, cellId) => clickHandler.clickOnCell(gameId, cellId);
