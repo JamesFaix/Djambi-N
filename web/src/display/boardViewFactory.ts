@@ -3,7 +3,7 @@ import CellView from "./cellView";
 import { Location, Board } from "../api/model";
 import Color from "./color";
 import { Polygon, Line } from "../geometry/model";
-import GeometryService from "../geometry/geometryService";
+import Geometry from "../geometry/geometry";
 
 export default class BoardViewFactory {
     constructor(){
@@ -18,21 +18,21 @@ export default class BoardViewFactory {
         let visualCells : Array<CellView> = [];
 
         let boardPolygon = this.getBoardPolygon(board.regionCount, sideLength);
-        let boardEdges = GeometryService.polygonEdges(boardPolygon);
-        let boardCentroid = GeometryService.polygonCentroid(boardPolygon);
+        let boardEdges = Geometry.polygonEdges(boardPolygon);
+        let boardCentroid = Geometry.polygonCentroid(boardPolygon);
 
         //Loop over regions
         for (var i = 0; i < board.regionCount; i++) {
 
             const regionVertices = [
                 boardPolygon.vertices[i],
-                GeometryService.lineMidPoint(boardEdges[i]),
+                Geometry.lineMidPoint(boardEdges[i]),
                 boardCentroid,
-                GeometryService.lineMidPoint(boardEdges[(i+(board.regionCount - 1))%board.regionCount])
+                Geometry.lineMidPoint(boardEdges[(i+(board.regionCount - 1))%board.regionCount])
             ];
 
             const region : Polygon = { vertices: regionVertices };
-            const regionEdges = GeometryService.polygonEdges(region);
+            const regionEdges = Geometry.polygonEdges(region);
 
             function getFraction(index : number, isLower : boolean) {
                 let result = 0;
@@ -56,12 +56,12 @@ export default class BoardViewFactory {
 
                 const rowBorders : Line[] = [
                     {
-                        a: GeometryService.lineFractionPoint(regionEdges[3], 1-lowerFraction),
-                        b: GeometryService.lineFractionPoint(regionEdges[1], lowerFraction)
+                        a: Geometry.lineFractionPoint(regionEdges[3], 1-lowerFraction),
+                        b: Geometry.lineFractionPoint(regionEdges[1], lowerFraction)
                     },
                     {
-                        a: GeometryService.lineFractionPoint(regionEdges[3], 1-upperFraction),
-                        b: GeometryService.lineFractionPoint(regionEdges[1], upperFraction)
+                        a: Geometry.lineFractionPoint(regionEdges[3], 1-upperFraction),
+                        b: Geometry.lineFractionPoint(regionEdges[1], upperFraction)
                     }
                 ];
 
@@ -77,10 +77,10 @@ export default class BoardViewFactory {
 
                     const polygon : Polygon = {
                         vertices: [
-                            GeometryService.lineFractionPoint(rowBorders[0], lowerFraction),
-                            GeometryService.lineFractionPoint(rowBorders[0], upperFraction),
-                            GeometryService.lineFractionPoint(rowBorders[1], upperFraction),
-                            GeometryService.lineFractionPoint(rowBorders[1], lowerFraction),
+                            Geometry.lineFractionPoint(rowBorders[0], lowerFraction),
+                            Geometry.lineFractionPoint(rowBorders[0], upperFraction),
+                            Geometry.lineFractionPoint(rowBorders[1], upperFraction),
+                            Geometry.lineFractionPoint(rowBorders[1], lowerFraction),
                         ]
                     };
 
@@ -102,7 +102,7 @@ export default class BoardViewFactory {
 
         visualCells = this.coalesceColocatedCells(visualCells);
 
-        const transform = GeometryService.transformRotation(360 / board.regionCount / 2);
+        const transform = Geometry.transformRotation(360 / board.regionCount / 2);
         visualCells = visualCells.map(c => c.transform(transform));
 
         const radius = this.getPolygonRadius(board.regionCount, sideLength);

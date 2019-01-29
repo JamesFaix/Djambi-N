@@ -1,6 +1,6 @@
 import { Point, Line, Polygon, TransformMatrix } from "./model";
 
-export default class GeometryService {
+export default class Geometry {
 
     //---POINT---
 

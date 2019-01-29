@@ -4,7 +4,7 @@ import Color from "./color";
 import { Game, Turn } from "../api/model";
 import BoardView from "./boardView";
 import ThemeService from "../themes/themeService";
-import GeometryService from "../geometry/geometryService";
+import Geometry from "../geometry/geometry";
 
 export default class BoardRenderer {
     private lastGameState : Game;
@@ -108,7 +108,7 @@ export default class BoardRenderer {
 
         let offset = { x: -size/2, y: -size/2 };
         const canvasOffset = { x : this.canvas.offsetLeft, y: this.canvas.offsetTop };
-        offset = GeometryService.pointTranslate(offset, canvasOffset);
+        offset = Geometry.pointTranslate(offset, canvasOffset);
 
         const playerColorsHighlightStyles = new Map();
         for(var i = 0; i < game.players.length; i++) {
@@ -128,7 +128,7 @@ export default class BoardRenderer {
             let piece =  game.pieces[i];
 
             let cell = this.boardView.cells.find(c => c.id === piece.cellId);
-            let centroid = GeometryService.pointTranslate(cell.centroid(), offset);
+            let centroid = Geometry.pointTranslate(cell.centroid(), offset);
 
             let div = document.createElement("div");
             div.id = "div_board_piece" + piece.id
