@@ -37,7 +37,7 @@ Task(task_buildDotNet)
 Task(task_buildWeb)
     .Does(() =>
     {
-        var dir = root + Directory("web2\\");
+        var dir = root + Directory("web\\");
 
         NpmInstall(new NpmInstallSettings
         {
@@ -104,7 +104,7 @@ Task(task_runWeb)
         var info = new ProcessStartInfo
         {
             FileName = "http-server",
-            WorkingDirectory = (root + File("web\\dist")).ToString()
+            WorkingDirectory = (root + Directory("web\\")).ToString()
         };
 
         Process.Start(info);
