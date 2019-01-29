@@ -4,7 +4,7 @@ import PageTitle from '../pageTitle';
 import { Redirect } from 'react-router';
 import { User } from '../../api/model';
 import ApiClient from '../../api/client';
-import LinkButton from '../linkButton';
+import LinkButton from '../controls/linkButton';
 import Routes from '../../routes';
 
 export interface HomePageProps {

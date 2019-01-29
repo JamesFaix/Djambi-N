@@ -1,6 +1,6 @@
 import * as React from 'react';
-import '../index.css';
-import { InputTypes } from '../constants';
+import '../../index.css';
+import { InputTypes } from '../../constants';
 
 export interface LabeledInputProps {
     type : InputTypes,

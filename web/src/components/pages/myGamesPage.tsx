@@ -4,7 +4,7 @@ import PageTitle from '../pageTitle';
 import { User, Game, GamesQuery } from '../../api/model';
 import ApiClient from '../../api/client';
 import { Redirect } from 'react-router';
-import LinkButton from '../linkButton';
+import LinkButton from '../controls/linkButton';
 import GameInfoTable from '../gameInfoTable';
 import Routes from '../../routes';
 

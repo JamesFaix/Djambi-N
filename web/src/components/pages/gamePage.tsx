@@ -1,7 +1,7 @@
 import * as React from 'react';
 import ApiClient from '../../api/client';
 import { User, Game } from '../../api/model';
-import LinkButton from '../linkButton';
+import LinkButton from '../controls/linkButton';
 import PageTitle from '../pageTitle';
 import GameBoard from '../gameBoard';
 import BoardView from '../../display/boardView';

@@ -3,10 +3,10 @@ import '../../index.css';
 import PageTitle from '../pageTitle';
 import ApiClient from '../../api/client';
 import { LoginRequest, User } from '../../api/model';
-import LabeledInput from '../labeledInput';
+import LabeledInput from '../controls/labeledInput';
 import { Redirect } from 'react-router';
-import LinkButton from '../linkButton';
-import ActionButton from '../actionButton';
+import LinkButton from '../controls/linkButton';
+import ActionButton from '../controls/actionButton';
 import { InputTypes } from '../../constants';
 import Routes from '../../routes';
 

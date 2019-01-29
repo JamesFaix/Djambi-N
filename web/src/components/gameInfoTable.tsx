@@ -1,6 +1,6 @@
 import { Game } from "../api/model";
 import * as React from 'react';
-import LinkButton from "./linkButton";
+import LinkButton from "./controls/linkButton";
 import moment = require("moment");
 import Routes from "../routes";
 

@@ -4,9 +4,9 @@ import PageTitle from '../pageTitle';
 import { User, GameParameters } from '../../api/model';
 import ApiClient from '../../api/client';
 import { Redirect } from 'react-router';
-import LinkButton from '../linkButton';
-import LabeledInput from '../labeledInput';
-import ActionButton from '../actionButton';
+import LinkButton from '../controls/linkButton';
+import LabeledInput from '../controls/labeledInput';
+import ActionButton from '../controls/actionButton';
 import Constants, { InputTypes } from '../../constants';
 import Routes from '../../routes';
 

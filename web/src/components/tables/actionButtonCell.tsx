@@ -1,6 +1,6 @@
 import * as React from 'react';
 import '../../index.css';
-import ActionButton from '../actionButton';
+import ActionButton from '../controls/actionButton';
 
 export interface ActionButtonCellProps {
     label : string,
