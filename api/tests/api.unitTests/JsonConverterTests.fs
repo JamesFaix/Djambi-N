@@ -165,3 +165,36 @@ let ``DiscriminatedUnionJsonConverter record object should deserialize as record
     let actual = JsonConvert.DeserializeObject<RecordUnion>(json, [|converter|])
 
     Assert.Equal(expected, actual)
+
+//---Combos---
+
+[<Fact>]
+let ``Should serialize None of union enum``() =
+    let converters = 
+        [|
+            new DiscriminatedUnionJsonConverter() :> JsonConverter    
+            new OptionJsonConverter() :> JsonConverter
+        |]
+
+    let opt : Option<UnionEnum> = None
+    let expected = "null"
+
+    let actual = JsonConvert.SerializeObject(opt, converters)
+
+    Assert.Equal(expected, actual)
+
+
+[<Fact>]
+let ``Should deserizlize None of union enum``() =
+    let converters = 
+        [|
+            new DiscriminatedUnionJsonConverter() :> JsonConverter    
+            new OptionJsonConverter() :> JsonConverter
+        |]
+
+    let json = "null"
+    let expected : Option<UnionEnum> = None
+
+    let actual = JsonConvert.DeserializeObject<Option<UnionEnum>>(json, converters)
+
+    Assert.Equal(expected, actual)

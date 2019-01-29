@@ -24,7 +24,15 @@ type OptionJsonConverter() =
         let innerType = 
             if innerType.IsValueType then (typedefof<Nullable<_>>).MakeGenericType([|innerType|])
             else innerType        
-        let value = serializer.Deserialize(reader, innerType)
+            
         let cases = FSharpType.GetUnionCases(t)
-        if value = null then FSharpValue.MakeUnion(cases.[0], [||])
-        else FSharpValue.MakeUnion(cases.[1], [|value|])
+        
+        let makeNone() = FSharpValue.MakeUnion(cases.[0], [||])
+        let makeSome(x) = FSharpValue.MakeUnion(cases.[1], [|x|])
+
+        try
+            let value = serializer.Deserialize(reader, innerType)
+            if value = null then makeNone()
+            else makeSome value
+        with
+        | :? NullReferenceException -> makeNone()

@@ -123,9 +123,9 @@ export default class ApiClient {
 	}
 
 	async selectCell(gameId : number, cellId : number) : Promise<Model.StateAndEventResponse> {
-		const route = "/games/" + gameId + "/current-turn/selection-request";
-		return await ApiClientCore.sendRequest<number, Model.StateAndEventResponse>(
-			HttpMethod.Post, route, cellId);
+		const route = "/games/" + gameId + "/current-turn/selection-request/" + cellId + "";
+		return await ApiClientCore.sendRequest<{}, Model.StateAndEventResponse>(
+			HttpMethod.Post, route);
 	}
 
 //-------- BOARD --------
