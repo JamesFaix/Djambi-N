@@ -25,7 +25,7 @@ export default class CanvasPolygon extends React.Component<CanvasPolygonProps> {
                     }
 
                     ctx.closePath();
-                    ctx.fill();
+                    ctx.fillStrokeShape(shape);
                 }}
                 fill={this.props.fillColor}
             />
