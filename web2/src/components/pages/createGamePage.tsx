@@ -38,7 +38,7 @@ export default class CreateGamePage extends React.Component<CreateGamePageProps,
     private formOnChange(event : React.ChangeEvent<HTMLInputElement>) {
         const input = event.target;
         switch (input.name) {
-            case "Region count":
+            case "Regions":
                 this.setState({ regionCount: Number(input.value) });
                 break;
 
