@@ -10,7 +10,8 @@ export interface GameBoardProps {
     user : User,
     api : ApiClient,
     game : Game,
-    boardView : BoardView
+    boardView : BoardView,
+    theme : ThemeService
 }
 
 export interface GameBoardState {
@@ -39,8 +40,7 @@ export default class GameBoard extends React.Component<GameBoardProps, GameBoard
     componentDidUpdate() {
         if (this.props.game && this.props.boardView) {
             const canvas = document.getElementById("canvas_board") as HTMLCanvasElement;
-            const themeService = new ThemeService();
-            const renderer = new BoardRenderer(canvas, this.props.boardView, themeService);
+            const renderer = new BoardRenderer(canvas, this.props.boardView, this.props.theme);
             const clickHandler = new BoardClickHandler(renderer, canvas, this.props.boardView, this.props.api, this.props.game.id);
             canvas.onclick = (e) => clickHandler.clickOnBoard(e);
             renderer.onPieceClicked = (gameId, cellId) => clickHandler.clickOnCell(gameId, cellId);

@@ -7,11 +7,13 @@ import GameBoard from '../gameBoard';
 import BoardView from '../../display/boardView';
 import BoardViewFactory from '../../display/boardViewFactory';
 import Routes from '../../routes';
+import ThemeService from '../../themes/themeService';
 
 export interface GamePageProps {
     user : User,
     api : ApiClient,
-    gameId : number
+    gameId : number,
+    theme : ThemeService
 }
 
 export interface GamePageState {
@@ -68,6 +70,7 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                     api={this.props.api}
                     game={this.state.game}
                     boardView={this.state.boardView}
+                    theme={this.props.theme}
                 />
             </div>
         );
