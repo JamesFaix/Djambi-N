@@ -3,6 +3,9 @@ import ApiClient from '../../api/client';
 import { User, Game } from '../../api/model';
 import LinkButton from '../linkButton';
 import PageTitle from '../pageTitle';
+import GameBoard from '../gameBoard';
+import BoardView from '../../display/boardView';
+import BoardViewFactory from '../../display/boardViewFactory';
 import Routes from '../../routes';
 
 export interface GamePageProps {
@@ -12,15 +15,21 @@ export interface GamePageProps {
 }
 
 export interface GamePageState {
-    game : Game
+    game : Game,
+    boardView : BoardView
 }
 
 export default class GamePage extends React.Component<GamePageProps, GamePageState> {
     constructor(props : GamePageProps) {
         super(props);
         this.state = {
-            game : null
+            game : null,
+            boardView : null
         };
+    }
+
+    private getCellSize(regionCount : number) : number {
+        return Math.floor(160 * Math.pow(Math.E, (-0.2 * regionCount)));
     }
 
     componentDidMount() {
@@ -31,7 +40,9 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                 return this.props.api
                     .getBoard(game.parameters.regionCount)
                     .then(board => {
-                        console.log(board);
+                        const cellSize = this.getCellSize(board.regionCount);
+                        const boardView = BoardViewFactory.createBoard(board, cellSize);
+                        this.setState({boardView : boardView});
                     })
                     .catch(reason => {
                         alert("Get board failed because " + reason);
@@ -52,7 +63,12 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                     <LinkButton label="Rules" to={Routes.rules()} newWindow={true}/>
                 </div>
                 <br/>
-                [Board]
+                <GameBoard
+                    user={this.props.user}
+                    api={this.props.api}
+                    game={this.state.game}
+                    boardView={this.state.boardView}
+                />
             </div>
         );
     }
