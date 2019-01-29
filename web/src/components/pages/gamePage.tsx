@@ -4,8 +4,8 @@ import { User, Game } from '../../api/model';
 import LinkButton from '../controls/linkButton';
 import PageTitle from '../pageTitle';
 import GameBoard from '../gameBoard';
-import BoardView from '../../display/boardView';
-import BoardViewFactory from '../../display/boardViewFactory';
+import BoardView from '../../boardRendering/boardView';
+import BoardViewFactory from '../../boardRendering/boardViewFactory';
 import Routes from '../../routes';
 import ThemeService from '../../themes/themeService';
 

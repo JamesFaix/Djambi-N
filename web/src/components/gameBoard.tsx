@@ -1,9 +1,9 @@
 import * as React from 'react';
 import ApiClient from '../api/client';
 import { User, Game } from '../api/model';
-import BoardView from '../display/boardView';
-import BoardRenderer from '../display/boardRenderer';
-import { BoardClickHandler } from '../display/boardClickHandler';
+import BoardView from '../boardRendering/boardView';
+import BoardRenderer from '../boardRendering/boardRenderer';
+import { BoardClickHandler } from '../boardRendering/boardClickHandler';
 import ThemeService from '../themes/themeService';
 
 export interface GameBoardProps {
