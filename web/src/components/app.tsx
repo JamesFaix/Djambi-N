@@ -16,6 +16,7 @@ import CreateGamePage from './pages/createGamePage';
 import FindGamePage from './pages/findGamePage';
 import GameInfoPage from './pages/gameInfoPage';
 import Routes from '../routes';
+import ThemeService from '../themes/themeService';
 
 export interface AppProps {
 
@@ -23,7 +24,8 @@ export interface AppProps {
 
 export interface AppState {
     user : User,
-    api : ApiClient
+    api : ApiClient,
+    theme : ThemeService
 }
 
 export default class App extends React.Component<AppProps, AppState> {
@@ -31,7 +33,8 @@ export default class App extends React.Component<AppProps, AppState> {
         super(props);
         this.state = {
             user : null,
-            api : new ApiClient()
+            api : new ApiClient(),
+            theme : new ThemeService()
         };
     }
 
@@ -124,6 +127,7 @@ export default class App extends React.Component<AppProps, AppState> {
                                 user={this.state.user}
                                 api={this.state.api}
                                 gameId={props.match.params.gameId}
+                                theme={this.state.theme}
                             />
                         }
                     />

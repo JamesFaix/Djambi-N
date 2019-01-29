@@ -4,17 +4,14 @@ import Color from "./color";
 import { Game, Turn } from "../api/model";
 import Point from "../geometry/point";
 import BoardView from "./boardView";
-import { Theme, ThemeFactory } from "./themes";
+import ThemeService from "../themes/themeService";
 
 export default class BoardRenderer {
     private lastGameState : Game;
-    theme : Theme;
     constructor(
         readonly canvas : HTMLCanvasElement,
-        readonly boardView : BoardView){
-
-        //TODO: Allow custom themes
-        this.theme = ThemeFactory.default;
+        readonly boardView : BoardView,
+        readonly themeService : ThemeService){
     }
 
     onPieceClicked : (gameId : number, cellId : number) => any;
@@ -115,7 +112,7 @@ export default class BoardRenderer {
         const playerColorsHighlightStyles = new Map();
         for(var i = 0; i < game.players.length; i++) {
             const player = game.players[i];
-            const hexColor = this.theme.getPlayerColor(player.colorId);
+            const hexColor = this.themeService.getPlayerColor(player.colorId);
             const style = "text-shadow: 0px 0px 20px " + hexColor +
                                      ", 0px 0px 20px " + hexColor +
                                      ", 0px 0px 20px " + hexColor + ";"; //triple shadow to make it wide and dark
@@ -144,7 +141,7 @@ export default class BoardRenderer {
 
             let innerDiv = document.createElement("div");
             innerDiv.setAttribute("style", emojiStyle);
-            innerDiv.innerHTML = this.theme.getPieceEmoji(piece);
+            innerDiv.innerHTML = this.themeService.getPieceEmoji(piece.kind);
 
             div.appendChild(innerDiv);
             boardDiv.appendChild(div);
