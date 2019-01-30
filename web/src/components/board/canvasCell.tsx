@@ -3,6 +3,7 @@ import { Group } from 'react-konva';
 import { CellView } from '../../boardRendering/model';
 import CanvasPolygon from './canvasPolygon';
 import ThemeService from '../../themes/themeService';
+import Color from '../../boardRendering/color';
 
 export interface CanvasCellProps {
     cell: CellView,
@@ -12,16 +13,31 @@ export interface CanvasCellProps {
 
 export default class CanvasCell extends React.Component<CanvasCellProps> {
 
-    render() {
-        const color = this.props.theme.getCellColor(this.props.cell.type, this.props.cell.state);
+    private getCellColor() : string {
+        const baseColor = this.props.theme.getCellBaseColor(this.props.cell.type);
+        const highlight = this.props.theme.getCellHighlight(this.props.cell.state);
 
+        if (highlight === null) {
+            return baseColor;
+        } else {
+            const hColor = Color.fromHex(highlight[0]);
+            const hIntensity = highlight[1];
+
+            return Color.fromHex(baseColor)
+                .lighten(hIntensity)
+                .multiply(hColor)
+                .toHex();
+        }
+    }
+
+    render() {
         return (
             <Group>
                 {this.props.cell.polygons.map((p, i) =>
                     <CanvasPolygon
                         key={"polygon" + i}
                         polygon={p}
-                        fillColor={color}
+                        fillColor={this.getCellColor()}
                         onClick={() => this.props.selectCell(this.props.cell)}
                     />
                 )}

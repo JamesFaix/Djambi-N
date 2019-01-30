@@ -3,7 +3,6 @@ import * as Sprintf from "sprintf-js";
 import Theme from "./theme";
 import ThemeFactory from "./themeFactory";
 import { CellType, CellState } from "../boardRendering/model";
-import Color from "../boardRendering/color";
 
 export default class ThemeService {
     theme : Theme;
@@ -25,40 +24,35 @@ export default class ThemeService {
         return getProperty(this.defaultTheme);
     }
 
-    public getCellColor(type : CellType, state : CellState) : string {
-        let baseColor : string;
+    public getCellBaseColor(type : CellType) : string {
         switch(type) {
-            case CellType.Center:
-                baseColor = this.getValue(t => t.cellColorCenter);
-                break;
-
-            case CellType.Even:
-                baseColor = this.getValue(t => t.cellColorEven);
-                break;
-
-            case CellType.Odd:
-                baseColor = this.getValue(t => t.cellColorOdd);
-                break;
-
+            case CellType.Center: return this.getValue(t => t.cellColorCenter);
+            case CellType.Even: return this.getValue(t => t.cellColorEven);
+            case CellType.Odd: return this.getValue(t => t.cellColorOdd);
             default: throw "Invalid cell type.";
         }
+    }
 
+    public getCellHighlight(state : CellState) : [string, number] {
         switch (state)
         {
             case CellState.Default:
-                return baseColor;
+                return null;
 
             case CellState.Selected:
-                return Color.fromHex(baseColor)
-                    .lighten(this.getValue(t => t.cellHighlightSelectedIntensity))
-                    .multiply(Color.fromHex(this.getValue(t => t.cellHighlightSelectedColor)))
-                    .toHex();
+                return [
+                    this.getValue(t => t.cellHighlightSelectedColor),
+                    this.getValue(t => t.cellHighlightSelectedIntensity)
+                ];
 
             case CellState.Selectable:
-                return Color.fromHex(baseColor)
-                    .lighten(this.getValue(t => t.cellHighlightSelectionOptionIntensity))
-                    .multiply(Color.fromHex(this.getValue(t => t.cellHighlightSelectionOptionColor)))
-                    .toHex();
+                return [
+                    this.getValue(t => t.cellHighlightSelectionOptionColor),
+                    this.getValue(t => t.cellHighlightSelectionOptionIntensity)
+                ];
+
+            default:
+                throw "Invalid cell state.";
         }
     }
 
