@@ -23,7 +23,7 @@ export default class CanvasBoard extends React.Component<CanvasBoardProps> {
     private getPieceLocation(cell : CellView) : Point {
         const size = this.getPieceSize();
         const cellCenter = BoardGeometry.cellCentroid(cell);
-        const offset = { x: size, y: size };
+        const offset = { x: -(size/2), y: -(size/2) };
         return Geometry.pointTranslate(cellCenter, offset);
     }
 
