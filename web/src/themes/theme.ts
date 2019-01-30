@@ -1,18 +1,23 @@
 export default interface Theme {
 
-    cellColorBlack : string,
     cellColorCenter : string,
-    cellColorWhite : string,
+    cellColorEven : string,
+    cellColorOdd : string,
+
+    cellHighlightSelectedColor : string,
+    cellHighlightSelectedIntensity : number,
+    cellHighlightSelectionOptionColor : string,
+    cellHighlightSelectionOptionIntensity : number,
 
     centerCellName : string,
 
-    pieceEmojiAssassin : string,
-    pieceEmojiChief : string,
-    pieceEmojiCorpse : string,
-    pieceEmojiDiplomat : string,
-    pieceEmojiGravedigger : string,
-    pieceEmojiReporter : string,
-    pieceEmojiThug: string,
+    pieceImageAssassin : string,
+    pieceImageChief : string,
+    pieceImageCorpse : string,
+    pieceImageDiplomat : string,
+    pieceImageGravedigger : string,
+    pieceImageReporter : string,
+    pieceImageThug: string,
 
     pieceNameAssassin : string,
     pieceNameChief : string,

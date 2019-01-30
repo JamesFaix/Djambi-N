@@ -2,7 +2,7 @@ import { PieceKind, Selection, SelectionKind, Game } from "../api/model";
 import * as Sprintf from "sprintf-js";
 import Theme from "./theme";
 import ThemeFactory from "./themeFactory";
-import { CellType } from "../boardRendering/model";
+import { CellType, CellState, CellHighlight } from "../boardRendering/model";
 
 export default class ThemeService {
     theme : Theme;
@@ -13,7 +13,7 @@ export default class ThemeService {
     }
 
     //Get the custom theme value if it exists, otherwise default value
-    private getValue(getProperty : (t : Theme) => string) : string {
+    private getValue<T>(getProperty : (t : Theme) => T) : T {
         if (this.theme){
             const value = getProperty(this.theme);
             if (value) {
@@ -24,12 +24,35 @@ export default class ThemeService {
         return getProperty(this.defaultTheme);
     }
 
-    public getCellColor(type : CellType) : string {
+    public getCellBaseColor(type : CellType) : string {
         switch(type) {
-            case CellType.Black: return this.getValue(t => t.cellColorBlack);
-            case CellType.Seat: return this.getValue(t => t.cellColorCenter);
-            case CellType.White: return this.getValue(t => t.cellColorWhite);
+            case CellType.Center: return this.getValue(t => t.cellColorCenter);
+            case CellType.Even: return this.getValue(t => t.cellColorEven);
+            case CellType.Odd: return this.getValue(t => t.cellColorOdd);
             default: throw "Invalid cell type.";
+        }
+    }
+
+    public getCellHighlight(state : CellState) : CellHighlight {
+        switch (state)
+        {
+            case CellState.Default:
+                return null;
+
+            case CellState.Selected:
+                return {
+                    color: this.getValue(t => t.cellHighlightSelectedColor),
+                    intensity: this.getValue(t => t.cellHighlightSelectedIntensity)
+                };
+
+            case CellState.Selectable:
+                return {
+                    color: this.getValue(t => t.cellHighlightSelectionOptionColor),
+                    intensity: this.getValue(t => t.cellHighlightSelectionOptionIntensity)
+                };
+
+            default:
+                throw "Invalid cell state.";
         }
     }
 
@@ -37,15 +60,15 @@ export default class ThemeService {
         return this.getValue(t => t.centerCellName);
     }
 
-    public getPieceEmoji(kind : PieceKind) : string {
+    public getPieceImage(kind : PieceKind) : string {
         switch (kind) {
-            case PieceKind.Assassin: return this.getValue(t => t.pieceEmojiAssassin);
-            case PieceKind.Chief: return this.getValue(t => t.pieceEmojiChief);
-            case PieceKind.Corpse: return this.getValue(t => t.pieceEmojiCorpse);
-            case PieceKind.Diplomat: return this.getValue(t => t.pieceEmojiDiplomat);
-            case PieceKind.Gravedigger: return this.getValue(t => t.pieceEmojiGravedigger);
-            case PieceKind.Reporter: return this.getValue(t => t.pieceEmojiReporter);
-            case PieceKind.Thug: return this.getValue(t => t.pieceEmojiThug);
+            case PieceKind.Assassin: return this.getValue(t => t.pieceImageAssassin);
+            case PieceKind.Chief: return this.getValue(t => t.pieceImageChief);
+            case PieceKind.Corpse: return this.getValue(t => t.pieceImageCorpse);
+            case PieceKind.Diplomat: return this.getValue(t => t.pieceImageDiplomat);
+            case PieceKind.Gravedigger: return this.getValue(t => t.pieceImageGravedigger);
+            case PieceKind.Reporter: return this.getValue(t => t.pieceImageReporter);
+            case PieceKind.Thug: return this.getValue(t => t.pieceImageThug);
             default: throw "Invalid piece kind.";
         }
     }
@@ -64,6 +87,7 @@ export default class ThemeService {
     }
 
     public getPlayerColor(colorId : number) : string {
+        console.log("ColorID: " + colorId);
         switch (colorId) {
             case 0: return this.getValue(t => t.playerColor0);
             case 1: return this.getValue(t => t.playerColor1);
@@ -73,7 +97,8 @@ export default class ThemeService {
             case 5: return this.getValue(t => t.playerColor5);
             case 6: return this.getValue(t => t.playerColor6);
             case 7: return this.getValue(t => t.playerColor7);
-            default: throw "Invalid colorId.";
+            case null : return null; //Neutral
+            default: throw "Invalid colorId. " + colorId;
         }
     }
 

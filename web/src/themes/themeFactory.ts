@@ -3,19 +3,24 @@ import Theme from "./theme";
 export default class ThemeFactory {
     public static getDefaultTheme() : Theme {
         return {
-            cellColorBlack : "#000000",
-            cellColorCenter : "#828282",
-            cellColorWhite : "#FFFFFF",
+            cellColorCenter : "#828282", //Gray
+            cellColorEven : "#000000",   //Black
+            cellColorOdd : "#FFFFFF",    //White
+
+            cellHighlightSelectedColor : "#6AC921", //Green
+            cellHighlightSelectedIntensity : 0.75,
+            cellHighlightSelectionOptionColor : "#E5E500", //Yellow
+            cellHighlightSelectionOptionIntensity : 0.5,
 
             centerCellName : "The Seat",
 
-            pieceEmojiAssassin : "&#x1F5E1",
-            pieceEmojiChief : "&#x1F451",
-            pieceEmojiCorpse : "&#x1F480",
-            pieceEmojiDiplomat : "&#x1F54A",
-            pieceEmojiGravedigger : "&#x26CF",
-            pieceEmojiReporter : "&#x1F4F0",
-            pieceEmojiThug: "&#x270A",
+            pieceImageAssassin : "../resources/daggerEmoji.png",
+            pieceImageChief : "../resources/crownEmoji.png",
+            pieceImageCorpse : "../resources/skullEmoji.png",
+            pieceImageDiplomat : "../resources/doveEmoji.png",
+            pieceImageGravedigger : "../resources/pickEmoji.png",
+            pieceImageReporter : "../resources/newspaperEmoji.png",
+            pieceImageThug : "../resources/fistEmoji.png",
 
             pieceNameAssassin : "Assassin",
             pieceNameChief : "Chief",
@@ -52,19 +57,24 @@ export default class ThemeFactory {
 
     public static getHotDogTownTheme() : Theme {
         return {
-            cellColorBlack : null,
+            cellColorEven : null,
             cellColorCenter : null,
-            cellColorWhite : null,
+            cellColorOdd : null,
+
+            cellHighlightSelectedColor : null,
+            cellHighlightSelectedIntensity : null,
+            cellHighlightSelectionOptionColor : null,
+            cellHighlightSelectionOptionIntensity : null,
 
             centerCellName : "The Booth",
 
-            pieceEmojiAssassin : "&#x1F374",
-            pieceEmojiChief : "&#x1F96B",
-            pieceEmojiCorpse : "&#x1F32D",
-            pieceEmojiDiplomat : "&#x1F917",
-            pieceEmojiGravedigger : "&#x1F924",
-            pieceEmojiReporter : "&#x1F4A8",
-            pieceEmojiThug: "&#x1F35F",
+            pieceImageAssassin : null,
+            pieceImageChief : null,
+            pieceImageCorpse : null,
+            pieceImageDiplomat : null,
+            pieceImageGravedigger : null,
+            pieceImageReporter : null,
+            pieceImageThug: null,
 
             pieceNameAssassin : "Fork",
             pieceNameChief : "Sauce",

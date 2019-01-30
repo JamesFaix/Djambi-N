@@ -1,4 +1,5 @@
 import { Polygon } from "../geometry/model";
+import { PieceKind } from "../api/model";
 
 export enum CellState {
     Default,
@@ -7,15 +8,26 @@ export enum CellState {
 }
 
 export enum CellType {
-    White,
-    Black,
-    Seat
+    Even,
+    Odd,
+    Center
+}
+
+export interface CellHighlight {
+    color : string,
+    intensity : number
+}
+
+export interface PieceView {
+    kind : PieceKind,
+    colorId : number
 }
 
 export interface CellView {
     id : number,
     type : CellType,
     state : CellState,
+    piece : PieceView,
     polygons : Polygon[],
 }
 

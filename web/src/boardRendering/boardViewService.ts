@@ -1,13 +1,10 @@
-import { Location, Board } from "../api/model";
+import { Location, Board, Game } from "../api/model";
 import { Polygon, Line } from "../geometry/model";
 import Geometry from "../geometry/geometry";
 import { BoardView, CellView, CellType, CellState } from "./model";
 import BoardGeometry from "./boardGeometry";
 
-export default class BoardViewFactory {
-    constructor(){
-
-    }
+export default class BoardViewService {
 
     static createBoard(board : Board, cellSize : number): BoardView {
 
@@ -89,10 +86,11 @@ export default class BoardViewFactory {
                             !== undefined)
                         .id;
 
-                    const cv = {
+                    const cv : CellView = {
                         id: cellId,
                         type: this.getCellType(col, row),
                         state: CellState.Default,
+                        piece: null,
                         polygons: [polygon]
                     }
 
@@ -141,6 +139,7 @@ export default class BoardViewFactory {
                 id: group[0].id,
                 type: group[0].type,
                 state: group[0].state,
+                piece: group[0].piece,
                 polygons: group
                     .map((vc : CellView) => vc.polygons)
                     .reduce((a : Polygon[], b : Polygon[]) => a.concat(b)),
@@ -177,11 +176,46 @@ export default class BoardViewFactory {
 
     private static getCellType(col : number, row : number) : CellType {
         if (col === 0 && row === 0){
-            return CellType.Seat;
+            return CellType.Center;
         }
         if ((col + row) % 2 === 1){
-            return CellType.Black;
+            return CellType.Odd;
         }
-        return CellType.White;
+        return CellType.Even;
+    }
+
+    public static update(board : BoardView, game : Game) : BoardView {
+
+        const newCells = board.cells.map(c => {
+            let newState = CellState.Default;
+            const turn = game.currentTurn;
+
+            if (turn) {
+                if (turn.selections.find(s => s.cellId === c.id)) {
+                    newState = CellState.Selected;
+                } else if (turn.selectionOptions.find(cellId => cellId === c.id)) {
+                    newState = CellState.Selectable;
+                }
+            }
+
+            const piece = game.pieces.find(p => p.cellId === c.id);
+            const owner = piece ? game.players.find(p => p.id === piece.playerId) : null;
+            const colorId = owner ? owner.colorId : null;
+            const pieceView = piece ? { kind: piece.kind, colorId: colorId } : null;
+
+            return {
+                id: c.id,
+                type: c.type,
+                state: newState,
+                piece: pieceView,
+                polygons: c.polygons
+            }
+        });
+
+        return {
+            regionCount : board.regionCount,
+            cellSize : board.cellSize,
+            cells : newCells
+        }
     }
 }
