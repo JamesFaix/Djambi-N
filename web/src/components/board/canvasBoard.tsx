@@ -46,8 +46,9 @@ export default class CanvasBoard extends React.Component<CanvasBoardProps> {
                     {
                         this.props.board.cells
                             .filter(c => c.piece !== null)
-                            .map(c =>
+                            .map((c, i) =>
                                 <CanvasPiece
+                                    key={"piece" + i}
                                     piece={c.piece}
                                     theme={this.props.theme}
                                     onClick={() => this.props.selectCell(c)}

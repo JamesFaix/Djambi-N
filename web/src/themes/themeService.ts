@@ -93,6 +93,7 @@ export default class ThemeService {
     }
 
     public getPlayerColor(colorId : number) : string {
+        console.log("ColorID: " + colorId);
         switch (colorId) {
             case 0: return this.getValue(t => t.playerColor0);
             case 1: return this.getValue(t => t.playerColor1);
@@ -102,7 +103,8 @@ export default class ThemeService {
             case 5: return this.getValue(t => t.playerColor5);
             case 6: return this.getValue(t => t.playerColor6);
             case 7: return this.getValue(t => t.playerColor7);
-            default: throw "Invalid colorId.";
+            case null : return null; //Neutral
+            default: throw "Invalid colorId. " + colorId;
         }
     }
 
