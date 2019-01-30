@@ -3,7 +3,6 @@ import ApiClient from '../../api/client';
 import { User, Game, Board } from '../../api/model';
 import LinkButton from '../controls/linkButton';
 import PageTitle from '../pageTitle';
-import BoardViewFactory from '../../boardRendering/boardViewFactory';
 import Routes from '../../routes';
 import ThemeService from '../../themes/themeService';
 import { BoardView, CellView, CellState } from '../../boardRendering/model';
@@ -58,7 +57,7 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
         return await this.getAndCacheBoard(game.parameters.regionCount)
             .then(board => {
                 const cellSize = this.getCellSize(game.parameters.regionCount);
-                let boardView = BoardViewFactory.createBoard(board, cellSize);
+                let boardView = BoardViewService.createBoard(board, cellSize);
                 boardView = BoardViewService.update(boardView, game);
                 this.setState({
                     boardView : boardView,
