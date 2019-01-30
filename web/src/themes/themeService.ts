@@ -87,7 +87,6 @@ export default class ThemeService {
     }
 
     public getPlayerColor(colorId : number) : string {
-        console.log("ColorID: " + colorId);
         switch (colorId) {
             case 0: return this.getValue(t => t.playerColor0);
             case 1: return this.getValue(t => t.playerColor1);
