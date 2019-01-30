@@ -1,29 +1,33 @@
 import { BoardView, CellState } from "./model";
-import { Turn } from "../api/model";
+import { Game } from "../api/model";
 
 export default class BoardViewService {
 
-    public static update(board : BoardView, currentTurn : Turn) : BoardView {
+    public static update(board : BoardView, game : Game) : BoardView {
 
         const newCells = board.cells.map(c => {
-            const oldState = c.state;
             let newState = CellState.Default;
+            const turn = game.currentTurn;
 
-            if (currentTurn.selections.find(s => s.cellId === c.id)) {
-                newState = CellState.Selected;
-            } else if (currentTurn.selectionOptions.find(cellId => cellId === c.id)) {
-                newState = CellState.Selectable;
+            if (turn) {
+                if (turn.selections.find(s => s.cellId === c.id)) {
+                    newState = CellState.Selected;
+                } else if (turn.selectionOptions.find(cellId => cellId === c.id)) {
+                    newState = CellState.Selectable;
+                }
             }
 
-            if (oldState === newState) {
-                return c;
-            } else {
-                return {
-                    id: c.id,
-                    type: c.type,
-                    state: newState,
-                    polygons: c.polygons
-                };
+            const piece = game.pieces.find(p => p.cellId === c.id);
+            const owner = piece ? game.players.find(p => p.id === piece.playerId) : null;
+            const colorId = owner ? owner.colorId : null;
+            const pieceView = piece ? { kind: piece.kind, colorId: colorId } : null;
+
+            return {
+                id: c.id,
+                type: c.type,
+                state: newState,
+                piece: pieceView,
+                polygons: c.polygons
             }
         });
 

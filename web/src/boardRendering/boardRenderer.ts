@@ -82,7 +82,7 @@ export default class BoardRenderer {
 
             let innerDiv = document.createElement("div");
             innerDiv.setAttribute("style", emojiStyle);
-            innerDiv.innerHTML = this.theme.getPieceEmoji(piece.kind);
+            innerDiv.innerHTML = this.theme.getPieceImage(piece.kind);
 
             div.appendChild(innerDiv);
             boardDiv.appendChild(div);

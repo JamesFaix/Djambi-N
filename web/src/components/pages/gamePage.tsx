@@ -9,7 +9,6 @@ import ThemeService from '../../themes/themeService';
 import { BoardView, CellView, CellState } from '../../boardRendering/model';
 import CanvasBoard from '../board/canvasBoard';
 import BoardViewService from '../../boardRendering/boardViewService';
-import GameBoard from '../gameBoard';
 
 export interface GamePageProps {
     user : User,
@@ -60,7 +59,7 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
             .then(board => {
                 const cellSize = this.getCellSize(game.parameters.regionCount);
                 let boardView = BoardViewFactory.createBoard(board, cellSize);
-                boardView = BoardViewService.update(boardView, game.currentTurn);
+                boardView = BoardViewService.update(boardView, game);
                 this.setState({
                     boardView : boardView,
                     game : game
@@ -93,13 +92,6 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                     <LinkButton label="Rules" to={Routes.rules()} newWindow={true}/>
                 </div>
                 <br/>
-                <GameBoard
-                    user={this.props.user}
-                    api={this.props.api}
-                    game={this.state.game}
-                    boardView={this.state.boardView}
-                    theme={this.props.theme}
-                />
                 {
                     this.state.boardView
                     ?

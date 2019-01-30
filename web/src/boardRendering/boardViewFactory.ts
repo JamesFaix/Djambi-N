@@ -5,9 +5,6 @@ import { BoardView, CellView, CellType, CellState } from "./model";
 import BoardGeometry from "./boardGeometry";
 
 export default class BoardViewFactory {
-    constructor(){
-
-    }
 
     static createBoard(board : Board, cellSize : number): BoardView {
 
@@ -89,10 +86,11 @@ export default class BoardViewFactory {
                             !== undefined)
                         .id;
 
-                    const cv = {
+                    const cv : CellView = {
                         id: cellId,
                         type: this.getCellType(col, row),
                         state: CellState.Default,
+                        piece: null,
                         polygons: [polygon]
                     }
 
@@ -141,6 +139,7 @@ export default class BoardViewFactory {
                 id: group[0].id,
                 type: group[0].type,
                 state: group[0].state,
+                piece: group[0].piece,
                 polygons: group
                     .map((vc : CellView) => vc.polygons)
                     .reduce((a : Polygon[], b : Polygon[]) => a.concat(b)),

@@ -17,16 +17,14 @@ export default class CanvasCell extends React.Component<CanvasCellProps> {
 
         return (
             <Group>
-                {
-                    this.props.cell.polygons.map((p, i) =>
-                        <CanvasPolygon
-                            key={"polygon" + i}
-                            polygon={p}
-                            fillColor={color}
-                            onClick={() => this.props.selectCell(this.props.cell)}
-                        />
-                    )
-                }
+                {this.props.cell.polygons.map((p, i) =>
+                    <CanvasPolygon
+                        key={"polygon" + i}
+                        polygon={p}
+                        fillColor={color}
+                        onClick={() => this.props.selectCell(this.props.cell)}
+                    />
+                )}
             </Group>
         );
     }

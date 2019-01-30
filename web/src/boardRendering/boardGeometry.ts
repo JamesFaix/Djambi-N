@@ -11,6 +11,7 @@ export default class BoardGeometry {
             id: c.id,
             type: c.type,
             state: c.state,
+            piece: c.piece,
             polygons: c.polygons.map(p => Geometry.polygonTranslate(p, offset))
         };
     }
@@ -20,6 +21,7 @@ export default class BoardGeometry {
             id: c.id,
             type: c.type,
             state: c.state,
+            piece: c.piece,
             polygons: c.polygons.map(p => Geometry.polygonTransform(p, matrix))
         };
     }
