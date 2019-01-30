@@ -75,4 +75,10 @@ export default class BoardGeometry {
             cells: b.cells.map(c => this.cellTranslate(c, offset))
         };
     }
+
+    public static boardDiameter(b : BoardView) : number {
+        const sides = Geometry.polygonEdges(b.polygon);
+        const length = Geometry.lineLength(sides[0]);
+        return 2 * Geometry.regularPolygonRadius(b.regionCount, length);
+    }
 }
