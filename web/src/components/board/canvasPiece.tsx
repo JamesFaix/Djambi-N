@@ -33,6 +33,7 @@ export default class CanvasPiece extends React.Component<CanvasPieceProps, Canva
     }
 
     render() {
+        const playerColor = this.props.theme.getPlayerColor(this.props.piece.colorId);
         return (
             <Image
                image={this.state.image}
@@ -40,8 +41,9 @@ export default class CanvasPiece extends React.Component<CanvasPieceProps, Canva
                y={this.props.location.y}
                height={this.props.size}
                width={this.props.size}
-               shadowColor={this.props.theme.getPlayerColor(this.props.piece.colorId)}
-               shadowOpacity={1}
+               shadowColor={playerColor}
+               shadowOpacity={playerColor ? 1 : 0}
+               opacity={playerColor ? 1 : 0.75}
                shadowBlur={30}
                shadowOffsetX={5}
                shadowOffsetY={5}

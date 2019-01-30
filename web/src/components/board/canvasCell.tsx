@@ -37,7 +37,7 @@ export default class CanvasCell extends React.Component<CanvasCellProps> {
                         polygon={p}
                         fillColor={color}
                         strokeColor={color}
-                        strokeWidth={1}
+                        strokeWidth={1} //Stroke is necessary to fill gaps between polygons belonging to the same cell
                         onClick={() => this.props.selectCell(this.props.cell)}
                     />
                 )}
