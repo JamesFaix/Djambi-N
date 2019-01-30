@@ -45,6 +45,7 @@ export default class CanvasPiece extends React.Component<CanvasPieceProps, Canva
                shadowBlur={50}
                shadowOffsetX={5}
                shadowOffsetY={5}
+               onClick={() => this.props.onClick()}
             />
         );
     }
