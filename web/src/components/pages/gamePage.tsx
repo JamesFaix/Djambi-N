@@ -8,6 +8,8 @@ import Routes from '../../routes';
 import ThemeService from '../../themes/themeService';
 import { BoardView } from '../../boardRendering/model';
 import CanvasBoard from '../board/canvasBoard';
+import BoardViewService from '../../boardRendering/boardViewService';
+import GameBoard from '../gameBoard';
 
 export interface GamePageProps {
     user : User,
@@ -43,7 +45,8 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                     .getBoard(game.parameters.regionCount)
                     .then(board => {
                         const cellSize = this.getCellSize(board.regionCount);
-                        const boardView = BoardViewFactory.createBoard(board, cellSize);
+                        let boardView = BoardViewFactory.createBoard(board, cellSize);
+                        boardView = BoardViewService.update(boardView, game.currentTurn);
                         this.setState({boardView : boardView});
                     })
                     .catch(reason => {
@@ -65,9 +68,17 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                     <LinkButton label="Rules" to={Routes.rules()} newWindow={true}/>
                 </div>
                 <br/>
+                <GameBoard
+                    user={this.props.user}
+                    api={this.props.api}
+                    game={this.state.game}
+                    boardView={this.state.boardView}
+                    theme={this.props.theme}
+                />
                 {
                     this.state.boardView
-                    ? <CanvasBoard
+                    ?
+                    <CanvasBoard
                         board={this.state.boardView}
                         theme={this.props.theme}
                     />

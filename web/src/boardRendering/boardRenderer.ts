@@ -1,13 +1,14 @@
-import { Game, Turn } from "../api/model";
+import { Game } from "../api/model";
 import ThemeService from "../themes/themeService";
 import Geometry from "../geometry/geometry";
-import { BoardView, CellState, CellView } from "./model";
+import { BoardView } from "./model";
 import BoardGeometry from "./boardGeometry";
+import { Point } from "../geometry/model";
 
 export default class BoardRenderer {
     private lastGameState : Game;
     constructor(
-        readonly canvas : HTMLCanvasElement,
+        readonly offset : Point,
         readonly boardView : BoardView,
         readonly theme : ThemeService){
     }
@@ -18,54 +19,14 @@ export default class BoardRenderer {
         this.updateGame(this.lastGameState);
     }
 
-    updateTurn(turn : Turn) {
-        this.lastGameState.currentTurn = turn;
-
-        this.boardView.cells.forEach(c => c.state = CellState.Default);
-
-        turn.selectionOptions
-            .map(id => this.boardView.cells.find(c => c.id === id))
-            .forEach(c => c.state = CellState.Selectable);
-
-        turn.selections
-            .map(s => s.cellId)
-            .filter(id => id !== null)
-            .map(id => this.boardView.cells.find(c => c.id === id))
-            .forEach(c => c.state = CellState.Selected)
-
-        this.boardView.cells.forEach(c => this.drawCell(c));
-    }
-
     updateGame(game : Game){
         this.lastGameState = game;
-
-        this.updateTurn(game.currentTurn);
         this.drawPieces(game);
     }
 
     clearPieces() : void {
         document.querySelectorAll("[id^='div_board_piece']")
             .forEach(div => div.parentElement.removeChild(div));
-    }
-
-    private drawCell(cell : CellView) : void {
-        var ctx = this.canvas.getContext("2d");
-        ctx.fillStyle = this.theme.getCellColor(cell.type, cell.state);
-
-        cell.polygons.forEach(p => {
-            ctx.beginPath();
-
-            var v = p.vertices[0];
-            ctx.moveTo(v.x, v.y);
-
-            for (var i = 1; i < p.vertices.length; i++) {
-                v = p.vertices[i];
-                ctx.lineTo(v.x, v.y);
-            }
-
-            ctx.closePath();
-            ctx.fill();
-        })
     }
 
     private drawPieces(game : Game) : void {
@@ -87,8 +48,7 @@ export default class BoardRenderer {
         const emojiStyle = "position: absolute; top: -24px; left: -24px;";
 
         let offset = { x: -size/2, y: -size/2 };
-        const canvasOffset = { x : this.canvas.offsetLeft, y: this.canvas.offsetTop };
-        offset = Geometry.pointTranslate(offset, canvasOffset);
+        offset = Geometry.pointTranslate(offset, this.offset);
 
         const playerColorsHighlightStyles = new Map();
         for(var i = 0; i < game.players.length; i++) {

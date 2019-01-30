@@ -3,9 +3,9 @@ import Theme from "./theme";
 export default class ThemeFactory {
     public static getDefaultTheme() : Theme {
         return {
-            cellColorCenter : "#828282",
-            cellColorEven : "#000000",
-            cellColorOdd : "#FFFFFF",
+            cellColorCenter : "#828282", //Gray
+            cellColorEven : "#000000",   //Black
+            cellColorOdd : "#FFFFFF",    //White
 
             cellHighlightSelectedColor : "#6AC921", //Green
             cellHighlightSelectedIntensity : 0.75,
