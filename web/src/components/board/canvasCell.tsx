@@ -20,12 +20,9 @@ export default class CanvasCell extends React.Component<CanvasCellProps> {
         if (highlight === null) {
             return baseColor;
         } else {
-            const hColor = Color.fromHex(highlight[0]);
-            const hIntensity = highlight[1];
-
             return Color.fromHex(baseColor)
-                .lighten(hIntensity)
-                .multiply(hColor)
+                .lighten(highlight.intensity)
+                .multiply(Color.fromHex(highlight.color))
                 .toHex();
         }
     }

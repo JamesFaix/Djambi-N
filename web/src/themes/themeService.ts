@@ -2,7 +2,7 @@ import { PieceKind, Selection, SelectionKind, Game } from "../api/model";
 import * as Sprintf from "sprintf-js";
 import Theme from "./theme";
 import ThemeFactory from "./themeFactory";
-import { CellType, CellState } from "../boardRendering/model";
+import { CellType, CellState, CellHighlight } from "../boardRendering/model";
 
 export default class ThemeService {
     theme : Theme;
@@ -33,23 +33,23 @@ export default class ThemeService {
         }
     }
 
-    public getCellHighlight(state : CellState) : [string, number] {
+    public getCellHighlight(state : CellState) : CellHighlight {
         switch (state)
         {
             case CellState.Default:
                 return null;
 
             case CellState.Selected:
-                return [
-                    this.getValue(t => t.cellHighlightSelectedColor),
-                    this.getValue(t => t.cellHighlightSelectedIntensity)
-                ];
+                return {
+                    color: this.getValue(t => t.cellHighlightSelectedColor),
+                    intensity: this.getValue(t => t.cellHighlightSelectedIntensity)
+                };
 
             case CellState.Selectable:
-                return [
-                    this.getValue(t => t.cellHighlightSelectionOptionColor),
-                    this.getValue(t => t.cellHighlightSelectionOptionIntensity)
-                ];
+                return {
+                    color: this.getValue(t => t.cellHighlightSelectionOptionColor),
+                    intensity: this.getValue(t => t.cellHighlightSelectionOptionIntensity)
+                };
 
             default:
                 throw "Invalid cell state.";

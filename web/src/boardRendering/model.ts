@@ -13,6 +13,11 @@ export enum CellType {
     Center
 }
 
+export interface CellHighlight {
+    color : string,
+    intensity : number
+}
+
 export interface PieceView {
     kind : PieceKind,
     colorId : number
