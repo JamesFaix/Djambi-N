@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { Stage, Layer } from 'react-konva';
-import { BoardView, CellView } from '../../boardRendering/model';
+import { BoardView, CellView, CellType } from '../../boardRendering/model';
 import ThemeService from '../../themes/themeService';
 import CanvasCell from './canvasCell';
 import CanvasPiece from './canvasPiece';
 import { Point } from '../../geometry/model';
 import BoardGeometry from '../../boardRendering/boardGeometry';
 import Geometry from '../../geometry/geometry';
+import CanvasPolygon from './canvasPolygon';
 
 export interface CanvasBoardProps {
     board : BoardView,
@@ -27,37 +28,62 @@ export default class CanvasBoard extends React.Component<CanvasBoardProps> {
         return Geometry.pointTranslate(cellCenter, offset);
     }
 
+    private renderBackground() {
+        return (
+            <Layer>
+                <CanvasPolygon
+                    polygon={this.props.board.polygon}
+                    strokeColor={this.props.theme.getCellBaseColor(CellType.Center)}
+                    strokeWidth={10}
+                />
+            </Layer>
+        )
+    }
+
+    private renderCells() {
+        return (
+            <Layer>
+                {
+                    this.props.board.cells.map((c, i) =>
+                        <CanvasCell
+                            key={"cell" + i}
+                            cell={c}
+                            theme={this.props.theme}
+                            selectCell={(cell) => this.props.selectCell(cell)}
+                        />
+                    )
+                }
+            </Layer>
+        );
+    }
+
+    private renderPieces() {
+        return (
+            <Layer>
+                {
+                    this.props.board.cells
+                        .filter(c => c.piece !== null)
+                        .map((c, i) =>
+                            <CanvasPiece
+                                key={"piece" + i}
+                                piece={c.piece}
+                                theme={this.props.theme}
+                                onClick={() => this.props.selectCell(c)}
+                                size={this.props.board.cellSize/2}
+                                location={this.getPieceLocation(c)}
+                            />
+                        )
+                }
+            </Layer>
+        );
+    }
+
     render() {
         return (
             <Stage width={1000} height={1000}>
-                <Layer>
-                    {
-                        this.props.board.cells.map((c, i) =>
-                            <CanvasCell
-                                key={"cell" + i}
-                                cell={c}
-                                theme={this.props.theme}
-                                selectCell={(cell) => this.props.selectCell(cell)}
-                            />
-                        )
-                    }
-                </Layer>
-                <Layer>
-                    {
-                        this.props.board.cells
-                            .filter(c => c.piece !== null)
-                            .map((c, i) =>
-                                <CanvasPiece
-                                    key={"piece" + i}
-                                    piece={c.piece}
-                                    theme={this.props.theme}
-                                    onClick={() => this.props.selectCell(c)}
-                                    size={this.props.board.cellSize/2}
-                                    location={this.getPieceLocation(c)}
-                                />
-                            )
-                    }
-                </Layer>
+                {this.renderBackground()}
+                {this.renderCells()}
+                {this.renderPieces()}
             </Stage>
         );
     }

@@ -57,4 +57,22 @@ export default class BoardGeometry {
     public static boardCellById(b : BoardView, id : number) : CellView {
         return b.cells.find((c: CellView) => c.id === id);
     }
+
+    public static boardTransform(b : BoardView, matrix : TransformMatrix) : BoardView {
+        return {
+            regionCount: b.regionCount,
+            cellSize: b.cellSize,
+            polygon: Geometry.polygonTransform(b.polygon, matrix),
+            cells: b.cells.map(c => this.cellTransform(c, matrix))
+        };
+    }
+
+    public static boardTranslate(b : BoardView, offset : Point) : BoardView {
+        return {
+            regionCount: b.regionCount,
+            cellSize: b.cellSize,
+            polygon: Geometry.polygonTranslate(b.polygon, offset),
+            cells: b.cells.map(c => this.cellTranslate(c, offset))
+        };
+    }
 }

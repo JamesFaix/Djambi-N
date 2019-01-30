@@ -42,7 +42,7 @@ export default class CanvasPiece extends React.Component<CanvasPieceProps, Canva
                width={this.props.size}
                shadowColor={this.props.theme.getPlayerColor(this.props.piece.colorId)}
                shadowOpacity={1}
-               shadowBlur={50}
+               shadowBlur={30}
                shadowOffsetX={5}
                shadowOffsetY={5}
                onClick={() => this.props.onClick()}

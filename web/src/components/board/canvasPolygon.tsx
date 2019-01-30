@@ -4,9 +4,11 @@ import { Polygon } from '../../geometry/model';
 import { Context } from 'konva';
 
 export interface CanvasPolygonProps {
-    fillColor : string,
+    fillColor? : string,
     polygon: Polygon,
-    onClick : () => void
+    onClick? : () => void
+    strokeColor? : string,
+    strokeWidth? : number
 }
 
 export default class CanvasPolygon extends React.Component<CanvasPolygonProps> {
@@ -29,6 +31,8 @@ export default class CanvasPolygon extends React.Component<CanvasPolygonProps> {
                     ctx.fillStrokeShape(shape);
                 }}
                 fill={this.props.fillColor}
+                stroke={this.props.strokeColor}
+                strokeWidth={this.props.strokeWidth}
                 onClick={() => this.props.onClick()}
             />
         );
