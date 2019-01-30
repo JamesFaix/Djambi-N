@@ -7,9 +7,9 @@ export enum CellState {
 }
 
 export enum CellType {
-    White,
-    Black,
-    Seat
+    Even,
+    Odd,
+    Center
 }
 
 export interface CellView {

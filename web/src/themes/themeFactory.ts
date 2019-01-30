@@ -3,9 +3,9 @@ import Theme from "./theme";
 export default class ThemeFactory {
     public static getDefaultTheme() : Theme {
         return {
-            cellColorBlack : "#000000",
             cellColorCenter : "#828282",
-            cellColorWhite : "#FFFFFF",
+            cellColorEven : "#000000",
+            cellColorOdd : "#FFFFFF",
 
             cellHighlightSelectedColor : "#6AC921", //Green
             cellHighlightSelectedIntensity : 0.75,
@@ -57,9 +57,9 @@ export default class ThemeFactory {
 
     public static getHotDogTownTheme() : Theme {
         return {
-            cellColorBlack : null,
+            cellColorEven : null,
             cellColorCenter : null,
-            cellColorWhite : null,
+            cellColorOdd : null,
 
             cellHighlightSelectedColor : null,
             cellHighlightSelectedIntensity : null,

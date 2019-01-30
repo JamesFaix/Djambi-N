@@ -177,11 +177,11 @@ export default class BoardViewFactory {
 
     private static getCellType(col : number, row : number) : CellType {
         if (col === 0 && row === 0){
-            return CellType.Seat;
+            return CellType.Center;
         }
         if ((col + row) % 2 === 1){
-            return CellType.Black;
+            return CellType.Odd;
         }
-        return CellType.White;
+        return CellType.Even;
     }
 }

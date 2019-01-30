@@ -1,8 +1,8 @@
 export default interface Theme {
 
-    cellColorBlack : string,
     cellColorCenter : string,
-    cellColorWhite : string,
+    cellColorEven : string,
+    cellColorOdd : string,
 
     cellHighlightSelectedColor : string,
     cellHighlightSelectedIntensity : number,

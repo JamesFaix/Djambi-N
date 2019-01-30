@@ -28,16 +28,16 @@ export default class ThemeService {
     public getCellColor(type : CellType, state : CellState) : string {
         let baseColor : string;
         switch(type) {
-            case CellType.Black:
-                baseColor = this.getValue(t => t.cellColorBlack);
-                break;
-
-            case CellType.Seat:
+            case CellType.Center:
                 baseColor = this.getValue(t => t.cellColorCenter);
                 break;
 
-            case CellType.White:
-                baseColor = this.getValue(t => t.cellColorWhite);
+            case CellType.Even:
+                baseColor = this.getValue(t => t.cellColorEven);
+                break;
+
+            case CellType.Odd:
+                baseColor = this.getValue(t => t.cellColorOdd);
                 break;
 
             default: throw "Invalid cell type.";
