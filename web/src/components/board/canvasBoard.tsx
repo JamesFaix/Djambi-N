@@ -82,7 +82,7 @@ export default class CanvasBoard extends React.Component<CanvasBoardProps> {
         const canvasSize = BoardGeometry.boardDiameter(this.props.board);
 
         return (
-            <Stage width={canvasSize} height={canvasSize} className="thinBorder">
+            <Stage width={canvasSize} height={canvasSize}>
                 {this.renderBackground()}
                 {this.renderCells()}
                 {this.renderPieces()}

@@ -42,6 +42,7 @@ export default class CanvasPiece extends React.Component<CanvasPieceProps, Canva
                height={this.props.size}
                width={this.props.size}
                shadowColor={playerColor}
+               //Fade neutral pieces
                shadowOpacity={playerColor ? 1 : 0}
                opacity={playerColor ? 1 : 0.75}
                shadowBlur={30}
