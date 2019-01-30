@@ -8,6 +8,7 @@ import ThemeService from '../../themes/themeService';
 import { BoardView, CellView, CellState } from '../../boardRendering/model';
 import CanvasBoard from '../board/canvasBoard';
 import BoardViewService from '../../boardRendering/boardViewService';
+import BoardGeometry from '../../boardRendering/boardGeometry';
 
 export interface GamePageProps {
     user : User,
@@ -91,16 +92,31 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                     <LinkButton label="Rules" to={Routes.rules()} newWindow={true}/>
                 </div>
                 <br/>
-                {
-                    this.state.boardView
-                    ?
-                    <CanvasBoard
-                        board={this.state.boardView}
-                        theme={this.props.theme}
-                        selectCell={(cellId) => this.onCellClick(cellId)}
-                    />
-                    : ""
-                }
+                {this.renderBoard()}
+            </div>
+        );
+    }
+
+    private renderBoard() {
+        if (this.state.boardView === null) {
+            return "";
+        }
+
+        const canvasSize = BoardGeometry.boardDiameter(this.state.boardView);
+
+        const style = {
+            margin: "0 auto",
+            width: canvasSize,
+            height: canvasSize
+        };
+
+        return (
+            <div className="thinBorder" style={style}>
+                <CanvasBoard
+                    board={this.state.boardView}
+                    theme={this.props.theme}
+                    selectCell={(cellId) => this.onCellClick(cellId)}
+                />
             </div>
         );
     }

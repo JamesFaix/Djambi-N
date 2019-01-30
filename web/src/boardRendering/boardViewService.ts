@@ -13,9 +13,9 @@ export default class BoardViewService {
 
         let cellViews : Array<CellView> = [];
 
-        let boardPolygon = this.getBoardPolygon(board.regionCount, sideLength);
-        let boardEdges = Geometry.polygonEdges(boardPolygon);
-        let boardCentroid = Geometry.polygonCentroid(boardPolygon);
+        const boardPolygon = this.getBoardPolygon(board.regionCount, sideLength);
+        const boardEdges = Geometry.polygonEdges(boardPolygon);
+        const boardCentroid = Geometry.polygonCentroid(boardPolygon);
 
         //Loop over regions
         for (var i = 0; i < board.regionCount; i++) {
@@ -101,18 +101,21 @@ export default class BoardViewService {
 
         cellViews = this.coalesceColocatedCells(cellViews);
 
-        const transform = Geometry.transformRotation(360 / board.regionCount / 2);
-        cellViews = cellViews.map(c => BoardGeometry.cellTransform(c, transform));
-
-        const radius = this.getPolygonRadius(board.regionCount, sideLength);
-        const offset = { x: radius, y: radius };
-        cellViews = cellViews.map(c =>  BoardGeometry.cellTranslate(c, offset));
-
-        return {
+        let boardView = {
             regionCount: board.regionCount,
             cellSize: cellSize,
-            cells: cellViews
+            cells: cellViews,
+            polygon: boardPolygon
         };
+
+        const transform = Geometry.transformRotation(360 / board.regionCount / 2);
+        const radius = this.getPolygonRadius(board.regionCount, sideLength);
+        const offset = { x: radius, y: radius };
+
+        boardView = BoardGeometry.boardTransform(boardView, transform);
+        boardView = BoardGeometry.boardTranslate(boardView, offset);
+
+        return boardView;
     }
 
     private static locationEquals(a : Location, b : Location) : boolean {
@@ -215,7 +218,8 @@ export default class BoardViewService {
         return {
             regionCount : board.regionCount,
             cellSize : board.cellSize,
-            cells : newCells
+            cells : newCells,
+            polygon : board.polygon
         }
     }
 }
