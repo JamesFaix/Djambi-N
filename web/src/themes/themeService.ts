@@ -66,15 +66,15 @@ export default class ThemeService {
         return this.getValue(t => t.centerCellName);
     }
 
-    public getPieceEmoji(kind : PieceKind) : string {
+    public getPieceImage(kind : PieceKind) : string {
         switch (kind) {
-            case PieceKind.Assassin: return this.getValue(t => t.pieceEmojiAssassin);
-            case PieceKind.Chief: return this.getValue(t => t.pieceEmojiChief);
-            case PieceKind.Corpse: return this.getValue(t => t.pieceEmojiCorpse);
-            case PieceKind.Diplomat: return this.getValue(t => t.pieceEmojiDiplomat);
-            case PieceKind.Gravedigger: return this.getValue(t => t.pieceEmojiGravedigger);
-            case PieceKind.Reporter: return this.getValue(t => t.pieceEmojiReporter);
-            case PieceKind.Thug: return this.getValue(t => t.pieceEmojiThug);
+            case PieceKind.Assassin: return this.getValue(t => t.pieceImageAssassin);
+            case PieceKind.Chief: return this.getValue(t => t.pieceImageChief);
+            case PieceKind.Corpse: return this.getValue(t => t.pieceImageCorpse);
+            case PieceKind.Diplomat: return this.getValue(t => t.pieceImageDiplomat);
+            case PieceKind.Gravedigger: return this.getValue(t => t.pieceImageGravedigger);
+            case PieceKind.Reporter: return this.getValue(t => t.pieceImageReporter);
+            case PieceKind.Thug: return this.getValue(t => t.pieceImageThug);
             default: throw "Invalid piece kind.";
         }
     }
