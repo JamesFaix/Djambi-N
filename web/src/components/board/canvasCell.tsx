@@ -6,7 +6,8 @@ import ThemeService from '../../themes/themeService';
 
 export interface CanvasCellProps {
     cell: CellView,
-    theme : ThemeService
+    theme : ThemeService,
+    selectCell : (cell : CellView) => void
 }
 
 export default class CanvasCell extends React.Component<CanvasCellProps> {
@@ -22,6 +23,7 @@ export default class CanvasCell extends React.Component<CanvasCellProps> {
                             key={"polygon" + i}
                             polygon={p}
                             fillColor={color}
+                            onClick={() => this.props.selectCell(this.props.cell)}
                         />
                     )
                 }

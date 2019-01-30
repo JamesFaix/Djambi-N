@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { Stage, Layer } from 'react-konva';
-import { BoardView } from '../../boardRendering/model';
+import { BoardView, CellView } from '../../boardRendering/model';
 import ThemeService from '../../themes/themeService';
 import CanvasCell from './canvasCell';
 
 export interface CanvasBoardProps {
     board : BoardView,
-    theme : ThemeService
+    theme : ThemeService,
+    selectCell : (cell : CellView) => void
 }
 
 export default class CanvasBoard extends React.Component<CanvasBoardProps> {
@@ -21,6 +22,7 @@ export default class CanvasBoard extends React.Component<CanvasBoardProps> {
                                 key={"cell" + i}
                                 cell={c}
                                 theme={this.props.theme}
+                                selectCell={(cell) => this.props.selectCell(cell)}
                             />
                         )
                     }

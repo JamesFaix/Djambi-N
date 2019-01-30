@@ -1,12 +1,12 @@
 import * as React from 'react';
 import ApiClient from '../../api/client';
-import { User, Game } from '../../api/model';
+import { User, Game, Board } from '../../api/model';
 import LinkButton from '../controls/linkButton';
 import PageTitle from '../pageTitle';
 import BoardViewFactory from '../../boardRendering/boardViewFactory';
 import Routes from '../../routes';
 import ThemeService from '../../themes/themeService';
-import { BoardView } from '../../boardRendering/model';
+import { BoardView, CellView, CellState } from '../../boardRendering/model';
 import CanvasBoard from '../board/canvasBoard';
 import BoardViewService from '../../boardRendering/boardViewService';
 import GameBoard from '../gameBoard';
@@ -20,7 +20,8 @@ export interface GamePageProps {
 
 export interface GamePageState {
     game : Game,
-    boardView : BoardView
+    boardView : BoardView,
+    board : Board
 }
 
 export default class GamePage extends React.Component<GamePageProps, GamePageState> {
@@ -28,7 +29,8 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
         super(props);
         this.state = {
             game : null,
-            boardView : null
+            boardView : null,
+            board : null
         };
     }
 
@@ -36,26 +38,49 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
         return Math.floor(160 * Math.pow(Math.E, (-0.2 * regionCount)));
     }
 
+    private async getAndCacheBoard(regionCount : number) : Promise<Board> {
+        if (this.state.board) {
+            return this.state.board;
+        }
+
+        return await this.props.api
+            .getBoard(regionCount)
+            .then(board => {
+                this.setState({board : board});
+                return board;
+            })
+            .catch(reason => {
+                alert("Get board failed because " + reason);
+                return null;
+            });
+    }
+
+    private async updateState(game : Game) : Promise<void> {
+        return await this.getAndCacheBoard(game.parameters.regionCount)
+            .then(board => {
+                const cellSize = this.getCellSize(game.parameters.regionCount);
+                let boardView = BoardViewFactory.createBoard(board, cellSize);
+                boardView = BoardViewService.update(boardView, game.currentTurn);
+                this.setState({
+                    boardView : boardView,
+                    game : game
+                });
+            });
+    }
+
+    private onCellClick(cell : CellView) : void {
+        console.log("Cell click ID:" + cell.id);
+        if (cell.state === CellState.Selectable) {
+            this.props.api
+                .selectCell(this.props.gameId, cell.id)
+                .then(response => this.updateState(response.game));
+        }
+    }
+
     componentDidMount() {
         this.props.api
             .getGame(this.props.gameId)
-            .then(game => {
-                this.setState({game : game});
-                return this.props.api
-                    .getBoard(game.parameters.regionCount)
-                    .then(board => {
-                        const cellSize = this.getCellSize(board.regionCount);
-                        let boardView = BoardViewFactory.createBoard(board, cellSize);
-                        boardView = BoardViewService.update(boardView, game.currentTurn);
-                        this.setState({boardView : boardView});
-                    })
-                    .catch(reason => {
-                        alert("Get board failed because " + reason);
-                    });
-            })
-            .catch(reason => {
-                alert("Get game failed because " + reason);
-            });
+            .then(game => this.updateState(game));
     }
 
     render() {
@@ -81,6 +106,7 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                     <CanvasBoard
                         board={this.state.boardView}
                         theme={this.props.theme}
+                        selectCell={(cellId) => this.onCellClick(cellId)}
                     />
                     : ""
                 }

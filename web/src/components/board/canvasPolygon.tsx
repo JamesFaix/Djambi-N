@@ -5,7 +5,8 @@ import { Context } from 'konva';
 
 export interface CanvasPolygonProps {
     fillColor : string,
-    polygon: Polygon
+    polygon: Polygon,
+    onClick : () => void
 }
 
 export default class CanvasPolygon extends React.Component<CanvasPolygonProps> {
@@ -28,6 +29,7 @@ export default class CanvasPolygon extends React.Component<CanvasPolygonProps> {
                     ctx.fillStrokeShape(shape);
                 }}
                 fill={this.props.fillColor}
+                onClick={() => this.props.onClick()}
             />
         );
     }
