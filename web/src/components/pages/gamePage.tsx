@@ -25,6 +25,8 @@ export interface GamePageState {
 }
 
 export default class GamePage extends React.Component<GamePageProps, GamePageState> {
+    private readonly scale = 100;
+
     constructor(props : GamePageProps) {
         super(props);
         this.state = {
@@ -35,7 +37,9 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
     }
 
     private getCellSize(regionCount : number) : number {
-        return Math.floor(160 * Math.pow(Math.E, (-0.2 * regionCount)));
+        //Through trial an error, I found that this formula keeps boards of varying regionCount about the same absolute size
+        const baseValue = Math.pow(Math.E, (-0.2 * regionCount));
+        return Math.floor(this.scale * baseValue);
     }
 
     private async getAndCacheBoard(regionCount : number) : Promise<Board> {

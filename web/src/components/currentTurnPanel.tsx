@@ -3,6 +3,7 @@ import '../index.css';
 import { Game, User } from '../api/model';
 import ThemeService from '../themes/themeService';
 import ActionButton from './controls/actionButton';
+import * as Sprintf from 'sprintf-js';
 
 export interface CurrentTurnPanelProps {
     game : Game,
@@ -15,11 +16,14 @@ export interface CurrentTurnPanelProps {
 export default class CurrentTurnPanel extends React.Component<CurrentTurnPanelProps> {
 
     render() {
-        const player = this.getCurrentPlayer(this.props.game);
+        if (this.props.game.currentTurn === null){
+            return <div></div>;
+        }
 
         return (
-            <div className="thinBorder">
-                {player.name}
+            <div className="thinBorder paddedCell">
+                {this.getPlayerNameHeader()}
+                <br/>
                 <br/>
                 {this.getSelectionsDescription()}
                 <br/>
@@ -40,36 +44,51 @@ export default class CurrentTurnPanel extends React.Component<CurrentTurnPanelPr
             .find(p => p.id === game.turnCycle[0]);
     }
 
+    private getPlayerNameHeader() {
+        const player = this.getCurrentPlayer(this.props.game);
+        return player.name + "'s turn";
+    }
+
     private getSelectionsDescription() {
         const game = this.props.game;
-        const turn = game.currentTurn;
 
-        if (turn === null) {
-            return "";
-        }
+        const descriptions = game.currentTurn.selections
+            .map(s => <p>{this.props.theme.getSelectionDescription(s, game)}</p>);
 
-        return turn.selections
-            .map(s => this.props.theme.getSelectionDescription(s, game))
-            .join("");
+        return (
+            <div>
+                Selections:
+                <br/>
+                <div className="indented">
+                    {descriptions}
+                </div>
+            </div>
+        );
     }
 
     private getSelectionPrompt() {
-        const turn = this.props.game.currentTurn;
+        const prompt = this.props.theme.getSelectionPrompt(
+            this.props.game.currentTurn.requiredSelectionKind);
 
-        if (turn === null) {
-            return "";
-        }
-
-        return this.props.theme.getSelectionPrompt(turn.requiredSelectionKind);
+        return (
+            <div>
+                Required action:
+                <br/>
+                <div className="indented">
+                    {prompt}
+                </div>
+            </div>
+        )
     }
 
     private renderActionButtons() {
-        const turn = this.props.game.currentTurn;
-        if (!this.isCurrentPlayerSelfOrGuest() || turn === null) {
+        if (!this.isCurrentPlayerSelfOrGuest()) {
             return "";
         }
 
         const gameId = this.props.game.id;
+        const turn = this.props.game.currentTurn;
+
         return (
             <div>
                 {
