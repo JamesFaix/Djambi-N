@@ -1,6 +1,6 @@
 import * as React from 'react';
 import ApiClient from '../../api/client';
-import { User, Game, Board } from '../../api/model';
+import { User, Game, Board, Event } from '../../api/model';
 import LinkButton from '../controls/linkButton';
 import PageTitle from '../pageTitle';
 import Routes from '../../routes';
@@ -12,6 +12,7 @@ import BoardGeometry from '../../boardRendering/boardGeometry';
 import CurrentTurnPanel from '../gamePanels/currentTurnPanel';
 import TurnCyclePanel from '../gamePanels/turnCyclePanel';
 import PlayersPanel from '../gamePanels/playersPanel';
+import HistoryPanel from '../gamePanels/historyPanel';
 
 export interface GamePageProps {
     user : User,
@@ -23,7 +24,8 @@ export interface GamePageProps {
 export interface GamePageState {
     game : Game,
     boardView : BoardView,
-    board : Board
+    board : Board,
+    events : Event[]
 }
 
 export default class GamePage extends React.Component<GamePageProps, GamePageState> {
@@ -34,7 +36,8 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
         this.state = {
             game : null,
             boardView : null,
-            board : null
+            board : null,
+            events: []
         };
     }
 
@@ -161,6 +164,11 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                         />
                     </div>
                 </div>
+                <HistoryPanel
+                    game={this.state.game}
+                    theme={this.props.theme}
+                    events={this.state.events}
+                />
             </div>
         );
     }
