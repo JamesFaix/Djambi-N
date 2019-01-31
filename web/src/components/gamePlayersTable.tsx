@@ -188,7 +188,7 @@ export default class GamePlayersTable extends React.Component<GamePlayersTablePr
                         <tr key={"row" + rowNumber}>
                             <HintCell text="(Empty)" />
                             <EmptyCell/>
-                            {status === GameStatus.Pending ? <EmptyCell/> : ""}
+                            {status === GameStatus.Pending ? <EmptyCell/> : undefined}
                         </tr>
                     );
                 } else {
@@ -196,7 +196,7 @@ export default class GamePlayersTable extends React.Component<GamePlayersTablePr
                         <tr key={"row" + rowNumber}>
                             <EmphasizedTextCell text={seat.player.name}/>
                             <TextCell text={seat.note} />
-                            {status === GameStatus.Pending ? <EmptyCell/> : ""}
+                            {status === GameStatus.Pending ? <EmptyCell/> : undefined}
                         </tr>
                     );
                 }
@@ -211,7 +211,7 @@ export default class GamePlayersTable extends React.Component<GamePlayersTablePr
                                 label="Join"
                                 onClick={() => this.addSelfOnClick()}
                             />
-                            : ""
+                            : undefined
                         }
                     </tr>
                 );
@@ -229,7 +229,7 @@ export default class GamePlayersTable extends React.Component<GamePlayersTablePr
                                 label="Add Guest"
                                 onClick={() => this.addGuestOnClick()}
                             />
-                            : ""
+                            : undefined
                         }
                     </tr>
                 );
@@ -244,7 +244,7 @@ export default class GamePlayersTable extends React.Component<GamePlayersTablePr
                                 label={this.isSeatSelf(seat) ? "Quit" : "Remove"}
                                 onClick={() => this.removeOnClick(seat.player.id)}
                             />
-                            : ""
+                            : undefined
                         }
                     </tr>
                 );
