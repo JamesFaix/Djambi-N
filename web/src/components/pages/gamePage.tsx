@@ -150,14 +150,16 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                         commitTurn={gameId => this.commitTurn(gameId)}
                         resetTurn={gameId => this.resetTurn(gameId)}
                     />
-                    <TurnCyclePanel
-                        game={this.state.game}
-                        theme={this.props.theme}
-                    />
-                    <PlayersPanel
-                        game={this.state.game}
-                        theme={this.props.theme}
-                    />
+                    <div style={{width:"60%"}}>
+                        <TurnCyclePanel
+                            game={this.state.game}
+                            theme={this.props.theme}
+                        />
+                        <PlayersPanel
+                            game={this.state.game}
+                            theme={this.props.theme}
+                        />
+                    </div>
                 </div>
             </div>
         );
