@@ -10,7 +10,7 @@ import { InputTypes } from '../../constants';
 import LabeledTristateDropdown from '../controls/labeledTristateDropdown';
 import ActionButton from '../controls/actionButton';
 import Util from '../../util';
-import GameInfoTable from '../gameInfoTable';
+import GamesQueryResultsTable from '../gamesQueryResultsTable';
 import Routes from '../../routes';
 
 export interface FindGamePageProps {
@@ -168,7 +168,7 @@ export default class FindGamePage extends React.Component<FindGamePageProps, Fin
                 <br/>
                 {this.renderQueryFilters()}
                 <br/>
-                <GameInfoTable
+                <GamesQueryResultsTable
                     games={this.state.games}
                 />
             </div>

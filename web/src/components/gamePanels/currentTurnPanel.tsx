@@ -22,7 +22,8 @@ export default class CurrentTurnPanel extends React.Component<CurrentTurnPanelPr
         const currentPlayer = this.getCurrentPlayer(this.props.game);
         const color = this.props.theme.getPlayerColor(currentPlayer.colorId);
         const style = {
-            boxShadow: "inset 0 0 5px 5px " + color
+            boxShadow: "inset 0 0 5px 5px " + color,
+            width: "40%"
         };
 
         return (
