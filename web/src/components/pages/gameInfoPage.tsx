@@ -6,7 +6,7 @@ import ApiClient from '../../api/client';
 import { Redirect } from 'react-router';
 import LinkButton from '../controls/linkButton';
 import ActionButton from '../controls/actionButton';
-import GamePlayersTable from '../gamePlayersTable';
+import GameInfoPlayersTable from '../gameInfoPlayersTable';
 import Routes from '../../routes';
 
 export interface GameInfoPageProps {
@@ -185,7 +185,7 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
                 </div>
                 {this.renderLobbyDetails(this.state.game)}
                 <br/>
-                <GamePlayersTable
+                <GameInfoPlayersTable
                     user={this.props.user}
                     game={this.state.game}
                     addPlayer={(gameId, request) => this.addPlayer(gameId, request)}

@@ -7,14 +7,14 @@ import EmphasizedTextCell from './tables/emphasizedTextCell';
 import TextFieldCell from './tables/textFieldCell';
 import ActionButtonCell from './tables/actionButtonCell';
 
-export interface GamePlayersTableProps {
+export interface GameInfoPlayersTableProps {
     user : User,
     game : Game,
     addPlayer(gameId : number, request : CreatePlayerRequest) : void,
     removePlayer(gameId : number, playerId : number) : void
 }
 
-export interface GamePlayersTableState {
+export interface GameInfoPlayersTableState {
     guestName : string
 }
 
@@ -31,8 +31,8 @@ interface Seat {
     action : SeatActionType
 }
 
-export default class GamePlayersTable extends React.Component<GamePlayersTableProps, GamePlayersTableState> {
-    constructor(props : GamePlayersTableProps) {
+export default class GameInfoPlayersTable extends React.Component<GameInfoPlayersTableProps, GameInfoPlayersTableState> {
+    constructor(props : GameInfoPlayersTableProps) {
         super(props);
         this.state = {
             guestName: ""
