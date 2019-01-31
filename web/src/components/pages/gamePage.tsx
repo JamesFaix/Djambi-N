@@ -1,6 +1,6 @@
 import * as React from 'react';
 import ApiClient from '../../api/client';
-import { User, Game, Board, Event } from '../../api/model';
+import { User, Game, Board, Event, EventsQuery, ResultsDirection } from '../../api/model';
 import LinkButton from '../controls/linkButton';
 import PageTitle from '../pageTitle';
 import Routes from '../../routes';
@@ -66,15 +66,18 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
 
     private async updateState(game : Game) : Promise<void> {
         return await this.getAndCacheBoard(game.parameters.regionCount)
-            .then(board => {
-                const cellSize = this.getCellSize(game.parameters.regionCount);
-                let boardView = BoardViewService.createBoard(board, cellSize);
-                boardView = BoardViewService.update(boardView, game);
-                this.setState({
-                    boardView : boardView,
-                    game : game
-                });
-            });
+            .then(board => this.getEvents(game.id)
+                .then(events => {
+                    const cellSize = this.getCellSize(game.parameters.regionCount);
+                    let boardView = BoardViewService.createBoard(board, cellSize);
+                    boardView = BoardViewService.update(boardView, game);
+                    this.setState({
+                        boardView : boardView,
+                        game : game,
+                        events: events
+                    });
+                })
+            );
     }
 
     private selectCell(cell : CellView) : void {
@@ -95,6 +98,17 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
         this.props.api
             .resetTurn(gameId)
             .then(response => this.updateState(response.game));
+    }
+
+    private getEvents(gameId : number) : Promise<Event[]> {
+        const eventQuery : EventsQuery = {
+            maxResults: null,
+            direction: ResultsDirection.Ascending,
+            thresholdEventId: null,
+            thresholdTime: null
+        }
+
+        return this.props.api.getEvents(gameId, eventQuery);
     }
 
     componentDidMount() {

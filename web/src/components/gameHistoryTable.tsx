@@ -11,6 +11,7 @@ export interface GameHistoryTableProps {
 export default class GameHistoryTable extends React.Component<GameHistoryTableProps> {
 
     render() {
+        console.log(this.props.events);
         return (
             <div style={{display:"flex"}}>
                 <table className="table">
