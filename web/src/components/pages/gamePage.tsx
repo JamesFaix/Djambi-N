@@ -9,6 +9,7 @@ import { BoardView, CellView, CellState } from '../../boardRendering/model';
 import CanvasBoard from '../board/canvasBoard';
 import BoardViewService from '../../boardRendering/boardViewService';
 import BoardGeometry from '../../boardRendering/boardGeometry';
+import CurrentTurnPanel from '../currentTurnPanel';
 
 export interface GamePageProps {
     user : User,
@@ -24,6 +25,8 @@ export interface GamePageState {
 }
 
 export default class GamePage extends React.Component<GamePageProps, GamePageState> {
+    private readonly scale = 100;
+
     constructor(props : GamePageProps) {
         super(props);
         this.state = {
@@ -34,7 +37,9 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
     }
 
     private getCellSize(regionCount : number) : number {
-        return Math.floor(160 * Math.pow(Math.E, (-0.2 * regionCount)));
+        //Through trial an error, I found that this formula keeps boards of varying regionCount about the same absolute size
+        const baseValue = Math.pow(Math.E, (-0.2 * regionCount));
+        return Math.floor(this.scale * baseValue);
     }
 
     private async getAndCacheBoard(regionCount : number) : Promise<Board> {
@@ -67,13 +72,24 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
             });
     }
 
-    private onCellClick(cell : CellView) : void {
-        console.log("Cell click ID:" + cell.id);
+    private selectCell(cell : CellView) : void {
         if (cell.state === CellState.Selectable) {
             this.props.api
                 .selectCell(this.props.gameId, cell.id)
                 .then(response => this.updateState(response.game));
         }
+    }
+
+    private commitTurn(gameId : number) : void {
+        this.props.api
+            .commitTurn(gameId)
+            .then(response => this.updateState(response.game));
+    }
+
+    private resetTurn(gameId : number) : void {
+        this.props.api
+            .resetTurn(gameId)
+            .then(response => this.updateState(response.game));
     }
 
     componentDidMount() {
@@ -104,18 +120,32 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
 
         const canvasSize = BoardGeometry.boardDiameter(this.state.boardView);
 
-        const style = {
+        const contentStyle = {
+            margin: "0 auto",
+            width: canvasSize
+        }
+
+        const canvasStyle = {
             margin: "0 auto",
             width: canvasSize,
             height: canvasSize
         };
 
         return (
-            <div className="thinBorder" style={style}>
-                <CanvasBoard
-                    board={this.state.boardView}
+            <div style={contentStyle}>
+                <div className="thinBorder" style={canvasStyle}>
+                    <CanvasBoard
+                        board={this.state.boardView}
+                        theme={this.props.theme}
+                        selectCell={(cellId) => this.selectCell(cellId)}
+                    />
+                </div>
+                <CurrentTurnPanel
+                    game={this.state.game}
                     theme={this.props.theme}
-                    selectCell={(cellId) => this.onCellClick(cellId)}
+                    user={this.props.user}
+                    commitTurn={gameId => this.commitTurn(gameId)}
+                    resetTurn={gameId => this.resetTurn(gameId)}
                 />
             </div>
         );

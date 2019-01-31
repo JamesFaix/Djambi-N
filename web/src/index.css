@@ -149,3 +149,7 @@ td {
     border-style: solid;
     border-color: #eeeeee;
 }
+
+.indented {
+    margin-left: 20px;
+}

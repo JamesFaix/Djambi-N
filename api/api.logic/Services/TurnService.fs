@@ -146,11 +146,13 @@ let private applyTurnToPieces(game : Game) : (Piece list * Effect list) =
         (pieces.Values |> Seq.toList, effects |> Seq.toList)
 
 let private removeSequentialDuplicates(turnCycle : int list) : int list =
-    let list = turnCycle.ToList()
-    for i in [(list.Count-1)..1] do
-        if list.[i] = list.[i-1]
-        then list.RemoveAt(i)
-    list |> Seq.toList
+    if turnCycle.Length = 1 then turnCycle
+    else
+        let list = turnCycle.ToList()
+        for i in [(list.Count-1)..1] do
+            if list.[i] = list.[i-1]
+            then list.RemoveAt(i)
+        list |> Seq.toList
 
 let private applyTurnToTurnCycle(game : Game) : (int list * Effect list) =
     let mutable turns = game.turnCycle
@@ -266,6 +268,7 @@ let getCommitTurnEvent(game : Game) (session : Session) : CreateEventRequest Htt
                 pieces = pieces
                 turnCycle = turnCycle
                 players = players
+                currentTurn = Some Turn.empty
             }
 
         //While next player has no moves, kill chief and abandon all pieces

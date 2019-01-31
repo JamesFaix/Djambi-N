@@ -39,16 +39,16 @@ export default class ThemeFactory {
             playerColor6 : "#08CC8B", //Teal
             playerColor7 : "#996A0C", //Brown
 
-            selectionDescriptionSubject : "Move %s",
-            selectionDescriptionMove : " to cell %s",
-            selectionDescriptionMoveAndTarget : " to cell %s and target %s",
-            selectionDescriptionTarget : " and target %s at cell %s",
-            selectionDescriptionDrop : ", then drop target piece at cell %s",
-            selectionDescriptionVacate: ", finally vacate %s to cell %s",
+            selectionDescriptionSubject : "Pick up %s",
+            selectionDescriptionMove : "Move to cell %s",
+            selectionDescriptionMoveAndTarget : "Move to cell %s and target %s",
+            selectionDescriptionTarget : "Target %s at cell %s",
+            selectionDescriptionDrop : "Drop target piece at cell %s",
+            selectionDescriptionVacate: "Vacate %s to cell %s",
 
             selectionPromptDrop : "Select a cell to drop the target piece in",
             selectionPromptMove : "Select a cell to move to",
-            selectionPromptNull : "(Click Done or Reset)",
+            selectionPromptNull : "Click Commit or Reset",
             selectionPromptSubject : "Select a piece to move",
             selectionPromptTarget : "Select a piece to target",
             selectionPromptVacate : "Select a cell to vacate to",
