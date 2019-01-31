@@ -23,16 +23,15 @@ export default class TurnCyclePanel extends React.Component<TurnCyclePanelProps>
                 <div style={containerStyle}>
                     {
                         this.getPlayerViews()
-                            .map(pv => {
+                            .map((pv, i) => {
                                 const style = {
                                     background: pv.color,
                                     height: this.scale,
-                                    width: this.scale,
-                                    "text-align": "center",
+                                    width: this.scale
                                 };
                                 return (
-                                    <div
-                                        className="thinBorder"
+                                    <div key={"turn" + i}
+                                        className="thinBorder centeredContainer"
                                         style={style}>
                                         {pv.id}
                                     </div>
