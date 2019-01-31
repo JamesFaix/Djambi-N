@@ -10,9 +10,6 @@ export interface PlayersPanelProps {
 }
 
 export default class PlayersPanel extends React.Component<PlayersPanelProps> {
-
-    private readonly scale = 50;
-
     render() {
         return (
             <div className="thinBorder">
