@@ -1,6 +1,6 @@
 import * as React from 'react';
 import '../index.css';
-import { Game, User } from '../api/model';
+import { Game, User, Player } from '../api/model';
 import ThemeService from '../themes/themeService';
 import ActionButton from './controls/actionButton';
 import * as Sprintf from 'sprintf-js';
@@ -20,9 +20,15 @@ export default class CurrentTurnPanel extends React.Component<CurrentTurnPanelPr
             return <div></div>;
         }
 
+        const currentPlayer = this.getCurrentPlayer(this.props.game);
+        const color = this.props.theme.getPlayerColor(currentPlayer.colorId);
+        const style = {
+            boxShadow: "inset 0 0 5px 5px " + color
+        };
+
         return (
-            <div className="thinBorder paddedCell">
-                {this.getPlayerNameHeader()}
+            <div className="thinBorder paddedCell" style={style}>
+                {this.getPlayerNameHeader(currentPlayer)}
                 <br/>
                 <br/>
                 {this.getSelectionsDescription()}
@@ -44,8 +50,7 @@ export default class CurrentTurnPanel extends React.Component<CurrentTurnPanelPr
             .find(p => p.id === game.turnCycle[0]);
     }
 
-    private getPlayerNameHeader() {
-        const player = this.getCurrentPlayer(this.props.game);
+    private getPlayerNameHeader(player : Player) {
         return player.name + "'s turn";
     }
 
