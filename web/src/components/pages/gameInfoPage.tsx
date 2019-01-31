@@ -1,7 +1,7 @@
 import * as React from 'react';
 import '../../index.css';
 import PageTitle from '../pageTitle';
-import { User, Game, GameStatus } from '../../api/model';
+import { User, Game, GameStatus, CreatePlayerRequest } from '../../api/model';
 import ApiClient from '../../api/client';
 import { Redirect } from 'react-router';
 import LinkButton from '../controls/linkButton';
@@ -44,7 +44,18 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
     }
 
 //---Event handlers---
-    private playerTableUpdateGame(newGame : Game) {
+
+    private addPlayer(gameId : number, request : CreatePlayerRequest) : void {
+        this.props.api.addPlayer(gameId, request)
+            .then(response => this.updateGame(response.game));
+    }
+
+    private removePlayer(gameId : number, playerId : number) : void {
+        this.props.api.removePlayer(gameId, playerId)
+            .then(response => this.updateGame(response.game));
+    }
+
+    private updateGame(newGame : Game) {
         if (newGame.status === GameStatus.Aborted
             || newGame.status === GameStatus.AbortedWhilePending) {
             this.setState({
@@ -116,7 +127,7 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
                 return (
                     //Only creator can start game, and only with > 1 players
                     <div className="centeredContainer">
-                        Pending 
+                        Pending
                         { this.props.user.id === game.createdByUserId
                             && game.players.length >= 2
                             ? <ActionButton
@@ -131,7 +142,7 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
             case GameStatus.Started:
                 return (
                     <div className="centeredContainer">
-                        Started 
+                        Started
                         <LinkButton label="Enter" to={Routes.game(this.state.game.id)} />
                     </div>
                 );
@@ -176,9 +187,9 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
                 <br/>
                 <GamePlayersTable
                     user={this.props.user}
-                    api={this.props.api}
                     game={this.state.game}
-                    updateGame={newGame => this.playerTableUpdateGame(newGame)}
+                    addPlayer={(gameId, request) => this.addPlayer(gameId, request)}
+                    removePlayer={(gameId, playerId) => this.removePlayer(gameId, playerId)}
                 />
             </div>
         );

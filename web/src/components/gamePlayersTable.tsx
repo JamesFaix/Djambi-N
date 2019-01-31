@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { User, Game, Player, PlayerKind, CreatePlayerRequest, GameStatus } from '../api/model';
-import ApiClient from '../api/client';
 import HintCell from './tables/hintCell';
 import EmptyCell from './tables/emptyCell';
 import TextCell from './tables/textCell';
@@ -9,10 +8,10 @@ import TextFieldCell from './tables/textFieldCell';
 import ActionButtonCell from './tables/actionButtonCell';
 
 export interface GamePlayersTableProps {
-    api : ApiClient,
     user : User,
     game : Game,
-    updateGame(game: Game) : void
+    addPlayer(gameId : number, request : CreatePlayerRequest) : void,
+    removePlayer(gameId : number, playerId : number) : void
 }
 
 export interface GamePlayersTableState {
@@ -131,14 +130,7 @@ export default class GamePlayersTable extends React.Component<GamePlayersTablePr
             kind: PlayerKind.User
         };
 
-        this.props.api
-            .addPlayer(this.props.game.id, request)
-            .then(stateAndEvent => {
-                this.props.updateGame(stateAndEvent.game);
-            })
-            .catch(reason => {
-                alert("Add player failed because " + reason);
-            });
+        this.props.addPlayer(this.props.game.id, request);
     }
 
     private addGuestOnClick() : void {
@@ -148,17 +140,7 @@ export default class GamePlayersTable extends React.Component<GamePlayersTablePr
             kind: PlayerKind.Guest
         };
 
-        this.props.api
-            .addPlayer(this.props.game.id, request)
-            .then(stateAndEvent => {
-                this.setState({
-                        guestName : ""
-                    },
-                    () => this.props.updateGame(stateAndEvent.game));
-            })
-            .catch(reason => {
-                alert("Add player failed because " + reason);
-            });
+        this.props.addPlayer(this.props.game.id, request);
     }
 
     private addGuestOnChanged(event : React.ChangeEvent<HTMLInputElement>) : void {
@@ -167,16 +149,8 @@ export default class GamePlayersTable extends React.Component<GamePlayersTablePr
     }
 
     private removeOnClick(playerId : number) : void {
-        this.props.api
-            .removePlayer(this.props.game.id, playerId)
-            .then(stateAndEvent => {
-                this.props.updateGame(stateAndEvent.game);
-            })
-            .catch(reason => {
-                alert("Remove player failed because " + reason);
-            });
+        this.props.removePlayer(this.props.game.id, playerId);
     }
-
 
     //---Rendering---
 
