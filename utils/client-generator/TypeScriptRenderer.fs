@@ -5,6 +5,7 @@ open System.Reflection
 open System.Text
 open System.Text.RegularExpressions
 open FSharp.Reflection
+open Djambi.Api.Common
 open Djambi.Api.Model
 open Djambi.ClientGenerator.Annotations
 
@@ -109,7 +110,7 @@ type TypeScriptRenderer() =
         match TypeKind.fromType t with
         | TypeKind.Record -> renderRecordDeclaration t
         | TypeKind.Union -> renderUnionDeclaration t
-        | TypeKind.Enum -> renderEnumDeclaration t
+        | TypeKind.UnionEnum -> renderEnumDeclaration t
         | _ -> failwith "Unsupported type"
 
     let renderMethod (m : MethodInfo) : string = 

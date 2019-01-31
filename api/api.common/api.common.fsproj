@@ -5,10 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="TypeKind.fs" />
     <Compile Include="Control\Result.fs" />
     <Compile Include="Control\Task.fs" />
     <Compile Include="Control\HttpException.fs" />
     <Compile Include="Control\AsyncHttpResult.fs" />
+    <Compile Include="Json\UnionEnumJsonConverter.fs" />
     <Compile Include="Json\DiscriminationUnionJsonConverter.fs" />
     <Compile Include="Json\JsonUtility.fs" />
     <Compile Include="Json\OptionJsonConverter.fs" />

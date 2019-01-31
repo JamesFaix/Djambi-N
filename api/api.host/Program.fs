@@ -44,10 +44,11 @@ let configureCors (builder : CorsPolicyBuilder) =
 
 let configureNewtonsoft () =
     let converters : List<JsonConverter> =
-         [
-            new OptionJsonConverter()
-            new TupleArrayJsonConverter()
-            new DiscriminatedUnionJsonConverter()
+        [
+            OptionJsonConverter()
+            TupleArrayJsonConverter()
+            DiscriminatedUnionJsonConverter()
+            UnionEnumJsonConverter()
         ]
 
     let settings = new JsonSerializerSettings()

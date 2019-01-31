@@ -4,6 +4,7 @@ open System
 open System.IO
 open Microsoft.FSharp.Reflection
 open Newtonsoft.Json
+open Djambi.Api.Common
 
 //Taken from http://www.hoonzis.com/fsharp-json-serializaton/
 type DiscriminatedUnionJsonConverter() =
@@ -11,7 +12,7 @@ type DiscriminatedUnionJsonConverter() =
     
     override x.CanConvert (t : Type) : bool = 
         FSharpType.IsUnion t &&
-        //it seems that both option and list are implemented using discriminated unions, so we tell json.net to ignore them and use different serializer
+        TypeKind.fromType t <> TypeKind.UnionEnum &&
         not (t.IsGenericType && t.GetGenericTypeDefinition() = typedefof<list<_>>) &&
         not (t.IsGenericType && t.GetGenericTypeDefinition() = typedefof<option<_>>) &&
         not (FSharpType.IsRecord t)

@@ -1,25 +1,25 @@
-﻿namespace Djambi.ClientGenerator
+﻿namespace Djambi.Api.Common
     
 open System
 open FSharp.Reflection
 
 type TypeKind =
     | Record
-    | Enum
+    | UnionEnum
     | Union
     | UnionCase
-    | Unsupported
+    | Other
 
 module TypeKind =
     let fromType (t : Type) : TypeKind =     
         //This is just assembly level attributes
-        if t.Name = "AssemblyAttributes" then TypeKind.Unsupported
+        if t.Name = "AssemblyAttributes" then TypeKind.Other
         //Each union type contains a nested Tags type that has a constant int for each tag
-        elif t.Name = "Tags" then TypeKind.Unsupported
+        elif t.Name = "Tags" then TypeKind.Other
         //This is some noise that gets added to unions during debugging        
-        elif t.Name.Contains "DebugTypeProxy" then TypeKind.Unsupported
+        elif t.Name.Contains "DebugTypeProxy" then TypeKind.Other
         //This is a module/static class
-        elif t.IsAbstract && t.IsSealed then TypeKind.Unsupported
+        elif t.IsAbstract && t.IsSealed then TypeKind.Other
 
         elif FSharpType.IsRecord t then TypeKind.Record
 
@@ -30,8 +30,8 @@ module TypeKind =
                 |> Seq.toList
 
             if casesAndFields |> List.forall (fun (_, fields) -> fields |> Seq.isEmpty)
-            then TypeKind.Enum
+            then TypeKind.UnionEnum
             elif t.IsAbstract then TypeKind.Union //This will only count the union base class
             else TypeKind.UnionCase //This allows excluding each case's derived class
 
-        else TypeKind.Unsupported
+        else TypeKind.Other
