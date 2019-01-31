@@ -3,6 +3,7 @@
 open Newtonsoft.Json
 open Xunit
 open Djambi.Api.Common.Json
+open Djambi.Api.Model
 
 //---Option---
 
@@ -112,8 +113,8 @@ let ``Default union enum serialization is awkward``() =
     Assert.Equal(expected, actual)
 
 [<Fact>]
-let ``DiscriminatedUnionJsonConverter enum should serialize as string``() =
-    let converter = new DiscriminatedUnionJsonConverter() :> JsonConverter
+let ``UnionEnumJsonConverter enum should serialize as string``() =
+    let converter = UnionEnumJsonConverter() :> JsonConverter
     let record : RecordWithEnum = { rsvp = Maybe }
     let expected = """{"rsvp":"Maybe"}"""
 
@@ -122,14 +123,15 @@ let ``DiscriminatedUnionJsonConverter enum should serialize as string``() =
     Assert.Equal(expected, actual)
 
 [<Fact>]
-let ``DiscriminatedUnionJsonConverter string should deserialized as enum``() =
-    let converter = new DiscriminatedUnionJsonConverter() :> JsonConverter
+let ``UnionEnumJsonConverter string should deserialized as enum``() =
+    let converter = UnionEnumJsonConverter() :> JsonConverter
     let json = """{"rsvp":"Maybe"}"""
     let expected : RecordWithEnum = { rsvp = Maybe }
 
     let actual = JsonConvert.DeserializeObject<RecordWithEnum>(json, [|converter|])
 
     Assert.Equal(expected, actual)
+
 
 //---Record union---
 
@@ -172,7 +174,7 @@ let ``DiscriminatedUnionJsonConverter record object should deserialize as record
 let ``Should serialize None of union enum``() =
     let converters = 
         [|
-            new DiscriminatedUnionJsonConverter() :> JsonConverter    
+            new UnionEnumJsonConverter() :> JsonConverter    
             new OptionJsonConverter() :> JsonConverter
         |]
 
@@ -185,10 +187,10 @@ let ``Should serialize None of union enum``() =
 
 
 [<Fact>]
-let ``Should deserizlize None of union enum``() =
+let ``Should deserialize None of union enum``() =
     let converters = 
         [|
-            new DiscriminatedUnionJsonConverter() :> JsonConverter    
+            new UnionEnumJsonConverter() :> JsonConverter    
             new OptionJsonConverter() :> JsonConverter
         |]
 
@@ -196,5 +198,26 @@ let ``Should deserizlize None of union enum``() =
     let expected : Option<UnionEnum> = None
 
     let actual = JsonConvert.DeserializeObject<Option<UnionEnum>>(json, converters)
+
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``Should deserialize Union with Record case with Record property``() =
+    let converters = 
+        [|
+            new UnionEnumJsonConverter() :> JsonConverter    
+            new OptionJsonConverter() :> JsonConverter
+        |]
+
+    let json = """{"kind":"PlayerAdded","value":{"kind":"Guest","userId":7,"name":""}}"""
+    let expectedRequest : CreatePlayerRequest = 
+        { 
+            kind = PlayerKind.Guest
+            userId = Some 7
+            name = None
+        }
+    let expected = Effect.playerAdded expectedRequest
+
+    let actual = JsonConvert.DeserializeObject<Effect>(json, converters)
 
     Assert.Equal(expected, actual)
