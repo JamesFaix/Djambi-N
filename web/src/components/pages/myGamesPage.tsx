@@ -5,7 +5,7 @@ import { User, Game, GamesQuery } from '../../api/model';
 import ApiClient from '../../api/client';
 import { Redirect } from 'react-router';
 import LinkButton from '../controls/linkButton';
-import GameInfoTable from '../gameInfoTable';
+import GamesQueryResultsTable from '../gamesQueryResultsTable';
 import Routes from '../../routes';
 
 export interface MyGamesPageProps {
@@ -65,7 +65,7 @@ export default class MyGamesPage extends React.Component<MyGamesPageProps, MyGam
                     <LinkButton label="Find Game" to={Routes.findGame()}/>
                 </div>
                 <br/>
-                <GameInfoTable
+                <GamesQueryResultsTable
                     games={this.state.games}
                 />
             </div>

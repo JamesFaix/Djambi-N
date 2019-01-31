@@ -4,11 +4,11 @@ import LinkButton from "./controls/linkButton";
 import moment = require("moment");
 import Routes from "../routes";
 
-export interface GameInfoTableProps {
+export interface GamesQueryResultsTableProps {
     games : Game[]
 }
 
-export default class GameInfoTable extends React.Component<GameInfoTableProps> {
+export default class GamesQueryResultsTable extends React.Component<GamesQueryResultsTableProps> {
 
     renderGameRow(game : Game, rowNumber : number) {
         return (
