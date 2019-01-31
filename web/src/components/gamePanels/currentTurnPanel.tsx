@@ -1,9 +1,8 @@
 import * as React from 'react';
-import '../index.css';
-import { Game, User, Player } from '../api/model';
-import ThemeService from '../themes/themeService';
-import ActionButton from './controls/actionButton';
-import * as Sprintf from 'sprintf-js';
+import '../../index.css';
+import { Game, User, Player } from '../../api/model';
+import ThemeService from '../../themes/themeService';
+import ActionButton from '../controls/actionButton';
 
 export interface CurrentTurnPanelProps {
     game : Game,

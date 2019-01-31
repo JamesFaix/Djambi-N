@@ -9,7 +9,8 @@ import { BoardView, CellView, CellState } from '../../boardRendering/model';
 import CanvasBoard from '../board/canvasBoard';
 import BoardViewService from '../../boardRendering/boardViewService';
 import BoardGeometry from '../../boardRendering/boardGeometry';
-import CurrentTurnPanel from '../currentTurnPanel';
+import CurrentTurnPanel from '../gamePanels/currentTurnPanel';
+import TurnCyclePanel from '../gamePanels/turnCyclePanel';
 
 export interface GamePageProps {
     user : User,
@@ -140,13 +141,19 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                         selectCell={(cellId) => this.selectCell(cellId)}
                     />
                 </div>
-                <CurrentTurnPanel
-                    game={this.state.game}
-                    theme={this.props.theme}
-                    user={this.props.user}
-                    commitTurn={gameId => this.commitTurn(gameId)}
-                    resetTurn={gameId => this.resetTurn(gameId)}
-                />
+                <div style={{display: "flex"}}>
+                    <CurrentTurnPanel
+                        game={this.state.game}
+                        theme={this.props.theme}
+                        user={this.props.user}
+                        commitTurn={gameId => this.commitTurn(gameId)}
+                        resetTurn={gameId => this.resetTurn(gameId)}
+                    />
+                    <TurnCyclePanel
+                        game={this.state.game}
+                        theme={this.props.theme}
+                    />
+                </div>
             </div>
         );
     }
