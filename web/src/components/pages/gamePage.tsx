@@ -11,6 +11,7 @@ import BoardViewService from '../../boardRendering/boardViewService';
 import BoardGeometry from '../../boardRendering/boardGeometry';
 import CurrentTurnPanel from '../gamePanels/currentTurnPanel';
 import TurnCyclePanel from '../gamePanels/turnCyclePanel';
+import PlayersPanel from '../gamePanels/playersPanel';
 
 export interface GamePageProps {
     user : User,
@@ -150,6 +151,10 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                         resetTurn={gameId => this.resetTurn(gameId)}
                     />
                     <TurnCyclePanel
+                        game={this.state.game}
+                        theme={this.props.theme}
+                    />
+                    <PlayersPanel
                         game={this.state.game}
                         theme={this.props.theme}
                     />
