@@ -36,6 +36,7 @@ let getGame (gameId : int) (session : Session) : Game AsyncHttpResult =
 let createGame (parameters : GameParameters) (session : Session) : Game AsyncHttpResult =
     GameCrudService.createGame parameters session
 
+//TODO: Requites integration tests
 [<ClientFunction(HttpMethod.Post, "/events/query", ClientSection.Events)>]
 let getEvents (gameId : int, query : EventsQuery) (session : Session) : Event list AsyncHttpResult =
     GameRepository.getGame gameId
