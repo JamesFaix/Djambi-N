@@ -3,20 +3,22 @@
 open System
 open FSharp.Reflection
 open Newtonsoft.Json
-open Djambi.Api.Common
 
 type UnionEnumJsonConverter() =
     inherit JsonConverter()
 
     override x.CanConvert (t : Type) : bool =
-        (TypeKind.fromType t) = TypeKind.UnionEnum
+        FSharpType.IsUnion t &&
+        FSharpType.GetUnionCases t 
+            |> Seq.map (fun c -> c.GetFields().Length)
+            |> Seq.forall (fun n -> n = 0)
 
     override x.WriteJson (writer : JsonWriter, 
                           value : obj, 
                           serializer : JsonSerializer) : Unit =
 
-        let t = value.GetType()
-        let (case, _) = FSharpValue.GetUnionFields(value, t)
+        let caseType = value.GetType()
+        let (case, _) = FSharpValue.GetUnionFields(value, caseType)
         let json = sprintf "\"%s\"" case.Name
         writer.WriteRawValue(json)
 

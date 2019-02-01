@@ -47,7 +47,6 @@ let configureNewtonsoft () =
         [
             OptionJsonConverter()
             TupleArrayJsonConverter()
-            DiscriminatedUnionJsonConverter()
             UnionEnumJsonConverter()
         ]
 

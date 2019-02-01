@@ -29,7 +29,7 @@ let ``Default Some serialization is awkward``() =
 
 [<Fact>]
 let ``OptionJsonConverter None should serialize as null``() =
-    let converter = new OptionJsonConverter() :> JsonConverter 
+    let converter = OptionJsonConverter() :> JsonConverter 
     let record : RecordWithOption = { age = None }
     let expected = """{"age":null}""" 
 
@@ -39,7 +39,7 @@ let ``OptionJsonConverter None should serialize as null``() =
 
 [<Fact>]
 let ``OptionJsonConverter Some should serialize as value``() =
-    let converter = new OptionJsonConverter() :> JsonConverter 
+    let converter = OptionJsonConverter() :> JsonConverter 
     let record : RecordWithOption = { age = Some 3 }
     let expected = """{"age":3}""" 
 
@@ -49,7 +49,7 @@ let ``OptionJsonConverter Some should serialize as value``() =
 
 [<Fact>]
 let ``OptionJsonConverter null should deserialize as None``() =
-    let converter = new OptionJsonConverter() :> JsonConverter 
+    let converter = OptionJsonConverter() :> JsonConverter 
     let json = """{"age":null}""" 
     let expected : RecordWithOption = { age = None }
 
@@ -59,7 +59,7 @@ let ``OptionJsonConverter null should deserialize as None``() =
 
 [<Fact>]
 let ``OptionJsonConverter non-null should deserialize as Some``() =
-    let converter = new OptionJsonConverter() :> JsonConverter 
+    let converter = OptionJsonConverter() :> JsonConverter 
     let json = """{"age":3}""" 
     let expected : RecordWithOption = { age = Some 3 }
 
@@ -80,7 +80,7 @@ let ``Default tuple serialization is awkward``() =
 
 [<Fact>]
 let ``TupleArrayJsonConverter tuple should serialize as array``() =
-    let converter = new TupleArrayJsonConverter() :> JsonConverter
+    let converter = TupleArrayJsonConverter() :> JsonConverter
     let tuple = (1, true, "hello")
     let expected = """[1,true,"hello"]"""
 
@@ -90,7 +90,7 @@ let ``TupleArrayJsonConverter tuple should serialize as array``() =
 
 [<Fact>]
 let ``TupleArrayJsonConverter array should deserialize as tuple``() =
-    let converter = new TupleArrayJsonConverter() :> JsonConverter
+    let converter = TupleArrayJsonConverter() :> JsonConverter
     let json = """[1,true,"hello"]"""
     let expected = (1, true, "hello")
  
@@ -138,6 +138,7 @@ let ``UnionEnumJsonConverter string should deserialized as enum``() =
 type RecordA = { name : string }
 type RecordB = { height : int; weight : int }
 type RecordUnion = A of RecordA | B of RecordB
+type TupleUnion = C of int | D of int * string
 
 [<Fact>]
 let ``Default record union serialization is awkward``() =
@@ -149,33 +150,41 @@ let ``Default record union serialization is awkward``() =
     Assert.Equal(expected, actual)
 
 [<Fact>]
-let ``DiscriminatedUnionJsonConverter record union should serialize as record object``() =
-    let converter = new DiscriminatedUnionJsonConverter() :> JsonConverter
+let ``Default tuple union serialization is awkward``() =
+    let record : TupleUnion = D(1, "test")
+    let expected = """{"Case":"D","Fields":[1,"test"]}"""
+
+    let actual = JsonConvert.SerializeObject(record)
+
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``RecordUnionJsonConverter should serialize union where all cases have 1 field``() =
+    let converter = RecordUnionJsonConverter() :> JsonConverter
     let record : RecordUnion = A { name = "test" }
-    let expected = """{"name":"test"}"""
+    let expected = """{"kind":"A","name":"test"}"""
 
     let actual = JsonConvert.SerializeObject(record, [|converter|])
 
     Assert.Equal(expected, actual)
 
 [<Fact>]
-let ``DiscriminatedUnionJsonConverter record object should deserialize as record union``() =
-    let converter = new DiscriminatedUnionJsonConverter() :> JsonConverter
-    let json = """{"name":"test"}"""
+let ``RecordUnionJsonConverter should deserialize union where all cases have 1 field``() =
+    let converter = RecordUnionJsonConverter() :> JsonConverter
+    let json = """{"kind":"A","name":"test"}"""
     let expected : RecordUnion = A { name = "test" }
 
     let actual = JsonConvert.DeserializeObject<RecordUnion>(json, [|converter|])
 
     Assert.Equal(expected, actual)
-
 //---Combos---
 
 [<Fact>]
 let ``Should serialize None of union enum``() =
     let converters = 
         [|
-            new UnionEnumJsonConverter() :> JsonConverter    
-            new OptionJsonConverter() :> JsonConverter
+            UnionEnumJsonConverter() :> JsonConverter    
+            OptionJsonConverter() :> JsonConverter
         |]
 
     let opt : Option<UnionEnum> = None
@@ -190,8 +199,8 @@ let ``Should serialize None of union enum``() =
 let ``Should deserialize None of union enum``() =
     let converters = 
         [|
-            new UnionEnumJsonConverter() :> JsonConverter    
-            new OptionJsonConverter() :> JsonConverter
+            UnionEnumJsonConverter() :> JsonConverter    
+            OptionJsonConverter() :> JsonConverter
         |]
 
     let json = "null"
@@ -205,16 +214,17 @@ let ``Should deserialize None of union enum``() =
 let ``Should deserialize Union with Record case with Record property``() =
     let converters = 
         [|
-            new UnionEnumJsonConverter() :> JsonConverter    
-            new OptionJsonConverter() :> JsonConverter
+            UnionEnumJsonConverter() :> JsonConverter    
+            OptionJsonConverter() :> JsonConverter
+            RecordUnionJsonConverter() :> JsonConverter
         |]
 
-    let json = """{"kind":"PlayerAdded","value":{"kind":"Guest","userId":7,"name":""}}"""
+    let json = """{"kind":"PlayerAdded","value":{"kind":"Guest","userId":7,"name":"test"}}"""
     let expectedRequest : CreatePlayerRequest = 
         { 
             kind = PlayerKind.Guest
             userId = Some 7
-            name = None
+            name = Some "test"
         }
     let expected = Effect.playerAdded expectedRequest
 

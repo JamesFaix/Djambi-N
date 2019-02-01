@@ -15,7 +15,6 @@ let converters =
     [|
         OptionJsonConverter() :> JsonConverter
         TupleArrayJsonConverter() :> JsonConverter
-        DiscriminatedUnionJsonConverter() :> JsonConverter
         UnionEnumJsonConverter() :> JsonConverter
     |]
 

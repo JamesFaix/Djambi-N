@@ -65,7 +65,6 @@ module HttpUtility =
         [|
             OptionJsonConverter() :> JsonConverter
             TupleArrayJsonConverter() :> JsonConverter
-            DiscriminatedUnionJsonConverter() :> JsonConverter
             UnionEnumJsonConverter() :> JsonConverter
         |]
 
