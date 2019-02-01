@@ -72,11 +72,11 @@ export interface GameParameters {
 }
 
 export enum GameStatus {
-	Pending = "Pending",
-	AbortedWhilePending = "AbortedWhilePending",
-	Started = "Started",
 	Aborted = "Aborted",
+	AbortedWhilePending = "AbortedWhilePending",
 	Finished = "Finished",
+	Pending = "Pending",
+	Started = "Started",
 }
 
 export interface GamesQuery {
@@ -97,13 +97,13 @@ export interface Piece {
 }
 
 export enum PieceKind {
-	Chief = "Chief",
-	Thug = "Thug",
-	Reporter = "Reporter",
 	Assassin = "Assassin",
+	Chief = "Chief",
+	Corpse = "Corpse",
 	Diplomat = "Diplomat",
 	Gravedigger = "Gravedigger",
-	Corpse = "Corpse",
+	Reporter = "Reporter",
+	Thug = "Thug",
 }
 
 //-------- PLAYER --------
@@ -127,15 +127,15 @@ export interface Player {
 }
 
 export enum PlayerKind {
-	User = "User",
 	Guest = "Guest",
 	Neutral = "Neutral",
+	User = "User",
 }
 
 export enum PlayerStatus {
-	Pending = "Pending",
 	Alive = "Alive",
 	Eliminated = "Eliminated",
+	Pending = "Pending",
 }
 
 //-------- TURN --------
@@ -147,10 +147,10 @@ export interface Selection {
 }
 
 export enum SelectionKind {
-	Subject = "Subject",
-	Move = "Move",
-	Target = "Target",
 	Drop = "Drop",
+	Move = "Move",
+	Subject = "Subject",
+	Target = "Target",
 	Vacate = "Vacate",
 }
 
@@ -166,26 +166,29 @@ export interface Turn {
 }
 
 export enum TurnStatus {
-	AwaitingSelection = "AwaitingSelection",
 	AwaitingConfirmation = "AwaitingConfirmation",
+	AwaitingSelection = "AwaitingSelection",
 }
 
 //-------- EVENTS --------
 
 export interface DiffEffect<a> {
-	kind : EffectKind,
 	oldValue : a,
 	newValue : a,
 }
 
 export interface DiffWithContextEffect<a, b> {
-	kind : EffectKind,
 	oldValue : a,
 	newValue : a,
 	context : b,
 }
 
-export type Effect =
+export interface Effect {
+	kind : EffectKind,
+	value : EffectCase,
+}
+
+export type EffectCase =
 	DiffEffect<GameStatus> |
 	DiffEffect<number[]> |
 	DiffEffect<GameParameters> |
@@ -199,18 +202,19 @@ export type Effect =
 	DiffEffect<Turn>
 
 export enum EffectKind {
-	GameStatusChanged = "GameStatusChanged",
-	PlayerEliminated = "PlayerEliminated",
-	PiecesOwnershipChanged = "PiecesOwnershipChanged",
-	PieceMoved = "PieceMoved",
-	PieceKilled = "PieceKilled",
-	TurnCycleChanged = "TurnCycleChanged",
-	PlayerOutOfMoves = "PlayerOutOfMoves",
-	PlayerAdded = "PlayerAdded",
-	PlayersRemoved = "PlayersRemoved",
-	ParametersChanged = "ParametersChanged",
 	CurrentTurnChanged = "CurrentTurnChanged",
+	GameStatusChanged = "GameStatusChanged",
+	ParametersChanged = "ParametersChanged",
+	PieceKilled = "PieceKilled",
+	PieceMoved = "PieceMoved",
+	PiecesOwnershipChanged = "PiecesOwnershipChanged",
+	PlayerAdded = "PlayerAdded",
+	PlayerEliminated = "PlayerEliminated",
+	PlayerOutOfMoves = "PlayerOutOfMoves",
+	PlayersRemoved = "PlayersRemoved",
+	TurnCycleChanged = "TurnCycleChanged",
 }
+
 
 export interface Event {
 	id : number,
@@ -221,15 +225,15 @@ export interface Event {
 }
 
 export enum EventKind {
-	GameParametersChanged = "GameParametersChanged",
+	CellSelected = "CellSelected",
 	GameCanceled = "GameCanceled",
-	PlayerJoined = "PlayerJoined",
-	PlayerEjected = "PlayerEjected",
-	PlayerQuit = "PlayerQuit",
+	GameParametersChanged = "GameParametersChanged",
 	GameStarted = "GameStarted",
+	PlayerEjected = "PlayerEjected",
+	PlayerJoined = "PlayerJoined",
+	PlayerQuit = "PlayerQuit",
 	TurnCommitted = "TurnCommitted",
 	TurnReset = "TurnReset",
-	CellSelected = "CellSelected",
 }
 
 export interface EventsQuery {
@@ -240,7 +244,6 @@ export interface EventsQuery {
 }
 
 export interface ScalarEffect<a> {
-	kind : EffectKind,
 	value : a,
 }
 

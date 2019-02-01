@@ -68,7 +68,7 @@ type TypeScriptRenderer() =
         let sb = StringBuilder()
         sb.AppendLine(sprintf "export enum %s {" name) |> ignore
 
-        for v in values do
+        for v in values |> Seq.sortBy (fun x -> x) do
             sb.AppendLine(sprintf "\t%s = \"%s\"," v v) |> ignore
             ()
 
@@ -94,18 +94,39 @@ type TypeScriptRenderer() =
 
         renderTypeScriptInterface(typeName, props)
 
-    let renderUnionDeclaration (t : Type) : string =
+    let renderSingleFieldUnionDeclaration (t : Type) : string =
         let typeName = renderTypeName(t, true)
 
-        let cases = 
-            FSharpType.GetUnionCases t
+        let cases = FSharpType.GetUnionCases t
+
+        let caseTypeNames = 
+            cases
             |> Seq.map (fun c ->
                 let field = c.GetFields().[0]
                 renderTypeName(field.PropertyType, true)
             )
 
-        renderTypeScriptUnionAlias(typeName, cases)
+        let kinds = cases |> Seq.map (fun c -> c.Name)
 
+        let kindTypeName = typeName + "Kind"
+        let caseTypeName = typeName + "Case"
+
+        let props = 
+            [
+                ("kind", kindTypeName)
+                ("value", caseTypeName)
+            ]
+
+        let kindEnum = renderTypeScriptStringEnum(kindTypeName, kinds)
+        let caseUnion = renderTypeScriptUnionAlias(caseTypeName, caseTypeNames)
+        let baseType = renderTypeScriptInterface(typeName, props)
+
+        StringBuilder()
+            .AppendLine(baseType)
+            .AppendLine(caseUnion)
+            .AppendLine(kindEnum)
+            .ToString()
+         
     let renderEnumDeclaration (t : Type) : string =
         let tagsType = t.GetNestedTypes() |> Seq.head
         let values = tagsType.GetFields() |> Seq.map (fun f -> f.Name)
@@ -114,7 +135,7 @@ type TypeScriptRenderer() =
     let renderTypeDeclaration (t : Type) : string =
         match TypeKind.fromType t with
         | TypeKind.Record -> renderRecordDeclaration t
-        | TypeKind.Union -> renderUnionDeclaration t
+        | TypeKind.Union -> renderSingleFieldUnionDeclaration t
         | TypeKind.UnionEnum -> renderEnumDeclaration t
         | _ -> failwith "Unsupported type"
 
