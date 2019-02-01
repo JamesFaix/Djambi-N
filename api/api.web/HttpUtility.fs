@@ -66,6 +66,7 @@ module HttpUtility =
             OptionJsonConverter() :> JsonConverter
             TupleArrayJsonConverter() :> JsonConverter
             UnionEnumJsonConverter() :> JsonConverter
+            SingleFieldUnionJsonConverter() :> JsonConverter
         |]
 
     let private readJsonBody<'a> (ctx : HttpContext) : 'a AsyncHttpResult =

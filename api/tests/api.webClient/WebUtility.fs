@@ -16,6 +16,7 @@ let converters =
         OptionJsonConverter() :> JsonConverter
         TupleArrayJsonConverter() :> JsonConverter
         UnionEnumJsonConverter() :> JsonConverter
+        SingleFieldUnionJsonConverter() :> JsonConverter
     |]
 
 let private config = 

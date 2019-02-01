@@ -48,6 +48,7 @@ let configureNewtonsoft () =
             OptionJsonConverter()
             TupleArrayJsonConverter()
             UnionEnumJsonConverter()
+            SingleFieldUnionJsonConverter()
         ]
 
     let settings = new JsonSerializerSettings()
