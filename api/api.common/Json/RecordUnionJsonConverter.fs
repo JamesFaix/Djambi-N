@@ -6,17 +6,13 @@ open FSharp.Reflection
 open Newtonsoft.Json
 open Djambi.Api.Common.Collections
 
-type RecordUnionJsonConverter() =
+type SingleFieldUnionJsonConverter() =
     inherit JsonConverter()
 
-    //Converts discriminated unions where all cases are 1 field that is a record    
     override x.CanConvert (t : Type) : bool = 
         FSharpType.IsUnion t &&
         FSharpType.GetUnionCases t 
-            |> Seq.map (fun c -> c.GetFields())
-            |> Seq.forall (fun fs -> 
-                fs.Length = 1 && 
-                FSharpType.IsRecord fs.[0].PropertyType)
+            |> Seq.forall (fun c -> c.GetFields().Length = 1)
 
     override x.WriteJson (writer : JsonWriter, 
                           value : obj, 
@@ -27,16 +23,12 @@ type RecordUnionJsonConverter() =
         writer.WriteStartObject()
         writer.WritePropertyName "kind"
         writer.WriteValue case.Name
+        writer.WritePropertyName "value"
 
         let itemProp = caseType.GetProperty "Item"
         let recordValue = itemProp.GetValue value
-        let recordType = recordValue.GetType()
-        let fields = FSharpType.GetRecordFields recordType
 
-        for p in fields do
-            writer.WritePropertyName p.Name
-            let propValue = p.GetValue recordValue
-            serializer.Serialize(writer, propValue)
+        serializer.Serialize(writer, recordValue)
 
         writer.WriteEndObject()
 
@@ -50,6 +42,10 @@ type RecordUnionJsonConverter() =
         while reader.Read() do
             tokens.Add (reader.TokenType, reader.Value)
 
+        //Remove first and last tokens
+        tokens.RemoveAt(0)
+        tokens.RemoveAt(tokens.Count-1)
+
         //Find index of first token that is a property named kind
         let index = 
             tokens 
@@ -60,8 +56,19 @@ type RecordUnionJsonConverter() =
 
         let (_, kind) = tokens.[index+1]
 
-        //tokens.RemoveAt(index+1) //Remove value
-        //tokens.RemoveAt(index)   //Remove name
+        //Remove `kind` property
+        tokens.RemoveAt(index+1)
+        tokens.RemoveAt(index)
+
+        //Remove `value` property name
+        let index = 
+            tokens
+            |> Seq.findIndex (fun (t, v) -> 
+                t = JsonToken.PropertyName
+                    && v.ToString() = "value"
+            )
+
+        tokens.RemoveAt(index)
 
         let json = 
             let jsonParts = 

@@ -159,19 +159,19 @@ let ``Default tuple union serialization is awkward``() =
     Assert.Equal(expected, actual)
 
 [<Fact>]
-let ``RecordUnionJsonConverter should serialize union where all cases have 1 field``() =
-    let converter = RecordUnionJsonConverter() :> JsonConverter
+let ``SingleFieldUnionJsonConverter should serialize union where all cases have 1 field``() =
+    let converter = SingleFieldUnionJsonConverter() :> JsonConverter
     let record : RecordUnion = A { name = "test" }
-    let expected = """{"kind":"A","name":"test"}"""
+    let expected = """{"kind":"A","value":{"name":"test"}}"""
 
     let actual = JsonConvert.SerializeObject(record, [|converter|])
 
     Assert.Equal(expected, actual)
 
 [<Fact>]
-let ``RecordUnionJsonConverter should deserialize union where all cases have 1 field``() =
-    let converter = RecordUnionJsonConverter() :> JsonConverter
-    let json = """{"kind":"A","name":"test"}"""
+let ``SingleFieldUnionJsonConverter should deserialize union where all cases have 1 field``() =
+    let converter = SingleFieldUnionJsonConverter() :> JsonConverter
+    let json = """{"kind":"A","value":{"name":"test"}}"""
     let expected : RecordUnion = A { name = "test" }
 
     let actual = JsonConvert.DeserializeObject<RecordUnion>(json, [|converter|])
@@ -216,7 +216,7 @@ let ``Should deserialize Union with Record case with Record property``() =
         [|
             UnionEnumJsonConverter() :> JsonConverter    
             OptionJsonConverter() :> JsonConverter
-            RecordUnionJsonConverter() :> JsonConverter
+            SingleFieldUnionJsonConverter() :> JsonConverter
         |]
 
     let json = """{"kind":"PlayerAdded","value":{"kind":"Guest","userId":7,"name":"test"}}"""
