@@ -5,23 +5,8 @@ open System
 open Djambi.ClientGenerator.Annotations
 
 [<ClientType(ClientSection.Events)>]
-type EffectKind =
-    | GameStatusChanged
-    | PlayerEliminated
-    | PiecesOwnershipChanged
-    | PieceMoved
-    | PieceKilled
-    | TurnCycleChanged
-    | PlayerOutOfMoves
-    | PlayerAdded
-    | PlayersRemoved
-    | ParametersChanged
-    | CurrentTurnChanged
-
-[<ClientType(ClientSection.Events)>]
 type DiffEffect<'a> =
     {
-        kind : EffectKind
         oldValue : 'a
         newValue : 'a
     }
@@ -29,14 +14,12 @@ type DiffEffect<'a> =
 [<ClientType(ClientSection.Events)>]
 type ScalarEffect<'a> =
     {
-        kind : EffectKind
         value : 'a
     }
 
 [<ClientType(ClientSection.Events)>]
 type DiffWithContextEffect<'a, 'b> =
     {
-        kind : EffectKind
         oldValue : 'a
         newValue : 'a
         context : 'b
@@ -60,58 +43,49 @@ type Effect =
 module Effect =
     let gameStatusChanged (oldValue, newValue) =
         Effect.GameStatusChanged {
-            kind = EffectKind.GameStatusChanged
             oldValue = oldValue
             newValue = newValue
         }
 
     let turnCycleChanged (oldValue, newValue) =
         Effect.TurnCycleChanged {
-            kind = EffectKind.TurnCycleChanged
             oldValue = oldValue
             newValue = newValue
         }
 
     let parametersChanged (oldValue, newValue) =
         Effect.ParametersChanged {
-            kind = EffectKind.ParametersChanged
             oldValue = oldValue
             newValue = newValue
         }
 
     let playerEliminated (playerId) =
         Effect.PlayerEliminated {
-            kind = EffectKind.PlayerEliminated
             value = playerId
         }
 
     let playerAdded (request) =
         Effect.PlayerAdded {
-            kind = EffectKind.PlayerAdded
             value = request
         }
 
     let playerOutOfMoves (playerId) =
         Effect.PlayerOutOfMoves {
-            kind = EffectKind.PlayerOutOfMoves
             value = playerId
         }
 
     let pieceKilled (pieceId) =
         Effect.PieceKilled {
-            kind = EffectKind.PieceKilled
             value = pieceId
         }
 
     let playersRemoved (playerIds) =
         Effect.PlayersRemoved {
-            kind = EffectKind.PlayersRemoved
             value = playerIds
         }
 
     let piecesOwnershipChanged (pieceIds, oldPlayerId, newPlayerId) =
         Effect.PiecesOwnershipChanged {
-            kind = EffectKind.PiecesOwnershipChanged
             context = pieceIds
             oldValue = oldPlayerId
             newValue = newPlayerId
@@ -119,7 +93,6 @@ module Effect =
 
     let pieceMoved (pieceId, oldCellId, newCellId) =
         Effect.PieceMoved {
-            kind = EffectKind.PieceMoved
             context = pieceId
             oldValue = oldCellId
             newValue = newCellId
@@ -127,7 +100,6 @@ module Effect =
 
     let currentTurnChanged (oldTurn, newTurn) =
         Effect.CurrentTurnChanged {
-            kind = EffectKind.CurrentTurnChanged
             oldValue = oldTurn
             newValue = newTurn
         }

@@ -53,63 +53,89 @@ type TypeScriptRenderer() =
                 then t.Name
                 else "Model." + t.Name
 
-    let renderRecordDeclaration (t : Type) : string =
+    let renderTypeScriptInterface (name : string, properties : (string * string) seq) : string =
+        let sb = StringBuilder()        
+        sb.AppendLine(sprintf "export interface %s {" name) |> ignore
+
+        for (name, typeName) in properties do
+            sb.AppendLine(sprintf "\t%s : %s," name typeName) |> ignore
+
+        sb.AppendLine("}")
+          .ToString()
+
+    let renderTypeScriptStringEnum (name : string, values : string seq) : string =
         let sb = StringBuilder()
+        sb.AppendLine(sprintf "export enum %s {" name) |> ignore
 
-        let typeName = renderTypeName(t, true)
-
-        sb.AppendLine(sprintf "export interface %s {" typeName) |> ignore
-
-        let props = t.GetProperties()
-        for p in props do
-            //Formats property like
-            //Name : Type,
-            let typeName = renderTypeName(p.PropertyType, true)
-            sb.AppendLine(sprintf "\t%s : %s," p.Name typeName) |> ignore
+        for v in values |> Seq.sortBy (fun x -> x) do
+            sb.AppendLine(sprintf "\t%s = \"%s\"," v v) |> ignore
             ()
 
         sb.AppendLine("}")
           .ToString()
 
-    let renderUnionDeclaration (t : Type) : string =
+    let renderTypeScriptUnionAlias (name : string, caseTypeNames : string seq) : string =
         let sb = StringBuilder()
-        
+        sb.AppendLine(sprintf "export type %s =" name) |> ignore
+        let casesList = String.Join(" |\n\t", caseTypeNames)
+        sb.AppendLine(sprintf "\t%s" casesList)
+          .ToString()
+
+    let renderRecordDeclaration (t : Type) : string =
         let typeName = renderTypeName(t, true)
-        sb.AppendLine(sprintf "export type %s =" typeName) |> ignore
+
+        let props = 
+            t.GetProperties()
+            |> Seq.map (fun p -> 
+                 let typeName = renderTypeName(p.PropertyType, true)
+                 (p.Name, typeName)
+            )
+
+        renderTypeScriptInterface(typeName, props)
+
+    let renderSingleFieldUnionDeclaration (t : Type) : string =
+        let typeName = renderTypeName(t, true)
 
         let cases = FSharpType.GetUnionCases t
-        let caseTypes = 
-            cases 
+
+        let caseTypeNames = 
+            cases
             |> Seq.map (fun c ->
                 let field = c.GetFields().[0]
                 renderTypeName(field.PropertyType, true)
             )
-        let casesList = String.Join(" |\n\t", caseTypes)
 
-        sb.AppendLine(sprintf "\t%s" casesList)
-          .ToString()
+        let kinds = cases |> Seq.map (fun c -> c.Name)
 
+        let kindTypeName = typeName + "Kind"
+        let caseTypeName = typeName + "Case"
+
+        let props = 
+            [
+                ("kind", kindTypeName)
+                ("value", caseTypeName)
+            ]
+
+        let kindEnum = renderTypeScriptStringEnum(kindTypeName, kinds)
+        let caseUnion = renderTypeScriptUnionAlias(caseTypeName, caseTypeNames)
+        let baseType = renderTypeScriptInterface(typeName, props)
+
+        StringBuilder()
+            .AppendLine(baseType)
+            .AppendLine(caseUnion)
+            .AppendLine(kindEnum)
+            .ToString()
+         
     let renderEnumDeclaration (t : Type) : string =
-        let sb = StringBuilder()
-        sb.AppendLine(sprintf "export enum %s {" t.Name) |> ignore
-
         let tagsType = t.GetNestedTypes() |> Seq.head
-        let fields = tagsType.GetFields()
-
-        for f in fields do
-            //Formats enum value like 
-            //Foo = "Foo",
-            sb.AppendLine(sprintf "\t%s = \"%s\"," f.Name f.Name) |> ignore
-            ()
-
-        sb.AppendLine("}")
-          .ToString()
+        let values = tagsType.GetFields() |> Seq.map (fun f -> f.Name)
+        renderTypeScriptStringEnum(t.Name, values)
         
     let renderTypeDeclaration (t : Type) : string =
         match TypeKind.fromType t with
         | TypeKind.Record -> renderRecordDeclaration t
-        | TypeKind.Union -> renderUnionDeclaration t
-        | TypeKind.Enum -> renderEnumDeclaration t
+        | TypeKind.Union -> renderSingleFieldUnionDeclaration t
+        | TypeKind.UnionEnum -> renderEnumDeclaration t
         | _ -> failwith "Unsupported type"
 
     let renderMethod (m : MethodInfo) : string = 
