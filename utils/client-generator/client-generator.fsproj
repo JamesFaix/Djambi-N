@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="TypeKind.fs" />
     <Content Include="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -20,7 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\api\api.common\api.common.fsproj" />
     <ProjectReference Include="..\..\api\api.logic\api.logic.fsproj" />
     <ProjectReference Include="..\..\api\api.model\api.model.fsproj" />
     <ProjectReference Include="..\client-generator.annotations\client-generator.annotations.fsproj" />

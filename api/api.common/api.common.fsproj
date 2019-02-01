@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="TypeKind.fs" />
     <Compile Include="Control\Result.fs" />
     <Compile Include="Control\Task.fs" />
     <Compile Include="Control\HttpException.fs" />

@@ -5,7 +5,6 @@ open System.Reflection
 open System.Text
 open System.Text.RegularExpressions
 open FSharp.Reflection
-open Djambi.Api.Common
 open Djambi.Api.Model
 open Djambi.ClientGenerator.Annotations
 

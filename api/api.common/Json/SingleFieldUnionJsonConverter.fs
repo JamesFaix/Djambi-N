@@ -4,7 +4,6 @@ open System
 open System.IO
 open FSharp.Reflection
 open Newtonsoft.Json
-open Djambi.Api.Common.Collections
 
 type SingleFieldUnionJsonConverter() =
     inherit JsonConverter()
