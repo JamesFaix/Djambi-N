@@ -7,10 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="TypeKind.fs" />
     <Content Include="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Compile Include="TypeKind.fs" />
     <Compile Include="IRenderer.fs" />
     <Compile Include="TypeScriptRenderer.fs" />
     <Compile Include="Program.fs" />

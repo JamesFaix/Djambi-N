@@ -7,6 +7,7 @@ open Djambi.Api.Db.Repositories
 open Djambi.Api.IntegrationTests
 open Djambi.Api.Logic.Services
 open Djambi.Api.Model
+open Djambi.Api.Logic.Managers
 
 type EventRepositoryTests() =
     inherit TestsBase()
@@ -210,4 +211,45 @@ type EventRepositoryTests() =
             let! persistedGame = GameRepository.getGame game.id |> thenValue
             persistedGame.players.Length |> shouldBe 1 //Just the creator
             persistedGame.players |> shouldNotExist (fun p -> p.name = playerRequest.name.Value)
+        }
+
+    [<Fact>]
+    let ``Should get events``() =
+        task {
+            //Arrange
+            let! (user, session, game) = TestUtilities.createuserSessionAndGame(true) |> thenValue
+
+            let playerRequest = 
+                {
+                    userId = Some user.id
+                    name = Some "test"
+                    kind = PlayerKind.Guest
+                }
+
+            let! _ = GameManager.addPlayer game.id playerRequest session |> thenValue
+            
+            let query : EventsQuery = 
+                {
+                    maxResults = None
+                    direction = Ascending
+                    thresholdEventId = None
+                    thresholdTime = None
+                }
+
+            //Act
+            let! events = EventRepository.getEvents (game.id, query) |> thenValue
+
+            //Assert
+            events.Length |> shouldBe 1
+
+            let e = events.[0]
+            e.kind |> shouldBe EventKind.PlayerJoined
+            e.createdByUserId |> shouldBe user.id
+            e.effects.Length |> shouldBe 1
+
+            match e.effects.[0] with
+            | Effect.PlayerAdded f ->
+                f.value |> shouldBe playerRequest
+
+            | _ -> failwith "Incorrect effects"
         }
