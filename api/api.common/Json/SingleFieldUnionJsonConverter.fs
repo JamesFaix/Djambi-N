@@ -38,9 +38,15 @@ type SingleFieldUnionJsonConverter() =
                         serializer : JsonSerializer) : obj =   
                         
         let tokens = ArrayList<JsonToken * obj>()
+        let mutable objStarts = 1
+        let mutable objEnds = 0
         tokens.Add (reader.TokenType, reader.Value)
-        while reader.Read() do
-            tokens.Add (reader.TokenType, reader.Value)
+
+        while objStarts > objEnds && reader.Read() do
+            let tt = reader.TokenType
+            if tt = JsonToken.StartObject then objStarts <- objStarts + 1
+            if tt = JsonToken.EndObject then objEnds <- objEnds + 1
+            tokens.Add (tt, reader.Value)
 
         //Remove first and last tokens
         tokens.RemoveAt(0)
@@ -84,6 +90,8 @@ type SingleFieldUnionJsonConverter() =
 
             String.Join("", jsonParts)
                 .Replace(",}", "}")
+
+        let json = json.Substring(0, json.Length-1) //Remove trailing comma
 
         let cases = FSharpType.GetUnionCases t
         let case = cases |> Seq.find (fun c -> c.Name = kind.ToString())

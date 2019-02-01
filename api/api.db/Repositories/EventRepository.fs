@@ -5,10 +5,10 @@ open System.Data
 open System.Linq
 open Dapper
 open FSharp.Control.Tasks
-open Newtonsoft.Json
 open Djambi.Api.Common.Collections
 open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
+open Djambi.Api.Common.Json
 open Djambi.Api.Db
 open Djambi.Api.Db.Mapping
 open Djambi.Api.Db.SqlUtility
@@ -32,7 +32,7 @@ let private getCreateEventCommand (gameId : int, request : CreateEventRequest) :
                     .add("GameId", gameId)
                     .add("EventKindId", request.kind |> mapEventKindToId)
                     .add("CreatedByUserId", request.createdByUserId)
-                    .add("EffectsJson", request.effects |> JsonConvert.SerializeObject)
+                    .add("EffectsJson", JsonUtility.serialize request.effects)
     proc("Events_Create", param)
 
 let private getCommands (oldGame : Game, newGame : Game, transaction : IDbTransaction) : CommandDefinition seq = 

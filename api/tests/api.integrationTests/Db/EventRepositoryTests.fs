@@ -219,14 +219,17 @@ type EventRepositoryTests() =
             //Arrange
             let! (user, session, game) = TestUtilities.createuserSessionAndGame(true) |> thenValue
 
-            let playerRequest = 
+            let p2Request = 
                 {
                     userId = Some user.id
-                    name = Some "test"
+                    name = Some "p2"
                     kind = PlayerKind.Guest
                 }
 
-            let! _ = GameManager.addPlayer game.id playerRequest session |> thenValue
+            let p3Request = { p2Request with name = Some "p3" }
+
+            let! _ = GameManager.addPlayer game.id p2Request session |> thenValue
+            let! _ = GameManager.addPlayer game.id p3Request session |> thenValue
             
             let query : EventsQuery = 
                 {
@@ -240,16 +243,26 @@ type EventRepositoryTests() =
             let! events = EventRepository.getEvents (game.id, query) |> thenValue
 
             //Assert
-            events.Length |> shouldBe 1
+            events.Length |> shouldBe 2
 
-            let e = events.[0]
-            e.kind |> shouldBe EventKind.PlayerJoined
-            e.createdByUserId |> shouldBe user.id
-            e.effects.Length |> shouldBe 1
+            let e1 = events.[0]
+            e1.kind |> shouldBe EventKind.PlayerJoined
+            e1.createdByUserId |> shouldBe user.id
+            e1.effects.Length |> shouldBe 1
 
-            match e.effects.[0] with
+            match e1.effects.[0] with
             | Effect.PlayerAdded f ->
-                f.value |> shouldBe playerRequest
+                f.value |> shouldBe p2Request
 
             | _ -> failwith "Incorrect effects"
-        }
+            
+            let e2 = events.[1]
+            e2.kind |> shouldBe EventKind.PlayerJoined
+            e2.createdByUserId |> shouldBe user.id
+            e2.effects.Length |> shouldBe 1
+
+            match e2.effects.[0] with
+            | Effect.PlayerAdded f ->
+                f.value |> shouldBe p3Request
+
+            | _ -> failwith "Incorrect effects"}

@@ -12,9 +12,9 @@
     <Compile Include="Collections.fs" />
     <Compile Include="Json\SingleFieldUnionJsonConverter.fs" />
     <Compile Include="Json\UnionEnumJsonConverter.fs" />
-    <Compile Include="Json\JsonUtility.fs" />
     <Compile Include="Json\OptionJsonConverter.fs" />
     <Compile Include="Json\TupleArrayJsonConverter.fs" />
+    <Compile Include="Json\JsonUtility.fs" />
     <Compile Include="Constants.fs" />
     <Compile Include="Enum.fs" />
     <Compile Include="Function.fs" />
