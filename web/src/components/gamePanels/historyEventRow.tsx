@@ -19,7 +19,7 @@ export default class HistoryEventRow extends React.Component<HistoryEventRowProp
         const e = this.props.event;
         return (
             <tr>
-                <td>
+                <td style={{padding:0}}>
                     <table>
                         <tbody>
                             <tr>

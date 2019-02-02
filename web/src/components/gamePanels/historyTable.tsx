@@ -14,7 +14,7 @@ export default class HistoryTable extends React.Component<HistoryTableProps> {
     render() {
         return (
             <div style={{display:"flex"}}>
-                <table className="table">
+                <table className="table" style={{width:"100%"}}>
                     <tbody>
                         {
                             this.props.events
