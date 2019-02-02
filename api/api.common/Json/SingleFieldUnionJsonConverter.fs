@@ -84,7 +84,7 @@ type SingleFieldUnionJsonConverter() =
                     | JsonToken.StartObject -> "{"
                     | JsonToken.EndObject -> "},"
                     | JsonToken.PropertyName -> sprintf "\"%s\":" (v.ToString())
-                    | _ -> if v = null then "null" 
+                    | _ -> if v = null then "null," 
                            else sprintf "\"%s\"," (v.ToString())
                 )
 
