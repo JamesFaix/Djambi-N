@@ -103,7 +103,7 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
     private getEvents(gameId : number) : Promise<Event[]> {
         const eventQuery : EventsQuery = {
             maxResults: null,
-            direction: ResultsDirection.Ascending,
+            direction: ResultsDirection.Descending,
             thresholdEventId: null,
             thresholdTime: null
         }
