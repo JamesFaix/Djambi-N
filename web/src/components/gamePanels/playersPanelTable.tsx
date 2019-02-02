@@ -1,14 +1,14 @@
 import * as React from 'react';
-import { Game, Player, PlayerKind } from '../api/model';
-import TextCell from './tables/textCell';
-import ThemeService from '../themes/themeService';
+import { Game, Player, PlayerKind } from '../../api/model';
+import TextCell from '../tables/textCell';
+import ThemeService from '../../themes/themeService';
 
-export interface GamePlayersPanelPlayersTableProps {
+export interface PlayersPanelTableProps {
     game : Game,
     theme : ThemeService
 }
 
-export default class GamePlayersPanelPlayersTable extends React.Component<GamePlayersPanelPlayersTableProps> {
+export default class PlayersPanelTable extends React.Component<PlayersPanelTableProps> {
 
     private getPlayerNote(player : Player) {
         switch (player.kind) {

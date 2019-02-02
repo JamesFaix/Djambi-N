@@ -2,7 +2,7 @@ import * as React from 'react';
 import '../../index.css';
 import { Game } from '../../api/model';
 import ThemeService from '../../themes/themeService';
-import GamePlayersPanelPlayersTable from '../gamePlayersPanelPlayersTable';
+import PlayersPanelTable from './playersPanelTable';
 
 export interface PlayersPanelProps {
     game : Game,
@@ -14,7 +14,7 @@ export default class PlayersPanel extends React.Component<PlayersPanelProps> {
         return (
             <div className="thinBorder">
                 Players
-                <GamePlayersPanelPlayersTable
+                <PlayersPanelTable
                     game={this.props.game}
                     theme={this.props.theme}
                 />
