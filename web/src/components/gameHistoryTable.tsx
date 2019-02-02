@@ -4,7 +4,7 @@ import ThemeService from '../themes/themeService';
 import * as Sprintf from 'sprintf-js';
 import HintCell from './tables/hintCell';
 import EmphasizedTextCell from './tables/emphasizedTextCell';
-import moment = require("moment");
+import DateService from '../dateService';
 
 export interface GameHistoryTableProps {
     game : Game,
@@ -38,7 +38,7 @@ export default class GameHistoryTable extends React.Component<GameHistoryTablePr
                         <tbody>
                             <tr>
                                 <EmphasizedTextCell text={this.getEventMessage(event)}/>
-                                <HintCell text={moment(event.createdOn).format('MM/DD/YY hh:mm a')}/>
+                                <HintCell text={DateService.format(event.createdOn)}/>
                             </tr>
                         </tbody>
                     </table>
