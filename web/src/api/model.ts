@@ -188,10 +188,10 @@ export type EffectCase =
 	ParametersChangedEffect |
 	PlayerEliminatedEffect |
 	PieceKilledEffect |
-	PlayersRemovedEffect |
+	PlayerRemovedEffect |
 	PlayerOutOfMovesEffect |
 	PlayerAddedEffect |
-	PiecesOwnershipChangedEffect |
+	PieceOwnershipChangedEffect |
 	PieceMovedEffect |
 	CurrentTurnChangedEffect
 
@@ -201,11 +201,11 @@ export enum EffectKind {
 	ParametersChanged = "ParametersChanged",
 	PieceKilled = "PieceKilled",
 	PieceMoved = "PieceMoved",
-	PiecesOwnershipChanged = "PiecesOwnershipChanged",
+	PieceOwnershipChanged = "PieceOwnershipChanged",
 	PlayerAdded = "PlayerAdded",
 	PlayerEliminated = "PlayerEliminated",
 	PlayerOutOfMoves = "PlayerOutOfMoves",
-	PlayersRemoved = "PlayersRemoved",
+	PlayerRemoved = "PlayerRemoved",
 	TurnCycleChanged = "TurnCycleChanged",
 }
 
@@ -257,10 +257,10 @@ export interface PieceMovedEffect {
 	pieceId : number,
 }
 
-export interface PiecesOwnershipChangedEffect {
+export interface PieceOwnershipChangedEffect {
 	oldPlayerId : number,
 	newPlayerId : number,
-	pieceIds : number[],
+	pieceId : number,
 }
 
 export interface PlayerAddedEffect {
@@ -277,8 +277,8 @@ export interface PlayerOutOfMovesEffect {
 	playerId : number,
 }
 
-export interface PlayersRemovedEffect {
-	playerIds : number[],
+export interface PlayerRemovedEffect {
+	playerId : number,
 }
 
 export interface StateAndEventResponse {

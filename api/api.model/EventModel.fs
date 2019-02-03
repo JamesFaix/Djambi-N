@@ -45,9 +45,9 @@ type PieceKilledEffect =
     }
 
 [<ClientType(ClientSection.Events)>]
-type PlayersRemovedEffect =
+type PlayerRemovedEffect =
     {
-        playerIds : int list
+        playerId : int
     }
 
 [<ClientType(ClientSection.Events)>]
@@ -65,11 +65,11 @@ type PlayerAddedEffect =
     }
 
 [<ClientType(ClientSection.Events)>]
-type PiecesOwnershipChangedEffect =
+type PieceOwnershipChangedEffect =
     {
         oldPlayerId : int option
         newPlayerId : int option
-        pieceIds : int list
+        pieceId : int
     }
 
 [<ClientType(ClientSection.Events)>]
@@ -88,10 +88,10 @@ type Effect =
     //TODO: PlayerEliminated may need to change to PlayerStatusChanged as a DiffWithCOntext when statuses are added to players
     | PlayerEliminated of PlayerEliminatedEffect
     | PieceKilled of PieceKilledEffect
-    | PlayersRemoved of PlayersRemovedEffect
+    | PlayerRemoved of PlayerRemovedEffect
     | PlayerOutOfMoves of PlayerOutOfMovesEffect
     | PlayerAdded of PlayerAddedEffect
-    | PiecesOwnershipChanged of PiecesOwnershipChangedEffect
+    | PieceOwnershipChanged of PieceOwnershipChangedEffect
     | PieceMoved of PieceMovedEffect
     | CurrentTurnChanged of CurrentTurnChangedEffect
 

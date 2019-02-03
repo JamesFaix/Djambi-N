@@ -79,7 +79,8 @@ let getRemovePlayerEvent (game : Game, playerId : int) (session : Session) : Cre
                         | Guest -> [playerId]
                         | _ -> List.empty //Already eliminated this case in validation above
 
-                    effects.Add(Effect.PlayersRemoved { playerIds = playerIdsToRemove })
+                    for pId in playerIdsToRemove do
+                        effects.Add(Effect.PlayerRemoved { playerId = pId })
 
                     //Cancel game if Pending and creator quit
                     if game.status = GameStatus.Pending
