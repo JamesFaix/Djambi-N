@@ -1,13 +1,9 @@
 import * as React from 'react';
-import { Game, Event, Effect, DiffEffect, GameStatus, ScalarEffect, DiffWithContextEffect, CreatePlayerRequest, EffectKind, PlayerKind } from '../../api/model';
-import ThemeService from '../../themes/themeService';
+import { Effect, DiffEffect, GameStatus, ScalarEffect, DiffWithContextEffect, CreatePlayerRequest, EffectKind, PlayerKind } from '../../api/model';
 import * as Sprintf from 'sprintf-js';
 
 export interface HistoryEffectRowProps {
-    game : Game,
-    event : Event,
-    effect : Effect,
-    theme : ThemeService
+    effect : Effect
 }
 
 export default class HistoryEffectRow extends React.Component<HistoryEffectRowProps> {

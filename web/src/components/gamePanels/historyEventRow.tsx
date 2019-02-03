@@ -1,15 +1,12 @@
 import * as React from 'react';
-import { Game, Event, EventKind, Effect } from '../../api/model';
-import ThemeService from '../../themes/themeService';
+import { Event, EventKind, Effect } from '../../api/model';
 import HintCell from '../tables/hintCell';
 import EmphasizedTextCell from '../tables/emphasizedTextCell';
 import DateService from '../../dateService';
 import HistoryEffectRow from './historyEffectRow';
 
 export interface HistoryEventRowProps {
-    game : Game,
     event : Event,
-    theme : ThemeService,
     isEffectVisible : (f : Effect) => boolean
 }
 
@@ -36,9 +33,6 @@ export default class HistoryEventRow extends React.Component<HistoryEventRowProp
                                     <HistoryEffectRow
                                         key={"effect" + i}
                                         effect={f}
-                                        event={this.props.event}
-                                        game={this.props.game}
-                                        theme={this.props.theme}
                                     />
                                 )
                         }

@@ -180,7 +180,6 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                 </div>
                 <HistoryPanel
                     game={this.state.game}
-                    theme={this.props.theme}
                     events={this.state.events}
                 />
             </div>
