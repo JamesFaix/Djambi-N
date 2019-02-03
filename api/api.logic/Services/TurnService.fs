@@ -84,7 +84,7 @@ let getCellSelectedEvent(game : Game, cellId : int) (session: Session) : CreateE
                     
                     {
                         kind = EventKind.CellSelected
-                        effects = [Effect.currentTurnChanged(game.currentTurn, Some updatedTurn)]
+                        effects = [Effect.CurrentTurnChanged { oldValue = game.currentTurn; newValue = Some updatedTurn }]
                         createdByUserId = session.user.id                    
                     }
                     ))
@@ -105,10 +105,10 @@ let private applyTurnToPieces(game : Game) : (Piece list * Effect list) =
         match currentTurn.vacateCellId with
         | None ->        
             pieces.[subject.id] <- subject.moveTo destination.id
-            effects.Add(Effect.pieceMoved(subject.id, subject.cellId, destination.id))
+            effects.Add(Effect.PieceMoved { pieceId = subject.id; oldCellId = subject.cellId; newCellId = destination.id })
         | Some vacateCellId -> 
             pieces.[subject.id] <- subject.moveTo vacateCellId
-            effects.Add(Effect.pieceMoved(subject.id, destination.id, vacateCellId))
+            effects.Add(Effect.PieceMoved { pieceId = subject.id; oldCellId = destination.id; newCellId = vacateCellId })
 
         match currentTurn.targetPiece game with
         | None -> ()
@@ -117,7 +117,7 @@ let private applyTurnToPieces(game : Game) : (Piece list * Effect list) =
             if subject.isKiller
             then 
                 pieces.[target.id] <- target.kill
-                effects.Add(Effect.pieceKilled(target.id))
+                effects.Add(Effect.PieceKilled { pieceId = target.id })
 
             //Enlist players pieces if killing chief
             if subject.isKiller && target.kind = Chief
@@ -126,23 +126,24 @@ let private applyTurnToPieces(game : Game) : (Piece list * Effect list) =
                 for p in enlistedPieces do
                     pieces.[p.id] <- pieces.[p.id].enlistBy subject.playerId.Value
 
-                effects.Add(Effect.piecesOwnershipChanged(
-                                enlistedPieces |> List.map(fun p -> p.id), 
-                                target.playerId, 
-                                subject.playerId))
+                effects.Add(Effect.PiecesOwnershipChanged {
+                                pieceIds = enlistedPieces |> List.map(fun p -> p.id)
+                                oldPlayerId = target.playerId
+                                newPlayerId = subject.playerId
+                            })
 
             //Drop target if drop cell exists
             match currentTurn.dropCellId with
             | Some dropCellId ->  
                 pieces.[target.id] <- pieces.[target.id].moveTo dropCellId
-                effects.Add(Effect.pieceMoved(target.id, target.cellId, dropCellId))
+                effects.Add(Effect.PieceMoved { pieceId = target.id; oldCellId = target.cellId; newCellId = dropCellId })
             | None -> ()
 
             //Move target back to origin if subject is assassin
             if subject.kind = Assassin
             then 
                 pieces.[target.id] <- pieces.[target.id].moveTo originCellId
-                effects.Add(Effect.pieceMoved(target.id, target.cellId, originCellId))
+                effects.Add(Effect.PieceMoved { pieceId = target.id; oldCellId = target.cellId; newCellId = originCellId })
         (pieces.Values |> Seq.toList, effects |> Seq.toList)
 
 let private removeSequentialDuplicates(turnCycle : int list) : int list =
@@ -206,7 +207,7 @@ let private applyTurnToTurnCycle(game : Game) : (int list * Effect list) =
     //Cycle turn queue
     turns <- List.append turns.Tail [turns.Head]
 
-    let effect = Effect.turnCycleChanged(game.turnCycle, turns)
+    let effect = Effect.TurnCycleChanged { oldValue = game.turnCycle; newValue = turns }
     (turns, [effect])
 
 let private killCurrentPlayer(game : Game) : (Game * Effect list) =
@@ -222,13 +223,13 @@ let private killCurrentPlayer(game : Game) : (Game * Effect list) =
                 |> removeSequentialDuplicates
 
     let effects = new ArrayList<Effect>()
-    effects.Add(Effect.playerOutOfMoves(playerId))
-    effects.Add(Effect.turnCycleChanged(game.turnCycle, turns))
+    effects.Add(Effect.PlayerOutOfMoves { playerId = playerId })
+    effects.Add(Effect.TurnCycleChanged { oldValue = game.turnCycle; newValue = turns })
 
     let abandonedPieces = game.pieces |> List.filter (fun p -> p.playerId = Some playerId) |> List.map(fun p -> p.id)
     if abandonedPieces.IsEmpty |> not 
     then 
-        effects.Add(Effect.piecesOwnershipChanged(abandonedPieces, Some playerId, None))
+        effects.Add(Effect.PiecesOwnershipChanged { pieceIds = abandonedPieces; oldPlayerId = Some playerId; newPlayerId = None })
 
     let updatedGame =
         { game with
@@ -259,7 +260,7 @@ let getCommitTurnEvent(game : Game) (session : Session) : CreateEventRequest Htt
         match (currentTurn.subjectPiece game, currentTurn.targetPiece game) with
         | (Some subject, Some target) 
             when subject.isKiller && target.kind = Chief ->
-                effects.Add(Effect.playerEliminated(target.playerId.Value))
+                effects.Add(Effect.PlayerEliminated { playerId = target.playerId.Value })
                 players <- players |> List.map (fun p -> if p.id = target.playerId.Value then p.kill else p)
         | _ -> ()
 
@@ -292,7 +293,7 @@ let getCommitTurnEvent(game : Game) (session : Session) : CreateEventRequest Htt
                 requiredSelectionKind = requiredSelectionType
             }
 
-        effects.Add(Effect.currentTurnChanged(game.currentTurn, Some updatedTurn))
+        effects.Add(Effect.CurrentTurnChanged { oldValue = game.currentTurn; newValue = Some updatedTurn })
 
         {
             kind = EventKind.TurnCommitted
@@ -314,7 +315,7 @@ let getResetTurnEvent(game : Game) (session : Session) : CreateEventRequest Http
             }
         {
             kind = EventKind.TurnReset
-            effects = [ Effect.currentTurnChanged(game.currentTurn, Some turn) ]
+            effects = [ Effect.CurrentTurnChanged { oldValue = game.currentTurn; newValue = Some turn } ]
             createdByUserId = session.user.id
         }
     )

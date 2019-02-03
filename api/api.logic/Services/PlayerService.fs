@@ -46,7 +46,7 @@ let getAddPlayerEvent (game : Game, request : CreatePlayerRequest) (session : Se
     |> Result.map (fun _ -> 
         {
             kind = EventKind.PlayerJoined
-            effects = [ Effect.playerAdded request ]
+            effects = [ Effect.PlayerAdded { playerRequest = request } ]
             createdByUserId = self.id
         }
     )
@@ -79,14 +79,14 @@ let getRemovePlayerEvent (game : Game, playerId : int) (session : Session) : Cre
                         | Guest -> [playerId]
                         | _ -> List.empty //Already eliminated this case in validation above
 
-                    effects.Add(Effect.playersRemoved(playerIdsToRemove))
+                    effects.Add(Effect.PlayersRemoved { playerIds = playerIdsToRemove })
 
                     //Cancel game if Pending and creator quit
                     if game.status = GameStatus.Pending
                         && game.createdByUserId = player.userId.Value
                         && player.kind = PlayerKind.User
                     then 
-                        effects.Add(Effect.gameStatusChanged(GameStatus.Pending, GameStatus.AbortedWhilePending))
+                        effects.Add(Effect.GameStatusChanged { oldValue = GameStatus.Pending; newValue = GameStatus.AbortedWhilePending })
                     else ()
 
                     let kind = 
@@ -118,5 +118,5 @@ let fillEmptyPlayerSlots (game : Game) : Effect list AsyncHttpResult =
     else
         GameRepository.getNeutralPlayerNames()
         |> thenMap getNeutralPlayerNamesToUse
-        |> thenMap (Seq.map (Effect.playerAdded << CreatePlayerRequest.neutral))    
+        |> thenMap (Seq.map (fun name -> Effect.PlayerAdded { playerRequest = CreatePlayerRequest.neutral name }))    
         |> thenMap Seq.toList

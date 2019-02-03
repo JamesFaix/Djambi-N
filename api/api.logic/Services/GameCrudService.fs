@@ -32,7 +32,7 @@ let getUpdateGameParametersEvent (game : Game, parameters : GameParameters) (ses
     |> Result.map (fun _ ->
         let effects = new ArrayList<Effect>()
 
-        effects.Add(Effect.parametersChanged(game.parameters, parameters))
+        effects.Add(Effect.ParametersChanged { oldValue = game.parameters; newValue = parameters })
 
         //If lowering region count, extra players are ejected
         let truncatedPlayers = 
@@ -54,7 +54,7 @@ let getUpdateGameParametersEvent (game : Game, parameters : GameParameters) (ses
             |> Seq.toList
 
         if removedPlayerIds.Length > 0
-        then effects.Add(Effect.playersRemoved removedPlayerIds)
+        then effects.Add(Effect.PlayersRemoved { playerIds = removedPlayerIds })
         else ()
 
         {

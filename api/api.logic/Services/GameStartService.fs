@@ -24,7 +24,7 @@ let getGameStartEvent (game : Game) (session : Session) : CreateEventRequest Asy
                     //The order is very important for effect processing. Neutral players must be created before the game start.                    
                     List.append 
                         addNeutralPlayerEffects 
-                        [Effect.gameStatusChanged(GameStatus.Pending, GameStatus.Started)]
+                        [Effect.GameStatusChanged { oldValue = GameStatus.Pending; newValue = GameStatus.Started }]
                 {
                     kind = EventKind.GameStarted
                     effects = effects

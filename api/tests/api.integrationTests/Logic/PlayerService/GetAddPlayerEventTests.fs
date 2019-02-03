@@ -21,7 +21,7 @@ type GetAddPlayerEventTests() =
 
         match eventRequest.effects.[0] with
         | Effect.PlayerAdded f ->
-            f.value |> shouldBe request
+            f.playerRequest |> shouldBe request
 
         | _ -> failwith "Incorrect effects"
 

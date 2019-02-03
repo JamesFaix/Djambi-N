@@ -3,10 +3,8 @@
 open System
 open FSharp.Control.Tasks
 open Xunit
-open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.IntegrationTests
-open Djambi.Api.Logic.Services
 open Djambi.Api.Model
 open Djambi.Api.Logic.Managers
 
@@ -35,7 +33,7 @@ type AddPlayerTests() =
             player.kind |> shouldBe PlayerKind.User
 
             resp.event.effects.Length |> shouldBe 1
-            resp.event.effects.[0] |> shouldBe (Effect.playerAdded request)
+            resp.event.effects.[0] |> shouldBe (Effect.PlayerAdded { playerRequest = request })
         }
 
     [<Fact>]
