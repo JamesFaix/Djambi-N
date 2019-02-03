@@ -5,104 +5,95 @@ open System
 open Djambi.ClientGenerator.Annotations
 
 [<ClientType(ClientSection.Events)>]
-type DiffEffect<'a> =
+type GameStatusChangedEffect = 
     {
-        oldValue : 'a
-        newValue : 'a
+        oldValue : GameStatus
+        newValue : GameStatus
     }
 
 [<ClientType(ClientSection.Events)>]
-type ScalarEffect<'a> =
+type TurnCycleChangedEffect = 
     {
-        value : 'a
+        oldValue : int list
+        newValue : int list
+    }
+    
+[<ClientType(ClientSection.Events)>]
+type ParametersChangedEffect = 
+    {
+        oldValue : GameParameters
+        newValue : GameParameters
     }
 
 [<ClientType(ClientSection.Events)>]
-type DiffWithContextEffect<'a, 'b> =
+type CurrentTurnChangedEffect = 
     {
-        oldValue : 'a
-        newValue : 'a
-        context : 'b
+        oldValue : Turn option
+        newValue : Turn option
+    }
+
+[<ClientType(ClientSection.Events)>]
+type PlayerEliminatedEffect =
+    {
+        playerId : int
+    }
+
+[<ClientType(ClientSection.Events)>]
+type PieceKilledEffect =
+    {
+        pieceId : int
+    }
+
+[<ClientType(ClientSection.Events)>]
+type PlayersRemovedEffect =
+    {
+        playerIds : int list
+    }
+
+[<ClientType(ClientSection.Events)>]
+type PlayerOutOfMovesEffect =
+    {
+        playerId : int
+    }
+
+[<ClientType(ClientSection.Events)>]
+type PlayerAddedEffect =
+    {
+        name : string option
+        userId : int option
+        kind : PlayerKind
+    }
+
+[<ClientType(ClientSection.Events)>]
+type PiecesOwnershipChangedEffect =
+    {
+        oldPlayerId : int option
+        newPlayerId : int option
+        pieceIds : int list
+    }
+
+[<ClientType(ClientSection.Events)>]
+type PieceMovedEffect =
+    {
+        oldCellId : int
+        newCellId : int
+        pieceId : int
     }
 
 [<ClientType(ClientSection.Events)>]
 type Effect =
-    | GameStatusChanged of DiffEffect<GameStatus>
-    | TurnCycleChanged of DiffEffect<int list>
-    | ParametersChanged of DiffEffect<GameParameters>
+    | GameStatusChanged of GameStatusChangedEffect
+    | TurnCycleChanged of TurnCycleChangedEffect
+    | ParametersChanged of ParametersChangedEffect
     //TODO: PlayerEliminated may need to change to PlayerStatusChanged as a DiffWithCOntext when statuses are added to players
-    | PlayerEliminated of ScalarEffect<int>
-    | PieceKilled of ScalarEffect<int>
-    | PlayersRemoved of ScalarEffect<int list>
-    | PlayerOutOfMoves of ScalarEffect<int>
-    | PlayerAdded of ScalarEffect<CreatePlayerRequest>
-    | PiecesOwnershipChanged of DiffWithContextEffect<int option, int list>
-    | PieceMoved of DiffWithContextEffect<int, int>
-    | CurrentTurnChanged of DiffEffect<Turn option>
-
-module Effect =
-    let gameStatusChanged (oldValue, newValue) =
-        Effect.GameStatusChanged {
-            oldValue = oldValue
-            newValue = newValue
-        }
-
-    let turnCycleChanged (oldValue, newValue) =
-        Effect.TurnCycleChanged {
-            oldValue = oldValue
-            newValue = newValue
-        }
-
-    let parametersChanged (oldValue, newValue) =
-        Effect.ParametersChanged {
-            oldValue = oldValue
-            newValue = newValue
-        }
-
-    let playerEliminated (playerId) =
-        Effect.PlayerEliminated {
-            value = playerId
-        }
-
-    let playerAdded (request) =
-        Effect.PlayerAdded {
-            value = request
-        }
-
-    let playerOutOfMoves (playerId) =
-        Effect.PlayerOutOfMoves {
-            value = playerId
-        }
-
-    let pieceKilled (pieceId) =
-        Effect.PieceKilled {
-            value = pieceId
-        }
-
-    let playersRemoved (playerIds) =
-        Effect.PlayersRemoved {
-            value = playerIds
-        }
-
-    let piecesOwnershipChanged (pieceIds, oldPlayerId, newPlayerId) =
-        Effect.PiecesOwnershipChanged {
-            context = pieceIds
-            oldValue = oldPlayerId
-            newValue = newPlayerId
-        }
-
-    let pieceMoved (pieceId, oldCellId, newCellId) =
-        Effect.PieceMoved {
-            context = pieceId
-            oldValue = oldCellId
-            newValue = newCellId
-        }
-
-    let currentTurnChanged (oldTurn, newTurn) =
-        Effect.CurrentTurnChanged {
-            oldValue = oldTurn
-            newValue = newTurn
-        }
+    | PlayerEliminated of PlayerEliminatedEffect
+    | PieceKilled of PieceKilledEffect
+    | PlayersRemoved of PlayersRemovedEffect
+    | PlayerOutOfMoves of PlayerOutOfMovesEffect
+    | PlayerAdded of PlayerAddedEffect
+    | PiecesOwnershipChanged of PiecesOwnershipChangedEffect
+    | PieceMoved of PieceMovedEffect
+    | CurrentTurnChanged of CurrentTurnChangedEffect
 
 [<ClientType(ClientSection.Events)>]
 type EventKind =
@@ -140,3 +131,12 @@ type CreateEventRequest =
         effects : Effect list
         createdByUserId : int
     }
+    
+module PlayerAddedEffect =
+    let fromRequest (request : CreatePlayerRequest) : Effect =
+        let f : PlayerAddedEffect = {
+            name = request.name
+            userId = request.userId
+            kind = request.kind
+        } 
+        Effect.PlayerAdded f

@@ -195,8 +195,8 @@ type EventRepositoryTests() =
 
             let effects = 
                 [
-                    Effect.playerAdded playerRequest
-                    Effect.playerAdded playerRequest
+                    PlayerAddedEffect.fromRequest playerRequest
+                    PlayerAddedEffect.fromRequest playerRequest
                 ]
             let event = TestUtilities.createEventRequest(effects) //EventKind doesn't matter
 
@@ -249,20 +249,13 @@ type EventRepositoryTests() =
             e1.kind |> shouldBe EventKind.PlayerJoined
             e1.createdByUserId |> shouldBe user.id
             e1.effects.Length |> shouldBe 1
-
-            match e1.effects.[0] with
-            | Effect.PlayerAdded f ->
-                f.value |> shouldBe p2Request
-
-            | _ -> failwith "Incorrect effects"
+            
+            e1.effects.[0] |> shouldBe (PlayerAddedEffect.fromRequest p2Request)
             
             let e2 = events.[1]
             e2.kind |> shouldBe EventKind.PlayerJoined
             e2.createdByUserId |> shouldBe user.id
             e2.effects.Length |> shouldBe 1
 
-            match e2.effects.[0] with
-            | Effect.PlayerAdded f ->
-                f.value |> shouldBe p3Request
-
-            | _ -> failwith "Incorrect effects"}
+            e2.effects.[0] |> shouldBe (PlayerAddedEffect.fromRequest p3Request)
+        }

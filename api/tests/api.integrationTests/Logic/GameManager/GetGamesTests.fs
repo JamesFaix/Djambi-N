@@ -7,6 +7,7 @@ open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.IntegrationTests
 open Djambi.Api.Model
 open Djambi.Api.Logic.Managers
+open Djambi.Api.Db.Repositories
 
 type GetGamesTests() =
     inherit TestsBase()
@@ -33,15 +34,9 @@ type GetGamesTests() =
     let ``Get games should filter on allowGuests``() =
         task {
             //Arrange
-            let request = getGameParameters()
-            let session1 = getSessionForUser 1
-            let session2 = getSessionForUser 2
+            let! (_, _, game1) = TestUtilities.createuserSessionAndGame(false) |> thenValue
+            let! (_, _, game2) = TestUtilities.createuserSessionAndGame(true) |> thenValue
             let adminSession = getSessionForUser 3 |> TestUtilities.setSessionIsAdmin true
-
-            let! game1 = GameManager.createGame request session1
-                          |> AsyncHttpResult.thenValue
-            let! game2 = GameManager.createGame { request with allowGuests = true } session2
-                          |> AsyncHttpResult.thenValue
 
             let query = { GamesQuery.empty with allowGuests = Some true }
 
@@ -58,16 +53,12 @@ type GetGamesTests() =
     let ``Get games should filter on isPublic``() =
         task {
             //Arrange
-            let request = getGameParameters()
-            let session1 = getSessionForUser 1
-            let session2 = getSessionForUser 2
+            
+            let! (_, _, game1) = TestUtilities.createuserSessionAndGame(false) |> thenValue
+            let! (_, _, game2) = TestUtilities.createuserSessionAndGame(true) |> thenValue
+            let! _ = GameRepository.updateGame({ game2 with parameters = { game2.parameters with isPublic = true }}) |> thenValue
+
             let adminSession = getSessionForUser 3 |> TestUtilities.setSessionIsAdmin true
-
-            let! game1 = GameManager.createGame request session1
-                          |> AsyncHttpResult.thenValue
-            let! game2 = GameManager.createGame { request with isPublic = true } session2
-                          |> AsyncHttpResult.thenValue
-
             let query = { GamesQuery.empty with isPublic = Some true }
 
             //Act
@@ -105,15 +96,9 @@ type GetGamesTests() =
     let ``Get games should filter non-public games current user is not in, if not admin``() =
         task {
             //Arrange
-            let request = getGameParameters()
-            let session1 = getSessionForUser 1
-            let session2 = getSessionForUser 2
-
-            let! game1 = GameManager.createGame request session1
-                          |> AsyncHttpResult.thenValue
-            let! game2 = GameManager.createGame request session2
-                          |> AsyncHttpResult.thenValue
-            let! game3 = GameManager.createGame { request with isPublic = true } session2
+            let! (_, session1, game1) = TestUtilities.createuserSessionAndGame(true) |> thenValue
+            let! (_, session2, game2) = TestUtilities.createuserSessionAndGame(true) |> thenValue           
+            let! game3 = GameManager.createGame { getGameParameters() with isPublic = true } session2
                           |> AsyncHttpResult.thenValue
 
             let playerRequest = { getCreatePlayerRequest with userId = Some 1 }

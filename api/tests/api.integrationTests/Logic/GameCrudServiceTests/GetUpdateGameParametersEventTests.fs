@@ -80,7 +80,7 @@ type GetUpdateGameParametersEventTests() =
             | (Effect.ParametersChanged f1, Effect.PlayersRemoved f2) ->
                 f1.oldValue |> shouldBe game.parameters
                 f1.newValue |> shouldBe newParameters
-                f2.value |> shouldBe [game.players.[3].id]
+                f2.playerIds |> shouldBe [game.players.[3].id]
 
             | _ -> failwith "Incorrect effects"
         }
@@ -116,7 +116,7 @@ type GetUpdateGameParametersEventTests() =
             | (Effect.ParametersChanged f1, Effect.PlayersRemoved f2) ->
                 f1.oldValue |> shouldBe game.parameters
                 f1.newValue |> shouldBe newParameters
-                f2.value |> shouldBe [game.players.[1].id; game.players.[2].id]
+                f2.playerIds |> shouldBe [game.players.[1].id; game.players.[2].id]
 
             | _ -> failwith "Incorrect effects"
         }

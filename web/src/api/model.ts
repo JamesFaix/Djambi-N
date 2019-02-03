@@ -172,15 +172,9 @@ export enum TurnStatus {
 
 //-------- EVENTS --------
 
-export interface DiffEffect<a> {
-	oldValue : a,
-	newValue : a,
-}
-
-export interface DiffWithContextEffect<a, b> {
-	oldValue : a,
-	newValue : a,
-	context : b,
+export interface CurrentTurnChangedEffect {
+	oldValue : Turn,
+	newValue : Turn,
 }
 
 export interface Effect {
@@ -189,17 +183,17 @@ export interface Effect {
 }
 
 export type EffectCase =
-	DiffEffect<GameStatus> |
-	DiffEffect<number[]> |
-	DiffEffect<GameParameters> |
-	ScalarEffect<number> |
-	ScalarEffect<number> |
-	ScalarEffect<number[]> |
-	ScalarEffect<number> |
-	ScalarEffect<CreatePlayerRequest> |
-	DiffWithContextEffect<number, number[]> |
-	DiffWithContextEffect<number, number> |
-	DiffEffect<Turn>
+	GameStatusChangedEffect |
+	TurnCycleChangedEffect |
+	ParametersChangedEffect |
+	PlayerEliminatedEffect |
+	PieceKilledEffect |
+	PlayersRemovedEffect |
+	PlayerOutOfMovesEffect |
+	PlayerAddedEffect |
+	PiecesOwnershipChangedEffect |
+	PieceMovedEffect |
+	CurrentTurnChangedEffect
 
 export enum EffectKind {
 	CurrentTurnChanged = "CurrentTurnChanged",
@@ -243,13 +237,58 @@ export interface EventsQuery {
 	thresholdEventId : number,
 }
 
-export interface ScalarEffect<a> {
-	value : a,
+export interface GameStatusChangedEffect {
+	oldValue : GameStatus,
+	newValue : GameStatus,
+}
+
+export interface ParametersChangedEffect {
+	oldValue : GameParameters,
+	newValue : GameParameters,
+}
+
+export interface PieceKilledEffect {
+	pieceId : number,
+}
+
+export interface PieceMovedEffect {
+	oldCellId : number,
+	newCellId : number,
+	pieceId : number,
+}
+
+export interface PiecesOwnershipChangedEffect {
+	oldPlayerId : number,
+	newPlayerId : number,
+	pieceIds : number[],
+}
+
+export interface PlayerAddedEffect {
+	name : string,
+	userId : number,
+	kind : PlayerKind,
+}
+
+export interface PlayerEliminatedEffect {
+	playerId : number,
+}
+
+export interface PlayerOutOfMovesEffect {
+	playerId : number,
+}
+
+export interface PlayersRemovedEffect {
+	playerIds : number[],
 }
 
 export interface StateAndEventResponse {
 	game : Game,
 	event : Event,
+}
+
+export interface TurnCycleChangedEffect {
+	oldValue : number[],
+	newValue : number[],
 }
 
 //-------- MISC --------

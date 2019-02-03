@@ -219,14 +219,14 @@ let ``Should deserialize Union with Record case with Record property``() =
             SingleFieldUnionJsonConverter() :> JsonConverter
         |]
 
-    let json = """{"kind":"PlayerAdded","value":{"value":{"kind":"Guest","userId":7,"name":"test"}}}"""
-    let expectedRequest : CreatePlayerRequest = 
+    let json = """{"kind":"PlayerAdded","value":{"kind":"Guest","userId":7,"name":"test"}}"""
+    let request : CreatePlayerRequest = 
         { 
             kind = PlayerKind.Guest
             userId = Some 7
             name = Some "test"
         }
-    let expected = Effect.playerAdded expectedRequest
+    let expected = PlayerAddedEffect.fromRequest request
 
     let actual = JsonConvert.DeserializeObject<Effect>(json, converters)
 

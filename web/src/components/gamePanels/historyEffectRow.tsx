@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Effect, DiffEffect, GameStatus, ScalarEffect, DiffWithContextEffect, CreatePlayerRequest, EffectKind, PlayerKind } from '../../api/model';
+import { Effect, EffectKind, PlayerKind, GameStatusChangedEffect, PieceKilledEffect, PieceMovedEffect, PiecesOwnershipChangedEffect, PlayerAddedEffect, PlayerEliminatedEffect, PlayerOutOfMovesEffect, PlayersRemovedEffect, TurnCycleChangedEffect } from '../../api/model';
 import * as Sprintf from 'sprintf-js';
 
 export interface HistoryEffectRowProps {
@@ -21,47 +21,47 @@ export default class HistoryEffectRow extends React.Component<HistoryEffectRowPr
         let f;
         switch (effect.kind) {
             case EffectKind.GameStatusChanged:
-                f = effect.value as DiffEffect<GameStatus>;
+                f = effect.value as GameStatusChangedEffect;
                 return Sprintf.sprintf("Game status changed from %s to %s.", f.oldValue, f.newValue);
 
             case EffectKind.PieceKilled:
-                f = effect.value as ScalarEffect<number>;
-                return Sprintf.sprintf("Piece %i was killed.", f.value);
+                f = effect.value as PieceKilledEffect;
+                return Sprintf.sprintf("Piece %i was killed.", f.pieceId);
 
             case EffectKind.PieceMoved:
-                f = effect.value as DiffWithContextEffect<number, number>;
-                return Sprintf.sprintf("Piece %i moved from cell %i to cell %i.", f.context, f.oldValue, f.newValue);
+                f = effect.value as PieceMovedEffect;
+                return Sprintf.sprintf("Piece %i moved from cell %i to cell %i.", f.pieceId, f.oldCellId, f.newCellId);
 
             case EffectKind.PiecesOwnershipChanged:
-                f = effect.value as DiffWithContextEffect<number, number[]>;
-                if (f.newValue === null) {
-                    return Sprintf.sprintf("Pieces %s were abandoned by player %s.", f.context.join(", "), f.oldValue);
+                f = effect.value as PiecesOwnershipChangedEffect;
+                if (f.newPlayerId === null) {
+                    return Sprintf.sprintf("Pieces %s were abandoned by player %s.", f.pieceIds.join(", "), f.oldPlayerId);
                 } else {
-                    return Sprintf.sprintf("Pieces %s were enlisted by player %s.", f.context.join(", "), f.newValue);
+                    return Sprintf.sprintf("Pieces %s were enlisted by player %s.", f.pieceIds.join(", "), f.newPlayerId);
                 }
 
             case EffectKind.PlayerAdded:
-                f = effect.value as ScalarEffect<CreatePlayerRequest>;
-                if (f.value.kind === PlayerKind.Neutral) {
-                    return Sprintf.sprintf("Neutral player %s joined the game.", f.value.name);
+                f = effect.value as PlayerAddedEffect;
+                if (f.kind === PlayerKind.Neutral) {
+                    return Sprintf.sprintf("Neutral player %s joined the game.", f.name);
                 } else {
-                    return Sprintf.sprintf("Player %s joined the game.", f.value.name);
+                    return Sprintf.sprintf("Player %s joined the game.", f.name);
                 }
 
             case EffectKind.PlayerEliminated:
-                f = effect.value as ScalarEffect<number>;
-                return Sprintf.sprintf("Player %s was eliminated.", f.value);
+                f = effect.value as PlayerEliminatedEffect;
+                return Sprintf.sprintf("Player %s was eliminated.", f.playerId);
 
             case EffectKind.PlayerOutOfMoves:
-                f = effect.value as ScalarEffect<number>;
-                return Sprintf.sprintf("Player %s is out of moves.", f.value);
+                f = effect.value as PlayerOutOfMovesEffect;
+                return Sprintf.sprintf("Player %s is out of moves.", f.playerId);
 
             case EffectKind.PlayersRemoved:
-                f = effect.value as ScalarEffect<number[]>;
-                return Sprintf.sprintf("Players %s were removed from the game.", f.value.join(", "));
+                f = effect.value as PlayersRemovedEffect;
+                return Sprintf.sprintf("Players %s were removed from the game.", f.playerIds.join(", "));
 
             case EffectKind.TurnCycleChanged:
-                f = effect.value as DiffEffect<number[]>;
+                f = effect.value as TurnCycleChangedEffect;
                 return Sprintf.sprintf("The turn cycle was changed from [%s] to [%s].", f.oldValue.join(","), f.newValue.join(","))
 
             default:

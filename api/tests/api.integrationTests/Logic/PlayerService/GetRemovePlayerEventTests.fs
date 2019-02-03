@@ -109,7 +109,7 @@ type GetRemovePlayerEventTests() =
             event.effects.Length |> shouldBe 1
             match event.effects.[0] with 
             | Effect.PlayersRemoved f ->
-                f.value |> shouldBe [player.id]
+                f.playerIds |> shouldBe [player.id]
 
             | _ -> failwith "Incorrect effects"
         }
@@ -138,7 +138,7 @@ type GetRemovePlayerEventTests() =
             event.effects.Length |> shouldBe 1
             match event.effects.[0] with 
             | Effect.PlayersRemoved f ->
-                f.value |> shouldBe [player.id]
+                f.playerIds |> shouldBe [player.id]
 
             | _ -> failwith "Incorrect effects"
         }
@@ -167,7 +167,7 @@ type GetRemovePlayerEventTests() =
             event.effects.Length |> shouldBe 1
             match event.effects.[0] with 
             | Effect.PlayersRemoved f ->
-                f.value |> shouldBe [player.id]
+                f.playerIds |> shouldBe [player.id]
 
             | _ -> failwith "Incorrect effects"
         }
@@ -203,7 +203,7 @@ type GetRemovePlayerEventTests() =
             event.effects.Length |> shouldBe 1
             match event.effects.[0] with 
             | Effect.PlayersRemoved f ->
-                f.value |> shouldBe [userPlayer.id; guestPlayer.id]
+                f.playerIds |> shouldBe [userPlayer.id; guestPlayer.id]
 
             | _ -> failwith "Incorrect effects"
         }
@@ -240,7 +240,7 @@ type GetRemovePlayerEventTests() =
             event.effects.Length |> shouldBe 1
             match event.effects.[0] with 
             | Effect.PlayersRemoved f ->
-                f.value |> shouldBe [guestPlayer.id]
+                f.playerIds |> shouldBe [guestPlayer.id]
 
             | _ -> failwith "Incorrect effects"
         }
@@ -260,7 +260,7 @@ type GetRemovePlayerEventTests() =
             event.effects.Length |> shouldBe 2
             match (event.effects.[0], event.effects.[1]) with 
             | (Effect.PlayersRemoved f1, Effect.GameStatusChanged f2) ->
-                f1.value |> shouldBe [creator.id]
+                f1.playerIds |> shouldBe [creator.id]
 
                 f2.oldValue |> shouldBe GameStatus.Pending
                 f2.newValue |> shouldBe GameStatus.AbortedWhilePending
@@ -294,7 +294,7 @@ type GetRemovePlayerEventTests() =
             event.effects.Length |> shouldBe 1
             match event.effects.[0] with 
             | Effect.PlayersRemoved f ->
-                f.value |> shouldBe [game.players.[0].id; game.players.[1].id]
+                f.playerIds |> shouldBe [game.players.[0].id; game.players.[1].id]
 
             | _ -> failwith "Incorrect effects"
         }
