@@ -47,9 +47,9 @@ let private applyAddPlayerEffect (effect : PlayerAddedEffect) (game : Game) : Ga
         {
             id = 0
             gameId = game.id
-            userId = effect.playerRequest.userId
-            kind = effect.playerRequest.kind
-            name = match effect.playerRequest.name with Some x -> x | None -> ""
+            userId = effect.userId
+            kind = effect.kind
+            name = match effect.name with Some x -> x | None -> ""
             status = PlayerStatus.Pending
             colorId = None
             startingRegion = None

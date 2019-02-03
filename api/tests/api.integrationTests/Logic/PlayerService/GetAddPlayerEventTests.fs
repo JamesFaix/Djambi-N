@@ -18,12 +18,7 @@ type GetAddPlayerEventTests() =
     let assertSuccess (eventRequest : CreateEventRequest) (request : CreatePlayerRequest) : unit =        
         eventRequest.kind |> shouldBe EventKind.PlayerJoined
         eventRequest.effects.Length |> shouldBe 1
-
-        match eventRequest.effects.[0] with
-        | Effect.PlayerAdded f ->
-            f.playerRequest |> shouldBe request
-
-        | _ -> failwith "Incorrect effects"
+        eventRequest.effects.[0] |> shouldBe (PlayerAddedEffect.fromRequest request)
 
     [<Fact>]
     let ``Add user player should work if adding self``() =

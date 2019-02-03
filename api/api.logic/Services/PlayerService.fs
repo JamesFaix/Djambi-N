@@ -46,7 +46,7 @@ let getAddPlayerEvent (game : Game, request : CreatePlayerRequest) (session : Se
     |> Result.map (fun _ -> 
         {
             kind = EventKind.PlayerJoined
-            effects = [ Effect.PlayerAdded { playerRequest = request } ]
+            effects = [ PlayerAddedEffect.fromRequest request ]
             createdByUserId = self.id
         }
     )
@@ -118,5 +118,5 @@ let fillEmptyPlayerSlots (game : Game) : Effect list AsyncHttpResult =
     else
         GameRepository.getNeutralPlayerNames()
         |> thenMap getNeutralPlayerNamesToUse
-        |> thenMap (Seq.map (fun name -> Effect.PlayerAdded { playerRequest = CreatePlayerRequest.neutral name }))    
+        |> thenMap (Seq.map (fun name -> PlayerAddedEffect.fromRequest <| CreatePlayerRequest.neutral name ))    
         |> thenMap Seq.toList

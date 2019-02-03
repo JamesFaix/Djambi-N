@@ -42,10 +42,10 @@ export default class HistoryEffectRow extends React.Component<HistoryEffectRowPr
 
             case EffectKind.PlayerAdded:
                 f = effect.value as PlayerAddedEffect;
-                if (f.playerRequest.kind === PlayerKind.Neutral) {
-                    return Sprintf.sprintf("Neutral player %s joined the game.", f.playerRequest.name);
+                if (f.kind === PlayerKind.Neutral) {
+                    return Sprintf.sprintf("Neutral player %s joined the game.", f.name);
                 } else {
-                    return Sprintf.sprintf("Player %s joined the game.", f.playerRequest.name);
+                    return Sprintf.sprintf("Player %s joined the game.", f.name);
                 }
 
             case EffectKind.PlayerEliminated:

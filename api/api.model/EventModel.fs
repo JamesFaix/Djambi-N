@@ -59,7 +59,9 @@ type PlayerOutOfMovesEffect =
 [<ClientType(ClientSection.Events)>]
 type PlayerAddedEffect =
     {
-        playerRequest : CreatePlayerRequest
+        name : string option
+        userId : int option
+        kind : PlayerKind
     }
 
 [<ClientType(ClientSection.Events)>]
@@ -129,3 +131,12 @@ type CreateEventRequest =
         effects : Effect list
         createdByUserId : int
     }
+    
+module PlayerAddedEffect =
+    let fromRequest (request : CreatePlayerRequest) : Effect =
+        let f : PlayerAddedEffect = {
+            name = request.name
+            userId = request.userId
+            kind = request.kind
+        } 
+        Effect.PlayerAdded f

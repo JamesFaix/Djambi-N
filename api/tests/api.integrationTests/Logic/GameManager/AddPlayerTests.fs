@@ -33,7 +33,7 @@ type AddPlayerTests() =
             player.kind |> shouldBe PlayerKind.User
 
             resp.event.effects.Length |> shouldBe 1
-            resp.event.effects.[0] |> shouldBe (Effect.PlayerAdded { playerRequest = request })
+            resp.event.effects.[0] |> shouldBe (PlayerAddedEffect.fromRequest request)
         }
 
     [<Fact>]

@@ -35,7 +35,7 @@ type EventServiceTests() =
         let game = { TestUtilities.defaultGame with id = 5 }
         let userId = 1
         let playerRequest = CreatePlayerRequest.user(userId)
-        let effect = Effect.PlayerAdded { playerRequest = playerRequest }   
+        let effect = PlayerAddedEffect.fromRequest playerRequest
         let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
         
         game.players.Length |> shouldBe 0

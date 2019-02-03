@@ -264,7 +264,9 @@ export interface PiecesOwnershipChangedEffect {
 }
 
 export interface PlayerAddedEffect {
-	playerRequest : CreatePlayerRequest,
+	name : string,
+	userId : number,
+	kind : PlayerKind,
 }
 
 export interface PlayerEliminatedEffect {
