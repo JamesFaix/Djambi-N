@@ -53,9 +53,8 @@ let getUpdateGameParametersEvent (game : Game, parameters : GameParameters) (ses
             |> Seq.distinct
             |> Seq.toList
 
-        if removedPlayerIds.Length > 0
-        then effects.Add(Effect.PlayersRemoved { playerIds = removedPlayerIds })
-        else ()
+        for pId in removedPlayerIds do
+            effects.Add(Effect.PlayerRemoved({playerId = pId}))
 
         {
             kind = EventKind.GameParametersChanged

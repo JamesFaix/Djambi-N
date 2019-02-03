@@ -31,10 +31,9 @@ let private applyPieceKilledEffect (effect : PieceKilledEffect) (game : Game) : 
             (fun p -> { p with kind = PieceKind.Corpse; playerId = None }) 
     }
 
-let private applyPlayersRemovedEffect (effect : PlayersRemovedEffect) (game : Game) : Game =
+let private applyPlayerRemovedEffect (effect : PlayerRemovedEffect) (game : Game) : Game =
     { game with 
-        players = game.players 
-            |> List.exceptWithKey (fun p -> p.id) effect.playerIds 
+        players = game.players |> List.filter (fun p -> p.id <> effect.playerId)
     }
 
 let private applyPlayerOutOfMovesEffect (effect : PlayerOutOfMovesEffect) (game : Game) : Game =
@@ -58,10 +57,10 @@ let private applyAddPlayerEffect (effect : PlayerAddedEffect) (game : Game) : Ga
 
     { game with players = List.append game.players [player] }
 
-let private applyPiecesOwnershipChangedEffect (effect : PiecesOwnershipChangedEffect) (game : Game) : Game = 
+let private applyPieceOwnershipChangedEffect (effect : PieceOwnershipChangedEffect) (game : Game) : Game = 
     { game with 
         pieces = game.pieces |> List.replaceIf
-            (fun p -> effect.pieceIds |> List.contains p.id)
+            (fun p -> p.id = effect.pieceId)
             (fun p -> { p with playerId = effect.newPlayerId })
     }
 
@@ -82,10 +81,10 @@ let private applyEffect (effect : Effect) (game : Game) : Game =
     | Effect.ParametersChanged e -> applyParameterChangedEffect e game
     | Effect.PlayerEliminated e -> applyPlayerEliminatedEffect e game
     | Effect.PieceKilled e -> applyPieceKilledEffect e game       
-    | Effect.PlayersRemoved e -> applyPlayersRemovedEffect e game
+    | Effect.PlayerRemoved e -> applyPlayerRemovedEffect e game
     | Effect.PlayerOutOfMoves e -> applyPlayerOutOfMovesEffect e game
     | Effect.PlayerAdded e -> applyAddPlayerEffect e game
-    | Effect.PiecesOwnershipChanged e -> applyPiecesOwnershipChangedEffect e game
+    | Effect.PieceOwnershipChanged e -> applyPieceOwnershipChangedEffect e game
     | Effect.PieceMoved e -> applyPieceMovedEffect e game
     | Effect.CurrentTurnChanged e -> applyCurrentTurnChangedEffect e game
 

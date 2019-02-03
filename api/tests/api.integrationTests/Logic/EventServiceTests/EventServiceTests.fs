@@ -181,7 +181,7 @@ type EventServiceTests() =
         newPiece |> shouldBe { piece with cellId = newCellId }
 
     [<Fact>]
-    let ``Should apply PiecesOwnershipChanged effect``() =
+    let ``Should apply PieceOwnershipChanged effect``() =
         //Arrange
         let pieces : Piece list =
             [
@@ -199,17 +199,10 @@ type EventServiceTests() =
                     originalPlayerId = 0
                     cellId = 0
                 }
-                {
-                    id = 3
-                    kind = PieceKind.Assassin
-                    playerId = Some 0
-                    originalPlayerId = 0
-                    cellId = 0
-                }
             ]
         let game = { TestUtilities.defaultGame with pieces = pieces}
         let newPlayerId = Some 1
-        let effect = Effect.PiecesOwnershipChanged { pieceIds = [1;2]; oldPlayerId = pieces.[0].playerId; newPlayerId = newPlayerId }
+        let effect = Effect.PieceOwnershipChanged { pieceId = 1; oldPlayerId = pieces.[0].playerId; newPlayerId = newPlayerId }
         let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
 
         //Act
@@ -218,11 +211,10 @@ type EventServiceTests() =
         //Assert
         { game with pieces = newGame.pieces } |> shouldBe newGame
 
-        newGame.pieces.Length |> shouldBe 3
+        newGame.pieces.Length |> shouldBe 2
         
         newGame.pieces.[0] |> shouldBe { pieces.[0] with playerId = newPlayerId }
-        newGame.pieces.[1] |> shouldBe { pieces.[1] with playerId = newPlayerId }
-        newGame.pieces.[2] |> shouldBe pieces.[2]
+        newGame.pieces.[1] |> shouldBe pieces.[1]
 
     [<Fact>]
     let ``Should apply PlayerEliminated effect``() =
@@ -281,20 +273,9 @@ type EventServiceTests() =
                     startingRegion = None
                     startingTurnNumber = None
                 }
-                {
-                    id = 3
-                    kind = PlayerKind.User
-                    name = "p3"
-                    gameId = 0
-                    userId = None
-                    status = PlayerStatus.Pending
-                    colorId = None
-                    startingRegion = None
-                    startingTurnNumber = None
-                }
             ]
         let game = { TestUtilities.defaultGame with players = players}
-        let effect = Effect.PlayersRemoved { playerIds = [1;2] }
+        let effect = Effect.PlayerRemoved { playerId = 1 }
         let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
 
         //Act
