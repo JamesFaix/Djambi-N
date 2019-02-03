@@ -89,7 +89,7 @@ export default class ApiClient {
 //-------- EVENTS --------
 
 	async getEvents(gameId : number, query : Model.EventsQuery) : Promise<Model.Event[]> {
-		const route = "/events/query";
+		const route = "/games/" + gameId + "/events/query";
 		return await ApiClientCore.sendRequest<Model.EventsQuery, Model.Event[]>(
 			HttpMethod.Post, route, query);
 	}

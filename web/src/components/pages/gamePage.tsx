@@ -1,6 +1,6 @@
 import * as React from 'react';
 import ApiClient from '../../api/client';
-import { User, Game, Board } from '../../api/model';
+import { User, Game, Board, Event, EventsQuery, ResultsDirection } from '../../api/model';
 import LinkButton from '../controls/linkButton';
 import PageTitle from '../pageTitle';
 import Routes from '../../routes';
@@ -12,6 +12,7 @@ import BoardGeometry from '../../boardRendering/boardGeometry';
 import CurrentTurnPanel from '../gamePanels/currentTurnPanel';
 import TurnCyclePanel from '../gamePanels/turnCyclePanel';
 import PlayersPanel from '../gamePanels/playersPanel';
+import HistoryPanel from '../gamePanels/historyPanel';
 
 export interface GamePageProps {
     user : User,
@@ -23,7 +24,8 @@ export interface GamePageProps {
 export interface GamePageState {
     game : Game,
     boardView : BoardView,
-    board : Board
+    board : Board,
+    events : Event[]
 }
 
 export default class GamePage extends React.Component<GamePageProps, GamePageState> {
@@ -34,7 +36,8 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
         this.state = {
             game : null,
             boardView : null,
-            board : null
+            board : null,
+            events: []
         };
     }
 
@@ -63,15 +66,18 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
 
     private async updateState(game : Game) : Promise<void> {
         return await this.getAndCacheBoard(game.parameters.regionCount)
-            .then(board => {
-                const cellSize = this.getCellSize(game.parameters.regionCount);
-                let boardView = BoardViewService.createBoard(board, cellSize);
-                boardView = BoardViewService.update(boardView, game);
-                this.setState({
-                    boardView : boardView,
-                    game : game
-                });
-            });
+            .then(board => this.getEvents(game.id)
+                .then(events => {
+                    const cellSize = this.getCellSize(game.parameters.regionCount);
+                    let boardView = BoardViewService.createBoard(board, cellSize);
+                    boardView = BoardViewService.update(boardView, game);
+                    this.setState({
+                        boardView : boardView,
+                        game : game,
+                        events: events
+                    });
+                })
+            );
     }
 
     private selectCell(cell : CellView) : void {
@@ -92,6 +98,17 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
         this.props.api
             .resetTurn(gameId)
             .then(response => this.updateState(response.game));
+    }
+
+    private getEvents(gameId : number) : Promise<Event[]> {
+        const eventQuery : EventsQuery = {
+            maxResults: null,
+            direction: ResultsDirection.Descending,
+            thresholdEventId: null,
+            thresholdTime: null
+        }
+
+        return this.props.api.getEvents(gameId, eventQuery);
     }
 
     componentDidMount() {
@@ -161,6 +178,10 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                         />
                     </div>
                 </div>
+                <HistoryPanel
+                    game={this.state.game}
+                    events={this.state.events}
+                />
             </div>
         );
     }

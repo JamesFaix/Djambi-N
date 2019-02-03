@@ -3,9 +3,9 @@
 open System
 open Dapper
 open FSharp.Control.Tasks
-open Newtonsoft.Json
 open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
+open Djambi.Api.Common.Json
 open Djambi.Api.Db
 open Djambi.Api.Db.Mapping
 open Djambi.Api.Db.Model
@@ -144,9 +144,9 @@ let getUpdateGameCommand (game : Game) : CommandDefinition =
                     .add("IsPublic", game.parameters.isPublic)
                     .add("RegionCount", game.parameters.regionCount)
                     .add("GameStatusId", game.status |> mapGameStatusToId)
-                    .add("PiecesJson", JsonConvert.SerializeObject(game.pieces))
-                    .add("CurrentTurnJson", JsonConvert.SerializeObject(game.currentTurn))
-                    .add("TurnCycleJson", JsonConvert.SerializeObject(game.turnCycle))
+                    .add("PiecesJson", JsonUtility.serialize game.pieces)
+                    .add("CurrentTurnJson", JsonUtility.serialize game.currentTurn)
+                    .add("TurnCycleJson", JsonUtility.serialize game.turnCycle)
     proc("Games_Update", param)
     
 //Exposed for test setup
