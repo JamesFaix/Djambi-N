@@ -47,7 +47,7 @@ let private getCommands (oldGame : Game, newGame : Game, transaction : IDbTransa
             |> (not << Seq.exists (fun newP -> oldP.id = newP.id )))
             
     for p in removedPlayers do
-        commands.Add (GameRepository.getRemovePlayerCommand p.id)
+        commands.Add (GameRepository.getRemovePlayerCommand (oldGame.id, p.id))
 
     //add players
     let addedPlayers = 

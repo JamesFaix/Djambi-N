@@ -136,7 +136,7 @@ type GameRepositoryTests() =
             let! player = GameRepository.addPlayer (gameId, playerRequest) |> thenValue
 
             //Act
-            let! _ = GameRepository.removePlayer player.id |> thenValue
+            let! _ = GameRepository.removePlayer (gameId, player.id) |> thenValue
 
             //Assert
             let! players = GameRepository.getPlayersForGames [gameId] |> thenValue

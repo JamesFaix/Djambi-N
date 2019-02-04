@@ -50,9 +50,9 @@ let getPlayersForGames (gameIds : int list) : Player List AsyncHttpResult =
     queryMany<PlayerSqlModel>(cmd, "Player")
     |> thenMap (List.map mapPlayerResponse)
 
-let getPlayer (playerId : int) : Player AsyncHttpResult =
+let getPlayer (gameId : int, playerId : int) : Player AsyncHttpResult =
     let param = DynamicParameters()
-                    .add("GameIds", null)
+                    .add("GameIds", gameId.ToString())
                     .add("PlayerId", playerId);
 
     let cmd = proc("Players_Get", param)
@@ -108,7 +108,7 @@ let getAddPlayerCommand (gameId : int, request : CreatePlayerRequest) : CommandD
 let addPlayer (gameId : int, request : CreatePlayerRequest) : Player AsyncHttpResult =
     let cmd = getAddPlayerCommand (gameId, request)
     querySingle<int>(cmd, "Player")
-    |> thenBindAsync getPlayer
+    |> thenBindAsync (fun pId -> getPlayer (gameId, pId))
 
 let getAddFullPlayerCommand (player : Player) : CommandDefinition =
     let param = DynamicParameters()
@@ -122,13 +122,14 @@ let getAddFullPlayerCommand (player : Player) : CommandDefinition =
                     .addOption("StartingTurnNumber", player.startingTurnNumber)
     proc("Players_Add", param)
 
-let getRemovePlayerCommand (playerId : int) : CommandDefinition = 
+let getRemovePlayerCommand (gameId : int, playerId : int) : CommandDefinition = 
     let param = DynamicParameters()
+                    .add("GameId", gameId)
                     .add("PlayerId", playerId)
     proc("Players_Remove", param)
 
-let removePlayer(playerId : int) : Unit AsyncHttpResult =
-    let cmd = getRemovePlayerCommand playerId
+let removePlayer(gameId : int, playerId : int) : Unit AsyncHttpResult =
+    let cmd = getRemovePlayerCommand (gameId, playerId)
     queryUnit(cmd, "Player")
 
 let getNeutralPlayerNames() : string list AsyncHttpResult =
@@ -156,6 +157,7 @@ let updateGame(game : Game) : Unit AsyncHttpResult =
 
 let getUpdatePlayerCommand (player : Player) : CommandDefinition =
     let param = DynamicParameters()
+                    .add("GameId", player.gameId)
                     .add("PlayerId", player.id)
                     .addOption("ColorId", player.colorId)
                     .addOption("StartingTurnNumber", player.startingTurnNumber)

@@ -1,4 +1,5 @@
 CREATE PROCEDURE [dbo].[Players_Update]
+    @GameId INT,
     @PlayerId INT,
     @PlayerStatusId TINYINT,
     @ColorId TINYINT,
@@ -8,7 +9,12 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-    IF NOT EXISTS(SELECT 1 FROM Players WHERE PlayerId = @PlayerId)
+    IF NOT EXISTS(
+        SELECT 1
+        FROM Players
+        WHERE PlayerId = @PlayerId
+            AND GameId = @GameId
+    )
         THROW 50404, 'Player not found.', 1
 
     UPDATE Players
@@ -17,4 +23,5 @@ BEGIN
         StartingTurnNumber = @StartingTurnNumber,
         PlayerStatusId = @PlayerStatusId
     WHERE PlayerId = @PlayerId
+        AND GameId = @GameId
 END
