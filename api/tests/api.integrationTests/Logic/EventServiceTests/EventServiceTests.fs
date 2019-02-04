@@ -285,7 +285,7 @@ type EventServiceTests() =
         { game with players = newGame.players } |> shouldBe newGame
 
         newGame.players.Length |> shouldBe 1
-        newGame.players.Head |> shouldBe players.[2]
+        newGame.players.Head |> shouldBe players.[1]
 
     [<Fact>]
     let ``Should apply TurnCycleChanged effect``() =
