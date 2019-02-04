@@ -14,6 +14,7 @@ BEGIN
         EventId,
         GameId,
         CreatedByUserId,
+        ActingPlayerId,
         CreatedOn,
         EventKindId,
         EffectsJson

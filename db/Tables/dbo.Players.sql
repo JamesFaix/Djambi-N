@@ -9,7 +9,7 @@ CREATE TABLE [dbo].[Players]
     [ColorId]            TINYINT NULL,
     [StartingRegion]     TINYINT NULL,
     [StartingTurnNumber] TINYINT NULL,
-    CONSTRAINT [PK_Players] PRIMARY KEY CLUSTERED  ([PlayerId]),
+    CONSTRAINT [PK_Players] PRIMARY KEY CLUSTERED  ([GameId], [PlayerId]),
     CONSTRAINT [UQ_Players_Name] UNIQUE NONCLUSTERED  ([GameId], [Name]),
     CONSTRAINT [FK_Players_GameyId] FOREIGN KEY ([GameId]) REFERENCES [dbo].[Games] ([GameId]),
     CONSTRAINT [FK_Players_UserId] FOREIGN KEY ([UserId]) REFERENCES [dbo].[Users] ([UserId]),
