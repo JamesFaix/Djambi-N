@@ -107,10 +107,10 @@ let private applyTurnToPieces(game : Game) : (Piece list * Effect list) =
         match currentTurn.vacateCellId with
         | None ->        
             pieces.[subject.id] <- subject.moveTo destination.id
-            effects.Add(Effect.PieceMoved { pieceId = subject.id; oldCellId = subject.cellId; newCellId = destination.id })
+            effects.Add(Effect.PieceMoved { oldPiece = subject; newCellId = destination.id })
         | Some vacateCellId -> 
             pieces.[subject.id] <- subject.moveTo vacateCellId
-            effects.Add(Effect.PieceMoved { pieceId = subject.id; oldCellId = destination.id; newCellId = vacateCellId })
+            effects.Add(Effect.PieceMoved { oldPiece = { subject with cellId = destination.id}; newCellId = vacateCellId })
 
         match currentTurn.targetPiece game with
         | None -> ()
@@ -119,7 +119,9 @@ let private applyTurnToPieces(game : Game) : (Piece list * Effect list) =
             if subject.isKiller
             then 
                 pieces.[target.id] <- target.kill
-                effects.Add(Effect.PieceKilled { pieceId = target.id })
+                effects.Add(Effect.PieceKilled { 
+                    oldPiece = target
+                })
 
             //Enlist players pieces if killing chief
             if subject.isKiller && target.kind = Chief
@@ -128,8 +130,7 @@ let private applyTurnToPieces(game : Game) : (Piece list * Effect list) =
                 for p in enlistedPieces do
                     pieces.[p.id] <- pieces.[p.id].enlistBy subject.playerId.Value
                     effects.Add(Effect.PieceOwnershipChanged{
-                                pieceId = p.id
-                                oldPlayerId = target.playerId
+                                oldPiece = p
                                 newPlayerId = subject.playerId
                             })
 
@@ -137,14 +138,14 @@ let private applyTurnToPieces(game : Game) : (Piece list * Effect list) =
             match currentTurn.dropCellId with
             | Some dropCellId ->  
                 pieces.[target.id] <- pieces.[target.id].moveTo dropCellId
-                effects.Add(Effect.PieceMoved { pieceId = target.id; oldCellId = target.cellId; newCellId = dropCellId })
+                effects.Add(Effect.PieceMoved { oldPiece = target; newCellId = dropCellId })
             | None -> ()
 
             //Move target back to origin if subject is assassin
             if subject.kind = Assassin
             then 
                 pieces.[target.id] <- pieces.[target.id].moveTo originCellId
-                effects.Add(Effect.PieceMoved { pieceId = target.id; oldCellId = target.cellId; newCellId = originCellId })
+                effects.Add(Effect.PieceMoved { oldPiece = target; newCellId = originCellId })
         (pieces.Values |> Seq.toList, effects |> Seq.toList)
 
 let private removeSequentialDuplicates(turnCycle : int list) : int list =
@@ -230,7 +231,7 @@ let private killCurrentPlayer(game : Game) : (Game * Effect list) =
     let abandonedPieces = game.pieces |> List.filter (fun p -> p.playerId = Some playerId)
 
     for p in abandonedPieces do
-        effects.Add(Effect.PieceOwnershipChanged { pieceId = p.id; oldPlayerId = Some playerId; newPlayerId = None })
+        effects.Add(Effect.PieceOwnershipChanged { oldPiece = p; newPlayerId = None })
 
     let updatedGame =
         { game with

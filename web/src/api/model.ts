@@ -249,19 +249,17 @@ export interface ParametersChangedEffect {
 }
 
 export interface PieceKilledEffect {
-	pieceId : number,
+	oldPiece : Piece,
 }
 
 export interface PieceMovedEffect {
-	oldCellId : number,
+	oldPiece : Piece,
 	newCellId : number,
-	pieceId : number,
 }
 
 export interface PieceOwnershipChangedEffect {
-	oldPlayerId : number,
+	oldPiece : Piece,
 	newPlayerId : number,
-	pieceId : number,
 }
 
 export interface PlayerAddedEffect {

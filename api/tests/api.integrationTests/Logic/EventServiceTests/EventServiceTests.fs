@@ -139,7 +139,9 @@ type EventServiceTests() =
             }
         let game = { TestUtilities.defaultGame with pieces = [piece]}
 
-        let effect = Effect.PieceKilled { pieceId = piece.id }
+        let effect = Effect.PieceKilled { 
+            oldPiece = piece
+        }
         let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
 
         //Act
@@ -166,7 +168,7 @@ type EventServiceTests() =
             }
         let game = { TestUtilities.defaultGame with pieces = [piece]}
         let newCellId = 3
-        let effect = Effect.PieceMoved { pieceId = piece.id; oldCellId = piece.cellId; newCellId = newCellId }
+        let effect = Effect.PieceMoved { oldPiece = piece; newCellId = newCellId }
         let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
 
         //Act
@@ -202,7 +204,7 @@ type EventServiceTests() =
             ]
         let game = { TestUtilities.defaultGame with pieces = pieces}
         let newPlayerId = Some 1
-        let effect = Effect.PieceOwnershipChanged { pieceId = 1; oldPlayerId = pieces.[0].playerId; newPlayerId = newPlayerId }
+        let effect = Effect.PieceOwnershipChanged { oldPiece = pieces.[0]; newPlayerId = newPlayerId }
         let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
 
         //Act

@@ -41,7 +41,7 @@ type PlayerEliminatedEffect =
 [<ClientType(ClientSection.Events)>]
 type PieceKilledEffect =
     {
-        pieceId : int
+        oldPiece : Piece
     }
 
 [<ClientType(ClientSection.Events)>]
@@ -67,17 +67,15 @@ type PlayerAddedEffect =
 [<ClientType(ClientSection.Events)>]
 type PieceOwnershipChangedEffect =
     {
-        oldPlayerId : int option
+        oldPiece : Piece
         newPlayerId : int option
-        pieceId : int
     }
 
 [<ClientType(ClientSection.Events)>]
 type PieceMovedEffect =
     {
-        oldCellId : int
+        oldPiece : Piece
         newCellId : int
-        pieceId : int
     }
 
 [<ClientType(ClientSection.Events)>]
