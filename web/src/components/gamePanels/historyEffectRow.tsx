@@ -92,7 +92,9 @@ export default class HistoryEffectRow extends React.Component<HistoryEffectRowPr
     }
 
     private getTurnCycleChangedMessage(game : Model.Game, effect : Model.TurnCycleChangedEffect) : string {
-        return Sprintf.sprintf("The turn cycle was changed from [%s] to [%s].", effect.oldValue.join(","), effect.newValue.join(","));
+        const oldList = effect.oldValue.map(id => this.getPlayerName(id)).join(",");
+        const newList = effect.newValue.map(id => this.getPlayerName(id)).join(",");
+        return Sprintf.sprintf("The turn cycle was changed from [%s] to [%s].", oldList, newList);
     }
 
     //---Helpers---
