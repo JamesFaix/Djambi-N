@@ -113,6 +113,7 @@ type Event =
         id : int
         createdByUserId : int
         createdOn : DateTime
+        actingPlayerId : int option
         kind : EventKind
         effects : Effect list
     }
@@ -130,6 +131,7 @@ type CreateEventRequest =
         kind : EventKind
         effects : Effect list
         createdByUserId : int
+        actingPlayerId : int option
     }
     
 module PlayerAddedEffect =

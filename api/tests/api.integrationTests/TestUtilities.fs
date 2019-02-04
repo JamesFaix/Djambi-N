@@ -106,6 +106,7 @@ let emptyEventRequest : CreateEventRequest =
         kind = EventKind.CellSelected //Kind shouldn't matter
         effects = List.empty
         createdByUserId = 1
+        actingPlayerId = None
     }
 
 let createEventRequest (effects : Effect list) : CreateEventRequest =

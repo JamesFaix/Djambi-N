@@ -32,6 +32,7 @@ let private getCreateEventCommand (gameId : int, request : CreateEventRequest) :
                     .add("GameId", gameId)
                     .add("EventKindId", request.kind |> mapEventKindToId)
                     .add("CreatedByUserId", request.createdByUserId)
+                    .addOption("ActingPlayerId", request.actingPlayerId)
                     .add("EffectsJson", JsonUtility.serialize request.effects)
     proc("Events_Create", param)
 
@@ -105,6 +106,7 @@ let persistEvent (request : CreateEventRequest, oldGame : Game, newGame : Game) 
                     id = eventId
                     createdByUserId = request.createdByUserId
                     createdOn = DateTime.UtcNow
+                    actingPlayerId = request.actingPlayerId
                     kind = request.kind
                     effects = request.effects
                 }

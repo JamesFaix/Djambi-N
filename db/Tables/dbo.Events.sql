@@ -10,6 +10,6 @@ CREATE TABLE [dbo].[Events]
     CONSTRAINT [PK_Events]              PRIMARY KEY CLUSTERED  ([EventId]),
     CONSTRAINT [FK_Events_GameId] FOREIGN KEY ([GameId]) REFERENCES [dbo].[Games] ([GameId]),
     CONSTRAINT [FK_Events_CreatedByUserId] FOREIGN KEY ([CreatedByUserId]) REFERENCES [dbo].[Users] ([UserId]),
-    CONSTRAINT [FK_Events_ActingPlayerId] FOREIGN KEY ([GameId], [ActingPlayerId]) REFERENCES [dbo].[Players] ([GameId], [PlayerId]),
+    CONSTRAINT [FK_Events_ActingPlayerId] FOREIGN KEY ([ActingPlayerId]) REFERENCES [dbo].[Players] ([PlayerId]),
     CONSTRAINT [FK_Events_EventKindId] FOREIGN KEY ([EventKindId]) REFERENCES [dbo].[EventKinds] ([EventKindId])
 )

@@ -9,6 +9,7 @@ open Djambi.Api.Logic.ModelExtensions
 open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
 open Djambi.Api.Logic.Services
 open Djambi.Api.Model
+open Djambi.Api.Logic
  
 let getGameStartEvent (game : Game) (session : Session) : CreateEventRequest AsyncHttpResult =    
     SecurityService.ensureAdminOrCreator session game
@@ -25,10 +26,12 @@ let getGameStartEvent (game : Game) (session : Session) : CreateEventRequest Asy
                     List.append 
                         addNeutralPlayerEffects 
                         [Effect.GameStatusChanged { oldValue = GameStatus.Pending; newValue = GameStatus.Started }]
+
                 {
                     kind = EventKind.GameStarted
                     effects = effects
                     createdByUserId = session.user.id
+                    actingPlayerId = ContextService.getActingPlayerId session game
                 }
             )
     )

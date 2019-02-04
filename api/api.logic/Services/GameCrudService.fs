@@ -5,6 +5,7 @@ open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Db.Repositories
 open Djambi.Api.Model
+open Djambi.Api.Logic
     
 let createGame (parameters : GameParameters) (session : Session) : Game AsyncHttpResult =
     let self = session.user
@@ -60,5 +61,6 @@ let getUpdateGameParametersEvent (game : Game, parameters : GameParameters) (ses
             kind = EventKind.GameParametersChanged
             effects = effects |> Seq.toList
             createdByUserId = session.user.id
+            actingPlayerId = ContextService.getActingPlayerId session game
         }
     )

@@ -139,6 +139,7 @@ let mapEventResponse (sqlModel : EventSqlModel) : Event =
         id = sqlModel.eventId
         kind = sqlModel.eventKindId |> mapEventKindId
         createdByUserId = sqlModel.createdByUserId
+        actingPlayerId = sqlModel.actingPlayerId |> Option.ofNullable
         createdOn = sqlModel.createdOn
         effects = JsonUtility.deserializeList sqlModel.effectsJson
     }
