@@ -14,6 +14,23 @@ export default class ThemeFactory {
 
             centerCellName : "The Seat",
 
+            effectMessageGameStatusChanged :  "Game status changed from %(oldStatus)s to %(newStatus)s.",
+            effectMessagePieceAbandoned :  "%(piece)s was abandoned.",
+            effectMessagePieceEnlisted : "%(piece)s was enlisted by player %(newPlayer)s.",
+            effectMessagePieceKilled : "%(piece)s was killed.",
+            effectMessagePieceMoved : "%(piece)s moved from %(oldCell)s to %(newCell)s.",
+            effectMessagePlayerAdded : "%(player)s joined the game.",
+            effectMessagePlayerAddedNeutral : "Neutral player %(player)s added to the game.",
+            effectMessagePlayerEliminated : "%(player)s was eliminated.",
+            effectMessagePlayerOutOfMoves : "%(player)s is out of moves.",
+            effectMessagePlayerRemoved : "%(player)s was removed from the game.",
+            effectMessageTurnCycleChanged : "The turn cycle was changed from [%(oldCycle)s] to [%(newCycle)s].",
+
+            eventMessageGameStarted : "Game started",
+            eventMessagePlayerEjected : "%(actingPlayer)s ejected %(removedPlayer)s",
+            eventMessagePlayerQuit : "%(player)s conceded",
+            eventMessageTurnCommitted : "%(player)s took a turn",
+
             pieceImageAssassin : "../resources/daggerEmoji.png",
             pieceImageChief : "../resources/crownEmoji.png",
             pieceImageCorpse : "../resources/skullEmoji.png",
@@ -67,6 +84,23 @@ export default class ThemeFactory {
             cellHighlightSelectionOptionIntensity : null,
 
             centerCellName : "The Booth",
+
+            effectMessageGameStatusChanged : null,
+            effectMessagePieceAbandoned : null,
+            effectMessagePieceEnlisted : null,
+            effectMessagePieceKilled : null,
+            effectMessagePieceMoved : null,
+            effectMessagePlayerAdded : null,
+            effectMessagePlayerAddedNeutral : null,
+            effectMessagePlayerEliminated : null,
+            effectMessagePlayerOutOfMoves : null,
+            effectMessagePlayerRemoved : null,
+            effectMessageTurnCycleChanged : null,
+            eventMessageGameStarted : null,
+            eventMessagePlayerEjected : null,
+            eventMessagePlayerQuit : null,
+            eventMessageTurnCommitted : null,
+
 
             pieceImageAssassin : null,
             pieceImageChief : null,

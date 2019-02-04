@@ -1,4 +1,4 @@
-import { PieceKind, Selection, SelectionKind, Game } from "../api/model";
+import { PieceKind, Selection, SelectionKind, Game, Event, EventKind, Effect, EffectKind, PieceOwnershipChangedEffect, PlayerKind, PlayerAddedEffect } from "../api/model";
 import * as Sprintf from "sprintf-js";
 import Theme from "./theme";
 import ThemeFactory from "./themeFactory";
@@ -154,6 +154,50 @@ export default class ThemeService {
             case SelectionKind.Vacate: return this.getValue(t => t.selectionPromptVacate);
             case null: return this.getValue(t => t.selectionPromptNull);
             default: throw "Invalid selection kind.";
+        }
+    }
+
+    public getEventMessageTemplate(event : Event) : string {
+        switch (event.kind) {
+            case EventKind.GameStarted:
+                return this.getValue(t => t.eventMessageGameStarted);
+            case EventKind.PlayerEjected:
+                return this.getValue(t => t.eventMessagePlayerEjected);
+            case EventKind.PlayerQuit:
+                return this.getValue(t => t.eventMessagePlayerQuit);
+            case EventKind.TurnCommitted:
+                return this.getValue(t => t.eventMessageTurnCommitted);
+            default:
+                throw "Unsupported event kind.";
+        }
+    }
+
+    public getEffectMessageTemplate(effect : Effect) : string {
+        switch (effect.kind) {
+            case EffectKind.GameStatusChanged:
+                return this.getValue(t => t.effectMessageGameStatusChanged);
+            case EffectKind.PieceKilled:
+                return this.getValue(t => t.effectMessagePieceKilled);
+            case EffectKind.PieceMoved:
+                return this.getValue(t => t.effectMessagePieceMoved);
+            case EffectKind.PieceOwnershipChanged:
+                return (effect.value as PieceOwnershipChangedEffect).newPlayerId === null
+                    ? this.getValue(t => t.effectMessagePieceAbandoned)
+                    : this.getValue(t => t.effectMessagePieceEnlisted);
+            case EffectKind.PlayerAdded:
+                return (effect.value as PlayerAddedEffect).kind === PlayerKind.Neutral
+                    ? this.getValue(t => t.effectMessagePlayerAddedNeutral)
+                    : this.getValue(t => t.effectMessagePlayerAdded);
+            case EffectKind.PlayerEliminated:
+                return this.getValue(t => t.effectMessagePlayerEliminated);
+            case EffectKind.PlayerOutOfMoves:
+                return this.getValue(t => t.effectMessagePlayerOutOfMoves);
+            case EffectKind.PlayerRemoved:
+                return this.getValue(t => t.effectMessagePlayerRemoved);
+            case EffectKind.TurnCycleChanged:
+                return this.getValue(t => t.effectMessageTurnCycleChanged);
+            default:
+                throw "Unsupported effect kind.";
         }
     }
 }

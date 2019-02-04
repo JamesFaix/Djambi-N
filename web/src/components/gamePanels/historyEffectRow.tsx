@@ -20,26 +20,25 @@ export default class HistoryEffectRow extends React.Component<HistoryEffectRowPr
     }
 
     private getEffectMessage(game : Model.Game, effect : Model.Effect) : string {
-        let f;
         switch (effect.kind) {
             case Model.EffectKind.GameStatusChanged:
-                return this.getGameStatusChangedMessage(game, effect.value as Model.GameStatusChangedEffect);
+                return this.getGameStatusChangedMessage(game, effect);
             case Model.EffectKind.PieceKilled:
-                return this.getPieceKilledMessage(game, effect.value as Model.PieceKilledEffect);
+                return this.getPieceKilledMessage(game, effect);
             case Model.EffectKind.PieceMoved:
-                return this.getPieceMovedMessage(game, effect.value as Model.PieceMovedEffect);
+                return this.getPieceMovedMessage(game, effect);
             case Model.EffectKind.PieceOwnershipChanged:
-                return this.getPieceOwnershipChangedMessage(game, effect.value as Model.PieceOwnershipChangedEffect);
+                return this.getPieceOwnershipChangedMessage(game, effect);
             case Model.EffectKind.PlayerAdded:
-                return this.getPlayerAddedMessage(game, effect.value as Model.PlayerAddedEffect);
+                return this.getPlayerAddedMessage(game, effect);
             case Model.EffectKind.PlayerEliminated:
-                return this.getPlayerEliminatedMessage(game, effect.value as Model.PlayerEliminatedEffect);
+                return this.getPlayerEliminatedMessage(game, effect);
             case Model.EffectKind.PlayerOutOfMoves:
-                return this.getPlayerOutOfMovesMessages(game, effect.value as Model.PlayerOutOfMovesEffect);
+                return this.getPlayerOutOfMovesMessages(game, effect);
             case Model.EffectKind.PlayerRemoved:
-                return this.getPlayerRemovedMessage(game, effect.value as Model.PlayerRemovedEffect);
+                return this.getPlayerRemovedMessage(game, effect);
             case Model.EffectKind.TurnCycleChanged:
-                return this.getTurnCycleChangedMessage(game, effect.value as Model.TurnCycleChangedEffect);
+                return this.getTurnCycleChangedMessage(game, effect);
             default:
                 throw "Unsupported effect kind.";
         }
@@ -47,54 +46,94 @@ export default class HistoryEffectRow extends React.Component<HistoryEffectRowPr
 
     //---Specific effects---
 
-    private getGameStatusChangedMessage(game : Model.Game, effect : Model.GameStatusChangedEffect) : string {
-        return Sprintf.sprintf("Game status changed from %s to %s.", effect.oldValue, effect.newValue);
+    private getGameStatusChangedMessage(game : Model.Game, effect : Model.Effect) : string {
+        const template = this.props.theme.getEffectMessageTemplate(effect);
+        const f = effect.value as Model.GameStatusChangedEffect;
+        return Sprintf.sprintf(template, {
+            oldStatus: f.oldValue,
+            newStatus: f.newValue
+        });
     }
 
-    private getPieceKilledMessage(game : Model.Game, effect : Model.PieceKilledEffect) : string {
-        return Sprintf.sprintf("%s was killed.", this.getPieceIdentifier(effect.oldPiece));
+    private getPieceKilledMessage(game : Model.Game, effect : Model.Effect) : string {
+        const template = this.props.theme.getEffectMessageTemplate(effect);
+        const f = effect.value as Model.PieceKilledEffect;
+        return Sprintf.sprintf(template, {
+            piece: this.getPieceIdentifier(f.oldPiece)
+        });
     }
 
-    private getPieceMovedMessage(game : Model.Game, effect : Model.PieceMovedEffect) : string {
-        const piece = this.getPieceIdentifier(effect.oldPiece);
-
-        return Sprintf.sprintf("%s moved from cell %i to cell %i.", piece, effect.oldPiece.cellId, effect.newCellId);
+    private getPieceMovedMessage(game : Model.Game, effect : Model.Effect) : string {
+        const template = this.props.theme.getEffectMessageTemplate(effect);
+        const f = effect.value as Model.PieceMovedEffect;
+        return Sprintf.sprintf(template, {
+            piece: this.getPieceIdentifier(f.oldPiece),
+            oldCell : f.oldPiece.cellId.toString(),
+            newCell : f.newCellId.toString()
+        });
     }
 
-    private getPieceOwnershipChangedMessage(game : Model.Game, effect : Model.PieceOwnershipChangedEffect) : string {
-        const piece = this.getPieceIdentifier(effect.oldPiece);
-
-        if (effect.newPlayerId === null) {
-            return Sprintf.sprintf("%s was abandoned.", piece);
+    private getPieceOwnershipChangedMessage(game : Model.Game, effect : Model.Effect) : string {
+        const template = this.props.theme.getEffectMessageTemplate(effect);
+        const f = effect.value as Model.PieceOwnershipChangedEffect;
+        const piece = this.getPieceIdentifier(f.oldPiece);
+        if (f.newPlayerId === null) {
+            return Sprintf.sprintf(template, {
+                piece: piece
+            });
         } else {
-            return Sprintf.sprintf("%s was enlisted by player %s.", piece, effect.newPlayerId);
+            return Sprintf.sprintf(template, {
+                piece: piece,
+                newPlayer: this.getPlayerName(f.newPlayerId)
+            });
         }
     }
 
-    private getPlayerAddedMessage(game : Model.Game, effect : Model.PlayerAddedEffect) : string {
-        if (effect.kind === Model.PlayerKind.Neutral) {
-            return Sprintf.sprintf("Neutral player %s added to the game.", effect.name);
+    private getPlayerAddedMessage(game : Model.Game, effect : Model.Effect) : string {
+        const template = this.props.theme.getEffectMessageTemplate(effect);
+        const f = effect.value as Model.PlayerAddedEffect;
+        if (f.kind === Model.PlayerKind.Neutral) {
+            return Sprintf.sprintf(template, {
+                player: f.name
+            });
         } else {
-            return Sprintf.sprintf("%s joined the game.", effect.name);
+            return Sprintf.sprintf(template, {
+                player: f.name
+            });
         }
     }
 
-    private getPlayerEliminatedMessage(game : Model.Game, effect : Model.PlayerEliminatedEffect) : string {
-        return Sprintf.sprintf("%s was eliminated.", this.getPlayerName(effect.playerId));
+    private getPlayerEliminatedMessage(game : Model.Game, effect : Model.Effect) : string {
+        const template = this.props.theme.getEffectMessageTemplate(effect);
+        const f = effect.value as Model.PlayerEliminatedEffect;
+        return Sprintf.sprintf(template, {
+            player: this.getPlayerName(f.playerId)
+        });
     }
 
-    private getPlayerOutOfMovesMessages(game : Model.Game, effect : Model.PlayerOutOfMovesEffect) : string {
-        return Sprintf.sprintf("%s is out of moves.", this.getPlayerName(effect.playerId));
+    private getPlayerOutOfMovesMessages(game : Model.Game, effect : Model.Effect) : string {
+        const template = this.props.theme.getEffectMessageTemplate(effect);
+        const f = effect.value as Model.PlayerOutOfMovesEffect;
+        return Sprintf.sprintf(template,  {
+            player: this.getPlayerName(f.playerId)
+        });
     }
 
-    private getPlayerRemovedMessage(game : Model.Game, effect : Model.PlayerRemovedEffect) : string {
-        return Sprintf.sprintf("%s was removed from the game.", this.getPlayerName(effect.playerId));
+    private getPlayerRemovedMessage(game : Model.Game, effect : Model.Effect) : string {
+        const template = this.props.theme.getEffectMessageTemplate(effect);
+        const f = effect.value as Model.PlayerRemovedEffect;
+        return Sprintf.sprintf(template,  {
+            player: this.getPlayerName(f.playerId)
+        });
     }
 
-    private getTurnCycleChangedMessage(game : Model.Game, effect : Model.TurnCycleChangedEffect) : string {
-        const oldList = effect.oldValue.map(id => this.getPlayerName(id)).join(",");
-        const newList = effect.newValue.map(id => this.getPlayerName(id)).join(",");
-        return Sprintf.sprintf("The turn cycle was changed from [%s] to [%s].", oldList, newList);
+    private getTurnCycleChangedMessage(game : Model.Game, effect : Model.Effect) : string {
+        const template = this.props.theme.getEffectMessageTemplate(effect);
+        const f = effect.value as Model.TurnCycleChangedEffect;
+        return Sprintf.sprintf(template, {
+            oldCycle: f.oldValue.map(id => this.getPlayerName(id)).join(","),
+            newCycle: f.newValue.map(id => this.getPlayerName(id)).join(",")
+        });
     }
 
     //---Helpers---

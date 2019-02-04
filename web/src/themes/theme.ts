@@ -11,6 +11,23 @@ export default interface Theme {
 
     centerCellName : string,
 
+    effectMessageGameStatusChanged : string,
+    effectMessagePieceAbandoned : string,
+    effectMessagePieceEnlisted : string,
+    effectMessagePieceKilled : string,
+    effectMessagePieceMoved : string,
+    effectMessagePlayerAdded : string,
+    effectMessagePlayerAddedNeutral : string,
+    effectMessagePlayerEliminated : string,
+    effectMessagePlayerOutOfMoves : string,
+    effectMessagePlayerRemoved : string,
+    effectMessageTurnCycleChanged : string,
+
+    eventMessageGameStarted : string,
+    eventMessagePlayerEjected : string,
+    eventMessagePlayerQuit : string,
+    eventMessageTurnCommitted : string,
+
     pieceImageAssassin : string,
     pieceImageChief : string,
     pieceImageCorpse : string,
