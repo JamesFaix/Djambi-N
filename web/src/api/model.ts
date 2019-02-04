@@ -214,6 +214,7 @@ export interface Event {
 	id : number,
 	createdByUserId : number,
 	createdOn : Date,
+	actingPlayerId : number,
 	kind : EventKind,
 	effects : Effect[],
 }
