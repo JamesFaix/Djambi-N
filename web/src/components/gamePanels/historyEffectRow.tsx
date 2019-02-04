@@ -73,22 +73,22 @@ export default class HistoryEffectRow extends React.Component<HistoryEffectRowPr
 
     private getPlayerAddedMessage(game : Model.Game, effect : Model.PlayerAddedEffect) : string {
         if (effect.kind === Model.PlayerKind.Neutral) {
-            return Sprintf.sprintf("Neutral player %s joined the game.", effect.name);
+            return Sprintf.sprintf("Neutral player %s added to the game.", effect.name);
         } else {
-            return Sprintf.sprintf("Player %s joined the game.", effect.name);
+            return Sprintf.sprintf("%s joined the game.", effect.name);
         }
     }
 
     private getPlayerEliminatedMessage(game : Model.Game, effect : Model.PlayerEliminatedEffect) : string {
-        return Sprintf.sprintf("Player %s was eliminated.", effect.playerId);
+        return Sprintf.sprintf("%s was eliminated.", this.getPlayerName(effect.playerId));
     }
 
     private getPlayerOutOfMovesMessages(game : Model.Game, effect : Model.PlayerOutOfMovesEffect) : string {
-        return Sprintf.sprintf("Player %s is out of moves.", effect.playerId);
+        return Sprintf.sprintf("%s is out of moves.", this.getPlayerName(effect.playerId));
     }
 
     private getPlayerRemovedMessage(game : Model.Game, effect : Model.PlayerRemovedEffect) : string {
-        return Sprintf.sprintf("Player %i was removed from the game.", effect.playerId);
+        return Sprintf.sprintf("%s was removed from the game.", this.getPlayerName(effect.playerId));
     }
 
     private getTurnCycleChangedMessage(game : Model.Game, effect : Model.TurnCycleChangedEffect) : string {
@@ -106,5 +106,9 @@ export default class HistoryEffectRow extends React.Component<HistoryEffectRowPr
         const player = this.props.game.players.find(p => p.id === piece.playerId);
         const playerName = player ? player.name : "Neutral";
         return Sprintf.sprintf("%s's %s", playerName, kindName);
+    }
+
+    private getPlayerName(playerId : number) : string {
+        return this.props.game.players.find(p => p.id === playerId).name;
     }
 }
