@@ -12,6 +12,7 @@ import ActionButton from '../controls/actionButton';
 import Util from '../../util';
 import GamesQueryResultsTable from '../gamesQueryResultsTable';
 import Routes from '../../routes';
+import StyleService from '../../styleService';
 
 export interface FindGamePageProps {
     user : User,
@@ -82,10 +83,10 @@ export default class FindGamePage extends React.Component<FindGamePageProps, Fin
     renderQueryFilters() {
         return (
             <div>
-                <table className="table">
+                <table className={StyleService.classTable}>
                     <tbody>
                         <tr>
-                            <td className="borderless">
+                            <td className={StyleService.classBorderless}>
                                 <LabeledInput
                                     label="Created by"
                                     type={InputTypes.Text}
@@ -93,7 +94,7 @@ export default class FindGamePage extends React.Component<FindGamePageProps, Fin
                                     onChange={e => this.setState({ createdByUserNameFilter: e.target.value })}
                                 />
                             </td>
-                            <td className="borderless">
+                            <td className={StyleService.classBorderless}>
                                 <LabeledTristateDropdown
                                     label="Public"
                                     value={this.state.isPublicFilter}
@@ -102,7 +103,7 @@ export default class FindGamePage extends React.Component<FindGamePageProps, Fin
                             </td>
                         </tr>
                         <tr>
-                        <td className="borderless">
+                        <td className={StyleService.classBorderless}>
                                 <LabeledInput
                                     label="Has user"
                                     type={InputTypes.Text}
@@ -110,7 +111,7 @@ export default class FindGamePage extends React.Component<FindGamePageProps, Fin
                                     onChange={e => this.setState({ playerUserNameFilter: e.target.value })}
                                 />
                             </td>
-                            <td className="borderless">
+                            <td className={StyleService.classBorderless}>
                                 <LabeledTristateDropdown
                                     label="Guests allowed"
                                     value={this.state.allowGuestsFilter}
@@ -119,7 +120,7 @@ export default class FindGamePage extends React.Component<FindGamePageProps, Fin
                             </td>
                         </tr>
                         <tr>
-                            <td className="borderless">
+                            <td className={StyleService.classBorderless}>
                                 <LabeledInput
                                     label="Description"
                                     type={InputTypes.Text}
@@ -127,17 +128,17 @@ export default class FindGamePage extends React.Component<FindGamePageProps, Fin
                                     onChange={e => this.setState({ descriptionContainsFilter: e.target.value })}
                                 />
                             </td>
-                            <td className="borderless">
+                            <td className={StyleService.classBorderless}>
                             </td>
                         </tr>
                         <tr>
-                            <td className="borderless rightAligned">
+                            <td className={StyleService.classes([StyleService.classBorderless, StyleService.classRightAligned])}>
                                 <ActionButton
                                     label="Search"
                                     onClick={() => this.refreshResults()}
                                 />
                             </td>
-                            <td className="borderless">
+                            <td className={StyleService.classBorderless}>
                                 <ActionButton
                                     label="Reset"
                                     onClick={() => this.resetOnClick()}
@@ -160,7 +161,7 @@ export default class FindGamePage extends React.Component<FindGamePageProps, Fin
             <div>
                 <PageTitle label={"Find Game"}/>
                 <br/>
-                <div className="centeredContainer">
+                <div className={StyleService.classCenteredContainer}>
                     <LinkButton label="Home" to={Routes.dashboard()}/>
                     <LinkButton label="My Games" to={Routes.myGames()}/>
                     <LinkButton label="Create Game" to={Routes.createGame()}/>

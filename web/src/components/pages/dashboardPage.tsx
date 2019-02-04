@@ -7,6 +7,7 @@ import { Redirect } from 'react-router';
 import ActionButton from '../controls/actionButton';
 import LinkButton from '../controls/linkButton';
 import Routes from '../../routes';
+import StyleService from '../../styleService';
 
 export interface DashboardPageProps {
     user : User,
@@ -37,7 +38,7 @@ export default class DashboardPage extends React.Component<DashboardPageProps> {
             <div>
                 <PageTitle label={"Welcome, " + this.props.user.name}/>
                 <br/>
-                <div className="centeredContainer">
+                <div className={StyleService.classCenteredContainer}>
                     <LinkButton label="My Games" to={Routes.myGames()}/>
                     <LinkButton label="Create Game" to={Routes.createGame()}/>
                     <LinkButton label="Find Game" to={Routes.findGame()}/>

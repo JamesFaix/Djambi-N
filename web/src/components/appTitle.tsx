@@ -1,19 +1,20 @@
 import * as React from 'react';
 import '../index.css';
+import StyleService from '../styleService';
 
 export default class AppTitle extends React.Component {
 
     render() {
         return (
-            <div className="appTitle">
-                <div className="appTitleCharA">D</div>
-                <div className="appTitleCharB">J</div>
-                <div className="appTitleCharA">A</div>
-                <div className="appTitleCharB">M</div>
-                <div className="appTitleCharA">B</div>
-                <div className="appTitleCharB">I</div>
-                <div className="appTitleCharA">-</div>
-                <div className="appTitleCharB">N</div>
+            <div className={StyleService.classAppTitle}>
+                <div className={StyleService.classAppTitleCharA}>D</div>
+                <div className={StyleService.classAppTitleCharB}>J</div>
+                <div className={StyleService.classAppTitleCharA}>A</div>
+                <div className={StyleService.classAppTitleCharB}>M</div>
+                <div className={StyleService.classAppTitleCharA}>B</div>
+                <div className={StyleService.classAppTitleCharB}>I</div>
+                <div className={StyleService.classAppTitleCharA}>-</div>
+                <div className={StyleService.classAppTitleCharB}>N</div>
             </div>
         );
     }

@@ -9,6 +9,7 @@ import LinkButton from '../controls/linkButton';
 import ActionButton from '../controls/actionButton';
 import { InputTypes } from '../../constants';
 import Routes from '../../routes';
+import StyleService from '../../styleService';
 
 export interface LoginPageProps {
     api : ApiClient,
@@ -76,13 +77,13 @@ export default class LoginPage extends React.Component<LoginPageProps, LoginPage
             <div>
                 <PageTitle label="Log in"/>
                 <br/>
-                <div className="centeredContainer">
+                <div className={StyleService.classCenteredContainer}>
                     <LinkButton label="Home" to={Routes.home()} />
                     <LinkButton label="Sign up" to={Routes.signup()} />
                 </div>
                 <br/>
                 <br/>
-                <div className="form">
+                <div className={StyleService.classForm}>
                     <LabeledInput
                         label="Username"
                         type={InputTypes.Text}
@@ -98,7 +99,7 @@ export default class LoginPage extends React.Component<LoginPageProps, LoginPage
                     />
                     <br/>
                 </div>
-                <div className="centeredContainer">
+                <div className={StyleService.classCenteredContainer}>
                     <ActionButton label="Submit" onClick={() => this.submitOnClick()}/>
                 </div>
             </div>

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import '../../index.css';
 import { InputTypes } from '../../constants';
+import StyleService from '../../styleService';
 
 export interface LabeledInputProps {
     type : InputTypes,
@@ -18,7 +19,7 @@ export default class LabeledInput extends React.Component<LabeledInputProps> {
     render() {
         return (
             <div
-                className="labeledTextBox"
+                className={StyleService.classLabeledTextBox}
                 title={this.props.tip}
             >
                 <label>{this.props.label}:</label>

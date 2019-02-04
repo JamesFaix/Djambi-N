@@ -1,6 +1,7 @@
 import * as React from 'react';
 import '../../index.css';
 import TristateDropdown from './tristateDropdown';
+import StyleService from '../../styleService';
 
 export interface LabeledTristateDropdownProps {
     label : string,
@@ -13,7 +14,7 @@ export default class LabeledTristateDropdown extends React.Component<LabeledTris
     render() {
         return (
             <div
-                className="labeledTextBox"
+                className={StyleService.classLabeledTextBox}
                 title={this.props.tip}
             >
                 <label>{this.props.label}:</label>
