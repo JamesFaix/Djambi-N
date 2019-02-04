@@ -32,6 +32,7 @@ let private getCreateEventCommand (gameId : int, request : CreateEventRequest) :
                     .add("GameId", gameId)
                     .add("EventKindId", request.kind |> mapEventKindToId)
                     .add("CreatedByUserId", request.createdByUserId)
+                    .addOption("ActingPlayerId", request.actingPlayerId)
                     .add("EffectsJson", JsonUtility.serialize request.effects)
     proc("Events_Create", param)
 
@@ -46,7 +47,7 @@ let private getCommands (oldGame : Game, newGame : Game, transaction : IDbTransa
             |> (not << Seq.exists (fun newP -> oldP.id = newP.id )))
             
     for p in removedPlayers do
-        commands.Add (GameRepository.getRemovePlayerCommand p.id)
+        commands.Add (GameRepository.getRemovePlayerCommand (oldGame.id, p.id))
 
     //add players
     let addedPlayers = 
@@ -105,6 +106,7 @@ let persistEvent (request : CreateEventRequest, oldGame : Game, newGame : Game) 
                     id = eventId
                     createdByUserId = request.createdByUserId
                     createdOn = DateTime.UtcNow
+                    actingPlayerId = request.actingPlayerId
                     kind = request.kind
                     effects = request.effects
                 }

@@ -7,6 +7,7 @@ open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Db.Repositories
 open Djambi.Api.Model
+open Djambi.Api.Logic
     
 let getAddPlayerEvent (game : Game, request : CreatePlayerRequest) (session : Session) : CreateEventRequest HttpResult =
     let self = session.user
@@ -48,6 +49,7 @@ let getAddPlayerEvent (game : Game, request : CreatePlayerRequest) (session : Se
             kind = EventKind.PlayerJoined
             effects = [ PlayerAddedEffect.fromRequest request ]
             createdByUserId = self.id
+            actingPlayerId = None
         }
     )
 
@@ -99,6 +101,7 @@ let getRemovePlayerEvent (game : Game, playerId : int) (session : Session) : Cre
                         kind = kind
                         effects = effects |> Seq.toList
                         createdByUserId = self.id
+                        actingPlayerId = ContextService.getActingPlayerId session game
                     }
                     |> Ok
 

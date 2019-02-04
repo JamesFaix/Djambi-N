@@ -20,6 +20,7 @@ export default class HistoryTable extends React.Component<HistoryTableProps> {
                                 .map((e, i) =>
                                     <HistoryEventRow
                                         key={"event" + i}
+                                        game={this.props.game}
                                         event={e}
                                         isEffectVisible={f => this.isEffectVisible(f)}
                                     />

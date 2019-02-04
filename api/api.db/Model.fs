@@ -63,6 +63,7 @@ type EventSqlModel =
         eventId : int
         gameId : int
         createdByUserId : int
+        actingPlayerId : int Nullable
         createdOn : DateTime
         eventKindId : byte
         effectsJson : string

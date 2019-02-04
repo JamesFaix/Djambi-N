@@ -8,6 +8,7 @@ open Djambi.Api.Logic.ModelExtensions
 open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
 open Djambi.Api.Logic.ModelExtensions.GameModelExtensions
 open Djambi.Api.Model
+open Djambi.Api.Logic
 
 let getCellSelectedEvent(game : Game, cellId : int) (session: Session) : CreateEventRequest HttpResult =
     SecurityService.ensureAdminOrCurrentPlayer session game
@@ -85,7 +86,8 @@ let getCellSelectedEvent(game : Game, cellId : int) (session: Session) : CreateE
                     {
                         kind = EventKind.CellSelected
                         effects = [Effect.CurrentTurnChanged { oldValue = game.currentTurn; newValue = Some updatedTurn }]
-                        createdByUserId = session.user.id                    
+                        createdByUserId = session.user.id     
+                        actingPlayerId = ContextService.getActingPlayerId session game
                     }
                     ))
 
@@ -298,6 +300,7 @@ let getCommitTurnEvent(game : Game) (session : Session) : CreateEventRequest Htt
             kind = EventKind.TurnCommitted
             effects = effects |> Seq.toList
             createdByUserId = session.user.id
+            actingPlayerId = ContextService.getActingPlayerId session game
         }
     )
 
@@ -316,5 +319,6 @@ let getResetTurnEvent(game : Game) (session : Session) : CreateEventRequest Http
             kind = EventKind.TurnReset
             effects = [ Effect.CurrentTurnChanged { oldValue = game.currentTurn; newValue = Some turn } ]
             createdByUserId = session.user.id
+            actingPlayerId = ContextService.getActingPlayerId session game
         }
     )
