@@ -52,31 +52,30 @@ export default class HistoryEventRow extends React.Component<HistoryEventRowProp
         const actingPlayer = game.players.find(p => p.id === event.actingPlayerId);
         console.log(actingPlayer);
         const actingPlayerName = actingPlayer ? actingPlayer.name : "[Admin]";
-        let params;
+
+        const template = this.props.theme.getEventMessageTemplate(event);
+
         switch (event.kind) {
             case EventKind.GameStarted:
-                return "Game started";
+                return template;
 
             case EventKind.PlayerEjected:
                 const effect = event.effects.find(f => f.kind === EffectKind.PlayerRemoved).value as PlayerRemovedEffect;
                 const removedPlayer = game.players.find(p => p.id === effect.playerId);
-                params = {
+                return Sprintf.sprintf(template, {
                     actingPlayer: actingPlayerName,
                     removedPlayer: removedPlayer.name
-                };
-                return Sprintf.sprintf("%(actingPlayer)s ejected %(removedPlayer)s", params);
+                });
 
             case EventKind.PlayerQuit:
-                params = {
+                return Sprintf.sprintf(template, {
                     player: actingPlayerName
-                };
-                return Sprintf.sprintf("%(player)s conceded", params);
+                });
 
             case EventKind.TurnCommitted:
-                params = {
+                return Sprintf.sprintf(template, {
                     player: actingPlayerName
-                };
-                return Sprintf.sprintf("%(player)s took a turn", params);
+                });
 
             default:
                 throw "Unsupported event kind.";
