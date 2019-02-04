@@ -27,7 +27,7 @@ let private applyPlayerEliminatedEffect (effect : PlayerEliminatedEffect) (game 
 let private applyPieceKilledEffect (effect : PieceKilledEffect) (game : Game) : Game =
     { game with 
         pieces = game.pieces |> List.replaceIf
-            (fun p -> p.id = effect.pieceId) 
+            (fun p -> p.id = effect.oldPiece.id) 
             (fun p -> { p with kind = PieceKind.Corpse; playerId = None }) 
     }
 
@@ -60,14 +60,14 @@ let private applyAddPlayerEffect (effect : PlayerAddedEffect) (game : Game) : Ga
 let private applyPieceOwnershipChangedEffect (effect : PieceOwnershipChangedEffect) (game : Game) : Game = 
     { game with 
         pieces = game.pieces |> List.replaceIf
-            (fun p -> p.id = effect.pieceId)
+            (fun p -> p.id = effect.oldPiece.id)
             (fun p -> { p with playerId = effect.newPlayerId })
     }
 
 let private applyPieceMovedEffect (effect : PieceMovedEffect) (game : Game) : Game =
     { game with 
         pieces = game.pieces |> List.replaceIf
-            (fun p -> effect.pieceId = p.id)
+            (fun p -> effect.oldPiece.id = p.id)
             (fun p -> { p with cellId = effect.newCellId }) 
     }
 

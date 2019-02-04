@@ -5,10 +5,12 @@ import EmphasizedTextCell from '../tables/emphasizedTextCell';
 import DateService from '../../dateService';
 import HistoryEffectRow from './historyEffectRow';
 import * as Sprintf from 'sprintf-js';
+import ThemeService from '../../themes/themeService';
 
 export interface HistoryEventRowProps {
     game : Game,
     event : Event,
+    theme : ThemeService,
     isEffectVisible : (f : Effect) => boolean
 }
 
@@ -34,7 +36,9 @@ export default class HistoryEventRow extends React.Component<HistoryEventRowProp
                                 .map((f, i) =>
                                     <HistoryEffectRow
                                         key={"effect" + i}
+                                        game={this.props.game}
                                         effect={f}
+                                        theme={this.props.theme}
                                     />
                                 )
                         }
