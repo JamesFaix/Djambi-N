@@ -1,19 +1,20 @@
 import * as React from 'react';
 import '../index.css';
+import { Classes } from '../styles';
 
 export default class AppTitle extends React.Component {
 
     render() {
         return (
-            <div className="appTitle">
-                <div className="appTitleCharA">D</div>
-                <div className="appTitleCharB">J</div>
-                <div className="appTitleCharA">A</div>
-                <div className="appTitleCharB">M</div>
-                <div className="appTitleCharA">B</div>
-                <div className="appTitleCharB">I</div>
-                <div className="appTitleCharA">-</div>
-                <div className="appTitleCharB">N</div>
+            <div className={Classes.appTitle}>
+                <div className={Classes.appTitleCharA}>D</div>
+                <div className={Classes.appTitleCharB}>J</div>
+                <div className={Classes.appTitleCharA}>A</div>
+                <div className={Classes.appTitleCharB}>M</div>
+                <div className={Classes.appTitleCharA}>B</div>
+                <div className={Classes.appTitleCharB}>I</div>
+                <div className={Classes.appTitleCharA}>-</div>
+                <div className={Classes.appTitleCharB}>N</div>
             </div>
         );
     }

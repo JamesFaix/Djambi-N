@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Game, Event, Effect, EventKind, EffectKind } from '../../api/model';
 import HistoryEventRow from './historyEventRow';
 import ThemeService from '../../themes/themeService';
+import { Classes, Styles } from '../../styles';
 
 export interface HistoryTableProps {
     game : Game,
@@ -13,8 +14,11 @@ export default class HistoryTable extends React.Component<HistoryTableProps> {
 
     render() {
         return (
-            <div style={{display:"flex"}}>
-                <table className="table" style={{width:"100%"}}>
+            <div className={Classes.flex}>
+                <table
+                    className={Classes.table}
+                    style={Styles.width(100)}
+                >
                     <tbody>
                         {
                             this.props.events

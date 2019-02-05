@@ -9,6 +9,7 @@ import LabeledInput from '../controls/labeledInput';
 import ActionButton from '../controls/actionButton';
 import Constants, { InputTypes } from '../../constants';
 import Routes from '../../routes';
+import { Classes } from '../../styles';
 
 export interface CreateGamePageProps {
     user : User,
@@ -99,14 +100,14 @@ export default class CreateGamePage extends React.Component<CreateGamePageProps,
             <div>
                 <PageTitle label={"Create Game"}/>
                 <br/>
-                <div className="centeredContainer">
+                <div className={Classes.centerAligned}>
                     <LinkButton label="Home" to={Routes.dashboard()}/>
                     <LinkButton label="My Games" to={Routes.myGames()}/>
                     <LinkButton label="Find Game" to={Routes.findGame()}/>
                 </div>
                 <br/>
                 <br/>
-                <div className="form">
+                <div className={Classes.form}>
                     <LabeledInput
                         label="Regions"
                         type={InputTypes.Number}
@@ -143,7 +144,7 @@ export default class CreateGamePage extends React.Component<CreateGamePageProps,
                     />
                     <br/>
                 </div>
-                <div className="centeredContainer">
+                <div className={Classes.centerAligned}>
                     <ActionButton label="Submit" onClick={() => this.submitOnClick()}/>
                 </div>
             </div>

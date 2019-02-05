@@ -7,6 +7,7 @@ import { Redirect } from 'react-router';
 import LinkButton from '../controls/linkButton';
 import GamesQueryResultsTable from '../gamesQueryResultsTable';
 import Routes from '../../routes';
+import { Classes } from '../../styles';
 
 export interface MyGamesPageProps {
     user : User,
@@ -59,7 +60,7 @@ export default class MyGamesPage extends React.Component<MyGamesPageProps, MyGam
             <div>
                 <PageTitle label={"My Games"}/>
                 <br/>
-                <div className="centeredContainer">
+                <div className={Classes.centerAligned}>
                     <LinkButton label="Home" to={Routes.dashboard()}/>
                     <LinkButton label="Create Game" to={Routes.createGame()}/>
                     <LinkButton label="Find Game" to={Routes.findGame()}/>

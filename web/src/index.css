@@ -53,22 +53,6 @@ td {
     display: table-cell;
 }
 
-.headerBar {
-    display: flex;
-}
-
-.headerBarLabel {
-    flex: 1;
-    font-size: 30px;
-    text-align: center;
-}
-
-.headerBarLinks {
-    flex: 1;
-    position: absolute;
-    right: 20px;
-}
-
 .appTitle {
     font-size: 40px;
     display: flex;
@@ -110,18 +94,17 @@ td {
     text-align: center;
 }
 
-.lobbyDetailsContainer {
-    width: 500px;
-    margin: 0 auto;
-}
-
 .table {
     width: 500px;
     margin: 0 auto;
 }
 
-.centeredContainer {
+.centerAligned {
     text-align: center;
+}
+
+.rightAligned {
+    text-align: right;
 }
 
 .lightText {
@@ -140,10 +123,6 @@ td {
     border: 0;
 }
 
-.rightAligned {
-    text-align: right;
-}
-
 .thinBorder {
     border: 1px;
     border-style: solid;
@@ -152,4 +131,8 @@ td {
 
 .indented {
     margin-left: 20px;
+}
+
+.flex {
+    display: "flex";
 }

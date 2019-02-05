@@ -9,6 +9,7 @@ import LinkButton from '../controls/linkButton';
 import ActionButton from '../controls/actionButton';
 import { InputTypes } from '../../constants';
 import Routes from '../../routes';
+import { Classes } from '../../styles';
 
 export interface SignupPageProps {
     api : ApiClient,
@@ -86,13 +87,13 @@ export default class SignupPage extends React.Component<SignupPageProps, SignupP
             <div>
                 <PageTitle label="Sign up"/>
                 <br/>
-                <div className="centeredContainer">
+                <div className={Classes.centerAligned}>
                     <LinkButton label="Home" to={Routes.home()} />
                     <LinkButton label="Login" to={Routes.login()} />
                 </div>
                 <br/>
                 <br/>
-                <div className="form">
+                <div className={Classes.form}>
                     <LabeledInput
                         label="Username"
                         type={InputTypes.Text}
@@ -108,7 +109,7 @@ export default class SignupPage extends React.Component<SignupPageProps, SignupP
                     />
                     <br/>
                 </div>
-                <div className="centeredContainer">
+                <div className={Classes.centerAligned}>
                     <ActionButton label="Submit" onClick={() => this.submitOnClick()}/>
                 </div>
             </div>
