@@ -83,7 +83,7 @@ type EventServiceTests() =
         p.gameId |> shouldBe newGame.id       
         p.userId |> shouldBe playerRequest.userId
         p.kind |> shouldBe playerRequest.kind
-        p.name |> shouldBe "" //This is pulled from the db for User players
+        p.name |> shouldBe playerRequest.name.Value
         
         //These are assigned at game start
         p.status |> shouldBe PlayerStatus.Pending
@@ -212,9 +212,44 @@ type EventServiceTests() =
         
         let newPiece = newGame.pieces.Head
         newPiece |> shouldBe { piece with cellId = newCellId }
+   
+    [<Fact>]
+    let ``Should apply PieceAbandoned effect``() =
+        //Arrange
+        let pieces : Piece list =
+            [
+                {
+                    id = 1
+                    kind = PieceKind.Assassin
+                    playerId = Some 0
+                    originalPlayerId = 0
+                    cellId = 0
+                }
+                {
+                    id = 2
+                    kind = PieceKind.Assassin
+                    playerId = Some 0
+                    originalPlayerId = 0
+                    cellId = 0
+                }
+            ]
+        let game = { TestUtilities.defaultGame with pieces = pieces}
+        let effect = Effect.PieceAbandoned { oldPiece = pieces.[0] }
+        let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
+
+        //Act
+        let newGame = EventService.applyEvent game eventRequest
+
+        //Assert
+        { game with pieces = newGame.pieces } |> shouldBe newGame
+
+        newGame.pieces.Length |> shouldBe 2
+        
+        newGame.pieces.[0] |> shouldBe { pieces.[0] with playerId = None }
+        newGame.pieces.[1] |> shouldBe pieces.[1]
 
     [<Fact>]
-    let ``Should apply PieceOwnershipChanged effect``() =
+    let ``Should apply PieceEnlisted effect``() =
         //Arrange
         let pieces : Piece list =
             [
@@ -235,7 +270,7 @@ type EventServiceTests() =
             ]
         let game = { TestUtilities.defaultGame with pieces = pieces}
         let newPlayerId = Some 1
-        let effect = Effect.PieceOwnershipChanged { oldPiece = pieces.[0]; newPlayerId = newPlayerId }
+        let effect = Effect.PieceEnlisted { oldPiece = pieces.[0]; newPlayerId = newPlayerId }
         let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
 
         //Act

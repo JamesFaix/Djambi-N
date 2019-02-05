@@ -72,8 +72,15 @@ let private applyNeutralPlayerAddedEffect (effect : NeutralPlayerAddedEffect) (g
         }
 
     { game with players = List.append game.players [player] }
+   
+let private applyPieceAbandonedEffect (effect : PieceAbandonedEffect) (game : Game) : Game = 
+    { game with 
+        pieces = game.pieces |> List.replaceIf
+            (fun p -> p.id = effect.oldPiece.id)
+            (fun p -> { p with playerId = None })
+    }
 
-let private applyPieceOwnershipChangedEffect (effect : PieceOwnershipChangedEffect) (game : Game) : Game = 
+let private applyPieceEnlistedEffect (effect : PieceEnlistedEffect) (game : Game) : Game = 
     { game with 
         pieces = game.pieces |> List.replaceIf
             (fun p -> p.id = effect.oldPiece.id)
@@ -92,18 +99,19 @@ let private applyCurrentTurnChangedEffect (effect : CurrentTurnChangedEffect) (g
 
 let private applyEffect (effect : Effect) (game : Game) : Game =
     match effect with 
-    | Effect.GameStatusChanged e -> applyGameStatusChangedEffect e game
-    | Effect.TurnCycleChanged e -> applyTurnCycleChangedEffect e game
-    | Effect.ParametersChanged e -> applyParameterChangedEffect e game
-    | Effect.PlayerEliminated e -> applyPlayerEliminatedEffect e game
-    | Effect.PieceKilled e -> applyPieceKilledEffect e game       
-    | Effect.PlayerRemoved e -> applyPlayerRemovedEffect e game
-    | Effect.PlayerOutOfMoves e -> applyPlayerOutOfMovesEffect e game
-    | Effect.PlayerAdded e -> applyPlayerAddedEffect e game
-    | Effect.NeutralPlayerAdded e -> applyNeutralPlayerAddedEffect e game
-    | Effect.PieceOwnershipChanged e -> applyPieceOwnershipChangedEffect e game
-    | Effect.PieceMoved e -> applyPieceMovedEffect e game
     | Effect.CurrentTurnChanged e -> applyCurrentTurnChangedEffect e game
+    | Effect.GameStatusChanged e -> applyGameStatusChangedEffect e game
+    | Effect.NeutralPlayerAdded e -> applyNeutralPlayerAddedEffect e game
+    | Effect.ParametersChanged e -> applyParameterChangedEffect e game
+    | Effect.PieceAbandoned e -> applyPieceAbandonedEffect e game
+    | Effect.PieceEnlisted e -> applyPieceEnlistedEffect e game
+    | Effect.PieceKilled e -> applyPieceKilledEffect e game       
+    | Effect.PieceMoved e -> applyPieceMovedEffect e game
+    | Effect.PlayerAdded e -> applyPlayerAddedEffect e game
+    | Effect.PlayerEliminated e -> applyPlayerEliminatedEffect e game
+    | Effect.PlayerOutOfMoves e -> applyPlayerOutOfMovesEffect e game
+    | Effect.PlayerRemoved e -> applyPlayerRemovedEffect e game
+    | Effect.TurnCycleChanged e -> applyTurnCycleChangedEffect e game
 
 let applyEvent (game : Game) (eventRequest : CreateEventRequest) : Game =
     let mutable game = game

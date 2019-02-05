@@ -129,7 +129,7 @@ let private applyTurnToPieces(game : Game) : (Piece list * Effect list) =
                 let enlistedPieces = game.piecesControlledBy target.playerId.Value
                 for p in enlistedPieces do
                     pieces.[p.id] <- pieces.[p.id].enlistBy subject.playerId.Value
-                    effects.Add(Effect.PieceOwnershipChanged{
+                    effects.Add(Effect.PieceEnlisted{
                                 oldPiece = p
                                 newPlayerId = subject.playerId
                             })
@@ -231,7 +231,7 @@ let private killCurrentPlayer(game : Game) : (Game * Effect list) =
     let abandonedPieces = game.pieces |> List.filter (fun p -> p.playerId = Some playerId)
 
     for p in abandonedPieces do
-        effects.Add(Effect.PieceOwnershipChanged { oldPiece = p; newPlayerId = None })
+        effects.Add(Effect.PieceAbandoned { oldPiece = p })
 
     let updatedGame =
         { game with

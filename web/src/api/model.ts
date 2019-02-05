@@ -183,27 +183,29 @@ export interface Effect {
 }
 
 export type EffectCase =
-	GameStatusChangedEffect |
-	TurnCycleChangedEffect |
-	ParametersChangedEffect |
-	PlayerEliminatedEffect |
-	PieceKilledEffect |
-	PlayerRemovedEffect |
-	PlayerOutOfMovesEffect |
-	PlayerAddedEffect |
-	PieceOwnershipChangedEffect |
-	PieceMovedEffect |
 	CurrentTurnChangedEffect |
-	NeutralPlayerAddedEffect
+	GameStatusChangedEffect |
+	NeutralPlayerAddedEffect |
+	ParametersChangedEffect |
+	PieceAbandonedEffect |
+	PieceEnlistedEffect |
+	PieceKilledEffect |
+	PieceMovedEffect |
+	PlayerAddedEffect |
+	PlayerEliminatedEffect |
+	PlayerOutOfMovesEffect |
+	PlayerRemovedEffect |
+	TurnCycleChangedEffect
 
 export enum EffectKind {
 	CurrentTurnChanged = "CurrentTurnChanged",
 	GameStatusChanged = "GameStatusChanged",
 	NeutralPlayerAdded = "NeutralPlayerAdded",
 	ParametersChanged = "ParametersChanged",
+	PieceAbandoned = "PieceAbandoned",
+	PieceEnlisted = "PieceEnlisted",
 	PieceKilled = "PieceKilled",
 	PieceMoved = "PieceMoved",
-	PieceOwnershipChanged = "PieceOwnershipChanged",
 	PlayerAdded = "PlayerAdded",
 	PlayerEliminated = "PlayerEliminated",
 	PlayerOutOfMoves = "PlayerOutOfMoves",
@@ -254,6 +256,15 @@ export interface ParametersChangedEffect {
 	newValue : GameParameters,
 }
 
+export interface PieceAbandonedEffect {
+	oldPiece : Piece,
+}
+
+export interface PieceEnlistedEffect {
+	oldPiece : Piece,
+	newPlayerId : number,
+}
+
 export interface PieceKilledEffect {
 	oldPiece : Piece,
 }
@@ -261,11 +272,6 @@ export interface PieceKilledEffect {
 export interface PieceMovedEffect {
 	oldPiece : Piece,
 	newCellId : number,
-}
-
-export interface PieceOwnershipChangedEffect {
-	oldPiece : Piece,
-	newPlayerId : number,
 }
 
 export interface PlayerAddedEffect {

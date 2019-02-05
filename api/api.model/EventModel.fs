@@ -71,10 +71,16 @@ type NeutralPlayerAddedEffect =
     }
 
 [<ClientType(ClientSection.Events)>]
-type PieceOwnershipChangedEffect =
+type PieceEnlistedEffect =
     {
         oldPiece : Piece
         newPlayerId : int option
+    }
+    
+[<ClientType(ClientSection.Events)>]
+type PieceAbandonedEffect =
+    {
+        oldPiece : Piece
     }
 
 [<ClientType(ClientSection.Events)>]
@@ -89,13 +95,13 @@ type Effect =
     | GameStatusChanged of GameStatusChangedEffect
     | TurnCycleChanged of TurnCycleChangedEffect
     | ParametersChanged of ParametersChangedEffect
-    //TODO: PlayerEliminated may need to change to PlayerStatusChanged as a DiffWithCOntext when statuses are added to players
     | PlayerEliminated of PlayerEliminatedEffect
     | PieceKilled of PieceKilledEffect
     | PlayerRemoved of PlayerRemovedEffect
     | PlayerOutOfMoves of PlayerOutOfMovesEffect
     | PlayerAdded of PlayerAddedEffect
-    | PieceOwnershipChanged of PieceOwnershipChangedEffect
+    | PieceEnlisted of PieceEnlistedEffect
+    | PieceAbandoned of PieceAbandonedEffect
     | PieceMoved of PieceMovedEffect
     | CurrentTurnChanged of CurrentTurnChangedEffect
     | NeutralPlayerAdded of NeutralPlayerAddedEffect

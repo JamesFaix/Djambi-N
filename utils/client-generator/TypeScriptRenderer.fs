@@ -77,7 +77,7 @@ type TypeScriptRenderer() =
     let renderTypeScriptUnionAlias (name : string, caseTypeNames : string seq) : string =
         let sb = StringBuilder()
         sb.AppendLine(sprintf "export type %s =" name) |> ignore
-        let casesList = String.Join(" |\n\t", caseTypeNames)
+        let casesList = String.Join(" |\n\t", caseTypeNames |> Seq.sort)
         sb.AppendLine(sprintf "\t%s" casesList)
           .ToString()
 

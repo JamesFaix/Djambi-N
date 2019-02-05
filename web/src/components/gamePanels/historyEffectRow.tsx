@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as Sprintf from 'sprintf-js';
 import ThemeService from '../../themes/themeService';
-import { Game, Effect, EffectKind, GameStatusChangedEffect, PieceKilledEffect, PieceOwnershipChangedEffect, PlayerAddedEffect, PieceMovedEffect, PlayerKind, PlayerEliminatedEffect, PlayerOutOfMovesEffect, PlayerRemovedEffect, TurnCycleChangedEffect, PieceKind, Piece, NeutralPlayerAddedEffect } from '../../api/model';
+import { Game, Effect, EffectKind, GameStatusChangedEffect, PieceKilledEffect, PlayerAddedEffect, PieceMovedEffect, PlayerKind, PlayerEliminatedEffect, PlayerOutOfMovesEffect, PlayerRemovedEffect, TurnCycleChangedEffect, PieceKind, Piece, NeutralPlayerAddedEffect, PieceAbandonedEffect, PieceEnlistedEffect } from '../../api/model';
 
 export interface HistoryEffectRowProps {
     game : Game,
@@ -25,12 +25,14 @@ export default class HistoryEffectRow extends React.Component<HistoryEffectRowPr
                 return this.getGameStatusChangedMessage(game, effect);
             case EffectKind.NeutralPlayerAdded:
                 return this.getNeutralPlayerAddedMessage(game, effect);
+            case EffectKind.PieceAbandoned:
+                return this.getPieceAbandonedMessage(game, effect);
+            case EffectKind.PieceEnlisted:
+                return this.getPieceEnlistedMessage(game, effect);
             case EffectKind.PieceKilled:
                 return this.getPieceKilledMessage(game, effect);
             case EffectKind.PieceMoved:
                 return this.getPieceMovedMessage(game, effect);
-            case EffectKind.PieceOwnershipChanged:
-                return this.getPieceOwnershipChangedMessage(game, effect);
             case EffectKind.PlayerAdded:
                 return this.getPlayerAddedMessage(game, effect);
             case EffectKind.PlayerEliminated:
@@ -65,6 +67,23 @@ export default class HistoryEffectRow extends React.Component<HistoryEffectRowPr
         })
     }
 
+    private getPieceAbandonedMessage(game : Game, effect : Effect) : string {
+        const template = this.props.theme.getEffectMessageTemplate(effect);
+        const f = effect.value as PieceAbandonedEffect;
+        return Sprintf.sprintf(template, {
+            piece: this.getPieceIdentifier(f.oldPiece)
+        });
+    }
+
+    private getPieceEnlistedMessage(game : Game, effect : Effect) : string {
+        const template = this.props.theme.getEffectMessageTemplate(effect);
+        const f = effect.value as PieceEnlistedEffect;
+        return Sprintf.sprintf(template, {
+            piece: this.getPieceIdentifier(f.oldPiece),
+            newPlayer: this.getPlayerName(f.newPlayerId)
+        });
+    }
+
     private getPieceKilledMessage(game : Game, effect : Effect) : string {
         const template = this.props.theme.getEffectMessageTemplate(effect);
         const f = effect.value as PieceKilledEffect;
@@ -81,22 +100,6 @@ export default class HistoryEffectRow extends React.Component<HistoryEffectRowPr
             oldCell : f.oldPiece.cellId.toString(),
             newCell : f.newCellId.toString()
         });
-    }
-
-    private getPieceOwnershipChangedMessage(game : Game, effect : Effect) : string {
-        const template = this.props.theme.getEffectMessageTemplate(effect);
-        const f = effect.value as PieceOwnershipChangedEffect;
-        const piece = this.getPieceIdentifier(f.oldPiece);
-        if (f.newPlayerId === null) {
-            return Sprintf.sprintf(template, {
-                piece: piece
-            });
-        } else {
-            return Sprintf.sprintf(template, {
-                piece: piece,
-                newPlayer: this.getPlayerName(f.newPlayerId)
-            });
-        }
     }
 
     private getPlayerAddedMessage(game : Game, effect : Effect) : string {

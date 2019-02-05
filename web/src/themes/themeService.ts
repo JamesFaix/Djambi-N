@@ -1,4 +1,4 @@
-import { PieceKind, Selection, SelectionKind, Game, Event, EventKind, Effect, EffectKind, PieceOwnershipChangedEffect, PlayerKind, PlayerAddedEffect } from "../api/model";
+import { PieceKind, Selection, SelectionKind, Game, Event, EventKind, Effect, EffectKind } from "../api/model";
 import * as Sprintf from "sprintf-js";
 import Theme from "./theme";
 import ThemeFactory from "./themeFactory";
@@ -178,14 +178,14 @@ export default class ThemeService {
                 return this.getValue(t => t.effectMessageGameStatusChanged);
             case EffectKind.NeutralPlayerAdded:
                 return this.getValue(t => t.effectMessageNeutralPlayerAdded);
+            case EffectKind.PieceAbandoned:
+                return this.getValue(t => t.effectMessagePieceAbandoned);
+            case EffectKind.PieceEnlisted:
+                return this.getValue(t => t.effectMessagePieceEnlisted);
             case EffectKind.PieceKilled:
                 return this.getValue(t => t.effectMessagePieceKilled);
             case EffectKind.PieceMoved:
                 return this.getValue(t => t.effectMessagePieceMoved);
-            case EffectKind.PieceOwnershipChanged:
-                return (effect.value as PieceOwnershipChangedEffect).newPlayerId === null
-                    ? this.getValue(t => t.effectMessagePieceAbandoned)
-                    : this.getValue(t => t.effectMessagePieceEnlisted);
             case EffectKind.PlayerAdded:
                 return this.getValue(t => t.effectMessagePlayerAdded);
             case EffectKind.PlayerEliminated:
