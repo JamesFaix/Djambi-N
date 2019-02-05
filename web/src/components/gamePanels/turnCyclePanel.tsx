@@ -2,7 +2,7 @@ import * as React from 'react';
 import '../../index.css';
 import { Game } from '../../api/model';
 import ThemeService from '../../themes/themeService';
-import StyleService from '../../styleService';
+import { Classes, Styles } from '../../styles';
 
 export interface TurnCyclePanelProps {
     game : Game,
@@ -14,18 +14,18 @@ export default class TurnCyclePanel extends React.Component<TurnCyclePanelProps>
     private readonly scale = 50;
 
     render() {
-        const rowClass = StyleService.classes([StyleService.classThinBorder, StyleService.classCenteredContainer]);
+        const rowClass = Classes.combine([Classes.thinBorder, Classes.centerAligned]);
 
         return (
-            <div className={StyleService.classThinBorder}>
+            <div className={Classes.thinBorder}>
                 Turn Cycle
-                <div style={StyleService.styleFlex}>
+                <div className={Classes.flex}>
                     {
                         this.getPlayerViews()
                             .map((pv, i) =>
                                 <div key={"turn" + i}
                                     className={rowClass}
-                                    style={StyleService.styleTurnCycleElement(pv.color, this.scale)}>
+                                    style={Styles.turnCycleElement(pv.color, this.scale)}>
                                     {pv.id}
                                 </div>
                             )

@@ -8,7 +8,7 @@ import LinkButton from '../controls/linkButton';
 import ActionButton from '../controls/actionButton';
 import GameInfoPlayersTable from '../gameInfoPlayersTable';
 import Routes from '../../routes';
-import StyleService from '../../styleService';
+import { Classes } from '../../styles';
 
 export interface GameInfoPageProps {
     user : User,
@@ -87,8 +87,8 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
         }
 
         return (
-            <div className={StyleService.classLobbyDetailsContainer}>
-                <div className={StyleService.classCenteredContainer}>
+            <div className={Classes.table}>
+                <div className={Classes.centerAligned}>
                     {this.renderGameDescription(game)}
                     {this.renderGameOptions(game)}
                     <p>{game.parameters.regionCount + " regions"}</p>
@@ -127,7 +127,7 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
             case GameStatus.Pending:
                 return (
                     //Only creator can start game, and only with > 1 players
-                    <div className={StyleService.classCenteredContainer}>
+                    <div className={Classes.centerAligned}>
                         Pending
                         { this.props.user.id === game.createdByUserId
                             && game.players.length >= 2
@@ -142,7 +142,7 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
 
             case GameStatus.Started:
                 return (
-                    <div className={StyleService.classCenteredContainer}>
+                    <div className={Classes.centerAligned}>
                         Started
                         <LinkButton label="Enter" to={Routes.game(this.state.game.id)} />
                     </div>
@@ -150,14 +150,14 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
 
             case GameStatus.Finished:
                 return (
-                    <div className={StyleService.classCenteredContainer}>
+                    <div className={Classes.centerAligned}>
                         Finished
                     </div>
                 );
             case GameStatus.Aborted:
             case GameStatus.AbortedWhilePending:
                 return (
-                    <div className={StyleService.classCenteredContainer}>
+                    <div className={Classes.centerAligned}>
                         Aborted
                     </div>
                 );
@@ -178,7 +178,7 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
             <div>
                 <PageTitle label={"Game Info"}/>
                 <br/>
-                <div className={StyleService.classCenteredContainer}>
+                <div className={Classes.centerAligned}>
                     <LinkButton label="Home" to={Routes.dashboard()}/>
                     <LinkButton label="My Games" to={Routes.myGames()}/>
                     <LinkButton label="Create Game" to={Routes.createGame()}/>

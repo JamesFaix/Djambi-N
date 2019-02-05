@@ -6,7 +6,7 @@ import TextCell from './tables/textCell';
 import EmphasizedTextCell from './tables/emphasizedTextCell';
 import TextFieldCell from './tables/textFieldCell';
 import ActionButtonCell from './tables/actionButtonCell';
-import StyleService from '../styleService';
+import { Classes } from '../styles';
 
 export interface GameInfoPlayersTableProps {
     user : User,
@@ -238,16 +238,16 @@ export default class GameInfoPlayersTable extends React.Component<GameInfoPlayer
 
         return (
             <div>
-                <table className={StyleService.classTable}>
+                <table className={Classes.table}>
                     <tbody>
                         <tr>
-                            <td className={StyleService.classCenteredContainer}>
+                            <td className={Classes.centerAligned}>
                                 Seats
                             </td>
                         </tr>
                     </tbody>
                 </table>
-                <table className={StyleService.classTable}>
+                <table className={Classes.table}>
                     <tbody>
                         {seats.map((seat, i) => this.renderPlayerRow(this.props.game.status, seat, i))}
                     </tbody>

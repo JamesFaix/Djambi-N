@@ -1,6 +1,6 @@
 import * as React from 'react';
 import '../../index.css';
-import StyleService from '../../styleService';
+import { Classes } from '../../styles';
 
 export interface EmphasizedTextCellProps {
     text : string
@@ -10,7 +10,7 @@ export default class EmphasizedTextCell extends React.Component<EmphasizedTextCe
 
     render() {
         return  (
-            <td className={StyleService.classPaddedCell}>
+            <td className={Classes.paddedCell}>
                 {this.props.text}
             </td>
         );

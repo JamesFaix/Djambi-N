@@ -3,7 +3,7 @@ import '../../index.css';
 import { Game } from '../../api/model';
 import ThemeService from '../../themes/themeService';
 import PlayersPanelTable from './playersPanelTable';
-import StyleService from '../../styleService';
+import { Classes } from '../../styles';
 
 export interface PlayersPanelProps {
     game : Game,
@@ -13,7 +13,7 @@ export interface PlayersPanelProps {
 export default class PlayersPanel extends React.Component<PlayersPanelProps> {
     render() {
         return (
-            <div className={StyleService.classThinBorder}>
+            <div className={Classes.thinBorder}>
                 Players
                 <PlayersPanelTable
                     game={this.props.game}

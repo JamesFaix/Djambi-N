@@ -3,7 +3,7 @@ import '../../index.css';
 import { Game, Event } from '../../api/model';
 import HistoryTable from './historyTable';
 import ThemeService from '../../themes/themeService';
-import StyleService from '../../styleService';
+import { Classes } from '../../styles';
 
 export interface HistoryPanelProps {
     game : Game,
@@ -14,7 +14,7 @@ export interface HistoryPanelProps {
 export default class HistoryPanel extends React.Component<HistoryPanelProps> {
     render() {
         return (
-            <div className={StyleService.classThinBorder}>
+            <div className={Classes.thinBorder}>
                 History
                 <HistoryTable
                     game={this.props.game}

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import '../../index.css';
-import StyleService from '../../styleService';
+import { Classes } from '../../styles';
 
 export interface TextFieldCellProps {
     value : string,
@@ -16,7 +16,7 @@ export default class TextFieldCell extends React.Component<TextFieldCellProps> {
                     type="text"
                     value={this.props.value}
                     onChange={this.props.onChange}
-                    className={StyleService.classFullWidth}
+                    className={Classes.fullWidth}
                 />
             </td>
         );

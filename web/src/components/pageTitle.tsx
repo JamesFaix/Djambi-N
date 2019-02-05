@@ -1,6 +1,6 @@
 import * as React from 'react';
 import '../index.css';
-import StyleService from '../styleService';
+import { Classes } from '../styles';
 
 export interface PageTitleProps {
     label : string
@@ -10,7 +10,7 @@ export default class PageTitle extends React.Component<PageTitleProps> {
 
     render() {
         return (
-            <div className={StyleService.classPageTitle}>
+            <div className={Classes.pageTitle}>
                 {this.props.label}
             </div>
         );

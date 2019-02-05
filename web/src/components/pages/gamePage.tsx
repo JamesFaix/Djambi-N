@@ -13,7 +13,7 @@ import CurrentTurnPanel from '../gamePanels/currentTurnPanel';
 import TurnCyclePanel from '../gamePanels/turnCyclePanel';
 import PlayersPanel from '../gamePanels/playersPanel';
 import HistoryPanel from '../gamePanels/historyPanel';
-import StyleService from '../../styleService';
+import { Classes, Styles } from '../../styles';
 
 export interface GamePageProps {
     user : User,
@@ -123,7 +123,7 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
             <div>
                 <PageTitle label={"Game"}/>
                 <br/>
-                <div className={StyleService.classCenteredContainer}>
+                <div className={Classes.centerAligned}>
                     <LinkButton label="Home" to={Routes.dashboard()}/>
                     <LinkButton label="Rules" to={Routes.rules()} newWindow={true}/>
                 </div>
@@ -141,10 +141,10 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
         const canvasSize = BoardGeometry.boardDiameter(this.state.boardView);
 
         return (
-            <div style={StyleService.styleGamePageContainer(canvasSize)}>
+            <div style={Styles.gamePageContainer(canvasSize)}>
                 <div
-                    className={StyleService.classThinBorder}
-                    style={StyleService.styleGamePageCanvas(canvasSize)}
+                    className={Classes.thinBorder}
+                    style={Styles.gamePageCanvas(canvasSize)}
                 >
                     <CanvasBoard
                         board={this.state.boardView}
@@ -152,7 +152,7 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                         selectCell={(cellId) => this.selectCell(cellId)}
                     />
                 </div>
-                <div style={StyleService.styleFlex}>
+                <div className={Classes.flex}>
                     <CurrentTurnPanel
                         game={this.state.game}
                         theme={this.props.theme}
@@ -160,7 +160,7 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                         commitTurn={gameId => this.commitTurn(gameId)}
                         resetTurn={gameId => this.resetTurn(gameId)}
                     />
-                    <div style={StyleService.styleWidth(60)}>
+                    <div style={Styles.width(60)}>
                         <TurnCyclePanel
                             game={this.state.game}
                             theme={this.props.theme}

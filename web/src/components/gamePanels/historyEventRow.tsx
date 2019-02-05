@@ -6,7 +6,7 @@ import DateService from '../../dateService';
 import HistoryEffectRow from './historyEffectRow';
 import * as Sprintf from 'sprintf-js';
 import ThemeService from '../../themes/themeService';
-import StyleService from '../../styleService';
+import { Classes, Styles } from '../../styles';
 
 export interface HistoryEventRowProps {
     game : Game,
@@ -21,7 +21,7 @@ export default class HistoryEventRow extends React.Component<HistoryEventRowProp
         const e = this.props.event;
         return (
             <tr>
-                <td style={StyleService.styleNoPadding}>
+                <td style={Styles.noPadding}>
                     <table>
                         <tbody>
                             <tr>
@@ -30,7 +30,7 @@ export default class HistoryEventRow extends React.Component<HistoryEventRowProp
                             </tr>
                         </tbody>
                     </table>
-                    <div className={StyleService.classIndented}>
+                    <div className={Classes.indented}>
                         {
                             e.effects
                                 .filter(f => this.props.isEffectVisible(f))

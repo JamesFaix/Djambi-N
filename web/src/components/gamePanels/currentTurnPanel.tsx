@@ -3,7 +3,7 @@ import '../../index.css';
 import { Game, User, Player } from '../../api/model';
 import ThemeService from '../../themes/themeService';
 import ActionButton from '../controls/actionButton';
-import StyleService from '../../styleService';
+import { Classes, Styles } from '../../styles';
 
 export interface CurrentTurnPanelProps {
     game : Game,
@@ -22,8 +22,8 @@ export default class CurrentTurnPanel extends React.Component<CurrentTurnPanelPr
 
         const currentPlayer = this.getCurrentPlayer(this.props.game);
         const color = this.props.theme.getPlayerColor(currentPlayer.colorId);
-        const style = StyleService.styleCurrentTurnPanelGlow(color);
-        const className = StyleService.classes([StyleService.classThinBorder, StyleService.classPaddedCell]);
+        const style = Styles.currentTurnPanelGlow(color);
+        const className = Classes.combine([Classes.thinBorder, Classes.paddedCell]);
         return (
             <div className={className} style={style}>
                 {this.getPlayerNameHeader(currentPlayer)}
@@ -62,7 +62,7 @@ export default class CurrentTurnPanel extends React.Component<CurrentTurnPanelPr
             <div>
                 Selections:
                 <br/>
-                <div className={StyleService.classIndented}>
+                <div className={Classes.indented}>
                     {descriptions}
                 </div>
             </div>
@@ -77,7 +77,7 @@ export default class CurrentTurnPanel extends React.Component<CurrentTurnPanelPr
             <div>
                 Required action:
                 <br/>
-                <div className={StyleService.classIndented}>
+                <div className={Classes.indented}>
                     {prompt}
                 </div>
             </div>

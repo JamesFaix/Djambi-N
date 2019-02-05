@@ -1,7 +1,7 @@
 import * as React from 'react';
 import '../../index.css';
 import ActionButton from '../controls/actionButton';
-import StyleService from '../../styleService';
+import { Classes } from '../../styles';
 
 export interface ActionButtonCellProps {
     label : string,
@@ -12,7 +12,7 @@ export default class ActionButtonCell extends React.Component<ActionButtonCellPr
 
     render() {
         return (
-            <td className={StyleService.classCenteredContainer}>
+            <td className={Classes.centerAligned}>
                 <ActionButton
                     label={this.props.label}
                     onClick={this.props.onClick}

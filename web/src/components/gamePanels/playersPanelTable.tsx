@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Game, Player, PlayerKind } from '../../api/model';
 import TextCell from '../tables/textCell';
 import ThemeService from '../../themes/themeService';
-import StyleService from '../../styleService';
+import { Classes, Styles } from '../../styles';
 
 export interface PlayersPanelTableProps {
     game : Game,
@@ -35,7 +35,7 @@ export default class PlayersPanelTable extends React.Component<PlayersPanelTable
         const color = this.props.theme.getPlayerColor(player.colorId);
         return (
             <tr
-                style={StyleService.stylePlayersPanelGlow(color)}
+                style={Styles.playersPanelGlow(color)}
                 key={"row" + rowNumber}
             >
                 <TextCell text={player.name}/>
@@ -46,8 +46,8 @@ export default class PlayersPanelTable extends React.Component<PlayersPanelTable
 
     render() {
         return (
-            <div style={StyleService.styleFlex}>
-                <table className={StyleService.classTable}>
+            <div className={Classes.flex}>
+                <table className={Classes.table}>
                     <tbody>
                         {
                             this.props.game.players

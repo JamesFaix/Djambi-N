@@ -1,6 +1,6 @@
 import * as React from 'react';
 import '../../index.css';
-import StyleService from '../../styleService';
+import { Classes } from '../../styles';
 
 export interface HintCellProps {
     text : string
@@ -9,7 +9,7 @@ export interface HintCellProps {
 export default class HintCell extends React.Component<HintCellProps> {
 
     render() {
-        const className = StyleService.classes([StyleService.classLightText, StyleService.classPaddedCell]);
+        const className = Classes.combine([Classes.lightText, Classes.paddedCell]);
         return  (
             <td className={className}>
                 {this.props.text}

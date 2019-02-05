@@ -6,7 +6,7 @@ import { User } from '../../api/model';
 import ApiClient from '../../api/client';
 import LinkButton from '../controls/linkButton';
 import Routes from '../../routes';
-import StyleService from '../../styleService';
+import { Classes } from '../../styles';
 
 export interface HomePageProps {
     user : User,
@@ -34,14 +34,14 @@ export default class HomePage extends React.Component<HomePageProps> {
             <div>
                 <PageTitle label="Greetings, visitor"/>
                 <br/>
-                <div className={StyleService.classCenteredContainer}>
+                <div className={Classes.centerAligned}>
                     <LinkButton label="Sign up" to={Routes.signup()}/>
                     <LinkButton label="Login" to={Routes.login()}/>
                     <LinkButton label="Rules" to={Routes.rules()} newWindow={true}/>
                 </div>
                 <br/>
                 <br/>
-                <div className={StyleService.classCenteredContainer}>
+                <div className={Classes.centerAligned}>
                     <img src={"../../../resources/djambi6.png"} height={500}/>
                 </div>
             </div>

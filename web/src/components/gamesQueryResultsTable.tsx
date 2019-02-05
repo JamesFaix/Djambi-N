@@ -3,7 +3,7 @@ import * as React from 'react';
 import LinkButton from "./controls/linkButton";
 import Routes from "../routes";
 import DateService from "../dateService";
-import StyleService from "../styleService";
+import { Classes } from "../styles";
 
 export interface GamesQueryResultsTableProps {
     games : Game[]
@@ -21,17 +21,17 @@ export default class GamesQueryResultsTable extends React.Component<GamesQueryRe
                     {DateService.format(game.createdOn)}
                 </td>
                 <td>{game.createdByUserId}</td>
-                <td className={StyleService.classCenteredContainer}>
+                <td className={Classes.centerAligned}>
                     {game.parameters.regionCount}
                 </td>
-                <td className={StyleService.classCenteredContainer}>
+                <td className={Classes.centerAligned}>
                     <input
                         type="checkbox"
                         checked={game.parameters.isPublic}
                         disabled={true}
                     />
                 </td>
-                <td className={StyleService.classCenteredContainer}>
+                <td className={Classes.centerAligned}>
                     <input
                         type="checkbox"
                         checked={game.parameters.allowGuests}
@@ -46,7 +46,7 @@ export default class GamesQueryResultsTable extends React.Component<GamesQueryRe
     render() {
         return (
             <div>
-                <table className={StyleService.classTable}>
+                <table className={Classes.table}>
                     <tbody>
                         <tr>
                             <th></th>
