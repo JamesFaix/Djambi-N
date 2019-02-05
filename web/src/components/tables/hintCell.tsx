@@ -9,7 +9,7 @@ export interface HintCellProps {
 export default class HintCell extends React.Component<HintCellProps> {
 
     render() {
-        const className = StyleService.classes([StyleService.classLightText, StyleService.classBorderless]);
+        const className = StyleService.classes([StyleService.classLightText, StyleService.classPaddedCell]);
         return  (
             <td className={className}>
                 {this.props.text}

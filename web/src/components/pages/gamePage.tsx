@@ -152,7 +152,7 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                         selectCell={(cellId) => this.selectCell(cellId)}
                     />
                 </div>
-                <div style={StyleService.styleFlexContainer()}>
+                <div style={StyleService.styleFlex}>
                     <CurrentTurnPanel
                         game={this.state.game}
                         theme={this.props.theme}

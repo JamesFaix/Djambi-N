@@ -21,7 +21,7 @@ export default class HistoryEventRow extends React.Component<HistoryEventRowProp
         const e = this.props.event;
         return (
             <tr>
-                <td style={StyleService.noPadding()}>
+                <td style={StyleService.styleNoPadding}>
                     <table>
                         <tbody>
                             <tr>

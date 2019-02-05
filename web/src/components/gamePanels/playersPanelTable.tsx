@@ -46,7 +46,7 @@ export default class PlayersPanelTable extends React.Component<PlayersPanelTable
 
     render() {
         return (
-            <div style={StyleService.styleFlexContainer()}>
+            <div style={StyleService.styleFlex}>
                 <table className={StyleService.classTable}>
                     <tbody>
                         {

@@ -19,13 +19,13 @@ export default class TurnCyclePanel extends React.Component<TurnCyclePanelProps>
         return (
             <div className={StyleService.classThinBorder}>
                 Turn Cycle
-                <div style={StyleService.styleFlexContainer()}>
+                <div style={StyleService.styleFlex}>
                     {
                         this.getPlayerViews()
                             .map((pv, i) =>
                                 <div key={"turn" + i}
                                     className={rowClass}
-                                    style={StyleService.turnCycleElement(pv.color, this.scale)}>
+                                    style={StyleService.styleTurnCycleElement(pv.color, this.scale)}>
                                     {pv.id}
                                 </div>
                             )

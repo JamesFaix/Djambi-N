@@ -14,10 +14,10 @@ export default class HistoryTable extends React.Component<HistoryTableProps> {
 
     render() {
         return (
-            <div style={StyleService.styleFlexContainer()}>
+            <div style={StyleService.styleFlex}>
                 <table
                     className={StyleService.classTable}
-                    style={StyleService.styleHistoryTable()}
+                    style={StyleService.styleWidth(100)}
                 >
                     <tbody>
                         {

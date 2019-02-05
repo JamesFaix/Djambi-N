@@ -55,17 +55,9 @@ export default class StyleService {
         };
     }
 
-    public static styleFlexContainer() : React.CSSProperties {
-        return {
-            display:"flex"
-        };
-    }
-
-    public static styleHistoryTable() : React.CSSProperties {
-        return {
-            width:"100%"
-        };
-    }
+    public static readonly styleFlex : React.CSSProperties = {
+        display:"flex"
+    };
 
     public static styleGamePageContainer(canvasSize : number) : React.CSSProperties {
         return {
@@ -88,13 +80,11 @@ export default class StyleService {
         }
     }
 
-    public static noPadding() : React.CSSProperties {
-        return {
-            padding: 0
-        };
-    }
+    public static readonly styleNoPadding : React.CSSProperties = {
+        padding: 0
+    };
 
-    public static turnCycleElement(color : string, scale : number) : React.CSSProperties {
+    public static styleTurnCycleElement(color : string, scale : number) : React.CSSProperties {
         return {
             background: color,
             height: scale,
