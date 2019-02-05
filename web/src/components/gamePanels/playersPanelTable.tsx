@@ -47,7 +47,7 @@ export default class PlayersPanelTable extends React.Component<PlayersPanelTable
     render() {
         return (
             <div className={Classes.flex}>
-                <table className={Classes.table}>
+                <table className={Classes.combine([Classes.table, Classes.fullWidth])}>
                     <tbody>
                         {
                             this.props.game.players

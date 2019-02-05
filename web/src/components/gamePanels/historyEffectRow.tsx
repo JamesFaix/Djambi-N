@@ -207,8 +207,9 @@ export default class HistoryEffectRow extends React.Component<HistoryEffectRowPr
         }
 
         const player = this.props.game.players.find(p => p.id === piece.playerId);
-        const playerName = player ? player.name : "Neutral";
-        return Sprintf.sprintf("%s's %s", playerName, kindName);
+        return player
+            ? Sprintf.sprintf("%s's %s", player.name, kindName)
+            : Sprintf.sprintf("Neutral %s", kindName);
     }
 
     private getPlayerName(playerId : number) : string {
