@@ -14,6 +14,7 @@ import TurnCyclePanel from '../gamePanels/turnCyclePanel';
 import PlayersPanel from '../gamePanels/playersPanel';
 import HistoryPanel from '../gamePanels/historyPanel';
 import { Classes, Styles } from '../../styles';
+import Scrollbars from 'react-custom-scrollbars';
 
 export interface GamePageProps {
     user : User,
@@ -175,6 +176,7 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                     game={this.state.game}
                     events={this.state.events}
                     theme={this.props.theme}
+                    height={200}
                 />
             </div>
         );

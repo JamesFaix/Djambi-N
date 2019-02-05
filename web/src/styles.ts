@@ -87,4 +87,10 @@ export class Styles {
             width: scale
         };
     }
+
+    public static absoluteHeight(pixels : number) : React.CSSProperties {
+        return {
+            height: pixels + "px"
+        };
+    }
 }
