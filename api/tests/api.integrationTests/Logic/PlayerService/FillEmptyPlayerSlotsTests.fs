@@ -52,10 +52,7 @@ type FillEmptyPlayerSlotsTests() =
             effects.Length |> shouldBe 2
 
             match (effects.[0], effects.[1]) with
-            | (Effect.PlayerAdded p2, Effect.PlayerAdded p3) ->
-                p2.kind |> shouldBe PlayerKind.Neutral
-                p2.userId |> shouldBe None
-                p3.kind |> shouldBe PlayerKind.Neutral
-                p3.userId |> shouldBe None                
+            | (Effect.NeutralPlayerAdded p2, Effect.NeutralPlayerAdded p3) ->
+                ()
             | _ -> failwith "Invalid effects."
         }

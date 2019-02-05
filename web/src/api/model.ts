@@ -193,11 +193,13 @@ export type EffectCase =
 	PlayerAddedEffect |
 	PieceOwnershipChangedEffect |
 	PieceMovedEffect |
-	CurrentTurnChangedEffect
+	CurrentTurnChangedEffect |
+	NeutralPlayerAddedEffect
 
 export enum EffectKind {
 	CurrentTurnChanged = "CurrentTurnChanged",
 	GameStatusChanged = "GameStatusChanged",
+	NeutralPlayerAdded = "NeutralPlayerAdded",
 	ParametersChanged = "ParametersChanged",
 	PieceKilled = "PieceKilled",
 	PieceMoved = "PieceMoved",
@@ -241,6 +243,10 @@ export interface EventsQuery {
 export interface GameStatusChangedEffect {
 	oldValue : GameStatus,
 	newValue : GameStatus,
+}
+
+export interface NeutralPlayerAddedEffect {
+	name : string,
 }
 
 export interface ParametersChangedEffect {

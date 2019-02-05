@@ -30,11 +30,42 @@ type EventServiceTests() =
         newGame.status |> shouldBe GameStatus.Aborted
 
     [<Fact>]
-    let ``Should apply AddPlayer effect``() =
+    let ``Should apply PlayerAdded effect``() =
         //Arrange
         let game = { TestUtilities.defaultGame with id = 5 }
         let userId = 1
         let playerRequest = CreatePlayerRequest.user(userId)
+        let effect = PlayerAddedEffect.fromRequest playerRequest
+        let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
+        
+        game.players.Length |> shouldBe 0
+
+        //Act
+        let newGame = EventService.applyEvent game eventRequest
+
+        //Assert
+        { game with players = newGame.players } |> shouldBe newGame
+        
+        newGame.players.Length |> shouldBe 1
+        let p = newGame.players.Head
+        p.id |> shouldBe 0 //This is generated when the event is persisted
+        p.gameId |> shouldBe newGame.id       
+        p.userId |> shouldBe playerRequest.userId
+        p.kind |> shouldBe playerRequest.kind
+        p.name |> shouldBe "" //This is pulled from the db for User players
+        
+        //These are assigned at game start
+        p.status |> shouldBe PlayerStatus.Pending
+        p.colorId |> shouldBe None
+        p.startingRegion |> shouldBe None
+        p.startingTurnNumber |> shouldBe None
+
+    
+    [<Fact>]
+    let ``Should apply NeutralPlayerAdded effect``() =
+        //Arrange
+        let game = { TestUtilities.defaultGame with id = 5 }
+        let playerRequest = { kind = PlayerKind.Neutral; userId = None; name = Some "p2" }
         let effect = PlayerAddedEffect.fromRequest playerRequest
         let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
         

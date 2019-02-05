@@ -41,14 +41,30 @@ let private applyPlayerOutOfMovesEffect (effect : PlayerOutOfMovesEffect) (game 
     //the same event should also create a PlayerEliminated and PiecesOwnershipChanged effect
     game
 
-let private applyAddPlayerEffect (effect : PlayerAddedEffect) (game : Game) : Game =
+let private applyPlayerAddedEffect (effect : PlayerAddedEffect) (game : Game) : Game =
     let player : Player = 
         {
             id = 0
             gameId = game.id
-            userId = effect.userId
+            userId = Some effect.userId
             kind = effect.kind
             name = match effect.name with Some x -> x | None -> ""
+            status = PlayerStatus.Pending
+            colorId = None
+            startingRegion = None
+            startingTurnNumber = None
+        }
+
+    { game with players = List.append game.players [player] }
+
+let private applyNeutralPlayerAddedEffect (effect : NeutralPlayerAddedEffect) (game : Game) : Game =
+    let player : Player = 
+        {
+            id = 0
+            gameId = game.id
+            userId = None
+            kind = PlayerKind.Neutral
+            name = effect.name
             status = PlayerStatus.Pending
             colorId = None
             startingRegion = None
@@ -83,7 +99,8 @@ let private applyEffect (effect : Effect) (game : Game) : Game =
     | Effect.PieceKilled e -> applyPieceKilledEffect e game       
     | Effect.PlayerRemoved e -> applyPlayerRemovedEffect e game
     | Effect.PlayerOutOfMoves e -> applyPlayerOutOfMovesEffect e game
-    | Effect.PlayerAdded e -> applyAddPlayerEffect e game
+    | Effect.PlayerAdded e -> applyPlayerAddedEffect e game
+    | Effect.NeutralPlayerAdded e -> applyNeutralPlayerAddedEffect e game
     | Effect.PieceOwnershipChanged e -> applyPieceOwnershipChangedEffect e game
     | Effect.PieceMoved e -> applyPieceMovedEffect e game
     | Effect.CurrentTurnChanged e -> applyCurrentTurnChangedEffect e game

@@ -60,8 +60,14 @@ type PlayerOutOfMovesEffect =
 type PlayerAddedEffect =
     {
         name : string option
-        userId : int option
+        userId : int
         kind : PlayerKind
+    }
+
+[<ClientType(ClientSection.Events)>]
+type NeutralPlayerAddedEffect =
+    {
+        name : string
     }
 
 [<ClientType(ClientSection.Events)>]
@@ -92,6 +98,7 @@ type Effect =
     | PieceOwnershipChanged of PieceOwnershipChangedEffect
     | PieceMoved of PieceMovedEffect
     | CurrentTurnChanged of CurrentTurnChangedEffect
+    | NeutralPlayerAdded of NeutralPlayerAddedEffect
 
 [<ClientType(ClientSection.Events)>]
 type EventKind =
@@ -134,9 +141,15 @@ type CreateEventRequest =
     
 module PlayerAddedEffect =
     let fromRequest (request : CreatePlayerRequest) : Effect =
-        let f : PlayerAddedEffect = {
-            name = request.name
-            userId = request.userId
-            kind = request.kind
-        } 
-        Effect.PlayerAdded f
+        if request.kind = PlayerKind.Neutral then
+            let f : NeutralPlayerAddedEffect = {
+                name = request.name.Value
+            }
+            Effect.NeutralPlayerAdded f
+        else
+            let f : PlayerAddedEffect = {
+                name = request.name
+                userId = request.userId.Value
+                kind = request.kind
+            } 
+            Effect.PlayerAdded f

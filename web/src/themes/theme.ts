@@ -17,7 +17,7 @@ export default interface Theme {
     effectMessagePieceKilled : string,
     effectMessagePieceMoved : string,
     effectMessagePlayerAdded : string,
-    effectMessagePlayerAddedNeutral : string,
+    effectMessageNeutralPlayerAdded : string,
     effectMessagePlayerEliminated : string,
     effectMessagePlayerOutOfMoves : string,
     effectMessagePlayerRemoved : string,

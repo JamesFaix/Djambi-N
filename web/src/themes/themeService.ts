@@ -176,6 +176,8 @@ export default class ThemeService {
         switch (effect.kind) {
             case EffectKind.GameStatusChanged:
                 return this.getValue(t => t.effectMessageGameStatusChanged);
+            case EffectKind.NeutralPlayerAdded:
+                return this.getValue(t => t.effectMessageNeutralPlayerAdded);
             case EffectKind.PieceKilled:
                 return this.getValue(t => t.effectMessagePieceKilled);
             case EffectKind.PieceMoved:
@@ -185,9 +187,7 @@ export default class ThemeService {
                     ? this.getValue(t => t.effectMessagePieceAbandoned)
                     : this.getValue(t => t.effectMessagePieceEnlisted);
             case EffectKind.PlayerAdded:
-                return (effect.value as PlayerAddedEffect).kind === PlayerKind.Neutral
-                    ? this.getValue(t => t.effectMessagePlayerAddedNeutral)
-                    : this.getValue(t => t.effectMessagePlayerAdded);
+                return this.getValue(t => t.effectMessagePlayerAdded);
             case EffectKind.PlayerEliminated:
                 return this.getValue(t => t.effectMessagePlayerEliminated);
             case EffectKind.PlayerOutOfMoves:
