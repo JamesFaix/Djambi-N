@@ -108,7 +108,16 @@ let private applyPlayerRemovedEffect (effect : PlayerRemovedEffect) (game : Game
         players = game.players |> List.filter (fun p -> p.id <> effect.playerId)
     }
 
-let private applyTurnCycleChangedEffect (effect : TurnCycleChangedEffect) (game : Game) : Game =
+let private applyTurnCycleAdvancedEffect (effect : TurnCycleAdvancedEffect) (game : Game) : Game =
+    { game with turnCycle = effect.newValue }
+
+let private applyTurnCyclePlayerFellFromPowerEffect (effect : TurnCyclePlayerFellFromPowerEffect) (game : Game) : Game =
+    { game with turnCycle = effect.newValue }
+
+let private applyTurnCyclePlayerRemovedEffect (effect : TurnCyclePlayerRemovedEffect) (game : Game) : Game =
+    { game with turnCycle = effect.newValue }
+
+let private applyTurnCyclePlayerRoseToPowerEffect (effect : TurnCyclePlayerRoseToPowerEffect) (game : Game) : Game =
     { game with turnCycle = effect.newValue }
 
 let private applyEffect (effect : Effect) (game : Game) : Game =
@@ -127,7 +136,10 @@ let private applyEffect (effect : Effect) (game : Game) : Game =
     | Effect.PlayerEliminated e -> applyPlayerEliminatedEffect e game
     | Effect.PlayerOutOfMoves e -> applyPlayerOutOfMovesEffect e game
     | Effect.PlayerRemoved e -> applyPlayerRemovedEffect e game
-    | Effect.TurnCycleChanged e -> applyTurnCycleChangedEffect e game
+    | Effect.TurnCycleAdvanced e -> applyTurnCycleAdvancedEffect e game
+    | Effect.TurnCyclePlayerFellFromPower e -> applyTurnCyclePlayerFellFromPowerEffect e game
+    | Effect.TurnCyclePlayerRemoved e -> applyTurnCyclePlayerRemovedEffect e game
+    | Effect.TurnCyclePlayerRoseToPower e -> applyTurnCyclePlayerRoseToPowerEffect e game
 
 let applyEvent (game : Game) (eventRequest : CreateEventRequest) : Game =
     let mutable game = game

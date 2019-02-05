@@ -197,7 +197,10 @@ export type EffectCase =
 	PlayerEliminatedEffect |
 	PlayerOutOfMovesEffect |
 	PlayerRemovedEffect |
-	TurnCycleChangedEffect
+	TurnCycleAdvancedEffect |
+	TurnCyclePlayerFellFromPowerEffect |
+	TurnCyclePlayerRemovedEffect |
+	TurnCyclePlayerRoseToPowerEffect
 
 export enum EffectKind {
 	CurrentTurnChanged = "CurrentTurnChanged",
@@ -214,7 +217,10 @@ export enum EffectKind {
 	PlayerEliminated = "PlayerEliminated",
 	PlayerOutOfMoves = "PlayerOutOfMoves",
 	PlayerRemoved = "PlayerRemoved",
-	TurnCycleChanged = "TurnCycleChanged",
+	TurnCycleAdvanced = "TurnCycleAdvanced",
+	TurnCyclePlayerFellFromPower = "TurnCyclePlayerFellFromPower",
+	TurnCyclePlayerRemoved = "TurnCyclePlayerRemoved",
+	TurnCyclePlayerRoseToPower = "TurnCyclePlayerRoseToPower",
 }
 
 
@@ -311,9 +317,27 @@ export interface StateAndEventResponse {
 	event : Event,
 }
 
-export interface TurnCycleChangedEffect {
+export interface TurnCycleAdvancedEffect {
 	oldValue : number[],
 	newValue : number[],
+}
+
+export interface TurnCyclePlayerFellFromPowerEffect {
+	oldValue : number[],
+	newValue : number[],
+	playerId : number,
+}
+
+export interface TurnCyclePlayerRemovedEffect {
+	oldValue : number[],
+	newValue : number[],
+	playerId : number,
+}
+
+export interface TurnCyclePlayerRoseToPowerEffect {
+	oldValue : number[],
+	newValue : number[],
+	playerId : number,
 }
 
 //-------- MISC --------

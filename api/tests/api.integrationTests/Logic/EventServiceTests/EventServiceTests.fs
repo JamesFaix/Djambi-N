@@ -409,11 +409,65 @@ type EventServiceTests() =
         newGame.players.Head |> shouldBe players.[1]
 
     [<Fact>]
-    let ``Should apply TurnCycleChanged effect``() =
+    let ``Should apply TurnCycleAdvanced effect``() =
         //Arrange
         let game = TestUtilities.defaultGame
         let newCycle = [1;2;3]
-        let effect = Effect.TurnCycleChanged { oldValue = game.turnCycle; newValue = newCycle }
+        let effect = Effect.TurnCycleAdvanced { oldValue = game.turnCycle; newValue = newCycle }
+        let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
+
+        game.turnCycle |> shouldBe List.empty
+
+        //Act
+        let newGame = EventService.applyEvent game eventRequest
+
+        //Assert
+        { game with turnCycle = newGame.turnCycle } |> shouldBe newGame
+
+        newGame.turnCycle |> shouldBe newCycle   
+
+    [<Fact>]
+    let ``Should apply TurnCyclePlayerFellFromPower effect``() =
+        //Arrange
+        let game = TestUtilities.defaultGame
+        let newCycle = [1;2;3]
+        let effect = Effect.TurnCyclePlayerFellFromPower { oldValue = game.turnCycle; newValue = newCycle; playerId = 1 } //PlayerID is just informative, doesn't effect processing
+        let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
+
+        game.turnCycle |> shouldBe List.empty
+
+        //Act
+        let newGame = EventService.applyEvent game eventRequest
+
+        //Assert
+        { game with turnCycle = newGame.turnCycle } |> shouldBe newGame
+
+        newGame.turnCycle |> shouldBe newCycle   
+
+    [<Fact>]
+    let ``Should apply TurnCyclePlayerRemoved effect``() =
+        //Arrange
+        let game = TestUtilities.defaultGame
+        let newCycle = [1;2;3]
+        let effect = Effect.TurnCyclePlayerRemoved { oldValue = game.turnCycle; newValue = newCycle; playerId = 1 } //PlayerID is just informative, doesn't effect processing
+        let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
+
+        game.turnCycle |> shouldBe List.empty
+
+        //Act
+        let newGame = EventService.applyEvent game eventRequest
+
+        //Assert
+        { game with turnCycle = newGame.turnCycle } |> shouldBe newGame
+
+        newGame.turnCycle |> shouldBe newCycle   
+
+    [<Fact>]
+    let ``Should apply TurnCyclePlayerRoseToPower effect``() =
+        //Arrange
+        let game = TestUtilities.defaultGame
+        let newCycle = [1;2;3]
+        let effect = Effect.TurnCyclePlayerRoseToPower { oldValue = game.turnCycle; newValue = newCycle; playerId = 1 } //PlayerID is just informative, doesn't effect processing
         let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
 
         game.turnCycle |> shouldBe List.empty

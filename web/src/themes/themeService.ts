@@ -198,8 +198,14 @@ export default class ThemeService {
                 return this.getValue(t => t.effectMessagePlayerOutOfMoves);
             case EffectKind.PlayerRemoved:
                 return this.getValue(t => t.effectMessagePlayerRemoved);
-            case EffectKind.TurnCycleChanged:
-                return this.getValue(t => t.effectMessageTurnCycleChanged);
+            case EffectKind.TurnCycleAdvanced:
+                return this.getValue(t => t.effectMessageTurnCycleAdvanced);
+            case EffectKind.TurnCyclePlayerFellFromPower:
+                return this.getValue(t => t.effectMessageTurnCyclePlayerFellFromPower);
+            case EffectKind.TurnCyclePlayerRemoved:
+                return this.getValue(t => t.effectMessageTurnCyclePlayerRemoved);
+            case EffectKind.TurnCyclePlayerRoseToPower:
+                return this.getValue(t => t.effectMessageTurnCyclePlayerRoseToPower);
             default:
                 throw "Unsupported effect kind.";
         }

@@ -23,7 +23,10 @@ export default interface Theme {
     effectMessagePlayerEliminated : string,
     effectMessagePlayerOutOfMoves : string,
     effectMessagePlayerRemoved : string,
-    effectMessageTurnCycleChanged : string,
+    effectMessageTurnCycleAdvanced : string,
+    effectMessageTurnCyclePlayerFellFromPower : string,
+    effectMessageTurnCyclePlayerRemoved : string,
+    effectMessageTurnCyclePlayerRoseToPower : string,
 
     eventMessageGameStarted : string,
     eventMessagePlayerEjected : string,

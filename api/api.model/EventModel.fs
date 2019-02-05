@@ -98,10 +98,34 @@ type PlayerRemovedEffect =
     }
 
 [<ClientType(ClientSection.Events)>]
-type TurnCycleChangedEffect = 
+type TurnCycleAdvancedEffect = 
     {
         oldValue : int list
         newValue : int list
+    }
+    
+[<ClientType(ClientSection.Events)>]
+type TurnCyclePlayerFellFromPowerEffect = 
+    {
+        oldValue : int list
+        newValue : int list
+        playerId : int
+    }
+
+[<ClientType(ClientSection.Events)>]
+type TurnCyclePlayerRemovedEffect = 
+    {
+        oldValue : int list
+        newValue : int list
+        playerId : int
+    }
+
+[<ClientType(ClientSection.Events)>]
+type TurnCyclePlayerRoseToPowerEffect = 
+    {
+        oldValue : int list
+        newValue : int list
+        playerId : int
     }
 
 [<ClientType(ClientSection.Events)>]
@@ -120,7 +144,10 @@ type Effect =
     | PlayerEliminated of PlayerEliminatedEffect
     | PlayerOutOfMoves of PlayerOutOfMovesEffect
     | PlayerRemoved of PlayerRemovedEffect
-    | TurnCycleChanged of TurnCycleChangedEffect
+    | TurnCycleAdvanced of TurnCycleAdvancedEffect
+    | TurnCyclePlayerFellFromPower of TurnCyclePlayerFellFromPowerEffect
+    | TurnCyclePlayerRemoved of TurnCyclePlayerRemovedEffect
+    | TurnCyclePlayerRoseToPower of TurnCyclePlayerRoseToPowerEffect
 
 [<ClientType(ClientSection.Events)>]
 type EventKind =

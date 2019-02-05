@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as Sprintf from 'sprintf-js';
 import ThemeService from '../../themes/themeService';
-import { Game, Effect, EffectKind, GameStatusChangedEffect, PieceKilledEffect, PlayerAddedEffect, PieceMovedEffect, PlayerKind, PlayerEliminatedEffect, PlayerOutOfMovesEffect, PlayerRemovedEffect, TurnCycleChangedEffect, PieceKind, Piece, NeutralPlayerAddedEffect, PieceAbandonedEffect, PieceEnlistedEffect, PieceDroppedEffect, PieceVacatedEffect } from '../../api/model';
+import { Game, Effect, EffectKind, GameStatusChangedEffect, PieceKilledEffect, PlayerAddedEffect, PieceMovedEffect, PlayerKind, PlayerEliminatedEffect, PlayerOutOfMovesEffect, PlayerRemovedEffect, PieceKind, Piece, NeutralPlayerAddedEffect, PieceAbandonedEffect, PieceEnlistedEffect, PieceDroppedEffect, PieceVacatedEffect, TurnCycleAdvancedEffect, TurnCyclePlayerFellFromPowerEffect, TurnCyclePlayerRemovedEffect, TurnCyclePlayerRoseToPowerEffect } from '../../api/model';
 
 export interface HistoryEffectRowProps {
     game : Game,
@@ -45,8 +45,14 @@ export default class HistoryEffectRow extends React.Component<HistoryEffectRowPr
                 return this.getPlayerOutOfMovesMessages(game, effect);
             case EffectKind.PlayerRemoved:
                 return this.getPlayerRemovedMessage(game, effect);
-            case EffectKind.TurnCycleChanged:
-                return this.getTurnCycleChangedMessage(game, effect);
+            case EffectKind.TurnCycleAdvanced:
+                return this.getTurnCycleAdvancedMessage(game, effect);
+            case EffectKind.TurnCyclePlayerFellFromPower:
+                return this.getTurnCyclePlayerFellFromPowerMessage(game, effect);
+            case EffectKind.TurnCyclePlayerRemoved:
+                return this.getTurnCyclePlayerRemovedMessage(game, effect);
+            case EffectKind.TurnCyclePlayerRoseToPower:
+                return this.getTurnCyclePlayerRoseToPowerMessage(game, effect);
             default:
                 throw "Unsupported effect kind.";
         }
@@ -157,11 +163,37 @@ export default class HistoryEffectRow extends React.Component<HistoryEffectRowPr
         });
     }
 
-    private getTurnCycleChangedMessage(game : Game, effect : Effect) : string {
+    private getTurnCycleAdvancedMessage(game : Game, effect : Effect) : string {
         const template = this.props.theme.getEffectMessageTemplate(effect);
-        const f = effect.value as TurnCycleChangedEffect;
+        const f = effect.value as TurnCycleAdvancedEffect;
         return Sprintf.sprintf(template, {
-            oldCycle: f.oldValue.map(id => this.getPlayerName(id)).join(","),
+            newCycle: f.newValue.map(id => this.getPlayerName(id)).join(",")
+        });
+    }
+
+    private getTurnCyclePlayerFellFromPowerMessage(game : Game, effect : Effect) : string {
+        const template = this.props.theme.getEffectMessageTemplate(effect);
+        const f = effect.value as TurnCyclePlayerFellFromPowerEffect;
+        return Sprintf.sprintf(template, {
+            player: this.getPlayerName(f.playerId),
+            newCycle: f.newValue.map(id => this.getPlayerName(id)).join(",")
+        });
+    }
+
+    private getTurnCyclePlayerRemovedMessage(game : Game, effect : Effect) : string {
+        const template = this.props.theme.getEffectMessageTemplate(effect);
+        const f = effect.value as TurnCyclePlayerRemovedEffect;
+        return Sprintf.sprintf(template, {
+            player: this.getPlayerName(f.playerId),
+            newCycle: f.newValue.map(id => this.getPlayerName(id)).join(",")
+        });
+    }
+
+    private getTurnCyclePlayerRoseToPowerMessage(game : Game, effect : Effect) : string {
+        const template = this.props.theme.getEffectMessageTemplate(effect);
+        const f = effect.value as TurnCyclePlayerRoseToPowerEffect;
+        return Sprintf.sprintf(template, {
+            player: this.getPlayerName(f.playerId),
             newCycle: f.newValue.map(id => this.getPlayerName(id)).join(",")
         });
     }
