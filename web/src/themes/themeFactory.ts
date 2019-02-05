@@ -16,9 +16,11 @@ export default class ThemeFactory {
 
             effectMessageGameStatusChanged :  "Game status changed from %(oldStatus)s to %(newStatus)s.",
             effectMessagePieceAbandoned :  "%(piece)s was abandoned.",
+            effectMessagePieceDropped : "%(piece)s was dropped at %(newCell)s.",
             effectMessagePieceEnlisted : "%(piece)s was enlisted by player %(newPlayer)s.",
             effectMessagePieceKilled : "%(piece)s was killed.",
             effectMessagePieceMoved : "%(piece)s moved from %(oldCell)s to %(newCell)s.",
+            effectMessagePieceVacated : "%(piece)s fled %(center)s to %(newCell)s.",
             effectMessagePlayerAdded : "%(player)s joined the game.",
             effectMessageNeutralPlayerAdded : "Neutral player %(player)s added to the game.",
             effectMessagePlayerEliminated : "%(player)s was eliminated.",
@@ -87,9 +89,11 @@ export default class ThemeFactory {
 
             effectMessageGameStatusChanged : null,
             effectMessagePieceAbandoned : null,
+            effectMessagePieceDropped : null,
             effectMessagePieceEnlisted : null,
             effectMessagePieceKilled : null,
             effectMessagePieceMoved : null,
+            effectMessagePieceVacated : null,
             effectMessagePlayerAdded : null,
             effectMessageNeutralPlayerAdded : null,
             effectMessagePlayerEliminated : null,

@@ -3,6 +3,9 @@
 open Djambi.Api.Model
 open Djambi.Api.Common.Collections
 
+let private applyCurrentTurnChangedEffect (effect : CurrentTurnChangedEffect) (game : Game) : Game =
+    { game with currentTurn = effect.newValue }
+
 let private applyGameStatusChangedEffect (effect : GameStatusChangedEffect) (game : Game) : Game =
     match (effect.oldValue, effect.newValue) with
     | (Pending, Started) ->
@@ -11,17 +14,44 @@ let private applyGameStatusChangedEffect (effect : GameStatusChangedEffect) (gam
     | _ ->
         { game with status = effect.newValue }
 
-let private applyTurnCycleChangedEffect (effect : TurnCycleChangedEffect) (game : Game) : Game =
-    { game with turnCycle = effect.newValue }
+let private applyNeutralPlayerAddedEffect (effect : NeutralPlayerAddedEffect) (game : Game) : Game =
+    let player : Player = 
+        {
+            id = 0
+            gameId = game.id
+            userId = None
+            kind = PlayerKind.Neutral
+            name = effect.name
+            status = PlayerStatus.Pending
+            colorId = None
+            startingRegion = None
+            startingTurnNumber = None
+        }
+
+    { game with players = List.append game.players [player] }
 
 let private applyParameterChangedEffect (effect : ParametersChangedEffect) (game : Game) : Game =
     { game with parameters = effect.newValue }
 
-let private applyPlayerEliminatedEffect (effect : PlayerEliminatedEffect) (game : Game) : Game =
+let private applyPieceAbandonedEffect (effect : PieceAbandonedEffect) (game : Game) : Game = 
     { game with 
-        players = game.players |> List.replaceIf 
-            (fun p -> p.id = effect.playerId) 
-            (fun p -> { p with status = PlayerStatus.Eliminated })
+        pieces = game.pieces |> List.replaceIf
+            (fun p -> p.id = effect.oldPiece.id)
+            (fun p -> { p with playerId = None })
+    }
+    
+let private applyPieceDroppedEffect (effect : PieceDroppedEffect) (game : Game) : Game =
+    { game with 
+        pieces = game.pieces |> List.replaceIf
+            (fun p -> effect.oldPiece.id = p.id)
+            (fun p -> { p with cellId = effect.newCellId }) 
+    }
+
+let private applyPieceEnlistedEffect (effect : PieceEnlistedEffect) (game : Game) : Game = 
+    { game with 
+        pieces = game.pieces |> List.replaceIf
+            (fun p -> p.id = effect.oldPiece.id)
+            (fun p -> { p with playerId = effect.newPlayerId })
     }
 
 let private applyPieceKilledEffect (effect : PieceKilledEffect) (game : Game) : Game =
@@ -31,15 +61,19 @@ let private applyPieceKilledEffect (effect : PieceKilledEffect) (game : Game) : 
             (fun p -> { p with kind = PieceKind.Corpse; playerId = None }) 
     }
 
-let private applyPlayerRemovedEffect (effect : PlayerRemovedEffect) (game : Game) : Game =
+let private applyPieceMovedEffect (effect : PieceMovedEffect) (game : Game) : Game =
     { game with 
-        players = game.players |> List.filter (fun p -> p.id <> effect.playerId)
+        pieces = game.pieces |> List.replaceIf
+            (fun p -> effect.oldPiece.id = p.id)
+            (fun p -> { p with cellId = effect.newCellId }) 
     }
-
-let private applyPlayerOutOfMovesEffect (effect : PlayerOutOfMovesEffect) (game : Game) : Game =
-    //This effect is just to communicate what happened,
-    //the same event should also create a PlayerEliminated and PiecesOwnershipChanged effect
-    game
+    
+let private applyPieceVacatedEffect (effect : PieceVacatedEffect) (game : Game) : Game =
+    { game with 
+        pieces = game.pieces |> List.replaceIf
+            (fun p -> effect.oldPiece.id = p.id)
+            (fun p -> { p with cellId = effect.newCellId }) 
+    }
 
 let private applyPlayerAddedEffect (effect : PlayerAddedEffect) (game : Game) : Game =
     let player : Player = 
@@ -57,45 +91,25 @@ let private applyPlayerAddedEffect (effect : PlayerAddedEffect) (game : Game) : 
 
     { game with players = List.append game.players [player] }
 
-let private applyNeutralPlayerAddedEffect (effect : NeutralPlayerAddedEffect) (game : Game) : Game =
-    let player : Player = 
-        {
-            id = 0
-            gameId = game.id
-            userId = None
-            kind = PlayerKind.Neutral
-            name = effect.name
-            status = PlayerStatus.Pending
-            colorId = None
-            startingRegion = None
-            startingTurnNumber = None
-        }
-
-    { game with players = List.append game.players [player] }
-   
-let private applyPieceAbandonedEffect (effect : PieceAbandonedEffect) (game : Game) : Game = 
+let private applyPlayerEliminatedEffect (effect : PlayerEliminatedEffect) (game : Game) : Game =
     { game with 
-        pieces = game.pieces |> List.replaceIf
-            (fun p -> p.id = effect.oldPiece.id)
-            (fun p -> { p with playerId = None })
+        players = game.players |> List.replaceIf 
+            (fun p -> p.id = effect.playerId) 
+            (fun p -> { p with status = PlayerStatus.Eliminated })
     }
 
-let private applyPieceEnlistedEffect (effect : PieceEnlistedEffect) (game : Game) : Game = 
+let private applyPlayerOutOfMovesEffect (effect : PlayerOutOfMovesEffect) (game : Game) : Game =
+    //This effect is just to communicate what happened,
+    //the same event should also create a PlayerEliminated and PiecesOwnershipChanged effect
+    game
+
+let private applyPlayerRemovedEffect (effect : PlayerRemovedEffect) (game : Game) : Game =
     { game with 
-        pieces = game.pieces |> List.replaceIf
-            (fun p -> p.id = effect.oldPiece.id)
-            (fun p -> { p with playerId = effect.newPlayerId })
+        players = game.players |> List.filter (fun p -> p.id <> effect.playerId)
     }
 
-let private applyPieceMovedEffect (effect : PieceMovedEffect) (game : Game) : Game =
-    { game with 
-        pieces = game.pieces |> List.replaceIf
-            (fun p -> effect.oldPiece.id = p.id)
-            (fun p -> { p with cellId = effect.newCellId }) 
-    }
-
-let private applyCurrentTurnChangedEffect (effect : CurrentTurnChangedEffect) (game : Game) : Game =
-    { game with currentTurn = effect.newValue }
+let private applyTurnCycleChangedEffect (effect : TurnCycleChangedEffect) (game : Game) : Game =
+    { game with turnCycle = effect.newValue }
 
 let private applyEffect (effect : Effect) (game : Game) : Game =
     match effect with 
@@ -104,9 +118,11 @@ let private applyEffect (effect : Effect) (game : Game) : Game =
     | Effect.NeutralPlayerAdded e -> applyNeutralPlayerAddedEffect e game
     | Effect.ParametersChanged e -> applyParameterChangedEffect e game
     | Effect.PieceAbandoned e -> applyPieceAbandonedEffect e game
+    | Effect.PieceDropped e -> applyPieceDroppedEffect e game
     | Effect.PieceEnlisted e -> applyPieceEnlistedEffect e game
     | Effect.PieceKilled e -> applyPieceKilledEffect e game       
     | Effect.PieceMoved e -> applyPieceMovedEffect e game
+    | Effect.PieceVacated e -> applyPieceVacatedEffect e game
     | Effect.PlayerAdded e -> applyPlayerAddedEffect e game
     | Effect.PlayerEliminated e -> applyPlayerEliminatedEffect e game
     | Effect.PlayerOutOfMoves e -> applyPlayerOutOfMovesEffect e game

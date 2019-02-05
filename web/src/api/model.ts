@@ -188,9 +188,11 @@ export type EffectCase =
 	NeutralPlayerAddedEffect |
 	ParametersChangedEffect |
 	PieceAbandonedEffect |
+	PieceDroppedEffect |
 	PieceEnlistedEffect |
 	PieceKilledEffect |
 	PieceMovedEffect |
+	PieceVacatedEffect |
 	PlayerAddedEffect |
 	PlayerEliminatedEffect |
 	PlayerOutOfMovesEffect |
@@ -203,9 +205,11 @@ export enum EffectKind {
 	NeutralPlayerAdded = "NeutralPlayerAdded",
 	ParametersChanged = "ParametersChanged",
 	PieceAbandoned = "PieceAbandoned",
+	PieceDropped = "PieceDropped",
 	PieceEnlisted = "PieceEnlisted",
 	PieceKilled = "PieceKilled",
 	PieceMoved = "PieceMoved",
+	PieceVacated = "PieceVacated",
 	PlayerAdded = "PlayerAdded",
 	PlayerEliminated = "PlayerEliminated",
 	PlayerOutOfMoves = "PlayerOutOfMoves",
@@ -260,6 +264,11 @@ export interface PieceAbandonedEffect {
 	oldPiece : Piece,
 }
 
+export interface PieceDroppedEffect {
+	oldPiece : Piece,
+	newCellId : number,
+}
+
 export interface PieceEnlistedEffect {
 	oldPiece : Piece,
 	newPlayerId : number,
@@ -270,6 +279,11 @@ export interface PieceKilledEffect {
 }
 
 export interface PieceMovedEffect {
+	oldPiece : Piece,
+	newCellId : number,
+}
+
+export interface PieceVacatedEffect {
 	oldPiece : Piece,
 	newCellId : number,
 }

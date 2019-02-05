@@ -110,7 +110,7 @@ let private applyTurnToPieces(game : Game) : (Piece list * Effect list) =
             effects.Add(Effect.PieceMoved { oldPiece = subject; newCellId = destination.id })
         | Some vacateCellId -> 
             pieces.[subject.id] <- subject.moveTo vacateCellId
-            effects.Add(Effect.PieceMoved { oldPiece = { subject with cellId = destination.id}; newCellId = vacateCellId })
+            effects.Add(Effect.PieceVacated { oldPiece = { subject with cellId = destination.id}; newCellId = vacateCellId })
 
         match currentTurn.targetPiece game with
         | None -> ()
@@ -138,14 +138,14 @@ let private applyTurnToPieces(game : Game) : (Piece list * Effect list) =
             match currentTurn.dropCellId with
             | Some dropCellId ->  
                 pieces.[target.id] <- pieces.[target.id].moveTo dropCellId
-                effects.Add(Effect.PieceMoved { oldPiece = target; newCellId = dropCellId })
+                effects.Add(Effect.PieceDropped { oldPiece = target; newCellId = dropCellId })
             | None -> ()
 
             //Move target back to origin if subject is assassin
             if subject.kind = Assassin
             then 
                 pieces.[target.id] <- pieces.[target.id].moveTo originCellId
-                effects.Add(Effect.PieceMoved { oldPiece = target; newCellId = originCellId })
+                effects.Add(Effect.PieceDropped { oldPiece = target; newCellId = originCellId })
         (pieces.Values |> Seq.toList, effects |> Seq.toList)
 
 let private removeSequentialDuplicates(turnCycle : int list) : int list =
