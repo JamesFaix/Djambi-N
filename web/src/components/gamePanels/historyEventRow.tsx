@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Event, EventKind, Effect, Game, EffectKind, PlayerRemovedEffect } from '../../api/model';
+import { Event, EventKind, Effect, Game, EffectKind, PlayerRemovedEffect, Player } from '../../api/model';
 import HintCell from '../tables/hintCell';
 import EmphasizedTextCell from '../tables/emphasizedTextCell';
 import DateService from '../../dateService';
@@ -19,8 +19,14 @@ export default class HistoryEventRow extends React.Component<HistoryEventRowProp
 
     render() {
         const e = this.props.event;
+        const player = this.getActingPlayer();
+        let style;
+        if (player !== null) {
+            const color = this.props.theme.getPlayerColor(player.colorId);
+            style = Styles.currentTurnPanelGlow(color);
+        }
         return (
-            <tr>
+            <tr style={style}>
                 <td style={Styles.noPadding}>
                     <table>
                         <tbody>
@@ -47,6 +53,13 @@ export default class HistoryEventRow extends React.Component<HistoryEventRowProp
                 </td>
             </tr>
         );
+    }
+
+    private getActingPlayer() : Player {
+        if (this.props.event.actingPlayerId === null) {
+            return null;
+        }
+        return this.props.game.players.find(p => p.id === this.props.event.actingPlayerId);
     }
 
     private getEventMessage(game : Game, event : Event) : string {

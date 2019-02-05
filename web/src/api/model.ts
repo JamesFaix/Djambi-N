@@ -183,30 +183,44 @@ export interface Effect {
 }
 
 export type EffectCase =
+	CurrentTurnChangedEffect |
 	GameStatusChangedEffect |
-	TurnCycleChangedEffect |
+	NeutralPlayerAddedEffect |
 	ParametersChangedEffect |
-	PlayerEliminatedEffect |
+	PieceAbandonedEffect |
+	PieceDroppedEffect |
+	PieceEnlistedEffect |
 	PieceKilledEffect |
-	PlayerRemovedEffect |
-	PlayerOutOfMovesEffect |
-	PlayerAddedEffect |
-	PieceOwnershipChangedEffect |
 	PieceMovedEffect |
-	CurrentTurnChangedEffect
+	PieceVacatedEffect |
+	PlayerAddedEffect |
+	PlayerEliminatedEffect |
+	PlayerOutOfMovesEffect |
+	PlayerRemovedEffect |
+	TurnCycleAdvancedEffect |
+	TurnCyclePlayerFellFromPowerEffect |
+	TurnCyclePlayerRemovedEffect |
+	TurnCyclePlayerRoseToPowerEffect
 
 export enum EffectKind {
 	CurrentTurnChanged = "CurrentTurnChanged",
 	GameStatusChanged = "GameStatusChanged",
+	NeutralPlayerAdded = "NeutralPlayerAdded",
 	ParametersChanged = "ParametersChanged",
+	PieceAbandoned = "PieceAbandoned",
+	PieceDropped = "PieceDropped",
+	PieceEnlisted = "PieceEnlisted",
 	PieceKilled = "PieceKilled",
 	PieceMoved = "PieceMoved",
-	PieceOwnershipChanged = "PieceOwnershipChanged",
+	PieceVacated = "PieceVacated",
 	PlayerAdded = "PlayerAdded",
 	PlayerEliminated = "PlayerEliminated",
 	PlayerOutOfMoves = "PlayerOutOfMoves",
 	PlayerRemoved = "PlayerRemoved",
-	TurnCycleChanged = "TurnCycleChanged",
+	TurnCycleAdvanced = "TurnCycleAdvanced",
+	TurnCyclePlayerFellFromPower = "TurnCyclePlayerFellFromPower",
+	TurnCyclePlayerRemoved = "TurnCyclePlayerRemoved",
+	TurnCyclePlayerRoseToPower = "TurnCyclePlayerRoseToPower",
 }
 
 
@@ -243,9 +257,27 @@ export interface GameStatusChangedEffect {
 	newValue : GameStatus,
 }
 
+export interface NeutralPlayerAddedEffect {
+	name : string,
+}
+
 export interface ParametersChangedEffect {
 	oldValue : GameParameters,
 	newValue : GameParameters,
+}
+
+export interface PieceAbandonedEffect {
+	oldPiece : Piece,
+}
+
+export interface PieceDroppedEffect {
+	oldPiece : Piece,
+	newCellId : number,
+}
+
+export interface PieceEnlistedEffect {
+	oldPiece : Piece,
+	newPlayerId : number,
 }
 
 export interface PieceKilledEffect {
@@ -257,9 +289,9 @@ export interface PieceMovedEffect {
 	newCellId : number,
 }
 
-export interface PieceOwnershipChangedEffect {
+export interface PieceVacatedEffect {
 	oldPiece : Piece,
-	newPlayerId : number,
+	newCellId : number,
 }
 
 export interface PlayerAddedEffect {
@@ -285,9 +317,27 @@ export interface StateAndEventResponse {
 	event : Event,
 }
 
-export interface TurnCycleChangedEffect {
+export interface TurnCycleAdvancedEffect {
 	oldValue : number[],
 	newValue : number[],
+}
+
+export interface TurnCyclePlayerFellFromPowerEffect {
+	oldValue : number[],
+	newValue : number[],
+	playerId : number,
+}
+
+export interface TurnCyclePlayerRemovedEffect {
+	oldValue : number[],
+	newValue : number[],
+	playerId : number,
+}
+
+export interface TurnCyclePlayerRoseToPowerEffect {
+	oldValue : number[],
+	newValue : number[],
+	playerId : number,
 }
 
 //-------- MISC --------

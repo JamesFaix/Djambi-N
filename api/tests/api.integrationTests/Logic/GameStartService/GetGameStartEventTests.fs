@@ -123,10 +123,7 @@ type GetGameStartEventTests() =
             event.kind |> shouldBe EventKind.GameStarted
             event.effects.Length |> shouldBe 2
             match (event.effects.[0], event.effects.[1]) with
-            | (Effect.PlayerAdded f1, Effect.GameStatusChanged f2) ->
-                f1.kind |> shouldBe PlayerKind.Neutral
-                f1.userId |> shouldBeNone
-
+            | (Effect.NeutralPlayerAdded f1, Effect.GameStatusChanged f2) ->
                 f2.oldValue |> shouldBe GameStatus.Pending
                 f2.newValue |> shouldBe GameStatus.Started
                 

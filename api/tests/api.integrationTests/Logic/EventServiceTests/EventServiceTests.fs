@@ -30,37 +30,6 @@ type EventServiceTests() =
         newGame.status |> shouldBe GameStatus.Aborted
 
     [<Fact>]
-    let ``Should apply AddPlayer effect``() =
-        //Arrange
-        let game = { TestUtilities.defaultGame with id = 5 }
-        let userId = 1
-        let playerRequest = CreatePlayerRequest.user(userId)
-        let effect = PlayerAddedEffect.fromRequest playerRequest
-        let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
-        
-        game.players.Length |> shouldBe 0
-
-        //Act
-        let newGame = EventService.applyEvent game eventRequest
-
-        //Assert
-        { game with players = newGame.players } |> shouldBe newGame
-        
-        newGame.players.Length |> shouldBe 1
-        let p = newGame.players.Head
-        p.id |> shouldBe 0 //This is generated when the event is persisted
-        p.gameId |> shouldBe newGame.id       
-        p.userId |> shouldBe playerRequest.userId
-        p.kind |> shouldBe playerRequest.kind
-        p.name |> shouldBe "" //This is pulled from the db for User players
-        
-        //These are assigned at game start
-        p.status |> shouldBe PlayerStatus.Pending
-        p.colorId |> shouldBe None
-        p.startingRegion |> shouldBe None
-        p.startingTurnNumber |> shouldBe None
-
-    [<Fact>]
     let ``Should apply CurrentTurnChanged effect``() =
         //Arrange
         let game = TestUtilities.defaultGame
@@ -97,6 +66,36 @@ type EventServiceTests() =
         newGame.status |> shouldBe newStatus
         
     [<Fact>]
+    let ``Should apply NeutralPlayerAdded effect``() =
+        //Arrange
+        let game = { TestUtilities.defaultGame with id = 5 }
+        let playerRequest = { kind = PlayerKind.Neutral; userId = None; name = Some "p2" }
+        let effect = PlayerAddedEffect.fromRequest playerRequest
+        let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
+        
+        game.players.Length |> shouldBe 0
+
+        //Act
+        let newGame = EventService.applyEvent game eventRequest
+
+        //Assert
+        { game with players = newGame.players } |> shouldBe newGame
+        
+        newGame.players.Length |> shouldBe 1
+        let p = newGame.players.Head
+        p.id |> shouldBe 0 //This is generated when the event is persisted
+        p.gameId |> shouldBe newGame.id       
+        p.userId |> shouldBe playerRequest.userId
+        p.kind |> shouldBe playerRequest.kind
+        p.name |> shouldBe playerRequest.name.Value
+        
+        //These are assigned at game start
+        p.status |> shouldBe PlayerStatus.Pending
+        p.colorId |> shouldBe None
+        p.startingRegion |> shouldBe None
+        p.startingTurnNumber |> shouldBe None
+
+    [<Fact>]
     let ``Should apply ParametersChanged effect``() =
         //Arrange
         let game = TestUtilities.defaultGame
@@ -125,6 +124,104 @@ type EventServiceTests() =
         { game with parameters = newGame.parameters } |> shouldBe newGame
 
         newGame.parameters |> shouldBe newParameters   
+        
+    [<Fact>]
+    let ``Should apply PieceAbandoned effect``() =
+        //Arrange
+        let pieces : Piece list =
+            [
+                {
+                    id = 1
+                    kind = PieceKind.Assassin
+                    playerId = Some 0
+                    originalPlayerId = 0
+                    cellId = 0
+                }
+                {
+                    id = 2
+                    kind = PieceKind.Assassin
+                    playerId = Some 0
+                    originalPlayerId = 0
+                    cellId = 0
+                }
+            ]
+        let game = { TestUtilities.defaultGame with pieces = pieces}
+        let effect = Effect.PieceAbandoned { oldPiece = pieces.[0] }
+        let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
+
+        //Act
+        let newGame = EventService.applyEvent game eventRequest
+
+        //Assert
+        { game with pieces = newGame.pieces } |> shouldBe newGame
+
+        newGame.pieces.Length |> shouldBe 2
+        
+        newGame.pieces.[0] |> shouldBe { pieces.[0] with playerId = None }
+        newGame.pieces.[1] |> shouldBe pieces.[1]
+
+    [<Fact>]
+    let ``Should apply PieceDropped effect``() =
+        //Arrange
+        let piece : Piece = 
+            {
+                id = 1
+                kind = PieceKind.Assassin
+                playerId = Some 0
+                originalPlayerId = 0
+                cellId = 0
+            }
+        let game = { TestUtilities.defaultGame with pieces = [piece]}
+        let newCellId = 3
+        let effect = Effect.PieceDropped { oldPiece = piece; newCellId = newCellId }
+        let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
+
+        //Act
+        let newGame = EventService.applyEvent game eventRequest
+
+        //Assert
+        { game with pieces = newGame.pieces } |> shouldBe newGame
+
+        newGame.pieces.Length |> shouldBe 1
+        
+        let newPiece = newGame.pieces.Head
+        newPiece |> shouldBe { piece with cellId = newCellId }
+
+    [<Fact>]
+    let ``Should apply PieceEnlisted effect``() =
+        //Arrange
+        let pieces : Piece list =
+            [
+                {
+                    id = 1
+                    kind = PieceKind.Assassin
+                    playerId = Some 0
+                    originalPlayerId = 0
+                    cellId = 0
+                }
+                {
+                    id = 2
+                    kind = PieceKind.Assassin
+                    playerId = Some 0
+                    originalPlayerId = 0
+                    cellId = 0
+                }
+            ]
+        let game = { TestUtilities.defaultGame with pieces = pieces}
+        let newPlayerId = Some 1
+        let effect = Effect.PieceEnlisted { oldPiece = pieces.[0]; newPlayerId = newPlayerId }
+        let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
+
+        //Act
+        let newGame = EventService.applyEvent game eventRequest
+
+        //Assert
+        { game with pieces = newGame.pieces } |> shouldBe newGame
+
+        newGame.pieces.Length |> shouldBe 2
+        
+        newGame.pieces.[0] |> shouldBe { pieces.[0] with playerId = newPlayerId }
+        newGame.pieces.[1] |> shouldBe pieces.[1]
 
     [<Fact>]
     let ``Should apply PieceKilled effect``() =
@@ -183,28 +280,19 @@ type EventServiceTests() =
         newPiece |> shouldBe { piece with cellId = newCellId }
 
     [<Fact>]
-    let ``Should apply PieceOwnershipChanged effect``() =
+    let ``Should apply PIeceVacated effect``() =
         //Arrange
-        let pieces : Piece list =
-            [
-                {
-                    id = 1
-                    kind = PieceKind.Assassin
-                    playerId = Some 0
-                    originalPlayerId = 0
-                    cellId = 0
-                }
-                {
-                    id = 2
-                    kind = PieceKind.Assassin
-                    playerId = Some 0
-                    originalPlayerId = 0
-                    cellId = 0
-                }
-            ]
-        let game = { TestUtilities.defaultGame with pieces = pieces}
-        let newPlayerId = Some 1
-        let effect = Effect.PieceOwnershipChanged { oldPiece = pieces.[0]; newPlayerId = newPlayerId }
+        let piece : Piece = 
+            {
+                id = 1
+                kind = PieceKind.Assassin
+                playerId = Some 0
+                originalPlayerId = 0
+                cellId = 0
+            }
+        let game = { TestUtilities.defaultGame with pieces = [piece]}
+        let newCellId = 3
+        let effect = Effect.PieceVacated { oldPiece = piece; newCellId = newCellId }
         let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
 
         //Act
@@ -213,10 +301,41 @@ type EventServiceTests() =
         //Assert
         { game with pieces = newGame.pieces } |> shouldBe newGame
 
-        newGame.pieces.Length |> shouldBe 2
+        newGame.pieces.Length |> shouldBe 1
         
-        newGame.pieces.[0] |> shouldBe { pieces.[0] with playerId = newPlayerId }
-        newGame.pieces.[1] |> shouldBe pieces.[1]
+        let newPiece = newGame.pieces.Head
+        newPiece |> shouldBe { piece with cellId = newCellId }
+
+    [<Fact>]
+    let ``Should apply PlayerAdded effect``() =
+        //Arrange
+        let game = { TestUtilities.defaultGame with id = 5 }
+        let userId = 1
+        let playerRequest = CreatePlayerRequest.user(userId)
+        let effect = PlayerAddedEffect.fromRequest playerRequest
+        let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
+        
+        game.players.Length |> shouldBe 0
+
+        //Act
+        let newGame = EventService.applyEvent game eventRequest
+
+        //Assert
+        { game with players = newGame.players } |> shouldBe newGame
+        
+        newGame.players.Length |> shouldBe 1
+        let p = newGame.players.Head
+        p.id |> shouldBe 0 //This is generated when the event is persisted
+        p.gameId |> shouldBe newGame.id       
+        p.userId |> shouldBe playerRequest.userId
+        p.kind |> shouldBe playerRequest.kind
+        p.name |> shouldBe "" //This is pulled from the db for User players
+        
+        //These are assigned at game start
+        p.status |> shouldBe PlayerStatus.Pending
+        p.colorId |> shouldBe None
+        p.startingRegion |> shouldBe None
+        p.startingTurnNumber |> shouldBe None
 
     [<Fact>]
     let ``Should apply PlayerEliminated effect``() =
@@ -290,11 +409,65 @@ type EventServiceTests() =
         newGame.players.Head |> shouldBe players.[1]
 
     [<Fact>]
-    let ``Should apply TurnCycleChanged effect``() =
+    let ``Should apply TurnCycleAdvanced effect``() =
         //Arrange
         let game = TestUtilities.defaultGame
         let newCycle = [1;2;3]
-        let effect = Effect.TurnCycleChanged { oldValue = game.turnCycle; newValue = newCycle }
+        let effect = Effect.TurnCycleAdvanced { oldValue = game.turnCycle; newValue = newCycle }
+        let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
+
+        game.turnCycle |> shouldBe List.empty
+
+        //Act
+        let newGame = EventService.applyEvent game eventRequest
+
+        //Assert
+        { game with turnCycle = newGame.turnCycle } |> shouldBe newGame
+
+        newGame.turnCycle |> shouldBe newCycle   
+
+    [<Fact>]
+    let ``Should apply TurnCyclePlayerFellFromPower effect``() =
+        //Arrange
+        let game = TestUtilities.defaultGame
+        let newCycle = [1;2;3]
+        let effect = Effect.TurnCyclePlayerFellFromPower { oldValue = game.turnCycle; newValue = newCycle; playerId = 1 } //PlayerID is just informative, doesn't effect processing
+        let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
+
+        game.turnCycle |> shouldBe List.empty
+
+        //Act
+        let newGame = EventService.applyEvent game eventRequest
+
+        //Assert
+        { game with turnCycle = newGame.turnCycle } |> shouldBe newGame
+
+        newGame.turnCycle |> shouldBe newCycle   
+
+    [<Fact>]
+    let ``Should apply TurnCyclePlayerRemoved effect``() =
+        //Arrange
+        let game = TestUtilities.defaultGame
+        let newCycle = [1;2;3]
+        let effect = Effect.TurnCyclePlayerRemoved { oldValue = game.turnCycle; newValue = newCycle; playerId = 1 } //PlayerID is just informative, doesn't effect processing
+        let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
+
+        game.turnCycle |> shouldBe List.empty
+
+        //Act
+        let newGame = EventService.applyEvent game eventRequest
+
+        //Assert
+        { game with turnCycle = newGame.turnCycle } |> shouldBe newGame
+
+        newGame.turnCycle |> shouldBe newCycle   
+
+    [<Fact>]
+    let ``Should apply TurnCyclePlayerRoseToPower effect``() =
+        //Arrange
+        let game = TestUtilities.defaultGame
+        let newCycle = [1;2;3]
+        let effect = Effect.TurnCyclePlayerRoseToPower { oldValue = game.turnCycle; newValue = newCycle; playerId = 1 } //PlayerID is just informative, doesn't effect processing
         let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
 
         game.turnCycle |> shouldBe List.empty

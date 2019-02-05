@@ -110,7 +110,7 @@ let private applyTurnToPieces(game : Game) : (Piece list * Effect list) =
             effects.Add(Effect.PieceMoved { oldPiece = subject; newCellId = destination.id })
         | Some vacateCellId -> 
             pieces.[subject.id] <- subject.moveTo vacateCellId
-            effects.Add(Effect.PieceMoved { oldPiece = { subject with cellId = destination.id}; newCellId = vacateCellId })
+            effects.Add(Effect.PieceVacated { oldPiece = { subject with cellId = destination.id}; newCellId = vacateCellId })
 
         match currentTurn.targetPiece game with
         | None -> ()
@@ -129,7 +129,7 @@ let private applyTurnToPieces(game : Game) : (Piece list * Effect list) =
                 let enlistedPieces = game.piecesControlledBy target.playerId.Value
                 for p in enlistedPieces do
                     pieces.[p.id] <- pieces.[p.id].enlistBy subject.playerId.Value
-                    effects.Add(Effect.PieceOwnershipChanged{
+                    effects.Add(Effect.PieceEnlisted{
                                 oldPiece = p
                                 newPlayerId = subject.playerId
                             })
@@ -138,14 +138,14 @@ let private applyTurnToPieces(game : Game) : (Piece list * Effect list) =
             match currentTurn.dropCellId with
             | Some dropCellId ->  
                 pieces.[target.id] <- pieces.[target.id].moveTo dropCellId
-                effects.Add(Effect.PieceMoved { oldPiece = target; newCellId = dropCellId })
+                effects.Add(Effect.PieceDropped { oldPiece = target; newCellId = dropCellId })
             | None -> ()
 
             //Move target back to origin if subject is assassin
             if subject.kind = Assassin
             then 
                 pieces.[target.id] <- pieces.[target.id].moveTo originCellId
-                effects.Add(Effect.PieceMoved { oldPiece = target; newCellId = originCellId })
+                effects.Add(Effect.PieceDropped { oldPiece = target; newCellId = originCellId })
         (pieces.Values |> Seq.toList, effects |> Seq.toList)
 
 let private removeSequentialDuplicates(turnCycle : int list) : int list =
@@ -161,6 +161,12 @@ let private applyTurnToTurnCycle(game : Game) : (int list * Effect list) =
     let mutable turns = game.turnCycle
     let currentTurn = game.currentTurn.Value
     let regions = game.parameters.regionCount
+    let effects = ArrayList<Effect>()
+
+    let removeAllTurnsForPlayer playerId = 
+        let newTurns = turns |> Seq.filter(fun playerId -> playerId <> playerId) |> Seq.toList |> removeSequentialDuplicates
+        effects.Add(Effect.TurnCyclePlayerRemoved { oldValue = turns; newValue = newTurns; playerId = playerId })
+        turns <- newTurns
 
     let removeBonusTurnsForPlayer playerId =
         //Copy only the last turn of the given player, plus all other turns
@@ -172,7 +178,9 @@ let private applyTurnToTurnCycle(game : Game) : (int list * Effect list) =
                 hasAddedTargetPlayer <- true
                 stack.Push t
             else stack.Push t
-        turns <- stack |> Seq.toList
+        let newTurns = stack |> Seq.toList |> removeSequentialDuplicates
+        effects.Add(Effect.TurnCyclePlayerFellFromPower { oldValue = turns; newValue = newTurns; playerId = playerId })
+        turns <- newTurns
 
     let addBonusTurnsForPlayer playerId =
         //Insert a turn for the given player before every turn, except the current one
@@ -180,13 +188,16 @@ let private applyTurnToTurnCycle(game : Game) : (int list * Effect list) =
         for t in turns |> Seq.skip(1) |> Seq.rev do
             stack.Push t
             stack.Push playerId
-        turns <- stack |> Seq.toList
+        let newTurns = stack |> Seq.toList |> removeSequentialDuplicates
+        effects.Add(Effect.TurnCyclePlayerRoseToPower { oldValue = turns; newValue = newTurns; playerId = playerId })
+        turns <- newTurns
 
     match (currentTurn.subjectPiece game, currentTurn.targetPiece game, currentTurn.dropCell regions) with
     //If chief being killed, remove all its turns
     | (Some subject, Some target, _)
         when subject.isKiller && target.kind = Chief ->
-        turns <- turns |> Seq.filter(fun playerId -> playerId <> target.playerId.Value) |> Seq.toList
+        removeAllTurnsForPlayer target.playerId.Value
+
     //If chief being forced out of power, remove its bonus turns only
     | (Some subject, Some target, Some drop)
         when subject.kind = Diplomat && target.kind = Chief && not drop.isCenter ->
@@ -198,19 +209,19 @@ let private applyTurnToTurnCycle(game : Game) : (int list * Effect list) =
     | (Some subject, Some origin, Some destination)
         when subject.kind = Chief && origin.isCenter && not destination.isCenter ->
         removeBonusTurnsForPlayer subject.playerId.Value
+
     //If subject is chief and destination is center, add extra turns to queue
     | (Some subject, _, Some destination)
         when subject.kind = Chief && destination.isCenter ->
         addBonusTurnsForPlayer subject.playerId.Value
     | _ -> ()
 
-    turns <- removeSequentialDuplicates turns
-
     //Cycle turn queue
-    turns <- List.append turns.Tail [turns.Head]
+    let newTurns = List.append turns.Tail [turns.Head]
+    effects.Add(Effect.TurnCycleAdvanced { oldValue = turns; newValue = newTurns })
+    turns <- newTurns
 
-    let effect = Effect.TurnCycleChanged { oldValue = game.turnCycle; newValue = turns }
-    (turns, [effect])
+    (turns, effects |> Seq.toList)
 
 let private killCurrentPlayer(game : Game) : (Game * Effect list) =
     let playerId = game.turnCycle.Head
@@ -226,12 +237,12 @@ let private killCurrentPlayer(game : Game) : (Game * Effect list) =
 
     let effects = new ArrayList<Effect>()
     effects.Add(Effect.PlayerOutOfMoves { playerId = playerId })
-    effects.Add(Effect.TurnCycleChanged { oldValue = game.turnCycle; newValue = turns })
+    effects.Add(Effect.TurnCyclePlayerRemoved { oldValue = game.turnCycle; newValue = turns; playerId = playerId })
 
     let abandonedPieces = game.pieces |> List.filter (fun p -> p.playerId = Some playerId)
 
     for p in abandonedPieces do
-        effects.Add(Effect.PieceOwnershipChanged { oldPiece = p; newPlayerId = None })
+        effects.Add(Effect.PieceAbandoned { oldPiece = p })
 
     let updatedGame =
         { game with

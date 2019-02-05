@@ -5,19 +5,25 @@ open System
 open Djambi.ClientGenerator.Annotations
 
 [<ClientType(ClientSection.Events)>]
+type CurrentTurnChangedEffect = 
+    {
+        oldValue : Turn option
+        newValue : Turn option
+    }
+
+[<ClientType(ClientSection.Events)>]
 type GameStatusChangedEffect = 
     {
         oldValue : GameStatus
         newValue : GameStatus
     }
-
-[<ClientType(ClientSection.Events)>]
-type TurnCycleChangedEffect = 
-    {
-        oldValue : int list
-        newValue : int list
-    }
     
+[<ClientType(ClientSection.Events)>]
+type NeutralPlayerAddedEffect =
+    {
+        name : string
+    }
+
 [<ClientType(ClientSection.Events)>]
 type ParametersChangedEffect = 
     {
@@ -26,16 +32,23 @@ type ParametersChangedEffect =
     }
 
 [<ClientType(ClientSection.Events)>]
-type CurrentTurnChangedEffect = 
+type PieceEnlistedEffect =
     {
-        oldValue : Turn option
-        newValue : Turn option
+        oldPiece : Piece
+        newPlayerId : int option
+    }
+    
+[<ClientType(ClientSection.Events)>]
+type PieceAbandonedEffect =
+    {
+        oldPiece : Piece
     }
 
 [<ClientType(ClientSection.Events)>]
-type PlayerEliminatedEffect =
+type PieceDroppedEffect =
     {
-        playerId : int
+        oldPiece : Piece
+        newCellId : int
     }
 
 [<ClientType(ClientSection.Events)>]
@@ -45,7 +58,29 @@ type PieceKilledEffect =
     }
 
 [<ClientType(ClientSection.Events)>]
-type PlayerRemovedEffect =
+type PieceMovedEffect =
+    {
+        oldPiece : Piece
+        newCellId : int
+    }
+
+[<ClientType(ClientSection.Events)>]
+type PieceVacatedEffect =
+    {
+        oldPiece : Piece
+        newCellId : int
+    }
+
+[<ClientType(ClientSection.Events)>]
+type PlayerAddedEffect =
+    {
+        name : string option
+        userId : int
+        kind : PlayerKind
+    }
+
+[<ClientType(ClientSection.Events)>]
+type PlayerEliminatedEffect =
     {
         playerId : int
     }
@@ -57,41 +92,62 @@ type PlayerOutOfMovesEffect =
     }
 
 [<ClientType(ClientSection.Events)>]
-type PlayerAddedEffect =
+type PlayerRemovedEffect =
     {
-        name : string option
-        userId : int option
-        kind : PlayerKind
+        playerId : int
     }
 
 [<ClientType(ClientSection.Events)>]
-type PieceOwnershipChangedEffect =
+type TurnCycleAdvancedEffect = 
     {
-        oldPiece : Piece
-        newPlayerId : int option
+        oldValue : int list
+        newValue : int list
+    }
+    
+[<ClientType(ClientSection.Events)>]
+type TurnCyclePlayerFellFromPowerEffect = 
+    {
+        oldValue : int list
+        newValue : int list
+        playerId : int
     }
 
 [<ClientType(ClientSection.Events)>]
-type PieceMovedEffect =
+type TurnCyclePlayerRemovedEffect = 
     {
-        oldPiece : Piece
-        newCellId : int
+        oldValue : int list
+        newValue : int list
+        playerId : int
+    }
+
+[<ClientType(ClientSection.Events)>]
+type TurnCyclePlayerRoseToPowerEffect = 
+    {
+        oldValue : int list
+        newValue : int list
+        playerId : int
     }
 
 [<ClientType(ClientSection.Events)>]
 type Effect =
-    | GameStatusChanged of GameStatusChangedEffect
-    | TurnCycleChanged of TurnCycleChangedEffect
-    | ParametersChanged of ParametersChangedEffect
-    //TODO: PlayerEliminated may need to change to PlayerStatusChanged as a DiffWithCOntext when statuses are added to players
-    | PlayerEliminated of PlayerEliminatedEffect
-    | PieceKilled of PieceKilledEffect
-    | PlayerRemoved of PlayerRemovedEffect
-    | PlayerOutOfMoves of PlayerOutOfMovesEffect
-    | PlayerAdded of PlayerAddedEffect
-    | PieceOwnershipChanged of PieceOwnershipChangedEffect
-    | PieceMoved of PieceMovedEffect
     | CurrentTurnChanged of CurrentTurnChangedEffect
+    | GameStatusChanged of GameStatusChangedEffect
+    | NeutralPlayerAdded of NeutralPlayerAddedEffect
+    | ParametersChanged of ParametersChangedEffect
+    | PieceAbandoned of PieceAbandonedEffect
+    | PieceDropped of PieceDroppedEffect
+    | PieceEnlisted of PieceEnlistedEffect
+    | PieceKilled of PieceKilledEffect
+    | PieceMoved of PieceMovedEffect
+    | PieceVacated of PieceVacatedEffect
+    | PlayerAdded of PlayerAddedEffect
+    | PlayerEliminated of PlayerEliminatedEffect
+    | PlayerOutOfMoves of PlayerOutOfMovesEffect
+    | PlayerRemoved of PlayerRemovedEffect
+    | TurnCycleAdvanced of TurnCycleAdvancedEffect
+    | TurnCyclePlayerFellFromPower of TurnCyclePlayerFellFromPowerEffect
+    | TurnCyclePlayerRemoved of TurnCyclePlayerRemovedEffect
+    | TurnCyclePlayerRoseToPower of TurnCyclePlayerRoseToPowerEffect
 
 [<ClientType(ClientSection.Events)>]
 type EventKind =
@@ -134,9 +190,15 @@ type CreateEventRequest =
     
 module PlayerAddedEffect =
     let fromRequest (request : CreatePlayerRequest) : Effect =
-        let f : PlayerAddedEffect = {
-            name = request.name
-            userId = request.userId
-            kind = request.kind
-        } 
-        Effect.PlayerAdded f
+        if request.kind = PlayerKind.Neutral then
+            let f : NeutralPlayerAddedEffect = {
+                name = request.name.Value
+            }
+            Effect.NeutralPlayerAdded f
+        else
+            let f : PlayerAddedEffect = {
+                name = request.name
+                userId = request.userId.Value
+                kind = request.kind
+            } 
+            Effect.PlayerAdded f
