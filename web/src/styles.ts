@@ -35,7 +35,7 @@ export class Classes {
     public static readonly flex = "flex";
 
     public static combine(classes: string[]) : string {
-        return classes.join(",");
+        return classes.join(" ");
     }
 
 }
