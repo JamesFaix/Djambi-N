@@ -140,12 +140,14 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
         }
 
         const canvasSize = BoardGeometry.boardDiameter(this.state.boardView);
+        const containerStyle = Styles.combine([Styles.noMargin, Styles.width(canvasSize + "px")]);
+        const canvasStyle = Styles.combine([containerStyle, Styles.height(canvasSize +"px")]);
 
         return (
-            <div style={Styles.gamePageContainer(canvasSize)}>
+            <div style={containerStyle}>
                 <div
                     className={Classes.thinBorder}
-                    style={Styles.gamePageCanvas(canvasSize)}
+                    style={canvasStyle}
                 >
                     <CanvasBoard
                         board={this.state.boardView}
@@ -160,11 +162,14 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                         user={this.props.user}
                         commitTurn={gameId => this.commitTurn(gameId)}
                         resetTurn={gameId => this.resetTurn(gameId)}
+                        height={"100%"}
+                        width={"40%"}
                     />
-                    <div style={Styles.width(60)}>
+                    <div style={Styles.width("60%")}>
                         <TurnCyclePanel
                             game={this.state.game}
                             theme={this.props.theme}
+                            iconSize={"50px"}
                         />
                         <PlayersPanel
                             game={this.state.game}
@@ -176,7 +181,8 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                     game={this.state.game}
                     events={this.state.events}
                     theme={this.props.theme}
-                    height={200}
+                    height={"200px"}
+                    width={"100%"}
                 />
             </div>
         );

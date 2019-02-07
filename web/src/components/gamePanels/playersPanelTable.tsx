@@ -35,7 +35,7 @@ export default class PlayersPanelTable extends React.Component<PlayersPanelTable
         const color = this.props.theme.getPlayerColor(player.colorId);
         return (
             <tr
-                style={Styles.playersPanelGlow(color)}
+                style={Styles.playerGlow(color)}
                 key={"row" + rowNumber}
             >
                 <TextCell text={player.name}/>

@@ -11,6 +11,8 @@ export interface CurrentTurnPanelProps {
     user : User,
     commitTurn : (gameId : number) => void,
     resetTurn : (gameId : number) => void
+    height : string,
+    width : string
 }
 
 export default class CurrentTurnPanel extends React.Component<CurrentTurnPanelProps> {
@@ -22,7 +24,11 @@ export default class CurrentTurnPanel extends React.Component<CurrentTurnPanelPr
 
         const currentPlayer = this.getCurrentPlayer(this.props.game);
         const color = this.props.theme.getPlayerColor(currentPlayer.colorId);
-        const style = Styles.currentTurnPanelGlow(color);
+        const style = Styles.combine([
+            Styles.playerGlow(color),
+            Styles.width(this.props.width),
+            Styles.height(this.props.height)
+        ]);
         const className = Classes.combine([Classes.thinBorder, Classes.paddedCell]);
         return (
             <div className={className} style={style}>
