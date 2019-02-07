@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Shape } from 'react-konva';
-import { Polygon } from '../../geometry/model';
+import { Polygon } from '../../../../geometry/model';
 import { Context } from 'konva';
 
 export interface CanvasPolygonProps {

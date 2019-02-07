@@ -1,22 +1,20 @@
 import * as React from 'react';
 import { Switch, Route } from 'react-router-dom';
-import '../index.css';
-
 import HomePage from './pages/homePage';
 import LoginPage from './pages/loginPage';
 import SignupPage from './pages/signupPage';
 import DashboardPage from './pages/dashboardPage';
-import GamePage from './pages/gamePage';
-
+import GamePage from './pages/gamePage/gamePage';
 import TopMenu from './topMenu';
 import { User } from '../api/model';
 import ApiClient from '../api/client';
 import MyGamesPage from './pages/myGamesPage';
 import CreateGamePage from './pages/createGamePage';
 import FindGamePage from './pages/findGamePage';
-import GameInfoPage from './pages/gameInfoPage';
+import GameInfoPage from './pages/gameInfoPage/gameInfoPage';
 import Routes from '../routes';
 import ThemeService from '../themes/themeService';
+import "../index.css";
 
 export interface AppProps {
 

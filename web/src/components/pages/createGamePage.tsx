@@ -1,5 +1,4 @@
 import * as React from 'react';
-import '../../index.css';
 import PageTitle from '../pageTitle';
 import { User, GameParameters } from '../../api/model';
 import ApiClient from '../../api/client';

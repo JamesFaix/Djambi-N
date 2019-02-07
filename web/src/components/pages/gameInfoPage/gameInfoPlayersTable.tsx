@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { User, Game, Player, PlayerKind, CreatePlayerRequest, GameStatus } from '../api/model';
-import HintCell from './tables/hintCell';
-import EmptyCell from './tables/emptyCell';
-import TextCell from './tables/textCell';
-import EmphasizedTextCell from './tables/emphasizedTextCell';
-import TextFieldCell from './tables/textFieldCell';
-import ActionButtonCell from './tables/actionButtonCell';
-import { Classes } from '../styles';
+import { User, Game, Player, PlayerKind, CreatePlayerRequest, GameStatus } from '../../../api/model';
+import HintCell from '../../tables/hintCell';
+import EmptyCell from '../../tables/emptyCell';
+import TextCell from '../../tables/textCell';
+import EmphasizedTextCell from '../../tables/emphasizedTextCell';
+import TextFieldCell from '../../tables/textFieldCell';
+import ActionButtonCell from '../../tables/actionButtonCell';
+import { Classes } from '../../../styles';
 
 export interface GameInfoPlayersTableProps {
     user : User,

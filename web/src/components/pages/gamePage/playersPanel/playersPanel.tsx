@@ -1,9 +1,8 @@
 import * as React from 'react';
-import '../../index.css';
-import { Game } from '../../api/model';
-import ThemeService from '../../themes/themeService';
+import { Game } from '../../../../api/model';
+import ThemeService from '../../../../themes/themeService';
 import PlayersPanelTable from './playersPanelTable';
-import { Classes } from '../../styles';
+import { Classes } from '../../../../styles';
 
 export interface PlayersPanelProps {
     game : Game,

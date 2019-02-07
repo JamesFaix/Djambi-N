@@ -1,5 +1,4 @@
 import * as React from 'react';
-import '../../index.css';
 
 export interface TristateDropdownProps {
     name : string,

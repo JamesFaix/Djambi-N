@@ -1,5 +1,4 @@
 import * as React from 'react';
-import '../../index.css';
 import ActionButton from '../controls/actionButton';
 import { Classes } from '../../styles';
 

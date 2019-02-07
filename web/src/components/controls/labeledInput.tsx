@@ -1,5 +1,4 @@
 import * as React from 'react';
-import '../../index.css';
 import { InputTypes } from '../../constants';
 import { Classes } from '../../styles';
 

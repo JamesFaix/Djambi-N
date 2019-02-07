@@ -1,5 +1,4 @@
 import * as React from 'react';
-import '../../index.css';
 import TristateDropdown from './tristateDropdown';
 import { Classes } from '../../styles';
 

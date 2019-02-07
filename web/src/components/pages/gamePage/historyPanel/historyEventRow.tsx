@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { Event, EventKind, Effect, Game, EffectKind, PlayerRemovedEffect, Player } from '../../api/model';
-import HintCell from '../tables/hintCell';
-import EmphasizedTextCell from '../tables/emphasizedTextCell';
-import DateService from '../../dateService';
+import { Event, EventKind, Effect, Game, EffectKind, PlayerRemovedEffect, Player } from '../../../../api/model';
+import HintCell from '../../../tables/hintCell';
+import EmphasizedTextCell from '../../../tables/emphasizedTextCell';
+import DateService from '../../../../dateService';
 import HistoryEffectRow from './historyEffectRow';
 import * as Sprintf from 'sprintf-js';
-import ThemeService from '../../themes/themeService';
-import { Classes, Styles } from '../../styles';
+import ThemeService from '../../../../themes/themeService';
+import { Classes, Styles } from '../../../../styles';
 
 export interface HistoryEventRowProps {
     game : Game,

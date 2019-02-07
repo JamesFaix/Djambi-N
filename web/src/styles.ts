@@ -1,3 +1,5 @@
+import "./index.css";
+
 export class Classes {
 
     public static readonly appTitle = "appTitle";

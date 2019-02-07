@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { PieceView } from '../../boardRendering/model';
-import ThemeService from '../../themes/themeService';
+import { PieceView } from '../../../../boardRendering/model';
+import ThemeService from '../../../../themes/themeService';
 import { Image } from 'react-konva';
-import { Point } from '../../geometry/model';
+import { Point } from '../../../../geometry/model';
 
 export interface CanvasPieceProps {
     piece : PieceView,
