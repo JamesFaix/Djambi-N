@@ -1,19 +1,19 @@
 import * as React from 'react';
-import ApiClient from '../../api/client';
-import { User, Game, Board, Event, EventsQuery, ResultsDirection } from '../../api/model';
-import LinkButton from '../controls/linkButton';
-import PageTitle from '../pageTitle';
-import Routes from '../../routes';
-import ThemeService from '../../themes/themeService';
-import { BoardView, CellView, CellState } from '../../boardRendering/model';
-import CanvasBoard from '../board/canvasBoard';
-import BoardViewService from '../../boardRendering/boardViewService';
-import BoardGeometry from '../../boardRendering/boardGeometry';
-import CurrentTurnPanel from '../gamePanels/currentTurnPanel';
-import TurnCyclePanel from '../gamePanels/turnCyclePanel';
-import PlayersPanel from '../gamePanels/playersPanel';
-import HistoryPanel from '../gamePanels/historyPanel';
-import { Classes, Styles } from '../../styles';
+import ApiClient from '../../../api/client';
+import { User, Game, Board, Event, EventsQuery, ResultsDirection } from '../../../api/model';
+import LinkButton from '../../controls/linkButton';
+import PageTitle from '../../pageTitle';
+import Routes from '../../../routes';
+import ThemeService from '../../../themes/themeService';
+import { BoardView, CellView, CellState } from '../../../boardRendering/model';
+import CanvasBoard from './board/canvasBoard';
+import BoardViewService from '../../../boardRendering/boardViewService';
+import BoardGeometry from '../../../boardRendering/boardGeometry';
+import CurrentTurnPanel from './currentTurnPanel';
+import TurnCyclePanel from './turnCyclePanel';
+import PlayersPanel from './playersPanel/playersPanel';
+import HistoryPanel from './historyPanel/historyPanel';
+import { Classes, Styles } from '../../../styles';
 import Scrollbars from 'react-custom-scrollbars';
 
 export interface GamePageProps {

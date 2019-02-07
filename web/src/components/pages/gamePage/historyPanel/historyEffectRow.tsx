@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as Sprintf from 'sprintf-js';
-import ThemeService from '../../themes/themeService';
-import { Game, Effect, EffectKind, GameStatusChangedEffect, PieceKilledEffect, PlayerAddedEffect, PieceMovedEffect, PlayerKind, PlayerEliminatedEffect, PlayerOutOfMovesEffect, PlayerRemovedEffect, PieceKind, Piece, NeutralPlayerAddedEffect, PieceAbandonedEffect, PieceEnlistedEffect, PieceDroppedEffect, PieceVacatedEffect, TurnCycleAdvancedEffect, TurnCyclePlayerFellFromPowerEffect, TurnCyclePlayerRemovedEffect, TurnCyclePlayerRoseToPowerEffect } from '../../api/model';
+import ThemeService from '../../../../themes/themeService';
+import { Game, Effect, EffectKind, GameStatusChangedEffect, PieceKilledEffect, PlayerAddedEffect, PieceMovedEffect, PlayerKind, PlayerEliminatedEffect, PlayerOutOfMovesEffect, PlayerRemovedEffect, PieceKind, Piece, NeutralPlayerAddedEffect, PieceAbandonedEffect, PieceEnlistedEffect, PieceDroppedEffect, PieceVacatedEffect, TurnCycleAdvancedEffect, TurnCyclePlayerFellFromPowerEffect, TurnCyclePlayerRemovedEffect, TurnCyclePlayerRoseToPowerEffect } from '../../../../api/model';
 
 export interface HistoryEffectRowProps {
     game : Game,

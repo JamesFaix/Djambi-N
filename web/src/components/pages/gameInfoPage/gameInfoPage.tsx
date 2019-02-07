@@ -1,14 +1,14 @@
 import * as React from 'react';
-import '../../index.css';
-import PageTitle from '../pageTitle';
-import { User, Game, GameStatus, CreatePlayerRequest } from '../../api/model';
-import ApiClient from '../../api/client';
+import '../../../index.css';
+import PageTitle from '../../pageTitle';
+import { User, Game, GameStatus, CreatePlayerRequest } from '../../../api/model';
+import ApiClient from '../../../api/client';
 import { Redirect } from 'react-router';
-import LinkButton from '../controls/linkButton';
-import ActionButton from '../controls/actionButton';
-import GameInfoPlayersTable from '../gameInfoPlayersTable';
-import Routes from '../../routes';
-import { Classes } from '../../styles';
+import LinkButton from '../../controls/linkButton';
+import ActionButton from '../../controls/actionButton';
+import GameInfoPlayersTable from './gameInfoPlayersTable';
+import Routes from '../../../routes';
+import { Classes } from '../../../styles';
 
 export interface GameInfoPageProps {
     user : User,

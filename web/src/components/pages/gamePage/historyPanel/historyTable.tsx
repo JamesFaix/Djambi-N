@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Game, Event, Effect, EventKind, EffectKind } from '../../api/model';
+import { Game, Event, Effect, EventKind, EffectKind } from '../../../../api/model';
 import HistoryEventRow from './historyEventRow';
-import ThemeService from '../../themes/themeService';
-import { Classes, Styles } from '../../styles';
+import ThemeService from '../../../../themes/themeService';
+import { Classes, Styles } from '../../../../styles';
 
 export interface HistoryTableProps {
     game : Game,

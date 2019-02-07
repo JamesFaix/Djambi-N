@@ -1,9 +1,9 @@
 import * as React from 'react';
-import '../../index.css';
-import { Game, Event } from '../../api/model';
+import '../../../../index.css';
+import { Game, Event } from '../../../../api/model';
 import HistoryTable from './historyTable';
-import ThemeService from '../../themes/themeService';
-import { Classes, Styles } from '../../styles';
+import ThemeService from '../../../../themes/themeService';
+import { Classes, Styles } from '../../../../styles';
 import Scrollbars from 'react-custom-scrollbars';
 
 export interface HistoryPanelProps {

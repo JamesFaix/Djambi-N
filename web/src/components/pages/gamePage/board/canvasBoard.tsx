@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { Stage, Layer } from 'react-konva';
-import { BoardView, CellView, CellType } from '../../boardRendering/model';
-import ThemeService from '../../themes/themeService';
+import { BoardView, CellView, CellType } from '../../../../boardRendering/model';
+import ThemeService from '../../../../themes/themeService';
 import CanvasCell from './canvasCell';
 import CanvasPiece from './canvasPiece';
-import { Point } from '../../geometry/model';
-import BoardGeometry from '../../boardRendering/boardGeometry';
-import Geometry from '../../geometry/geometry';
+import { Point } from '../../../../geometry/model';
+import BoardGeometry from '../../../../boardRendering/boardGeometry';
+import Geometry from '../../../../geometry/geometry';
 import CanvasPolygon from './canvasPolygon';
 
 export interface CanvasBoardProps {
