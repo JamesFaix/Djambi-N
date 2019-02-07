@@ -6,15 +6,13 @@ import PageTitle from '../../pageTitle';
 import Routes from '../../../routes';
 import ThemeService from '../../../themes/themeService';
 import { BoardView, CellView, CellState } from '../../../boardRendering/model';
-import CanvasBoard from './boardPanel/canvas/canvasBoard';
 import BoardViewService from '../../../boardRendering/boardViewService';
-import BoardGeometry from '../../../boardRendering/boardGeometry';
 import CurrentTurnPanel from './currentTurnPanel';
 import TurnCyclePanel from './turnCyclePanel';
 import PlayersPanel from './playersPanel/playersPanel';
 import HistoryPanel from './historyPanel/historyPanel';
 import { Classes, Styles } from '../../../styles';
-import Scrollbars from 'react-custom-scrollbars';
+import BoardPanel from './boardPanel/boardPanel';
 
 export interface GamePageProps {
     user : User,
@@ -31,6 +29,7 @@ export interface GamePageState {
 }
 
 export default class GamePage extends React.Component<GamePageProps, GamePageState> {
+    private readonly contentWidth = "600px";
     private readonly scale = 100;
 
     constructor(props : GamePageProps) {
@@ -129,32 +128,29 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                     <LinkButton label="Rules" to={Routes.rules()} newWindow={true}/>
                 </div>
                 <br/>
-                {this.renderBoard()}
+                {this.renderPanels()}
             </div>
         );
     }
 
-    private renderBoard() {
+    private renderPanels() {
         if (this.state.boardView === null) {
             return "";
         }
 
-        const canvasSize = BoardGeometry.boardDiameter(this.state.boardView);
-        const containerStyle = Styles.combine([Styles.noMargin, Styles.width(canvasSize + "px")]);
-        const canvasStyle = Styles.combine([containerStyle, Styles.height(canvasSize +"px")]);
+        const containerStyle = Styles.combine([
+            Styles.noMargin,
+            Styles.width(this.contentWidth)
+        ]);
 
         return (
             <div style={containerStyle}>
-                <div
-                    className={Classes.thinBorder}
-                    style={canvasStyle}
-                >
-                    <CanvasBoard
-                        board={this.state.boardView}
-                        theme={this.props.theme}
-                        selectCell={(cellId) => this.selectCell(cellId)}
-                    />
-                </div>
+                <BoardPanel
+                    game={this.state.game}
+                    theme={this.props.theme}
+                    boardView={this.state.boardView}
+                    selectCell={cell => this.selectCell(cell)}
+                />
                 <div className={Classes.flex}>
                     <CurrentTurnPanel
                         game={this.state.game}
