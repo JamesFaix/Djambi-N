@@ -6,7 +6,7 @@ import PageTitle from '../../pageTitle';
 import Routes from '../../../routes';
 import ThemeService from '../../../themes/themeService';
 import { BoardView, CellView, CellState } from '../../../boardRendering/model';
-import CanvasBoard from './board/canvasBoard';
+import CanvasBoard from './boardPanel/canvas/canvasBoard';
 import BoardViewService from '../../../boardRendering/boardViewService';
 import BoardGeometry from '../../../boardRendering/boardGeometry';
 import CurrentTurnPanel from './currentTurnPanel';
