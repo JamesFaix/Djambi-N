@@ -68,6 +68,14 @@ export class Styles {
         return { background: color };
     }
 
+    public static margin(margin : string) : React.CSSProperties {
+        return { margin: margin };
+    }
+
+    public static padding(padding : string) : React.CSSProperties {
+        return { padding : padding };
+    }
+
     public static combine(styles : React.CSSProperties[]) : React.CSSProperties {
         const len = styles.length;
         switch (len) {

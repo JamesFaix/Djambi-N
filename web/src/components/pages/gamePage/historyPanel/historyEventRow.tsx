@@ -1,7 +1,5 @@
 import * as React from 'react';
 import { Event, EventKind, Effect, Game, EffectKind, PlayerRemovedEffect, Player } from '../../../../api/model';
-import HintCell from '../../../tables/hintCell';
-import EmphasizedTextCell from '../../../tables/emphasizedTextCell';
 import DateService from '../../../../dateService';
 import HistoryEffectRow from './historyEffectRow';
 import * as Sprintf from 'sprintf-js';
@@ -29,11 +27,15 @@ export default class HistoryEventRow extends React.Component<HistoryEventRowProp
         return (
             <tr style={style}>
                 <td style={Styles.noPadding}>
-                    <table>
+                    <table style={{width: "100%"}}>
                         <tbody>
                             <tr>
-                                <EmphasizedTextCell text={this.getEventMessage(this.props.game, e)}/>
-                                <HintCell text={DateService.format(e.createdOn)}/>
+                                <td className={Classes.borderless} style={{padding: "10px 10px 0px 10px", width: "50%"}}>
+                                    {this.getEventMessage(this.props.game, e)}
+                                </td>
+                                <td className={Classes.combine([Classes.borderless, Classes.lightText])} style={{padding: "10px 10px 0px 10px", width: "50%", textAlign: "right"}}>
+                                    {DateService.format(e.createdOn)}
+                                </td>
                             </tr>
                         </tbody>
                     </table>

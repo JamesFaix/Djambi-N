@@ -38,8 +38,12 @@ export default class PlayersPanelTable extends React.Component<PlayersPanelTable
                 style={Styles.playerGlow(color)}
                 key={"row" + rowNumber}
             >
-                <TextCell text={player.name}/>
-                <TextCell text={this.getPlayerNote(player)}/>
+                <td className={Classes.borderless}>
+                    {player.name}
+                </td>
+                <td className={Classes.combine([Classes.borderless, Classes.lightText])}>
+                    {this.getPlayerNote(player)}
+                </td>
             </tr>
         );
     }

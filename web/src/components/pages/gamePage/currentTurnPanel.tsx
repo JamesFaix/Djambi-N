@@ -29,16 +29,17 @@ export default class CurrentTurnPanel extends React.Component<CurrentTurnPanelPr
             Styles.width(this.props.width),
             Styles.height(this.props.height)
         ]);
-        const className = Classes.combine([Classes.thinBorder, Classes.paddedCell]);
         return (
-            <div className={className} style={style}>
-                {this.getPlayerNameHeader(currentPlayer)}
-                <br/>
-                <br/>
-                {this.getSelectionsDescription()}
-                {this.getSelectionPrompt()}
-                <br/>
-                {this.renderActionButtons()}
+            <div className={Classes.thinBorder} style={style}>
+                <div style={Styles.margin("10px")}>
+                    {this.getPlayerNameHeader(currentPlayer)}
+                    <br/>
+                    <br/>
+                    {this.getSelectionsDescription()}
+                    {this.getSelectionPrompt()}
+                    <br/>
+                    {this.renderActionButtons()}
+                </div>
             </div>
         );
     }
