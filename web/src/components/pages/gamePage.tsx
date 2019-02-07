@@ -178,7 +178,7 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                     game={this.state.game}
                     events={this.state.events}
                     theme={this.props.theme}
-                    height={200}
+                    height={"200px"}
                 />
             </div>
         );
