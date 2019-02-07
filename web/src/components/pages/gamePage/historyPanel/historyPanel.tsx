@@ -10,7 +10,8 @@ export interface HistoryPanelProps {
     events : Event[],
     theme : ThemeService,
     height : string,
-    width : string
+    width : string,
+    textStyle : React.CSSProperties
 }
 
 export default class HistoryPanel extends React.Component<HistoryPanelProps> {
@@ -27,6 +28,7 @@ export default class HistoryPanel extends React.Component<HistoryPanelProps> {
                         game={this.props.game}
                         events={this.props.events}
                         theme={this.props.theme}
+                        textStyle={this.props.textStyle}
                     />
                 </Scrollbars>
             </div>

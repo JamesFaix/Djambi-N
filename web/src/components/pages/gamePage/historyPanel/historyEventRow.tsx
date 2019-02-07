@@ -12,7 +12,8 @@ export interface HistoryEventRowProps {
     game : Game,
     event : Event,
     theme : ThemeService,
-    isEffectVisible : (f : Effect) => boolean
+    isEffectVisible : (f : Effect) => boolean,
+    textStyle : React.CSSProperties
 }
 
 export default class HistoryEventRow extends React.Component<HistoryEventRowProps> {
@@ -36,7 +37,7 @@ export default class HistoryEventRow extends React.Component<HistoryEventRowProp
                             </tr>
                         </tbody>
                     </table>
-                    <div className={Classes.indented}>
+                    <div className={Classes.indented} style={this.props.textStyle}>
                         {
                             e.effects
                                 .filter(f => this.props.isEffectVisible(f))

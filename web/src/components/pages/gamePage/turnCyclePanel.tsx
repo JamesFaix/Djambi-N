@@ -6,15 +6,18 @@ import { Classes, Styles } from '../../../styles';
 export interface TurnCyclePanelProps {
     game : Game,
     theme : ThemeService,
-    iconSize : string
+    iconSize : string,
+    height : string,
+    width : string
 }
 
 export default class TurnCyclePanel extends React.Component<TurnCyclePanelProps> {
     render() {
         const rowClass = Classes.combine([Classes.thinBorder, Classes.centerAligned]);
+        const style = Styles.combine([Styles.height(this.props.height), Styles.width(this.props.width)]);
 
         return (
-            <div className={Classes.thinBorder}>
+            <div className={Classes.thinBorder} style={style}>
                 Turn Cycle
                 <div className={Classes.flex}>
                     {

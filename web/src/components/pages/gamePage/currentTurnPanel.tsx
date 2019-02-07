@@ -11,7 +11,8 @@ export interface CurrentTurnPanelProps {
     commitTurn : (gameId : number) => void,
     resetTurn : (gameId : number) => void
     height : string,
-    width : string
+    width : string,
+    textStyle : React.CSSProperties
 }
 
 export default class CurrentTurnPanel extends React.Component<CurrentTurnPanelProps> {
@@ -35,7 +36,6 @@ export default class CurrentTurnPanel extends React.Component<CurrentTurnPanelPr
                 <br/>
                 <br/>
                 {this.getSelectionsDescription()}
-                <br/>
                 {this.getSelectionPrompt()}
                 <br/>
                 {this.renderActionButtons()}
@@ -64,7 +64,7 @@ export default class CurrentTurnPanel extends React.Component<CurrentTurnPanelPr
             .map(s => <p>{this.props.theme.getSelectionDescription(s, game)}</p>);
 
         return (
-            <div>
+            <div style={this.props.textStyle}>
                 Selections:
                 <br/>
                 <div className={Classes.indented}>

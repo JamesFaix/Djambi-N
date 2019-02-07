@@ -58,6 +58,10 @@ export class Styles {
         return { height: height };
     }
 
+    public static lineHeight(height : string) : React.CSSProperties {
+        return { lineHeight: height };
+    }
+
     public static readonly noPadding : React.CSSProperties = { padding: 0 };
 
     public static background(color : string) : React.CSSProperties {

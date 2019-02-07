@@ -10,7 +10,9 @@ export interface BoardPanelProps {
     game : Game,
     theme : ThemeService,
     boardView : BoardView,
-    selectCell : (cell : CellView) => void
+    selectCell : (cell : CellView) => void,
+    height : string,
+    width : string
 }
 
 export interface BoardPanelState {
@@ -27,11 +29,11 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
 
     render() {
         const boardView = this.props.boardView;
-        const canvasSize = BoardGeometry.boardDiameter(boardView) + "px";
+        //const canvasSize = BoardGeometry.boardDiameter(boardView) + "px";
         const canvasStyle = Styles.combine([
             Styles.noMargin,
-            Styles.width(canvasSize),
-            Styles.height(canvasSize)
+            Styles.width(this.props.width),
+            Styles.height(this.props.height)
         ]);
 
         return (

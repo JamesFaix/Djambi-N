@@ -29,7 +29,8 @@ export interface GamePageState {
 }
 
 export default class GamePage extends React.Component<GamePageProps, GamePageState> {
-    private readonly contentWidth = "600px";
+    private readonly contentWidth = Math.round(window.screen.width * 0.6) + "px";
+    private readonly contentHeight = Math.round(window.screen.height * 0.6) + "px";
     private readonly scale = 100;
 
     constructor(props : GamePageProps) {
@@ -58,10 +59,6 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
             .then(board => {
                 this.setState({board : board});
                 return board;
-            })
-            .catch(reason => {
-                alert("Get board failed because " + reason);
-                return null;
             });
     }
 
@@ -140,46 +137,55 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
 
         const containerStyle = Styles.combine([
             Styles.noMargin,
-            Styles.width(this.contentWidth)
+            Styles.width(this.contentWidth),
+            Styles.height(this.contentHeight)
         ]);
 
+        const textStyle = Styles.lineHeight("8px");
+
         return (
-            <div style={containerStyle}>
+            <div className={Classes.flex} style={containerStyle}>
                 <BoardPanel
                     game={this.state.game}
                     theme={this.props.theme}
                     boardView={this.state.boardView}
                     selectCell={cell => this.selectCell(cell)}
+                    height={"100%"}
+                    width={"70%"}
                 />
-                <div className={Classes.flex}>
+                <div style={Styles.width("30%")}>
+                    <TurnCyclePanel
+                        game={this.state.game}
+                        theme={this.props.theme}
+                        iconSize={"35px"}
+                        height={"49px"}
+                        width={"100%"}
+                    />
+                    <PlayersPanel
+                        game={this.state.game}
+                        theme={this.props.theme}
+                        height={"100px"}
+                        width={"100%"}
+                    />
                     <CurrentTurnPanel
                         game={this.state.game}
                         theme={this.props.theme}
                         user={this.props.user}
                         commitTurn={gameId => this.commitTurn(gameId)}
                         resetTurn={gameId => this.resetTurn(gameId)}
-                        height={"100%"}
-                        width={"40%"}
+                        height={"200px"}
+                        width={"100%"}
+                        textStyle={textStyle}
                     />
-                    <div style={Styles.width("60%")}>
-                        <TurnCyclePanel
-                            game={this.state.game}
-                            theme={this.props.theme}
-                            iconSize={"50px"}
-                        />
-                        <PlayersPanel
-                            game={this.state.game}
-                            theme={this.props.theme}
-                        />
-                    </div>
+                    <HistoryPanel
+                        game={this.state.game}
+                        events={this.state.events}
+                        theme={this.props.theme}
+                        height={"200px"}
+                        width={"100%"}
+                        textStyle={textStyle}
+                    />
                 </div>
-                <HistoryPanel
-                    game={this.state.game}
-                    events={this.state.events}
-                    theme={this.props.theme}
-                    height={"200px"}
-                    width={"100%"}
-                />
             </div>
         );
     }
