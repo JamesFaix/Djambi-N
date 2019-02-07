@@ -42,55 +42,37 @@ export class Classes {
 
 export class Styles {
 
-    public static currentTurnPanelGlow(color : string) : React.CSSProperties {
-        return {
-            boxShadow: "inset 0 0 5px 5px " + color,
-            width: "40%"
-        };
+    public static playerGlow(color : string) : React.CSSProperties {
+        return { boxShadow: "inset 0 0 5px 5px " + color };
     }
 
-    public static playersPanelGlow(color : string) : React.CSSProperties {
-        return {
-            boxShadow: "inset 0 0 5px 5px " + color
-        };
+    public static readonly noMargin : React.CSSProperties = { margin: "0 auto" };
+
+    public static width(width : string) : React.CSSProperties {
+        return { width: width };
     }
 
-    public static gamePageContainer(canvasSize : number) : React.CSSProperties {
-        return {
-            margin: "0 auto",
-            width: canvasSize
-        };
+    public static height(height : string) : React.CSSProperties {
+        return { height: height };
     }
 
-    public static gamePageCanvas(canvasSize : number) : React.CSSProperties {
-        return {
-            margin: "0 auto",
-            width: canvasSize,
-            height: canvasSize
-        };
+    public static readonly noPadding : React.CSSProperties = { padding: 0 };
+
+    public static background(color : string) : React.CSSProperties {
+        return { background: color };
     }
 
-    public static width(width : number) : React.CSSProperties {
-        return {
-            width: width + "%"
+    public static combine(styles : React.CSSProperties[]) : React.CSSProperties {
+        const len = styles.length;
+        switch (len) {
+            case 0: return {};
+            case 1: return styles[0];
+            default:
+                let result = {};
+                styles.forEach(s => {
+                    result = { ...result, ...s };
+                })
+                return result;
         }
-    }
-
-    public static readonly noPadding : React.CSSProperties = {
-        padding: 0
-    };
-
-    public static turnCycleElement(color : string, scale : number) : React.CSSProperties {
-        return {
-            background: color,
-            height: scale,
-            width: scale
-        };
-    }
-
-    public static absoluteHeight(pixels : number) : React.CSSProperties {
-        return {
-            height: pixels + "px"
-        };
     }
 }

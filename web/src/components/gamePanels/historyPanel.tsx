@@ -18,7 +18,7 @@ export default class HistoryPanel extends React.Component<HistoryPanelProps> {
         return (
             <div className={Classes.thinBorder}>
                 History
-                <Scrollbars style={Styles.absoluteHeight(this.props.height)}>
+                <Scrollbars style={Styles.height(this.props.height + "px")}>
                     <HistoryTable
                         game={this.props.game}
                         events={this.props.events}

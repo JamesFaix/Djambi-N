@@ -11,7 +11,7 @@ export interface TurnCyclePanelProps {
 
 export default class TurnCyclePanel extends React.Component<TurnCyclePanelProps> {
 
-    private readonly scale = 50;
+    private readonly scale = "50px";
 
     render() {
         const rowClass = Classes.combine([Classes.thinBorder, Classes.centerAligned]);
@@ -22,13 +22,16 @@ export default class TurnCyclePanel extends React.Component<TurnCyclePanelProps>
                 <div className={Classes.flex}>
                     {
                         this.getPlayerViews()
-                            .map((pv, i) =>
-                                <div key={"turn" + i}
-                                    className={rowClass}
-                                    style={Styles.turnCycleElement(pv.color, this.scale)}>
-                                    {pv.id}
-                                </div>
-                            )
+                            .map((pv, i) => {
+                                const style = Styles.combine([Styles.background(pv.color), Styles.height(this.scale), Styles.width(this.scale)])
+                                return (
+                                    <div key={"turn" + i}
+                                        className={rowClass}
+                                        style={style}>
+                                        {pv.id}
+                                    </div>
+                                );
+                            })
                     }
                 </div>
             </div>

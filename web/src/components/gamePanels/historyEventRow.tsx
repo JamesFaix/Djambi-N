@@ -23,7 +23,7 @@ export default class HistoryEventRow extends React.Component<HistoryEventRowProp
         let style;
         if (player !== null) {
             const color = this.props.theme.getPlayerColor(player.colorId);
-            style = Styles.currentTurnPanelGlow(color);
+            style = Styles.playerGlow(color);
         }
         return (
             <tr style={style}>

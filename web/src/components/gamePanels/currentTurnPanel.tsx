@@ -22,7 +22,7 @@ export default class CurrentTurnPanel extends React.Component<CurrentTurnPanelPr
 
         const currentPlayer = this.getCurrentPlayer(this.props.game);
         const color = this.props.theme.getPlayerColor(currentPlayer.colorId);
-        const style = Styles.currentTurnPanelGlow(color);
+        const style = Styles.combine([Styles.playerGlow(color), Styles.width("40%")]);
         const className = Classes.combine([Classes.thinBorder, Classes.paddedCell]);
         return (
             <div className={className} style={style}>
