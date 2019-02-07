@@ -1,5 +1,4 @@
 import * as React from 'react';
-import '../../index.css';
 import { Classes } from '../../styles';
 
 export interface EmphasizedTextCellProps {

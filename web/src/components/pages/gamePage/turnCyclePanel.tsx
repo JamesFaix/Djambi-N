@@ -1,5 +1,4 @@
 import * as React from 'react';
-import '../../../index.css';
 import { Game } from '../../../api/model';
 import ThemeService from '../../../themes/themeService';
 import { Classes, Styles } from '../../../styles';

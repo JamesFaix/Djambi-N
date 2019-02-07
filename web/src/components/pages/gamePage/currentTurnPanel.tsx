@@ -1,5 +1,4 @@
 import * as React from 'react';
-import '../../../index.css';
 import { Game, User, Player } from '../../../api/model';
 import ThemeService from '../../../themes/themeService';
 import ActionButton from '../../controls/actionButton';

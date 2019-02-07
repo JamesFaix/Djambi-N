@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import '../../index.css';
 
 export interface LinkButtonProps {
     to : string,

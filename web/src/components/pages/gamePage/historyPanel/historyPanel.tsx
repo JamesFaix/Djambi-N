@@ -1,5 +1,4 @@
 import * as React from 'react';
-import '../../../../index.css';
 import { Game, Event } from '../../../../api/model';
 import HistoryTable from './historyTable';
 import ThemeService from '../../../../themes/themeService';

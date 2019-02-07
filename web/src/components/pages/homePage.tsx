@@ -1,5 +1,4 @@
 import * as React from 'react';
-import '../../index.css';
 import PageTitle from '../pageTitle';
 import { Redirect } from 'react-router';
 import { User } from '../../api/model';

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import '../../index.css';
 import PageTitle from '../pageTitle';
 import ApiClient from '../../api/client';
 import { LoginRequest, User } from '../../api/model';
