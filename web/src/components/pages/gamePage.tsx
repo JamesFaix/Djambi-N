@@ -162,11 +162,14 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                         user={this.props.user}
                         commitTurn={gameId => this.commitTurn(gameId)}
                         resetTurn={gameId => this.resetTurn(gameId)}
+                        height={"100%"}
+                        width={"40%"}
                     />
                     <div style={Styles.width("60%")}>
                         <TurnCyclePanel
                             game={this.state.game}
                             theme={this.props.theme}
+                            iconSize={"50px"}
                         />
                         <PlayersPanel
                             game={this.state.game}
@@ -179,6 +182,7 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                     events={this.state.events}
                     theme={this.props.theme}
                     height={"200px"}
+                    width={"100%"}
                 />
             </div>
         );

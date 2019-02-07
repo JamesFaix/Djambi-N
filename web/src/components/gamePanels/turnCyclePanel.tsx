@@ -6,13 +6,11 @@ import { Classes, Styles } from '../../styles';
 
 export interface TurnCyclePanelProps {
     game : Game,
-    theme : ThemeService
+    theme : ThemeService,
+    iconSize : string
 }
 
 export default class TurnCyclePanel extends React.Component<TurnCyclePanelProps> {
-
-    private readonly scale = "50px";
-
     render() {
         const rowClass = Classes.combine([Classes.thinBorder, Classes.centerAligned]);
 
@@ -23,7 +21,11 @@ export default class TurnCyclePanel extends React.Component<TurnCyclePanelProps>
                     {
                         this.getPlayerViews()
                             .map((pv, i) => {
-                                const style = Styles.combine([Styles.background(pv.color), Styles.height(this.scale), Styles.width(this.scale)])
+                                const style = Styles.combine([
+                                    Styles.background(pv.color),
+                                    Styles.height(this.props.iconSize),
+                                    Styles.width(this.props.iconSize)
+                                ]);
                                 return (
                                     <div key={"turn" + i}
                                         className={rowClass}

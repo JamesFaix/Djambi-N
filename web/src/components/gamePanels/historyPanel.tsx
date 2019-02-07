@@ -10,13 +10,18 @@ export interface HistoryPanelProps {
     game : Game,
     events : Event[],
     theme : ThemeService,
-    height : string
+    height : string,
+    width : string
 }
 
 export default class HistoryPanel extends React.Component<HistoryPanelProps> {
     render() {
+        const panelStyle = Styles.combine([
+            Styles.height(this.props.height),
+            Styles.width(this.props.width)
+        ]);
         return (
-            <div className={Classes.thinBorder}>
+            <div className={Classes.thinBorder} style={panelStyle}>
                 History
                 <Scrollbars style={Styles.height(this.props.height)}>
                     <HistoryTable
