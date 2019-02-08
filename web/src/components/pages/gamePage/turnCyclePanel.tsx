@@ -24,7 +24,7 @@ export default class TurnCyclePanel extends React.Component<TurnCyclePanelProps>
                         this.getPlayerViews()
                             .map((pv, i) => {
                                 const style = Styles.combine([
-                                    Styles.background(pv.color),
+                                    Styles.playerGlow(pv.color),
                                     Styles.height(this.props.iconSize),
                                     Styles.width(this.props.iconSize)
                                 ]);
@@ -32,7 +32,6 @@ export default class TurnCyclePanel extends React.Component<TurnCyclePanelProps>
                                     <div key={"turn" + i}
                                         className={rowClass}
                                         style={style}>
-                                        {pv.id}
                                     </div>
                                 );
                             })

@@ -35,10 +35,16 @@ export default class CurrentTurnPanel extends React.Component<CurrentTurnPanelPr
                     {this.getPlayerNameHeader(currentPlayer)}
                     <br/>
                     <br/>
-                    {this.getSelectionsDescription()}
-                    {this.getSelectionPrompt()}
-                    <br/>
-                    {this.renderActionButtons()}
+                    <div className={Classes.flex}>
+                        <div style={{width:"45%"}}>
+                            {this.getSelectionsDescription()}
+                        </div>
+                        <div style={{width:"10%"}}/>
+                        <div style={{width:"45%"}}>
+                            {this.getSelectionPrompt()}
+                            {this.renderActionButtons()}
+                        </div>
+                    </div>
                 </div>
             </div>
         );
@@ -79,15 +85,7 @@ export default class CurrentTurnPanel extends React.Component<CurrentTurnPanelPr
         const prompt = this.props.theme.getSelectionPrompt(
             this.props.game.currentTurn.requiredSelectionKind);
 
-        return (
-            <div>
-                Required action:
-                <br/>
-                <div className={Classes.indented}>
-                    {prompt}
-                </div>
-            </div>
-        )
+        return prompt;
     }
 
     private renderActionButtons() {
@@ -99,15 +97,26 @@ export default class CurrentTurnPanel extends React.Component<CurrentTurnPanelPr
         const turn = this.props.game.currentTurn;
 
         return (
-            <div>
+            <div style={{display: "grid"}}>
                 {
                     turn.requiredSelectionKind === null
-                        ? <ActionButton label="Commit" onClick={() => this.props.commitTurn(gameId)}/>
+                        ? <button
+                            onClick={_ => this.props.commitTurn(gameId)}
+                            style={{width:"70%"}}
+                        >
+                            Commit
+                        </button>
                         : ""
                 }
+                <br/>
                 {
                     turn.selections.length > 0
-                        ? <ActionButton label="Reset" onClick={() => this.props.resetTurn(gameId)}/>
+                        ? <button
+                            onClick={_ => this.props.resetTurn(gameId)}
+                            style={{width:"70%"}}
+                        >
+                            Reset
+                        </button>
                         : ""
                 }
             </div>

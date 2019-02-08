@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Game, Player, PlayerKind } from '../../../../api/model';
-import TextCell from '../../../tables/textCell';
 import ThemeService from '../../../../themes/themeService';
 import { Classes, Styles } from '../../../../styles';
 
