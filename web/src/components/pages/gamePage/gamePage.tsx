@@ -25,35 +25,52 @@ export interface GamePageProps {
 export interface GamePageState {
     game : Game,
     boardView : BoardView,
-    events : Event[]
+    events : Event[],
+    cellSize : number
 }
 
 export default class GamePage extends React.Component<GamePageProps, GamePageState> {
     private readonly contentWidth = Math.round(window.screen.width * 0.6) + "px";
     private readonly contentHeight = Math.round(window.screen.height * 0.6) + "px";
-    private readonly scale = 100;
 
     constructor(props : GamePageProps) {
         super(props);
         this.state = {
             game : null,
             boardView : null,
-            events: []
+            events: [],
+            cellSize : 0
         };
     }
 
-    private getCellSize(regionCount : number) : number {
+    private getDefaultCellSize(regionCount : number) : number {
         //Through trial an error, I found that this formula keeps boards of varying regionCount about the same absolute size
         const baseValue = Math.pow(Math.E, (-0.2 * regionCount));
-        return Math.floor(this.scale * baseValue);
+        const scale = 100;
+        return Math.floor(scale * baseValue);
     }
 
-    private async updateState(game : Game) : Promise<void> {
-        const cellSize = this.getCellSize(game.parameters.regionCount);
+    private async updateGame(game : Game) : Promise<void> {
+        let cellSize = this.state.cellSize;
+
+        //Only the first time, after that zooming will control size
+        if (cellSize === 0){
+            cellSize = this.getDefaultCellSize(game.parameters.regionCount);
+        }
+
         const boardView = await this.props.boardViewService.getBoardView(cellSize, game);
         this.setState({
             boardView : boardView,
-            game : game
+            game : game,
+            cellSize : cellSize
+        });
+    }
+
+    private async updateCellSize(cellSize : number) : Promise<void> {
+        const boardView = await this.props.boardViewService.getBoardView(cellSize, this.state.game);
+        this.setState({
+            boardView : boardView,
+            cellSize : cellSize
         });
     }
 
@@ -72,27 +89,27 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
         if (cell.state === CellState.Selectable) {
             this.props.api
                 .selectCell(this.props.gameId, cell.id)
-                .then(response => this.updateState(response.game));
+                .then(response => this.updateGame(response.game));
         }
     }
 
     private commitTurn(gameId : number) : void {
         this.props.api
             .commitTurn(gameId)
-            .then(response => this.updateState(response.game))
+            .then(response => this.updateGame(response.game))
             .then(_ => this.updateEvents(gameId));
     }
 
     private resetTurn(gameId : number) : void {
         this.props.api
             .resetTurn(gameId)
-            .then(response => this.updateState(response.game));
+            .then(response => this.updateGame(response.game));
     }
 
     componentDidMount() {
         this.props.api
             .getGame(this.props.gameId)
-            .then(game => this.updateState(game));
+            .then(game => this.updateGame(game));
     }
 
     render() {
@@ -133,6 +150,7 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                     selectCell={cell => this.selectCell(cell)}
                     height={"100%"}
                     width={"70%"}
+                    updateCellSize={cellSize => this.updateCellSize(cellSize)}
                 />
                 <div style={Styles.width("30%")}>
                     <TurnCyclePanel

@@ -12,7 +12,8 @@ export interface BoardPanelProps {
     boardView : BoardView,
     selectCell : (cell : CellView) => void,
     height : string,
-    width : string
+    width : string,
+    updateCellSize : (cellSize : number) => void
 }
 
 export interface BoardPanelState {
@@ -46,6 +47,13 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
                     theme={this.props.theme}
                     selectCell={(cell) => this.props.selectCell(cell)}
                 />
+                <button onClick={_ => this.props.updateCellSize(this.props.boardView.cellSize * 2)}>
+                    +
+                </button>
+                <button onClick={_ => this.props.updateCellSize(this.props.boardView.cellSize / 2)}>
+                    -
+                </button>
+
             </div>
         );
     }
