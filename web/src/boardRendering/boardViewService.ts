@@ -3,10 +3,17 @@ import { Polygon, Line } from "../geometry/model";
 import Geometry from "../geometry/geometry";
 import { BoardView, CellView, CellType, CellState } from "./model";
 import BoardGeometry from "./boardGeometry";
+import * as Sprintf from 'sprintf-js';
 
 export default class BoardViewService {
+    private static readonly cache : any = {};
 
     static createBoard(board : Board, cellSize : number): BoardView {
+        const key = Sprintf.sprintf("%i-%i-%i", board.regionCount, board.regionSize, cellSize);
+        const cachedBoardView = this.cache[key];
+        if (cachedBoardView) {
+            return cachedBoardView;
+        }
 
         const cellCountPerSide = (board.regionSize * 2) - 1;
         const sideLength = cellCountPerSide * cellSize;
@@ -115,6 +122,7 @@ export default class BoardViewService {
         boardView = BoardGeometry.boardTransform(boardView, transform);
         boardView = BoardGeometry.boardTranslate(boardView, offset);
 
+        this.cache[key] = boardView;
         return boardView;
     }
 
