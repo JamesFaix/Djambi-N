@@ -51,12 +51,21 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
     private async updateState(game : Game) : Promise<void> {
         const cellSize = this.getCellSize(game.parameters.regionCount);
         const boardView = await this.props.boardViewService.getBoardView(cellSize, game);
-        const events = await this.getEvents(game.id);
         this.setState({
             boardView : boardView,
-            game : game,
-            events: events
+            game : game
         });
+    }
+
+    private async updateEvents(gameId: number) : Promise<void> {
+        const eventQuery : EventsQuery = {
+            maxResults: null,
+            direction: ResultsDirection.Descending,
+            thresholdEventId: null,
+            thresholdTime: null
+        }
+        const events = await this.props.api.getEvents(gameId, eventQuery);
+        this.setState({ events: events });
     }
 
     private selectCell(cell : CellView) : void {
@@ -70,24 +79,14 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
     private commitTurn(gameId : number) : void {
         this.props.api
             .commitTurn(gameId)
-            .then(response => this.updateState(response.game));
+            .then(response => this.updateState(response.game))
+            .then(_ => this.updateEvents(gameId));
     }
 
     private resetTurn(gameId : number) : void {
         this.props.api
             .resetTurn(gameId)
             .then(response => this.updateState(response.game));
-    }
-
-    private getEvents(gameId : number) : Promise<Event[]> {
-        const eventQuery : EventsQuery = {
-            maxResults: null,
-            direction: ResultsDirection.Descending,
-            thresholdEventId: null,
-            thresholdTime: null
-        }
-
-        return this.props.api.getEvents(gameId, eventQuery);
     }
 
     componentDidMount() {
