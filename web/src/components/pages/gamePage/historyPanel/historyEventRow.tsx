@@ -68,7 +68,6 @@ export default class HistoryEventRow extends React.Component<HistoryEventRowProp
 
     private getEventMessage(game : Game, event : Event) : string {
         const actingPlayer = game.players.find(p => p.id === event.actingPlayerId);
-        console.log(actingPlayer);
         const actingPlayerName = actingPlayer ? actingPlayer.name : "[Admin]";
 
         const template = this.props.theme.getEventMessageTemplate(event);

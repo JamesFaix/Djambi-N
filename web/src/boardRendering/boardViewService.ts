@@ -6,15 +6,18 @@ import BoardGeometry from "./boardGeometry";
 import * as Sprintf from 'sprintf-js';
 
 export default class BoardViewService {
-    private static readonly cache : any = {};
+    private static readonly emptyBoardViewCache : any = {};
 
-    static createBoard(board : Board, cellSize : number): BoardView {
+    static getBoard(board : Board, cellSize : number, game : Game) : BoardView {
         const key = Sprintf.sprintf("%i-%i-%i", board.regionCount, board.regionSize, cellSize);
-        const cachedBoardView = this.cache[key];
-        if (cachedBoardView) {
-            return cachedBoardView;
+        let empty = this.emptyBoardViewCache[key];
+        if (!empty) {
+            empty = this.createBoard(board, cellSize);
         }
+        return this.update(empty, game);
+    }
 
+    private static createBoard(board : Board, cellSize : number): BoardView {
         const cellCountPerSide = (board.regionSize * 2) - 1;
         const sideLength = cellCountPerSide * cellSize;
 
@@ -122,7 +125,6 @@ export default class BoardViewService {
         boardView = BoardGeometry.boardTransform(boardView, transform);
         boardView = BoardGeometry.boardTranslate(boardView, offset);
 
-        this.cache[key] = boardView;
         return boardView;
     }
 
@@ -195,7 +197,7 @@ export default class BoardViewService {
         return CellType.Even;
     }
 
-    public static update(board : BoardView, game : Game) : BoardView {
+    private static update(board : BoardView, game : Game) : BoardView {
 
         const newCells = board.cells.map(c => {
             let newState = CellState.Default;

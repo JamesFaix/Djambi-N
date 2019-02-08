@@ -54,8 +54,7 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
             .then(board => this.getEvents(game.id)
                 .then(events => {
                     const cellSize = this.getCellSize(game.parameters.regionCount);
-                    let boardView = BoardViewService.createBoard(board, cellSize);
-                    boardView = BoardViewService.update(boardView, game);
+                    const boardView = BoardViewService.getBoard(board, cellSize, game);
                     this.setState({
                         boardView : boardView,
                         game : game,
