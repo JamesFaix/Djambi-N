@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Game, User, Player } from '../../../api/model';
 import ThemeService from '../../../themes/themeService';
-import ActionButton from '../../controls/actionButton';
 import { Classes, Styles } from '../../../styles';
 
 export interface CurrentTurnPanelProps {
@@ -11,7 +10,8 @@ export interface CurrentTurnPanelProps {
     commitTurn : (gameId : number) => void,
     resetTurn : (gameId : number) => void
     height : string,
-    width : string
+    width : string,
+    textStyle : React.CSSProperties
 }
 
 export default class CurrentTurnPanel extends React.Component<CurrentTurnPanelProps> {
@@ -28,17 +28,23 @@ export default class CurrentTurnPanel extends React.Component<CurrentTurnPanelPr
             Styles.width(this.props.width),
             Styles.height(this.props.height)
         ]);
-        const className = Classes.combine([Classes.thinBorder, Classes.paddedCell]);
         return (
-            <div className={className} style={style}>
-                {this.getPlayerNameHeader(currentPlayer)}
-                <br/>
-                <br/>
-                {this.getSelectionsDescription()}
-                <br/>
-                {this.getSelectionPrompt()}
-                <br/>
-                {this.renderActionButtons()}
+            <div className={Classes.thinBorder} style={style}>
+                <div style={Styles.margin("10px")}>
+                    {this.getPlayerNameHeader(currentPlayer)}
+                    <br/>
+                    <br/>
+                    <div className={Classes.flex}>
+                        <div style={Styles.width("45%")}>
+                            {this.getSelectionsDescription()}
+                        </div>
+                        <div style={Styles.width("10%")}/>
+                        <div style={Styles.width("45%")}>
+                            {this.getSelectionPrompt()}
+                            {this.renderActionButtons()}
+                        </div>
+                    </div>
+                </div>
             </div>
         );
     }
@@ -64,7 +70,7 @@ export default class CurrentTurnPanel extends React.Component<CurrentTurnPanelPr
             .map(s => <p>{this.props.theme.getSelectionDescription(s, game)}</p>);
 
         return (
-            <div>
+            <div style={this.props.textStyle}>
                 Selections:
                 <br/>
                 <div className={Classes.indented}>
@@ -78,15 +84,7 @@ export default class CurrentTurnPanel extends React.Component<CurrentTurnPanelPr
         const prompt = this.props.theme.getSelectionPrompt(
             this.props.game.currentTurn.requiredSelectionKind);
 
-        return (
-            <div>
-                Required action:
-                <br/>
-                <div className={Classes.indented}>
-                    {prompt}
-                </div>
-            </div>
-        )
+        return prompt;
     }
 
     private renderActionButtons() {
@@ -98,15 +96,26 @@ export default class CurrentTurnPanel extends React.Component<CurrentTurnPanelPr
         const turn = this.props.game.currentTurn;
 
         return (
-            <div>
+            <div style={Styles.grid()}>
                 {
                     turn.requiredSelectionKind === null
-                        ? <ActionButton label="Commit" onClick={() => this.props.commitTurn(gameId)}/>
+                        ? <button
+                            onClick={_ => this.props.commitTurn(gameId)}
+                            style={Styles.width("70%")}
+                        >
+                            Commit
+                        </button>
                         : ""
                 }
+                <br/>
                 {
                     turn.selections.length > 0
-                        ? <ActionButton label="Reset" onClick={() => this.props.resetTurn(gameId)}/>
+                        ? <button
+                            onClick={_ => this.props.resetTurn(gameId)}
+                            style={Styles.width("70%")}
+                        >
+                            Reset
+                        </button>
                         : ""
                 }
             </div>

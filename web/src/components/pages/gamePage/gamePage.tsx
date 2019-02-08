@@ -6,15 +6,13 @@ import PageTitle from '../../pageTitle';
 import Routes from '../../../routes';
 import ThemeService from '../../../themes/themeService';
 import { BoardView, CellView, CellState } from '../../../boardRendering/model';
-import CanvasBoard from './board/canvasBoard';
 import BoardViewService from '../../../boardRendering/boardViewService';
-import BoardGeometry from '../../../boardRendering/boardGeometry';
 import CurrentTurnPanel from './currentTurnPanel';
 import TurnCyclePanel from './turnCyclePanel';
 import PlayersPanel from './playersPanel/playersPanel';
 import HistoryPanel from './historyPanel/historyPanel';
 import { Classes, Styles } from '../../../styles';
-import Scrollbars from 'react-custom-scrollbars';
+import BoardPanel from './boardPanel/boardPanel';
 
 export interface GamePageProps {
     user : User,
@@ -31,6 +29,8 @@ export interface GamePageState {
 }
 
 export default class GamePage extends React.Component<GamePageProps, GamePageState> {
+    private readonly contentWidth = Math.round(window.screen.width * 0.6) + "px";
+    private readonly contentHeight = Math.round(window.screen.height * 0.6) + "px";
     private readonly scale = 100;
 
     constructor(props : GamePageProps) {
@@ -59,10 +59,6 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
             .then(board => {
                 this.setState({board : board});
                 return board;
-            })
-            .catch(reason => {
-                alert("Get board failed because " + reason);
-                return null;
             });
     }
 
@@ -129,61 +125,67 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                     <LinkButton label="Rules" to={Routes.rules()} newWindow={true}/>
                 </div>
                 <br/>
-                {this.renderBoard()}
+                {this.renderPanels()}
             </div>
         );
     }
 
-    private renderBoard() {
+    private renderPanels() {
         if (this.state.boardView === null) {
             return "";
         }
 
-        const canvasSize = BoardGeometry.boardDiameter(this.state.boardView);
-        const containerStyle = Styles.combine([Styles.noMargin, Styles.width(canvasSize + "px")]);
-        const canvasStyle = Styles.combine([containerStyle, Styles.height(canvasSize +"px")]);
+        const containerStyle = Styles.combine([
+            Styles.noMargin,
+            Styles.width(this.contentWidth),
+            Styles.height(this.contentHeight)
+        ]);
+
+        const textStyle = Styles.lineHeight("8px");
 
         return (
-            <div style={containerStyle}>
-                <div
-                    className={Classes.thinBorder}
-                    style={canvasStyle}
-                >
-                    <CanvasBoard
-                        board={this.state.boardView}
+            <div className={Classes.flex} style={containerStyle}>
+                <BoardPanel
+                    game={this.state.game}
+                    theme={this.props.theme}
+                    boardView={this.state.boardView}
+                    selectCell={cell => this.selectCell(cell)}
+                    height={"100%"}
+                    width={"70%"}
+                />
+                <div style={Styles.width("30%")}>
+                    <TurnCyclePanel
+                        game={this.state.game}
                         theme={this.props.theme}
-                        selectCell={(cellId) => this.selectCell(cellId)}
+                        iconSize={"20px"}
+                        height={"50px"}
+                        width={"100%"}
                     />
-                </div>
-                <div className={Classes.flex}>
+                    <PlayersPanel
+                        game={this.state.game}
+                        theme={this.props.theme}
+                        height={"100px"}
+                        width={"100%"}
+                    />
                     <CurrentTurnPanel
                         game={this.state.game}
                         theme={this.props.theme}
                         user={this.props.user}
                         commitTurn={gameId => this.commitTurn(gameId)}
                         resetTurn={gameId => this.resetTurn(gameId)}
-                        height={"100%"}
-                        width={"40%"}
+                        height={"150px"}
+                        width={"100%"}
+                        textStyle={textStyle}
                     />
-                    <div style={Styles.width("60%")}>
-                        <TurnCyclePanel
-                            game={this.state.game}
-                            theme={this.props.theme}
-                            iconSize={"50px"}
-                        />
-                        <PlayersPanel
-                            game={this.state.game}
-                            theme={this.props.theme}
-                        />
-                    </div>
+                    <HistoryPanel
+                        game={this.state.game}
+                        events={this.state.events}
+                        theme={this.props.theme}
+                        height={"350px"}
+                        width={"100%"}
+                        textStyle={textStyle}
+                    />
                 </div>
-                <HistoryPanel
-                    game={this.state.game}
-                    events={this.state.events}
-                    theme={this.props.theme}
-                    height={"200px"}
-                    width={"100%"}
-                />
             </div>
         );
     }

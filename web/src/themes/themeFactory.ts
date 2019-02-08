@@ -70,7 +70,7 @@ export default class ThemeFactory {
 
             selectionPromptDrop : "Select a cell to drop the target piece in",
             selectionPromptMove : "Select a cell to move to",
-            selectionPromptNull : "Click Commit or Reset",
+            selectionPromptNull : "",
             selectionPromptSubject : "Select a piece to move",
             selectionPromptTarget : "Select a piece to target",
             selectionPromptVacate : "Select a cell to vacate to",

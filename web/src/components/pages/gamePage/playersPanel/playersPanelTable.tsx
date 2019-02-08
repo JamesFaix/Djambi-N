@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Game, Player, PlayerKind } from '../../../../api/model';
-import TextCell from '../../../tables/textCell';
 import ThemeService from '../../../../themes/themeService';
 import { Classes, Styles } from '../../../../styles';
 
@@ -38,8 +37,12 @@ export default class PlayersPanelTable extends React.Component<PlayersPanelTable
                 style={Styles.playerGlow(color)}
                 key={"row" + rowNumber}
             >
-                <TextCell text={player.name}/>
-                <TextCell text={this.getPlayerNote(player)}/>
+                <td className={Classes.borderless}>
+                    {player.name}
+                </td>
+                <td className={Classes.combine([Classes.borderless, Classes.lightText])}>
+                    {this.getPlayerNote(player)}
+                </td>
             </tr>
         );
     }

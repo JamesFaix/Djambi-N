@@ -58,10 +58,26 @@ export class Styles {
         return { height: height };
     }
 
+    public static lineHeight(height : string) : React.CSSProperties {
+        return { lineHeight: height };
+    }
+
     public static readonly noPadding : React.CSSProperties = { padding: 0 };
 
     public static background(color : string) : React.CSSProperties {
         return { background: color };
+    }
+
+    public static margin(margin : string) : React.CSSProperties {
+        return { margin: margin };
+    }
+
+    public static padding(padding : string) : React.CSSProperties {
+        return { padding : padding };
+    }
+
+    public static grid() : React.CSSProperties {
+        return { display: "grid" };
     }
 
     public static combine(styles : React.CSSProperties[]) : React.CSSProperties {

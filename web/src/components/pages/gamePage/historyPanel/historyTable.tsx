@@ -7,7 +7,8 @@ import { Classes, Styles } from '../../../../styles';
 export interface HistoryTableProps {
     game : Game,
     events : Event[],
-    theme : ThemeService
+    theme : ThemeService,
+    textStyle : React.CSSProperties
 }
 
 export default class HistoryTable extends React.Component<HistoryTableProps> {
@@ -30,6 +31,7 @@ export default class HistoryTable extends React.Component<HistoryTableProps> {
                                         event={e}
                                         isEffectVisible={f => this.isEffectVisible(f)}
                                         theme={this.props.theme}
+                                        textStyle={this.props.textStyle}
                                     />
                                 )
                         }
