@@ -20,7 +20,8 @@ export interface GamePageProps {
     api : ApiClient,
     gameId : number,
     theme : ThemeService,
-    boardService : BoardService
+    boardService : BoardService,
+    boardViewService : BoardViewService
 }
 
 export interface GamePageState {
@@ -54,7 +55,7 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
             .then(board => this.getEvents(game.id)
                 .then(events => {
                     const cellSize = this.getCellSize(game.parameters.regionCount);
-                    const boardView = BoardViewService.getBoard(board, cellSize, game);
+                    const boardView = this.props.boardViewService.getBoard(board, cellSize, game);
                     this.setState({
                         boardView : boardView,
                         game : game,

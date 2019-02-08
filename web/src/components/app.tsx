@@ -16,6 +16,7 @@ import Routes from '../routes';
 import ThemeService from '../themes/themeService';
 import "../index.css";
 import BoardService from '../boardService';
+import BoardViewService from '../boardRendering/boardViewService';
 
 export interface AppProps {
 
@@ -25,7 +26,8 @@ export interface AppState {
     user : User,
     api : ApiClient,
     theme : ThemeService,
-    boardService : BoardService
+    boardService : BoardService,
+    boardViewService : BoardViewService
 }
 
 export default class App extends React.Component<AppProps, AppState> {
@@ -38,7 +40,8 @@ export default class App extends React.Component<AppProps, AppState> {
             user : null,
             api : api,
             theme : new ThemeService(),
-            boardService : new BoardService(api)
+            boardService : new BoardService(api),
+            boardViewService : new BoardViewService()
         };
     }
 
@@ -133,6 +136,7 @@ export default class App extends React.Component<AppProps, AppState> {
                                 gameId={props.match.params.gameId}
                                 theme={this.state.theme}
                                 boardService={this.state.boardService}
+                                boardViewService={this.state.boardViewService}
                             />
                         }
                     />
