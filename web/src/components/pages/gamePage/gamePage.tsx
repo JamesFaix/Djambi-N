@@ -13,14 +13,12 @@ import PlayersPanel from './playersPanel/playersPanel';
 import HistoryPanel from './historyPanel/historyPanel';
 import { Classes, Styles } from '../../../styles';
 import BoardPanel from './boardPanel/boardPanel';
-import BoardService from '../../../boardService';
 
 export interface GamePageProps {
     user : User,
     api : ApiClient,
     gameId : number,
     theme : ThemeService,
-    boardService : BoardService,
     boardViewService : BoardViewService
 }
 
@@ -51,18 +49,14 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
     }
 
     private async updateState(game : Game) : Promise<void> {
-        return await this.props.boardService.getBoard(game.parameters.regionCount)
-            .then(board => this.getEvents(game.id)
-                .then(events => {
-                    const cellSize = this.getCellSize(game.parameters.regionCount);
-                    const boardView = this.props.boardViewService.getBoard(board, cellSize, game);
-                    this.setState({
-                        boardView : boardView,
-                        game : game,
-                        events: events
-                    });
-                })
-            );
+        const cellSize = this.getCellSize(game.parameters.regionCount);
+        const boardView = await this.props.boardViewService.getBoardView(cellSize, game);
+        const events = await this.getEvents(game.id);
+        this.setState({
+            boardView : boardView,
+            game : game,
+            events: events
+        });
     }
 
     private selectCell(cell : CellView) : void {

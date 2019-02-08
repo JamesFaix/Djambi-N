@@ -4,22 +4,50 @@ import Geometry from "../geometry/geometry";
 import { BoardView, CellView, CellType, CellState } from "./model";
 import BoardGeometry from "./boardGeometry";
 import * as Sprintf from 'sprintf-js';
+import ApiClient from "../api/client";
 
 export default class BoardViewService {
-    private readonly emptyBoardViewCache : any = {};
+    private readonly boardCache : any;
+    private readonly emptyBoardViewCache : any;
+    private readonly api : ApiClient;
 
-    public getBoard(board : Board, cellSize : number, game : Game) : BoardView {
-        const key = Sprintf.sprintf("%i-%i-%i", board.regionCount, board.regionSize, cellSize);
-        let empty = this.emptyBoardViewCache[key];
-        if (!empty) {
-            empty = BoardViewService.createEmptyBoard(board, cellSize);
-        }
-        return BoardViewService.update(empty, game);
+    constructor(api : ApiClient) {
+        this.boardCache = {};
+        this.emptyBoardViewCache = {};
+        this.api = api;
     }
 
-    //--- Empty board creation ---
+    public async getBoardView(cellSize : number, game : Game) : Promise<BoardView> {
+        const b = await this.getBoard(game.parameters.regionCount);
+        const bv = this.getEmptyBoardView(b, cellSize);
+        return BoardViewService.updateBoardView(bv, game);
+    }
 
-    private static createEmptyBoard(board : Board, cellSize : number): BoardView {
+    //--- Caching ---
+
+    private async getBoard (regionCount : number) : Promise<Board> {
+        //The board returned from the API of each regionCount is always the same, so it can be cached.
+        let b = this.boardCache[regionCount];
+        if (!b) {
+            b = await this.api.getBoard(regionCount);
+            this.boardCache[regionCount] = b;
+        }
+        return b;
+    }
+
+    private getEmptyBoardView(board : Board, cellSize : number) : BoardView {
+        //The empty state of a board with the same dimensions is always the same, so it can be cached.
+        const key = Sprintf.sprintf("%i-%i-%i", board.regionCount, board.regionSize, cellSize);
+        let bv = this.emptyBoardViewCache[key];
+        if (!bv) {
+            bv = BoardViewService.createEmptyBoardView(board, cellSize);
+        }
+        return bv;
+    }
+
+    //--- Empty boardview creation ---
+
+    private static createEmptyBoardView(board : Board, cellSize : number): BoardView {
         const cellCountPerSide = (board.regionSize * 2) - 1;
         const sideLength = cellCountPerSide * cellSize;
 
@@ -199,9 +227,9 @@ export default class BoardViewService {
         return CellType.Even;
     }
 
-    //--- Update board ---
+    //--- Update boardview ---
 
-    private static update(board : BoardView, game : Game) : BoardView {
+    private static updateBoardView(board : BoardView, game : Game) : BoardView {
 
         const newCells = board.cells.map(c => {
             let newState = CellState.Default;
