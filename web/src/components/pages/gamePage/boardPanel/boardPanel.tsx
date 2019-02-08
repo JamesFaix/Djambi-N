@@ -2,9 +2,9 @@ import * as React from 'react';
 import { Game } from '../../../../api/model';
 import ThemeService from '../../../../themes/themeService';
 import { Classes, Styles } from '../../../../styles';
-import BoardGeometry from '../../../../boardRendering/boardGeometry';
 import { BoardView, CellView } from '../../../../boardRendering/model';
 import CanvasBoard from './canvas/canvasBoard';
+import Scrollbars from 'react-custom-scrollbars';
 
 export interface BoardPanelProps {
     game : Game,
@@ -29,28 +29,30 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
     }
 
     render() {
-        const boardView = this.props.boardView;
-        //const canvasSize = BoardGeometry.boardDiameter(boardView) + "px";
-        const canvasStyle = Styles.combine([
-            Styles.noMargin,
-            Styles.width(this.props.width),
-            Styles.height(this.props.height)
+        const p = this.props;
+        const bv = p.boardView;
+
+        const containerStyle = Styles.combine([
+            Styles.width("100%"),
+            Styles.height("100%")
         ]);
 
         return (
             <div
                 className={Classes.thinBorder}
-                style={canvasStyle}
+                style={containerStyle}
             >
-                <CanvasBoard
-                    board={boardView}
-                    theme={this.props.theme}
-                    selectCell={(cell) => this.props.selectCell(cell)}
-                />
-                <button onClick={_ => this.props.updateCellSize(this.props.boardView.cellSize * 2)}>
+                <Scrollbars style={containerStyle}>
+                    <CanvasBoard
+                        board={bv}
+                        theme={p.theme}
+                        selectCell={(cell) => p.selectCell(cell)}
+                    />
+                </Scrollbars>
+                <button onClick={_ => p.updateCellSize(bv.cellSize * 2)}>
                     +
                 </button>
-                <button onClick={_ => this.props.updateCellSize(this.props.boardView.cellSize / 2)}>
+                <button onClick={_ => p.updateCellSize(bv.cellSize / 2)}>
                     -
                 </button>
 
