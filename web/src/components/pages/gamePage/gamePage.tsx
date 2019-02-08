@@ -1,6 +1,6 @@
 import * as React from 'react';
 import ApiClient from '../../../api/client';
-import { User, Game, Board, Event, EventsQuery, ResultsDirection } from '../../../api/model';
+import { User, Game, Event, EventsQuery, ResultsDirection } from '../../../api/model';
 import LinkButton from '../../controls/linkButton';
 import PageTitle from '../../pageTitle';
 import Routes from '../../../routes';
@@ -13,18 +13,19 @@ import PlayersPanel from './playersPanel/playersPanel';
 import HistoryPanel from './historyPanel/historyPanel';
 import { Classes, Styles } from '../../../styles';
 import BoardPanel from './boardPanel/boardPanel';
+import BoardService from '../../../boardService';
 
 export interface GamePageProps {
     user : User,
     api : ApiClient,
     gameId : number,
-    theme : ThemeService
+    theme : ThemeService,
+    boardService : BoardService
 }
 
 export interface GamePageState {
     game : Game,
     boardView : BoardView,
-    board : Board,
     events : Event[]
 }
 
@@ -38,7 +39,6 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
         this.state = {
             game : null,
             boardView : null,
-            board : null,
             events: []
         };
     }
@@ -49,21 +49,8 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
         return Math.floor(this.scale * baseValue);
     }
 
-    private async getAndCacheBoard(regionCount : number) : Promise<Board> {
-        if (this.state.board) {
-            return this.state.board;
-        }
-
-        return await this.props.api
-            .getBoard(regionCount)
-            .then(board => {
-                this.setState({board : board});
-                return board;
-            });
-    }
-
     private async updateState(game : Game) : Promise<void> {
-        return await this.getAndCacheBoard(game.parameters.regionCount)
+        return await this.props.boardService.getBoard(game.parameters.regionCount)
             .then(board => this.getEvents(game.id)
                 .then(events => {
                     const cellSize = this.getCellSize(game.parameters.regionCount);
@@ -131,7 +118,8 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
     }
 
     private renderPanels() {
-        if (this.state.boardView === null) {
+        //The game is fetched from the API on page load. There's not much to render before that.
+        if (this.state.game === null || this.state.boardView === null) {
             return "";
         }
 
