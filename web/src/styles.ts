@@ -76,6 +76,10 @@ export class Styles {
         return { padding : padding };
     }
 
+    public static grid() : React.CSSProperties {
+        return { display: "grid" };
+    }
+
     public static combine(styles : React.CSSProperties[]) : React.CSSProperties {
         const len = styles.length;
         switch (len) {

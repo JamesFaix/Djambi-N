@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Game, User, Player } from '../../../api/model';
 import ThemeService from '../../../themes/themeService';
-import ActionButton from '../../controls/actionButton';
 import { Classes, Styles } from '../../../styles';
 
 export interface CurrentTurnPanelProps {
@@ -36,11 +35,11 @@ export default class CurrentTurnPanel extends React.Component<CurrentTurnPanelPr
                     <br/>
                     <br/>
                     <div className={Classes.flex}>
-                        <div style={{width:"45%"}}>
+                        <div style={Styles.width("45%")}>
                             {this.getSelectionsDescription()}
                         </div>
-                        <div style={{width:"10%"}}/>
-                        <div style={{width:"45%"}}>
+                        <div style={Styles.width("10%")}/>
+                        <div style={Styles.width("45%")}>
                             {this.getSelectionPrompt()}
                             {this.renderActionButtons()}
                         </div>
@@ -97,12 +96,12 @@ export default class CurrentTurnPanel extends React.Component<CurrentTurnPanelPr
         const turn = this.props.game.currentTurn;
 
         return (
-            <div style={{display: "grid"}}>
+            <div style={Styles.grid()}>
                 {
                     turn.requiredSelectionKind === null
                         ? <button
                             onClick={_ => this.props.commitTurn(gameId)}
-                            style={{width:"70%"}}
+                            style={Styles.width("70%")}
                         >
                             Commit
                         </button>
@@ -113,7 +112,7 @@ export default class CurrentTurnPanel extends React.Component<CurrentTurnPanelPr
                     turn.selections.length > 0
                         ? <button
                             onClick={_ => this.props.resetTurn(gameId)}
-                            style={{width:"70%"}}
+                            style={Styles.width("70%")}
                         >
                             Reset
                         </button>

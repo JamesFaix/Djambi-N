@@ -24,16 +24,17 @@ export default class HistoryEventRow extends React.Component<HistoryEventRowProp
             const color = this.props.theme.getPlayerColor(player.colorId);
             style = Styles.playerGlow(color);
         }
+        const cellStyle = Styles.combine([Styles.width("50%"), Styles.padding("10px 10px 0px 10px")]);
         return (
             <tr style={style}>
                 <td style={Styles.noPadding}>
-                    <table style={{width: "100%"}}>
+                    <table style={Styles.width("100%")}>
                         <tbody>
                             <tr>
-                                <td className={Classes.borderless} style={{padding: "10px 10px 0px 10px", width: "50%"}}>
+                                <td className={Classes.borderless} style={cellStyle}>
                                     {this.getEventMessage(this.props.game, e)}
                                 </td>
-                                <td className={Classes.combine([Classes.borderless, Classes.lightText])} style={{padding: "10px 10px 0px 10px", width: "50%", textAlign: "right"}}>
+                                <td className={Classes.combine([Classes.borderless, Classes.lightText, Classes.rightAligned])} style={cellStyle}>
                                     {DateService.format(e.createdOn)}
                                 </td>
                             </tr>
