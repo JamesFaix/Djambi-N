@@ -61,7 +61,6 @@ export default class BoardGeometry {
     public static boardTransform(b : BoardView, matrix : TransformMatrix) : BoardView {
         return {
             regionCount: b.regionCount,
-            cellSize: b.cellSize,
             polygon: Geometry.polygonTransform(b.polygon, matrix),
             cells: b.cells.map(c => this.cellTransform(c, matrix))
         };
@@ -70,7 +69,6 @@ export default class BoardGeometry {
     public static boardTranslate(b : BoardView, offset : Point) : BoardView {
         return {
             regionCount: b.regionCount,
-            cellSize: b.cellSize,
             polygon: Geometry.polygonTranslate(b.polygon, offset),
             cells: b.cells.map(c => this.cellTranslate(c, offset))
         };

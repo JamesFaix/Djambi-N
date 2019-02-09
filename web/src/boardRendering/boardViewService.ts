@@ -3,17 +3,55 @@ import { Polygon, Line } from "../geometry/model";
 import Geometry from "../geometry/geometry";
 import { BoardView, CellView, CellType, CellState } from "./model";
 import BoardGeometry from "./boardGeometry";
+import ApiClient from "../api/client";
 
 export default class BoardViewService {
+    private readonly boardCache : any;
+    private readonly emptyBoardViewCache : any;
+    private readonly api : ApiClient;
 
-    static createBoard(board : Board, cellSize : number): BoardView {
+    constructor(api : ApiClient) {
+        this.boardCache = {};
+        this.emptyBoardViewCache = {};
+        this.api = api;
+    }
 
+    public async getBoardView(game : Game) : Promise<BoardView> {
+        const b = await this.getBoard(game.parameters.regionCount);
+        const bv = this.getEmptyBoardView(b);
+        return BoardViewService.updateBoardView(bv, game);
+    }
+
+    //--- Caching ---
+
+    private async getBoard (regionCount : number) : Promise<Board> {
+        //The board returned from the API of each regionCount is always the same, so it can be cached.
+        let b = this.boardCache[regionCount];
+        if (!b) {
+            b = await this.api.getBoard(regionCount);
+            this.boardCache[regionCount] = b;
+        }
+        return b;
+    }
+
+    private getEmptyBoardView(board : Board) : BoardView {
+        //The empty state of a board with the same dimensions is always the same, so it can be cached.
+        const key = board.regionCount + "-" + board.regionSize;
+        let bv = this.emptyBoardViewCache[key];
+        if (!bv) {
+            bv = BoardViewService.createEmptyBoardView(board);
+        }
+        return bv;
+    }
+
+    //--- Empty boardview creation ---
+
+    private static createEmptyBoardView(board : Board): BoardView {
         const cellCountPerSide = (board.regionSize * 2) - 1;
-        const sideLength = cellCountPerSide * cellSize;
 
         let cellViews : Array<CellView> = [];
 
-        const boardPolygon = this.getBoardPolygon(board.regionCount, sideLength);
+        const boardPolygon = this.getBoardPolygon(board.regionCount, cellCountPerSide);
         const boardEdges = Geometry.polygonEdges(boardPolygon);
         const boardCentroid = Geometry.polygonCentroid(boardPolygon);
 
@@ -103,13 +141,12 @@ export default class BoardViewService {
 
         let boardView = {
             regionCount: board.regionCount,
-            cellSize: cellSize,
             cells: cellViews,
             polygon: boardPolygon
         };
 
         const transform = Geometry.transformRotation(360 / board.regionCount / 2);
-        const radius = this.getPolygonRadius(board.regionCount, sideLength);
+        const radius = this.getPolygonRadius(board.regionCount, cellCountPerSide);
         const offset = { x: radius, y: radius };
 
         boardView = BoardGeometry.boardTransform(boardView, transform);
@@ -187,7 +224,9 @@ export default class BoardViewService {
         return CellType.Even;
     }
 
-    public static update(board : BoardView, game : Game) : BoardView {
+    //--- Update boardview ---
+
+    private static updateBoardView(board : BoardView, game : Game) : BoardView {
 
         const newCells = board.cells.map(c => {
             let newState = CellState.Default;
@@ -217,7 +256,6 @@ export default class BoardViewService {
 
         return {
             regionCount : board.regionCount,
-            cellSize : board.cellSize,
             cells : newCells,
             polygon : board.polygon
         }

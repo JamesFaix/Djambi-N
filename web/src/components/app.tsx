@@ -15,6 +15,7 @@ import GameInfoPage from './pages/gameInfoPage/gameInfoPage';
 import Routes from '../routes';
 import ThemeService from '../themes/themeService';
 import "../index.css";
+import BoardViewService from '../boardRendering/boardViewService';
 
 export interface AppProps {
 
@@ -23,16 +24,21 @@ export interface AppProps {
 export interface AppState {
     user : User,
     api : ApiClient,
-    theme : ThemeService
+    theme : ThemeService,
+    boardViewService : BoardViewService
 }
 
 export default class App extends React.Component<AppProps, AppState> {
     constructor(props : AppProps) {
         super(props);
+
+        const api = new ApiClient();
+
         this.state = {
             user : null,
-            api : new ApiClient(),
-            theme : new ThemeService()
+            api : api,
+            theme : new ThemeService(),
+            boardViewService : new BoardViewService(api)
         };
     }
 
@@ -126,6 +132,7 @@ export default class App extends React.Component<AppProps, AppState> {
                                 api={this.state.api}
                                 gameId={props.match.params.gameId}
                                 theme={this.state.theme}
+                                boardViewService={this.state.boardViewService}
                             />
                         }
                     />

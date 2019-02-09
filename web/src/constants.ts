@@ -8,5 +8,6 @@ export enum InputTypes {
     Text = "text",
     Checkbox = "checkbox",
     Password = "password",
-    Number = "number"
+    Number = "number",
+    Range = "range"
 }

@@ -12,13 +12,13 @@ import CanvasPolygon from './canvasPolygon';
 export interface CanvasBoardProps {
     board : BoardView,
     theme : ThemeService,
-    selectCell : (cell : CellView) => void
+    selectCell : (cell : CellView) => void,
+    magnification : number
 }
 
 export default class CanvasBoard extends React.Component<CanvasBoardProps> {
-
     private getPieceSize() : number {
-        return this.props.board.cellSize / 2;
+        return this.props.magnification / 2;
     }
 
     private getPieceLocation(cell : CellView) : Point {
@@ -69,7 +69,7 @@ export default class CanvasBoard extends React.Component<CanvasBoardProps> {
                                 piece={c.piece}
                                 theme={this.props.theme}
                                 onClick={() => this.props.selectCell(c)}
-                                size={this.props.board.cellSize/2}
+                                size={this.getPieceSize()}
                                 location={this.getPieceLocation(c)}
                             />
                         )

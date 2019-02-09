@@ -1,6 +1,6 @@
 import * as React from 'react';
 import ApiClient from '../../../api/client';
-import { User, Game, Board, Event, EventsQuery, ResultsDirection } from '../../../api/model';
+import { User, Game, Event, EventsQuery, ResultsDirection } from '../../../api/model';
 import LinkButton from '../../controls/linkButton';
 import PageTitle from '../../pageTitle';
 import Routes from '../../../routes';
@@ -18,101 +18,74 @@ export interface GamePageProps {
     user : User,
     api : ApiClient,
     gameId : number,
-    theme : ThemeService
+    theme : ThemeService,
+    boardViewService : BoardViewService
 }
 
 export interface GamePageState {
     game : Game,
     boardView : BoardView,
-    board : Board,
     events : Event[]
 }
 
 export default class GamePage extends React.Component<GamePageProps, GamePageState> {
     private readonly contentWidth = Math.round(window.screen.width * 0.6) + "px";
     private readonly contentHeight = Math.round(window.screen.height * 0.6) + "px";
-    private readonly scale = 100;
 
     constructor(props : GamePageProps) {
         super(props);
         this.state = {
             game : null,
             boardView : null,
-            board : null,
             events: []
         };
     }
 
-    private getCellSize(regionCount : number) : number {
-        //Through trial an error, I found that this formula keeps boards of varying regionCount about the same absolute size
-        const baseValue = Math.pow(Math.E, (-0.2 * regionCount));
-        return Math.floor(this.scale * baseValue);
+    private async updateGame(game : Game) : Promise<void> {
+        const boardView = await this.props.boardViewService.getBoardView(game);
+        this.setState({
+            boardView : boardView,
+            game : game
+        });
     }
 
-    private async getAndCacheBoard(regionCount : number) : Promise<Board> {
-        if (this.state.board) {
-            return this.state.board;
-        }
-
-        return await this.props.api
-            .getBoard(regionCount)
-            .then(board => {
-                this.setState({board : board});
-                return board;
-            });
-    }
-
-    private async updateState(game : Game) : Promise<void> {
-        return await this.getAndCacheBoard(game.parameters.regionCount)
-            .then(board => this.getEvents(game.id)
-                .then(events => {
-                    const cellSize = this.getCellSize(game.parameters.regionCount);
-                    let boardView = BoardViewService.createBoard(board, cellSize);
-                    boardView = BoardViewService.update(boardView, game);
-                    this.setState({
-                        boardView : boardView,
-                        game : game,
-                        events: events
-                    });
-                })
-            );
-    }
-
-    private selectCell(cell : CellView) : void {
-        if (cell.state === CellState.Selectable) {
-            this.props.api
-                .selectCell(this.props.gameId, cell.id)
-                .then(response => this.updateState(response.game));
-        }
-    }
-
-    private commitTurn(gameId : number) : void {
-        this.props.api
-            .commitTurn(gameId)
-            .then(response => this.updateState(response.game));
-    }
-
-    private resetTurn(gameId : number) : void {
-        this.props.api
-            .resetTurn(gameId)
-            .then(response => this.updateState(response.game));
-    }
-
-    private getEvents(gameId : number) : Promise<Event[]> {
+    private async updateEvents(gameId: number) : Promise<void> {
         const eventQuery : EventsQuery = {
             maxResults: null,
             direction: ResultsDirection.Descending,
             thresholdEventId: null,
             thresholdTime: null
         }
+        const events = await this.props.api.getEvents(gameId, eventQuery);
+        this.setState({ events: events });
+    }
 
-        return this.props.api.getEvents(gameId, eventQuery);
+    private selectCell(cell : CellView) : void {
+        if (cell.state === CellState.Selectable) {
+            this.props.api
+                .selectCell(this.props.gameId, cell.id)
+                .then(response => this.updateGame(response.game));
+        }
+    }
+
+    private commitTurn(gameId : number) : void {
+        this.props.api
+            .commitTurn(gameId)
+            .then(response => this.updateGame(response.game))
+            .then(_ => this.updateEvents(gameId));
+    }
+
+    private resetTurn(gameId : number) : void {
+        this.props.api
+            .resetTurn(gameId)
+            .then(response => this.updateGame(response.game));
     }
 
     componentDidMount() {
         this.props.api
             .getGame(this.props.gameId)
-            .then(game => this.updateState(game));
+            .then(game => this.updateGame(game))
+            .then(_ => this.updateEvents(this.props.gameId));
     }
 
     render() {
@@ -131,7 +104,8 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
     }
 
     private renderPanels() {
-        if (this.state.boardView === null) {
+        //The game is fetched from the API on page load. There's not much to render before that.
+        if (this.state.game === null || this.state.boardView === null) {
             return "";
         }
 
