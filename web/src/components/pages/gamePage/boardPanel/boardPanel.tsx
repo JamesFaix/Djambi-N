@@ -99,7 +99,6 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
                 className={Classes.thinBorder}
                 style={containerStyle}
             >
-                {this.renderZoomControl()}
                 <Scrollbars style={containerStyle}>
                     <CanvasBoard
                         board={this.getMagnifiedBoard()}
@@ -108,6 +107,7 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
                         magnification={this.getMagnification()}
                     />
                 </Scrollbars>
+                {this.renderZoomControl()}
             </div>
         );
     }
