@@ -25,8 +25,7 @@ export interface GamePageProps {
 export interface GamePageState {
     game : Game,
     boardView : BoardView,
-    events : Event[],
-    cellSize : number
+    events : Event[]
 }
 
 export default class GamePage extends React.Component<GamePageProps, GamePageState> {
@@ -38,39 +37,15 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
         this.state = {
             game : null,
             boardView : null,
-            events: [],
-            cellSize : 0
+            events: []
         };
     }
 
-    private getDefaultCellSize(regionCount : number) : number {
-        //Through trial an error, I found that this formula keeps boards of varying regionCount about the same absolute size
-        const baseValue = Math.pow(Math.E, (-0.2 * regionCount));
-        const scale = 100;
-        return Math.floor(scale * baseValue);
-    }
-
     private async updateGame(game : Game) : Promise<void> {
-        let cellSize = this.state.cellSize;
-
-        //Only the first time, after that zooming will control size
-        if (cellSize === 0){
-            cellSize = this.getDefaultCellSize(game.parameters.regionCount);
-        }
-
-        const boardView = await this.props.boardViewService.getBoardView(cellSize, game);
+        const boardView = await this.props.boardViewService.getBoardView(game);
         this.setState({
             boardView : boardView,
-            game : game,
-            cellSize : cellSize
-        });
-    }
-
-    private async updateCellSize(cellSize : number) : Promise<void> {
-        const boardView = await this.props.boardViewService.getBoardView(cellSize, this.state.game);
-        this.setState({
-            boardView : boardView,
-            cellSize : cellSize
+            game : game
         });
     }
 
@@ -150,7 +125,6 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                     selectCell={cell => this.selectCell(cell)}
                     height={"100%"}
                     width={"70%"}
-                    updateCellSize={cellSize => this.updateCellSize(cellSize)}
                 />
                 <div style={Styles.width("30%")}>
                     <TurnCyclePanel
