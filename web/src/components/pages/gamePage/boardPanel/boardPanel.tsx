@@ -7,6 +7,8 @@ import CanvasBoard from './canvas/canvasBoard';
 import Scrollbars from 'react-custom-scrollbars';
 import LabeledInput from '../../../controls/labeledInput';
 import { InputTypes } from '../../../../constants';
+import Geometry from '../../../../geometry/geometry';
+import BoardGeometry from '../../../../boardRendering/boardGeometry';
 
 export interface BoardPanelProps {
     game : Game,
@@ -20,18 +22,24 @@ export interface BoardPanelProps {
 export interface BoardPanelState {
     zoomLevel : number
     zoomMultiplier : number,
-    windowSizeMultiplier : number,
+    windowSizeMultiplier : number, //TODO: Make this change based on window or container size later
     boardTypeMultiplier : number
 }
 
 export default class BoardPanel extends React.Component<BoardPanelProps, BoardPanelState> {
     constructor(props : BoardPanelProps) {
         super(props);
+
+        const zoomLevel = 0;
+        const zoomMultiplier = 1;
+        const windowSizeMultiplier = 50;
+        const boardTypeMultiplier = 1;
+
         this.state = {
-            zoomLevel: 0,
-            zoomMultiplier: 1,
-            windowSizeMultiplier: 50, //TODO: Make this change based on window or container size later
-            boardTypeMultiplier: 1
+            zoomLevel: zoomLevel,
+            zoomMultiplier: zoomMultiplier,
+            windowSizeMultiplier: windowSizeMultiplier,
+            boardTypeMultiplier: boardTypeMultiplier
         };
     }
 
@@ -40,6 +48,18 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
         this.setState({
             boardTypeMultiplier: multiplier
         });
+    }
+
+    private getMagnification() : number {
+        return this.state.windowSizeMultiplier
+            * this.state.zoomMultiplier
+            * this.state.boardTypeMultiplier;
+    }
+
+    private getMagnifiedBoard() : BoardView {
+        const mag = this.getMagnification();
+        const transform = Geometry.transformScale(mag, mag);
+        return BoardGeometry.boardTransform(this.props.boardView, transform);
     }
 
     private getBoardTypeMultiplier(regionCount : number) : number {
@@ -78,9 +98,6 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
     }
 
     render() {
-        const p = this.props;
-        const bv = p.boardView;
-
         const containerStyle = Styles.combine([
             Styles.width("100%"),
             Styles.height("100%")
@@ -94,14 +111,10 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
                 {this.renderZoomControl()}
                 <Scrollbars style={containerStyle}>
                     <CanvasBoard
-                        board={bv}
-                        theme={p.theme}
-                        selectCell={(cell) => p.selectCell(cell)}
-                        magnification={
-                            this.state.zoomMultiplier *
-                            this.state.boardTypeMultiplier *
-                            this.state.windowSizeMultiplier
-                        }
+                        board={this.getMagnifiedBoard()}
+                        theme={this.props.theme}
+                        selectCell={(cell) => this.props.selectCell(cell)}
+                        magnification={this.getMagnification()}
                     />
                 </Scrollbars>
             </div>

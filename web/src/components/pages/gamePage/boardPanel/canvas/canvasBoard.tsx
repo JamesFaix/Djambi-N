@@ -17,16 +17,6 @@ export interface CanvasBoardProps {
 }
 
 export default class CanvasBoard extends React.Component<CanvasBoardProps> {
-    private readonly magnifiedBoard : BoardView;
-
-    constructor(props: CanvasBoardProps) {
-        super(props);
-
-        const transform = Geometry.transformScale(props.magnification, props.magnification);
-        const bv = BoardGeometry.boardTransform(props.board, transform);
-        this.magnifiedBoard = bv;
-    }
-
     private getPieceSize() : number {
         return this.props.magnification / 2;
     }
@@ -42,7 +32,7 @@ export default class CanvasBoard extends React.Component<CanvasBoardProps> {
         return (
             <Layer>
                 <CanvasPolygon
-                    polygon={this.magnifiedBoard.polygon}
+                    polygon={this.props.board.polygon}
                     strokeColor={this.props.theme.getCellBaseColor(CellType.Center)}
                     strokeWidth={10}
                 />
@@ -54,7 +44,7 @@ export default class CanvasBoard extends React.Component<CanvasBoardProps> {
         return (
             <Layer>
                 {
-                    this.magnifiedBoard.cells.map((c, i) =>
+                    this.props.board.cells.map((c, i) =>
                         <CanvasCell
                             key={"cell" + i}
                             cell={c}
@@ -71,7 +61,7 @@ export default class CanvasBoard extends React.Component<CanvasBoardProps> {
         return (
             <Layer>
                 {
-                    this.magnifiedBoard.cells
+                    this.props.board.cells
                         .filter(c => c.piece !== null)
                         .map((c, i) =>
                             <CanvasPiece
@@ -89,7 +79,7 @@ export default class CanvasBoard extends React.Component<CanvasBoardProps> {
     }
 
     render() {
-        const canvasSize = BoardGeometry.boardDiameter(this.magnifiedBoard);
+        const canvasSize = BoardGeometry.boardDiameter(this.props.board);
 
         return (
             <Stage width={canvasSize} height={canvasSize}>
