@@ -3,7 +3,6 @@ import { Polygon, Line } from "../geometry/model";
 import Geometry from "../geometry/geometry";
 import { BoardView, CellView, CellType, CellState } from "./model";
 import BoardGeometry from "./boardGeometry";
-import * as Sprintf from 'sprintf-js';
 import ApiClient from "../api/client";
 
 export default class BoardViewService {
@@ -37,7 +36,7 @@ export default class BoardViewService {
 
     private getEmptyBoardView(board : Board) : BoardView {
         //The empty state of a board with the same dimensions is always the same, so it can be cached.
-        const key = Sprintf.sprintf("%i-%i", board.regionCount, board.regionSize);
+        const key = board.regionCount + "-" + board.regionSize;
         let bv = this.emptyBoardViewCache[key];
         if (!bv) {
             bv = BoardViewService.createEmptyBoardView(board);

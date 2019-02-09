@@ -5,7 +5,6 @@ import { Classes, Styles } from '../../../../styles';
 import { BoardView, CellView } from '../../../../boardRendering/model';
 import CanvasBoard from './canvas/canvasBoard';
 import Scrollbars from 'react-custom-scrollbars';
-import LabeledInput from '../../../controls/labeledInput';
 import { InputTypes } from '../../../../constants';
 import Geometry from '../../../../geometry/geometry';
 import BoardGeometry from '../../../../boardRendering/boardGeometry';
@@ -22,32 +21,20 @@ export interface BoardPanelProps {
 export interface BoardPanelState {
     zoomLevel : number
     zoomMultiplier : number,
-    windowSizeMultiplier : number, //TODO: Make this change based on window or container size later
+    windowSizeMultiplier : number,
     boardTypeMultiplier : number
 }
 
 export default class BoardPanel extends React.Component<BoardPanelProps, BoardPanelState> {
     constructor(props : BoardPanelProps) {
         super(props);
-
         const zoomLevel = 0;
-        const zoomMultiplier = 1;
-        const windowSizeMultiplier = 50;
-        const boardTypeMultiplier = 1;
-
         this.state = {
             zoomLevel: zoomLevel,
-            zoomMultiplier: zoomMultiplier,
-            windowSizeMultiplier: windowSizeMultiplier,
-            boardTypeMultiplier: boardTypeMultiplier
+            zoomMultiplier: this.getZoomMultiplierFromZoomLevel(zoomLevel),
+            windowSizeMultiplier: this.getWindowSizeMultiplier(),
+            boardTypeMultiplier: this.getBoardTypeMultiplier(props.game.parameters.regionCount)
         };
-    }
-
-    componentDidMount(){
-        const multiplier = this.getBoardTypeMultiplier(this.props.game.parameters.regionCount);
-        this.setState({
-            boardTypeMultiplier: multiplier
-        });
     }
 
     private getMagnification() : number {
@@ -71,16 +58,20 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
     private getZoomMultiplierFromZoomLevel(zoomLevel : number) : number {
         switch (zoomLevel) {
             case -3: return 0.25;
-            case -2: return 0.5;
+            case -2: return 0.50;
             case -1: return 0.75;
-            case 0: return 1;
-            case 1: return 1.25;
-            case 2: return 1.5;
-            case 3: return 2;
-            case 4: return 3;
-            case 5: return 4;
+            case  0: return 1.00;
+            case  1: return 1.25;
+            case  2: return 1.50;
+            case  3: return 2.00;
+            case  4: return 3.00;
+            case  5: return 4.00;
             default: throw "Unsupported zoom level: " + zoomLevel;
         }
+    }
+
+    private getWindowSizeMultiplier() : number {
+        return 50; //TODO: Make this change based on window or container size later
     }
 
     private onZoomSliderChanged(e : React.ChangeEvent<HTMLInputElement>) : void {
@@ -125,11 +116,11 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
         return (
 
             <div>
-                <LabeledInput
-                    label="Zoom"
+                Zoom
+                <input
                     type={InputTypes.Range}
                     onChange={e => this.onZoomSliderChanged(e)}
-                    value={this.state.zoomLevel.toString()}
+                    value={this.state.zoomLevel}
                     min={-3}
                     max={5}
                 />

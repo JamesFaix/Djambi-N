@@ -84,7 +84,8 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
     componentDidMount() {
         this.props.api
             .getGame(this.props.gameId)
-            .then(game => this.updateGame(game));
+            .then(game => this.updateGame(game))
+            .then(_ => this.updateEvents(this.props.gameId));
     }
 
     render() {
