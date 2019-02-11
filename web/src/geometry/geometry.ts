@@ -13,8 +13,10 @@ export default class Geometry {
     }
 
     public static pointTransform(p : Point, matrix : MathJs.Matrix) : Point {
-        const pointVector = MathJs.matrix([p.x, p.y]);
-        const resultMatrix = MathJs.multiply(matrix, pointVector) as MathJs.Matrix;
+        const resultMatrix = MathJs.multiply(matrix, [p.x, p.y]) as MathJs.Matrix;
+
+        //The typedefs seem to be wrong here, the result will be a number
+        //TODO: Contribute this to the mathjs repo
         const resultX = MathJs.subset(resultMatrix, MathJs.index(0)) as any as number;
         const resultY = MathJs.subset(resultMatrix, MathJs.index(1)) as any as number;
 
