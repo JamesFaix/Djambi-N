@@ -139,17 +139,12 @@ export default class BoardViewService {
 
         cellViews = this.coalesceColocatedCells(cellViews);
 
-        let boardView = {
+        return {
             regionCount: board.regionCount,
             cellCountPerSide: cellCountPerSide,
             cells: cellViews,
             polygon: boardPolygon,
         };
-
-        const transform = Geometry.transformRotation(360 / board.regionCount / 2);
-        boardView = BoardGeometry.boardTransform(boardView, transform);
-
-        return boardView;
     }
 
     private static locationEquals(a : Location, b : Location) : boolean {
