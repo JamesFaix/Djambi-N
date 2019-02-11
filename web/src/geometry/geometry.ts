@@ -1,4 +1,5 @@
 import { Point, Line, Polygon } from "./model";
+import * as MathJs from 'mathjs';
 
 export default class Geometry {
 
@@ -11,10 +12,15 @@ export default class Geometry {
         }
     }
 
-    public static pointTransform(p : Point, matrix : number[][]) : Point {
+    public static pointTransform(p : Point, matrix : MathJs.Matrix) : Point {
+        const pointVector = MathJs.matrix([p.x, p.y]);
+        const resultMatrix = MathJs.multiply(matrix, pointVector) as MathJs.Matrix;
+        const resultX = MathJs.subset(resultMatrix, MathJs.index(0)) as any as number;
+        const resultY = MathJs.subset(resultMatrix, MathJs.index(1)) as any as number;
+
         return {
-            x: (p.x * matrix[0][0]) + (p.y * matrix[0][1]),
-            y: (p.x * matrix[1][0]) + (p.y * matrix[1][1])
+            x: resultX,
+            y: resultY
         };
     }
 
@@ -108,7 +114,7 @@ export default class Geometry {
         return { vertices : p.vertices.map((v : Point) => this.pointTranslate(v, offset)) };
     }
 
-    public static polygonTransform(p : Polygon, matrix : number[][]) : Polygon {
+    public static polygonTransform(p : Polygon, matrix : MathJs.Matrix) : Polygon {
         return { vertices : p.vertices.map((v : Point) => this.pointTransform(v, matrix)) };
     }
 
@@ -138,48 +144,35 @@ export default class Geometry {
 
     //---TRANSFORMS---
 
-    public static transformIdentity() : number[][] {
-        return [
+    public static transformIdentity() : MathJs.Matrix {
+        return MathJs.matrix([
             [1,0],
             [0,1]
-        ];
+        ]);
     }
 
-    public static transformInverse() : number[][] {
-        return [
+    public static transformInverse() : MathJs.Matrix {
+        return MathJs.matrix([
             [0,1],
             [1,0]
-        ];
+        ]);
     }
 
-    public static transformRotation(degrees : number) : number[][] {
+    public static transformRotation(degrees : number) : MathJs.Matrix {
         const radians = degrees / 180 * Math.PI;
         const sin = Math.sin(radians);
         const cos = Math.cos(radians);
 
-        return [
+        return MathJs.matrix([
             [cos,sin],
             [-sin,cos]
-        ];
+        ]);
     }
 
-    public static transformScale(x : number, y : number) : number[][] {
-        return [
+    public static transformScale(x : number, y : number) : MathJs.Matrix {
+        return MathJs.matrix([
             [x,0],
             [0,y]
-        ];
-    }
-
-    public static transformCompose(a : number[][], b : number[][]) : number[][] {
-        return [
-            [
-                (a[0][0] * b[0][0]) + (a[0][1] * b[1][0]),
-                (a[0][0] * b[0][1]) + (a[0][1] * b[1][1])
-            ],
-            [
-                (a[1][0] * b[1][1]) + (a[1][1] * b[1][0]),
-                (a[1][0] * b[0][1]) + (a[1][1] * b[1][1])
-            ]
-        ];
+        ]);
     }
 }
