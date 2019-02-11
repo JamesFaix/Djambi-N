@@ -15,7 +15,7 @@ export default class Geometry {
     public static pointTransform(p : Point, matrix : MathJs.Matrix) : Point {
         const pointVector = MathJs.matrix([p.x, p.y, 1]);
         const resultMatrix = MathJs.multiply(matrix, pointVector);
-        const resultArray = (resultMatrix as any)._data as number[];
+        const resultArray = (resultMatrix as any)._data as number[]; //Breaking MathJs's encapsulation here for efficiency
         return {
             x: resultArray[0] / resultArray[2],
             y: resultArray[1] / resultArray[2]
@@ -156,6 +156,14 @@ export default class Geometry {
 
     //---TRANSFORMS---
 
+    public static transformIdentity() : MathJs.Matrix {
+        return MathJs.matrix([
+            [1, 0, 0],
+            [0, 1, 0],
+            [0, 0, 1]
+        ]);
+    }
+
     public static transformRotation(degrees : number) : MathJs.Matrix {
         const radians = degrees / 180 * Math.PI;
         const sin = Math.sin(radians);
@@ -187,7 +195,7 @@ export default class Geometry {
     public static transformCompose(transforms : MathJs.Matrix[]) : MathJs.Matrix {
         switch (transforms.length) {
             case 0:
-                throw "Cannot compose an empty array of transforms.";
+                return this.transformIdentity();
 
             case 1:
                 return transforms[0];
