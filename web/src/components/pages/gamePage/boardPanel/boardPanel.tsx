@@ -55,7 +55,8 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
 
         //BoardViews are created with the centroid at (0,0)
         //Offset so none of the board has negative coordinates, since canvases start at (0,0)
-        const centroidOffset = this.getCentroidOffsetFromCanvas(bv);
+        const centroidOffset = this.getCentroidOffsetFromCanvas(bv.regionCount, bv.cellCountPerSide);
+        const centroidOffsetTransform = Geometry.transformTranslate(centroidOffset.x, centroidOffset.y);
 
         //Magnify the board based on screen size, zoom setting, and board type
         const mag = this.getMagnification();
@@ -63,15 +64,16 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
 
         //Add a margin for the outline of the board and some whitespace around it within the canvas
         const margin = this.props.boardStrokeWidth + this.props.boardMargin;
-        const marginOffset = { x: margin, y: margin };
+        const marginOffsetTransform = Geometry.transformTranslate(margin, margin);
 
-        //Order is very important
-        bv = BoardGeometry.boardTransform(bv, rotationTransform);
-        bv = BoardGeometry.boardTranslate(bv, centroidOffset);
-        bv = BoardGeometry.boardTransform(bv, scaleTransform);
-        bv = BoardGeometry.boardTranslate(bv, marginOffset);
-
-        return bv;
+        //Order is very important. Last transform gets applied to image first
+        let t = Geometry.transformCompose([
+            marginOffsetTransform,
+            scaleTransform,
+            centroidOffsetTransform,
+            rotationTransform
+        ]);
+        return BoardGeometry.boardTransform(bv, t);
     }
 
     private getBoardTypeMultiplier(regionCount : number) : number {
@@ -108,11 +110,11 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
         return 50; //TODO: Make this change based on window or container size later
     }
 
-    private getCentroidOffsetFromCanvas(boardView : BoardView) : Point {
+    private getCentroidOffsetFromCanvas(regionCount : number, cellCountPerSide : number) : Point {
         let x : number;
         let y : number;
 
-        switch (boardView.regionCount) {
+        switch (regionCount) {
             case 3:
                 x = 0.500; // 1/2 width
                 y = 0.577; // radius
@@ -148,8 +150,8 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
         }
 
         return {
-            x: x * boardView.cellCountPerSide,
-            y: y * boardView.cellCountPerSide
+            x: x * cellCountPerSide,
+            y: y * cellCountPerSide
         };
     }
 
