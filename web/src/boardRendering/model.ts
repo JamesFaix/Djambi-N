@@ -33,6 +33,7 @@ export interface CellView {
 
 export interface BoardView {
     regionCount : number,
+    cellCountPerSide : number,
     polygon : Polygon,
     cells : CellView[]
 }

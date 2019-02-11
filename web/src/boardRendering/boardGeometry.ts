@@ -61,6 +61,7 @@ export default class BoardGeometry {
     public static boardTransform(b : BoardView, matrix : TransformMatrix) : BoardView {
         return {
             regionCount: b.regionCount,
+            cellCountPerSide: b.cellCountPerSide,
             polygon: Geometry.polygonTransform(b.polygon, matrix),
             cells: b.cells.map(c => this.cellTransform(c, matrix))
         };
@@ -69,6 +70,7 @@ export default class BoardGeometry {
     public static boardTranslate(b : BoardView, offset : Point) : BoardView {
         return {
             regionCount: b.regionCount,
+            cellCountPerSide: b.cellCountPerSide,
             polygon: Geometry.polygonTranslate(b.polygon, offset),
             cells: b.cells.map(c => this.cellTranslate(c, offset))
         };
@@ -78,5 +80,11 @@ export default class BoardGeometry {
         const sides = Geometry.polygonEdges(b.polygon);
         const length = Geometry.lineLength(sides[0]);
         return 2 * Geometry.regularPolygonRadius(b.regionCount, length);
+    }
+
+    public static boardDimensions(b : BoardView) : Point {
+        const h = Geometry.polygonHeight(b.polygon);
+        const w = Geometry.polygonWidth(b.polygon);
+        return { x: w, y: h };
     }
 }

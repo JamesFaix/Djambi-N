@@ -140,6 +140,20 @@ export default class Geometry {
         return sideLength / (2 * Math.sin(Math.PI/numberOfSides));
     }
 
+    public static polygonWidth(p : Polygon) : number {
+        const xs = p.vertices.map(v => v.x);
+        const min = Math.min(...xs);
+        const max = Math.max(...xs);
+        return Math.abs(max - min);
+    }
+
+    public static polygonHeight(p : Polygon) : number {
+        const ys = p.vertices.map(v => v.y);
+        const min = Math.min(...ys);
+        const max = Math.max(...ys);
+        return Math.abs(max - min);
+    }
+
     //---TRANSFORMS---
 
     public static transformIdentity() : TransformMatrix {

@@ -141,16 +141,13 @@ export default class BoardViewService {
 
         let boardView = {
             regionCount: board.regionCount,
+            cellCountPerSide: cellCountPerSide,
             cells: cellViews,
-            polygon: boardPolygon
+            polygon: boardPolygon,
         };
 
         const transform = Geometry.transformRotation(360 / board.regionCount / 2);
-        const radius = this.getPolygonRadius(board.regionCount, cellCountPerSide);
-        const offset = { x: radius, y: radius };
-
         boardView = BoardGeometry.boardTransform(boardView, transform);
-        boardView = BoardGeometry.boardTranslate(boardView, offset);
 
         return boardView;
     }
@@ -192,7 +189,7 @@ export default class BoardViewService {
 
     private static getBoardPolygon(sideCount : number, sideLength : number) : Polygon {
         const centralAngle = Math.PI * 2 / sideCount;
-        const radius = this.getPolygonRadius(sideCount, sideLength);
+        const radius = Geometry.regularPolygonRadius(sideCount, sideLength);
         const centroid = { x: 0, y:0 };
 
         const vertices = [];
@@ -206,12 +203,6 @@ export default class BoardViewService {
         }
 
         return { vertices: vertices };
-    }
-
-    private static getPolygonRadius(sideCount : number, sideLength : number) : number {
-        const centralAngle = Math.PI * 2 / sideCount;
-        const outerAngle = (Math.PI - centralAngle) / 2;
-        return sideLength * Math.sin(outerAngle) / Math.sin(centralAngle);
     }
 
     private static getCellType(col : number, row : number) : CellType {
@@ -256,6 +247,7 @@ export default class BoardViewService {
 
         return {
             regionCount : board.regionCount,
+            cellCountPerSide: board.cellCountPerSide,
             cells : newCells,
             polygon : board.polygon
         }
