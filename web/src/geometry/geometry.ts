@@ -1,4 +1,4 @@
-import { Point, Line, Polygon, TransformMatrix } from "./model";
+import { Point, Line, Polygon } from "./model";
 
 export default class Geometry {
 
@@ -11,10 +11,10 @@ export default class Geometry {
         }
     }
 
-    public static pointTransform(p : Point, matrix : TransformMatrix) : Point {
+    public static pointTransform(p : Point, matrix : number[][]) : Point {
         return {
-            x: (p.x * matrix.a1) + (p.y * matrix.a2),
-            y: (p.x * matrix.b1) + (p.y * matrix.b2)
+            x: (p.x * matrix[0][0]) + (p.y * matrix[0][1]),
+            y: (p.x * matrix[1][0]) + (p.y * matrix[1][1])
         };
     }
 
@@ -108,7 +108,7 @@ export default class Geometry {
         return { vertices : p.vertices.map((v : Point) => this.pointTranslate(v, offset)) };
     }
 
-    public static polygonTransform(p : Polygon, matrix : TransformMatrix) : Polygon {
+    public static polygonTransform(p : Polygon, matrix : number[][]) : Polygon {
         return { vertices : p.vertices.map((v : Point) => this.pointTransform(v, matrix)) };
     }
 
@@ -138,44 +138,48 @@ export default class Geometry {
 
     //---TRANSFORMS---
 
-    public static transformIdentity() : TransformMatrix {
-        return {
-            a1:1, b1:0,
-            a2:0, b2:1
-        }
+    public static transformIdentity() : number[][] {
+        return [
+            [1,0],
+            [0,1]
+        ];
     }
 
-    public static transformInverse() : TransformMatrix {
-        return {
-            a1:0, b1:1,
-            a2:1, b2:0
-        }
+    public static transformInverse() : number[][] {
+        return [
+            [0,1],
+            [1,0]
+        ];
     }
 
-    public static transformRotation(degrees : number) : TransformMatrix {
+    public static transformRotation(degrees : number) : number[][] {
         const radians = degrees / 180 * Math.PI;
         const sin = Math.sin(radians);
         const cos = Math.cos(radians);
 
-        return {
-            a1:cos, b1:-sin,
-            a2:sin, b2: cos
-        }
+        return [
+            [cos,sin],
+            [-sin,cos]
+        ];
     }
 
-    public static transformScale(x : number, y : number) : TransformMatrix {
-        return {
-            a1:x, b1:0,
-            a2:0, b2:y
-        }
+    public static transformScale(x : number, y : number) : number[][] {
+        return [
+            [x,0],
+            [0,y]
+        ];
     }
 
-    public static transformCompose(m : TransformMatrix, n : TransformMatrix) : TransformMatrix {
-        return {
-            a1: (m.a1 * n.a1) + (m.b1 * n.a2),
-            a2: (m.a1 * n.b1) + (m.b1 * n.b2),
-            b1: (m.a2 * n.a1) + (m.b2 * n.a2),
-            b2: (m.a2 * n.b1) + (m.b2 * n.b2)
-        };
+    public static transformCompose(a : number[][], b : number[][]) : number[][] {
+        return [
+            [
+                (a[0][0] * b[0][0]) + (a[0][1] * b[1][0]),
+                (a[0][0] * b[0][1]) + (a[0][1] * b[1][1])
+            ],
+            [
+                (a[1][0] * b[1][1]) + (a[1][1] * b[1][0]),
+                (a[1][0] * b[0][1]) + (a[1][1] * b[1][1])
+            ]
+        ];
     }
 }
