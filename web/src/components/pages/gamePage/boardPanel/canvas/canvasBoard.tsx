@@ -14,7 +14,9 @@ export interface CanvasBoardProps {
     theme : ThemeService,
     selectCell : (cell : CellView) => void,
     magnification : number,
-    boardStrokeWidth : number
+    boardStrokeWidth : number,
+    width : number,
+    height : number
 }
 
 export default class CanvasBoard extends React.Component<CanvasBoardProps> {
@@ -80,10 +82,8 @@ export default class CanvasBoard extends React.Component<CanvasBoardProps> {
     }
 
     render() {
-        const canvasSize = BoardGeometry.boardDiameter(this.props.board);
-
         return (
-            <Stage width={canvasSize} height={canvasSize}>
+            <Stage width={this.props.width} height={this.props.height}>
                 {this.renderBackground()}
                 {this.renderCells()}
                 {this.renderPieces()}

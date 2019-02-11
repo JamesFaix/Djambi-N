@@ -175,6 +175,11 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
             Styles.width("100%"),
             Styles.height("100%")
         ]);
+        const board = this.getMagnifiedBoard();
+        const dimensions = BoardGeometry.boardDimensions(board);
+        const margin = 2 * (this.props.boardStrokeWidth + this.props.boardMargin);
+        const width = dimensions.x + margin;
+        const height = dimensions.y + margin;
 
         return (
             <div
@@ -183,11 +188,13 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
             >
                 <Scrollbars style={containerStyle}>
                     <CanvasBoard
-                        board={this.getMagnifiedBoard()}
+                        board={board}
                         theme={this.props.theme}
                         selectCell={(cell) => this.props.selectCell(cell)}
                         magnification={this.getMagnification()}
                         boardStrokeWidth={this.props.boardStrokeWidth}
+                        width={width}
+                        height={height}
                     />
                 </Scrollbars>
                 {this.renderZoomControl()}

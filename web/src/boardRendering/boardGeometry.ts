@@ -77,12 +77,6 @@ export default class BoardGeometry {
         };
     }
 
-    public static boardDiameter(b : BoardView) : number {
-        const sides = Geometry.polygonEdges(b.polygon);
-        const length = Geometry.lineLength(sides[0]);
-        return 2 * Geometry.regularPolygonRadius(b.regionCount, length);
-    }
-
     public static boardDimensions(b : BoardView) : Point {
         const h = Geometry.polygonHeight(b.polygon);
         const w = Geometry.polygonWidth(b.polygon);
