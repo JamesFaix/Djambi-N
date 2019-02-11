@@ -114,6 +114,7 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
         let x : number;
         let y : number;
 
+        //These numbers all assume a side length of 1, and an edge is facing down
         switch (regionCount) {
             case 3:
                 x = 0.500; // 1/2 width
@@ -149,6 +150,7 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
                 throw "Unsupported region count.";
         }
 
+        //Enlarge for the actual side length
         return {
             x: x * cellCountPerSide,
             y: y * cellCountPerSide
