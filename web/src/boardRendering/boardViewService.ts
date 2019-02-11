@@ -2,7 +2,6 @@ import { Location, Board, Game } from "../api/model";
 import { Polygon, Line } from "../geometry/model";
 import Geometry from "../geometry/geometry";
 import { BoardView, CellView, CellType, CellState } from "./model";
-import BoardGeometry from "./boardGeometry";
 import ApiClient from "../api/client";
 
 export default class BoardViewService {

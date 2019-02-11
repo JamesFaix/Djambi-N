@@ -13,7 +13,7 @@ export default class Geometry {
     }
 
     public static pointTransform(p : Point, matrix : MathJs.Matrix) : Point {
-        const resultMatrix = MathJs.multiply(matrix, [p.x, p.y]) as MathJs.Matrix;
+        const resultMatrix = MathJs.multiply(matrix, [p.x, p.y, 0]) as MathJs.Matrix;
 
         //The typedefs seem to be wrong here, the result will be a number
         //TODO: Contribute this to the mathjs repo
@@ -160,35 +160,23 @@ export default class Geometry {
 
     //---TRANSFORMS---
 
-    public static transformIdentity() : MathJs.Matrix {
-        return MathJs.matrix([
-            [1,0],
-            [0,1]
-        ]);
-    }
-
-    public static transformInverse() : MathJs.Matrix {
-        return MathJs.matrix([
-            [0,1],
-            [1,0]
-        ]);
-    }
-
     public static transformRotation(degrees : number) : MathJs.Matrix {
         const radians = degrees / 180 * Math.PI;
         const sin = Math.sin(radians);
         const cos = Math.cos(radians);
 
         return MathJs.matrix([
-            [cos,sin],
-            [-sin,cos]
+            [ cos, sin, 0],
+            [-sin, cos, 0],
+            [   0,   0, 1]
         ]);
     }
 
     public static transformScale(x : number, y : number) : MathJs.Matrix {
         return MathJs.matrix([
-            [x,0],
-            [0,y]
+            [x, 0, 0],
+            [0, y, 0],
+            [0, 0, 1]
         ]);
     }
 }
