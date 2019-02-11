@@ -1,6 +1,7 @@
-import { Point, TransformMatrix } from "../geometry/model";
+import { Point } from "../geometry/model";
 import { CellView, BoardView } from "./model";
 import Geometry from "../geometry/geometry";
+import * as MathJs from 'mathjs';
 
 export default class BoardGeometry {
 
@@ -16,7 +17,7 @@ export default class BoardGeometry {
         };
     }
 
-    public static cellTransform(c: CellView, matrix : TransformMatrix) : CellView {
+    public static cellTransform(c: CellView, matrix : MathJs.Matrix) : CellView {
         return {
             id: c.id,
             type: c.type,
@@ -58,7 +59,7 @@ export default class BoardGeometry {
         return b.cells.find((c: CellView) => c.id === id);
     }
 
-    public static boardTransform(b : BoardView, matrix : TransformMatrix) : BoardView {
+    public static boardTransform(b : BoardView, matrix : MathJs.Matrix) : BoardView {
         return {
             regionCount: b.regionCount,
             cellCountPerSide: b.cellCountPerSide,
