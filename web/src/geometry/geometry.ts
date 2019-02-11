@@ -13,16 +13,12 @@ export default class Geometry {
     }
 
     public static pointTransform(p : Point, matrix : MathJs.Matrix) : Point {
-        const resultMatrix = MathJs.multiply(matrix, [p.x, p.y]) as MathJs.Matrix;
-
-        //The typedefs seem to be wrong here, the result will be a number
-        //TODO: Contribute this to the mathjs repo
-        const resultX = MathJs.subset(resultMatrix, MathJs.index(0)) as any as number;
-        const resultY = MathJs.subset(resultMatrix, MathJs.index(1)) as any as number;
-
+        const pointVector = MathJs.matrix([p.x, p.y, 1]);
+        const resultMatrix = MathJs.multiply(matrix, pointVector);
+        const resultArray = (resultMatrix as any)._data as number[]; //Breaking MathJs's encapsulation here for efficiency
         return {
-            x: resultX,
-            y: resultY
+            x: resultArray[0] / resultArray[2],
+            y: resultArray[1] / resultArray[2]
         };
     }
 
@@ -144,19 +140,27 @@ export default class Geometry {
         return sideLength / (2 * Math.sin(Math.PI/numberOfSides));
     }
 
+    public static polygonWidth(p : Polygon) : number {
+        const xs = p.vertices.map(v => v.x);
+        const min = Math.min(...xs);
+        const max = Math.max(...xs);
+        return Math.abs(max - min);
+    }
+
+    public static polygonHeight(p : Polygon) : number {
+        const ys = p.vertices.map(v => v.y);
+        const min = Math.min(...ys);
+        const max = Math.max(...ys);
+        return Math.abs(max - min);
+    }
+
     //---TRANSFORMS---
 
     public static transformIdentity() : MathJs.Matrix {
         return MathJs.matrix([
-            [1,0],
-            [0,1]
-        ]);
-    }
-
-    public static transformInverse() : MathJs.Matrix {
-        return MathJs.matrix([
-            [0,1],
-            [1,0]
+            [1, 0, 0],
+            [0, 1, 0],
+            [0, 0, 1]
         ]);
     }
 
@@ -166,15 +170,42 @@ export default class Geometry {
         const cos = Math.cos(radians);
 
         return MathJs.matrix([
-            [cos,sin],
-            [-sin,cos]
+            [ cos, sin, 0],
+            [-sin, cos, 0],
+            [   0,   0, 1]
         ]);
     }
 
     public static transformScale(x : number, y : number) : MathJs.Matrix {
         return MathJs.matrix([
-            [x,0],
-            [0,y]
+            [x, 0, 0],
+            [0, y, 0],
+            [0, 0, 1]
         ]);
+    }
+
+    public static transformTranslate(x : number, y : number) : MathJs.Matrix {
+        return MathJs.matrix([
+            [1, 0, x],
+            [0, 1, y],
+            [0, 0, 1]
+        ]);
+    }
+
+    public static transformCompose(transforms : MathJs.Matrix[]) : MathJs.Matrix {
+        switch (transforms.length) {
+            case 0:
+                return this.transformIdentity();
+
+            case 1:
+                return transforms[0];
+
+            default:
+                let t = transforms[0];
+                for (var i=1; i<transforms.length; i++) {
+                    t = MathJs.multiply(t, transforms[i]) as MathJs.Matrix;
+                }
+                return t;
+        }
     }
 }

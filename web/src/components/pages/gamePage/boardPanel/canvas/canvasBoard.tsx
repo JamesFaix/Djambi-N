@@ -13,7 +13,8 @@ export interface CanvasBoardProps {
     board : BoardView,
     theme : ThemeService,
     selectCell : (cell : CellView) => void,
-    magnification : number
+    magnification : number,
+    boardStrokeWidth : number
 }
 
 export default class CanvasBoard extends React.Component<CanvasBoardProps> {
@@ -34,7 +35,7 @@ export default class CanvasBoard extends React.Component<CanvasBoardProps> {
                 <CanvasPolygon
                     polygon={this.props.board.polygon}
                     strokeColor={this.props.theme.getCellBaseColor(CellType.Center)}
-                    strokeWidth={10}
+                    strokeWidth={this.props.boardStrokeWidth}
                 />
             </Layer>
         )

@@ -126,6 +126,8 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                     selectCell={cell => this.selectCell(cell)}
                     height={"100%"}
                     width={"70%"}
+                    boardStrokeWidth={10}
+                    boardMargin={5}
                 />
                 <div style={Styles.width("30%")}>
                     <TurnCyclePanel
