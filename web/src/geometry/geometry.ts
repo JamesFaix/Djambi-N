@@ -12,13 +12,9 @@ export default class Geometry {
     }
 
     public static pointTransform(p : Point, matrix : TransformMatrix) : Point {
-        const xt = (p.x * matrix.a1) + (p.y * matrix.a2) + (matrix.a3);
-        const yt = (p.x * matrix.b1) + (p.y * matrix.b2) + (matrix.b3);
-        const zt = (p.x * matrix.c1) + (p.y * matrix.c2) + (matrix.c3);
-
         return {
-            x: xt/zt,
-            y: yt/zt
+            x: (p.x * matrix.a1) + (p.y * matrix.a2),
+            y: (p.x * matrix.b1) + (p.y * matrix.b2)
         };
     }
 
@@ -144,17 +140,15 @@ export default class Geometry {
 
     public static transformIdentity() : TransformMatrix {
         return {
-            a1:1, b1:0, c1:0,
-            a2:0, b2:1, c2:0,
-            a3:0, b3:0, c3:1
+            a1:1, b1:0,
+            a2:0, b2:1
         }
     }
 
     public static transformInverse() : TransformMatrix {
         return {
-            a1:0, b1:1, c1:0,
-            a2:1, b2:0, c2:0,
-            a3:0, b3:0, c3:1
+            a1:0, b1:1,
+            a2:1, b2:0
         }
     }
 
@@ -164,31 +158,24 @@ export default class Geometry {
         const cos = Math.cos(radians);
 
         return {
-            a1:cos, b1:-sin, c1:0,
-            a2:sin, b2: cos, c2:0,
-            a3:0,   b3:0,    c3:1
+            a1:cos, b1:-sin,
+            a2:sin, b2: cos
         }
     }
 
     public static transformScale(x : number, y : number) : TransformMatrix {
         return {
-            a1:x, b1:0, c1:0,
-            a2:0, b2:y, c2:0,
-            a3:0, b3:0, c3:1
+            a1:x, b1:0,
+            a2:0, b2:y
         }
     }
 
     public static transformCompose(m : TransformMatrix, n : TransformMatrix) : TransformMatrix {
         return {
-            a1: (m.a1 * n.a1) + (m.b1 * n.a2) + (m.c1 * n.a3),
-            a2: (m.a1 * n.b1) + (m.b1 * n.b2) + (m.c1 * n.b3),
-            a3: (m.a1 * n.c1) + (m.b1 * n.c2) + (m.c1 * n.c3),
-            b1: (m.a2 * n.a1) + (m.b2 * n.a2) + (m.c2 * n.a3),
-            b2: (m.a2 * n.b1) + (m.b2 * n.b2) + (m.c2 * n.b3),
-            b3: (m.a2 * n.c1) + (m.b2 * n.c2) + (m.c2 * n.c3),
-            c1: (m.a3 * n.a1) + (m.b3 * n.a2) + (m.c3 * n.a3),
-            c2: (m.a3 * n.b1) + (m.b3 * n.b2) + (m.c3 * n.b3),
-            c3: (m.a3 * n.c1) + (m.b3 * n.c2) + (m.c3 * n.c3)
+            a1: (m.a1 * n.a1) + (m.b1 * n.a2),
+            a2: (m.a1 * n.b1) + (m.b1 * n.b2),
+            b1: (m.a2 * n.a1) + (m.b2 * n.a2),
+            b2: (m.a2 * n.b1) + (m.b2 * n.b2)
         };
     }
 }
