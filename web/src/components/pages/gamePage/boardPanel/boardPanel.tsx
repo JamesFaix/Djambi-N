@@ -58,8 +58,8 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
         const centroidOffsetTransform = Transform.translate(centroidOffset.x, centroidOffset.y);
 
         //Magnify the board based on screen size, zoom setting, and board type
-        const mag = this.getScale();
-        const scaleTransform = Transform.scale(mag, mag);
+        const scale = this.getScale();
+        const scaleTransform = Transform.scale(scale, scale);
 
         //Add a margin for the outline of the board and some whitespace around it within the canvas
         const margin = this.props.boardStrokeWidth + this.props.boardMargin;
@@ -176,8 +176,8 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
         ]);
 
         const board = this.getTransformedBoard();
-        let size = Geometry.Board.size(board);
         const margin = 2 * (this.props.boardStrokeWidth + this.props.boardMargin);
+        let size = Geometry.Board.size(board);
         size = Geometry.Point.addScalar(size, margin);
 
         return (
