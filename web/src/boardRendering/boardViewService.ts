@@ -1,6 +1,6 @@
 import { Location, Board, Game } from "../api/model";
-import { Polygon, Line } from "../geometry/model";
-import Geometry from "../geometry/geometry";
+import { Polygon, Line } from "./model";
+import Geometry from "./geometry";
 import { BoardView, CellView, CellType, CellState } from "./model";
 import ApiClient from "../api/client";
 
@@ -46,26 +46,28 @@ export default class BoardViewService {
     //--- Empty boardview creation ---
 
     private static createEmptyBoardView(board : Board): BoardView {
+        const Line = Geometry.Line;
+        const Polygon = Geometry.Polygon;
         const cellCountPerSide = (board.regionSize * 2) - 1;
 
         let cellViews : Array<CellView> = [];
 
         const boardPolygon = this.getBoardPolygon(board.regionCount, cellCountPerSide);
-        const boardEdges = Geometry.polygonEdges(boardPolygon);
-        const boardCentroid = Geometry.polygonCentroid(boardPolygon);
+        const boardEdges = Polygon.edges(boardPolygon);
+        const boardCentroid = Polygon.centroid(boardPolygon);
 
         //Loop over regions
         for (var i = 0; i < board.regionCount; i++) {
 
             const regionVertices = [
                 boardPolygon.vertices[i],
-                Geometry.lineMidPoint(boardEdges[i]),
+                Line.midPoint(boardEdges[i]),
                 boardCentroid,
-                Geometry.lineMidPoint(boardEdges[(i+(board.regionCount - 1))%board.regionCount])
+                Line.midPoint(boardEdges[(i+(board.regionCount - 1))%board.regionCount])
             ];
 
             const region : Polygon = { vertices: regionVertices };
-            const regionEdges = Geometry.polygonEdges(region);
+            const regionEdges = Polygon.edges(region);
 
             function getFraction(index : number, isLower : boolean) {
                 let result = 0;
@@ -89,12 +91,12 @@ export default class BoardViewService {
 
                 const rowBorders : Line[] = [
                     {
-                        a: Geometry.lineFractionPoint(regionEdges[3], 1-lowerFraction),
-                        b: Geometry.lineFractionPoint(regionEdges[1], lowerFraction)
+                        a: Line.fractionPoint(regionEdges[3], 1-lowerFraction),
+                        b: Line.fractionPoint(regionEdges[1], lowerFraction)
                     },
                     {
-                        a: Geometry.lineFractionPoint(regionEdges[3], 1-upperFraction),
-                        b: Geometry.lineFractionPoint(regionEdges[1], upperFraction)
+                        a: Line.fractionPoint(regionEdges[3], 1-upperFraction),
+                        b: Line.fractionPoint(regionEdges[1], upperFraction)
                     }
                 ];
 
@@ -110,10 +112,10 @@ export default class BoardViewService {
 
                     const polygon : Polygon = {
                         vertices: [
-                            Geometry.lineFractionPoint(rowBorders[0], lowerFraction),
-                            Geometry.lineFractionPoint(rowBorders[0], upperFraction),
-                            Geometry.lineFractionPoint(rowBorders[1], upperFraction),
-                            Geometry.lineFractionPoint(rowBorders[1], lowerFraction),
+                            Line.fractionPoint(rowBorders[0], lowerFraction),
+                            Line.fractionPoint(rowBorders[0], upperFraction),
+                            Line.fractionPoint(rowBorders[1], upperFraction),
+                            Line.fractionPoint(rowBorders[1], lowerFraction),
                         ]
                     };
 
@@ -183,7 +185,7 @@ export default class BoardViewService {
 
     private static getBoardPolygon(sideCount : number, sideLength : number) : Polygon {
         const centralAngle = Math.PI * 2 / sideCount;
-        const radius = Geometry.regularPolygonRadius(sideCount, sideLength);
+        const radius = Geometry.RegularPolygon.radius(sideCount, sideLength);
         const centroid = { x: 0, y:0 };
 
         const vertices = [];
