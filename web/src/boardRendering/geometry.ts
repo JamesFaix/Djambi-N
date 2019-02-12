@@ -4,10 +4,6 @@ import * as MathJs from 'mathjs';
 export default class Geometry {
 
     public static Point = class {
-        public static toString(p : Point) : string {
-            return "(" + p.x + ", " + p.y + ")";
-        }
-
         public static transform(p : Point, matrix : MathJs.Matrix) : Point {
             const pointVector = MathJs.matrix([p.x, p.y, 1]);
             const resultMatrix = MathJs.multiply(matrix, pointVector);
@@ -73,25 +69,6 @@ export default class Geometry {
             };
         }
 
-        public static contains(p : Polygon, point : Point) : boolean {
-            function getSideOfLine(pt: Point, line: Line) {
-                return ((pt.x - line.a.x) * (line.b.y - line.a.y))
-                    - ((pt.y - line.a.y) * (line.b.x - line.a.x));
-            }
-
-            let pos = 0;
-            let neg = 0;
-
-            const ls = this.edges(p);
-            for (var i = 0; i < ls.length; i++) {
-                const side = getSideOfLine(point, ls[i]);
-                if (side < 0) { neg++; }
-                else if (side > 0) { pos++; }
-            }
-
-            return pos === ls.length || neg === ls.length;
-        }
-
         public static edges(p : Polygon) : Line[] {
             const verticesOffset = p.vertices.slice(1);
             verticesOffset.push(p.vertices[0]);
@@ -120,10 +97,6 @@ export default class Geometry {
 
         public static transform(p : Polygon, matrix : MathJs.Matrix) : Polygon {
             return { vertices : p.vertices.map((v : Point) => Geometry.Point.transform(v, matrix)) };
-        }
-
-        public static translate(p : Polygon, offset : Point) : Polygon {
-            return { vertices : p.vertices.map((v : Point) => Geometry.Point.translate(v, offset)) };
         }
 
         public static width(p : Polygon) : number {
@@ -227,14 +200,6 @@ export default class Geometry {
             return { x: sumX/n, y: sumY/n };
         }
 
-        public static contains(c : CellView, point : Point) : boolean {
-            return c.polygons.find(p => Geometry.Polygon.contains(p, point)) !== undefined;
-        }
-
-        public static toString(c : CellView) : string {
-            return c.id.toString();
-        }
-
         public static transform(c: CellView, matrix : MathJs.Matrix) : CellView {
             return {
                 id: c.id,
@@ -244,27 +209,9 @@ export default class Geometry {
                 polygons: c.polygons.map(p => Geometry.Polygon.transform(p, matrix))
             };
         }
-
-        public static translate(c : CellView, offset: Point) : CellView {
-            return {
-                id: c.id,
-                type: c.type,
-                state: c.state,
-                piece: c.piece,
-                polygons: c.polygons.map(p => Geometry.Polygon.translate(p, offset))
-            };
-        }
     }
 
     public static Board = class {
-        public static cellAtPoint(b : BoardView, point : Point) : CellView {
-            return b.cells.find((c: CellView) => Geometry.Cell.contains(c, point));
-        }
-
-        public static cellById(b : BoardView, id : number) : CellView {
-            return b.cells.find((c: CellView) => c.id === id);
-        }
-
         public static diameter(b : BoardView) : number {
             const sides = Geometry.Polygon.edges(b.polygon);
             const length = Geometry.Line.len(sides[0]);
@@ -283,15 +230,6 @@ export default class Geometry {
                 cellCountPerSide: b.cellCountPerSide,
                 polygon: Geometry.Polygon.transform(b.polygon, matrix),
                 cells: b.cells.map(c => Geometry.Cell.transform(c, matrix))
-            };
-        }
-
-        public static translate(b : BoardView, offset : Point) : BoardView {
-            return {
-                regionCount: b.regionCount,
-                cellCountPerSide: b.cellCountPerSide,
-                polygon: Geometry.Polygon.translate(b.polygon, offset),
-                cells: b.cells.map(c => Geometry.Cell.translate(c, offset))
             };
         }
     }
