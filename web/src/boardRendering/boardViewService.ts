@@ -185,7 +185,7 @@ export default class BoardViewService {
 
     private static getBoardPolygon(sideCount : number, sideLength : number) : Polygon {
         const centralAngle = Math.PI * 2 / sideCount;
-        const radius = Geometry.regularPolygonRadius(sideCount, sideLength);
+        const radius = Geometry.RegularPolygon.radius(sideCount, sideLength);
         const centroid = { x: 0, y:0 };
 
         const vertices = [];
