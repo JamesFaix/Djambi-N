@@ -5,7 +5,7 @@ import LinkButton from '../../controls/linkButton';
 import PageTitle from '../../pageTitle';
 import Routes from '../../../routes';
 import ThemeService from '../../../themes/themeService';
-import { BoardView, CellView, CellState } from '../../../boardRendering/model';
+import { BoardView, CellView, CellState, Point } from '../../../boardRendering/model';
 import BoardViewService from '../../../boardRendering/boardViewService';
 import CurrentTurnPanel from './currentTurnPanel';
 import TurnCyclePanel from './turnCyclePanel';
@@ -13,6 +13,7 @@ import PlayersPanel from './playersPanel/playersPanel';
 import HistoryPanel from './historyPanel/historyPanel';
 import { Classes, Styles } from '../../../styles';
 import BoardPanel from './boardPanel/boardPanel';
+import Geometry from '../../../boardRendering/geometry';
 
 export interface GamePageProps {
     user : User,
@@ -29,8 +30,7 @@ export interface GamePageState {
 }
 
 export default class GamePage extends React.Component<GamePageProps, GamePageState> {
-    private readonly contentWidth = Math.round(window.screen.width * 0.6) + "px";
-    private readonly contentHeight = Math.round(window.screen.height * 0.6) + "px";
+    private readonly contentSize : Point;
 
     constructor(props : GamePageProps) {
         super(props);
@@ -39,6 +39,12 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
             boardView : null,
             events: []
         };
+
+        const windowSize = {
+            x: window.screen.width,
+            y: window.screen.height
+        };
+        this.contentSize = Geometry.Point.multiplyScalar(windowSize, 0.6);
     }
 
     private async updateGame(game : Game) : Promise<void> {
@@ -111,11 +117,16 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
 
         const containerStyle = Styles.combine([
             Styles.noMargin,
-            Styles.width(this.contentWidth),
-            Styles.height(this.contentHeight)
+            Styles.width(this.contentSize.x + "px"),
+            Styles.height(this.contentSize.y + "px")
         ]);
 
         const textStyle = Styles.lineHeight("8px");
+
+        const boardPanelSize = {
+            x: this.contentSize.x * 0.7,
+            y: this.contentSize.y
+        };
 
         return (
             <div className={Classes.flex} style={containerStyle}>
@@ -124,8 +135,7 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                     theme={this.props.theme}
                     boardView={this.state.boardView}
                     selectCell={cell => this.selectCell(cell)}
-                    height={"100%"}
-                    width={"70%"}
+                    size={boardPanelSize}
                     boardStrokeWidth={10}
                     boardMargin={5}
                 />
