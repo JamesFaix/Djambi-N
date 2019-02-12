@@ -6,9 +6,8 @@ import { BoardView, CellView } from '../../../../boardRendering/model';
 import CanvasBoard from './canvas/canvasBoard';
 import Scrollbars from 'react-custom-scrollbars';
 import { InputTypes } from '../../../../constants';
-import Geometry from '../../../../geometry/geometry';
-import BoardGeometry from '../../../../boardRendering/boardGeometry';
-import { Point } from '../../../../geometry/model';
+import Geometry from '../../../../boardRendering/geometry';
+import { Point } from '../../../../boardRendering/model';
 
 export interface BoardPanelProps {
     game : Game,
@@ -46,33 +45,34 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
     }
 
     private getMagnifiedBoard() : BoardView {
-        let bv = this.props.boardView;
+        const Transform = Geometry.Transform;
+        const bv = this.props.boardView;
 
         //BoardViews are created with a side facing up, but we want a side facing down.
         //Rotate 180 degrees to fix
-        const rotationTransform = Geometry.transformRotation(360 / bv.regionCount / 2);
+        const rotationTransform = Transform.rotation(360 / bv.regionCount / 2);
 
         //BoardViews are created with the centroid at (0,0)
         //Offset so none of the board has negative coordinates, since canvases start at (0,0)
         const centroidOffset = this.getCentroidOffsetFromCanvas(bv.regionCount, bv.cellCountPerSide);
-        const centroidOffsetTransform = Geometry.transformTranslate(centroidOffset.x, centroidOffset.y);
+        const centroidOffsetTransform = Transform.translate(centroidOffset.x, centroidOffset.y);
 
         //Magnify the board based on screen size, zoom setting, and board type
         const mag = this.getMagnification();
-        const scaleTransform = Geometry.transformScale(mag, mag);
+        const scaleTransform = Transform.scale(mag, mag);
 
         //Add a margin for the outline of the board and some whitespace around it within the canvas
         const margin = this.props.boardStrokeWidth + this.props.boardMargin;
-        const marginOffsetTransform = Geometry.transformTranslate(margin, margin);
+        const marginOffsetTransform = Transform.translate(margin, margin);
 
         //Order is very important. Last transform gets applied to image first
-        let t = Geometry.transformCompose([
+        let t = Transform.compose([
             marginOffsetTransform,
             scaleTransform,
             centroidOffsetTransform,
             rotationTransform
         ]);
-        return BoardGeometry.boardTransform(bv, t);
+        return Geometry.Board.transform(bv, t);
     }
 
     private getBoardTypeMultiplier(regionCount : number) : number {
@@ -158,7 +158,7 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
 
     private getUsableSize() : Point {
         const totalMargin = (2 * (this.props.boardMargin + this.props.boardStrokeWidth))
-        return Geometry.pointAdd(this.props.size, -totalMargin);
+        return Geometry.Point.addScalar(this.props.size, -totalMargin);
     }
 
     ///--- EVENTS ---
@@ -180,9 +180,9 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
             Styles.height("100%")
         ]);
         const board = this.getMagnifiedBoard();
-        let size = BoardGeometry.boardSize(board);
+        let size = Geometry.Board.size(board);
         const margin = 2 * (this.props.boardStrokeWidth + this.props.boardMargin);
-        size = Geometry.pointAdd(size, margin);
+        size = Geometry.Point.addScalar(size, margin);
 
         return (
             <div

@@ -4,9 +4,8 @@ import { BoardView, CellView, CellType } from '../../../../../boardRendering/mod
 import ThemeService from '../../../../../themes/themeService';
 import CanvasCell from './canvasCell';
 import CanvasPiece from './canvasPiece';
-import { Point } from '../../../../../geometry/model';
-import BoardGeometry from '../../../../../boardRendering/boardGeometry';
-import Geometry from '../../../../../geometry/geometry';
+import { Point } from '../../../../../boardRendering/model';
+import Geometry from '../../../../../boardRendering/geometry';
 import CanvasPolygon from './canvasPolygon';
 
 export interface CanvasBoardProps {
@@ -25,9 +24,9 @@ export default class CanvasBoard extends React.Component<CanvasBoardProps> {
 
     private getPieceLocation(cell : CellView) : Point {
         const size = this.getPieceSize();
-        const cellCenter = BoardGeometry.cellCentroid(cell);
+        const cellCenter = Geometry.Cell.centroid(cell);
         const offset = { x: -(size/2), y: -(size/2) };
-        return Geometry.pointTranslate(cellCenter, offset);
+        return Geometry.Point.translate(cellCenter, offset);
     }
 
     private renderBackground() {

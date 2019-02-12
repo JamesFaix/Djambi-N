@@ -1,5 +1,18 @@
-import { Polygon } from "../geometry/model";
 import { PieceKind } from "../api/model";
+
+export interface Point {
+    x : number,
+    y : number
+}
+
+export interface Line {
+    a : Point,
+    b : Point
+}
+
+export interface Polygon {
+    vertices : Point[]
+}
 
 export enum CellState {
     Default,
@@ -28,7 +41,7 @@ export interface CellView {
     type : CellType,
     state : CellState,
     piece : PieceView,
-    polygons : Polygon[],
+    polygons : Polygon[]
 }
 
 export interface BoardView {

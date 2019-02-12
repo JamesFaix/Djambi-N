@@ -5,7 +5,7 @@ import LinkButton from '../../controls/linkButton';
 import PageTitle from '../../pageTitle';
 import Routes from '../../../routes';
 import ThemeService from '../../../themes/themeService';
-import { BoardView, CellView, CellState } from '../../../boardRendering/model';
+import { BoardView, CellView, CellState, Point } from '../../../boardRendering/model';
 import BoardViewService from '../../../boardRendering/boardViewService';
 import CurrentTurnPanel from './currentTurnPanel';
 import TurnCyclePanel from './turnCyclePanel';
@@ -13,7 +13,6 @@ import PlayersPanel from './playersPanel/playersPanel';
 import HistoryPanel from './historyPanel/historyPanel';
 import { Classes, Styles } from '../../../styles';
 import BoardPanel from './boardPanel/boardPanel';
-import { Point } from '../../../geometry/model';
 
 export interface GamePageProps {
     user : User,
