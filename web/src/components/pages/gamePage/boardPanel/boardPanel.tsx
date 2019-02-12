@@ -15,8 +15,7 @@ export interface BoardPanelProps {
     theme : ThemeService,
     boardView : BoardView,
     selectCell : (cell : CellView) => void,
-    height : string,
-    width : string,
+    size : Point,
     boardMargin : number,
     boardStrokeWidth :number
 }
@@ -157,6 +156,11 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
         };
     }
 
+    private getUsableSize() : Point {
+        const totalMargin = (2 * (this.props.boardMargin + this.props.boardStrokeWidth))
+        return Geometry.pointAdd(this.props.size, -totalMargin);
+    }
+
     ///--- EVENTS ---
 
     private onZoomSliderChanged(e : React.ChangeEvent<HTMLInputElement>) : void {
@@ -176,10 +180,9 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
             Styles.height("100%")
         ]);
         const board = this.getMagnifiedBoard();
-        const dimensions = BoardGeometry.boardDimensions(board);
+        let size = BoardGeometry.boardSize(board);
         const margin = 2 * (this.props.boardStrokeWidth + this.props.boardMargin);
-        const width = dimensions.x + margin;
-        const height = dimensions.y + margin;
+        size = Geometry.pointAdd(size, margin);
 
         return (
             <div
@@ -187,15 +190,16 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
                 style={containerStyle}
             >
                 <Scrollbars style={containerStyle}>
-                    <CanvasBoard
-                        board={board}
-                        theme={this.props.theme}
-                        selectCell={(cell) => this.props.selectCell(cell)}
-                        magnification={this.getMagnification()}
-                        boardStrokeWidth={this.props.boardStrokeWidth}
-                        width={width}
-                        height={height}
-                    />
+                    <div id="boardcontainer">
+                        <CanvasBoard
+                            board={board}
+                            theme={this.props.theme}
+                            selectCell={(cell) => this.props.selectCell(cell)}
+                            magnification={this.getMagnification()}
+                            boardStrokeWidth={this.props.boardStrokeWidth}
+                            size={size}
+                        />
+                    </div>
                 </Scrollbars>
                 {this.renderZoomControl()}
             </div>

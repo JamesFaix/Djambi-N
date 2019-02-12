@@ -77,7 +77,7 @@ export default class BoardGeometry {
         };
     }
 
-    public static boardDimensions(b : BoardView) : Point {
+    public static boardSize(b : BoardView) : Point {
         const h = Geometry.polygonHeight(b.polygon);
         const w = Geometry.polygonWidth(b.polygon);
         return { x: w, y: h };

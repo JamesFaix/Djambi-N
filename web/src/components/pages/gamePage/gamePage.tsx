@@ -13,6 +13,7 @@ import PlayersPanel from './playersPanel/playersPanel';
 import HistoryPanel from './historyPanel/historyPanel';
 import { Classes, Styles } from '../../../styles';
 import BoardPanel from './boardPanel/boardPanel';
+import { Point } from '../../../geometry/model';
 
 export interface GamePageProps {
     user : User,
@@ -29,8 +30,10 @@ export interface GamePageState {
 }
 
 export default class GamePage extends React.Component<GamePageProps, GamePageState> {
-    private readonly contentWidth = Math.round(window.screen.width * 0.6) + "px";
-    private readonly contentHeight = Math.round(window.screen.height * 0.6) + "px";
+    private readonly contentSize : Point = {
+        x: Math.round(window.screen.width * 0.6),
+        y: Math.round(window.screen.height * 0.6)
+    };
 
     constructor(props : GamePageProps) {
         super(props);
@@ -111,11 +114,18 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
 
         const containerStyle = Styles.combine([
             Styles.noMargin,
-            Styles.width(this.contentWidth),
-            Styles.height(this.contentHeight)
+            Styles.width(this.contentSize.x + "px"),
+            Styles.height(this.contentSize.y + "px")
         ]);
 
         const textStyle = Styles.lineHeight("8px");
+
+        const boardPanelSize = {
+            x: this.contentSize.x * 0.7,
+            y: this.contentSize.y
+        };
+        const boardStrokeWidth = 10;
+        const boardMargin = 5;
 
         return (
             <div className={Classes.flex} style={containerStyle}>
@@ -124,10 +134,9 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                     theme={this.props.theme}
                     boardView={this.state.boardView}
                     selectCell={cell => this.selectCell(cell)}
-                    height={"100%"}
-                    width={"70%"}
-                    boardStrokeWidth={10}
-                    boardMargin={5}
+                    size={boardPanelSize}
+                    boardStrokeWidth={boardStrokeWidth}
+                    boardMargin={boardMargin}
                 />
                 <div style={Styles.width("30%")}>
                     <TurnCyclePanel

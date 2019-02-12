@@ -26,6 +26,20 @@ export default class Geometry {
         return "(" + p.x + ", " + p.y + ")";
     }
 
+    public static pointMultiply(p : Point, n : number) : Point {
+        return {
+            x: p.x * n,
+            y: p.y * n
+        };
+    }
+
+    public static pointAdd(p : Point, n : number) : Point {
+        return {
+            x: p.x + n,
+            y: p.y + n
+        };
+    }
+
     //---LINE---
 
     public static lineLength(l : Line) : number {

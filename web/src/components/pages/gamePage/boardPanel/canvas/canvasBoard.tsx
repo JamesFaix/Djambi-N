@@ -15,8 +15,7 @@ export interface CanvasBoardProps {
     selectCell : (cell : CellView) => void,
     magnification : number,
     boardStrokeWidth : number,
-    width : number,
-    height : number
+    size : Point
 }
 
 export default class CanvasBoard extends React.Component<CanvasBoardProps> {
@@ -83,7 +82,7 @@ export default class CanvasBoard extends React.Component<CanvasBoardProps> {
 
     render() {
         return (
-            <Stage width={this.props.width} height={this.props.height}>
+            <Stage width={this.props.size.x} height={this.props.size.y}>
                 {this.renderBackground()}
                 {this.renderCells()}
                 {this.renderPieces()}
