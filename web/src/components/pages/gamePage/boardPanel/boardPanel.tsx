@@ -14,17 +14,16 @@ export interface BoardPanelProps {
     theme : ThemeService,
     boardView : BoardView,
     selectCell : (cell : CellView) => void,
-    height : string,
-    width : string,
+    size : Point,
     boardMargin : number,
     boardStrokeWidth :number
 }
 
 export interface BoardPanelState {
     zoomLevel : number
-    zoomMultiplier : number,
-    windowSizeMultiplier : number,
-    boardTypeMultiplier : number
+    zoomScaleFactor : number,
+    windowSizeScaleFactor : number,
+    boardTypeScaleFactor : number
 }
 
 export default class BoardPanel extends React.Component<BoardPanelProps, BoardPanelState> {
@@ -33,19 +32,19 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
         const zoomLevel = 0;
         this.state = {
             zoomLevel: zoomLevel,
-            zoomMultiplier: this.getZoomMultiplierFromZoomLevel(zoomLevel),
-            windowSizeMultiplier: this.getWindowSizeMultiplier(),
-            boardTypeMultiplier: this.getBoardTypeMultiplier(props.game.parameters.regionCount)
+            zoomScaleFactor: this.getZoomScaleFactorFromLevel(zoomLevel),
+            windowSizeScaleFactor: this.getWindowSizeScaleFactor(),
+            boardTypeScaleFactor: this.getBoardTypeScaleFactor(props.game.parameters.regionCount)
         };
     }
 
-    private getMagnification() : number {
-        return this.state.windowSizeMultiplier
-            * this.state.zoomMultiplier
-            * this.state.boardTypeMultiplier;
+    private getScale() : number {
+        return this.state.windowSizeScaleFactor
+            * this.state.zoomScaleFactor
+            * this.state.boardTypeScaleFactor;
     }
 
-    private getMagnifiedBoard() : BoardView {
+    private getTransformedBoard() : BoardView {
         const Transform = Geometry.Transform;
         const bv = this.props.boardView;
 
@@ -59,7 +58,7 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
         const centroidOffsetTransform = Transform.translate(centroidOffset.x, centroidOffset.y);
 
         //Magnify the board based on screen size, zoom setting, and board type
-        const mag = this.getMagnification();
+        const mag = this.getScale();
         const scaleTransform = Transform.scale(mag, mag);
 
         //Add a margin for the outline of the board and some whitespace around it within the canvas
@@ -76,7 +75,7 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
         return Geometry.Board.transform(bv, t);
     }
 
-    private getBoardTypeMultiplier(regionCount : number) : number {
+    private getBoardTypeScaleFactor(regionCount : number) : number {
         //These numbers are based off the relative heights of the shapes, when sitting with an edge down
         switch (regionCount) {
             case 3: return 1.155;
@@ -91,7 +90,7 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
         //This formula approximates the trend: e^(-0.2 * regionCount) * 2
     }
 
-    private getZoomMultiplierFromZoomLevel(zoomLevel : number) : number {
+    private getZoomScaleFactorFromLevel(zoomLevel : number) : number {
         switch (zoomLevel) {
             case -3: return 0.25;
             case -2: return 0.50;
@@ -106,7 +105,7 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
         }
     }
 
-    private getWindowSizeMultiplier() : number {
+    private getWindowSizeScaleFactor() : number {
         return 50; //TODO: Make this change based on window or container size later
     }
 
@@ -161,10 +160,10 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
 
     private onZoomSliderChanged(e : React.ChangeEvent<HTMLInputElement>) : void {
         const level = Number(e.target.value);
-        const multiplier = this.getZoomMultiplierFromZoomLevel(level);
+        const scaleFactor = this.getZoomScaleFactorFromLevel(level);
         this.setState({
             zoomLevel: level,
-            zoomMultiplier: multiplier
+            zoomScaleFactor: scaleFactor
         });
     }
 
@@ -176,6 +175,11 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
             Styles.height("100%")
         ]);
 
+        const board = this.getTransformedBoard();
+        let size = Geometry.Board.size(board);
+        const margin = 2 * (this.props.boardStrokeWidth + this.props.boardMargin);
+        size = Geometry.Point.addScalar(size, margin);
+
         return (
             <div
                 className={Classes.thinBorder}
@@ -183,11 +187,12 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
             >
                 <Scrollbars style={containerStyle}>
                     <CanvasBoard
-                        board={this.getMagnifiedBoard()}
+                        board={board}
                         theme={this.props.theme}
                         selectCell={(cell) => this.props.selectCell(cell)}
-                        magnification={this.getMagnification()}
+                        scale={this.getScale()}
                         boardStrokeWidth={this.props.boardStrokeWidth}
+                        size={size}
                     />
                 </Scrollbars>
                 {this.renderZoomControl()}
@@ -213,7 +218,7 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
     }
 
     private getZoomDescription() : string {
-        const percent = this.state.zoomMultiplier * 100;
+        const percent = this.state.zoomScaleFactor * 100;
         return percent + "%";
     }
 }

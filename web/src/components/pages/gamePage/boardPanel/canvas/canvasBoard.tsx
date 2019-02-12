@@ -12,13 +12,14 @@ export interface CanvasBoardProps {
     board : BoardView,
     theme : ThemeService,
     selectCell : (cell : CellView) => void,
-    magnification : number,
-    boardStrokeWidth : number
+    scale : number,
+    boardStrokeWidth : number,
+    size : Point
 }
 
 export default class CanvasBoard extends React.Component<CanvasBoardProps> {
     private getPieceSize() : number {
-        return this.props.magnification / 2;
+        return this.props.scale / 2;
     }
 
     private getPieceLocation(cell : CellView) : Point {
@@ -79,10 +80,8 @@ export default class CanvasBoard extends React.Component<CanvasBoardProps> {
     }
 
     render() {
-        const canvasSize = Geometry.Board.diameter(this.props.board);
-
         return (
-            <Stage width={canvasSize} height={canvasSize}>
+            <Stage width={this.props.size.x} height={this.props.size.y}>
                 {this.renderBackground()}
                 {this.renderCells()}
                 {this.renderPieces()}

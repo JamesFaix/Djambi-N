@@ -4,6 +4,20 @@ import * as MathJs from 'mathjs';
 export default class Geometry {
 
     public static Point = class {
+        public static addScalar(p : Point, n : number) : Point {
+            return {
+                x: p.x + n,
+                y: p.y + n
+            };
+        }
+
+         public static multiplyScalar(p : Point, n : number) : Point {
+            return {
+                x: p.x * n,
+                y: p.y * n
+            };
+        }
+
         public static transform(p : Point, matrix : MathJs.Matrix) : Point {
             const pointVector = MathJs.matrix([p.x, p.y, 1]);
             const resultMatrix = MathJs.multiply(matrix, pointVector);
@@ -212,13 +226,7 @@ export default class Geometry {
     }
 
     public static Board = class {
-        public static diameter(b : BoardView) : number {
-            const sides = Geometry.Polygon.edges(b.polygon);
-            const length = Geometry.Line.len(sides[0]);
-            return 2 * Geometry.RegularPolygon.radius(b.regionCount, length);
-        }
-
-        public static dimensions(b : BoardView) : Point {
+        public static size(b : BoardView) : Point {
             const h = Geometry.Polygon.height(b.polygon);
             const w = Geometry.Polygon.width(b.polygon);
             return { x: w, y: h };
