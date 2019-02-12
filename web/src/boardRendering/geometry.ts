@@ -119,32 +119,111 @@ export default class Geometry {
     }
 
     public static RegularPolygon = class {
+        /*
+            Regarding Apothem and Radius
+
+            A regular polygon P with N sides of length L can be divided radially into N isocolese triangles.
+            Given one of these triangles T,
+                - The base of T is L
+                - The side of T is the radius (R) of P
+                - The height of T is the apothem (A) of P
+                - The "top" angle of T is 360/N degrees
+                - The base angles are (180 - (360/N))/2 = 90-(180/N) degrees
+
+            T can be split vertically into two right triangles, so trig functions can be used.
+            Given one of these two triangles U,
+                - The base of U is L/2
+                - The longer side of U is the R, and the shorter is A
+                - Angles are 90, 180/N, and 90-(180/N) degrees
+                - sin(180/N) = (L/2)/R   =>   R = L/(2 * sin(180/N))
+                - cos(180/N) = (L/2)/A   =>   A = L/(2 * cos(180/N))
+
+            Convert degrees to radians for JS trig functions
+
+            https://www.mathopenref.com/polygonradius.html
+        */
+
+        public static apothem(numberOfSides : number, sideLength : number) : number {
+            //TODO: Precompute values for numberOfSides = 1
+            return sideLength / (2 * Math.cos(Math.PI/numberOfSides));
+        }
+
         public static radius(numberOfSides : number, sideLength : number) : number {
-            /*
-                A regular polygon P with N sides of length L can be divided radially into N isocolese triangles.
-                Given one of these triangles T,
-                    - The base of T is L
-                    - The side of T is the radius (R) of P
-                    - The height of T is the apothem (A) of P
-                    - The "top" angle of T is 360/N degrees
-                    - The base angles are (180 - (360/N))/2 = 90-(180/N) degrees
-
-                T can be split vertically into two right triangles, so trig functions can be used.
-                Given one of these two triangles U,
-                    - The base of U is L/2
-                    - The longer side of U is the R, and the shorter is A
-                    - Angles are 90, 180/N, and 90-(180/N) degrees
-                    - sin(180/N) = (L/2)/R
-                    - R = L/(2 * sin(180/N))
-
-                Convert degrees to radians for JS trig functions
-            */
-
+            //TODO: Precompute values for numberOfSides = 1
             return sideLength / (2 * Math.sin(Math.PI/numberOfSides));
+        }
+
+        /*
+            Regarding Height, Width, and Centroid
+
+            These methods assume the polygon is oriented such that:
+                - Directions are orinted in "canvas space" where (1,1) is is bottom-right quadrant
+                - The bottom-most point(s) are coincident with with x-axis
+                - The left-most point(s) are coincident with the y-axis
+         */
+
+        public static height(numberOfSides : number, sideLength : number) : number {
+            function getUnitHeight(nSides : number) {
+                //TODO: Calculate these to more significant digits
+
+                /*
+                    For odd nSides, this will always be (radius + apothem)
+                    For even nSides, this will always be (2 x apothem)
+                 */
+                switch (nSides) {
+                    case 3: return 0.87;
+                    case 4: return 1.00;
+                    case 5: return 1.54;
+                    case 6: return 1.73;
+                    case 7: return 2.19;
+                    case 8: return 2.41;
+                    default: throw "Unsupported number of sides: " + nSides;
+                }
+            }
+
+            return getUnitHeight(numberOfSides) * sideLength;
+        }
+
+        public static width(numberOfSides : number, sideLength : number) : number {
+            //TODO: Calculate these to more significant digits
+
+            /*
+                When nSides is divisible by 4, this will be (2x apothem)
+                When nSides is even but not divisble by 4, this will be (2x radius)
+                When nSides is 3, this will be (sidelength)
+                When nSides is odd and not 3, the solution requires a complex
+                geometric construction that is slightly different for each case
+            */
+            function getUnitWidth(nSides : number) {
+                switch (nSides) {
+                    case 3: return 1.00;
+                    case 4: return 1.00;
+                    case 5: return 1.62;
+                    case 6: return 2.00;
+                    case 7: return 2.25;
+                    case 8: return 2.41;
+                    default: throw "Unsupported number of sides: " + nSides;
+                }
+            }
+
+            return getUnitWidth(numberOfSides) * sideLength;
+        }
+
+        public static centroid(numberOfSides : number, sidelength : number) : Point {
+            //TODO: Precompute values for numberOfSides = 1
+
+            const x = this.width(numberOfSides, sidelength) / 2;
+            const y = numberOfSides % 2 === 0
+                ? this.apothem(numberOfSides, sidelength)
+                : this.radius(numberOfSides, sidelength);
+
+            return Geometry.Point.multiplyScalar({ x: x, y: y }, sidelength);
         }
     }
 
     public static Transform = class {
+        //https://www.mathworks.com/help/images/matrix-representation-of-geometric-transformations.html
+
         public static compose(transforms : MathJs.Matrix[]) : MathJs.Matrix {
             switch (transforms.length) {
                 case 0:

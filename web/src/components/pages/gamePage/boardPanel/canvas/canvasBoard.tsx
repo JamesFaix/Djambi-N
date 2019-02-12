@@ -12,14 +12,14 @@ export interface CanvasBoardProps {
     board : BoardView,
     theme : ThemeService,
     selectCell : (cell : CellView) => void,
-    magnification : number,
+    scale : number,
     boardStrokeWidth : number,
     size : Point
 }
 
 export default class CanvasBoard extends React.Component<CanvasBoardProps> {
     private getPieceSize() : number {
-        return this.props.magnification / 2;
+        return this.props.scale / 2;
     }
 
     private getPieceLocation(cell : CellView) : Point {

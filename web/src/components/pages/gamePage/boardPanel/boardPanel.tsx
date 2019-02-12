@@ -21,9 +21,8 @@ export interface BoardPanelProps {
 
 export interface BoardPanelState {
     zoomLevel : number
-    zoomMultiplier : number,
-    windowSizeMultiplier : number,
-    boardTypeMultiplier : number
+    zoomScaleFactor : number,
+    windowScaleFactor : number
 }
 
 export default class BoardPanel extends React.Component<BoardPanelProps, BoardPanelState> {
@@ -32,33 +31,32 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
         const zoomLevel = 0;
         this.state = {
             zoomLevel: zoomLevel,
-            zoomMultiplier: this.getZoomMultiplierFromZoomLevel(zoomLevel),
-            windowSizeMultiplier: this.getWindowSizeMultiplier(),
-            boardTypeMultiplier: this.getBoardTypeMultiplier(props.game.parameters.regionCount)
+            zoomScaleFactor: this.getZoomScaleFactorFromZoomLevel(zoomLevel),
+            windowScaleFactor: this.getWindowScaleFactor()
         };
     }
 
-    private getMagnification() : number {
-        return this.state.windowSizeMultiplier
-            * this.state.zoomMultiplier
-            * this.state.boardTypeMultiplier;
+    private getScale() : number {
+        return this.state.windowScaleFactor
+            * this.state.zoomScaleFactor;
     }
 
-    private getMagnifiedBoard() : BoardView {
+    private getTransformedBoard() : BoardView {
         const Transform = Geometry.Transform;
         const bv = this.props.boardView;
 
-        //BoardViews are created with a side facing up, but we want a side facing down.
+        //BoardViews are created in "graph paper space" where (1, 1) is in the top-right quadrant.
+        //The canvas is in "web page space" where (1, 1) is in the bottom-right quadrant.
         //Rotate 180 degrees to fix
         const rotationTransform = Transform.rotation(360 / bv.regionCount / 2);
 
         //BoardViews are created with the centroid at (0,0)
         //Offset so none of the board has negative coordinates, since canvases start at (0,0)
-        const centroidOffset = this.getCentroidOffsetFromCanvas(bv.regionCount, bv.cellCountPerSide);
+        const centroidOffset = Geometry.RegularPolygon.centroid(bv.regionCount, bv.cellCountPerSide);
         const centroidOffsetTransform = Transform.translate(centroidOffset.x, centroidOffset.y);
 
         //Magnify the board based on screen size, zoom setting, and board type
-        const mag = this.getMagnification();
+        const mag = this.getScale();
         const scaleTransform = Transform.scale(mag, mag);
 
         //Add a margin for the outline of the board and some whitespace around it within the canvas
@@ -75,22 +73,7 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
         return Geometry.Board.transform(bv, t);
     }
 
-    private getBoardTypeMultiplier(regionCount : number) : number {
-        //These numbers are based off the relative heights of the shapes, when sitting with an edge down
-        switch (regionCount) {
-            case 3: return 1.155;
-            case 4: return 1.000;
-            case 5: return 0.650;
-            case 6: return 0.577;
-            case 7: return 0.456;
-            case 8: return 0.414;
-            default: throw "Unsupported region count.";
-        }
-
-        //This formula approximates the trend: e^(-0.2 * regionCount) * 2
-    }
-
-    private getZoomMultiplierFromZoomLevel(zoomLevel : number) : number {
+    private getZoomScaleFactorFromZoomLevel(zoomLevel : number) : number {
         switch (zoomLevel) {
             case -3: return 0.25;
             case -2: return 0.50;
@@ -105,55 +88,16 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
         }
     }
 
-    private getWindowSizeMultiplier() : number {
-        return 50; //TODO: Make this change based on window or container size later
-    }
 
-    private getCentroidOffsetFromCanvas(regionCount : number, cellCountPerSide : number) : Point {
-        let x : number;
-        let y : number;
-
-        //These numbers all assume a side length of 1, and an edge is facing down
-        switch (regionCount) {
-            case 3:
-                x = 0.500; // 1/2 width
-                y = 0.577; // radius
-                break;
-
-            case 4:
-                x = 0.500; // 1/2 width (also apothem)
-                y = 0.500; // 1/2 width (also apothem)
-                break;
-
-            case 5:
-                x = 0.810; // 1/2 width
-                y = 0.850; // radius
-                break;
-
-            case 6:
-                x = 1.000; // 1/2 width (also radius)
-                y = 0.866; // apothem
-                break;
-
-            case 7:
-                x = 1.125; // 1/2 width
-                y = 1.152; // radius
-                break;
-
-            case 8:
-                x = 1.205; // 1/2 width (also apothem)
-                y = 1.205; // 1/2 width (also apothem)
-                break;
-
-            default:
-                throw "Unsupported region count.";
-        }
-
-        //Enlarge for the actual side length
-        return {
-            x: x * cellCountPerSide,
-            y: y * cellCountPerSide
-        };
+    private getWindowScaleFactor() : number {
+        const bv = this.props.boardView;
+        const baseHeight = Geometry.RegularPolygon.height(bv.regionCount, bv.cellCountPerSide);
+        const baseWidth = Geometry.RegularPolygon.width(bv.regionCount, bv.cellCountPerSide);
+        const usableSize = this.getUsableSize();
+        const maxXScale = usableSize.x / baseWidth;
+        const maxYScale = usableSize.y / baseHeight;
+        const maxScale = Math.min(maxXScale, maxYScale);
+        return maxScale;
     }
 
     private getUsableSize() : Point {
@@ -165,10 +109,10 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
 
     private onZoomSliderChanged(e : React.ChangeEvent<HTMLInputElement>) : void {
         const level = Number(e.target.value);
-        const multiplier = this.getZoomMultiplierFromZoomLevel(level);
+        const multiplier = this.getZoomScaleFactorFromZoomLevel(level);
         this.setState({
             zoomLevel: level,
-            zoomMultiplier: multiplier
+            zoomScaleFactor: multiplier
         });
     }
 
@@ -179,7 +123,7 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
             Styles.width("100%"),
             Styles.height("100%")
         ]);
-        const board = this.getMagnifiedBoard();
+        const board = this.getTransformedBoard();
         let size = Geometry.Board.size(board);
         const margin = 2 * (this.props.boardStrokeWidth + this.props.boardMargin);
         size = Geometry.Point.addScalar(size, margin);
@@ -195,7 +139,7 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
                             board={board}
                             theme={this.props.theme}
                             selectCell={(cell) => this.props.selectCell(cell)}
-                            magnification={this.getMagnification()}
+                            scale={this.getScale()}
                             boardStrokeWidth={this.props.boardStrokeWidth}
                             size={size}
                         />
@@ -224,7 +168,7 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
     }
 
     private getZoomDescription() : string {
-        const percent = this.state.zoomMultiplier * 100;
+        const percent = this.state.zoomScaleFactor * 100;
         return percent + "%";
     }
 }
