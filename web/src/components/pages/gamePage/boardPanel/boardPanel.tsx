@@ -22,7 +22,7 @@ export interface BoardPanelProps {
 export interface BoardPanelState {
     zoomLevel : number
     zoomScaleFactor : number,
-    windowScaleFactor : number
+    windowSizeScaleFactor : number
 }
 
 export default class BoardPanel extends React.Component<BoardPanelProps, BoardPanelState> {
@@ -31,13 +31,13 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
         const zoomLevel = 0;
         this.state = {
             zoomLevel: zoomLevel,
-            zoomScaleFactor: this.getZoomScaleFactorFromZoomLevel(zoomLevel),
-            windowScaleFactor: this.getWindowScaleFactor()
+            zoomScaleFactor: this.getZoomScaleFactorFromLevel(zoomLevel),
+            windowSizeScaleFactor: this.getWindowSizeScaleFactor(),
         };
     }
 
     private getScale() : number {
-        return this.state.windowScaleFactor
+        return this.state.windowSizeScaleFactor
             * this.state.zoomScaleFactor;
     }
 
@@ -56,8 +56,8 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
         const centroidOffsetTransform = Transform.translate(centroidOffset.x, centroidOffset.y);
 
         //Magnify the board based on screen size, zoom setting, and board type
-        const mag = this.getScale();
-        const scaleTransform = Transform.scale(mag, mag);
+        const scale = this.getScale();
+        const scaleTransform = Transform.scale(scale, scale);
 
         //Add a margin for the outline of the board and some whitespace around it within the canvas
         const margin = this.props.boardStrokeWidth + this.props.boardMargin;
@@ -73,7 +73,7 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
         return Geometry.Board.transform(bv, t);
     }
 
-    private getZoomScaleFactorFromZoomLevel(zoomLevel : number) : number {
+    private getZoomScaleFactorFromLevel(zoomLevel : number) : number {
         switch (zoomLevel) {
             case -3: return 0.25;
             case -2: return 0.50;
@@ -88,8 +88,7 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
         }
     }
 
-
-    private getWindowScaleFactor() : number {
+    private getWindowSizeScaleFactor() : number {
         const bv = this.props.boardView;
         const baseHeight = Geometry.RegularPolygon.height(bv.regionCount, bv.cellCountPerSide);
         const baseWidth = Geometry.RegularPolygon.width(bv.regionCount, bv.cellCountPerSide);
@@ -109,10 +108,10 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
 
     private onZoomSliderChanged(e : React.ChangeEvent<HTMLInputElement>) : void {
         const level = Number(e.target.value);
-        const multiplier = this.getZoomScaleFactorFromZoomLevel(level);
+        const scaleFactor = this.getZoomScaleFactorFromLevel(level);
         this.setState({
             zoomLevel: level,
-            zoomScaleFactor: multiplier
+            zoomScaleFactor: scaleFactor
         });
     }
 
@@ -123,9 +122,10 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
             Styles.width("100%"),
             Styles.height("100%")
         ]);
+
         const board = this.getTransformedBoard();
-        let size = Geometry.Board.size(board);
         const margin = 2 * (this.props.boardStrokeWidth + this.props.boardMargin);
+        let size = Geometry.Board.size(board);
         size = Geometry.Point.addScalar(size, margin);
 
         return (
@@ -134,16 +134,14 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
                 style={containerStyle}
             >
                 <Scrollbars style={containerStyle}>
-                    <div id="boardcontainer">
-                        <CanvasBoard
-                            board={board}
-                            theme={this.props.theme}
-                            selectCell={(cell) => this.props.selectCell(cell)}
-                            scale={this.getScale()}
-                            boardStrokeWidth={this.props.boardStrokeWidth}
-                            size={size}
-                        />
-                    </div>
+                    <CanvasBoard
+                        board={board}
+                        theme={this.props.theme}
+                        selectCell={(cell) => this.props.selectCell(cell)}
+                        scale={this.getScale()}
+                        boardStrokeWidth={this.props.boardStrokeWidth}
+                        size={size}
+                    />
                 </Scrollbars>
                 {this.renderZoomControl()}
             </div>

@@ -13,6 +13,7 @@ import PlayersPanel from './playersPanel/playersPanel';
 import HistoryPanel from './historyPanel/historyPanel';
 import { Classes, Styles } from '../../../styles';
 import BoardPanel from './boardPanel/boardPanel';
+import Geometry from '../../../boardRendering/geometry';
 
 export interface GamePageProps {
     user : User,
@@ -29,10 +30,7 @@ export interface GamePageState {
 }
 
 export default class GamePage extends React.Component<GamePageProps, GamePageState> {
-    private readonly contentSize : Point = {
-        x: Math.round(window.screen.width * 0.6),
-        y: Math.round(window.screen.height * 0.6)
-    };
+    private readonly contentSize : Point;
 
     constructor(props : GamePageProps) {
         super(props);
@@ -41,6 +39,12 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
             boardView : null,
             events: []
         };
+
+        const windowSize = {
+            x: window.screen.width,
+            y: window.screen.height
+        };
+        this.contentSize = Geometry.Point.multiplyScalar(windowSize, 0.6);
     }
 
     private async updateGame(game : Game) : Promise<void> {
@@ -123,8 +127,6 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
             x: this.contentSize.x * 0.7,
             y: this.contentSize.y
         };
-        const boardStrokeWidth = 10;
-        const boardMargin = 5;
 
         return (
             <div className={Classes.flex} style={containerStyle}>
@@ -134,8 +136,8 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                     boardView={this.state.boardView}
                     selectCell={cell => this.selectCell(cell)}
                     size={boardPanelSize}
-                    boardStrokeWidth={boardStrokeWidth}
-                    boardMargin={boardMargin}
+                    boardStrokeWidth={10}
+                    boardMargin={5}
                 />
                 <div style={Styles.width("30%")}>
                     <TurnCyclePanel
