@@ -46,27 +46,28 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
     }
 
     private getMagnifiedBoard() : BoardView {
+        const Transform = Geometry.Transform;
         const bv = this.props.boardView;
 
         //BoardViews are created with a side facing up, but we want a side facing down.
         //Rotate 180 degrees to fix
-        const rotationTransform = Geometry.Transform.rotation(360 / bv.regionCount / 2);
+        const rotationTransform = Transform.rotation(360 / bv.regionCount / 2);
 
         //BoardViews are created with the centroid at (0,0)
         //Offset so none of the board has negative coordinates, since canvases start at (0,0)
         const centroidOffset = this.getCentroidOffsetFromCanvas(bv.regionCount, bv.cellCountPerSide);
-        const centroidOffsetTransform = Geometry.Transform.translate(centroidOffset.x, centroidOffset.y);
+        const centroidOffsetTransform = Transform.translate(centroidOffset.x, centroidOffset.y);
 
         //Magnify the board based on screen size, zoom setting, and board type
         const mag = this.getMagnification();
-        const scaleTransform = Geometry.Transform.scale(mag, mag);
+        const scaleTransform = Transform.scale(mag, mag);
 
         //Add a margin for the outline of the board and some whitespace around it within the canvas
         const margin = this.props.boardStrokeWidth + this.props.boardMargin;
-        const marginOffsetTransform = Geometry.Transform.translate(margin, margin);
+        const marginOffsetTransform = Transform.translate(margin, margin);
 
         //Order is very important. Last transform gets applied to image first
-        let t = Geometry.Transform.compose([
+        let t = Transform.compose([
             marginOffsetTransform,
             scaleTransform,
             centroidOffsetTransform,
