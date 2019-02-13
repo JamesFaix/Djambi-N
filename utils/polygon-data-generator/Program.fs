@@ -1,7 +1,6 @@
 ﻿open System
 open System.Text
 open System.IO
-open System.Reflection
 open Microsoft.Extensions.Configuration
 open Djambi.Utilities
 
