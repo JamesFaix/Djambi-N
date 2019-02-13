@@ -40,7 +40,7 @@ let radius nSides =
     sideLength / (2.0 * Math.Sin(Math.PI / (float nSides)))
 
 let apothem nSides = 
-    sideLength / (2.0 * Math.Cos(Math.PI / (float nSides)))
+    sideLength / (2.0 * Math.Tan(Math.PI / (float nSides)))
     
 let height nSides = 
     if isEven nSides then 2.0 * (apothem nSides) else (apothem nSides) + (radius nSides)
@@ -69,31 +69,30 @@ let width nSides =
         Math.Abs(maxY - minY)
 
 let centroidXOffset nSides = 
-    let polygon = polygon nSides
-    let xs = polygon |> List.map (fun p -> p.x)
-    xs |> Seq.max
+    (width nSides) / 2.0
 
 let centroidYOffset nSides = 
-    let polygon = polygon nSides
-    let ys = polygon |> List.map (fun p -> p.y)
-    ys |> Seq.max
+    if isEven nSides then apothem nSides
+    else radius nSides
+
+let getPolygons () =
+    range
+    |> List.map (fun nSides ->
+        let data = {
+            internalAngle = internalAngle nSides
+            externalAngle = externalAngle nSides
+            radius = radius nSides
+            apothem = apothem nSides
+            height = height nSides
+            width = width nSides
+            centroidXOffset = centroidXOffset nSides
+            centroidYOffset = centroidYOffset nSides
+        }
+        (nSides, data)    
+    )
 
 let getCsvText () = 
-    let polygons = 
-        range
-        |> List.map (fun nSides ->
-            let data = {
-                internalAngle = internalAngle nSides
-                externalAngle = externalAngle nSides
-                radius = radius nSides
-                apothem = apothem nSides
-                height = height nSides
-                width = width nSides
-                centroidXOffset = centroidXOffset nSides
-                centroidYOffset = centroidYOffset nSides
-            }
-            (nSides, data)    
-        )
+    let polygons = getPolygons()
 
     let headers = 
         [|
@@ -132,6 +131,51 @@ let getCsvText () =
 
     sb.ToString()
 
+let getTypeScriptText() =
+    let polygons = getPolygons()
+    let sb = StringBuilder()
+
+    let addLine str =
+        sb.AppendLine(str) |> ignore
+
+    let addBlankLine () = 
+        addLine ""
+
+    let addCacheArray (fieldName : string) (getValue : PolygonData -> string) : Unit =
+        let values = polygons|> List.map (fun (_, data) -> getValue data)
+        let values = List.append [ "undefined"; "undefined"; "undefined" ] values //Set indexes 0-2 to undefined
+        addLine (sprintf "\tprivate static readonly %sCache : number[] = [" fieldName)
+        for v in values do
+            addLine (sprintf "\t\t%s," v)
+        addLine "\t];"
+
+    let addMethod (fieldName : string) : Unit =
+        addLine (sprintf "\tpublic static %s(numberOfSides : number) : number {" fieldName)
+        addLine (sprintf "\t\tif (numberOfSides < 3 || numberOfSides > 8) {")
+        addLine (sprintf "\t\t\tthrow \"Unsupported number of sides: \" + numberOfSides;")
+        addLine "\t\t}"
+        addLine (sprintf "\t\treturn this.%sCache[numberOfSides];" fieldName)
+        addLine "\t}"
+
+    let addCachedAndMethod (fieldName : string) (getValue : PolygonData -> string) : Unit =
+        addCacheArray fieldName getValue
+        addBlankLine ()
+        addMethod fieldName
+        addBlankLine ()
+
+    addLine("export default class PolygonData {")
+    addCachedAndMethod "internalAngle" (fun d -> d.internalAngle.ToString())
+    addCachedAndMethod "externalAngle" (fun d -> d.externalAngle.ToString())
+    addCachedAndMethod "radius" (fun d -> d.radius.ToString())
+    addCachedAndMethod "apothem" (fun d -> d.apothem.ToString())
+    addCachedAndMethod "width" (fun d -> d.width.ToString())
+    addCachedAndMethod "height" (fun d -> d.height.ToString())
+    addCachedAndMethod "centroidXOffset" (fun d -> d.centroidXOffset.ToString())
+    addCachedAndMethod "centroidYOffset" (fun d -> d.centroidYOffset.ToString())
+    addLine("}")
+
+    sb.ToString()
+
 [<EntryPoint>]
 let main _ =
     printfn "Djambi Polygon Data Generator"
@@ -146,7 +190,9 @@ let main _ =
                     .Build()
 
     let outputPath = Path.Combine(root, config.["OutputPath"])
-    let text = getCsvText()
+    //let text = getCsvText()
+    let text = getTypeScriptText()
+
     File.WriteAllText(outputPath, text)
     Console.WriteLine("Done")
     0 // return an integer exit code
