@@ -12,6 +12,7 @@ var task_buildWeb = "build-web";
 var task_cleanSql = "clean-sql";
 var task_full = "full";
 var task_genClient = "gen-client";
+var task_genPolygon = "gen-polygon";
 var task_help = "help";
 var task_runAll = "run-all";
 var task_runApi = "run-api";
@@ -72,6 +73,13 @@ Task(task_genClient)
     .Does(() =>
     {
         var path = root + File(@"utils\client-generator\client-generator.fsproj");
+        DotNetCoreRun(path);
+    });
+
+Task(task_genPolygon)
+    .Does(() =>
+    {
+        var path = root + File(@"utils\polygon-data-generator\polygon-data-generator.fsproj");
         DotNetCoreRun(path);
     });
 
