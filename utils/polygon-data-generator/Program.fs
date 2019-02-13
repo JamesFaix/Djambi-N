@@ -149,6 +149,5 @@ let main _ =
     let outputPath = Path.Combine(root, config.["OutputPath"])
     let text = getCsvText()
     File.WriteAllText(outputPath, text)
-    Console.WriteLine("Done") 
-    Console.Read() |> ignore
+    Console.WriteLine("Done")
     0 // return an integer exit code
