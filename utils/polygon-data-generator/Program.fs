@@ -1,5 +1,9 @@
 ﻿open System
 open System.Text
+open System.IO
+open System.Reflection
+open Microsoft.Extensions.Configuration
+open Djambi.Utilities
 
 type Point = { x : float; y : float }
 
@@ -75,10 +79,7 @@ let centroidYOffset nSides =
     let ys = polygon |> List.map (fun p -> p.y)
     ys |> Seq.max
 
-[<EntryPoint>]
-let main _ =
-    printfn "Djambi Polygon Data Generator"
-    
+let getCsvText () = 
     let polygons = 
         range
         |> List.map (fun nSides ->
@@ -130,7 +131,24 @@ let main _ =
         let row = String.Join(',', cells)
         sb.AppendLine(row) |> ignore
 
-    Console.WriteLine(sb.ToString()) 
+    sb.ToString()
 
+[<EntryPoint>]
+let main _ =
+    printfn "Djambi Polygon Data Generator"
+    printfn "---------------------------"
+
+    let depthFromRoot = 5
+    
+    let root = Environment.rootDirectory(depthFromRoot)
+    let config = ConfigurationBuilder()
+                    .AddJsonFile("appsettings.json", false, true)
+                    .AddJsonFile(Environment.environmentConfigPath(depthFromRoot), false)
+                    .Build()
+
+    let outputPath = Path.Combine(root, config.["OutputPath"])
+    let text = getCsvText()
+    File.WriteAllText(outputPath, text)
+    Console.WriteLine("Done") 
     Console.Read() |> ignore
     0 // return an integer exit code
