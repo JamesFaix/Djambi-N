@@ -119,108 +119,6 @@ export default class Geometry {
     }
 
     public static RegularPolygon = class {
-<<<<<<< HEAD
-        //Values are pre-calculated by the Polygon Data Generator utility
-
-        public static apothem(numberOfSides : number, sideLength : number) : number {
-            function getBaseValue(nSides : number) {
-                switch (nSides) {
-                    case 3: return 0.2886751;
-                    case 4: return 0.5000000;
-                    case 5: return 0.6881910;
-                    case 6: return 0.8660254;
-                    case 7: return 1.0382607;
-                    case 8: return 1.2071068;
-                    default: throw "Unsupported number of sides: " + nSides;
-                }
-            }
-            return getBaseValue(numberOfSides) * sideLength;
-        }
-
-        public static radius(numberOfSides : number, sideLength : number) : number {
-            function getBaseValue(nSides : number) {
-                switch (nSides) {
-                    case 3: return 0.5773503;
-                    case 4: return 0.7071068;
-                    case 5: return 0.8506508;
-                    case 6: return 1.0000000;
-                    case 7: return 1.1523824;
-                    case 8: return 1.3065630;
-                    default: throw "Unsupported number of sides: " + nSides;
-                }
-            }
-            return getBaseValue(numberOfSides) * sideLength;
-        }
-
-        /*
-            Regarding Height, Width, and Centroid
-
-            These methods assume the polygon is oriented such that:
-                - Directions are orinted in "canvas space" where (1,1) is is bottom-right quadrant
-                - The bottom-most point(s) are coincident with with x-axis
-                - The left-most point(s) are coincident with the y-axis
-         */
-
-        public static height(numberOfSides : number, sideLength : number) : number {
-            function getBaseValue(nSides : number) {
-                switch (nSides) {
-                    case 3: return 0.8660254;
-                    case 4: return 1.0000000;
-                    case 5: return 1.5388418;
-                    case 6: return 1.7320508;
-                    case 7: return 2.1906431;
-                    case 8: return 2.4142136;
-                    default: throw "Unsupported number of sides: " + nSides;
-                }
-            }
-            return getBaseValue(numberOfSides) * sideLength;
-        }
-
-        public static width(numberOfSides : number, sideLength : number) : number {
-            function getBaseValue(nSides : number) {
-                switch (nSides) {
-                    case 3: return 1.0000000;
-                    case 4: return 1.0000000;
-                    case 5: return 1.5388418;
-                    case 6: return 2.0000000;
-                    case 7: return 2.1906431;
-                    case 8: return 2.4142136;
-                    default: throw "Unsupported number of sides: " + nSides;
-                }
-            }
-            return getBaseValue(numberOfSides) * sideLength;
-        }
-
-        public static centroid(numberOfSides : number, sidelength : number) : Point {
-            function getBaseXValue(nSides : number) {
-                switch (nSides) {
-                    case 3: return 0.5000000;
-                    case 4: return 0.7071068;
-                    case 5: return 0.8090170;
-                    case 6: return 0.8660254;
-                    case 7: return 1.1234898;
-                    case 8: return 1.3065630;
-                    default: throw "Unsupported number of sides: " + nSides;
-                }
-            }
-
-            function getBaseYValue(nSides : number) {
-                switch (nSides) {
-                    case 3: return 0.5773503;
-                    case 4: return 0.7071068;
-                    case 5: return 0.8506508;
-                    case 6: return 1.0000000;
-                    case 7: return 1.1523824;
-                    case 8: return 1.3065630;
-                    default: throw "Unsupported number of sides: " + nSides;
-                }
-            }
-
-            return {
-                x: getBaseXValue(numberOfSides) * sidelength,
-                y: getBaseYValue(numberOfSides) * sidelength
-            };
-=======
         private static readonly sideLength = 1;
 
         private static isDivisibleBy(divisor : number, dividend : number) : boolean {
@@ -367,7 +265,6 @@ export default class Geometry {
                 Thus, (width/2) can be used.
             */
             return this.sideToWidthRatio(numberOfSides) / 2;
->>>>>>> master
         }
     }
 

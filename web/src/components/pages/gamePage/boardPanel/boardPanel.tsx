@@ -45,17 +45,9 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
         const Transform = Geometry.Transform;
         const bv = this.props.boardView;
 
-<<<<<<< HEAD
-        //BoardViews are created in "graph paper space" where (1, 1) is in the top-right quadrant.
-        //The canvas is in "web page space" where (1, 1) is in the bottom-right quadrant.
-        //Rotate 180 degrees to fix
-        const rotationTransform = Transform.rotation(360 / bv.regionCount / 2);
-
-=======
->>>>>>> master
         //BoardViews are created with the centroid at (0,0)
         //Offset so none of the board has negative coordinates, since canvases start at (0,0)
-        const centroidOffset = Geometry.RegularPolygon.centroid(bv.regionCount, bv.cellCountPerSide);
+        const centroidOffset = this.getCentroidOffsetFromCanvas(bv.regionCount, bv.cellCountPerSide);
         const centroidOffsetTransform = Transform.translate(centroidOffset.x, centroidOffset.y);
 
         //Magnify the board based on screen size, zoom setting, and board type
@@ -75,13 +67,10 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
         return Geometry.Board.transform(bv, t);
     }
 
-<<<<<<< HEAD
-=======
     private getBoardTypeScaleFactor(regionCount : number) : number {
         return 1 / Geometry.RegularPolygon.sideToHeightRatio(regionCount);
     }
 
->>>>>>> master
     private getZoomScaleFactorFromLevel(zoomLevel : number) : number {
         switch (zoomLevel) {
             case -3: return 0.25;
@@ -99,8 +88,8 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
 
     private getWindowSizeScaleFactor() : number {
         const bv = this.props.boardView;
-        const baseHeight = Geometry.RegularPolygon.height(bv.regionCount, bv.cellCountPerSide);
-        const baseWidth = Geometry.RegularPolygon.width(bv.regionCount, bv.cellCountPerSide);
+        const baseHeight = Geometry.RegularPolygon.sideToHeightRatio(bv.regionCount) * bv.cellCountPerSide;
+        const baseWidth = Geometry.RegularPolygon.sideToWidthRatio(bv.regionCount) * bv.cellCountPerSide;
         const usableSize = this.getUsableSize();
         const maxXScale = usableSize.x / baseWidth;
         const maxYScale = usableSize.y / baseHeight;
@@ -108,17 +97,16 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
         return maxScale;
     }
 
-<<<<<<< HEAD
     private getUsableSize() : Point {
         const totalMargin = (2 * (this.props.boardMargin + this.props.boardStrokeWidth))
         return Geometry.Point.addScalar(this.props.size, -totalMargin);
-=======
+    }
+
     private getCentroidOffsetFromCanvas(regionCount : number, cellCountPerSide : number) : Point {
         return {
             x: Geometry.RegularPolygon.sideToCentroidDistanceFromLeftRatio(regionCount) * cellCountPerSide,
             y: Geometry.RegularPolygon.sideToCentroidDistanceFromTopRatio(regionCount) * cellCountPerSide
         };
->>>>>>> master
     }
 
     ///--- EVENTS ---
