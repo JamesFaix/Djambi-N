@@ -40,8 +40,6 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "client-generator", "utils\c
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "client-generator.annotations", "utils\client-generator.annotations\client-generator.annotations.fsproj", "{FBF36546-A313-4771-97CD-CC4CE3768C1A}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "polygon-data-generator", "utils\polygon-data-generator\polygon-data-generator.fsproj", "{BFDB5472-4398-402C-99D0-E196B3A0C0BA}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -104,10 +102,6 @@ Global
 		{FBF36546-A313-4771-97CD-CC4CE3768C1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FBF36546-A313-4771-97CD-CC4CE3768C1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FBF36546-A313-4771-97CD-CC4CE3768C1A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BFDB5472-4398-402C-99D0-E196B3A0C0BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BFDB5472-4398-402C-99D0-E196B3A0C0BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BFDB5472-4398-402C-99D0-E196B3A0C0BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BFDB5472-4398-402C-99D0-E196B3A0C0BA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -128,7 +122,6 @@ Global
 		{89DE769C-74A3-4988-A5CD-363FA91430A1} = {1A1C3DF9-1667-4BA8-88E9-B6A731A25300}
 		{99226CA6-C2A2-47F7-8ED7-DE34189AF634} = {12EE890F-7CFC-4DA3-A880-F94AF30F5F34}
 		{FBF36546-A313-4771-97CD-CC4CE3768C1A} = {12EE890F-7CFC-4DA3-A880-F94AF30F5F34}
-		{BFDB5472-4398-402C-99D0-E196B3A0C0BA} = {12EE890F-7CFC-4DA3-A880-F94AF30F5F34}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5C5837E5-44E0-4D02-8AD3-DCFB9460E497}
