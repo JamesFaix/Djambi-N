@@ -266,6 +266,14 @@ export default class Geometry {
             */
             return this.sideToWidthRatio(numberOfSides) / 2;
         }
+
+        public static largestScaleWithinBox(numberOfSides : number, boxSize : Point) : number {
+            const widthRatio = this.sideToWidthRatio(numberOfSides);
+            const heightRatio = this.sideToHeightRatio(numberOfSides);
+            const maxXScale = boxSize.x / widthRatio;
+            const maxYScale = boxSize.y / heightRatio;
+            return Math.min(maxXScale, maxYScale);
+        }
     }
 
     public static Transform = class {

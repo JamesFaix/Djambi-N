@@ -88,13 +88,9 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
 
     private getWindowSizeScaleFactor() : number {
         const bv = this.props.boardView;
-        const baseHeight = Geometry.RegularPolygon.sideToHeightRatio(bv.regionCount) * bv.cellCountPerSide;
-        const baseWidth = Geometry.RegularPolygon.sideToWidthRatio(bv.regionCount) * bv.cellCountPerSide;
         const usableSize = this.getUsableSize();
-        const maxXScale = usableSize.x / baseWidth;
-        const maxYScale = usableSize.y / baseHeight;
-        const maxScale = Math.min(maxXScale, maxYScale);
-        return maxScale;
+        const maxScale = Geometry.RegularPolygon.largestScaleWithinBox(bv.regionCount, usableSize);
+        return maxScale / bv.cellCountPerSide;
     }
 
     private getUsableSize() : Point {
