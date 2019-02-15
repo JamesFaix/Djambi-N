@@ -52,7 +52,7 @@ export default class BoardViewService {
 
         let cellViews : Array<CellView> = [];
 
-        const boardPolygon = this.getBoardPolygon(board.regionCount, cellCountPerSide);
+        const boardPolygon = Geometry.RegularPolygon.create(board.regionCount, cellCountPerSide);
         const boardEdges = Polygon.edges(boardPolygon);
         const boardCentroid = Polygon.centroid(boardPolygon);
 
@@ -181,24 +181,6 @@ export default class BoardViewService {
         });
 
         return results;
-    }
-
-    private static getBoardPolygon(sideCount : number, sideLength : number) : Polygon {
-        const centralAngle = Math.PI * 2 / sideCount;
-        const radius = Geometry.RegularPolygon.radius(sideCount, sideLength);
-        const centroid = { x: 0, y:0 };
-
-        const vertices = [];
-
-        for (var i = 0; i < sideCount; i++) {
-            let v = {
-                x: centroid.x + (radius * Math.sin(centralAngle * i)),
-                y: centroid.y + (radius * Math.cos(centralAngle * i))
-            };
-            vertices.push(v);
-        }
-
-        return { vertices: vertices };
     }
 
     private static getCellType(col : number, row : number) : CellType {

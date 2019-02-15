@@ -193,44 +193,15 @@ export default class Geometry {
             const radius = this.sideToRadiusRatio(numberOfSides) * sideLength;
             const internalAngle = this.internalAngle(numberOfSides);
 
-            function getAngle(vertexNumber : number) : number {
-                /*
-                    Returns evenly spaced angles, each of which will be a radius of the created n-gon.
-                    The (internalAngle/2) offset is necessary to orient the polygon with its bottom parallel to the x-axis.
-
-                    For example, a 3-gon:
-
-                        getAngle(1)
-                            => ((2PI / 3) * 1) + ((2PI / 3) / 2)
-                            => (2/3 * PI) + (2/6 * PI)
-                            => 3/3 * PI
-                            => PI
-
-                        getAngle(2) => ((2PI / 3) * 2) + ((2PI / 3) / 2)
-                            => (4/3 * PI) + (2/6 * PI)
-                            => 5/3 * PI
-
-                        getAngle(3) => ((2PI / 3) * 3) + ((2PI / 3) / 2)
-                            => (6/3 * PI) + (2/6 * PI)
-                            => 7/3 * PI
-                */
-                return (internalAngle*vertexNumber) + (internalAngle/2);
-            }
-
             const vertices : Point[] = [];
+            let angle = internalAngle/2;
             for (var i=1; i<=numberOfSides; i++) {
-                //When i == n, internalAngle*i will be 2*PI
-                //So, without the offset, you would have p == { x: 0, y: radius }
-                //This would be a radius perpendicular to the x-axis, which means for any even n-gon,
-                //you could not have an edge parallel to the x-axis.
-                //Hence, the (internalAngle/2) offset.
-
-                const a = getAngle(i);
                 const p = {
-                    x: radius * Math.sin(a),
-                    y: radius * Math.cos(a)
+                    x: radius * Math.sin(angle),
+                    y: radius * Math.cos(angle)
                 };
                 vertices.push(p);
+                angle += internalAngle;
             }
             return { vertices: vertices };
         }
@@ -313,6 +284,22 @@ export default class Geometry {
                     }
                     return t;
             }
+        }
+
+        public static flipHorizontal() : MathJs.Matrix {
+            return MathJs.matrix([
+                [-1, 0, 0],
+                [ 0, 1, 0],
+                [ 0, 0, 1]
+            ])
+        }
+
+        public static flipVertical() : MathJs.Matrix {
+            return MathJs.matrix([
+                [1,  0, 0],
+                [0, -1, 0],
+                [0,  0, 1]
+            ])
         }
 
         public static identity() : MathJs.Matrix {
