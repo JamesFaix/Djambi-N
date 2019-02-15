@@ -119,28 +119,152 @@ export default class Geometry {
     }
 
     public static RegularPolygon = class {
-        public static radius(numberOfSides : number, sideLength : number) : number {
+        private static readonly sideLength = 1;
+
+        private static isDivisibleBy(divisor : number, dividend : number) : boolean {
+            return dividend % divisor === 0;
+        }
+
+        private static isEven(n : number) : boolean {
+            return this.isDivisibleBy(2, n);
+        }
+
+        private static internalAngle(numberOfSides : number) : number {
+            //Divide a circle into n slices
+            return 2 * Math.PI / numberOfSides;
+        }
+
+        private static externalAngle(numberOfSides : number) : number {
             /*
-                A regular polygon P with N sides of length L can be divided radially into N isocolese triangles.
-                Given one of these triangles T,
-                    - The base of T is L
-                    - The side of T is the radius (R) of P
-                    - The height of T is the apothem (A) of P
-                    - The "top" angle of T is 360/N degrees
-                    - The base angles are (180 - (360/N))/2 = 90-(180/N) degrees
-
-                T can be split vertically into two right triangles, so trig functions can be used.
-                Given one of these two triangles U,
-                    - The base of U is L/2
-                    - The longer side of U is the R, and the shorter is A
-                    - Angles are 90, 180/N, and 90-(180/N) degrees
-                    - sin(180/N) = (L/2)/R
-                    - R = L/(2 * sin(180/N))
-
-                Convert degrees to radians for JS trig functions
+                Internal angle forms a "slice" with the internal angle and 2 other equal angles.
+                Those two outer angles of the slice are each 1/2 of the external angle of the polygon.
+                The sum of the angles of a triangle is PI radians.
+                So, PI minus the internal angle is the sum of the other 2 angles of the "slice".
             */
+            return Math.PI - this.internalAngle(numberOfSides);
+        }
 
-            return sideLength / (2 * Math.sin(Math.PI/numberOfSides));
+        public static sideToRadiusRatio(numberOfSides : number) : number {
+            /*
+                Radius connects center and a vertex.
+
+                Start with a "slice" triangle, as described in the externalAngle derivation.
+                One side of the "slice" is an edge of the polygon, the other two are radii.
+                The "slice" can be divided in half by adding a line from the center of the polygon
+                to the mid-point of the edge. (This line is an apothem.)
+
+                This "half-slice" is a right triangle. Its sides are one radius, one apothem,
+                and a half-edge. The angles that are PI/2, internalAngle/2 and externalAngle/2 radians.
+
+                Thus:
+                    1) sin(internalAngle/2) = (edge/2)/radius
+                    2) cos(internalAngle/2) = apothem/radius
+                    3) tan(internalAngle/2) = (edge/2)/apothem
+                    4) sin(externalAngle/2) = apothem/radius
+                    5) cos(externalAngle/2) = (edge/2)/radius
+                    6) tan(externalAngle/2) = apothem/(edge/2)
+
+                From 1),
+                    sin(internalAngle/2) = (edge/2)/radius
+                    radius * sin(internalAngle/2) = edge/2
+                    radius = (edge/2)/sin(internalAngle/2)
+            */
+           return (this.sideLength/2) / Math.sin(this.internalAngle(numberOfSides)/2);
+        }
+
+        public static sideToApothemRatio(numberOfSides : number) : number {
+            /*
+                Apothem connects center and the mid-point of an edge.
+
+                From 3) in the derivation of sideToRadiusRatio,
+                    tan(internalAngle/2) = (edge/2)/apothem
+                    apothem * tan(internalAngle/2) = edge/2
+                    apothem = (edge/2)/tan(internalAngle/2)
+            */
+            return (this.sideLength/2) / Math.tan(this.internalAngle(numberOfSides)/2);
+        }
+
+        public static create(numberOfSides : number, sideLength : number) : Polygon {
+            /*
+                Creates a regular n-gon with the given side length.
+                It's center will be (0,0).
+                The bottom side will be parallel to, and below, the x-axis.
+            */
+            const radius = this.sideToRadiusRatio(numberOfSides) * sideLength;
+            const internalAngle = this.internalAngle(numberOfSides);
+
+            const vertices : Point[] = [];
+            let angle = internalAngle/2;
+            for (var i=1; i<=numberOfSides; i++) {
+                const p = {
+                    x: radius * Math.sin(angle),
+                    y: radius * Math.cos(angle)
+                };
+                vertices.push(p);
+                angle += internalAngle;
+            }
+            return { vertices: vertices };
+        }
+
+        public static sideToHeightRatio(numberOfSides : number) : number {
+            /*
+                This function assumes the polygon is positioned with at least 1 edge parallel to the x-axis.
+                For even n, there will be two edges parallel to the x-axis, for odd n just one.
+                Thus, for even n the height is (2 * apothem), and for odd n it is (apothem + radius).
+            */
+            const a = this.sideToApothemRatio(numberOfSides);
+
+            return this.isEven(numberOfSides)
+                ? a * 2
+                : a + this.sideToRadiusRatio(numberOfSides);
+        }
+
+        public static sideToWidthRatio(numberOfSides : number) : number {
+            /*
+                This function assumes the polygon is positioned with at least 1 edge parallel to the x-axis.
+                Width is a lot harder to come up with a general formula for than the previous functions.
+            */
+            if (numberOfSides === 3 || numberOfSides === 4) {
+                //The width of an equilateral triangle or a square is obviously the length of its side.
+                return 1;
+            } else if (this.isDivisibleBy(4, numberOfSides)){
+                //For squares, octogons, 12-gons, 16-gons, etc, the width will always equal the height.
+                return this.sideToApothemRatio(numberOfSides) * 2;
+            } else if (this.isEven(numberOfSides)) {
+                //For hexagons, 10-gons, 14-gons, etc, the width will always be 2 * radius.
+                return this.sideToRadiusRatio(numberOfSides) * 2;
+            } else {
+                //For all other odd n-gons, I do not know of a simple formula.
+                //The next best heuristic is to generate an n-gon, and then check the min and max X values of its vertices.
+                const polygon = this.create(numberOfSides, 1);
+                const ys = polygon.vertices.map(p => p.y);
+                const maxY = Math.max(...ys);
+                const minY = Math.min(...ys);
+                return Math.abs(maxY - minY);
+            }
+        }
+
+        public static sideToCentroidDistanceFromTopRatio(numberOfSides : number) : number {
+            /*
+                This function assumes the polygon is positioned with at least 1 edge parallel to the x-axis.
+
+                Since the polygon's bottom is parallel to the x-axis,
+                    for even n, the top will also be parallel and there will be an apothem connecting the center to the top, and
+                    for odd n, the top will be a vertex and there will be a radius connecting the center to the top.
+            */
+            return this.isEven(numberOfSides)
+                ? this.sideToApothemRatio(numberOfSides)
+                : this.sideToRadiusRatio(numberOfSides);
+        }
+
+        public static sideToCentroidDistanceFromLeftRatio(numberOfSides : number) : number {
+            /*
+                This function assumes the polygon is positioned with at least 1 edge parallel to the x-axis.
+
+                Since the polygon's bottom is parallel to the x-axis, it is always symmetric across the y-axis.
+                Thus, (width/2) can be used.
+            */
+            return this.sideToWidthRatio(numberOfSides) / 2;
         }
     }
 
@@ -160,6 +284,22 @@ export default class Geometry {
                     }
                     return t;
             }
+        }
+
+        public static flipHorizontal() : MathJs.Matrix {
+            return MathJs.matrix([
+                [-1, 0, 0],
+                [ 0, 1, 0],
+                [ 0, 0, 1]
+            ])
+        }
+
+        public static flipVertical() : MathJs.Matrix {
+            return MathJs.matrix([
+                [1,  0, 0],
+                [0, -1, 0],
+                [0,  0, 1]
+            ])
         }
 
         public static identity() : MathJs.Matrix {

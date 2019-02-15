@@ -48,10 +48,6 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
         const Transform = Geometry.Transform;
         const bv = this.props.boardView;
 
-        //BoardViews are created with a side facing up, but we want a side facing down.
-        //Rotate 180 degrees to fix
-        const rotationTransform = Transform.rotation(360 / bv.regionCount / 2);
-
         //BoardViews are created with the centroid at (0,0)
         //Offset so none of the board has negative coordinates, since canvases start at (0,0)
         const centroidOffset = this.getCentroidOffsetFromCanvas(bv.regionCount, bv.cellCountPerSide);
@@ -66,28 +62,16 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
         const marginOffsetTransform = Transform.translate(margin, margin);
 
         //Order is very important. Last transform gets applied to image first
-        let t = Transform.compose([
+        const t = Transform.compose([
             marginOffsetTransform,
             scaleTransform,
-            centroidOffsetTransform,
-            rotationTransform
+            centroidOffsetTransform
         ]);
         return Geometry.Board.transform(bv, t);
     }
 
     private getBoardTypeScaleFactor(regionCount : number) : number {
-        //These numbers are based off the relative heights of the shapes, when sitting with an edge down
-        switch (regionCount) {
-            case 3: return 1.155;
-            case 4: return 1.000;
-            case 5: return 0.650;
-            case 6: return 0.577;
-            case 7: return 0.456;
-            case 8: return 0.414;
-            default: throw "Unsupported region count.";
-        }
-
-        //This formula approximates the trend: e^(-0.2 * regionCount) * 2
+        return 1 / Geometry.RegularPolygon.sideToHeightRatio(regionCount);
     }
 
     private getZoomScaleFactorFromLevel(zoomLevel : number) : number {
@@ -110,49 +94,9 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
     }
 
     private getCentroidOffsetFromCanvas(regionCount : number, cellCountPerSide : number) : Point {
-        let x : number;
-        let y : number;
-
-        //These numbers all assume a side length of 1, and an edge is facing down
-        switch (regionCount) {
-            case 3:
-                x = 0.500; // 1/2 width
-                y = 0.577; // radius
-                break;
-
-            case 4:
-                x = 0.500; // 1/2 width (also apothem)
-                y = 0.500; // 1/2 width (also apothem)
-                break;
-
-            case 5:
-                x = 0.810; // 1/2 width
-                y = 0.850; // radius
-                break;
-
-            case 6:
-                x = 1.000; // 1/2 width (also radius)
-                y = 0.866; // apothem
-                break;
-
-            case 7:
-                x = 1.125; // 1/2 width
-                y = 1.152; // radius
-                break;
-
-            case 8:
-                x = 1.205; // 1/2 width (also apothem)
-                y = 1.205; // 1/2 width (also apothem)
-                break;
-
-            default:
-                throw "Unsupported region count.";
-        }
-
-        //Enlarge for the actual side length
         return {
-            x: x * cellCountPerSide,
-            y: y * cellCountPerSide
+            x: Geometry.RegularPolygon.sideToCentroidDistanceFromLeftRatio(regionCount) * cellCountPerSide,
+            y: Geometry.RegularPolygon.sideToCentroidDistanceFromTopRatio(regionCount) * cellCountPerSide
         };
     }
 
