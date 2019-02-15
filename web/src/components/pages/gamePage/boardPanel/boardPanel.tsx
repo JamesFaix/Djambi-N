@@ -87,15 +87,12 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
     }
 
     private getWindowSizeScaleFactor() : number {
-        const bv = this.props.boardView;
-        const usableSize = this.getUsableSize();
+        const p = this.props;
+        const bv = p.boardView;
+        const totalMargin = (2 * (p.boardMargin + p.boardStrokeWidth))
+        const usableSize = Geometry.Point.addScalar(p.size, -totalMargin);
         const maxScale = Geometry.RegularPolygon.largestScaleWithinBox(bv.regionCount, usableSize);
         return maxScale / bv.cellCountPerSide;
-    }
-
-    private getUsableSize() : Point {
-        const totalMargin = (2 * (this.props.boardMargin + this.props.boardStrokeWidth))
-        return Geometry.Point.addScalar(this.props.size, -totalMargin);
     }
 
     private getCentroidOffsetFromCanvas(regionCount : number, cellCountPerSide : number) : Point {
