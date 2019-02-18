@@ -24,16 +24,16 @@ export default class CanvasTransformService{
 
         //BoardViews are created with the centroid at (0,0)
         //Offset so none of the board has negative coordinates, since canvases start at (0,0)
-        const centroidOffset = this.getCentroidOffsetFromCanvas();
-        const centroidOffsetTransform = Transform.translate(centroidOffset.x, centroidOffset.y);
+        const centroidOffset = Geometry.RegularPolygon.sideToCentroidDistanceFromTopLeftRatios(this.regionCount);
+        const centroidOffsetTransform = Transform.translate(centroidOffset);
 
         //Magnify the board based on screen size, zoom setting, and board type
         const scale = this.getScale();
-        const scaleTransform = Transform.scale(scale, scale);
+        const scaleTransform = Transform.scale({ x: scale, y: scale });
 
         //Add a margin for the outline of the board and some whitespace around it within the canvas
         const margin = this.contentPadding + this.canvasMargin;
-        const marginOffsetTransform = Transform.translate(margin, margin);
+        const marginOffsetTransform = Transform.translate({ x: margin, y: margin });
 
         //Order is very important. Last transform gets applied to image first
         return Transform.compose([
@@ -85,12 +85,4 @@ export default class CanvasTransformService{
     private getWindowSizeScaleFactor() : number {
         return 450; //TODO: Make this change based on window or container size later
     }
-
-    private getCentroidOffsetFromCanvas() : Point {
-        return {
-            x: Geometry.RegularPolygon.sideToCentroidDistanceFromLeftRatio(this.regionCount),
-            y: Geometry.RegularPolygon.sideToCentroidDistanceFromTopRatio(this.regionCount)
-        };
-    }
-
 }
