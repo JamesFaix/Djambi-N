@@ -130,15 +130,17 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
 
         return (
             <div className={Classes.flex} style={containerStyle}>
-                <BoardPanel
-                    game={this.state.game}
-                    theme={this.props.theme}
-                    boardView={this.state.boardView}
-                    selectCell={cell => this.selectCell(cell)}
-                    size={boardPanelSize}
-                    boardStrokeWidth={10}
-                    boardMargin={5}
-                />
+                <div style={Styles.width("70%")}>
+                    <BoardPanel
+                        game={this.state.game}
+                        theme={this.props.theme}
+                        boardView={this.state.boardView}
+                        selectCell={cell => this.selectCell(cell)}
+                        size={boardPanelSize}
+                        boardStrokeWidth={10}
+                        boardMargin={5}
+                    />
+                </div>
                 <div style={Styles.width("30%")}>
                     <TurnCyclePanel
                         game={this.state.game}

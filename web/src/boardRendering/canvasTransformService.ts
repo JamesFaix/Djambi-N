@@ -13,34 +13,45 @@ export default class CanvasTransformService{
 
     }
 
-    public getScale() : number {
-        return this.getWindowSizeScaleFactor()
-            * this.getZoomScaleFactor()
-            * this.getBoardTypeScaleFactor();
-    }
+    //--- Transforms ---
 
     public getBoardViewTransform() : MathJs.Matrix {
-        const Transform = Geometry.Transform;
-
-        //BoardViews are created with the centroid at (0,0)
-        //Offset so none of the board has negative coordinates, since canvases start at (0,0)
-        const centroidOffset = Geometry.RegularPolygon.sideToCentroidDistanceFromTopLeftRatios(this.regionCount);
-        const centroidOffsetTransform = Transform.translate(centroidOffset);
-
-        //Magnify the board based on screen size, zoom setting, and board type
-        const scale = this.getScale();
-        const scaleTransform = Transform.scale({ x: scale, y: scale });
-
-        //Add a margin for the outline of the board and some whitespace around it within the canvas
-        const margin = this.contentPadding + this.canvasMargin;
-        const marginOffsetTransform = Transform.translate({ x: margin, y: margin });
-
         //Order is very important. Last transform gets applied to image first
-        return Transform.compose([
-            marginOffsetTransform,
-            scaleTransform,
-            centroidOffsetTransform
+        return Geometry.Transform.compose([
+            this.getTransformToCenterBoardInCanvas(),
+            this.getTransformToScaleBoard(),
         ]);
+    }
+
+    private getTransformToScaleBoard() : MathJs.Matrix {
+        const scale = this.getScale();
+        return Geometry.Transform.scale({ x: scale, y: scale });
+    }
+
+    private getTransformToCenterBoardInCanvas() : MathJs.Matrix {
+        //Boardviews start with their centroid at 0,0.
+        const Point = Geometry.Point;
+
+        const canvasSize = this.getSize();
+
+        let offset = Point.multiplyScalar(canvasSize, 0.5);
+
+        let centroidToCenterOffset = Geometry.RegularPolygon.sideToCentroidOffsetFromCenterRatios(this.regionCount);
+        centroidToCenterOffset = Point.multiplyScalar(centroidToCenterOffset, this.getScale());
+
+        offset = Point.add(offset, centroidToCenterOffset);
+
+        return Geometry.Transform.translate(offset);
+    }
+
+    //------
+
+    private getCanvasContentAreaSizeWithNoZoom() : Point {
+        return Geometry.Point.subtractScalar(this.containerSize, 2 * this.canvasMargin);
+    }
+
+    private getBoardPolygonBaseSize() : Point {
+        return Geometry.RegularPolygon.sideToSizeRatios(this.regionCount);
     }
 
     private getTotalMarginSize() : Point {
@@ -49,7 +60,7 @@ export default class CanvasTransformService{
     }
 
     private getBoardSize() : Point {
-        let size = Geometry.RegularPolygon.sideToSizeRatios(this.regionCount);
+        let size = this.getBoardPolygonBaseSize();
         size = Geometry.Point.multiplyScalar(size, this.getScale());
         size = Geometry.Point.add(size, this.getTotalMarginSize())
         return size;
@@ -63,8 +74,11 @@ export default class CanvasTransformService{
         };
     }
 
-    private getBoardTypeScaleFactor() : number {
-        return 1 / Geometry.RegularPolygon.sideToHeightRatio(this.regionCount);
+    //--- Scale
+
+    public getScale() : number {
+        return this.getContainerSizeScaleFactor()
+            * this.getZoomScaleFactor();
     }
 
     public getZoomScaleFactor() : number {
@@ -82,7 +96,12 @@ export default class CanvasTransformService{
         }
     }
 
-    private getWindowSizeScaleFactor() : number {
-        return 450; //TODO: Make this change based on window or container size later
+    private getContainerSizeScaleFactor() : number {
+        let contentAreaSize = this.getCanvasContentAreaSizeWithNoZoom();
+        contentAreaSize = Geometry.Point.subtractScalar(contentAreaSize, 2 * this.contentPadding);
+        const boardBaseSize = this.getBoardPolygonBaseSize();
+        return Geometry.Rectangle.largestScaleWithinBox(boardBaseSize, contentAreaSize);
     }
+
+    //------
 }

@@ -18,10 +18,31 @@ export default class Geometry {
             };
         }
 
-         public static multiplyScalar(p : Point, n : number) : Point {
+        public static divide(a : Point, b : Point) : Point {
+            return {
+                x: a.x / b.x,
+                y: a.y / b.y
+            };
+        }
+
+        public static multiplyScalar(p : Point, n : number) : Point {
             return {
                 x: p.x * n,
                 y: p.y * n
+            };
+        }
+
+        public static subtract(a : Point, b : Point) : Point {
+            return {
+                x: a.x - b.x,
+                y: a.y - b.y
+            };
+        }
+
+        public static subtractScalar(p : Point, n : number) : Point {
+            return {
+                x: p.x - n,
+                y: p.y - n
             };
         }
 
@@ -258,7 +279,7 @@ export default class Geometry {
             }
         }
 
-        public static sideToCentroidDistanceFromTopLeftRatios(numberOfSides : number) : Point {
+        public static sideToCentroidOffsetFromTopLeftRatios(numberOfSides : number) : Point {
             /*
                 This function assumes the polygon is positioned with at least 1 edge parallel to the x-axis.
 
@@ -269,16 +290,36 @@ export default class Geometry {
                 For even n, the top will also be parallel and there will be an apothem connecting the center to the top, and
                 For odd n, the top will be a vertex and there will be a radius connecting the center to the top.
             */
-           return {
+            return {
                 x: this.sideToWidthRatio(numberOfSides) / 2,
                 y: this.isEven(numberOfSides)
                     ? this.sideToApothemRatio(numberOfSides)
                     : this.sideToRadiusRatio(numberOfSides)
             };
         }
+
+        public static sideToCentroidOffsetFromCenterRatios(numberOfSides : number) : Point {
+            const Point = Geometry.Point;
+
+            const centroidOffset = this.sideToCentroidOffsetFromTopLeftRatios(numberOfSides);
+            const centerOffset : Point = {
+                x: this.sideToWidthRatio(numberOfSides) / 2,
+                y: this.sideToHeightRatio(numberOfSides) / 2
+            };
+            return Point.subtract(centroidOffset, centerOffset);
+        }
+    }
+
+    public static Rectangle = class {
+        public static largestScaleWithinBox(innerSize : Point, outerSize : Point) : number {
+            const maxScale = Geometry.Point.divide(outerSize, innerSize);
+            return Math.min(maxScale.x, maxScale.y);
+        }
     }
 
     public static Transform = class {
+        //https://www.mathworks.com/help/images/matrix-representation-of-geometric-transformations.html
+
         public static compose(transforms : MathJs.Matrix[]) : MathJs.Matrix {
             switch (transforms.length) {
                 case 0:
