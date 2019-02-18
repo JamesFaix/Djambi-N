@@ -25,6 +25,20 @@ export default class Geometry {
             };
         }
 
+        public static divideSafe(a : Point, b : Point) : Point {
+            return {
+                x: b.x === 0 ? 0 : a.x / b.x,
+                y: b.y === 0 ? 0 : a.y / b.y
+            }
+        }
+
+        public static multiply(a : Point, b : Point) : Point {
+            return {
+                x: a.x * b.x,
+                y: a.y * b.y
+            };
+        }
+
         public static multiplyScalar(p : Point, n : number) : Point {
             return {
                 x: p.x * n,
@@ -46,6 +60,10 @@ export default class Geometry {
             };
         }
 
+        public static toString(p : Point) : string {
+            return "(" + p.x + ", " + p.y + ")";
+        }
+
         public static transform(p : Point, matrix : MathJs.Matrix) : Point {
             const pointVector = MathJs.matrix([p.x, p.y, 1]);
             const resultMatrix = MathJs.multiply(matrix, pointVector);
@@ -61,6 +79,13 @@ export default class Geometry {
                 x: p.x + offset.x,
                 y: p.y + offset.y
             }
+        }
+
+        public static zero() : Point {
+            return {
+                x: 0,
+                y: 0
+            };
         }
     }
 
