@@ -4,7 +4,7 @@ import ThemeService from '../../../../themes/themeService';
 import { Classes, Styles } from '../../../../styles';
 import { BoardView, CellView } from '../../../../boardRendering/model';
 import CanvasBoard from './canvas/canvasBoard';
-import Scrollbars from 'react-custom-scrollbars';
+import Scrollbars, { positionValues } from 'react-custom-scrollbars';
 import { InputTypes } from '../../../../constants';
 import Geometry from '../../../../boardRendering/geometry';
 import { Point } from '../../../../boardRendering/model';
@@ -21,23 +21,67 @@ export interface BoardPanelProps {
 }
 
 export interface BoardPanelState {
-    zoomLevel : number
+    zoomLevel : number,
+    scrollPercent : Point
 }
 
 export default class BoardPanel extends React.Component<BoardPanelProps, BoardPanelState> {
     constructor(props : BoardPanelProps) {
         super(props);
         this.state = {
-            zoomLevel: 0
+            zoomLevel: 0,
+            scrollPercent: Geometry.Point.zero()
         };
+    }
+
+    private getCanvasTransformService() {
+        return new CanvasTransformService(
+            this.props.size,
+            this.props.boardMargin,
+            this.props.boardStrokeWidth,
+            this.state.zoomLevel,
+            this.props.boardView.regionCount
+        );
     }
 
     ///--- EVENTS ---
 
     private onZoomSliderChanged(e : React.ChangeEvent<HTMLInputElement>) : void {
-        const level = Number(e.target.value);
+        const oldLevel = this.state.zoomLevel;
+        const newLevel = Number(e.target.value);
+
+        const newState : any = { zoomLevel : newLevel };
+
+        //If going from a negative level (where the whole board is visible) to a positive one, start zoom focus at center
+        if (oldLevel <= 0) {
+            newState.scrollPercent = { x: 0.5, y: 0.5 };
+        }
+
+        this.setState(newState, () => {
+            const {scrollbar} = this.refs as any;
+            const cts = this.getCanvasTransformService();
+
+            const scrollContainerSize = { x: scrollbar.getClientWidth(), y: scrollbar.getClientHeight() };
+            const scrollableAreaSize = Geometry.Point.subtract(cts.getSize(), scrollContainerSize);
+
+            const scrollPercent = this.state.scrollPercent;
+            const scrollPosition = Geometry.Point.multiply(scrollPercent, scrollableAreaSize);
+
+            scrollbar.scrollLeft(scrollPosition.x);
+            scrollbar.scrollTop(scrollPosition.y);
+        });
+    }
+
+    private onScroll(e : positionValues) : void {
+        const scrollContainerSize = { x: e.clientWidth, y: e.clientHeight };
+        const scrollContentSize = { x: e.scrollWidth, y: e.scrollHeight };
+        const scrollableAreaSize = Geometry.Point.subtract(scrollContentSize, scrollContainerSize);
+
+        const scrollPosition = { x: e.scrollLeft, y: e.scrollTop };
+        const scrollPercent = Geometry.Point.divideSafe(scrollPosition, scrollableAreaSize);
+
         this.setState({
-            zoomLevel: level
+            scrollPercent: scrollPercent
         });
     }
 
@@ -51,13 +95,7 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
 
         const p = this.props;
 
-        const cts = new CanvasTransformService(
-            p.size,
-            p.boardMargin,
-            p.boardStrokeWidth,
-            this.state.zoomLevel,
-            p.boardView.regionCount
-        );
+        const cts = this.getCanvasTransformService();
 
         const board = Geometry.Board.transform(p.boardView, cts.getBoardViewTransform());
 
@@ -66,7 +104,11 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
                 className={Classes.thinBorder}
                 style={containerStyle}
             >
-                <Scrollbars style={containerStyle}>
+                <Scrollbars
+                    ref='scrollbar'
+                    style={containerStyle}
+                    onScrollFrame={e => this.onScroll(e)}
+                >
                     <CanvasBoard
                         board={board}
                         theme={p.theme}
@@ -76,12 +118,12 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
                         size={cts.getSize()}
                     />
                 </Scrollbars>
-                {this.renderZoomControl(cts.getZoomScaleFactor())}
+                {this.renderZoomControl(cts)}
             </div>
         );
     }
 
-    private renderZoomControl(scaleFactor : number) {
+    private renderZoomControl(cts : CanvasTransformService) {
         return (
             <div>
                 Zoom
@@ -89,10 +131,10 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
                     type={InputTypes.Range}
                     onChange={e => this.onZoomSliderChanged(e)}
                     value={this.state.zoomLevel}
-                    min={-3}
-                    max={5}
+                    min={cts.minZoomLevel()}
+                    max={cts.maxZoomLevel()}
                 />
-                {(scaleFactor * 100) + "%"}
+                {(cts.getZoomScaleFactor() * 100) + "%"}
             </div>
         );
     }
