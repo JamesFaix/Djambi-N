@@ -47,7 +47,7 @@ export default class CanvasTransformService{
     //------
 
     private getCanvasContentAreaSizeWithNoZoom() : Point {
-        return Geometry.Point.subtractScalar(this.containerSize, this.canvasMargin);
+        return Geometry.Point.subtractScalar(this.containerSize, 2 * this.canvasMargin);
     }
 
     private getBoardPolygonBaseSize() : Point {
