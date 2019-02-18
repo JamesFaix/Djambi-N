@@ -13,12 +13,6 @@ export default class CanvasTransformService{
 
     }
 
-    public getScale() : number {
-        return this.getWindowSizeScaleFactor()
-            * this.getZoomScaleFactor()
-            * this.getBoardTypeScaleFactor();
-    }
-
     public getBoardViewTransform() : MathJs.Matrix {
         const Transform = Geometry.Transform;
 
@@ -31,40 +25,59 @@ export default class CanvasTransformService{
         const scale = this.getScale();
         const scaleTransform = Transform.scale({ x: scale, y: scale });
 
-        //Add a margin for the outline of the board and some whitespace around it within the canvas
-        const margin = this.contentPadding + this.canvasMargin;
-        const marginOffsetTransform = Transform.translate({ x: margin, y: margin });
+        //Offset canvas so the content is always centered in the container
+        const offsetToCenterCanvas = this.getOffsetWithNoZoom();
+        const centeringTransform = Transform.translate(offsetToCenterCanvas);
 
         //Order is very important. Last transform gets applied to image first
         return Transform.compose([
-            marginOffsetTransform,
+            centeringTransform,
             scaleTransform,
             centroidOffsetTransform
         ]);
     }
 
-    private getTotalMarginSize() : Point {
-        const n = 2 * (this.canvasMargin + this.contentPadding);
-        return { x: n, y: n };
+    private getCanvasContentAreaSizeWithNoZoom() : Point {
+        return Geometry.Point.addScalar(this.containerSize, -this.canvasMargin);
     }
 
-    private getBoardSize() : Point {
-        let size = Geometry.RegularPolygon.sideToSizeRatios(this.regionCount);
-        size = Geometry.Point.multiplyScalar(size, this.getScale());
-        size = Geometry.Point.add(size, this.getTotalMarginSize())
-        return size;
+    private getBoardPolygonBaseSize() : Point {
+        return Geometry.RegularPolygon.sideToSizeRatios(this.regionCount);
     }
 
-    public getSize() : Point {
-        const boardSize = this.getBoardSize();
-        return {
-            x: Math.max(boardSize.x, this.containerSize.x),
-            y: Math.max(boardSize.y, this.containerSize.y)
+    public getBoardSizeWithScaleButNoZoom() : Point {
+        const scale = this.getContainerSizeScaleFactor();
+        const baseSize = this.getBoardPolygonBaseSize();
+        return Geometry.Point.multiplyScalar(baseSize, scale);
+    }
+
+    private getOffsetWithNoZoom() : Point {
+        //Offset for margin and stroke width
+        let offset = {
+            x: this.canvasMargin + this.contentPadding,
+            y: this.canvasMargin + this.contentPadding
         };
+
+        //Center in container
+        const containerSize = this.getCanvasContentAreaSizeWithNoZoom();
+        const boardSize = this.getBoardSizeWithScaleButNoZoom();
+        const marginAfterScale = Geometry.Rectangle.marginWithinBox(boardSize, containerSize);
+        const halfMargin = Geometry.Point.multiplyScalar(marginAfterScale, 0.5);
+        offset = Geometry.Point.add(offset, halfMargin);
+
+        return offset;
     }
 
-    private getBoardTypeScaleFactor() : number {
-        return 1 / Geometry.RegularPolygon.sideToHeightRatio(this.regionCount);
+    public getScale() : number {
+        return this.getContainerSizeScaleFactor()
+            * this.getZoomScaleFactor();
+    }
+
+    private getContainerSizeScaleFactor() : number {
+        let contentAreaSize = this.getCanvasContentAreaSizeWithNoZoom();
+        contentAreaSize = Geometry.Point.addScalar(contentAreaSize, -(2 * this.contentPadding));
+        const boardBaseSize = this.getBoardPolygonBaseSize();
+        return Geometry.Rectangle.largestScaleWithinBox(boardBaseSize, contentAreaSize);
     }
 
     public getZoomScaleFactor() : number {
@@ -80,12 +93,5 @@ export default class CanvasTransformService{
             case  5: return 4.00;
             default: throw "Unsupported zoom level: " + this.zoomLevel;
         }
-    }
-
-    private getWindowSizeScaleFactor() : number {
-        const totalMargin = this.getTotalMarginSize();
-        const usableSize = Geometry.Point.addScalar(this.containerSize, -totalMargin);
-        const maxScale = Geometry.RegularPolygon.largestScaleWithinBox(this.regionCount, usableSize);
-        return maxScale;
     }
 }

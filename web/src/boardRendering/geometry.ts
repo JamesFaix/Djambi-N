@@ -255,7 +255,7 @@ export default class Geometry {
             return {
                 x: this.sideToWidthRatio(numberOfSides),
                 y: this.sideToHeightRatio(numberOfSides)
-            }
+            };
         }
 
         public static sideToCentroidDistanceFromTopLeftRatios(numberOfSides : number) : Point {
@@ -278,11 +278,23 @@ export default class Geometry {
         }
 
         public static largestScaleWithinBox(numberOfSides : number, boxSize : Point) : number {
-            const widthRatio = this.sideToWidthRatio(numberOfSides);
-            const heightRatio = this.sideToHeightRatio(numberOfSides);
-            const maxXScale = boxSize.x / widthRatio;
-            const maxYScale = boxSize.y / heightRatio;
+            const size = this.sideToSizeRatios(numberOfSides);
+            return Geometry.Rectangle.largestScaleWithinBox(size, boxSize);
+        }
+    }
+
+    public static Rectangle = class {
+        public static largestScaleWithinBox(innerSize : Point, outerSize : Point) : number {
+            const maxXScale = outerSize.x / innerSize.x;
+            const maxYScale = outerSize.y / innerSize.y;
             return Math.min(maxXScale, maxYScale);
+        }
+
+        public static marginWithinBox(innerSize : Point, outerSize : Point) : Point {
+            return {
+                x: outerSize.x - innerSize.x,
+                y: outerSize.y - innerSize.y
+            };
         }
     }
 

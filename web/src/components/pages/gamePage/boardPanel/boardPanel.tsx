@@ -73,7 +73,7 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
                         selectCell={(cell) => p.selectCell(cell)}
                         scale={cts.getScale()}
                         boardStrokeWidth={p.boardStrokeWidth}
-                        size={cts.getSize()}
+                        size={cts.getBoardSizeWithScaleButNoZoom()}
                     />
                 </Scrollbars>
                 {this.renderZoomControl(cts.getZoomScaleFactor())}
