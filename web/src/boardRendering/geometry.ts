@@ -39,6 +39,13 @@ export default class Geometry {
             };
         }
 
+        public static subtractScalar(p : Point, n : number) : Point {
+            return {
+                x: p.x - n,
+                y: p.y - n
+            };
+        }
+
         public static transform(p : Point, matrix : MathJs.Matrix) : Point {
             const pointVector = MathJs.matrix([p.x, p.y, 1]);
             const resultMatrix = MathJs.multiply(matrix, pointVector);

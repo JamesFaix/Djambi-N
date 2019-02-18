@@ -47,7 +47,7 @@ export default class CanvasTransformService{
     //------
 
     private getCanvasContentAreaSizeWithNoZoom() : Point {
-        return Geometry.Point.addScalar(this.containerSize, -this.canvasMargin);
+        return Geometry.Point.subtractScalar(this.containerSize, this.canvasMargin);
     }
 
     private getBoardPolygonBaseSize() : Point {
@@ -98,7 +98,7 @@ export default class CanvasTransformService{
 
     private getContainerSizeScaleFactor() : number {
         let contentAreaSize = this.getCanvasContentAreaSizeWithNoZoom();
-        contentAreaSize = Geometry.Point.addScalar(contentAreaSize, -(2 * this.contentPadding));
+        contentAreaSize = Geometry.Point.subtractScalar(contentAreaSize, 2 * this.contentPadding);
         const boardBaseSize = this.getBoardPolygonBaseSize();
         return Geometry.Rectangle.largestScaleWithinBox(boardBaseSize, contentAreaSize);
     }
