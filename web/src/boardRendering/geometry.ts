@@ -4,6 +4,13 @@ import * as MathJs from 'mathjs';
 export default class Geometry {
 
     public static Point = class {
+        public static add(a : Point, b : Point) : Point {
+            return {
+                x: a.x + b.x,
+                y: a.y + b.y
+            };
+        }
+
         public static addScalar(p : Point, n : number) : Point {
             return {
                 x: p.x + n,
@@ -241,6 +248,13 @@ export default class Geometry {
                 const maxY = Math.max(...ys);
                 const minY = Math.min(...ys);
                 return Math.abs(maxY - minY);
+            }
+        }
+
+        public static sideToSizeRatios(numberOfSides : number) : Point {
+            return {
+                x: this.sideToWidthRatio(numberOfSides),
+                y: this.sideToHeightRatio(numberOfSides)
             }
         }
 
