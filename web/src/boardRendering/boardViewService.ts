@@ -52,7 +52,7 @@ export default class BoardViewService {
 
         let cellViews : Array<CellView> = [];
 
-        const boardPolygon = Geometry.RegularPolygon.create(board.regionCount, cellCountPerSide);
+        const boardPolygon = Geometry.RegularPolygon.create(board.regionCount, 1);
         const boardEdges = Polygon.edges(boardPolygon);
         const boardCentroid = Polygon.centroid(boardPolygon);
 
