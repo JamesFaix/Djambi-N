@@ -50,7 +50,7 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
 
         //BoardViews are created with the centroid at (0,0)
         //Offset so none of the board has negative coordinates, since canvases start at (0,0)
-        const centroidOffset = this.getCentroidOffsetFromCanvas(bv.regionCount, bv.cellCountPerSide);
+        const centroidOffset = this.getCentroidOffsetFromCanvas(bv.regionCount);
         const centroidOffsetTransform = Transform.translate(centroidOffset.x, centroidOffset.y);
 
         //Magnify the board based on screen size, zoom setting, and board type
@@ -90,13 +90,13 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
     }
 
     private getWindowSizeScaleFactor() : number {
-        return 50; //TODO: Make this change based on window or container size later
+        return 450; //TODO: Make this change based on window or container size later
     }
 
-    private getCentroidOffsetFromCanvas(regionCount : number, cellCountPerSide : number) : Point {
+    private getCentroidOffsetFromCanvas(regionCount : number) : Point {
         return {
-            x: Geometry.RegularPolygon.sideToCentroidDistanceFromLeftRatio(regionCount) * cellCountPerSide,
-            y: Geometry.RegularPolygon.sideToCentroidDistanceFromTopRatio(regionCount) * cellCountPerSide
+            x: Geometry.RegularPolygon.sideToCentroidDistanceFromLeftRatio(regionCount),
+            y: Geometry.RegularPolygon.sideToCentroidDistanceFromTopRatio(regionCount)
         };
     }
 

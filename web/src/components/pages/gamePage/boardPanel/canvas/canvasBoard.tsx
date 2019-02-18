@@ -19,7 +19,7 @@ export interface CanvasBoardProps {
 
 export default class CanvasBoard extends React.Component<CanvasBoardProps> {
     private getPieceSize() : number {
-        return this.props.scale / 2;
+        return this.props.scale / this.props.board.cellCountPerSide / 2;
     }
 
     private getPieceLocation(cell : CellView) : Point {
