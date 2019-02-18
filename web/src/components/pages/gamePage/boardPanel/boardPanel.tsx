@@ -112,12 +112,12 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
                         size={cts.getSize()}
                     />
                 </Scrollbars>
-                {this.renderZoomControl(cts.getZoomScaleFactor())}
+                {this.renderZoomControl(cts)}
             </div>
         );
     }
 
-    private renderZoomControl(scaleFactor : number) {
+    private renderZoomControl(cts : CanvasTransformService) {
         return (
             <div>
                 Zoom
@@ -125,10 +125,10 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
                     type={InputTypes.Range}
                     onChange={e => this.onZoomSliderChanged(e)}
                     value={this.state.zoomLevel}
-                    min={-3}
-                    max={5}
+                    min={cts.minZoomLevel()}
+                    max={cts.maxZoomLevel()}
                 />
-                {(scaleFactor * 100) + "%"}
+                {(cts.getZoomScaleFactor() * 100) + "%"}
             </div>
         );
     }
