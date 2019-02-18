@@ -47,11 +47,17 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
     ///--- EVENTS ---
 
     private onZoomSliderChanged(e : React.ChangeEvent<HTMLInputElement>) : void {
-        const level = Number(e.target.value);
+        const oldLevel = this.state.zoomLevel;
+        const newLevel = Number(e.target.value);
 
-        this.setState({
-            zoomLevel: level
-        }, () => {
+        const newState : any = { zoomLevel : newLevel };
+
+        //If going from a negative level (where the whole board is visible) to a positive one, start zoom focus at center
+        if (oldLevel <= 0) {
+            newState.scrollPercent = { x: 0.5, y: 0.5 };
+        }
+
+        this.setState(newState, () => {
             const {scrollbar} = this.refs as any;
             const cts = this.getCanvasTransformService();
 
