@@ -4,6 +4,13 @@ import * as MathJs from 'mathjs';
 export default class Geometry {
 
     public static Point = class {
+        public static add(a : Point, b : Point) : Point {
+            return {
+                x: a.x + b.x,
+                y: a.y + b.y
+            };
+        }
+
         public static addScalar(p : Point, n : number) : Point {
             return {
                 x: p.x + n,
@@ -244,27 +251,30 @@ export default class Geometry {
             }
         }
 
-        public static sideToCentroidDistanceFromTopRatio(numberOfSides : number) : number {
-            /*
-                This function assumes the polygon is positioned with at least 1 edge parallel to the x-axis.
-
-                Since the polygon's bottom is parallel to the x-axis,
-                    for even n, the top will also be parallel and there will be an apothem connecting the center to the top, and
-                    for odd n, the top will be a vertex and there will be a radius connecting the center to the top.
-            */
-            return this.isEven(numberOfSides)
-                ? this.sideToApothemRatio(numberOfSides)
-                : this.sideToRadiusRatio(numberOfSides);
+        public static sideToSizeRatios(numberOfSides : number) : Point {
+            return {
+                x: this.sideToWidthRatio(numberOfSides),
+                y: this.sideToHeightRatio(numberOfSides)
+            }
         }
 
-        public static sideToCentroidDistanceFromLeftRatio(numberOfSides : number) : number {
+        public static sideToCentroidDistanceFromTopLeftRatios(numberOfSides : number) : Point {
             /*
                 This function assumes the polygon is positioned with at least 1 edge parallel to the x-axis.
 
                 Since the polygon's bottom is parallel to the x-axis, it is always symmetric across the y-axis.
-                Thus, (width/2) can be used.
+                Thus the distance from the left is (width/2).
+
+                Since the polygon's bottom is parallel to the x-axis, the distance from the top to the centroid follows two patterns.
+                For even n, the top will also be parallel and there will be an apothem connecting the center to the top, and
+                For odd n, the top will be a vertex and there will be a radius connecting the center to the top.
             */
-            return this.sideToWidthRatio(numberOfSides) / 2;
+           return {
+                x: this.sideToWidthRatio(numberOfSides) / 2,
+                y: this.isEven(numberOfSides)
+                    ? this.sideToApothemRatio(numberOfSides)
+                    : this.sideToRadiusRatio(numberOfSides)
+            };
         }
     }
 
@@ -322,19 +332,19 @@ export default class Geometry {
             ]);
         }
 
-        public static scale(x : number, y : number) : MathJs.Matrix {
+        public static scale(size : Point) : MathJs.Matrix {
             return MathJs.matrix([
-                [x, 0, 0],
-                [0, y, 0],
-                [0, 0, 1]
+                [size.x,      0, 0],
+                [     0, size.y, 0],
+                [     0,      0, 1]
             ]);
         }
 
-        public static translate(x : number, y : number) : MathJs.Matrix {
+        public static translate(size : Point) : MathJs.Matrix {
             return MathJs.matrix([
-                [1, 0, x],
-                [0, 1, y],
-                [0, 0, 1]
+                [1, 0, size.x],
+                [0, 1, size.y],
+                [0, 0,      1]
             ]);
         }
     }
