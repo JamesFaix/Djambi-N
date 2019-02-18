@@ -12,7 +12,6 @@ var task_buildWeb = "build-web";
 var task_cleanSql = "clean-sql";
 var task_full = "full";
 var task_genClient = "gen-client";
-var task_genPolygon = "gen-polygon";
 var task_help = "help";
 var task_runAll = "run-all";
 var task_runApi = "run-api";
@@ -21,6 +20,35 @@ var task_testApi = "test-api";
 var task_testApiContract = "test-api-contract";
 var task_testApiIntegration = "test-api-integration";
 var task_testApiUnit = "test-api-unit";
+
+
+Task(task_help)
+    .Does(() =>
+    {
+        var sb = new StringBuilder();
+        sb.AppendLine("BUILD TASKS");
+        sb.AppendLine("  `clean-sql` rebuilds the database");
+        sb.AppendLine("  `build-dotnet` builds all .NET projects");
+        sb.AppendLine("  `gen-client` regenerates the API client portion of the web client");
+        sb.AppendLine("  `build-web` builds web client");
+        sb.AppendLine();
+        sb.AppendLine("RUN TASKS");
+        sb.AppendLine("  `run-api` runs the API");
+        sb.AppendLine("  `run-web` runs the web client server");
+        sb.AppendLine("  `run-all` runs the API and web client servers");
+        sb.AppendLine();
+        sb.AppendLine("TEST TASKS");
+        sb.AppendLine("  `test-api-unit` runs the API unit tests");
+        sb.AppendLine("  `test-api-int` runs the API integration tests");
+        sb.AppendLine("  `test-api-contract` runs the API contract tests (currently may be broken)");
+        sb.AppendLine("  `test-api` runs all API tests (currently may be broken due to contract tests)");
+        sb.AppendLine();
+        sb.AppendLine("MISC TASKS");
+        sb.AppendLine("  `full` does everything");
+        sb.AppendLine("  `help` does this");
+
+        Information(sb.ToString());
+    });
 
 Task(task_buildDotNet)
     .Does(() =>
@@ -74,19 +102,6 @@ Task(task_genClient)
     {
         var path = root + File(@"utils\client-generator\client-generator.fsproj");
         DotNetCoreRun(path);
-    });
-
-Task(task_genPolygon)
-    .Does(() =>
-    {
-        var path = root + File(@"utils\polygon-data-generator\polygon-data-generator.fsproj");
-        DotNetCoreRun(path);
-    });
-
-Task(task_help)
-    .Does(() =>
-    {
-        Information("TODO: Add help info here");
     });
 
 Task(task_runAll)
