@@ -83,6 +83,9 @@ export default class CanvasTransformService{
     }
 
     private getWindowSizeScaleFactor() : number {
-        return 450; //TODO: Make this change based on window or container size later
+        const totalMargin = this.getTotalMarginSize();
+        const usableSize = Geometry.Point.addScalar(this.containerSize, -totalMargin);
+        const maxScale = Geometry.RegularPolygon.largestScaleWithinBox(this.regionCount, usableSize);
+        return maxScale;
     }
 }
