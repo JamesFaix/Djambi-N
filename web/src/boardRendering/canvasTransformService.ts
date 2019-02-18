@@ -20,15 +20,7 @@ export default class CanvasTransformService{
         return Geometry.Transform.compose([
             this.getTransformToCenterBoardInCanvas(),
             this.getTransformToScaleBoard(),
-            this.getTransformToMoveEntireBoardToFirstQuadrant()
         ]);
-    }
-
-    private getTransformToMoveEntireBoardToFirstQuadrant() : MathJs.Matrix {
-        //BoardViews are created with the centroid at (0,0)
-        //Offset so none of the board has negative coordinates, since canvases start at (0,0)
-        const centroidOffset = Geometry.RegularPolygon.sideToCentroidDistanceFromTopLeftRatios(this.regionCount);
-        return Geometry.Transform.translate(centroidOffset);
     }
 
     private getTransformToScaleBoard() : MathJs.Matrix {
@@ -37,12 +29,19 @@ export default class CanvasTransformService{
     }
 
     private getTransformToCenterBoardInCanvas() : MathJs.Matrix {
+        //Boardviews start with their centroid at 0,0.
+        const Point = Geometry.Point;
+
         const canvasSize = this.getSize();
-        const boardSize = this.getBoardSize();
-        let margin = Geometry.Rectangle.marginWithinBox(boardSize, canvasSize);
-        margin = Geometry.Point.multiplyScalar(margin, 0.5);
-        margin = Geometry.Point.addScalar(margin, this.canvasMargin + this.contentPadding);
-        return Geometry.Transform.translate(margin);
+
+        let offset = Point.multiplyScalar(canvasSize, 0.5);
+
+        let centroidToCenterOffset = Geometry.RegularPolygon.sideToCentroidOffsetFromCenterRatios(this.regionCount);
+        centroidToCenterOffset = Point.multiplyScalar(centroidToCenterOffset, this.getScale());
+
+        offset = Point.add(offset, centroidToCenterOffset);
+
+        return Geometry.Transform.translate(offset);
     }
 
     //------

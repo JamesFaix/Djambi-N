@@ -258,7 +258,7 @@ export default class Geometry {
             }
         }
 
-        public static sideToCentroidDistanceFromTopLeftRatios(numberOfSides : number) : Point {
+        public static sideToCentroidOffsetFromTopLeftRatios(numberOfSides : number) : Point {
             /*
                 This function assumes the polygon is positioned with at least 1 edge parallel to the x-axis.
 
@@ -269,12 +269,23 @@ export default class Geometry {
                 For even n, the top will also be parallel and there will be an apothem connecting the center to the top, and
                 For odd n, the top will be a vertex and there will be a radius connecting the center to the top.
             */
-           return {
+            return {
                 x: this.sideToWidthRatio(numberOfSides) / 2,
                 y: this.isEven(numberOfSides)
                     ? this.sideToApothemRatio(numberOfSides)
                     : this.sideToRadiusRatio(numberOfSides)
             };
+        }
+
+        public static sideToCentroidOffsetFromCenterRatios(numberOfSides : number) : Point {
+            const Point = Geometry.Point;
+
+            const centroidOffset = this.sideToCentroidOffsetFromTopLeftRatios(numberOfSides);
+            const centerOffset : Point = {
+                x: this.sideToWidthRatio(numberOfSides) / 2,
+                y: this.sideToHeightRatio(numberOfSides) / 2
+            };
+            return Point.add(centroidOffset, Point.multiplyScalar(centerOffset, -1));
         }
     }
 
