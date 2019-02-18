@@ -18,7 +18,7 @@ export default class Geometry {
             };
         }
 
-         public static multiplyScalar(p : Point, n : number) : Point {
+        public static multiplyScalar(p : Point, n : number) : Point {
             return {
                 x: p.x * n,
                 y: p.y * n
@@ -278,7 +278,17 @@ export default class Geometry {
         }
     }
 
+    public static Rectangle = class {
+        public static largestScaleWithinBox(innerSize : Point, outerSize : Point) : number {
+            const maxXScale = outerSize.x / innerSize.x;
+            const maxYScale = outerSize.y / innerSize.y;
+            return Math.min(maxXScale, maxYScale);
+        }
+    }
+
     public static Transform = class {
+        //https://www.mathworks.com/help/images/matrix-representation-of-geometric-transformations.html
+
         public static compose(transforms : MathJs.Matrix[]) : MathJs.Matrix {
             switch (transforms.length) {
                 case 0:

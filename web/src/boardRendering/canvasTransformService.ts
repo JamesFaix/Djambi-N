@@ -13,12 +13,6 @@ export default class CanvasTransformService{
 
     }
 
-    public getScale() : number {
-        return this.getWindowSizeScaleFactor()
-            * this.getZoomScaleFactor()
-            * this.getBoardTypeScaleFactor();
-    }
-
     public getBoardViewTransform() : MathJs.Matrix {
         const Transform = Geometry.Transform;
 
@@ -43,13 +37,21 @@ export default class CanvasTransformService{
         ]);
     }
 
+    private getCanvasContentAreaSizeWithNoZoom() : Point {
+        return Geometry.Point.addScalar(this.containerSize, -this.canvasMargin);
+    }
+
+    private getBoardPolygonBaseSize() : Point {
+        return Geometry.RegularPolygon.sideToSizeRatios(this.regionCount);
+    }
+
     private getTotalMarginSize() : Point {
         const n = 2 * (this.canvasMargin + this.contentPadding);
         return { x: n, y: n };
     }
 
     private getBoardSize() : Point {
-        let size = Geometry.RegularPolygon.sideToSizeRatios(this.regionCount);
+        let size = this.getBoardPolygonBaseSize();
         size = Geometry.Point.multiplyScalar(size, this.getScale());
         size = Geometry.Point.add(size, this.getTotalMarginSize())
         return size;
@@ -63,8 +65,9 @@ export default class CanvasTransformService{
         };
     }
 
-    private getBoardTypeScaleFactor() : number {
-        return 1 / Geometry.RegularPolygon.sideToHeightRatio(this.regionCount);
+    public getScale() : number {
+        return this.getContainerSizeScaleFactor()
+            * this.getZoomScaleFactor();
     }
 
     public getZoomScaleFactor() : number {
@@ -82,7 +85,10 @@ export default class CanvasTransformService{
         }
     }
 
-    private getWindowSizeScaleFactor() : number {
-        return 450; //TODO: Make this change based on window or container size later
+    private getContainerSizeScaleFactor() : number {
+        let contentAreaSize = this.getCanvasContentAreaSizeWithNoZoom();
+        contentAreaSize = Geometry.Point.addScalar(contentAreaSize, -(2 * this.contentPadding));
+        const boardBaseSize = this.getBoardPolygonBaseSize();
+        return Geometry.Rectangle.largestScaleWithinBox(boardBaseSize, contentAreaSize);
     }
 }
