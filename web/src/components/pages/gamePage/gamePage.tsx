@@ -130,7 +130,7 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
 
         return (
             <div className={Classes.flex} style={containerStyle}>
-                <div style={Styles.width((this.contentSize.x * 0.7) + "px")}>
+                <div style={Styles.width("70%")}>
                     <BoardPanel
                         game={this.state.game}
                         theme={this.props.theme}
@@ -141,7 +141,7 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                         boardMargin={5}
                     />
                 </div>
-                <div style={Styles.width((this.contentSize.x * 0.3) + "px")}>
+                <div style={Styles.width("30%")}>
                     <TurnCyclePanel
                         game={this.state.game}
                         theme={this.props.theme}
