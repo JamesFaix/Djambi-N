@@ -284,6 +284,13 @@ export default class Geometry {
             const maxYScale = outerSize.y / innerSize.y;
             return Math.min(maxXScale, maxYScale);
         }
+
+        public static marginWithinBox(innerSize : Point, outerSize : Point) : Point {
+            return {
+                x: outerSize.x - innerSize.x,
+                y: outerSize.y - innerSize.y
+            };
+        }
     }
 
     public static Transform = class {

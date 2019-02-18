@@ -18,7 +18,7 @@ export default class CanvasTransformService{
     public getBoardViewTransform() : MathJs.Matrix {
         //Order is very important. Last transform gets applied to image first
         return Geometry.Transform.compose([
-            this.getTransformToAddMargin(),
+            this.getTransformToCenterBoardInCanvas(),
             this.getTransformToScaleBoard(),
             this.getTransformToMoveEntireBoardToFirstQuadrant()
         ]);
@@ -36,10 +36,13 @@ export default class CanvasTransformService{
         return Geometry.Transform.scale({ x: scale, y: scale });
     }
 
-    private getTransformToAddMargin() : MathJs.Matrix {
-        //Add a margin for the outline of the board and some whitespace around it within the canvas
-        const margin = this.contentPadding + this.canvasMargin;
-        return Geometry.Transform.translate({ x: margin, y: margin });
+    private getTransformToCenterBoardInCanvas() : MathJs.Matrix {
+        const canvasSize = this.getSize();
+        const boardSize = this.getBoardSize();
+        let margin = Geometry.Rectangle.marginWithinBox(boardSize, canvasSize);
+        margin = Geometry.Point.multiplyScalar(margin, 0.5);
+        margin = Geometry.Point.addScalar(margin, this.canvasMargin + this.contentPadding);
+        return Geometry.Transform.translate(margin);
     }
 
     //------
