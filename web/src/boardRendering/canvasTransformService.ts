@@ -13,29 +13,36 @@ export default class CanvasTransformService{
 
     }
 
-    public getBoardViewTransform() : MathJs.Matrix {
-        const Transform = Geometry.Transform;
+    //--- Transforms ---
 
+    public getBoardViewTransform() : MathJs.Matrix {
+        //Order is very important. Last transform gets applied to image first
+        return Geometry.Transform.compose([
+            this.getTransformToAddMargin(),
+            this.getTransformToScaleBoard(),
+            this.getTransformToMoveEntireBoardToFirstQuadrant()
+        ]);
+    }
+
+    private getTransformToMoveEntireBoardToFirstQuadrant() : MathJs.Matrix {
         //BoardViews are created with the centroid at (0,0)
         //Offset so none of the board has negative coordinates, since canvases start at (0,0)
         const centroidOffset = Geometry.RegularPolygon.sideToCentroidDistanceFromTopLeftRatios(this.regionCount);
-        const centroidOffsetTransform = Transform.translate(centroidOffset);
+        return Geometry.Transform.translate(centroidOffset);
+    }
 
-        //Magnify the board based on screen size, zoom setting, and board type
+    private getTransformToScaleBoard() : MathJs.Matrix {
         const scale = this.getScale();
-        const scaleTransform = Transform.scale({ x: scale, y: scale });
+        return Geometry.Transform.scale({ x: scale, y: scale });
+    }
 
+    private getTransformToAddMargin() : MathJs.Matrix {
         //Add a margin for the outline of the board and some whitespace around it within the canvas
         const margin = this.contentPadding + this.canvasMargin;
-        const marginOffsetTransform = Transform.translate({ x: margin, y: margin });
-
-        //Order is very important. Last transform gets applied to image first
-        return Transform.compose([
-            marginOffsetTransform,
-            scaleTransform,
-            centroidOffsetTransform
-        ]);
+        return Geometry.Transform.translate({ x: margin, y: margin });
     }
+
+    //------
 
     private getCanvasContentAreaSizeWithNoZoom() : Point {
         return Geometry.Point.addScalar(this.containerSize, -this.canvasMargin);
@@ -65,6 +72,8 @@ export default class CanvasTransformService{
         };
     }
 
+    //--- Scale
+
     public getScale() : number {
         return this.getContainerSizeScaleFactor()
             * this.getZoomScaleFactor();
@@ -91,4 +100,6 @@ export default class CanvasTransformService{
         const boardBaseSize = this.getBoardPolygonBaseSize();
         return Geometry.Rectangle.largestScaleWithinBox(boardBaseSize, contentAreaSize);
     }
+
+    //------
 }
