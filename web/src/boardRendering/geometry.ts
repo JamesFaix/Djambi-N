@@ -18,10 +18,24 @@ export default class Geometry {
             };
         }
 
+        public static divide(a : Point, b : Point) : Point {
+            return {
+                x: a.x / b.x,
+                y: a.y / b.y
+            };
+        }
+
         public static multiplyScalar(p : Point, n : number) : Point {
             return {
                 x: p.x * n,
                 y: p.y * n
+            };
+        }
+
+        public static subtract(a : Point, b : Point) : Point {
+            return {
+                x: a.x - b.x,
+                y: a.y - b.y
             };
         }
 
@@ -285,22 +299,14 @@ export default class Geometry {
                 x: this.sideToWidthRatio(numberOfSides) / 2,
                 y: this.sideToHeightRatio(numberOfSides) / 2
             };
-            return Point.add(centroidOffset, Point.multiplyScalar(centerOffset, -1));
+            return Point.subtract(centroidOffset, centerOffset);
         }
     }
 
     public static Rectangle = class {
         public static largestScaleWithinBox(innerSize : Point, outerSize : Point) : number {
-            const maxXScale = outerSize.x / innerSize.x;
-            const maxYScale = outerSize.y / innerSize.y;
-            return Math.min(maxXScale, maxYScale);
-        }
-
-        public static marginWithinBox(innerSize : Point, outerSize : Point) : Point {
-            return {
-                x: outerSize.x - innerSize.x,
-                y: outerSize.y - innerSize.y
-            };
+            const maxScale = Geometry.Point.divide(outerSize, innerSize);
+            return Math.min(maxScale.x, maxScale.y);
         }
     }
 
