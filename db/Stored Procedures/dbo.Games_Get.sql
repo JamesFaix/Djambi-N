@@ -4,7 +4,8 @@ CREATE PROCEDURE [dbo].[Games_Get]
 	@CreatedByUserName NVARCHAR(50),
 	@PlayerUserName NVARCHAR(50),
 	@IsPublic BIT,
-	@AllowGuests BIT
+	@AllowGuests BIT,
+	@GameStatusId TINYINT
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -44,4 +45,5 @@ BEGIN
 		)
 		AND (@IsPublic IS NULL OR @IsPublic = g.IsPublic)
 		AND (@AllowGuests IS NULL OR @AllowGuests = g.AllowGuests)
+		AND (@GameStatusId IS NULL OR @GameStatusId = g.GameStatusId)
 END

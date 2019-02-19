@@ -20,6 +20,7 @@ let getGamesWithoutPlayers (query : GamesQuery) : Game List AsyncHttpResult =
                     .addOption("PlayerUserName", query.playerUserName)
                     .addOption("IsPublic", query.isPublic)
                     .addOption("AllowGuests", query.allowGuests)
+                    .addOption("GameStatusId", query.status |> Option.map mapGameStatusToId)
 
     let cmd = proc("Games_Get", param)
 
@@ -34,6 +35,7 @@ let getGameWithoutPlayers (gameId : int) : Game AsyncHttpResult =
                     .add("PlayerUserName",  null)
                     .add("IsPublic", null)
                     .add("AllowGuests", null)
+                    .add("GameStatusId", null)
 
     let cmd = proc("Games_Get", param)
 

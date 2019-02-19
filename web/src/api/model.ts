@@ -86,6 +86,7 @@ export interface GamesQuery {
 	playerUserName : string,
 	isPublic : boolean,
 	allowGuests : boolean,
+	status : GameStatus,
 }
 
 export interface Piece {
