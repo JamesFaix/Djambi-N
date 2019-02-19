@@ -93,6 +93,27 @@ type GetGamesTests() =
         }
 
     [<Fact>]
+    let ``Get games should filter on status``() =
+        task {
+            //Arrange
+            let! (_, _, game1) = TestUtilities.createuserSessionAndGame(false) |> thenValue
+            let! (_, _, game2) = TestUtilities.createuserSessionAndGame(false) |> thenValue
+            let adminSession = getSessionForUser 3 |> TestUtilities.setSessionIsAdmin true
+
+            let! _ = GameRepository.updateGame({ game1 with status = GameStatus.AbortedWhilePending });
+
+            let query = { GamesQuery.empty with status = Some GameStatus.Pending }
+
+            //Act
+            let! result = GameManager.getGames query adminSession
+                          |> AsyncHttpResult.thenValue
+
+            //Assert
+            result |> shouldNotExist (fun l -> l.id = game1.id)
+            result |> shouldExist (fun l -> l.id = game2.id)
+        }
+
+    [<Fact>]
     let ``Get games should filter non-public games current user is not in, if not admin``() =
         task {
             //Arrange

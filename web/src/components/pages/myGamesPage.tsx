@@ -33,10 +33,11 @@ export default class MyGamesPage extends React.Component<MyGamesPageProps, MyGam
         const query : GamesQuery = {
             gameId: null,
             createdByUserName: null,
-            playerUserName: this.props.user.name,
+            playerUserName: this.props.user.name, //My Games page only shows games where you are a player
             isPublic: null,
             allowGuests: null,
-            descriptionContains: null
+            descriptionContains: null,
+            status: null
         }
 
         this.props.api

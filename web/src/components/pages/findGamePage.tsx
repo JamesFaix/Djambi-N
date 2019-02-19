@@ -1,6 +1,6 @@
 import * as React from 'react';
 import PageTitle from '../pageTitle';
-import { User, Game, GamesQuery } from '../../api/model';
+import { User, Game, GamesQuery, GameStatus } from '../../api/model';
 import ApiClient from '../../api/client';
 import { Redirect } from 'react-router';
 import LinkButton from '../controls/linkButton';
@@ -51,7 +51,8 @@ export default class FindGamePage extends React.Component<FindGamePageProps, Fin
             playerUserName: this.state.playerUserNameFilter,
             isPublic: this.state.isPublicFilter,
             allowGuests: this.state.allowGuestsFilter,
-            descriptionContains: this.state.descriptionContainsFilter
+            descriptionContains: this.state.descriptionContainsFilter,
+            status: GameStatus.Pending //Find Games page only shows pending games that you can join
         }
 
         this.props.api
