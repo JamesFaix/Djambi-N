@@ -64,7 +64,7 @@ module SessionService =
     let private errorIfExpired (session : Session) =
         match session with
         | s when s.expiresOn >= DateTime.UtcNow -> Ok session
-        | _ -> Error <| HttpException(403, "Session expired.")
+        | _ -> Error <| HttpException(401, "Session expired.")
 
     let renewSession(token : string) : Session AsyncHttpResult =
         let renew (s : Session) =

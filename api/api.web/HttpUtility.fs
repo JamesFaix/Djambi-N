@@ -6,6 +6,7 @@ open System.Threading.Tasks
 open Giraffe
 open Microsoft.AspNetCore.Http
 open Newtonsoft.Json
+open Djambi.Api.Common
 open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Common.Json
@@ -15,6 +16,20 @@ open Djambi.Api.Model.SessionModel
 type HttpHandler = HttpFunc -> HttpContext -> HttpContext option Task
 
 module HttpUtility =
+
+    let cookieName = "DjambiSession"
+
+    let appendCookie (ctx : HttpContext) (token : string, expiration : DateTime) =
+        let cookieOptions = new CookieOptions()
+        cookieOptions.Domain <- "localhost" //TODO: (#166) Move this to a config file
+        cookieOptions.Path <- "/"
+        cookieOptions.Secure <- false
+        cookieOptions.HttpOnly <- true
+        cookieOptions.Expires <- DateTimeOffset(expiration) |> Nullable.ofValue
+        ctx.Response.Cookies.Append(cookieName, token, cookieOptions);
+
+    let appendEmptyCookie (ctx : HttpContext) =
+        appendCookie ctx ("", DateTime.MinValue)
 
     let handle<'a> (func : HttpContext -> 'a AsyncHttpResult) : HttpHandler =
 
@@ -37,8 +52,6 @@ module HttpUtility =
                     return! json ex.Message next ctx
             }
 
-    let cookieName = "DjambiSession"
-
     let getSessionOptionFromContext (ctx : HttpContext) : Session option AsyncHttpResult =
         let token = ctx.Request.Cookies.Item(cookieName)
 
@@ -50,14 +63,18 @@ module HttpUtility =
                 return match result with
                         | Ok session -> Ok <| Some(session)
                         | Error ex when ex.statusCode = 404 -> Ok(None)
-                        | Error ex -> Error ex
+                        | Error ex -> 
+                            appendEmptyCookie ctx
+                            Error ex
             }
 
     let getSessionFromContext (ctx : HttpContext) : Session AsyncHttpResult =
         getSessionOptionFromContext ctx
         |> thenBind (fun opt ->
             match opt with
-            | None -> Error <| HttpException(401, "Not signed in.")
+            | None -> 
+                appendEmptyCookie ctx
+                Error <| HttpException(401, "Not signed in.")
             | Some session -> Ok session
         )
 
