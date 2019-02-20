@@ -14,6 +14,7 @@ open Djambi.Api.Db
 open Djambi.Api.Http
 open Djambi.Utilities
 open Djambi.Api.Common.Json
+open Djambi.Api.Web
 
 // ---------------------------------
 // Error handler
@@ -34,6 +35,8 @@ let config = ConfigurationBuilder()
 
 SqlUtility.connectionString <- config.GetConnectionString("Main")
                                      .Replace("{sqlAddress}", env.sqlAddress)
+
+HttpUtility.cookieDomain <- env.cookieDomain
 
 let configureCors (builder : CorsPolicyBuilder) =
     builder.WithOrigins(env.webAddress)
