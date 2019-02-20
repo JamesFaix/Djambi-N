@@ -13,15 +13,15 @@ open Djambi.Api.Logic.Services
 open Djambi.Api.Logic.Managers
 open Djambi.Api.Db.Repositories
 
+let private env = Environment.load(6)
 let private config =
     ConfigurationBuilder()
         .AddJsonFile("appsettings.json", false)
-        .AddJsonFile(Environment.environmentConfigPath(6), false)
         .Build()
 
 let connectionString =
     config.GetConnectionString("Main")
-            .Replace("{sqlAddress}", config.["sqlAddress"])
+            .Replace("{sqlAddress}", env.sqlAddress)
 
 let getCreateUserRequest() : CreateUserRequest =
     {

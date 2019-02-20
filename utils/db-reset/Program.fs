@@ -10,10 +10,10 @@ open Microsoft.Extensions.Configuration
 
 open Djambi.Utilities
 
+let private env = Environment.load(5);
 let private config = 
     ConfigurationBuilder()
         .AddJsonFile("appsettings.json", false)
-        .AddJsonFile(Environment.environmentConfigPath(5), false)
         .Build()
 
 let private getSqlDirectory =
@@ -24,7 +24,7 @@ let private getSqlDirectory =
     Path.Combine(asmDir, relativeDir)
 
 let private getConnectionString name =
-    config.GetConnectionString(name).Replace("{sqlAddress}", config.["sqlAddress"])
+    config.GetConnectionString(name).Replace("{sqlAddress}", env.sqlAddress)
    
 let private masterConnectionString = getConnectionString "master"        
 let private djambiConnectionString = getConnectionString "djambi"
@@ -91,8 +91,8 @@ let createAdminUser() : unit =
     let cmd = sprintf 
                 "INSERT INTO dbo.Users ([Name], [Password], [CreatedOn], [IsAdmin], [FailedLoginAttempts], [LastFailedLoginAttemptOn]) 
                  VALUES (N'%s', N'%s', GETUTCDATE(), 1, 0, NULL)"
-                config.["adminUsername"]
-                config.["adminPassword"]
+                env.adminUsername
+                env.adminPassword
 
     executeCommand djambiConnectionString cmd
 

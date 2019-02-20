@@ -45,10 +45,9 @@ let main argv =
 
     let depthFromRoot = 5
     
-    let root = Environment.rootDirectory(depthFromRoot)
+    let env = Environment.load(depthFromRoot);
     let config = ConfigurationBuilder()
                     .AddJsonFile("appsettings.json", false, true)
-                    .AddJsonFile(Environment.environmentConfigPath(depthFromRoot), false)
                     .Build()
     
     let renderers = 
@@ -56,8 +55,8 @@ let main argv =
             TypeScriptRenderer() :> IRenderer
         ]
 
-    renderModel (renderers, config, root)
-    renderFunctions (renderers, config, root)
+    renderModel (renderers, config, env.root)
+    renderFunctions (renderers, config, env.root)
 
     printfn "Done"
     

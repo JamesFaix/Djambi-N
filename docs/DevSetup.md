@@ -24,6 +24,7 @@
 {
   "sqlAddress": "localhost",               //Address of SQL instance
   "apiAddress": "http://localhost:5100",   //Address used for API
+  "cookieDomain": "localhost",             //Domain to use for cookies
   "webAddress": "http://localhost:8080",   //Address used for web server
   "adminUsername": "admin",                //Username for primary admin user
   "adminPassword": "admin"                 //Password for primary admin user
