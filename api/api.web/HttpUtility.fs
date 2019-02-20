@@ -19,9 +19,11 @@ module HttpUtility =
 
     let cookieName = "DjambiSession"
 
+    let mutable cookieDomain : string = ""
+
     let appendCookie (ctx : HttpContext) (token : string, expiration : DateTime) =
         let cookieOptions = new CookieOptions()
-        cookieOptions.Domain <- "localhost" //TODO: (#166) Move this to a config file
+        cookieOptions.Domain <- cookieDomain
         cookieOptions.Path <- "/"
         cookieOptions.Secure <- false
         cookieOptions.HttpOnly <- true

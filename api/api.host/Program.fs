@@ -14,6 +14,7 @@ open Djambi.Api.Db
 open Djambi.Api.Http
 open Djambi.Utilities
 open Djambi.Api.Common.Json
+open Djambi.Api.Web
 
 // ---------------------------------
 // Error handler
@@ -27,16 +28,18 @@ let errorHandler (ex : Exception) (logger : ILogger) =
 // Config and Main
 // ---------------------------------
 
+let env = Environment.load(5)
 let config = ConfigurationBuilder()
                  .AddJsonFile("appsettings.json", false, true)
-                 .AddJsonFile(Environment.environmentConfigPath(5), false, true) //Working directory is project directory
                  .Build()
 
 SqlUtility.connectionString <- config.GetConnectionString("Main")
-                                     .Replace("{sqlAddress}", config.["sqlAddress"])
+                                     .Replace("{sqlAddress}", env.sqlAddress)
+
+HttpUtility.cookieDomain <- env.cookieDomain
 
 let configureCors (builder : CorsPolicyBuilder) =
-    builder.WithOrigins(config.["webAddress"])
+    builder.WithOrigins(env.webAddress)
            .AllowAnyMethod()
            .AllowAnyHeader()
            .AllowCredentials()
@@ -82,7 +85,7 @@ let configureLogging (builder : ILoggingBuilder) =
 let main _ =
     WebHostBuilder()
         .UseConfiguration(config)
-        .UseUrls(config.["apiAddress"])
+        .UseUrls(env.apiAddress)
         .UseKestrel()
         .UseIISIntegration()
         .ConfigureServices(configureServices)

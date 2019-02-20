@@ -5,7 +5,6 @@ open System.Linq
 open System.Net
 open System.Threading.Tasks
 open FSharp.Control.Tasks
-open Microsoft.Extensions.Configuration
 open Newtonsoft.Json
 open Djambi.Api.WebClient.Model
 open Djambi.Utilities
@@ -19,12 +18,9 @@ let converters =
         SingleFieldUnionJsonConverter() :> JsonConverter
     |]
 
-let private config = 
-    ConfigurationBuilder()
-        .AddJsonFile(Environment.environmentConfigPath(6), false)
-        .Build()
+let private env = Environment.load(6)
 
-let apiAddress = config.["apiAddress"]
+let apiAddress = env.apiAddress
 
 let DELETE = "DELETE";
 let GET = "GET";
