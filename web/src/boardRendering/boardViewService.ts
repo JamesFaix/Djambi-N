@@ -212,7 +212,7 @@ export default class BoardViewService {
             const piece = game.pieces.find(p => p.cellId === c.id);
             const owner = piece ? game.players.find(p => p.id === piece.playerId) : null;
             const colorId = owner ? owner.colorId : null;
-            const pieceView = piece ? { kind: piece.kind, colorId: colorId } : null;
+            const pieceView = piece ? { id : piece.id, kind: piece.kind, colorId: colorId } : null;
 
             return {
                 id: c.id,

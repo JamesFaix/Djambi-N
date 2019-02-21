@@ -32,6 +32,7 @@ export interface CellHighlight {
 }
 
 export interface PieceView {
+    id : number,
     kind : PieceKind,
     colorId : number
 }

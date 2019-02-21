@@ -1,12 +1,14 @@
 import * as React from 'react';
-import { Stage, Layer } from 'react-konva';
-import { BoardView, CellView, CellType } from '../../../../../boardRendering/model';
+import { Stage, Layer, Group, Text } from 'react-konva';
+import { BoardView, CellView, CellType, PieceView } from '../../../../../boardRendering/model';
 import ThemeService from '../../../../../themes/themeService';
 import CanvasCell from './canvasCell';
 import CanvasPiece from './canvasPiece';
 import { Point } from '../../../../../boardRendering/model';
 import Geometry from '../../../../../boardRendering/geometry';
 import CanvasPolygon from './canvasPolygon';
+import CanvasLabel from './canvasLabel';
+import Debug from '../../../../../debug';
 
 export interface CanvasBoardProps {
     board : BoardView,
@@ -59,6 +61,7 @@ export default class CanvasBoard extends React.Component<CanvasBoardProps> {
     }
 
     private renderPieces() {
+        const size = this.getPieceSize();
         return (
             <Layer>
                 {
@@ -70,10 +73,29 @@ export default class CanvasBoard extends React.Component<CanvasBoardProps> {
                                 piece={c.piece}
                                 theme={this.props.theme}
                                 onClick={() => this.props.selectCell(c)}
-                                size={this.getPieceSize()}
+                                size={size}
                                 location={this.getPieceLocation(c)}
                             />
                         )
+                }
+            </Layer>
+        );
+    }
+
+    private renderDebugLabels() {
+        if (!Debug.showPieceAndCellIds){
+            return undefined;
+        }
+
+        return (
+            <Layer>
+                {
+                    this.props.board.cells.map((c, i) =>
+                        <CanvasLabel
+                            key={"label" + i}
+                            cell={c}
+                        />
+                    )
                 }
             </Layer>
         );
@@ -85,6 +107,7 @@ export default class CanvasBoard extends React.Component<CanvasBoardProps> {
                 {this.renderBackground()}
                 {this.renderCells()}
                 {this.renderPieces()}
+                {this.renderDebugLabels()}
             </Stage>
         );
     }
