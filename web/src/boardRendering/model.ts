@@ -1,4 +1,4 @@
-import { PieceKind } from "../api/model";
+import { PieceKind, Location } from "../api/model";
 
 export interface Point {
     x : number,
@@ -39,6 +39,7 @@ export interface PieceView {
 
 export interface CellView {
     id : number,
+    locations : Location[],
     type : CellType,
     state : CellState,
     piece : PieceView,
@@ -50,4 +51,11 @@ export interface BoardView {
     cellCountPerSide : number,
     polygon : Polygon,
     cells : CellView[]
+}
+
+export interface Rectangle {
+    top : number,
+    left : number,
+    bottom : number,
+    right : number
 }

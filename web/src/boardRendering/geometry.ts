@@ -1,4 +1,4 @@
-import { Point, Line, Polygon, CellView, BoardView } from "./model";
+import { Point, Line, Polygon, CellView, BoardView, Rectangle } from "./model";
 import * as MathJs from 'mathjs';
 
 export default class Geometry {
@@ -430,9 +430,21 @@ export default class Geometry {
             return { x: sumX/n, y: sumY/n };
         }
 
+        public static rectangle(c : CellView) : Rectangle {
+            const xs = c.polygons.map(p => p.vertices.map(v => v.x)).reduce((a, b) => a.concat(b));
+            const ys = c.polygons.map(p => p.vertices.map(v => v.y)).reduce((a, b) => a.concat(b));
+            return {
+                left: Math.min(...xs),
+                right: Math.max(...xs),
+                top: Math.min(...ys),
+                bottom: Math.max(...ys)
+            };
+        }
+
         public static transform(c: CellView, matrix : MathJs.Matrix) : CellView {
             return {
                 id: c.id,
+                locations: c.locations,
                 type: c.type,
                 state: c.state,
                 piece: c.piece,

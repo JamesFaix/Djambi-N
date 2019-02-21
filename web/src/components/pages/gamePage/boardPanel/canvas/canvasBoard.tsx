@@ -94,6 +94,7 @@ export default class CanvasBoard extends React.Component<CanvasBoardProps> {
                         <CanvasLabel
                             key={"label" + i}
                             cell={c}
+                            onClick={() => this.props.selectCell(c)}
                         />
                     )
                 }
