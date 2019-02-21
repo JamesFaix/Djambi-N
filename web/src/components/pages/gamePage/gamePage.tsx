@@ -97,7 +97,9 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
     render() {
         return (
             <div>
-                <PageTitle label={"Game"}/>
+                <br/>
+                <br/>
+                <br/>
                 <br/>
                 <div className={Classes.centerAligned}>
                     <LinkButton label="Home" to={Routes.dashboard()}/>
