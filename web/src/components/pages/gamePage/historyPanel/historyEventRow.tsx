@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Event, EventKind, Effect, Game, EffectKind, PlayerRemovedEffect, Player } from '../../../../api/model';
+import { Event, EventKind, Effect, Game, EffectKind, PlayerRemovedEffect, Player, Board } from '../../../../api/model';
 import DateService from '../../../../dateService';
 import HistoryEffectRow from './historyEffectRow';
 import * as Sprintf from 'sprintf-js';
@@ -12,6 +12,7 @@ export interface HistoryEventRowProps {
     theme : ThemeService,
     isEffectVisible : (f : Effect) => boolean,
     textStyle : React.CSSProperties
+    getBoard : (regionCount : number) => Board
 }
 
 export default class HistoryEventRow extends React.Component<HistoryEventRowProps> {
@@ -50,6 +51,7 @@ export default class HistoryEventRow extends React.Component<HistoryEventRowProp
                                         game={this.props.game}
                                         effect={f}
                                         theme={this.props.theme}
+                                        getBoard={n => this.props.getBoard(n)}
                                     />
                                 )
                         }

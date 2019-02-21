@@ -2,37 +2,24 @@ import { Location, Board, Game } from "../api/model";
 import { Polygon, Line } from "./model";
 import Geometry from "./geometry";
 import { BoardView, CellView, CellType, CellState } from "./model";
-import ApiClient from "../api/client";
-import { number } from "prop-types";
+import BoardService from "../boardService";
 
 export default class BoardViewService {
-    private readonly boardCache : any;
     private readonly emptyBoardViewCache : any;
-    private readonly api : ApiClient;
 
-    constructor(api : ApiClient) {
-        this.boardCache = {};
+    constructor(
+        private readonly boardService : BoardService
+    ) {
         this.emptyBoardViewCache = {};
-        this.api = api;
     }
 
     public async getBoardView(game : Game) : Promise<BoardView> {
-        const b = await this.getBoard(game.parameters.regionCount);
+        const b = await this.boardService.getBoard(game.parameters.regionCount);
         const bv = this.getEmptyBoardView(b);
         return BoardViewService.updateBoardView(bv, game);
     }
 
     //--- Caching ---
-
-    private async getBoard (regionCount : number) : Promise<Board> {
-        //The board returned from the API of each regionCount is always the same, so it can be cached.
-        let b = this.boardCache[regionCount];
-        if (!b) {
-            b = await this.api.getBoard(regionCount);
-            this.boardCache[regionCount] = b;
-        }
-        return b;
-    }
 
     private getEmptyBoardView(board : Board) : BoardView {
         //The empty state of a board with the same dimensions is always the same, so it can be cached.

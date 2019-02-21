@@ -1,12 +1,14 @@
 import * as React from 'react';
 import * as Sprintf from 'sprintf-js';
 import ThemeService from '../../../../themes/themeService';
-import { Game, Effect, EffectKind, GameStatusChangedEffect, PieceKilledEffect, PlayerAddedEffect, PieceMovedEffect, PlayerKind, PlayerEliminatedEffect, PlayerOutOfMovesEffect, PlayerRemovedEffect, PieceKind, Piece, NeutralPlayerAddedEffect, PieceAbandonedEffect, PieceEnlistedEffect, PieceDroppedEffect, PieceVacatedEffect, TurnCycleAdvancedEffect, TurnCyclePlayerFellFromPowerEffect, TurnCyclePlayerRemovedEffect, TurnCyclePlayerRoseToPowerEffect } from '../../../../api/model';
+import { Game, Effect, EffectKind, GameStatusChangedEffect, PieceKilledEffect, PlayerAddedEffect, PieceMovedEffect, PlayerKind, PlayerEliminatedEffect, PlayerOutOfMovesEffect, PlayerRemovedEffect, PieceKind, Piece, NeutralPlayerAddedEffect, PieceAbandonedEffect, PieceEnlistedEffect, PieceDroppedEffect, PieceVacatedEffect, TurnCycleAdvancedEffect, TurnCyclePlayerFellFromPowerEffect, TurnCyclePlayerRemovedEffect, TurnCyclePlayerRoseToPowerEffect, Board } from '../../../../api/model';
+import CopyService from '../../../../copyService';
 
 export interface HistoryEffectRowProps {
     game : Game,
     effect : Effect,
-    theme : ThemeService
+    theme : ThemeService,
+    getBoard : (regionCount : number) => Board
 }
 
 export default class HistoryEffectRow extends React.Component<HistoryEffectRowProps> {
@@ -81,7 +83,7 @@ export default class HistoryEffectRow extends React.Component<HistoryEffectRowPr
         const template = this.props.theme.getEffectMessageTemplate(effect);
         const f = effect.value as PieceAbandonedEffect;
         return Sprintf.sprintf(template, {
-            piece: this.getPieceIdentifier(f.oldPiece)
+            piece: this.getPieceLabel(f.oldPiece)
         });
     }
 
@@ -89,8 +91,8 @@ export default class HistoryEffectRow extends React.Component<HistoryEffectRowPr
         const template = this.props.theme.getEffectMessageTemplate(effect);
         const f = effect.value as PieceDroppedEffect;
         return Sprintf.sprintf(template, {
-            piece: this.getPieceIdentifier(f.oldPiece),
-            newCell: f.newCellId.toString()
+            piece: this.getPieceLabel(f.oldPiece),
+            newCell: this.getCellLabel(f.newCellId)
         });
     }
 
@@ -98,8 +100,8 @@ export default class HistoryEffectRow extends React.Component<HistoryEffectRowPr
         const template = this.props.theme.getEffectMessageTemplate(effect);
         const f = effect.value as PieceEnlistedEffect;
         return Sprintf.sprintf(template, {
-            piece: this.getPieceIdentifier(f.oldPiece),
-            newPlayer: this.getPlayerName(f.newPlayerId)
+            piece: this.getPieceLabel(f.oldPiece),
+            newPlayer: this.getPlayerLabel(f.newPlayerId)
         });
     }
 
@@ -107,7 +109,7 @@ export default class HistoryEffectRow extends React.Component<HistoryEffectRowPr
         const template = this.props.theme.getEffectMessageTemplate(effect);
         const f = effect.value as PieceKilledEffect;
         return Sprintf.sprintf(template, {
-            piece: this.getPieceIdentifier(f.oldPiece)
+            piece: this.getPieceLabel(f.oldPiece)
         });
     }
 
@@ -115,9 +117,9 @@ export default class HistoryEffectRow extends React.Component<HistoryEffectRowPr
         const template = this.props.theme.getEffectMessageTemplate(effect);
         const f = effect.value as PieceMovedEffect;
         return Sprintf.sprintf(template, {
-            piece: this.getPieceIdentifier(f.oldPiece),
-            oldCell : f.oldPiece.cellId.toString(),
-            newCell : f.newCellId.toString()
+            piece: this.getPieceLabel(f.oldPiece),
+            oldCell : this.getCellLabel(f.oldPiece.cellId),
+            newCell : this.getCellLabel(f.newCellId)
         });
     }
 
@@ -125,7 +127,7 @@ export default class HistoryEffectRow extends React.Component<HistoryEffectRowPr
         const template = this.props.theme.getEffectMessageTemplate(effect);
         const f = effect.value as PieceVacatedEffect;
         return Sprintf.sprintf(template, {
-            piece: this.getPieceIdentifier(f.oldPiece),
+            piece: this.getPieceLabel(f.oldPiece),
             newCell: f.newCellId.toString(),
             center: this.props.theme.getCenterCellName()
         });
@@ -143,7 +145,7 @@ export default class HistoryEffectRow extends React.Component<HistoryEffectRowPr
         const template = this.props.theme.getEffectMessageTemplate(effect);
         const f = effect.value as PlayerEliminatedEffect;
         return Sprintf.sprintf(template, {
-            player: this.getPlayerName(f.playerId)
+            player: this.getPlayerLabel(f.playerId)
         });
     }
 
@@ -151,7 +153,7 @@ export default class HistoryEffectRow extends React.Component<HistoryEffectRowPr
         const template = this.props.theme.getEffectMessageTemplate(effect);
         const f = effect.value as PlayerOutOfMovesEffect;
         return Sprintf.sprintf(template,  {
-            player: this.getPlayerName(f.playerId)
+            player: this.getPlayerLabel(f.playerId)
         });
     }
 
@@ -159,7 +161,7 @@ export default class HistoryEffectRow extends React.Component<HistoryEffectRowPr
         const template = this.props.theme.getEffectMessageTemplate(effect);
         const f = effect.value as PlayerRemovedEffect;
         return Sprintf.sprintf(template,  {
-            player: this.getPlayerName(f.playerId)
+            player: this.getPlayerLabel(f.playerId)
         });
     }
 
@@ -167,7 +169,7 @@ export default class HistoryEffectRow extends React.Component<HistoryEffectRowPr
         const template = this.props.theme.getEffectMessageTemplate(effect);
         const f = effect.value as TurnCycleAdvancedEffect;
         return Sprintf.sprintf(template, {
-            newCycle: f.newValue.map(id => this.getPlayerName(id)).join(",")
+            newCycle: f.newValue.map(id => this.getPlayerLabel(id)).join(",")
         });
     }
 
@@ -175,8 +177,8 @@ export default class HistoryEffectRow extends React.Component<HistoryEffectRowPr
         const template = this.props.theme.getEffectMessageTemplate(effect);
         const f = effect.value as TurnCyclePlayerFellFromPowerEffect;
         return Sprintf.sprintf(template, {
-            player: this.getPlayerName(f.playerId),
-            newCycle: f.newValue.map(id => this.getPlayerName(id)).join(",")
+            player: this.getPlayerLabel(f.playerId),
+            newCycle: f.newValue.map(id => this.getPlayerLabel(id)).join(",")
         });
     }
 
@@ -184,8 +186,8 @@ export default class HistoryEffectRow extends React.Component<HistoryEffectRowPr
         const template = this.props.theme.getEffectMessageTemplate(effect);
         const f = effect.value as TurnCyclePlayerRemovedEffect;
         return Sprintf.sprintf(template, {
-            player: this.getPlayerName(f.playerId),
-            newCycle: f.newValue.map(id => this.getPlayerName(id)).join(",")
+            player: this.getPlayerLabel(f.playerId),
+            newCycle: f.newValue.map(id => this.getPlayerLabel(id)).join(",")
         });
     }
 
@@ -193,14 +195,14 @@ export default class HistoryEffectRow extends React.Component<HistoryEffectRowPr
         const template = this.props.theme.getEffectMessageTemplate(effect);
         const f = effect.value as TurnCyclePlayerRoseToPowerEffect;
         return Sprintf.sprintf(template, {
-            player: this.getPlayerName(f.playerId),
-            newCycle: f.newValue.map(id => this.getPlayerName(id)).join(",")
+            player: this.getPlayerLabel(f.playerId),
+            newCycle: f.newValue.map(id => this.getPlayerLabel(id)).join(",")
         });
     }
 
     //---Helpers---
 
-    private getPieceIdentifier(piece : Piece) : string {
+    private getPieceLabel(piece : Piece) : string {
         const kindName = this.props.theme.getPieceName(piece.kind);
         if (piece.kind === PieceKind.Corpse) {
             return kindName;
@@ -212,7 +214,19 @@ export default class HistoryEffectRow extends React.Component<HistoryEffectRowPr
             : Sprintf.sprintf("Neutral %s", kindName);
     }
 
-    private getPlayerName(playerId : number) : string {
+    private getPlayerLabel(playerId : number) : string {
         return this.props.game.players.find(p => p.id === playerId).name;
+    }
+
+    private getCellLabel(cellId : number) : string {
+        //The first time the board is needed it must be fetched from the API.
+        //To avoid making this asynchronous, this just skips the API call if the board is not already cached.
+        const board = this.props.getBoard(this.props.game.parameters.regionCount);
+        if (board) {
+            const cell = board.cells.find(c => c.id === cellId);
+            return CopyService.locationToString(cell.locations[0]);
+        } else {
+            return cellId.toString();
+        }
     }
 }

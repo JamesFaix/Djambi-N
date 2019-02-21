@@ -1,8 +1,7 @@
 import * as React from 'react';
 import ApiClient from '../../../api/client';
-import { User, Game, Event, EventsQuery, ResultsDirection } from '../../../api/model';
+import { User, Game, Event, EventsQuery, ResultsDirection, Board } from '../../../api/model';
 import LinkButton from '../../controls/linkButton';
-import PageTitle from '../../pageTitle';
 import Routes from '../../../routes';
 import ThemeService from '../../../themes/themeService';
 import { BoardView, CellView, CellState, Point } from '../../../boardRendering/model';
@@ -20,7 +19,8 @@ export interface GamePageProps {
     api : ApiClient,
     gameId : number,
     theme : ThemeService,
-    boardViewService : BoardViewService
+    boardViewService : BoardViewService,
+    getBoard : (regionCount : number) => Board
 }
 
 export interface GamePageState {
@@ -174,6 +174,7 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                         height={"350px"}
                         width={"100%"}
                         textStyle={textStyle}
+                        getBoard={n => this.props.getBoard(n)}
                     />
                 </div>
             </div>
