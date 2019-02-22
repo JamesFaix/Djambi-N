@@ -5,8 +5,6 @@ import { Redirect } from 'react-router';
 import LinkButton from '../../controls/linkButton';
 import ActionButton from '../../controls/actionButton';
 import GameInfoPlayersTable from './gameInfoPlayersTable';
-import Routes from '../../../routes';
-import { Classes } from '../../../styles';
 import { Kernel as K } from '../../../kernel';
 
 export interface GameInfoPageProps {
@@ -59,7 +57,7 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
             || newGame.status === GameStatus.AbortedWhilePending) {
             this.setState({
                 game : newGame,
-                redirectUrl: Routes.home()
+                redirectUrl: K.routes.home()
             });
         } else {
             this.setState({game : newGame});
@@ -70,7 +68,7 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
         K.api
             .startGame(this.state.game.id)
             .then(_ => {
-                this.setState({ redirectUrl : Routes.game(this.state.game.id) });
+                this.setState({ redirectUrl : K.routes.game(this.state.game.id) });
             })
             .catch(reason => {
                 alert("Game start failed because " + reason);
@@ -85,8 +83,8 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
         }
 
         return (
-            <div className={Classes.table}>
-                <div className={Classes.centerAligned}>
+            <div className={K.classes.table}>
+                <div className={K.classes.centerAligned}>
                     {this.renderGameDescription(game)}
                     {this.renderGameOptions(game)}
                     <p>{game.parameters.regionCount + " regions"}</p>
@@ -125,7 +123,7 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
             case GameStatus.Pending:
                 return (
                     //Only creator can start game, and only with > 1 players
-                    <div className={Classes.centerAligned}>
+                    <div className={K.classes.centerAligned}>
                         Pending
                         { this.props.user.id === game.createdByUserId
                             && game.players.length >= 2
@@ -140,22 +138,22 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
 
             case GameStatus.Started:
                 return (
-                    <div className={Classes.centerAligned}>
+                    <div className={K.classes.centerAligned}>
                         Started
-                        <LinkButton label="Enter" to={Routes.game(this.state.game.id)} />
+                        <LinkButton label="Enter" to={K.routes.game(this.state.game.id)} />
                     </div>
                 );
 
             case GameStatus.Finished:
                 return (
-                    <div className={Classes.centerAligned}>
+                    <div className={K.classes.centerAligned}>
                         Finished
                     </div>
                 );
             case GameStatus.Aborted:
             case GameStatus.AbortedWhilePending:
                 return (
-                    <div className={Classes.centerAligned}>
+                    <div className={K.classes.centerAligned}>
                         Aborted
                     </div>
                 );
@@ -165,7 +163,7 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
     render() {
         //Go to home if not logged in
         if (this.props.user === null) {
-            return <Redirect to={Routes.home()}/>;
+            return <Redirect to={K.routes.home()}/>;
         }
 
         if (this.state.redirectUrl !== null) {
@@ -176,11 +174,11 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
             <div>
                 <PageTitle label={"Game Info"}/>
                 <br/>
-                <div className={Classes.centerAligned}>
-                    <LinkButton label="Home" to={Routes.dashboard()}/>
-                    <LinkButton label="My Games" to={Routes.myGames()}/>
-                    <LinkButton label="Create Game" to={Routes.createGame()}/>
-                    <LinkButton label="Find Game" to={Routes.findGame()}/>
+                <div className={K.classes.centerAligned}>
+                    <LinkButton label="Home" to={K.routes.dashboard()}/>
+                    <LinkButton label="My Games" to={K.routes.myGames()}/>
+                    <LinkButton label="Create Game" to={K.routes.createGame()}/>
+                    <LinkButton label="Find Game" to={K.routes.findGame()}/>
                 </div>
                 {this.renderLobbyDetails(this.state.game)}
                 <br/>

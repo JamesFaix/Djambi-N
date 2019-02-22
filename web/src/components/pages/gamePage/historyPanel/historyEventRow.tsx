@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { Event, EventKind, Effect, Game, EffectKind, PlayerRemovedEffect, Player } from '../../../../api/model';
-import DateService from '../../../../dateService';
 import HistoryEffectRow from './historyEffectRow';
 import * as Sprintf from 'sprintf-js';
-import { Classes, Styles } from '../../../../styles';
 import {Kernel as K} from '../../../../kernel';
 
 export interface HistoryEventRowProps {
@@ -21,25 +19,25 @@ export default class HistoryEventRow extends React.Component<HistoryEventRowProp
         let style;
         if (player !== null) {
             const color = K.theme.getPlayerColor(player.colorId);
-            style = Styles.playerGlow(color);
+            style = K.styles.playerGlow(color);
         }
-        const cellStyle = Styles.combine([Styles.width("50%"), Styles.padding("10px 10px 0px 10px")]);
+        const cellStyle = K.styles.combine([K.styles.width("50%"), K.styles.padding("10px 10px 0px 10px")]);
         return (
             <tr style={style}>
-                <td style={Styles.noPadding}>
-                    <table style={Styles.width("100%")}>
+                <td style={K.styles.noPadding}>
+                    <table style={K.styles.width("100%")}>
                         <tbody>
                             <tr>
-                                <td className={Classes.borderless} style={cellStyle}>
+                                <td className={K.classes.borderless} style={cellStyle}>
                                     {this.getEventMessage(this.props.game, e)}
                                 </td>
-                                <td className={Classes.combine([Classes.borderless, Classes.lightText, Classes.rightAligned])} style={cellStyle}>
-                                    {DateService.format(e.createdOn)}
+                                <td className={K.classes.combine([K.classes.borderless, K.classes.lightText, K.classes.rightAligned])} style={cellStyle}>
+                                    {K.dates.format(e.createdOn)}
                                 </td>
                             </tr>
                         </tbody>
                     </table>
-                    <div className={Classes.indented} style={this.props.textStyle}>
+                    <div className={K.classes.indented} style={this.props.textStyle}>
                         {
                             e.effects
                                 .filter(f => this.props.isEffectVisible(f))

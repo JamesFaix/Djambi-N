@@ -2,13 +2,11 @@ import * as React from 'react';
 import { User, Game, Event, EventsQuery, ResultsDirection } from '../../../api/model';
 import LinkButton from '../../controls/linkButton';
 import PageTitle from '../../pageTitle';
-import Routes from '../../../routes';
 import { BoardView, CellView, CellState, Point } from '../../../boardRendering/model';
 import CurrentTurnPanel from './currentTurnPanel';
 import TurnCyclePanel from './turnCyclePanel';
 import PlayersPanel from './playersPanel/playersPanel';
 import HistoryPanel from './historyPanel/historyPanel';
-import { Classes, Styles } from '../../../styles';
 import BoardPanel from './boardPanel/boardPanel';
 import Geometry from '../../../boardRendering/geometry';
 import {Kernel as K} from '../../../kernel';
@@ -94,9 +92,9 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
             <div>
                 <PageTitle label={"Game"}/>
                 <br/>
-                <div className={Classes.centerAligned}>
-                    <LinkButton label="Home" to={Routes.dashboard()}/>
-                    <LinkButton label="Rules" to={Routes.rules()} newWindow={true}/>
+                <div className={K.classes.centerAligned}>
+                    <LinkButton label="Home" to={K.routes.dashboard()}/>
+                    <LinkButton label="Rules" to={K.routes.rules()} newWindow={true}/>
                 </div>
                 <br/>
                 {this.renderPanels()}
@@ -110,13 +108,13 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
             return "";
         }
 
-        const containerStyle = Styles.combine([
-            Styles.noMargin,
-            Styles.width(this.contentSize.x + "px"),
-            Styles.height(this.contentSize.y + "px")
+        const containerStyle = K.styles.combine([
+            K.styles.noMargin,
+            K.styles.width(this.contentSize.x + "px"),
+            K.styles.height(this.contentSize.y + "px")
         ]);
 
-        const textStyle = Styles.lineHeight("8px");
+        const textStyle = K.styles.lineHeight("8px");
 
         const boardPanelSize = {
             x: this.contentSize.x * 0.7,
@@ -124,8 +122,8 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
         };
 
         return (
-            <div className={Classes.flex} style={containerStyle}>
-                <div style={Styles.width("70%")}>
+            <div className={K.classes.flex} style={containerStyle}>
+                <div style={K.styles.width("70%")}>
                     <BoardPanel
                         game={this.state.game}
                         boardView={this.state.boardView}
@@ -135,7 +133,7 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                         boardMargin={5}
                     />
                 </div>
-                <div style={Styles.width("30%")}>
+                <div style={K.styles.width("30%")}>
                     <TurnCyclePanel
                         game={this.state.game}
                         iconSize={"20px"}

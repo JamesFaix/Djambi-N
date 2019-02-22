@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Game, Player, PlayerKind } from '../../../../api/model';
-import { Classes, Styles } from '../../../../styles';
 import {Kernel as K} from '../../../../kernel';
 
 export interface PlayersPanelTableProps {
@@ -33,13 +32,13 @@ export default class PlayersPanelTable extends React.Component<PlayersPanelTable
         const color = K.theme.getPlayerColor(player.colorId);
         return (
             <tr
-                style={Styles.playerGlow(color)}
+                style={K.styles.playerGlow(color)}
                 key={"row" + rowNumber}
             >
-                <td className={Classes.borderless}>
+                <td className={K.classes.borderless}>
                     {player.name}
                 </td>
-                <td className={Classes.combine([Classes.borderless, Classes.lightText])}>
+                <td className={K.classes.combine([K.classes.borderless, K.classes.lightText])}>
                     {this.getPlayerNote(player)}
                 </td>
             </tr>
@@ -48,8 +47,8 @@ export default class PlayersPanelTable extends React.Component<PlayersPanelTable
 
     render() {
         return (
-            <div className={Classes.flex}>
-                <table className={Classes.combine([Classes.table, Classes.fullWidth])}>
+            <div className={K.classes.flex}>
+                <table className={K.classes.combine([K.classes.table, K.classes.fullWidth])}>
                     <tbody>
                         {
                             this.props.game.players

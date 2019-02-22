@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Game } from '../../../../api/model';
 import PlayersPanelTable from './playersPanelTable';
-import { Classes, Styles } from '../../../../styles';
+import { Kernel as K } from '../../../../kernel';
 
 export interface PlayersPanelProps {
     game : Game,
@@ -11,9 +11,9 @@ export interface PlayersPanelProps {
 
 export default class PlayersPanel extends React.Component<PlayersPanelProps> {
     render() {
-        const style = Styles.combine([Styles.height(this.props.height), Styles.width(this.props.width)]);
+        const style = K.styles.combine([K.styles.height(this.props.height), K.styles.width(this.props.width)]);
         return (
-            <div className={Classes.thinBorder} style={style}>
+            <div className={K.classes.thinBorder} style={style}>
                 Players
                 <PlayersPanelTable
                     game={this.props.game}

@@ -11,9 +11,8 @@ import MyGamesPage from './pages/myGamesPage';
 import CreateGamePage from './pages/createGamePage';
 import FindGamePage from './pages/findGamePage';
 import GameInfoPage from './pages/gameInfoPage/gameInfoPage';
-import Routes from '../routes';
 import "../index.css";
-import { Kernel } from '../kernel';
+import { Kernel as K } from '../kernel';
 
 export interface AppProps {
 
@@ -27,7 +26,7 @@ export default class App extends React.Component<AppProps, AppState> {
     constructor(props : AppProps) {
         super(props);
 
-        Kernel.initialize();
+        K.initialize();
 
         this.state = {
             user : null
@@ -40,7 +39,7 @@ export default class App extends React.Component<AppProps, AppState> {
                 <TopMenu/>
                 <Switch>
                     <Route
-                        exact path={Routes.home()}
+                        exact path={K.routes.home()}
                         render={_ =>
                             <HomePage
                                 user={this.state.user}
@@ -49,7 +48,7 @@ export default class App extends React.Component<AppProps, AppState> {
                         }
                     />
                     <Route
-                        path={Routes.signup()}
+                        path={K.routes.signup()}
                         render={_ =>
                             <SignupPage
                                 user={this.state.user}
@@ -58,7 +57,7 @@ export default class App extends React.Component<AppProps, AppState> {
                         }
                     />
                     <Route
-                        path={Routes.login()}
+                        path={K.routes.login()}
                         render={_ =>
                             <LoginPage
                                 user={this.state.user}
@@ -67,7 +66,7 @@ export default class App extends React.Component<AppProps, AppState> {
                         }
                     />
                     <Route
-                        path={Routes.dashboard()}
+                        path={K.routes.dashboard()}
                         render={_ =>
                             <DashboardPage
                                 user={this.state.user}
@@ -76,7 +75,7 @@ export default class App extends React.Component<AppProps, AppState> {
                         }
                     />
                     <Route
-                        path={Routes.myGames()}
+                        path={K.routes.myGames()}
                         render={_ =>
                             <MyGamesPage
                                 user={this.state.user}
@@ -84,7 +83,7 @@ export default class App extends React.Component<AppProps, AppState> {
                         }
                     />
                     <Route
-                        path={Routes.createGame()}
+                        path={K.routes.createGame()}
                         render={_ =>
                             <CreateGamePage
                                 user={this.state.user}
@@ -92,7 +91,7 @@ export default class App extends React.Component<AppProps, AppState> {
                         }
                     />
                     <Route
-                        path={Routes.findGame()}
+                        path={K.routes.findGame()}
                         render={_ =>
                             <FindGamePage
                                 user={this.state.user}
@@ -100,7 +99,7 @@ export default class App extends React.Component<AppProps, AppState> {
                         }
                     />
                     <Route
-                        path={Routes.gameInfoTemplate()}
+                        path={K.routes.gameInfoTemplate()}
                         render={props =>
                             <GameInfoPage
                                 user={this.state.user}
@@ -109,7 +108,7 @@ export default class App extends React.Component<AppProps, AppState> {
                         }
                     />
                     <Route
-                        path={Routes.gameTemplate()}
+                        path={K.routes.gameTemplate()}
                         render={props =>
                             <GamePage
                                 user={this.state.user}

@@ -6,8 +6,6 @@ import { Redirect } from 'react-router';
 import LinkButton from '../controls/linkButton';
 import ActionButton from '../controls/actionButton';
 import { InputTypes } from '../../constants';
-import Routes from '../../routes';
-import { Classes } from '../../styles';
 import {Kernel as K} from '../../kernel';
 
 export interface SignupPageProps {
@@ -78,20 +76,20 @@ export default class SignupPage extends React.Component<SignupPageProps, SignupP
     render() {
         //Go straight to dashboard if already logged in
         if (this.props.user !== null) {
-            return <Redirect to={Routes.dashboard()}/>
+            return <Redirect to={K.routes.dashboard()}/>
         }
 
         return (
             <div>
                 <PageTitle label="Sign up"/>
                 <br/>
-                <div className={Classes.centerAligned}>
-                    <LinkButton label="Home" to={Routes.home()} />
-                    <LinkButton label="Login" to={Routes.login()} />
+                <div className={K.classes.centerAligned}>
+                    <LinkButton label="Home" to={K.routes.home()} />
+                    <LinkButton label="Login" to={K.routes.login()} />
                 </div>
                 <br/>
                 <br/>
-                <div className={Classes.form}>
+                <div className={K.classes.form}>
                     <LabeledInput
                         label="Username"
                         type={InputTypes.Text}
@@ -107,7 +105,7 @@ export default class SignupPage extends React.Component<SignupPageProps, SignupP
                     />
                     <br/>
                 </div>
-                <div className={Classes.centerAligned}>
+                <div className={K.classes.centerAligned}>
                     <ActionButton label="Submit" onClick={() => this.submitOnClick()}/>
                 </div>
             </div>

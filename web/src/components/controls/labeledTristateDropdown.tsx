@@ -1,6 +1,6 @@
 import * as React from 'react';
 import TristateDropdown from './tristateDropdown';
-import { Classes } from '../../styles';
+import { Kernel as K } from '../../kernel';
 
 export interface LabeledTristateDropdownProps {
     label : string,
@@ -13,7 +13,7 @@ export default class LabeledTristateDropdown extends React.Component<LabeledTris
     render() {
         return (
             <div
-                className={Classes.labeledTextBox}
+                className={K.classes.labeledTextBox}
                 title={this.props.tip}
             >
                 <label>{this.props.label}:</label>

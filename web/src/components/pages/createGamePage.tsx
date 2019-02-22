@@ -6,8 +6,6 @@ import LinkButton from '../controls/linkButton';
 import LabeledInput from '../controls/labeledInput';
 import ActionButton from '../controls/actionButton';
 import Constants, { InputTypes } from '../../constants';
-import Routes from '../../routes';
-import { Classes } from '../../styles';
 import {Kernel as K} from '../../kernel';
 
 export interface CreateGamePageProps {
@@ -86,26 +84,26 @@ export default class CreateGamePage extends React.Component<CreateGamePageProps,
     render() {
         //Go to home if not logged in
         if (this.props.user === null) {
-            return <Redirect to={Routes.home()}/>;
+            return <Redirect to={K.routes.home()}/>;
         }
 
         //If game created, redirect to info page for that game
         if (this.state.gameId !== null) {
-            return <Redirect to={Routes.gameInfo(this.state.gameId)}/>;
+            return <Redirect to={K.routes.gameInfo(this.state.gameId)}/>;
         }
 
         return (
             <div>
                 <PageTitle label={"Create Game"}/>
                 <br/>
-                <div className={Classes.centerAligned}>
-                    <LinkButton label="Home" to={Routes.dashboard()}/>
-                    <LinkButton label="My Games" to={Routes.myGames()}/>
-                    <LinkButton label="Find Game" to={Routes.findGame()}/>
+                <div className={K.classes.centerAligned}>
+                    <LinkButton label="Home" to={K.routes.dashboard()}/>
+                    <LinkButton label="My Games" to={K.routes.myGames()}/>
+                    <LinkButton label="Find Game" to={K.routes.findGame()}/>
                 </div>
                 <br/>
                 <br/>
-                <div className={Classes.form}>
+                <div className={K.classes.form}>
                     <LabeledInput
                         label="Regions"
                         type={InputTypes.Number}
@@ -142,7 +140,7 @@ export default class CreateGamePage extends React.Component<CreateGamePageProps,
                     />
                     <br/>
                 </div>
-                <div className={Classes.centerAligned}>
+                <div className={K.classes.centerAligned}>
                     <ActionButton label="Submit" onClick={() => this.submitOnClick()}/>
                 </div>
             </div>

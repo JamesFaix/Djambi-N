@@ -1,6 +1,6 @@
 import * as React from 'react';
 import ActionButton from '../controls/actionButton';
-import { Classes } from '../../styles';
+import { Kernel as K } from '../../kernel';
 
 export interface ActionButtonCellProps {
     label : string,
@@ -11,7 +11,7 @@ export default class ActionButtonCell extends React.Component<ActionButtonCellPr
 
     render() {
         return (
-            <td className={Classes.centerAligned}>
+            <td className={K.classes.centerAligned}>
                 <ActionButton
                     label={this.props.label}
                     onClick={this.props.onClick}

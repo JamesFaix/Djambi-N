@@ -4,9 +4,7 @@ import { User } from '../../api/model';
 import { Redirect } from 'react-router';
 import ActionButton from '../controls/actionButton';
 import LinkButton from '../controls/linkButton';
-import Routes from '../../routes';
-import { Classes } from '../../styles';
- import {Kernel as K} from '../../kernel';
+import {Kernel as K} from '../../kernel';
 
 export interface DashboardPageProps {
     user : User,
@@ -29,18 +27,18 @@ export default class DashboardPage extends React.Component<DashboardPageProps> {
     render() {
         //Go to home if not logged in
         if (this.props.user === null) {
-            return <Redirect to={Routes.home()}/>
+            return <Redirect to={K.routes.home()}/>
         }
 
         return (
             <div>
                 <PageTitle label={"Welcome, " + this.props.user.name}/>
                 <br/>
-                <div className={Classes.centerAligned}>
-                    <LinkButton label="My Games" to={Routes.myGames()}/>
-                    <LinkButton label="Create Game" to={Routes.createGame()}/>
-                    <LinkButton label="Find Game" to={Routes.findGame()}/>
-                    <LinkButton label="Rules" to={Routes.rules()} newWindow={true}/>
+                <div className={K.classes.centerAligned}>
+                    <LinkButton label="My Games" to={K.routes.myGames()}/>
+                    <LinkButton label="Create Game" to={K.routes.createGame()}/>
+                    <LinkButton label="Find Game" to={K.routes.findGame()}/>
+                    <LinkButton label="Rules" to={K.routes.rules()} newWindow={true}/>
                     <ActionButton label="Log out" onClick={() => this.logoutOnClick()}/>
                 </div>
             </div>
