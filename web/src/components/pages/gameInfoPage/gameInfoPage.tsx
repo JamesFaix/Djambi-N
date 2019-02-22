@@ -170,9 +170,11 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
             return <Redirect to={this.state.redirectUrl}/>
         }
 
+        const title = "Game " + this.props.gameId;
+
         return (
             <div>
-                <PageTitle label={"Game Info"}/>
+                <PageTitle label={title}/>
                 <br/>
                 <div className={K.classes.centerAligned}>
                     <LinkButton label="Home" to={K.routes.dashboard()}/>
