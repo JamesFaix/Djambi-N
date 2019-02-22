@@ -9,11 +9,36 @@ export interface GamesQueryResultsTableProps {
 
 export default class GamesQueryResultsTable extends React.Component<GamesQueryResultsTableProps> {
 
+    render() {
+        return (
+            <div>
+                <table className={K.classes.table}>
+                    <tbody>
+                        <tr>
+                            <th></th>
+                            <th>Game #</th>
+                            <th>Created on</th>
+                            <th>Created by</th>
+                            <th>Regions</th>
+                            <th>Public</th>
+                            <th>Guests allowed</th>
+                            <th>Description</th>
+                        </tr>
+                        {this.props.games.map((game, i) => this.renderGameRow(game, i))}
+                    </tbody>
+                </table>
+            </div>
+        );
+    }
+
     renderGameRow(game : Game, rowNumber : number) {
         return (
             <tr key={"row" + rowNumber}>
                 <td>
                     <LinkButton label="Go" to={K.routes.gameInfo(game.id)} />
+                </td>
+                <td className={K.classes.rightAligned}>
+                    {game.id}
                 </td>
                 <td>
                     {K.dates.format(game.createdOn)}
@@ -38,27 +63,6 @@ export default class GamesQueryResultsTable extends React.Component<GamesQueryRe
                 </td>
                 <td>{game.parameters.description}</td>
             </tr>
-        );
-    }
-
-    render() {
-        return (
-            <div>
-                <table className={K.classes.table}>
-                    <tbody>
-                        <tr>
-                            <th></th>
-                            <th>Created on</th>
-                            <th>Created by</th>
-                            <th>Regions</th>
-                            <th>Public</th>
-                            <th>Guests allowed</th>
-                            <th>Description</th>
-                        </tr>
-                        {this.props.games.map((game, i) => this.renderGameRow(game, i))}
-                    </tbody>
-                </table>
-            </div>
         );
     }
 }
