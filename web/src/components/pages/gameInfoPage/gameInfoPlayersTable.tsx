@@ -52,26 +52,9 @@ export default class GameInfoPlayersTable extends React.Component<GameInfoPlayer
             .map(p => {
                 const seat : Seat = {
                     player : p,
-                    note : null,
+                    note : K.copy.getPlayerNote(p, game),
                     action : SeatActionType.None
                 };
-
-                if (p.kind === PlayerKind.User
-                    && p.userId === game.createdByUserId) {
-                    seat.note = "Host";
-                }
-
-                if (p.kind === PlayerKind.Guest) {
-                    const host = game.players
-                        .find(h => h.userId === p.userId
-                            && h.kind === PlayerKind.User);
-
-                    seat.note = "Guest of " + host.name;
-                }
-
-                if (p.kind === PlayerKind.Neutral) {
-                    seat.note = "Neutral";
-                }
 
                 if (self.isAdmin
                     || game.createdByUserId === self.id
