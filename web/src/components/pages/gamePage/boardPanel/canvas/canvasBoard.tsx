@@ -6,7 +6,7 @@ import CanvasPiece from './canvasPiece';
 import { Point } from '../../../../../boardRendering/model';
 import Geometry from '../../../../../boardRendering/geometry';
 import CanvasPolygon from './canvasPolygon';
-import Kernel from '../../../../../kernel';
+import { Kernel as K } from '../../../../../kernel';
 
 export interface CanvasBoardProps {
     board : BoardView,
@@ -33,7 +33,7 @@ export default class CanvasBoard extends React.Component<CanvasBoardProps> {
             <Layer>
                 <CanvasPolygon
                     polygon={this.props.board.polygon}
-                    strokeColor={Kernel.theme.getCellBaseColor(CellType.Center)}
+                    strokeColor={K.theme.getCellBaseColor(CellType.Center)}
                     strokeWidth={this.props.boardStrokeWidth}
                 />
             </Layer>

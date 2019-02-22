@@ -6,7 +6,7 @@ import ActionButton from '../controls/actionButton';
 import LinkButton from '../controls/linkButton';
 import Routes from '../../routes';
 import { Classes } from '../../styles';
-import Kernel from '../../kernel';
+ import {Kernel as K} from '../../kernel';
 
 export interface DashboardPageProps {
     user : User,
@@ -16,7 +16,7 @@ export interface DashboardPageProps {
 export default class DashboardPage extends React.Component<DashboardPageProps> {
 
     private logoutOnClick() {
-        Kernel.api
+        K.api
             .logout()
             .then(_ => {
                 this.props.setUser(null);

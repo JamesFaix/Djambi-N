@@ -11,7 +11,7 @@ import Util from '../../util';
 import GamesQueryResultsTable from '../gamesQueryResultsTable';
 import Routes from '../../routes';
 import { Classes } from '../../styles';
-import Kernel from '../../kernel';
+import {Kernel as K} from '../../kernel';
 
 export interface FindGamePageProps {
     user : User
@@ -54,7 +54,7 @@ export default class FindGamePage extends React.Component<FindGamePageProps, Fin
             status: GameStatus.Pending //Find Games page only shows pending games that you can join
         }
 
-        Kernel.api
+        K.api
             .getGames(query)
             .then(games => {
                 this.setState({games : games});

@@ -7,7 +7,7 @@ import ActionButton from '../../controls/actionButton';
 import GameInfoPlayersTable from './gameInfoPlayersTable';
 import Routes from '../../../routes';
 import { Classes } from '../../../styles';
-import Kernel from '../../../kernel';
+import { Kernel as K } from '../../../kernel';
 
 export interface GameInfoPageProps {
     user : User,
@@ -32,7 +32,7 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
     }
 
     componentDidMount() {
-        Kernel.api
+        K.api
             .getGame(this.props.gameId)
             .then(game => {
                 this.setState({game : game});
@@ -45,12 +45,12 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
 //---Event handlers---
 
     private addPlayer(gameId : number, request : CreatePlayerRequest) : void {
-        Kernel.api.addPlayer(gameId, request)
+        K.api.addPlayer(gameId, request)
             .then(response => this.updateGame(response.game));
     }
 
     private removePlayer(gameId : number, playerId : number) : void {
-        Kernel.api.removePlayer(gameId, playerId)
+        K.api.removePlayer(gameId, playerId)
             .then(response => this.updateGame(response.game));
     }
 
@@ -67,7 +67,7 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
     }
 
     private startOnClick() {
-        Kernel.api
+        K.api
             .startGame(this.state.game.id)
             .then(_ => {
                 this.setState({ redirectUrl : Routes.game(this.state.game.id) });

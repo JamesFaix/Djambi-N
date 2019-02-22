@@ -8,7 +8,7 @@ import ActionButton from '../controls/actionButton';
 import Constants, { InputTypes } from '../../constants';
 import Routes from '../../routes';
 import { Classes } from '../../styles';
-import Kernel from '../../kernel';
+import {Kernel as K} from '../../kernel';
 
 export interface CreateGamePageProps {
     user : User
@@ -66,7 +66,7 @@ export default class CreateGamePage extends React.Component<CreateGamePageProps,
             isPublic: this.state.isPublic
         };
 
-        Kernel.api
+        K.api
             .createGame(request)
             .then(game => {
                 this.setState({

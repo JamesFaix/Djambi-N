@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Game, Player, PlayerKind } from '../../../../api/model';
 import { Classes, Styles } from '../../../../styles';
-import Kernel from '../../../../kernel';
+import {Kernel as K} from '../../../../kernel';
 
 export interface PlayersPanelTableProps {
     game : Game
@@ -30,7 +30,7 @@ export default class PlayersPanelTable extends React.Component<PlayersPanelTable
     }
 
     private renderPlayerRow(player : Player, rowNumber : number) {
-        const color = Kernel.theme.getPlayerColor(player.colorId);
+        const color = K.theme.getPlayerColor(player.colorId);
         return (
             <tr
                 style={Styles.playerGlow(color)}

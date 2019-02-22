@@ -5,7 +5,7 @@ import { User } from '../../api/model';
 import LinkButton from '../controls/linkButton';
 import Routes from '../../routes';
 import { Classes } from '../../styles';
-import Kernel from '../../kernel';
+import {Kernel as K} from '../../kernel';
 
 export interface HomePageProps {
     user : User,
@@ -20,7 +20,7 @@ export default class HomePage extends React.Component<HomePageProps> {
             return <Redirect to={Routes.dashboard()}/>
         }
 
-        Kernel.api
+        K.api
             .getCurrentUser()
             .then(user => {
                 if (user !== null){

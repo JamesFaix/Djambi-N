@@ -3,7 +3,7 @@ import { Group } from 'react-konva';
 import { CellView } from '../../../../../boardRendering/model';
 import CanvasPolygon from './canvasPolygon';
 import Color from '../../../../../boardRendering/color';
-import Kernel from '../../../../../kernel';
+import { Kernel as K } from '../../../../../kernel';
 
 export interface CanvasCellProps {
     cell: CellView,
@@ -13,8 +13,8 @@ export interface CanvasCellProps {
 export default class CanvasCell extends React.Component<CanvasCellProps> {
 
     private getCellColor() : string {
-        const baseColor = Kernel.theme.getCellBaseColor(this.props.cell.type);
-        const highlight = Kernel.theme.getCellHighlight(this.props.cell.state);
+        const baseColor = K.theme.getCellBaseColor(this.props.cell.type);
+        const highlight = K.theme.getCellHighlight(this.props.cell.state);
 
         if (highlight === null) {
             return baseColor;

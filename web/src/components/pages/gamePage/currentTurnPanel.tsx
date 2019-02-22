@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Game, User, Player } from '../../../api/model';
 import { Classes, Styles } from '../../../styles';
-import Kernel from '../../../kernel';
+import {Kernel as K} from '../../../kernel';
 
 export interface CurrentTurnPanelProps {
     game : Game,
@@ -21,7 +21,7 @@ export default class CurrentTurnPanel extends React.Component<CurrentTurnPanelPr
         }
 
         const currentPlayer = this.getCurrentPlayer(this.props.game);
-        const color = Kernel.theme.getPlayerColor(currentPlayer.colorId);
+        const color = K.theme.getPlayerColor(currentPlayer.colorId);
         const style = Styles.combine([
             Styles.playerGlow(color),
             Styles.width(this.props.width),
@@ -66,7 +66,7 @@ export default class CurrentTurnPanel extends React.Component<CurrentTurnPanelPr
         const game = this.props.game;
 
         const descriptions = game.currentTurn.selections
-            .map(s => <p>{Kernel.theme.getSelectionDescription(s, game)}</p>);
+            .map(s => <p>{K.theme.getSelectionDescription(s, game)}</p>);
 
         return (
             <div style={this.props.textStyle}>
@@ -80,7 +80,7 @@ export default class CurrentTurnPanel extends React.Component<CurrentTurnPanelPr
     }
 
     private getSelectionPrompt() {
-        const prompt = Kernel.theme.getSelectionPrompt(
+        const prompt = K.theme.getSelectionPrompt(
             this.props.game.currentTurn.requiredSelectionKind);
 
         return prompt;

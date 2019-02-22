@@ -6,7 +6,7 @@ import LinkButton from '../controls/linkButton';
 import GamesQueryResultsTable from '../gamesQueryResultsTable';
 import Routes from '../../routes';
 import { Classes } from '../../styles';
-import Kernel from '../../kernel';
+import {Kernel as K} from '../../kernel';
 
 export interface MyGamesPageProps {
     user : User
@@ -39,7 +39,7 @@ export default class MyGamesPage extends React.Component<MyGamesPageProps, MyGam
             status: null
         }
 
-        Kernel.api
+        K.api
             .getGames(query)
             .then(games => {
                 this.setState({games : games});

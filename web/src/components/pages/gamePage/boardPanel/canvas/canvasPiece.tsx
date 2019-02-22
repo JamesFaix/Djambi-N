@@ -2,7 +2,7 @@ import * as React from 'react';
 import { PieceView } from '../../../../../boardRendering/model';
 import { Image } from 'react-konva';
 import { Point } from '../../../../../boardRendering/model';
-import Kernel from '../../../../../kernel';
+import { Kernel as K } from '../../../../../kernel';
 
 export interface CanvasPieceProps {
     piece : PieceView,
@@ -25,14 +25,14 @@ export default class CanvasPiece extends React.Component<CanvasPieceProps, Canva
 
     componentDidMount() {
         const image = new (window as any).Image();
-        image.src = Kernel.theme.getPieceImage(this.props.piece.kind);
+        image.src = K.theme.getPieceImage(this.props.piece.kind);
         image.onload = () => {
             this.setState({image : image})
         };
     }
 
     render() {
-        const playerColor = Kernel.theme.getPlayerColor(this.props.piece.colorId);
+        const playerColor = K.theme.getPlayerColor(this.props.piece.colorId);
         return (
             <Image
                image={this.state.image}

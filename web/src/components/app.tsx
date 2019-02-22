@@ -13,7 +13,7 @@ import FindGamePage from './pages/findGamePage';
 import GameInfoPage from './pages/gameInfoPage/gameInfoPage';
 import Routes from '../routes';
 import "../index.css";
-import Kernel from '../kernel';
+import { Kernel } from '../kernel';
 
 export interface AppProps {
 
@@ -27,7 +27,7 @@ export default class App extends React.Component<AppProps, AppState> {
     constructor(props : AppProps) {
         super(props);
 
-        Kernel.Initialize();
+        Kernel.initialize();
 
         this.state = {
             user : null

@@ -11,7 +11,7 @@ import HistoryPanel from './historyPanel/historyPanel';
 import { Classes, Styles } from '../../../styles';
 import BoardPanel from './boardPanel/boardPanel';
 import Geometry from '../../../boardRendering/geometry';
-import Kernel from '../../../kernel';
+import {Kernel as K} from '../../../kernel';
 
 export interface GamePageProps {
     user : User,
@@ -43,7 +43,7 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
     }
 
     private async updateGame(game : Game) : Promise<void> {
-        const boardView = await Kernel.boardViews.getBoardView(game);
+        const boardView = await K.boardViews.getBoardView(game);
         this.setState({
             boardView : boardView,
             game : game
@@ -57,33 +57,33 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
             thresholdEventId: null,
             thresholdTime: null
         }
-        const events = await Kernel.api.getEvents(gameId, eventQuery);
+        const events = await K.api.getEvents(gameId, eventQuery);
         this.setState({ events: events });
     }
 
     private selectCell(cell : CellView) : void {
         if (cell.state === CellState.Selectable) {
-            Kernel.api
+            K.api
                 .selectCell(this.props.gameId, cell.id)
                 .then(response => this.updateGame(response.game));
         }
     }
 
     private commitTurn(gameId : number) : void {
-        Kernel.api
+        K.api
             .commitTurn(gameId)
             .then(response => this.updateGame(response.game))
             .then(_ => this.updateEvents(gameId));
     }
 
     private resetTurn(gameId : number) : void {
-        Kernel.api
+        K.api
             .resetTurn(gameId)
             .then(response => this.updateGame(response.game));
     }
 
     componentDidMount() {
-        Kernel.api
+        K.api
             .getGame(this.props.gameId)
             .then(game => this.updateGame(game))
             .then(_ => this.updateEvents(this.props.gameId));

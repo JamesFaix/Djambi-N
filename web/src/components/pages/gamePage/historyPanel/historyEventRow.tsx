@@ -4,7 +4,7 @@ import DateService from '../../../../dateService';
 import HistoryEffectRow from './historyEffectRow';
 import * as Sprintf from 'sprintf-js';
 import { Classes, Styles } from '../../../../styles';
-import Kernel from '../../../../kernel';
+import {Kernel as K} from '../../../../kernel';
 
 export interface HistoryEventRowProps {
     game : Game,
@@ -20,7 +20,7 @@ export default class HistoryEventRow extends React.Component<HistoryEventRowProp
         const player = this.getActingPlayer();
         let style;
         if (player !== null) {
-            const color = Kernel.theme.getPlayerColor(player.colorId);
+            const color = K.theme.getPlayerColor(player.colorId);
             style = Styles.playerGlow(color);
         }
         const cellStyle = Styles.combine([Styles.width("50%"), Styles.padding("10px 10px 0px 10px")]);
@@ -48,7 +48,6 @@ export default class HistoryEventRow extends React.Component<HistoryEventRowProp
                                         key={"effect" + i}
                                         game={this.props.game}
                                         effect={f}
-                                        theme={Kernel.theme}
                                     />
                                 )
                         }
@@ -69,7 +68,7 @@ export default class HistoryEventRow extends React.Component<HistoryEventRowProp
         const actingPlayer = game.players.find(p => p.id === event.actingPlayerId);
         const actingPlayerName = actingPlayer ? actingPlayer.name : "[Admin]";
 
-        const template = Kernel.theme.getEventMessageTemplate(event);
+        const template = K.theme.getEventMessageTemplate(event);
 
         switch (event.kind) {
             case EventKind.GameStarted:

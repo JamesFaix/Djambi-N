@@ -8,7 +8,7 @@ import ActionButton from '../controls/actionButton';
 import { InputTypes } from '../../constants';
 import Routes from '../../routes';
 import { Classes } from '../../styles';
-import Kernel from '../../kernel';
+import {Kernel as K} from '../../kernel';
 
 export interface SignupPageProps {
     user : User,
@@ -51,7 +51,7 @@ export default class SignupPage extends React.Component<SignupPageProps, SignupP
             password: this.state.password
         };
 
-        Kernel.api
+        K.api
             .createUser(request)
             .then(_ => {
                 this.setState({
@@ -64,7 +64,7 @@ export default class SignupPage extends React.Component<SignupPageProps, SignupP
                     password: request.password
                 };
 
-                return Kernel.api
+                return K.api
                     .login(loginRequest);
             })
             .then(session => {

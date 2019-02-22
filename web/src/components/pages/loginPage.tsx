@@ -8,7 +8,7 @@ import ActionButton from '../controls/actionButton';
 import { InputTypes } from '../../constants';
 import Routes from '../../routes';
 import { Classes } from '../../styles';
-import Kernel from '../../kernel';
+import {Kernel as K} from '../../kernel';
 
 export interface LoginPageProps {
     user : User,
@@ -51,7 +51,7 @@ export default class LoginPage extends React.Component<LoginPageProps, LoginPage
             password: this.state.password
         };
 
-        Kernel.api
+        K.api
             .login(request)
             .then(session => {
                 this.setState({
