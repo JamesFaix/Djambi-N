@@ -7,38 +7,29 @@ import DashboardPage from './pages/dashboardPage';
 import GamePage from './pages/gamePage/gamePage';
 import TopMenu from './topMenu';
 import { User } from '../api/model';
-import ApiClient from '../api/client';
 import MyGamesPage from './pages/myGamesPage';
 import CreateGamePage from './pages/createGamePage';
 import FindGamePage from './pages/findGamePage';
 import GameInfoPage from './pages/gameInfoPage/gameInfoPage';
-import Routes from '../routes';
-import ThemeService from '../themes/themeService';
 import "../index.css";
-import BoardViewService from '../boardRendering/boardViewService';
+import { Kernel as K } from '../kernel';
 
 export interface AppProps {
 
 }
 
 export interface AppState {
-    user : User,
-    api : ApiClient,
-    theme : ThemeService,
-    boardViewService : BoardViewService
+    user : User
 }
 
 export default class App extends React.Component<AppProps, AppState> {
     constructor(props : AppProps) {
         super(props);
 
-        const api = new ApiClient();
+        K.initialize();
 
         this.state = {
-            user : null,
-            api : api,
-            theme : new ThemeService(),
-            boardViewService : new BoardViewService(api)
+            user : null
         };
     }
 
@@ -48,91 +39,80 @@ export default class App extends React.Component<AppProps, AppState> {
                 <TopMenu/>
                 <Switch>
                     <Route
-                        exact path={Routes.home()}
+                        exact path={K.routes.home()}
                         render={_ =>
                             <HomePage
                                 user={this.state.user}
-                                api={this.state.api}
                                 setUser={user => this.setState({user : user})}
                             />
                         }
                     />
                     <Route
-                        path={Routes.signup()}
+                        path={K.routes.signup()}
                         render={_ =>
                             <SignupPage
-                                api={this.state.api}
                                 user={this.state.user}
                                 setUser={user => this.setState({user : user})}
                             />
                         }
                     />
                     <Route
-                        path={Routes.login()}
+                        path={K.routes.login()}
                         render={_ =>
                             <LoginPage
-                                api={this.state.api}
                                 user={this.state.user}
                                 setUser={user => this.setState({user : user})}
                             />
                         }
                     />
                     <Route
-                        path={Routes.dashboard()}
+                        path={K.routes.dashboard()}
                         render={_ =>
                             <DashboardPage
                                 user={this.state.user}
-                                api={this.state.api}
                                 setUser={user => this.setState({user : user})}
                             />
                         }
                     />
                     <Route
-                        path={Routes.myGames()}
+                        path={K.routes.myGames()}
                         render={_ =>
                             <MyGamesPage
                                 user={this.state.user}
-                                api={this.state.api}
                             />
                         }
                     />
                     <Route
-                        path={Routes.createGame()}
+                        path={K.routes.createGame()}
                         render={_ =>
                             <CreateGamePage
                                 user={this.state.user}
-                                api={this.state.api}
                             />
                         }
                     />
                     <Route
-                        path={Routes.findGame()}
+                        path={K.routes.findGame()}
                         render={_ =>
                             <FindGamePage
                                 user={this.state.user}
-                                api={this.state.api}
                             />
                         }
                     />
                     <Route
-                        path={Routes.gameInfoTemplate()}
+                        path={K.routes.gameInfoTemplate()}
                         render={props =>
                             <GameInfoPage
                                 user={this.state.user}
-                                api={this.state.api}
                                 gameId={props.match.params.gameId}
                             />
                         }
                     />
                     <Route
-                        path={Routes.gameTemplate()}
+                        path={K.routes.gameTemplate()}
                         render={props =>
                             <GamePage
                                 user={this.state.user}
-                                api={this.state.api}
                                 gameId={props.match.params.gameId}
-                                theme={this.state.theme}
-                                boardViewService={this.state.boardViewService}
                             />
                         }
                     />

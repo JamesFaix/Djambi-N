@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Classes } from '../../styles';
+import { Kernel as K } from '../../kernel';
 
 export interface TextFieldCellProps {
     value : string,
@@ -15,7 +15,7 @@ export default class TextFieldCell extends React.Component<TextFieldCellProps> {
                     type="text"
                     value={this.props.value}
                     onChange={this.props.onChange}
-                    className={Classes.fullWidth}
+                    className={K.classes.fullWidth}
                 />
             </td>
         );

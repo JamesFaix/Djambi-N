@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { InputTypes } from '../../constants';
-import { Classes } from '../../styles';
+import { Kernel as K } from '../../kernel';
 
 export interface LabeledInputProps {
     type : InputTypes,
@@ -18,7 +18,7 @@ export default class LabeledInput extends React.Component<LabeledInputProps> {
     render() {
         return (
             <div
-                className={Classes.labeledTextBox}
+                className={K.classes.labeledTextBox}
                 title={this.props.tip}
             >
                 <label>{this.props.label}:</label>

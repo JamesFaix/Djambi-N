@@ -1,16 +1,15 @@
 import * as React from 'react';
 import { Stage, Layer } from 'react-konva';
 import { BoardView, CellView, CellType } from '../../../../../boardRendering/model';
-import ThemeService from '../../../../../themes/themeService';
 import CanvasCell from './canvasCell';
 import CanvasPiece from './canvasPiece';
 import { Point } from '../../../../../boardRendering/model';
 import Geometry from '../../../../../boardRendering/geometry';
 import CanvasPolygon from './canvasPolygon';
+import { Kernel as K } from '../../../../../kernel';
 
 export interface CanvasBoardProps {
     board : BoardView,
-    theme : ThemeService,
     selectCell : (cell : CellView) => void,
     scale : number,
     boardStrokeWidth : number,
@@ -34,7 +33,7 @@ export default class CanvasBoard extends React.Component<CanvasBoardProps> {
             <Layer>
                 <CanvasPolygon
                     polygon={this.props.board.polygon}
-                    strokeColor={this.props.theme.getCellBaseColor(CellType.Center)}
+                    strokeColor={K.theme.getCellBaseColor(CellType.Center)}
                     strokeWidth={this.props.boardStrokeWidth}
                 />
             </Layer>
@@ -49,7 +48,6 @@ export default class CanvasBoard extends React.Component<CanvasBoardProps> {
                         <CanvasCell
                             key={"cell" + i}
                             cell={c}
-                            theme={this.props.theme}
                             selectCell={(cell) => this.props.selectCell(cell)}
                         />
                     )
@@ -68,7 +66,6 @@ export default class CanvasBoard extends React.Component<CanvasBoardProps> {
                             <CanvasPiece
                                 key={"piece" + i}
                                 piece={c.piece}
-                                theme={this.props.theme}
                                 onClick={() => this.props.selectCell(c)}
                                 size={this.getPieceSize()}
                                 location={this.getPieceLocation(c)}

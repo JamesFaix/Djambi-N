@@ -1,26 +1,20 @@
 import * as React from 'react';
-import ApiClient from '../../../api/client';
 import { User, Game, Event, EventsQuery, ResultsDirection } from '../../../api/model';
 import LinkButton from '../../controls/linkButton';
 import PageTitle from '../../pageTitle';
-import Routes from '../../../routes';
-import ThemeService from '../../../themes/themeService';
 import { BoardView, CellView, CellState, Point } from '../../../boardRendering/model';
-import BoardViewService from '../../../boardRendering/boardViewService';
 import CurrentTurnPanel from './currentTurnPanel';
 import TurnCyclePanel from './turnCyclePanel';
 import PlayersPanel from './playersPanel/playersPanel';
 import HistoryPanel from './historyPanel/historyPanel';
-import { Classes, Styles } from '../../../styles';
 import BoardPanel from './boardPanel/boardPanel';
 import Geometry from '../../../boardRendering/geometry';
+import {Kernel as K} from '../../../kernel';
+import BoardViewService from '../../../boardRendering/boardViewService';
 
 export interface GamePageProps {
     user : User,
-    api : ApiClient,
-    gameId : number,
-    theme : ThemeService,
-    boardViewService : BoardViewService
+    gameId : number
 }
 
 export interface GamePageState {
@@ -31,9 +25,13 @@ export interface GamePageState {
 
 export default class GamePage extends React.Component<GamePageProps, GamePageState> {
     private readonly contentSize : Point;
+    private readonly boardViewService : BoardViewService;
 
     constructor(props : GamePageProps) {
         super(props);
+
+        this.boardViewService = new BoardViewService(K.api);
+
         this.state = {
             game : null,
             boardView : null,
@@ -48,7 +46,7 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
     }
 
     private async updateGame(game : Game) : Promise<void> {
-        const boardView = await this.props.boardViewService.getBoardView(game);
+        const boardView = await this.boardViewService.getBoardView(game);
         this.setState({
             boardView : boardView,
             game : game
@@ -62,33 +60,33 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
             thresholdEventId: null,
             thresholdTime: null
         }
-        const events = await this.props.api.getEvents(gameId, eventQuery);
+        const events = await K.api.getEvents(gameId, eventQuery);
         this.setState({ events: events });
     }
 
     private selectCell(cell : CellView) : void {
         if (cell.state === CellState.Selectable) {
-            this.props.api
+            K.api
                 .selectCell(this.props.gameId, cell.id)
                 .then(response => this.updateGame(response.game));
         }
     }
 
     private commitTurn(gameId : number) : void {
-        this.props.api
+        K.api
             .commitTurn(gameId)
             .then(response => this.updateGame(response.game))
             .then(_ => this.updateEvents(gameId));
     }
 
     private resetTurn(gameId : number) : void {
-        this.props.api
+        K.api
             .resetTurn(gameId)
             .then(response => this.updateGame(response.game));
     }
 
     componentDidMount() {
-        this.props.api
+        K.api
             .getGame(this.props.gameId)
             .then(game => this.updateGame(game))
             .then(_ => this.updateEvents(this.props.gameId));
@@ -99,9 +97,9 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
             <div>
                 <PageTitle label={"Game"}/>
                 <br/>
-                <div className={Classes.centerAligned}>
-                    <LinkButton label="Home" to={Routes.dashboard()}/>
-                    <LinkButton label="Rules" to={Routes.rules()} newWindow={true}/>
+                <div className={K.classes.centerAligned}>
+                    <LinkButton label="Home" to={K.routes.dashboard()}/>
+                    <LinkButton label="Rules" to={K.routes.rules()} newWindow={true}/>
                 </div>
                 <br/>
                 {this.renderPanels()}
@@ -115,13 +113,13 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
             return "";
         }
 
-        const containerStyle = Styles.combine([
-            Styles.noMargin,
-            Styles.width(this.contentSize.x + "px"),
-            Styles.height(this.contentSize.y + "px")
+        const containerStyle = K.styles.combine([
+            K.styles.noMargin,
+            K.styles.width(this.contentSize.x + "px"),
+            K.styles.height(this.contentSize.y + "px")
         ]);
 
-        const textStyle = Styles.lineHeight("8px");
+        const textStyle = K.styles.lineHeight("8px");
 
         const boardPanelSize = {
             x: this.contentSize.x * 0.7,
@@ -129,11 +127,10 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
         };
 
         return (
-            <div className={Classes.flex} style={containerStyle}>
-                <div style={Styles.width("70%")}>
+            <div className={K.classes.flex} style={containerStyle}>
+                <div style={K.styles.width("70%")}>
                     <BoardPanel
                         game={this.state.game}
-                        theme={this.props.theme}
                         boardView={this.state.boardView}
                         selectCell={cell => this.selectCell(cell)}
                         size={boardPanelSize}
@@ -141,23 +138,20 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                         boardMargin={5}
                     />
                 </div>
-                <div style={Styles.width("30%")}>
+                <div style={K.styles.width("30%")}>
                     <TurnCyclePanel
                         game={this.state.game}
-                        theme={this.props.theme}
                         iconSize={"20px"}
                         height={"50px"}
                         width={"100%"}
                     />
                     <PlayersPanel
                         game={this.state.game}
-                        theme={this.props.theme}
                         height={"100px"}
                         width={"100%"}
                     />
                     <CurrentTurnPanel
                         game={this.state.game}
-                        theme={this.props.theme}
                         user={this.props.user}
                         commitTurn={gameId => this.commitTurn(gameId)}
                         resetTurn={gameId => this.resetTurn(gameId)}
@@ -168,7 +162,6 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                     <HistoryPanel
                         game={this.state.game}
                         events={this.state.events}
-                        theme={this.props.theme}
                         height={"350px"}
                         width={"100%"}
                         textStyle={textStyle}

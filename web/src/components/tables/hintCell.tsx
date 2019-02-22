@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Classes } from '../../styles';
+import { Kernel as K } from '../../kernel';
 
 export interface HintCellProps {
     text : string,
@@ -9,12 +9,12 @@ export interface HintCellProps {
 export default class HintCell extends React.Component<HintCellProps> {
 
     render() {
-        const classes = [Classes.lightText, Classes.paddedCell];
+        const classes = [K.classes.lightText, K.classes.paddedCell];
         if (this.props.noBorder) {
-            classes.push(Classes.borderless);
+            classes.push(K.classes.borderless);
         }
         return  (
-            <td className={Classes.combine(classes)}>
+            <td className={K.classes.combine(classes)}>
                 {this.props.text}
             </td>
         );

@@ -2,20 +2,19 @@ import * as React from 'react';
 import { Group } from 'react-konva';
 import { CellView } from '../../../../../boardRendering/model';
 import CanvasPolygon from './canvasPolygon';
-import ThemeService from '../../../../../themes/themeService';
 import Color from '../../../../../boardRendering/color';
+import { Kernel as K } from '../../../../../kernel';
 
 export interface CanvasCellProps {
     cell: CellView,
-    theme : ThemeService,
     selectCell : (cell : CellView) => void
 }
 
 export default class CanvasCell extends React.Component<CanvasCellProps> {
 
     private getCellColor() : string {
-        const baseColor = this.props.theme.getCellBaseColor(this.props.cell.type);
-        const highlight = this.props.theme.getCellHighlight(this.props.cell.state);
+        const baseColor = K.theme.getCellBaseColor(this.props.cell.type);
+        const highlight = K.theme.getCellHighlight(this.props.cell.state);
 
         if (highlight === null) {
             return baseColor;

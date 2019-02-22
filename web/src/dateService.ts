@@ -2,7 +2,7 @@ import moment = require("moment");
 
 export default class DateService {
 
-    public static format(date : Date) : string {
+    public format(date : Date) : string {
         return moment
             .utc(date)
             .local()

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Classes } from '../../styles';
+import { Kernel as K } from '../../kernel';
 
 export interface EmphasizedTextCellProps {
     text : string,
@@ -9,12 +9,12 @@ export interface EmphasizedTextCellProps {
 export default class EmphasizedTextCell extends React.Component<EmphasizedTextCellProps> {
 
     render() {
-        const classes = [Classes.paddedCell];
+        const classes = [K.classes.paddedCell];
         if (this.props.noBorder) {
-            classes.push(Classes.borderless);
+            classes.push(K.classes.borderless);
         }
         return  (
-            <td className={Classes.combine(classes)}>
+            <td className={K.classes.combine(classes)}>
                 {this.props.text}
             </td>
         );
