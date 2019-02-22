@@ -10,7 +10,6 @@ import BoardPanel from './boardPanel/boardPanel';
 import Geometry from '../../../boardRendering/geometry';
 import {Kernel as K} from '../../../kernel';
 import BoardViewService from '../../../boardRendering/boardViewService';
-import BoardService from '../../../boardService';
 
 export interface GamePageProps {
     user : User,
@@ -25,14 +24,12 @@ export interface GamePageState {
 
 export default class GamePage extends React.Component<GamePageProps, GamePageState> {
     private readonly contentSize : Point;
-    private readonly boardService : BoardService;
     private readonly boardViewService : BoardViewService;
 
     constructor(props : GamePageProps) {
         super(props);
 
-        this.boardService = new BoardService(K.api);
-        this.boardViewService = new BoardViewService(this.boardService);
+        this.boardViewService = new BoardViewService(K.boards);
 
         this.state = {
             game : null,
@@ -169,7 +166,7 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                         height={"350px"}
                         width={"100%"}
                         textStyle={textStyle}
-                        getBoard={n => this.boardService.getBoardIfCached(n)}
+                        getBoard={n => K.boards.getBoardIfCached(n)}
                     />
                 </div>
             </div>
