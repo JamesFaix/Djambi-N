@@ -161,7 +161,7 @@ export default class BoardViewService {
                 locations: group.map(c => c.locations).reduce((a, b) => a.concat(b)),
                 type: group[0].type,
                 state: group[0].state,
-                piece: group[0].piece,
+                piece: null,
                 polygons: group
                     .map((vc : CellView) => vc.polygons)
                     .reduce((a : Polygon[], b : Polygon[]) => a.concat(b)),
