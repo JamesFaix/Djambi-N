@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { Event, EventKind, Effect, Game, EffectKind, PlayerRemovedEffect, Player } from '../../../../api/model';
+import { Event,  Effect, Game, Player, Board } from '../../../../api/model';
 import HistoryEffectRow from './historyEffectRow';
-import * as Sprintf from 'sprintf-js';
 import {Kernel as K} from '../../../../kernel';
 
 export interface HistoryEventRowProps {
@@ -9,6 +8,7 @@ export interface HistoryEventRowProps {
     event : Event,
     isEffectVisible : (f : Effect) => boolean,
     textStyle : React.CSSProperties
+    getBoard : (regionCount : number) => Board
 }
 
 export default class HistoryEventRow extends React.Component<HistoryEventRowProps> {
@@ -29,7 +29,7 @@ export default class HistoryEventRow extends React.Component<HistoryEventRowProp
                         <tbody>
                             <tr>
                                 <td className={K.classes.borderless} style={cellStyle}>
-                                    {this.getEventMessage(this.props.game, e)}
+                                    {K.copy.getEventMessage(this.props.game, e)}
                                 </td>
                                 <td className={K.classes.combine([K.classes.borderless, K.classes.lightText, K.classes.rightAligned])} style={cellStyle}>
                                     {K.dates.format(e.createdOn)}
@@ -46,6 +46,7 @@ export default class HistoryEventRow extends React.Component<HistoryEventRowProp
                                         key={"effect" + i}
                                         game={this.props.game}
                                         effect={f}
+                                        getBoard={n => this.props.getBoard(n)}
                                     />
                                 )
                         }
@@ -60,38 +61,5 @@ export default class HistoryEventRow extends React.Component<HistoryEventRowProp
             return null;
         }
         return this.props.game.players.find(p => p.id === this.props.event.actingPlayerId);
-    }
-
-    private getEventMessage(game : Game, event : Event) : string {
-        const actingPlayer = game.players.find(p => p.id === event.actingPlayerId);
-        const actingPlayerName = actingPlayer ? actingPlayer.name : "[Admin]";
-
-        const template = K.theme.getEventMessageTemplate(event);
-
-        switch (event.kind) {
-            case EventKind.GameStarted:
-                return template;
-
-            case EventKind.PlayerEjected:
-                const effect = event.effects.find(f => f.kind === EffectKind.PlayerRemoved).value as PlayerRemovedEffect;
-                const removedPlayer = game.players.find(p => p.id === effect.playerId);
-                return Sprintf.sprintf(template, {
-                    actingPlayer: actingPlayerName,
-                    removedPlayer: removedPlayer.name
-                });
-
-            case EventKind.PlayerQuit:
-                return Sprintf.sprintf(template, {
-                    player: actingPlayerName
-                });
-
-            case EventKind.TurnCommitted:
-                return Sprintf.sprintf(template, {
-                    player: actingPlayerName
-                });
-
-            default:
-                throw "Unsupported event kind.";
-        }
     }
 }

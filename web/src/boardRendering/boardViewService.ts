@@ -2,36 +2,24 @@ import { Location, Board, Game } from "../api/model";
 import { Polygon, Line } from "./model";
 import Geometry from "./geometry";
 import { BoardView, CellView, CellType, CellState } from "./model";
-import ApiClient from "../api/client";
+import BoardService from "../boardService";
 
 export default class BoardViewService {
-    private readonly boardCache : any;
     private readonly emptyBoardViewCache : any;
-    private readonly api : ApiClient;
 
-    constructor(api : ApiClient) {
-        this.boardCache = {};
+    constructor(
+        private readonly boardService : BoardService
+    ) {
         this.emptyBoardViewCache = {};
-        this.api = api;
     }
 
     public async getBoardView(game : Game) : Promise<BoardView> {
-        const b = await this.getBoard(game.parameters.regionCount);
+        const b = await this.boardService.getBoard(game.parameters.regionCount);
         const bv = this.getEmptyBoardView(b);
         return BoardViewService.updateBoardView(bv, game);
     }
 
     //--- Caching ---
-
-    private async getBoard (regionCount : number) : Promise<Board> {
-        //The board returned from the API of each regionCount is always the same, so it can be cached.
-        let b = this.boardCache[regionCount];
-        if (!b) {
-            b = await this.api.getBoard(regionCount);
-            this.boardCache[regionCount] = b;
-        }
-        return b;
-    }
 
     private getEmptyBoardView(board : Board) : BoardView {
         //The empty state of a board with the same dimensions is always the same, so it can be cached.
@@ -119,14 +107,14 @@ export default class BoardViewService {
                         ]
                     };
 
-                    const cellId = board.cells
+                    const cell = board.cells
                         .find(c => c.locations
                             .find(loc => this.locationEquals(loc, location))
-                            !== undefined)
-                        .id;
+                            !== undefined);
 
                     const cv : CellView = {
-                        id: cellId,
+                        id: cell.id,
+                        locations: cell.locations,
                         type: this.getCellType(col, row),
                         state: CellState.Default,
                         piece: null,
@@ -157,7 +145,7 @@ export default class BoardViewService {
     private static coalesceColocatedCells(cells : Array<CellView>) : Array<CellView> {
         const results : Array<CellView> = [];
 
-        const map = new Map();
+        const map = new Map<number, CellView[]>();
         cells.forEach(vc => {
             const matches = map.get(vc.id);
             if (matches) {
@@ -170,6 +158,7 @@ export default class BoardViewService {
         map.forEach(group => {
             const coalesced : CellView = {
                 id: group[0].id,
+                locations: group.map(c => c.locations).reduce((a, b) => a.concat(b)),
                 type: group[0].type,
                 state: group[0].state,
                 piece: group[0].piece,
@@ -212,10 +201,11 @@ export default class BoardViewService {
             const piece = game.pieces.find(p => p.cellId === c.id);
             const owner = piece ? game.players.find(p => p.id === piece.playerId) : null;
             const colorId = owner ? owner.colorId : null;
-            const pieceView = piece ? { kind: piece.kind, colorId: colorId } : null;
+            const pieceView = piece ? { id : piece.id, kind: piece.kind, colorId: colorId } : null;
 
             return {
                 id: c.id,
+                locations: c.locations,
                 type: c.type,
                 state: newState,
                 piece: pieceView,

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Game, Event } from '../../../../api/model';
+import { Game, Event, Board } from '../../../../api/model';
 import HistoryTable from './historyTable';
 import Scrollbars from 'react-custom-scrollbars';
 import { Kernel as K } from '../../../../kernel';
@@ -9,7 +9,8 @@ export interface HistoryPanelProps {
     events : Event[],
     height : string,
     width : string,
-    textStyle : React.CSSProperties
+    textStyle : React.CSSProperties,
+    getBoard : (regionCount : number) => Board
 }
 
 export default class HistoryPanel extends React.Component<HistoryPanelProps> {
@@ -26,6 +27,7 @@ export default class HistoryPanel extends React.Component<HistoryPanelProps> {
                         game={this.props.game}
                         events={this.props.events}
                         textStyle={this.props.textStyle}
+                        getBoard={n => this.props.getBoard(n)}
                     />
                 </Scrollbars>
             </div>

@@ -1,12 +1,13 @@
 import * as React from 'react';
-import { Game, Event, Effect, EventKind, EffectKind } from '../../../../api/model';
+import { Game, Event, Effect, EventKind, EffectKind, Board } from '../../../../api/model';
 import HistoryEventRow from './historyEventRow';
 import { Kernel as K } from '../../../../kernel';
 
 export interface HistoryTableProps {
     game : Game,
     events : Event[],
-    textStyle : React.CSSProperties
+    textStyle : React.CSSProperties,
+    getBoard : (regionCount : number) => Board
 }
 
 export default class HistoryTable extends React.Component<HistoryTableProps> {
@@ -29,6 +30,7 @@ export default class HistoryTable extends React.Component<HistoryTableProps> {
                                         event={e}
                                         isEffectVisible={f => this.isEffectVisible(f)}
                                         textStyle={this.props.textStyle}
+                                        getBoard={n => this.props.getBoard(n)}
                                     />
                                 )
                         }

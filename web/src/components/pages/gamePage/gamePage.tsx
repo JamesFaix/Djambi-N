@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { User, Game, Event, EventsQuery, ResultsDirection } from '../../../api/model';
 import LinkButton from '../../controls/linkButton';
-import PageTitle from '../../pageTitle';
 import { BoardView, CellView, CellState, Point } from '../../../boardRendering/model';
 import CurrentTurnPanel from './currentTurnPanel';
 import TurnCyclePanel from './turnCyclePanel';
@@ -30,7 +29,7 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
     constructor(props : GamePageProps) {
         super(props);
 
-        this.boardViewService = new BoardViewService(K.api);
+        this.boardViewService = new BoardViewService(K.boards);
 
         this.state = {
             game : null,
@@ -95,7 +94,9 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
     render() {
         return (
             <div>
-                <PageTitle label={"Game"}/>
+                <br/>
+                <br/>
+                <br/>
                 <br/>
                 <div className={K.classes.centerAligned}>
                     <LinkButton label="Home" to={K.routes.dashboard()}/>
@@ -165,6 +166,7 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                         height={"350px"}
                         width={"100%"}
                         textStyle={textStyle}
+                        getBoard={n => K.boards.getBoardIfCached(n)}
                     />
                 </div>
             </div>

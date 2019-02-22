@@ -6,6 +6,8 @@ import CanvasPiece from './canvasPiece';
 import { Point } from '../../../../../boardRendering/model';
 import Geometry from '../../../../../boardRendering/geometry';
 import CanvasPolygon from './canvasPolygon';
+import CanvasLabel from './canvasLabel';
+import Debug from '../../../../../debug';
 import { Kernel as K } from '../../../../../kernel';
 
 export interface CanvasBoardProps {
@@ -57,6 +59,7 @@ export default class CanvasBoard extends React.Component<CanvasBoardProps> {
     }
 
     private renderPieces() {
+        const size = this.getPieceSize();
         return (
             <Layer>
                 {
@@ -67,10 +70,31 @@ export default class CanvasBoard extends React.Component<CanvasBoardProps> {
                                 key={"piece" + i}
                                 piece={c.piece}
                                 onClick={() => this.props.selectCell(c)}
-                                size={this.getPieceSize()}
+                                size={size}
                                 location={this.getPieceLocation(c)}
                             />
                         )
+                }
+            </Layer>
+        );
+    }
+
+    private renderDebugLabels() {
+        if (!Debug.showPieceAndCellIds){
+            return undefined;
+        }
+
+        return (
+            <Layer>
+                {
+                    this.props.board.cells.map((c, i) =>
+                        <CanvasLabel
+                            key={"label" + i}
+                            cell={c}
+                            onClick={() => this.props.selectCell(c)}
+                            regionCount={this.props.board.regionCount}
+                        />
+                    )
                 }
             </Layer>
         );
@@ -82,6 +106,7 @@ export default class CanvasBoard extends React.Component<CanvasBoardProps> {
                 {this.renderBackground()}
                 {this.renderCells()}
                 {this.renderPieces()}
+                {this.renderDebugLabels()}
             </Stage>
         );
     }
