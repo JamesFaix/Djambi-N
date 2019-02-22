@@ -1,13 +1,12 @@
 import * as React from 'react';
 import * as Sprintf from 'sprintf-js';
-import ThemeService from '../../../../themes/themeService';
 import { Game, Effect, EffectKind, GameStatusChangedEffect, PieceKilledEffect, PlayerAddedEffect, PieceMovedEffect, PlayerKind, PlayerEliminatedEffect, PlayerOutOfMovesEffect, PlayerRemovedEffect, PieceKind, Piece, NeutralPlayerAddedEffect, PieceAbandonedEffect, PieceEnlistedEffect, PieceDroppedEffect, PieceVacatedEffect, TurnCycleAdvancedEffect, TurnCyclePlayerFellFromPowerEffect, TurnCyclePlayerRemovedEffect, TurnCyclePlayerRoseToPowerEffect, Board } from '../../../../api/model';
 import CopyService from '../../../../copyService';
+import {Kernel as K} from '../../../../kernel';
 
 export interface HistoryEffectRowProps {
     game : Game,
     effect : Effect,
-    theme : ThemeService,
     getBoard : (regionCount : number) => Board
 }
 
@@ -63,7 +62,7 @@ export default class HistoryEffectRow extends React.Component<HistoryEffectRowPr
     //---Specific effects---
 
     private getGameStatusChangedMessage(game : Game, effect : Effect) : string {
-        const template = this.props.theme.getEffectMessageTemplate(effect);
+        const template = K.theme.getEffectMessageTemplate(effect);
         const f = effect.value as GameStatusChangedEffect;
         return Sprintf.sprintf(template, {
             oldStatus: f.oldValue,
@@ -72,7 +71,7 @@ export default class HistoryEffectRow extends React.Component<HistoryEffectRowPr
     }
 
     private getNeutralPlayerAddedMessage(game : Game, effect : Effect) : string {
-        const template = this.props.theme.getEffectMessageTemplate(effect);
+        const template = K.theme.getEffectMessageTemplate(effect);
         const f = effect.value as NeutralPlayerAddedEffect;
         return Sprintf.sprintf(template, {
             player: f.name
@@ -80,7 +79,7 @@ export default class HistoryEffectRow extends React.Component<HistoryEffectRowPr
     }
 
     private getPieceAbandonedMessage(game : Game, effect : Effect) : string {
-        const template = this.props.theme.getEffectMessageTemplate(effect);
+        const template = K.theme.getEffectMessageTemplate(effect);
         const f = effect.value as PieceAbandonedEffect;
         return Sprintf.sprintf(template, {
             piece: this.getPieceLabel(f.oldPiece)
@@ -88,7 +87,7 @@ export default class HistoryEffectRow extends React.Component<HistoryEffectRowPr
     }
 
     private getPieceDroppedMessage(game : Game, effect : Effect) : string {
-        const template = this.props.theme.getEffectMessageTemplate(effect);
+        const template = K.theme.getEffectMessageTemplate(effect);
         const f = effect.value as PieceDroppedEffect;
         return Sprintf.sprintf(template, {
             piece: this.getPieceLabel(f.oldPiece),
@@ -97,7 +96,7 @@ export default class HistoryEffectRow extends React.Component<HistoryEffectRowPr
     }
 
     private getPieceEnlistedMessage(game : Game, effect : Effect) : string {
-        const template = this.props.theme.getEffectMessageTemplate(effect);
+        const template = K.theme.getEffectMessageTemplate(effect);
         const f = effect.value as PieceEnlistedEffect;
         return Sprintf.sprintf(template, {
             piece: this.getPieceLabel(f.oldPiece),
@@ -106,7 +105,7 @@ export default class HistoryEffectRow extends React.Component<HistoryEffectRowPr
     }
 
     private getPieceKilledMessage(game : Game, effect : Effect) : string {
-        const template = this.props.theme.getEffectMessageTemplate(effect);
+        const template = K.theme.getEffectMessageTemplate(effect);
         const f = effect.value as PieceKilledEffect;
         return Sprintf.sprintf(template, {
             piece: this.getPieceLabel(f.oldPiece)
@@ -114,7 +113,7 @@ export default class HistoryEffectRow extends React.Component<HistoryEffectRowPr
     }
 
     private getPieceMovedMessage(game : Game, effect : Effect) : string {
-        const template = this.props.theme.getEffectMessageTemplate(effect);
+        const template = K.theme.getEffectMessageTemplate(effect);
         const f = effect.value as PieceMovedEffect;
         return Sprintf.sprintf(template, {
             piece: this.getPieceLabel(f.oldPiece),
@@ -124,17 +123,17 @@ export default class HistoryEffectRow extends React.Component<HistoryEffectRowPr
     }
 
     private getPieceVacatedMessage(game : Game, effect : Effect) : string {
-        const template = this.props.theme.getEffectMessageTemplate(effect);
+        const template = K.theme.getEffectMessageTemplate(effect);
         const f = effect.value as PieceVacatedEffect;
         return Sprintf.sprintf(template, {
             piece: this.getPieceLabel(f.oldPiece),
             newCell: f.newCellId.toString(),
-            center: this.props.theme.getCenterCellName()
+            center: K.theme.getCenterCellName()
         });
     }
 
     private getPlayerAddedMessage(game : Game, effect : Effect) : string {
-        const template = this.props.theme.getEffectMessageTemplate(effect);
+        const template = K.theme.getEffectMessageTemplate(effect);
         const f = effect.value as PlayerAddedEffect;
         return Sprintf.sprintf(template, {
             player: f.name
@@ -142,7 +141,7 @@ export default class HistoryEffectRow extends React.Component<HistoryEffectRowPr
     }
 
     private getPlayerEliminatedMessage(game : Game, effect : Effect) : string {
-        const template = this.props.theme.getEffectMessageTemplate(effect);
+        const template = K.theme.getEffectMessageTemplate(effect);
         const f = effect.value as PlayerEliminatedEffect;
         return Sprintf.sprintf(template, {
             player: this.getPlayerLabel(f.playerId)
@@ -150,7 +149,7 @@ export default class HistoryEffectRow extends React.Component<HistoryEffectRowPr
     }
 
     private getPlayerOutOfMovesMessages(game : Game, effect : Effect) : string {
-        const template = this.props.theme.getEffectMessageTemplate(effect);
+        const template = K.theme.getEffectMessageTemplate(effect);
         const f = effect.value as PlayerOutOfMovesEffect;
         return Sprintf.sprintf(template,  {
             player: this.getPlayerLabel(f.playerId)
@@ -158,7 +157,7 @@ export default class HistoryEffectRow extends React.Component<HistoryEffectRowPr
     }
 
     private getPlayerRemovedMessage(game : Game, effect : Effect) : string {
-        const template = this.props.theme.getEffectMessageTemplate(effect);
+        const template = K.theme.getEffectMessageTemplate(effect);
         const f = effect.value as PlayerRemovedEffect;
         return Sprintf.sprintf(template,  {
             player: this.getPlayerLabel(f.playerId)
@@ -166,7 +165,7 @@ export default class HistoryEffectRow extends React.Component<HistoryEffectRowPr
     }
 
     private getTurnCycleAdvancedMessage(game : Game, effect : Effect) : string {
-        const template = this.props.theme.getEffectMessageTemplate(effect);
+        const template = K.theme.getEffectMessageTemplate(effect);
         const f = effect.value as TurnCycleAdvancedEffect;
         return Sprintf.sprintf(template, {
             newCycle: f.newValue.map(id => this.getPlayerLabel(id)).join(",")
@@ -174,7 +173,7 @@ export default class HistoryEffectRow extends React.Component<HistoryEffectRowPr
     }
 
     private getTurnCyclePlayerFellFromPowerMessage(game : Game, effect : Effect) : string {
-        const template = this.props.theme.getEffectMessageTemplate(effect);
+        const template = K.theme.getEffectMessageTemplate(effect);
         const f = effect.value as TurnCyclePlayerFellFromPowerEffect;
         return Sprintf.sprintf(template, {
             player: this.getPlayerLabel(f.playerId),
@@ -183,7 +182,7 @@ export default class HistoryEffectRow extends React.Component<HistoryEffectRowPr
     }
 
     private getTurnCyclePlayerRemovedMessage(game : Game, effect : Effect) : string {
-        const template = this.props.theme.getEffectMessageTemplate(effect);
+        const template = K.theme.getEffectMessageTemplate(effect);
         const f = effect.value as TurnCyclePlayerRemovedEffect;
         return Sprintf.sprintf(template, {
             player: this.getPlayerLabel(f.playerId),
@@ -192,7 +191,7 @@ export default class HistoryEffectRow extends React.Component<HistoryEffectRowPr
     }
 
     private getTurnCyclePlayerRoseToPowerMessage(game : Game, effect : Effect) : string {
-        const template = this.props.theme.getEffectMessageTemplate(effect);
+        const template = K.theme.getEffectMessageTemplate(effect);
         const f = effect.value as TurnCyclePlayerRoseToPowerEffect;
         return Sprintf.sprintf(template, {
             player: this.getPlayerLabel(f.playerId),
@@ -203,7 +202,7 @@ export default class HistoryEffectRow extends React.Component<HistoryEffectRowPr
     //---Helpers---
 
     private getPieceLabel(piece : Piece) : string {
-        const kindName = this.props.theme.getPieceName(piece.kind);
+        const kindName = K.theme.getPieceName(piece.kind);
         if (piece.kind === PieceKind.Corpse) {
             return kindName;
         }

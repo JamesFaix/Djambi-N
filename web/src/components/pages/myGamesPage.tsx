@@ -1,16 +1,13 @@
 import * as React from 'react';
 import PageTitle from '../pageTitle';
 import { User, Game, GamesQuery } from '../../api/model';
-import ApiClient from '../../api/client';
 import { Redirect } from 'react-router';
 import LinkButton from '../controls/linkButton';
 import GamesQueryResultsTable from '../gamesQueryResultsTable';
-import Routes from '../../routes';
-import { Classes } from '../../styles';
+import {Kernel as K} from '../../kernel';
 
 export interface MyGamesPageProps {
-    user : User,
-    api : ApiClient,
+    user : User
 }
 
 export interface MyGamesPageState {
@@ -40,7 +37,7 @@ export default class MyGamesPage extends React.Component<MyGamesPageProps, MyGam
             status: null
         }
 
-        this.props.api
+        K.api
             .getGames(query)
             .then(games => {
                 this.setState({games : games});
@@ -53,17 +50,17 @@ export default class MyGamesPage extends React.Component<MyGamesPageProps, MyGam
     render() {
         //Go to home if not logged in
         if (this.props.user === null) {
-            return <Redirect to={Routes.home()}/>
+            return <Redirect to={K.routes.home()}/>
         }
 
         return (
             <div>
                 <PageTitle label={"My Games"}/>
                 <br/>
-                <div className={Classes.centerAligned}>
-                    <LinkButton label="Home" to={Routes.dashboard()}/>
-                    <LinkButton label="Create Game" to={Routes.createGame()}/>
-                    <LinkButton label="Find Game" to={Routes.findGame()}/>
+                <div className={K.classes.centerAligned}>
+                    <LinkButton label="Home" to={K.routes.dashboard()}/>
+                    <LinkButton label="Create Game" to={K.routes.createGame()}/>
+                    <LinkButton label="Find Game" to={K.routes.findGame()}/>
                 </div>
                 <br/>
                 <GamesQueryResultsTable

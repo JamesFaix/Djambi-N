@@ -2,85 +2,84 @@ import "./index.css";
 
 export class Classes {
 
-    public static readonly appTitle = "appTitle";
+    public readonly appTitle = "appTitle";
 
-    public static readonly appTitleCharA = "appTitleCharA";
+    public readonly appTitleCharA = "appTitleCharA";
 
-    public static readonly appTitleCharB = "appTitleCharB";
+    public readonly appTitleCharB = "appTitleCharB";
 
-    public static readonly pageTitle = "pageTitle";
+    public readonly pageTitle = "pageTitle";
 
-    public static readonly topMenu = "topMenu";
+    public readonly topMenu = "topMenu";
 
-    public static readonly centerAligned = "centerAligned";
+    public readonly centerAligned = "centerAligned";
 
-    public static readonly labeledTextBox = "labeledTextBox";
+    public readonly labeledTextBox = "labeledTextBox";
 
-    public static readonly thinBorder = "thinBorder";
+    public readonly thinBorder = "thinBorder";
 
-    public static readonly paddedCell = "paddedCell";
+    public readonly paddedCell = "paddedCell";
 
-    public static readonly indented = "indented";
+    public readonly indented = "indented";
 
-    public static readonly lightText = "lightText";
+    public readonly lightText = "lightText";
 
-    public static readonly table = "table";
+    public readonly table = "table";
 
-    public static readonly form = "form";
+    public readonly form = "form";
 
-    public static readonly borderless = "borderless";
+    public readonly borderless = "borderless";
 
-    public static readonly rightAligned = "rightAligned";
+    public readonly rightAligned = "rightAligned";
 
-    public static readonly fullWidth = "fullWidth";
+    public readonly fullWidth = "fullWidth";
 
-    public static readonly flex = "flex";
+    public readonly flex = "flex";
 
-    public static combine(classes: string[]) : string {
+    public combine(classes: string[]) : string {
         return classes.join(" ");
     }
-
 }
 
 export class Styles {
 
-    public static playerGlow(color : string) : React.CSSProperties {
+    public playerGlow(color : string) : React.CSSProperties {
         return { boxShadow: "inset 0 0 5px 5px " + color };
     }
 
-    public static readonly noMargin : React.CSSProperties = { margin: "0 auto" };
+    public readonly noMargin : React.CSSProperties = { margin: "0 auto" };
 
-    public static width(width : string) : React.CSSProperties {
+    public width(width : string) : React.CSSProperties {
         return { width: width };
     }
 
-    public static height(height : string) : React.CSSProperties {
+    public height(height : string) : React.CSSProperties {
         return { height: height };
     }
 
-    public static lineHeight(height : string) : React.CSSProperties {
+    public lineHeight(height : string) : React.CSSProperties {
         return { lineHeight: height };
     }
 
-    public static readonly noPadding : React.CSSProperties = { padding: 0 };
+    public readonly noPadding : React.CSSProperties = { padding: 0 };
 
-    public static background(color : string) : React.CSSProperties {
+    public background(color : string) : React.CSSProperties {
         return { background: color };
     }
 
-    public static margin(margin : string) : React.CSSProperties {
+    public margin(margin : string) : React.CSSProperties {
         return { margin: margin };
     }
 
-    public static padding(padding : string) : React.CSSProperties {
+    public padding(padding : string) : React.CSSProperties {
         return { padding : padding };
     }
 
-    public static grid() : React.CSSProperties {
+    public grid() : React.CSSProperties {
         return { display: "grid" };
     }
 
-    public static combine(styles : React.CSSProperties[]) : React.CSSProperties {
+    public combine(styles : React.CSSProperties[]) : React.CSSProperties {
         const len = styles.length;
         switch (len) {
             case 0: return {};

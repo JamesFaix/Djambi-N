@@ -1,7 +1,6 @@
 import * as React from 'react';
 import PageTitle from '../pageTitle';
 import { User, Game, GamesQuery, GameStatus } from '../../api/model';
-import ApiClient from '../../api/client';
 import { Redirect } from 'react-router';
 import LinkButton from '../controls/linkButton';
 import LabeledInput from '../controls/labeledInput';
@@ -10,12 +9,10 @@ import LabeledTristateDropdown from '../controls/labeledTristateDropdown';
 import ActionButton from '../controls/actionButton';
 import Util from '../../util';
 import GamesQueryResultsTable from '../gamesQueryResultsTable';
-import Routes from '../../routes';
-import { Classes } from '../../styles';
+import {Kernel as K} from '../../kernel';
 
 export interface FindGamePageProps {
-    user : User,
-    api : ApiClient,
+    user : User
 }
 
 export interface FindGamePageState {
@@ -55,7 +52,7 @@ export default class FindGamePage extends React.Component<FindGamePageProps, Fin
             status: GameStatus.Pending //Find Games page only shows pending games that you can join
         }
 
-        this.props.api
+        K.api
             .getGames(query)
             .then(games => {
                 this.setState({games : games});
@@ -83,10 +80,10 @@ export default class FindGamePage extends React.Component<FindGamePageProps, Fin
     renderQueryFilters() {
         return (
             <div>
-                <table className={Classes.table}>
+                <table className={K.classes.table}>
                     <tbody>
                         <tr>
-                            <td className={Classes.borderless}>
+                            <td className={K.classes.borderless}>
                                 <LabeledInput
                                     label="Created by"
                                     type={InputTypes.Text}
@@ -94,7 +91,7 @@ export default class FindGamePage extends React.Component<FindGamePageProps, Fin
                                     onChange={e => this.setState({ createdByUserNameFilter: e.target.value })}
                                 />
                             </td>
-                            <td className={Classes.borderless}>
+                            <td className={K.classes.borderless}>
                                 <LabeledTristateDropdown
                                     label="Public"
                                     value={this.state.isPublicFilter}
@@ -103,7 +100,7 @@ export default class FindGamePage extends React.Component<FindGamePageProps, Fin
                             </td>
                         </tr>
                         <tr>
-                        <td className={Classes.borderless}>
+                        <td className={K.classes.borderless}>
                                 <LabeledInput
                                     label="Has user"
                                     type={InputTypes.Text}
@@ -111,7 +108,7 @@ export default class FindGamePage extends React.Component<FindGamePageProps, Fin
                                     onChange={e => this.setState({ playerUserNameFilter: e.target.value })}
                                 />
                             </td>
-                            <td className={Classes.borderless}>
+                            <td className={K.classes.borderless}>
                                 <LabeledTristateDropdown
                                     label="Guests allowed"
                                     value={this.state.allowGuestsFilter}
@@ -120,7 +117,7 @@ export default class FindGamePage extends React.Component<FindGamePageProps, Fin
                             </td>
                         </tr>
                         <tr>
-                            <td className={Classes.borderless}>
+                            <td className={K.classes.borderless}>
                                 <LabeledInput
                                     label="Description"
                                     type={InputTypes.Text}
@@ -128,17 +125,17 @@ export default class FindGamePage extends React.Component<FindGamePageProps, Fin
                                     onChange={e => this.setState({ descriptionContainsFilter: e.target.value })}
                                 />
                             </td>
-                            <td className={Classes.borderless}>
+                            <td className={K.classes.borderless}>
                             </td>
                         </tr>
                         <tr>
-                            <td className={Classes.combine([Classes.borderless, Classes.rightAligned])}>
+                            <td className={K.classes.combine([K.classes.borderless, K.classes.rightAligned])}>
                                 <ActionButton
                                     label="Search"
                                     onClick={() => this.refreshResults()}
                                 />
                             </td>
-                            <td className={Classes.borderless}>
+                            <td className={K.classes.borderless}>
                                 <ActionButton
                                     label="Reset"
                                     onClick={() => this.resetOnClick()}
@@ -154,17 +151,17 @@ export default class FindGamePage extends React.Component<FindGamePageProps, Fin
     render() {
         //Go to home if not logged in
         if (this.props.user === null) {
-            return <Redirect to={Routes.home()}/>
+            return <Redirect to={K.routes.home()}/>
         }
 
         return (
             <div>
                 <PageTitle label={"Find Game"}/>
                 <br/>
-                <div className={Classes.centerAligned}>
-                    <LinkButton label="Home" to={Routes.dashboard()}/>
-                    <LinkButton label="My Games" to={Routes.myGames()}/>
-                    <LinkButton label="Create Game" to={Routes.createGame()}/>
+                <div className={K.classes.centerAligned}>
+                    <LinkButton label="Home" to={K.routes.dashboard()}/>
+                    <LinkButton label="My Games" to={K.routes.myGames()}/>
+                    <LinkButton label="Create Game" to={K.routes.createGame()}/>
                 </div>
                 <br/>
                 {this.renderQueryFilters()}

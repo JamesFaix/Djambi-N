@@ -1,11 +1,9 @@
 import * as React from 'react';
 import { Game } from '../../../api/model';
-import ThemeService from '../../../themes/themeService';
-import { Classes, Styles } from '../../../styles';
+import {Kernel as K} from '../../../kernel';
 
 export interface TurnCyclePanelProps {
     game : Game,
-    theme : ThemeService,
     iconSize : string,
     height : string,
     width : string
@@ -13,20 +11,20 @@ export interface TurnCyclePanelProps {
 
 export default class TurnCyclePanel extends React.Component<TurnCyclePanelProps> {
     render() {
-        const rowClass = Classes.combine([Classes.thinBorder, Classes.centerAligned]);
-        const style = Styles.combine([Styles.height(this.props.height), Styles.width(this.props.width)]);
+        const rowClass = K.classes.combine([K.classes.thinBorder, K.classes.centerAligned]);
+        const style = K.styles.combine([K.styles.height(this.props.height), K.styles.width(this.props.width)]);
 
         return (
-            <div className={Classes.thinBorder} style={style}>
+            <div className={K.classes.thinBorder} style={style}>
                 Turn Cycle
-                <div className={Classes.flex}>
+                <div className={K.classes.flex}>
                     {
                         this.getPlayerViews()
                             .map((pv, i) => {
-                                const style = Styles.combine([
-                                    Styles.playerGlow(pv.color),
-                                    Styles.height(this.props.iconSize),
-                                    Styles.width(this.props.iconSize)
+                                const style = K.styles.combine([
+                                    K.styles.playerGlow(pv.color),
+                                    K.styles.height(this.props.iconSize),
+                                    K.styles.width(this.props.iconSize)
                                 ]);
                                 return (
                                     <div key={"turn" + i}
@@ -50,7 +48,7 @@ export default class TurnCyclePanel extends React.Component<TurnCyclePanelProps>
                 return {
                     id: p.id,
                     name: p.name,
-                    color: this.props.theme.getPlayerColor(p.colorId)
+                    color: K.theme.getPlayerColor(p.colorId)
                 }
             });
     }

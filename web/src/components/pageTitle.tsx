@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Classes } from '../styles';
+import { Kernel as K } from '../kernel';
 
 export interface PageTitleProps {
     label : string
@@ -9,7 +9,7 @@ export default class PageTitle extends React.Component<PageTitleProps> {
 
     render() {
         return (
-            <div className={Classes.pageTitle}>
+            <div className={K.classes.pageTitle}>
                 {this.props.label}
             </div>
         );

@@ -1,9 +1,7 @@
 import { Game } from "../api/model";
 import * as React from 'react';
 import LinkButton from "./controls/linkButton";
-import Routes from "../routes";
-import DateService from "../dateService";
-import { Classes } from "../styles";
+import { Kernel as K } from '../kernel';
 
 export interface GamesQueryResultsTableProps {
     games : Game[]
@@ -15,23 +13,23 @@ export default class GamesQueryResultsTable extends React.Component<GamesQueryRe
         return (
             <tr key={"row" + rowNumber}>
                 <td>
-                    <LinkButton label="Go" to={Routes.gameInfo(game.id)} />
+                    <LinkButton label="Go" to={K.routes.gameInfo(game.id)} />
                 </td>
                 <td>
-                    {DateService.format(game.createdOn)}
+                    {K.dates.format(game.createdOn)}
                 </td>
                 <td>{game.createdByUserId}</td>
-                <td className={Classes.centerAligned}>
+                <td className={K.classes.centerAligned}>
                     {game.parameters.regionCount}
                 </td>
-                <td className={Classes.centerAligned}>
+                <td className={K.classes.centerAligned}>
                     <input
                         type="checkbox"
                         checked={game.parameters.isPublic}
                         disabled={true}
                     />
                 </td>
-                <td className={Classes.centerAligned}>
+                <td className={K.classes.centerAligned}>
                     <input
                         type="checkbox"
                         checked={game.parameters.allowGuests}
@@ -46,7 +44,7 @@ export default class GamesQueryResultsTable extends React.Component<GamesQueryRe
     render() {
         return (
             <div>
-                <table className={Classes.table}>
+                <table className={K.classes.table}>
                     <tbody>
                         <tr>
                             <th></th>

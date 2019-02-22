@@ -1,17 +1,14 @@
 import * as React from 'react';
 import PageTitle from '../pageTitle';
-import ApiClient from '../../api/client';
 import { LoginRequest, User } from '../../api/model';
 import LabeledInput from '../controls/labeledInput';
 import { Redirect } from 'react-router';
 import LinkButton from '../controls/linkButton';
 import ActionButton from '../controls/actionButton';
 import { InputTypes } from '../../constants';
-import Routes from '../../routes';
-import { Classes } from '../../styles';
+import {Kernel as K} from '../../kernel';
 
 export interface LoginPageProps {
-    api : ApiClient,
     user : User,
     setUser(user : User) : void
 }
@@ -52,7 +49,7 @@ export default class LoginPage extends React.Component<LoginPageProps, LoginPage
             password: this.state.password
         };
 
-        this.props.api
+        K.api
             .login(request)
             .then(session => {
                 this.setState({
@@ -69,20 +66,20 @@ export default class LoginPage extends React.Component<LoginPageProps, LoginPage
     render() {
         //Go straight to dashboard if already logged in
         if (this.props.user !== null) {
-            return <Redirect to={Routes.dashboard()}/>
+            return <Redirect to={K.routes.dashboard()}/>
         }
 
         return (
             <div>
                 <PageTitle label="Log in"/>
                 <br/>
-                <div className={Classes.centerAligned}>
-                    <LinkButton label="Home" to={Routes.home()} />
-                    <LinkButton label="Sign up" to={Routes.signup()} />
+                <div className={K.classes.centerAligned}>
+                    <LinkButton label="Home" to={K.routes.home()} />
+                    <LinkButton label="Sign up" to={K.routes.signup()} />
                 </div>
                 <br/>
                 <br/>
-                <div className={Classes.form}>
+                <div className={K.classes.form}>
                     <LabeledInput
                         label="Username"
                         type={InputTypes.Text}
@@ -98,7 +95,7 @@ export default class LoginPage extends React.Component<LoginPageProps, LoginPage
                     />
                     <br/>
                 </div>
-                <div className={Classes.centerAligned}>
+                <div className={K.classes.centerAligned}>
                     <ActionButton label="Submit" onClick={() => this.submitOnClick()}/>
                 </div>
             </div>

@@ -1,12 +1,12 @@
 import * as React from 'react';
 import AppTitle from './appTitle';
-import { Classes } from '../styles';
+import { Kernel as K } from '../kernel';
 
 export default class TopMenu extends React.Component {
 
     render() {
         return (
-            <div className={Classes.topMenu}>
+            <div className={K.classes.topMenu}>
                 <AppTitle/>
             </div>
         );

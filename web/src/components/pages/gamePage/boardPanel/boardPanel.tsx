@@ -1,7 +1,5 @@
 import * as React from 'react';
 import { Game } from '../../../../api/model';
-import ThemeService from '../../../../themes/themeService';
-import { Classes, Styles } from '../../../../styles';
 import { BoardView, CellView } from '../../../../boardRendering/model';
 import CanvasBoard from './canvas/canvasBoard';
 import Scrollbars, { positionValues } from 'react-custom-scrollbars';
@@ -9,10 +7,10 @@ import { InputTypes } from '../../../../constants';
 import Geometry from '../../../../boardRendering/geometry';
 import { Point } from '../../../../boardRendering/model';
 import CanvasTransformService from '../../../../boardRendering/canvasTransformService';
+import { Kernel as K } from '../../../../kernel';
 
 export interface BoardPanelProps {
     game : Game,
-    theme : ThemeService,
     boardView : BoardView,
     selectCell : (cell : CellView) => void,
     size : Point,
@@ -88,9 +86,9 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
     //--- RENDERING ---
 
     render() {
-        const containerStyle = Styles.combine([
-            Styles.width("100%"),
-            Styles.height("100%")
+        const containerStyle = K.styles.combine([
+            K.styles.width("100%"),
+            K.styles.height("100%")
         ]);
 
         const p = this.props;
@@ -101,7 +99,7 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
 
         return (
             <div
-                className={Classes.thinBorder}
+                className={K.classes.thinBorder}
                 style={containerStyle}
             >
                 <Scrollbars
@@ -111,7 +109,6 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
                 >
                     <CanvasBoard
                         board={board}
-                        theme={p.theme}
                         selectCell={(cell) => p.selectCell(cell)}
                         scale={cts.getScale()}
                         boardStrokeWidth={p.boardStrokeWidth}
