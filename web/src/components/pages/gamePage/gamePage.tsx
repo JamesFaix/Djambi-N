@@ -10,6 +10,7 @@ import HistoryPanel from './historyPanel/historyPanel';
 import BoardPanel from './boardPanel/boardPanel';
 import Geometry from '../../../boardRendering/geometry';
 import {Kernel as K} from '../../../kernel';
+import BoardViewService from '../../../boardRendering/boardViewService';
 
 export interface GamePageProps {
     user : User,
@@ -24,9 +25,13 @@ export interface GamePageState {
 
 export default class GamePage extends React.Component<GamePageProps, GamePageState> {
     private readonly contentSize : Point;
+    private readonly boardViewService : BoardViewService;
 
     constructor(props : GamePageProps) {
         super(props);
+
+        this.boardViewService = new BoardViewService(K.api);
+
         this.state = {
             game : null,
             boardView : null,
@@ -41,7 +46,7 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
     }
 
     private async updateGame(game : Game) : Promise<void> {
-        const boardView = await K.boardViews.getBoardView(game);
+        const boardView = await this.boardViewService.getBoardView(game);
         this.setState({
             boardView : boardView,
             game : game
