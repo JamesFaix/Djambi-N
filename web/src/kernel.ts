@@ -29,12 +29,12 @@ export class Kernel {
     public static get theme() { return this._theme; }
 
     public static initialize() {
-        this._theme = new ThemeService();
         this._api = new ApiClient();
-        this._styles = new Styles();
         this._classes = new Classes();
+        this._copy = new CopyService();
         this._dates = new DateService();
         this._routes = new Routes();
-        this._copy = new CopyService();
+        this._styles = new Styles();
+        this._theme = new ThemeService();
     }
 }
