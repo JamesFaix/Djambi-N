@@ -7,6 +7,7 @@ import { CellType, CellState, CellHighlight } from "../boardRendering/model";
 export default class ThemeService {
     theme : Theme;
     private readonly defaultTheme : Theme;
+    private readonly pieceImageCache : any = {};
 
     constructor(){
         this.defaultTheme = ThemeFactory.getDefaultTheme();
@@ -60,7 +61,7 @@ export default class ThemeService {
         return this.getValue(t => t.centerCellName);
     }
 
-    public getPieceImage(kind : PieceKind) : string {
+    private getPieceImagePath(kind : PieceKind) : string {
         switch (kind) {
             case PieceKind.Assassin: return this.getValue(t => t.pieceImageAssassin);
             case PieceKind.Chief: return this.getValue(t => t.pieceImageChief);
@@ -71,6 +72,12 @@ export default class ThemeService {
             case PieceKind.Thug: return this.getValue(t => t.pieceImageThug);
             default: throw "Invalid piece kind.";
         }
+    }
+
+    public getPieceImage(kind : PieceKind) : any {
+        const image = new (window as any).Image();
+        image.src = this.getPieceImagePath(kind);
+        return image;
     }
 
     public getPieceName(kind : PieceKind) : string {

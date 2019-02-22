@@ -11,31 +11,18 @@ export interface CanvasPieceProps {
     location : Point
 }
 
-export interface CanvasPieceState {
-    image : HTMLImageElement
-}
-
-export default class CanvasPiece extends React.Component<CanvasPieceProps, CanvasPieceState> {
+export default class CanvasPiece extends React.Component<CanvasPieceProps> {
     constructor(props : CanvasPieceProps) {
         super(props);
-        this.state = {
-            image : null
-        };
-    }
-
-    componentDidMount() {
-        const image = new (window as any).Image();
-        image.src = K.theme.getPieceImage(this.props.piece.kind);
-        image.onload = () => {
-            this.setState({image : image})
-        };
     }
 
     render() {
+        console.log("CanvasPiece.render Id:" + this.props.piece.id + ", Kind: " + this.props.piece.kind);
+
         const playerColor = K.theme.getPlayerColor(this.props.piece.colorId);
         return (
             <Image
-               image={this.state.image}
+               image={K.theme.getPieceImage(this.props.piece.kind)}
                x={this.props.location.x}
                y={this.props.location.y}
                height={this.props.size}
