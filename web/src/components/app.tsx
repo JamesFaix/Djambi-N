@@ -7,15 +7,12 @@ import DashboardPage from './pages/dashboardPage';
 import GamePage from './pages/gamePage/gamePage';
 import TopMenu from './topMenu';
 import { User } from '../api/model';
-import ApiClient from '../api/client';
 import MyGamesPage from './pages/myGamesPage';
 import CreateGamePage from './pages/createGamePage';
 import FindGamePage from './pages/findGamePage';
 import GameInfoPage from './pages/gameInfoPage/gameInfoPage';
 import Routes from '../routes';
-import ThemeService from '../themes/themeService';
 import "../index.css";
-import BoardViewService from '../boardRendering/boardViewService';
 import Kernel from '../kernel';
 
 export interface AppProps {
@@ -30,9 +27,7 @@ export default class App extends React.Component<AppProps, AppState> {
     constructor(props : AppProps) {
         super(props);
 
-        Kernel.api = new ApiClient();
-        Kernel.theme = new ThemeService();
-        Kernel.boardViews = new BoardViewService(Kernel.api);
+        Kernel.Initialize();
 
         this.state = {
             user : null
