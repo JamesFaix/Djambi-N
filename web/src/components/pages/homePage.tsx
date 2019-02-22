@@ -2,14 +2,13 @@ import * as React from 'react';
 import PageTitle from '../pageTitle';
 import { Redirect } from 'react-router';
 import { User } from '../../api/model';
-import ApiClient from '../../api/client';
 import LinkButton from '../controls/linkButton';
 import Routes from '../../routes';
 import { Classes } from '../../styles';
+import Kernel from '../../kernel';
 
 export interface HomePageProps {
     user : User,
-    api : ApiClient,
     setUser(user : User) : void
 }
 
@@ -21,7 +20,7 @@ export default class HomePage extends React.Component<HomePageProps> {
             return <Redirect to={Routes.dashboard()}/>
         }
 
-        this.props.api
+        Kernel.api
             .getCurrentUser()
             .then(user => {
                 if (user !== null){

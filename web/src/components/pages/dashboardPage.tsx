@@ -1,23 +1,22 @@
 import * as React from 'react';
 import PageTitle from '../pageTitle';
 import { User } from '../../api/model';
-import ApiClient from '../../api/client';
 import { Redirect } from 'react-router';
 import ActionButton from '../controls/actionButton';
 import LinkButton from '../controls/linkButton';
 import Routes from '../../routes';
 import { Classes } from '../../styles';
+import Kernel from '../../kernel';
 
 export interface DashboardPageProps {
     user : User,
-    api : ApiClient,
     setUser(user: User) : void
 }
 
 export default class DashboardPage extends React.Component<DashboardPageProps> {
 
     private logoutOnClick() {
-        this.props.api
+        Kernel.api
             .logout()
             .then(_ => {
                 this.props.setUser(null);

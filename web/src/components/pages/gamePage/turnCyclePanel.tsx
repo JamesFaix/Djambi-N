@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { Game } from '../../../api/model';
-import ThemeService from '../../../themes/themeService';
 import { Classes, Styles } from '../../../styles';
+import Kernel from '../../../kernel';
 
 export interface TurnCyclePanelProps {
     game : Game,
-    theme : ThemeService,
     iconSize : string,
     height : string,
     width : string
@@ -50,7 +49,7 @@ export default class TurnCyclePanel extends React.Component<TurnCyclePanelProps>
                 return {
                     id: p.id,
                     name: p.name,
-                    color: this.props.theme.getPlayerColor(p.colorId)
+                    color: Kernel.theme.getPlayerColor(p.colorId)
                 }
             });
     }

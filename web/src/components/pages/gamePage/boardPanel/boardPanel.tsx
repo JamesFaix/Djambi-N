@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Game } from '../../../../api/model';
-import ThemeService from '../../../../themes/themeService';
 import { Classes, Styles } from '../../../../styles';
 import { BoardView, CellView } from '../../../../boardRendering/model';
 import CanvasBoard from './canvas/canvasBoard';
@@ -12,7 +11,6 @@ import CanvasTransformService from '../../../../boardRendering/canvasTransformSe
 
 export interface BoardPanelProps {
     game : Game,
-    theme : ThemeService,
     boardView : BoardView,
     selectCell : (cell : CellView) => void,
     size : Point,
@@ -111,7 +109,6 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
                 >
                     <CanvasBoard
                         board={board}
-                        theme={p.theme}
                         selectCell={(cell) => p.selectCell(cell)}
                         scale={cts.getScale()}
                         boardStrokeWidth={p.boardStrokeWidth}

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import PageTitle from '../pageTitle';
-import ApiClient from '../../api/client';
 import { CreateUserRequest, User, LoginRequest } from '../../api/model';
 import LabeledInput from '../controls/labeledInput';
 import { Redirect } from 'react-router';
@@ -9,9 +8,9 @@ import ActionButton from '../controls/actionButton';
 import { InputTypes } from '../../constants';
 import Routes from '../../routes';
 import { Classes } from '../../styles';
+import Kernel from '../../kernel';
 
 export interface SignupPageProps {
-    api : ApiClient,
     user : User,
     setUser(user : User) : void
 }
@@ -52,7 +51,7 @@ export default class SignupPage extends React.Component<SignupPageProps, SignupP
             password: this.state.password
         };
 
-        this.props.api
+        Kernel.api
             .createUser(request)
             .then(_ => {
                 this.setState({
@@ -65,7 +64,7 @@ export default class SignupPage extends React.Component<SignupPageProps, SignupP
                     password: request.password
                 };
 
-                return this.props.api
+                return Kernel.api
                     .login(loginRequest);
             })
             .then(session => {

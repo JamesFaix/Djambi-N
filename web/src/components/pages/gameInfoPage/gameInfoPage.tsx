@@ -1,17 +1,16 @@
 import * as React from 'react';
 import PageTitle from '../../pageTitle';
 import { User, Game, GameStatus, CreatePlayerRequest } from '../../../api/model';
-import ApiClient from '../../../api/client';
 import { Redirect } from 'react-router';
 import LinkButton from '../../controls/linkButton';
 import ActionButton from '../../controls/actionButton';
 import GameInfoPlayersTable from './gameInfoPlayersTable';
 import Routes from '../../../routes';
 import { Classes } from '../../../styles';
+import Kernel from '../../../kernel';
 
 export interface GameInfoPageProps {
     user : User,
-    api : ApiClient,
     gameId : number
 }
 
@@ -33,7 +32,7 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
     }
 
     componentDidMount() {
-        this.props.api
+        Kernel.api
             .getGame(this.props.gameId)
             .then(game => {
                 this.setState({game : game});
@@ -46,12 +45,12 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
 //---Event handlers---
 
     private addPlayer(gameId : number, request : CreatePlayerRequest) : void {
-        this.props.api.addPlayer(gameId, request)
+        Kernel.api.addPlayer(gameId, request)
             .then(response => this.updateGame(response.game));
     }
 
     private removePlayer(gameId : number, playerId : number) : void {
-        this.props.api.removePlayer(gameId, playerId)
+        Kernel.api.removePlayer(gameId, playerId)
             .then(response => this.updateGame(response.game));
     }
 
@@ -68,7 +67,7 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
     }
 
     private startOnClick() {
-        this.props.api
+        Kernel.api
             .startGame(this.state.game.id)
             .then(_ => {
                 this.setState({ redirectUrl : Routes.game(this.state.game.id) });

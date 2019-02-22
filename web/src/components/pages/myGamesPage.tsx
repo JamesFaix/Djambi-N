@@ -1,16 +1,15 @@
 import * as React from 'react';
 import PageTitle from '../pageTitle';
 import { User, Game, GamesQuery } from '../../api/model';
-import ApiClient from '../../api/client';
 import { Redirect } from 'react-router';
 import LinkButton from '../controls/linkButton';
 import GamesQueryResultsTable from '../gamesQueryResultsTable';
 import Routes from '../../routes';
 import { Classes } from '../../styles';
+import Kernel from '../../kernel';
 
 export interface MyGamesPageProps {
-    user : User,
-    api : ApiClient,
+    user : User
 }
 
 export interface MyGamesPageState {
@@ -40,7 +39,7 @@ export default class MyGamesPage extends React.Component<MyGamesPageProps, MyGam
             status: null
         }
 
-        this.props.api
+        Kernel.api
             .getGames(query)
             .then(games => {
                 this.setState({games : games});

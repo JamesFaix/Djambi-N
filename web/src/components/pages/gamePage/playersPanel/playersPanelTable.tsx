@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { Game, Player, PlayerKind } from '../../../../api/model';
-import ThemeService from '../../../../themes/themeService';
 import { Classes, Styles } from '../../../../styles';
+import Kernel from '../../../../kernel';
 
 export interface PlayersPanelTableProps {
-    game : Game,
-    theme : ThemeService
+    game : Game
 }
 
 export default class PlayersPanelTable extends React.Component<PlayersPanelTableProps> {
@@ -31,7 +30,7 @@ export default class PlayersPanelTable extends React.Component<PlayersPanelTable
     }
 
     private renderPlayerRow(player : Player, rowNumber : number) {
-        const color = this.props.theme.getPlayerColor(player.colorId);
+        const color = Kernel.theme.getPlayerColor(player.colorId);
         return (
             <tr
                 style={Styles.playerGlow(color)}

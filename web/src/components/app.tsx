@@ -16,29 +16,26 @@ import Routes from '../routes';
 import ThemeService from '../themes/themeService';
 import "../index.css";
 import BoardViewService from '../boardRendering/boardViewService';
+import Kernel from '../kernel';
 
 export interface AppProps {
 
 }
 
 export interface AppState {
-    user : User,
-    api : ApiClient,
-    theme : ThemeService,
-    boardViewService : BoardViewService
+    user : User
 }
 
 export default class App extends React.Component<AppProps, AppState> {
     constructor(props : AppProps) {
         super(props);
 
-        const api = new ApiClient();
+        Kernel.api = new ApiClient();
+        Kernel.theme = new ThemeService();
+        Kernel.boardViews = new BoardViewService(Kernel.api);
 
         this.state = {
-            user : null,
-            api : api,
-            theme : new ThemeService(),
-            boardViewService : new BoardViewService(api)
+            user : null
         };
     }
 
@@ -52,7 +49,6 @@ export default class App extends React.Component<AppProps, AppState> {
                         render={_ =>
                             <HomePage
                                 user={this.state.user}
-                                api={this.state.api}
                                 setUser={user => this.setState({user : user})}
                             />
                         }
@@ -61,7 +57,6 @@ export default class App extends React.Component<AppProps, AppState> {
                         path={Routes.signup()}
                         render={_ =>
                             <SignupPage
-                                api={this.state.api}
                                 user={this.state.user}
                                 setUser={user => this.setState({user : user})}
                             />
@@ -71,7 +66,6 @@ export default class App extends React.Component<AppProps, AppState> {
                         path={Routes.login()}
                         render={_ =>
                             <LoginPage
-                                api={this.state.api}
                                 user={this.state.user}
                                 setUser={user => this.setState({user : user})}
                             />
@@ -82,7 +76,6 @@ export default class App extends React.Component<AppProps, AppState> {
                         render={_ =>
                             <DashboardPage
                                 user={this.state.user}
-                                api={this.state.api}
                                 setUser={user => this.setState({user : user})}
                             />
                         }
@@ -92,7 +85,6 @@ export default class App extends React.Component<AppProps, AppState> {
                         render={_ =>
                             <MyGamesPage
                                 user={this.state.user}
-                                api={this.state.api}
                             />
                         }
                     />
@@ -101,7 +93,6 @@ export default class App extends React.Component<AppProps, AppState> {
                         render={_ =>
                             <CreateGamePage
                                 user={this.state.user}
-                                api={this.state.api}
                             />
                         }
                     />
@@ -110,7 +101,6 @@ export default class App extends React.Component<AppProps, AppState> {
                         render={_ =>
                             <FindGamePage
                                 user={this.state.user}
-                                api={this.state.api}
                             />
                         }
                     />
@@ -119,7 +109,6 @@ export default class App extends React.Component<AppProps, AppState> {
                         render={props =>
                             <GameInfoPage
                                 user={this.state.user}
-                                api={this.state.api}
                                 gameId={props.match.params.gameId}
                             />
                         }
@@ -129,10 +118,7 @@ export default class App extends React.Component<AppProps, AppState> {
                         render={props =>
                             <GamePage
                                 user={this.state.user}
-                                api={this.state.api}
                                 gameId={props.match.params.gameId}
-                                theme={this.state.theme}
-                                boardViewService={this.state.boardViewService}
                             />
                         }
                     />

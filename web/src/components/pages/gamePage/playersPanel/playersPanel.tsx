@@ -1,12 +1,10 @@
 import * as React from 'react';
 import { Game } from '../../../../api/model';
-import ThemeService from '../../../../themes/themeService';
 import PlayersPanelTable from './playersPanelTable';
 import { Classes, Styles } from '../../../../styles';
 
 export interface PlayersPanelProps {
     game : Game,
-    theme : ThemeService,
     height : string,
     width : string
 }
@@ -19,7 +17,6 @@ export default class PlayersPanel extends React.Component<PlayersPanelProps> {
                 Players
                 <PlayersPanelTable
                     game={this.props.game}
-                    theme={this.props.theme}
                 />
             </div>
         );

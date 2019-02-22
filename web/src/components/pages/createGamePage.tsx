@@ -1,7 +1,6 @@
 import * as React from 'react';
 import PageTitle from '../pageTitle';
 import { User, GameParameters } from '../../api/model';
-import ApiClient from '../../api/client';
 import { Redirect } from 'react-router';
 import LinkButton from '../controls/linkButton';
 import LabeledInput from '../controls/labeledInput';
@@ -9,10 +8,10 @@ import ActionButton from '../controls/actionButton';
 import Constants, { InputTypes } from '../../constants';
 import Routes from '../../routes';
 import { Classes } from '../../styles';
+import Kernel from '../../kernel';
 
 export interface CreateGamePageProps {
-    user : User,
-    api : ApiClient
+    user : User
 }
 
 export interface CreateGamePageState {
@@ -67,7 +66,7 @@ export default class CreateGamePage extends React.Component<CreateGamePageProps,
             isPublic: this.state.isPublic
         };
 
-        this.props.api
+        Kernel.api
             .createGame(request)
             .then(game => {
                 this.setState({

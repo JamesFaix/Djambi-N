@@ -1,7 +1,6 @@
 import * as React from 'react';
 import PageTitle from '../pageTitle';
 import { User, Game, GamesQuery, GameStatus } from '../../api/model';
-import ApiClient from '../../api/client';
 import { Redirect } from 'react-router';
 import LinkButton from '../controls/linkButton';
 import LabeledInput from '../controls/labeledInput';
@@ -12,10 +11,10 @@ import Util from '../../util';
 import GamesQueryResultsTable from '../gamesQueryResultsTable';
 import Routes from '../../routes';
 import { Classes } from '../../styles';
+import Kernel from '../../kernel';
 
 export interface FindGamePageProps {
-    user : User,
-    api : ApiClient,
+    user : User
 }
 
 export interface FindGamePageState {
@@ -55,7 +54,7 @@ export default class FindGamePage extends React.Component<FindGamePageProps, Fin
             status: GameStatus.Pending //Find Games page only shows pending games that you can join
         }
 
-        this.props.api
+        Kernel.api
             .getGames(query)
             .then(games => {
                 this.setState({games : games});

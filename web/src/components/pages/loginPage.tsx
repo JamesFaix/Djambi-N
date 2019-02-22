@@ -1,6 +1,5 @@
 import * as React from 'react';
 import PageTitle from '../pageTitle';
-import ApiClient from '../../api/client';
 import { LoginRequest, User } from '../../api/model';
 import LabeledInput from '../controls/labeledInput';
 import { Redirect } from 'react-router';
@@ -9,9 +8,9 @@ import ActionButton from '../controls/actionButton';
 import { InputTypes } from '../../constants';
 import Routes from '../../routes';
 import { Classes } from '../../styles';
+import Kernel from '../../kernel';
 
 export interface LoginPageProps {
-    api : ApiClient,
     user : User,
     setUser(user : User) : void
 }
@@ -52,7 +51,7 @@ export default class LoginPage extends React.Component<LoginPageProps, LoginPage
             password: this.state.password
         };
 
-        this.props.api
+        Kernel.api
             .login(request)
             .then(session => {
                 this.setState({
