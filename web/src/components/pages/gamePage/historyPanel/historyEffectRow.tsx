@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as Sprintf from 'sprintf-js';
 import { Game, Effect, EffectKind, GameStatusChangedEffect, PieceKilledEffect, PlayerAddedEffect, PieceMovedEffect, PlayerKind, PlayerEliminatedEffect, PlayerOutOfMovesEffect, PlayerRemovedEffect, PieceKind, Piece, NeutralPlayerAddedEffect, PieceAbandonedEffect, PieceEnlistedEffect, PieceDroppedEffect, PieceVacatedEffect, TurnCycleAdvancedEffect, TurnCyclePlayerFellFromPowerEffect, TurnCyclePlayerRemovedEffect, TurnCyclePlayerRoseToPowerEffect, Board } from '../../../../api/model';
-import CopyService from '../../../../copyService';
 import {Kernel as K} from '../../../../kernel';
 
 export interface HistoryEffectRowProps {
@@ -223,7 +222,7 @@ export default class HistoryEffectRow extends React.Component<HistoryEffectRowPr
         const board = this.props.getBoard(this.props.game.parameters.regionCount);
         if (board) {
             const cell = board.cells.find(c => c.id === cellId);
-            return CopyService.locationToString(cell.locations[0]);
+            return K.copy.locationToString(cell.locations[0]);
         } else {
             return cellId.toString();
         }

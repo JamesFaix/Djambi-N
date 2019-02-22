@@ -3,7 +3,7 @@ import { CellView } from '../../../../../boardRendering/model';
 import { Text } from 'react-konva';
 import Debug from '../../../../../debug';
 import Geometry from '../../../../../boardRendering/geometry';
-import CopyService from '../../../../../copyService';
+import { Kernel as K } from '../../../../../kernel';
 
 export interface CanvasLabelProps {
     cell : CellView,
@@ -18,7 +18,7 @@ export default class CanvasLabel extends React.Component<CanvasLabelProps> {
         }
         const cell = this.props.cell;
 
-        let text = CopyService.locationToString(cell.locations[0]);
+        let text = K.copy.locationToString(cell.locations[0]);
         text += "\nC " + cell.id;
         if (cell.piece !== null) {
             text += "\nP " + cell.piece.id;
