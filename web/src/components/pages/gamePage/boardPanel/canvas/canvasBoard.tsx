@@ -92,6 +92,7 @@ export default class CanvasBoard extends React.Component<CanvasBoardProps> {
                             key={"label" + i}
                             cell={c}
                             onClick={() => this.props.selectCell(c)}
+                            regionCount={this.props.board.regionCount}
                         />
                     )
                 }

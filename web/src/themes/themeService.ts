@@ -101,45 +101,26 @@ export default class ThemeService {
         }
     }
 
-    public getSelectionDescription(selection : Selection, game : Game) : string {
-        const piece = selection.pieceId === null
-            ? null
-            : game.pieces.find(p => p.id === selection.pieceId);
-
-        const pieceName = piece === null
-            ? null
-            : this.getPieceName(piece.kind);
-
-        //TODO: Add support for using cell coordinates, not IDs
-        const cell = selection.cellId;
-
-        let format : string;
-
+    public getSelectionDescriptionTemplate(selection : Selection) : string {
         switch (selection.kind) {
             case SelectionKind.Drop:
-                format = this.getValue(t => t.selectionDescriptionDrop);
-                return Sprintf.sprintf(format, cell);
+                return this.getValue(t => t.selectionDescriptionDrop);
 
             case SelectionKind.Move:
-                if (piece === null) {
-                    format = this.getValue(t => t.selectionDescriptionMove);
-                    return Sprintf.sprintf(format, cell);
+                if (selection.pieceId === null) {
+                    return this.getValue(t => t.selectionDescriptionMove);
                 } else {
-                    format = this.getValue(t => t.selectionDescriptionMoveAndTarget);
-                    return Sprintf.sprintf(format, cell, pieceName)
+                    return this.getValue(t => t.selectionDescriptionMoveAndTarget);
                 }
 
             case SelectionKind.Subject:
-                format = this.getValue(t => t.selectionDescriptionSubject);
-                return Sprintf.sprintf(format, pieceName);
+                return this.getValue(t => t.selectionDescriptionSubject);
 
             case SelectionKind.Target:
-                format = this.getValue(t => t.selectionDescriptionTarget);
-                return Sprintf.sprintf(format, pieceName, cell);
+                return this.getValue(t => t.selectionDescriptionTarget);
 
             case SelectionKind.Vacate:
-                format = this.getValue(t => t.selectionDescriptionVacate);
-                return Sprintf.sprintf(format, this.getCenterCellName(), cell);
+                return this.getValue(t => t.selectionDescriptionVacate);
 
             default: throw "Invalid selection kind.";
         }

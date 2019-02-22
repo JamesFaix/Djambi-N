@@ -7,7 +7,8 @@ import { Kernel as K } from '../../../../../kernel';
 
 export interface CanvasLabelProps {
     cell : CellView,
-    onClick : (cell : CellView) => void
+    onClick : (cell : CellView) => void,
+    regionCount : number
 }
 
 export default class CanvasLabel extends React.Component<CanvasLabelProps> {
@@ -18,8 +19,7 @@ export default class CanvasLabel extends React.Component<CanvasLabelProps> {
         }
         const cell = this.props.cell;
 
-        let text = K.copy.locationToString(cell.locations[0]);
-        text += "\nC " + cell.id;
+        let text = K.copy.getCellLabel(cell.id, this.props.regionCount);
         if (cell.piece !== null) {
             text += "\nP " + cell.piece.id;
         }

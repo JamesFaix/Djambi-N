@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Game, Player, PlayerKind } from '../../../../api/model';
+import { Game, Player } from '../../../../api/model';
 import {Kernel as K} from '../../../../kernel';
 
 export interface PlayersPanelTableProps {
@@ -7,26 +7,6 @@ export interface PlayersPanelTableProps {
 }
 
 export default class PlayersPanelTable extends React.Component<PlayersPanelTableProps> {
-
-    private getPlayerNote(player : Player) {
-        switch (player.kind) {
-            case PlayerKind.User:
-                return "";
-
-            case PlayerKind.Guest:
-                const host = this.props.game.players
-                    .find(p => p.userId === player.userId
-                        && p.kind === PlayerKind.User);
-
-                return "Guest of " + host.name;
-
-            case PlayerKind.Neutral:
-                return "Neutral";
-
-            default:
-                throw "Invalid player kind.";
-        }
-    }
 
     private renderPlayerRow(player : Player, rowNumber : number) {
         const color = K.theme.getPlayerColor(player.colorId);
@@ -39,7 +19,7 @@ export default class PlayersPanelTable extends React.Component<PlayersPanelTable
                     {player.name}
                 </td>
                 <td className={K.classes.combine([K.classes.borderless, K.classes.lightText])}>
-                    {this.getPlayerNote(player)}
+                    {K.copy.getPlayerNote(player, this.props.game)}
                 </td>
             </tr>
         );

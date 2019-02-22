@@ -4,11 +4,15 @@ import { Styles, Classes } from "./styles";
 import DateService from "./dateService";
 import Routes from "./routes";
 import CopyService from "./copyService";
+import BoardService from "./boardService";
 
 export class Kernel {
 
     private static _api : ApiClient;
     public static get api() { return this._api; }
+
+    private static _boards : BoardService;
+    public static get boards() { return this._boards; }
 
     private static _classes : Classes;
     public static get classes() { return this._classes; }
@@ -31,10 +35,12 @@ export class Kernel {
     public static initialize() {
         this._api = new ApiClient();
         this._classes = new Classes();
-        this._copy = new CopyService();
         this._dates = new DateService();
         this._routes = new Routes();
         this._styles = new Styles();
         this._theme = new ThemeService();
+
+        this._boards = new BoardService(this._api);
+        this._copy = new CopyService(this._boards, this._theme);
     }
 }
