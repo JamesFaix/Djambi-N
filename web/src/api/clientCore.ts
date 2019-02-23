@@ -1,4 +1,5 @@
 import Environment from '../environment';
+import Debug from '../debug';
 
 export enum HttpMethod {
     Get = "GET",
@@ -36,12 +37,16 @@ export class ApiClientCore {
                 if (!response.ok){
                     return response.json()
                         .then(errorMessage => {
-                            console.log(endpointDescription + " failed (" + errorMessage + ")");
+                            if (Debug.logApiErrors) {
+                                console.log(endpointDescription + " failed (" + errorMessage + ")");
+                            }
                             return null;
 
                         });
                 } else {
-                    console.log(endpointDescription + " succeeded");
+                    if (Debug.logApiSuccesses) {
+                        console.log(endpointDescription + " succeeded");
+                    }
                     return await response.json();
                 }
             })

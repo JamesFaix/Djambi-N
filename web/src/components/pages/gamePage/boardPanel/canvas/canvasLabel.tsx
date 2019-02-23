@@ -14,13 +14,13 @@ export interface CanvasLabelProps {
 export default class CanvasLabel extends React.Component<CanvasLabelProps> {
 
     render() {
-        if (!Debug.showPieceAndCellIds) {
+        if (!Debug.showCellLabels) {
             return undefined;
         }
         const cell = this.props.cell;
 
         let text = K.copy.getCellLabel(cell.id, this.props.regionCount);
-        if (cell.piece !== null) {
+        if (Debug.showPieceAndCellIds && cell.piece !== null) {
             text += "\nP " + cell.piece.id;
         }
 

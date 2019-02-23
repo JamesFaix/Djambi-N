@@ -80,7 +80,7 @@ export default class CanvasBoard extends React.Component<CanvasBoardProps> {
     }
 
     private renderDebugLabels() {
-        if (!Debug.showPieceAndCellIds){
+        if (!Debug.showCellLabels){
             return undefined;
         }
 
