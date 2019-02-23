@@ -65,7 +65,7 @@ export default class CurrentTurnPanel extends React.Component<CurrentTurnPanelPr
         const game = this.props.game;
 
         const descriptions = game.currentTurn.selections
-            .map(s => <p>{K.copy.getSelectionDescription(s, game)}</p>);
+            .map((s, i) => <p key={"row" + i}>{K.copy.getSelectionDescription(s, game)}</p>);
 
         return (
             <div style={this.props.textStyle}>
