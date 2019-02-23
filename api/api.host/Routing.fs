@@ -3,6 +3,7 @@
 open Giraffe
 open Microsoft.AspNetCore.Http
 open Djambi.Api.Web.Controllers
+open Djambi.Api.Logic
 
 module Routing =
 
@@ -12,35 +13,35 @@ module Routing =
                 (choose [
 
                 //Session
-                    POST >=> route "/sessions" >=> SessionController.openSession
-                    DELETE >=> route "/sessions" >=> SessionController.closeSession
+                    POST >=> route Routes.sessions >=> SessionController.openSession
+                    DELETE >=> route Routes.sessions >=> SessionController.closeSession
 
                 //Users
-                    POST >=> route "/users" >=> UserController.createUser
-                    GET >=> routef "/users/%i" UserController.getUser
-                    GET >=> route "/users/current" >=> UserController.getCurrentUser
-                    GET >=> route "/users" >=> UserController.getUsers
-                    DELETE >=> routef "/users/%i" UserController.deleteUser
+                    POST >=> route Routes.users >=> UserController.createUser
+                    GET >=> routef Routes.userFormat UserController.getUser
+                    GET >=> route Routes.currentUser >=> UserController.getCurrentUser
+                    GET >=> route Routes.users >=> UserController.getUsers
+                    DELETE >=> routef Routes.userFormat UserController.deleteUser
                     
                 //Board
-                    GET >=> routef "/boards/%i" BoardController.getBoard
-                    GET >=> routef "/boards/%i/cells/%i/paths" BoardController.getCellPaths
+                    GET >=> routef Routes.boardFormat BoardController.getBoard
+                    GET >=> routef Routes.pathsFormat BoardController.getCellPaths
 
                 //Game
-                    POST >=> route "/games/query" >=> GameController.getGames
-                    POST >=> route "/games" >=> GameController.createGame
-                    GET >=> routef "/games/%i" GameController.getGame
-                    PUT >=> routef "/games/%i/parameters" GameController.updateGameParameters
+                    POST >=> route Routes.gamesQuery >=> GameController.getGames
+                    POST >=> route Routes.games >=> GameController.createGame
+                    GET >=> routef Routes.gameFormat GameController.getGame
+                    PUT >=> routef Routes.gameParametersFormat GameController.updateGameParameters
 
-                    POST >=> routef "/games/%i/players" GameController.addPlayer
-                    DELETE >=> routef "/games/%i/players/%i" GameController.removePlayer
+                    POST >=> routef Routes.playersFormat GameController.addPlayer
+                    DELETE >=> routef Routes.playerFormat GameController.removePlayer
 
-                    POST >=> routef "/games/%i/start-request" GameController.startGame
+                    POST >=> routef Routes.startGameFormat GameController.startGame
 
-                    POST >=> routef "/games/%i/current-turn/selection-request/%i" GameController.selectCell
-                    POST >=> routef "/games/%i/current-turn/reset-request" GameController.resetTurn
-                    POST >=> routef "/games/%i/current-turn/commit-request" GameController.commitTurn
+                    POST >=> routef Routes.selectCellFormat GameController.selectCell
+                    POST >=> routef Routes.resetTurnFormat GameController.resetTurn
+                    POST >=> routef Routes.commitTurnFormat GameController.commitTurn
 
-                    POST >=> routef "/games/%i/events/query" GameController.getEvents
+                    POST >=> routef Routes.eventsQueryFormat GameController.getEvents
                 ])
             setStatusCode 404 >=> text "Not Found" ]
