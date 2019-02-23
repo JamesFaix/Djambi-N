@@ -13,6 +13,7 @@ import { Kernel as K } from '../kernel';
 import { Route, Switch } from 'react-router-dom';
 import { User } from '../api/model';
 import '../index.css';
+import Debug from '../debug';
 
 export interface AppProps {
 
@@ -27,6 +28,7 @@ export default class App extends React.Component<AppProps, AppState> {
         super(props);
 
         K.initialize();
+        Debug.Initialize();
 
         this.state = {
             user : null
