@@ -64,12 +64,11 @@ let private eventKindsMap =
         1uy, EventKind.GameParametersChanged
         2uy, EventKind.GameCanceled
         3uy, EventKind.PlayerJoined
-        4uy, EventKind.PlayerEjected
-        5uy, EventKind.PlayerQuit
-        6uy, EventKind.GameStarted
-        7uy, EventKind.TurnCommitted
-        8uy, EventKind.TurnReset
-        9uy, EventKind.CellSelected
+        4uy, EventKind.PlayerRemoved
+        5uy, EventKind.GameStarted
+        6uy, EventKind.TurnCommitted
+        7uy, EventKind.TurnReset
+        8uy, EventKind.CellSelected
     ]
 
 let mapEventKindId (eventKindId : byte) : EventKind =

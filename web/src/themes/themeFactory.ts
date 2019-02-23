@@ -32,8 +32,6 @@ export default class ThemeFactory {
             effectMessageTurnCyclePlayerRoseToPower : "%(player)s rose to power. [%(newCycle)s]",
 
             eventMessageGameStarted : "Game started",
-            eventMessagePlayerEjected : "%(actingPlayer)s ejected %(removedPlayer)s",
-            eventMessagePlayerQuit : "%(player)s conceded",
             eventMessageTurnCommitted : "%(player)s took a turn",
 
             pieceImageAssassin : "../resources/daggerEmoji.png",
@@ -107,8 +105,6 @@ export default class ThemeFactory {
             effectMessageTurnCyclePlayerRemoved : null,
             effectMessageTurnCyclePlayerRoseToPower : null,
             eventMessageGameStarted : null,
-            eventMessagePlayerEjected : null,
-            eventMessagePlayerQuit : null,
             eventMessageTurnCommitted : null,
 
 

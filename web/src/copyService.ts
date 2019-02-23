@@ -128,19 +128,6 @@ export default class CopyService {
             case EventKind.GameStarted:
                 return template;
 
-            case EventKind.PlayerEjected:
-                const effect = event.effects.find(f => f.kind === EffectKind.PlayerRemoved).value as PlayerRemovedEffect;
-                const removedPlayer = game.players.find(p => p.id === effect.playerId);
-                return Sprintf.sprintf(template, {
-                    actingPlayer: actingPlayerName,
-                    removedPlayer: removedPlayer.name
-                });
-
-            case EventKind.PlayerQuit:
-                return Sprintf.sprintf(template, {
-                    player: actingPlayerName
-                });
-
             case EventKind.TurnCommitted:
                 return Sprintf.sprintf(template, {
                     player: actingPlayerName

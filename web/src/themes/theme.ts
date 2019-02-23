@@ -29,8 +29,6 @@ export default interface Theme {
     effectMessageTurnCyclePlayerRoseToPower : string,
 
     eventMessageGameStarted : string,
-    eventMessagePlayerEjected : string,
-    eventMessagePlayerQuit : string,
     eventMessageTurnCommitted : string,
 
     pieceImageAssassin : string,

@@ -14,8 +14,6 @@ open Djambi.Api.Db.Repositories
 type GetRemovePlayerEventTests() =
     inherit TestsBase()
           
-    //Should fail if Aborted, AbortedWhilePending, or Finished
-
     [<Fact>]
     let ``Should fail if removing player not in game``() =
         task {
@@ -105,7 +103,7 @@ type GetRemovePlayerEventTests() =
             let event = PlayerService.getRemovePlayerEvent (game, player.id) session |> Result.value
 
             //Assert
-            event.kind |> shouldBe EventKind.PlayerQuit
+            event.kind |> shouldBe EventKind.PlayerRemoved
             event.effects.Length |> shouldBe 1
             match event.effects.[0] with 
             | Effect.PlayerRemoved f ->
@@ -134,7 +132,7 @@ type GetRemovePlayerEventTests() =
             let event = PlayerService.getRemovePlayerEvent (game, player.id) session |> Result.value
 
             //Assert
-            event.kind |> shouldBe EventKind.PlayerEjected
+            event.kind |> shouldBe EventKind.PlayerRemoved
             event.effects.Length |> shouldBe 1
             match event.effects.[0] with 
             | Effect.PlayerRemoved f ->
@@ -163,7 +161,7 @@ type GetRemovePlayerEventTests() =
             let event = PlayerService.getRemovePlayerEvent (game, player.id) session |> Result.value
 
             //Assert
-            event.kind |> shouldBe EventKind.PlayerEjected
+            event.kind |> shouldBe EventKind.PlayerRemoved
             event.effects.Length |> shouldBe 1
             match event.effects.[0] with 
             | Effect.PlayerRemoved f ->
@@ -199,7 +197,7 @@ type GetRemovePlayerEventTests() =
             let event = PlayerService.getRemovePlayerEvent (game, userPlayer.id) session |> Result.value
 
             //Assert
-            event.kind |> shouldBe EventKind.PlayerEjected
+            event.kind |> shouldBe EventKind.PlayerRemoved
             event.effects.Length |> shouldBe 2
             match (event.effects.[0], event.effects.[1]) with 
             | (Effect.PlayerRemoved f1, Effect.PlayerRemoved f2) ->
@@ -237,7 +235,7 @@ type GetRemovePlayerEventTests() =
             let event = PlayerService.getRemovePlayerEvent (game, guestPlayer.id) session |> Result.value
 
             //Assert
-            event.kind |> shouldBe EventKind.PlayerEjected
+            event.kind |> shouldBe EventKind.PlayerRemoved
             event.effects.Length |> shouldBe 1
             match event.effects.[0] with 
             | Effect.PlayerRemoved f ->
@@ -257,7 +255,7 @@ type GetRemovePlayerEventTests() =
             let event = PlayerService.getRemovePlayerEvent (game, creator.id) session |> Result.value
 
             //Assert
-            event.kind |> shouldBe EventKind.PlayerQuit
+            event.kind |> shouldBe EventKind.PlayerRemoved
             event.effects.Length |> shouldBe 2
             match (event.effects.[0], event.effects.[1]) with 
             | (Effect.PlayerRemoved f1, Effect.GameStatusChanged f2) ->
@@ -270,7 +268,7 @@ type GetRemovePlayerEventTests() =
         }
            
     [<Fact>]
-    let ``Should not abort game if creating user and game is started``() =
+    let ``Should fali if game started``() =
         task {
             //Arrange
             let! (user, session, game) = createuserSessionAndGame(true) |> thenValue
@@ -288,15 +286,8 @@ type GetRemovePlayerEventTests() =
             let game = resp.game
 
             //Act
-            let event = PlayerService.getRemovePlayerEvent (game, game.players.[0].id) session |> Result.value
+            let result = PlayerService.getRemovePlayerEvent (game, game.players.[0].id) session
 
             //Assert
-            event.kind |> shouldBe EventKind.PlayerQuit
-            event.effects.Length |> shouldBe 2
-            match (event.effects.[0], event.effects.[1]) with 
-            | (Effect.PlayerRemoved f1, Effect.PlayerRemoved f2) ->
-                f1.playerId |> shouldBe game.players.[0].id
-                f2.playerId |> shouldBe game.players.[1].id
-
-            | _ -> failwith "Incorrect effects"
+            result |> shouldBeError 400 "Cannot remove players unless game is Pending."
         }

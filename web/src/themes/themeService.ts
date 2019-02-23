@@ -149,10 +149,6 @@ export default class ThemeService {
         switch (event.kind) {
             case EventKind.GameStarted:
                 return this.getValue(t => t.eventMessageGameStarted);
-            case EventKind.PlayerEjected:
-                return this.getValue(t => t.eventMessagePlayerEjected);
-            case EventKind.PlayerQuit:
-                return this.getValue(t => t.eventMessagePlayerQuit);
             case EventKind.TurnCommitted:
                 return this.getValue(t => t.eventMessageTurnCommitted);
             default:
