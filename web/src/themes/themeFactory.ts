@@ -1,4 +1,4 @@
-import Theme from "./theme";
+import Theme from './theme';
 
 export default class ThemeFactory {
     public static getDefaultTheme() : Theme {

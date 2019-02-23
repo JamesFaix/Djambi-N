@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Game, Player } from '../../../../api/model';
-import {Kernel as K} from '../../../../kernel';
+import { Kernel as K } from '../../../../kernel';
 
 export interface PlayersPanelTableProps {
     game : Game

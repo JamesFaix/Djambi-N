@@ -1,6 +1,6 @@
 import * as MathJs from 'mathjs';
-import { Point } from './model';
 import Geometry from './geometry';
+import { Point } from './model';
 
 export default class CanvasTransformService{
     constructor(

@@ -1,18 +1,18 @@
 import * as React from 'react';
-import { Switch, Route } from 'react-router-dom';
-import HomePage from './pages/homePage';
-import LoginPage from './pages/loginPage';
-import SignupPage from './pages/signupPage';
-import DashboardPage from './pages/dashboardPage';
-import GamePage from './pages/gamePage/gamePage';
-import TopMenu from './topMenu';
-import { User } from '../api/model';
-import MyGamesPage from './pages/myGamesPage';
 import CreateGamePage from './pages/createGamePage';
+import DashboardPage from './pages/dashboardPage';
 import FindGamePage from './pages/findGamePage';
 import GameInfoPage from './pages/gameInfoPage/gameInfoPage';
-import "../index.css";
+import GamePage from './pages/gamePage/gamePage';
+import HomePage from './pages/homePage';
+import LoginPage from './pages/loginPage';
+import MyGamesPage from './pages/myGamesPage';
+import SignupPage from './pages/signupPage';
+import TopMenu from './topMenu';
 import { Kernel as K } from '../kernel';
+import { Route, Switch } from 'react-router-dom';
+import { User } from '../api/model';
+import '../index.css';
 
 export interface AppProps {
 

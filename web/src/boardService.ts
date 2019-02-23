@@ -1,5 +1,5 @@
-import { Board } from "./api/model";
-import ApiClient from "./api/client";
+import ApiClient from './api/client';
+import { Board } from './api/model';
 
 export default class BoardService {
     private readonly boardCache : any;

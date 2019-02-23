@@ -1,8 +1,13 @@
-import { Location, Board, Game } from "../api/model";
-import { Polygon, Line } from "./model";
-import Geometry from "./geometry";
-import { BoardView, CellView, CellType, CellState } from "./model";
-import BoardService from "../boardService";
+import BoardService from '../boardService';
+import Geometry from './geometry';
+import { Board, Game, Location } from '../api/model';
+import {
+    BoardView,
+    CellState,
+    CellType,
+    CellView
+    } from './model';
+import { Line, Polygon } from './model';
 
 export default class BoardViewService {
     private readonly emptyBoardViewCache : any;

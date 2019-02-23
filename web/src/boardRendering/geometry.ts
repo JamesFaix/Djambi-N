@@ -1,5 +1,12 @@
-import { Point, Line, Polygon, CellView, BoardView, Rectangle } from "./model";
 import * as MathJs from 'mathjs';
+import {
+    BoardView,
+    CellView,
+    Line,
+    Point,
+    Polygon,
+    Rectangle
+    } from './model';
 
 export default class Geometry {
 

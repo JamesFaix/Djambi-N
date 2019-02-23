@@ -1,4 +1,4 @@
-import { PieceKind, Location } from "../api/model";
+import { Location, PieceKind } from '../api/model';
 
 export interface Point {
     x : number,

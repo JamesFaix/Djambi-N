@@ -1,7 +1,13 @@
 import * as React from 'react';
-import { Event,  Effect, Game, Player, Board } from '../../../../api/model';
 import HistoryEffectRow from './historyEffectRow';
-import {Kernel as K} from '../../../../kernel';
+import {
+    Board,
+    Effect,
+    Event,
+    Game,
+    Player
+    } from '../../../../api/model';
+import { Kernel as K } from '../../../../kernel';
 
 export interface HistoryEventRowProps {
     game : Game,

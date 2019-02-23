@@ -1,11 +1,16 @@
 import * as React from 'react';
-import PageTitle from '../../pageTitle';
-import { User, Game, GameStatus, CreatePlayerRequest } from '../../../api/model';
-import { Redirect } from 'react-router';
-import LinkButton from '../../controls/linkButton';
 import ActionButton from '../../controls/actionButton';
 import GameInfoPlayersTable from './gameInfoPlayersTable';
+import LinkButton from '../../controls/linkButton';
+import PageTitle from '../../pageTitle';
+import {
+    CreatePlayerRequest,
+    Game,
+    GameStatus,
+    User
+    } from '../../../api/model';
 import { Kernel as K } from '../../../kernel';
+import { Redirect } from 'react-router';
 
 export interface GameInfoPageProps {
     user : User,

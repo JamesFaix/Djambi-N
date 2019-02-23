@@ -1,8 +1,37 @@
-import { Location, Selection, Game, Event, Effect, EffectKind, GameStatusChangedEffect, PieceKilledEffect, PlayerAddedEffect, PieceMovedEffect, PlayerKind, PlayerEliminatedEffect, PlayerOutOfMovesEffect, PlayerRemovedEffect, PieceKind, Piece, NeutralPlayerAddedEffect, PieceAbandonedEffect, PieceEnlistedEffect, PieceDroppedEffect, PieceVacatedEffect, TurnCycleAdvancedEffect, TurnCyclePlayerFellFromPowerEffect, TurnCyclePlayerRemovedEffect, TurnCyclePlayerRoseToPowerEffect, EventKind, Player, SelectionKind } from './api/model';
 import * as Sprintf from 'sprintf-js';
 import BoardService from './boardService';
-import ThemeService from './themes/themeService';
 import Debug from './debug';
+import ThemeService from './themes/themeService';
+import {
+    Effect,
+    EffectKind,
+    Event,
+    EventKind,
+    Game,
+    GameStatusChangedEffect,
+    Location,
+    NeutralPlayerAddedEffect,
+    Piece,
+    PieceAbandonedEffect,
+    PieceDroppedEffect,
+    PieceEnlistedEffect,
+    PieceKilledEffect,
+    PieceKind,
+    PieceMovedEffect,
+    PieceVacatedEffect,
+    Player,
+    PlayerAddedEffect,
+    PlayerEliminatedEffect,
+    PlayerKind,
+    PlayerOutOfMovesEffect,
+    PlayerRemovedEffect,
+    Selection,
+    SelectionKind,
+    TurnCycleAdvancedEffect,
+    TurnCyclePlayerFellFromPowerEffect,
+    TurnCyclePlayerRemovedEffect,
+    TurnCyclePlayerRoseToPowerEffect
+    } from './api/model';
 
 export default class CopyService {
     constructor(
