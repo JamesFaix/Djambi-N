@@ -1,13 +1,19 @@
-import { PieceKind, Selection, SelectionKind, Game, Event, EventKind, Effect, EffectKind } from "../api/model";
-import * as Sprintf from "sprintf-js";
-import Theme from "./theme";
-import ThemeFactory from "./themeFactory";
-import { CellType, CellState, CellHighlight } from "../boardRendering/model";
+import Theme from './theme';
+import ThemeFactory from './themeFactory';
+import { CellHighlight, CellState, CellType } from '../boardRendering/model';
+import {
+    Effect,
+    EffectKind,
+    Event,
+    EventKind,
+    PieceKind,
+    Selection,
+    SelectionKind
+    } from '../api/model';
 
 export default class ThemeService {
     theme : Theme;
     private readonly defaultTheme : Theme;
-    private readonly pieceImageCache : any = {};
 
     constructor(){
         this.defaultTheme = ThemeFactory.getDefaultTheme();

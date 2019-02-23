@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { PieceView } from '../../../../../boardRendering/model';
 import { Image } from 'react-konva';
-import { Point } from '../../../../../boardRendering/model';
 import { Kernel as K } from '../../../../../kernel';
+import { PieceView } from '../../../../../boardRendering/model';
+import { Point } from '../../../../../boardRendering/model';
 
 export interface CanvasPieceProps {
     piece : PieceView,

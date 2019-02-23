@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Shape } from 'react-konva';
-import { Polygon } from '../../../../../boardRendering/model';
 import { Context } from 'konva';
+import { Polygon } from '../../../../../boardRendering/model';
+import { Shape } from 'react-konva';
 
 export interface CanvasPolygonProps {
     fillColor? : string,

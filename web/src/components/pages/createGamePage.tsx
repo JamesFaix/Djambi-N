@@ -1,12 +1,12 @@
 import * as React from 'react';
-import PageTitle from '../pageTitle';
-import { User, GameParameters } from '../../api/model';
-import { Redirect } from 'react-router';
-import LinkButton from '../controls/linkButton';
-import LabeledInput from '../controls/labeledInput';
 import ActionButton from '../controls/actionButton';
 import Constants, { InputTypes } from '../../constants';
-import {Kernel as K} from '../../kernel';
+import LabeledInput from '../controls/labeledInput';
+import LinkButton from '../controls/linkButton';
+import PageTitle from '../pageTitle';
+import { GameParameters, User } from '../../api/model';
+import { Kernel as K } from '../../kernel';
+import { Redirect } from 'react-router';
 
 export interface CreateGamePageProps {
     user : User

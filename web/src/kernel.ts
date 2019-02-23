@@ -1,10 +1,10 @@
-import ThemeService from "./themes/themeService";
-import ApiClient from "./api/client";
-import { Styles, Classes } from "./styles";
-import DateService from "./dateService";
-import Routes from "./routes";
-import CopyService from "./copyService";
-import BoardService from "./boardService";
+import ApiClient from './api/client';
+import BoardService from './boardService';
+import CopyService from './copyService';
+import DateService from './dateService';
+import Routes from './routes';
+import ThemeService from './themes/themeService';
+import { Classes, Styles } from './styles';
 
 export class Kernel {
 

@@ -1,6 +1,6 @@
-import { Game } from "../api/model";
 import * as React from 'react';
-import LinkButton from "./controls/linkButton";
+import LinkButton from './controls/linkButton';
+import { Game } from '../api/model';
 import { Kernel as K } from '../kernel';
 
 export interface GamesQueryResultsTableProps {

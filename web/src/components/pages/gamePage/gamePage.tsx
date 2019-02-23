@@ -1,15 +1,26 @@
 import * as React from 'react';
-import { User, Game, Event, EventsQuery, ResultsDirection } from '../../../api/model';
-import LinkButton from '../../controls/linkButton';
-import { BoardView, CellView, CellState, Point } from '../../../boardRendering/model';
-import CurrentTurnPanel from './currentTurnPanel';
-import TurnCyclePanel from './turnCyclePanel';
-import PlayersPanel from './playersPanel/playersPanel';
-import HistoryPanel from './historyPanel/historyPanel';
 import BoardPanel from './boardPanel/boardPanel';
-import Geometry from '../../../boardRendering/geometry';
-import {Kernel as K} from '../../../kernel';
 import BoardViewService from '../../../boardRendering/boardViewService';
+import CurrentTurnPanel from './currentTurnPanel';
+import Geometry from '../../../boardRendering/geometry';
+import HistoryPanel from './historyPanel/historyPanel';
+import LinkButton from '../../controls/linkButton';
+import PlayersPanel from './playersPanel/playersPanel';
+import TurnCyclePanel from './turnCyclePanel';
+import {
+    BoardView,
+    CellState,
+    CellView,
+    Point
+    } from '../../../boardRendering/model';
+import {
+    Event,
+    EventsQuery,
+    Game,
+    ResultsDirection,
+    User
+    } from '../../../api/model';
+import { Kernel as K } from '../../../kernel';
 
 export interface GamePageProps {
     user : User,

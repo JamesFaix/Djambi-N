@@ -1,15 +1,20 @@
 import * as React from 'react';
-import PageTitle from '../pageTitle';
-import { User, Game, GamesQuery, GameStatus } from '../../api/model';
-import { Redirect } from 'react-router';
-import LinkButton from '../controls/linkButton';
-import LabeledInput from '../controls/labeledInput';
-import { InputTypes } from '../../constants';
-import LabeledTristateDropdown from '../controls/labeledTristateDropdown';
 import ActionButton from '../controls/actionButton';
-import Util from '../../util';
 import GamesQueryResultsTable from '../gamesQueryResultsTable';
-import {Kernel as K} from '../../kernel';
+import LabeledInput from '../controls/labeledInput';
+import LabeledTristateDropdown from '../controls/labeledTristateDropdown';
+import LinkButton from '../controls/linkButton';
+import PageTitle from '../pageTitle';
+import Util from '../../util';
+import {
+    Game,
+    GamesQuery,
+    GameStatus,
+    User
+    } from '../../api/model';
+import { InputTypes } from '../../constants';
+import { Kernel as K } from '../../kernel';
+import { Redirect } from 'react-router';
 
 export interface FindGamePageProps {
     user : User

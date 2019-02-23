@@ -1,10 +1,10 @@
 import * as React from 'react';
-import PageTitle from '../pageTitle';
-import { User } from '../../api/model';
-import { Redirect } from 'react-router';
 import ActionButton from '../controls/actionButton';
 import LinkButton from '../controls/linkButton';
-import {Kernel as K} from '../../kernel';
+import PageTitle from '../pageTitle';
+import { Kernel as K } from '../../kernel';
+import { Redirect } from 'react-router';
+import { User } from '../../api/model';
 
 export interface DashboardPageProps {
     user : User,

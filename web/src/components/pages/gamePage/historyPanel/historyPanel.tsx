@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Game, Event, Board } from '../../../../api/model';
 import HistoryTable from './historyTable';
 import Scrollbars from 'react-custom-scrollbars';
+import { Board, Event, Game } from '../../../../api/model';
 import { Kernel as K } from '../../../../kernel';
 
 export interface HistoryPanelProps {

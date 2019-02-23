@@ -1,9 +1,9 @@
 import * as React from 'react';
+import LinkButton from '../controls/linkButton';
 import PageTitle from '../pageTitle';
+import { Kernel as K } from '../../kernel';
 import { Redirect } from 'react-router';
 import { User } from '../../api/model';
-import LinkButton from '../controls/linkButton';
-import {Kernel as K} from '../../kernel';
 
 export interface HomePageProps {
     user : User,

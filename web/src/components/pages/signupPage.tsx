@@ -1,12 +1,12 @@
 import * as React from 'react';
-import PageTitle from '../pageTitle';
-import { CreateUserRequest, User, LoginRequest } from '../../api/model';
-import LabeledInput from '../controls/labeledInput';
-import { Redirect } from 'react-router';
-import LinkButton from '../controls/linkButton';
 import ActionButton from '../controls/actionButton';
+import LabeledInput from '../controls/labeledInput';
+import LinkButton from '../controls/linkButton';
+import PageTitle from '../pageTitle';
+import { CreateUserRequest, LoginRequest, User } from '../../api/model';
 import { InputTypes } from '../../constants';
-import {Kernel as K} from '../../kernel';
+import { Kernel as K } from '../../kernel';
+import { Redirect } from 'react-router';
 
 export interface SignupPageProps {
     user : User,
