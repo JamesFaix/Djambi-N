@@ -55,10 +55,9 @@ let getAddPlayerEvent (game : Game, request : CreatePlayerRequest) (session : Se
 
 let getRemovePlayerEvent (game : Game, playerId : int) (session : Session) : CreateEventRequest HttpResult =
     let self = session.user
-    match game.status with
-    | Aborted | AbortedWhilePending | Finished -> 
-        Error <| HttpException(400, "Cannot remove players from finished or aborted games.")
-    | _ ->
+    if game.status <> Pending then
+        Error <| HttpException(400, "Cannot remove players unless game is Pending.")
+    else
         match game.players |> List.tryFind (fun p -> p.id = playerId) with
         | None -> Error <| HttpException(404, "Player not found.")
         | Some player ->
@@ -84,21 +83,15 @@ let getRemovePlayerEvent (game : Game, playerId : int) (session : Session) : Cre
                     for pId in playerIdsToRemove do
                         effects.Add(Effect.PlayerRemoved { playerId = pId })
 
-                    //Cancel game if Pending and creator quit
-                    if game.status = GameStatus.Pending
-                        && game.createdByUserId = player.userId.Value
+                    //Cancel game if creator quit
+                    if game.createdByUserId = player.userId.Value
                         && player.kind = PlayerKind.User
                     then 
                         effects.Add(Effect.GameStatusChanged { oldValue = GameStatus.Pending; newValue = GameStatus.AbortedWhilePending })
                     else ()
 
-                    let kind = 
-                        if player.userId = Some self.id
-                        then EventKind.PlayerQuit
-                        else EventKind.PlayerEjected
-
                     {
-                        kind = kind
+                        kind = EventKind.PlayerRemoved
                         effects = effects |> Seq.toList
                         createdByUserId = self.id
                         actingPlayerId = ContextService.getActingPlayerId session game

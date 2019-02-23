@@ -43,15 +43,11 @@ export default class HistoryTable extends React.Component<HistoryTableProps> {
 
     private isEventVisible(event : Event) : boolean {
         switch (event.kind) {
-            case EventKind.CellSelected:
-            case EventKind.GameCanceled:
-            case EventKind.GameParametersChanged:
-            case EventKind.PlayerJoined:
-            case EventKind.TurnReset:
-                return false;
-
-            default:
+            case EventKind.GameStarted:
+            case EventKind.TurnCommitted:
                 return true;
+            default:
+                return false;
         }
     }
 
@@ -59,6 +55,7 @@ export default class HistoryTable extends React.Component<HistoryTableProps> {
         switch (effect.kind) {
             case EffectKind.CurrentTurnChanged:
             case EffectKind.ParametersChanged:
+            case EffectKind.PlayerRemoved:
                 return false;
 
             default:

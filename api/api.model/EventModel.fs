@@ -154,8 +154,7 @@ type EventKind =
     | GameParametersChanged
     | GameCanceled
     | PlayerJoined
-    | PlayerEjected
-    | PlayerQuit
+    | PlayerRemoved
     | GameStarted
     | TurnCommitted
     | TurnReset
