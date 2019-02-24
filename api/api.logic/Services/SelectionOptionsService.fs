@@ -4,6 +4,7 @@ open Djambi.Api.Logic.ModelExtensions
 open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
 open Djambi.Api.Logic.ModelExtensions.GameModelExtensions
 open Djambi.Api.Model
+open Djambi.Api.Logic.PieceStrategies
 
 let private getMoveSelectionOptions(game : Game, piece : Piece) : int list =
     let board = BoardModelUtility.getBoardMetadata game.parameters.regionCount
@@ -25,51 +26,20 @@ let private getMoveSelectionOptions(game : Game, piece : Piece) : int list =
                     then yield c
         }
 
-    let excludeCenterUnless(condition : Piece -> bool)(cell : Cell) : bool =
-        if cell.isCenter
-        then match pieceIndex.TryFind cell.id with
-                | None -> false
-                | Some p -> condition p
-        else true
+    let strategy = PieceService.getStrategy piece
 
-    match piece.kind with
-    | Chief ->
-        paths
-        |> Seq.collect (takeCellsUntilAndIncluding (fun p -> p.isAlive && p.playerId <> piece.playerId))
-        |> Seq.map (fun cell -> cell.id)
-        |> Seq.toList
-    | Thug ->
-        paths
-        |> Seq.map (fun path -> path |> List.take (min 2 path.Length))
-        |> Seq.collect (takeCellsUntilAndIncluding (fun p -> p.isAlive && p.playerId <> piece.playerId))
-        |> Seq.filter (excludeCenterUnless (fun _ -> false))
-        |> Seq.map (fun cell -> cell.id)
-        |> Seq.toList
-    | Assassin ->
-        paths
-        |> Seq.collect (takeCellsUntilAndIncluding (fun p -> p.isAlive && p.playerId <> piece.playerId))
-        |> Seq.filter (excludeCenterUnless (fun p -> p.kind = Chief))
-        |> Seq.map (fun cell -> cell.id)
-        |> Seq.toList
-    | Reporter ->
-        paths
-        |> Seq.collect (takeCellsUntilAndIncluding (fun _ -> false))
-        |> Seq.filter (excludeCenterUnless (fun _ -> false))
-        |> Seq.map (fun cell -> cell.id)
-        |> Seq.toList
-    | Diplomat ->
-        paths
-        |> Seq.collect (takeCellsUntilAndIncluding (fun p -> p.isAlive && p.playerId <> piece.playerId))
-        |> Seq.filter (excludeCenterUnless (fun p -> p.kind = Chief))
-        |> Seq.map (fun cell -> cell.id)
-        |> Seq.toList
-    | Gravedigger ->
-        paths
-        |> Seq.collect (takeCellsUntilAndIncluding (fun p -> not p.isAlive))
-        |> Seq.filter (excludeCenterUnless (fun p -> p.kind = Corpse))
-        |> Seq.map (fun cell -> cell.id)
-        |> Seq.toList
-    | _ -> List.empty
+    paths
+    |> Seq.map (fun path -> path |> List.take (min strategy.moveMaxDistance path.Length))        
+    |> Seq.collect (takeCellsUntilAndIncluding (fun p -> strategy.moveCanTargetPiece piece p))
+    |> Seq.filter (fun cell -> 
+        if not cell.isCenter then true
+        else 
+            match pieceIndex.TryFind cell.id with
+            | None -> strategy.canStayInSeat
+            | Some p -> strategy.moveCanEnterSeatToEvictPiece piece p
+    )
+    |> Seq.map (fun cell -> cell.id)
+    |> Seq.toList
 
 let private getTargetSelectionOptions(game : Game, turn : Turn) : int list =
     match turn.destinationCellId with
