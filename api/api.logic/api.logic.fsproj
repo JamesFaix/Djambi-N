@@ -5,12 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="PieceStrategies\IPieceStrategy.fs" />
     <Compile Include="Routes.fs" />
     <Compile Include="Marker.fs" />
     <Compile Include="ModelExtensions\BoardModelExtensions.fs" />
     <Compile Include="ModelExtensions\BoardModelUtility.fs" />
     <Compile Include="ModelExtensions\GameModelExtensions.fs" />
+    <Compile Include="PieceStrategies\IPieceStrategy.fs" />
     <Compile Include="Services\ContextService.fs" />
     <Compile Include="Services\SecurityService.fs" />
     <Compile Include="Services\UserService.fs" />

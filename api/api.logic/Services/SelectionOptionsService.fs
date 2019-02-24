@@ -30,13 +30,14 @@ let private getMoveSelectionOptions(game : Game, piece : Piece) : int list =
 
     paths
     |> Seq.map (fun path -> path |> List.take (min strategy.moveMaxDistance path.Length))        
-    |> Seq.collect (takeCellsUntilAndIncluding (fun p -> strategy.moveCanTargetPiece piece p))
+    |> Seq.collect (takeCellsUntilAndIncluding (fun p -> strategy.canTargetWithMove 
+                                                        && strategy.canTargetPiece piece p))
     |> Seq.filter (fun cell -> 
         if not cell.isCenter then true
         else 
             match pieceIndex.TryFind cell.id with
             | None -> strategy.canStayInSeat
-            | Some p -> strategy.moveCanEnterSeatToEvictPiece piece p
+            | Some p -> strategy.canEnterSeatToEvictPiece piece p
     )
     |> Seq.map (fun cell -> cell.id)
     |> Seq.toList
@@ -48,17 +49,20 @@ let private getTargetSelectionOptions(game : Game, turn : Turn) : int list =
         match turn.subjectPiece game with
         | None -> list.Empty
         | Some subject ->
-            match subject.kind with
-            | Reporter ->
+            let strategy = PieceService.getStrategy(subject)
+            if not strategy.canTargetAfterMove then
+                List.empty
+            else
                 let board = BoardModelUtility.getBoardMetadata game.parameters.regionCount
                 let neighbors = board.neighborsFromCellId destinationCellId
                 let pieceIndex = game.piecesIndexedByCell
-                neighbors |> Seq.filter (fun cell -> match pieceIndex.TryFind cell.id with
-                                                        | None -> false
-                                                        | Some piece -> piece.playerId <> subject.playerId)
-                            |> Seq.map (fun cell -> cell.id)
-                            |> Seq.toList
-            | _ -> List.Empty
+                neighbors 
+                |> Seq.filter (fun cell -> 
+                    match pieceIndex.TryFind cell.id with
+                    | None -> false
+                    | Some piece -> strategy.canTargetPiece subject piece)
+                |> Seq.map (fun cell -> cell.id)
+                |> Seq.toList
 
 let private getDropSelectionOptions(game : Game, turn : Turn) : int list =
     match turn.subjectPiece game with
@@ -83,21 +87,18 @@ let private getVacateSelectionOptions(game : Game, turn : Turn) : int list =
         match turn.destinationCell game.parameters.regionCount with
         | None -> List.empty
         | Some destination ->
-            if not destination.isCenter
+            let strategy = PieceService.getStrategy subject
+            if not destination.isCenter || strategy.canStayInSeat
             then List.empty
-            else match subject.kind with
-                    | Assassin
-                    | Gravedigger
-                    | Diplomat ->
-                        let board = BoardModelUtility.getBoardMetadata game.parameters.regionCount
-                        let pieceIndex = game.piecesIndexedByCell
-                        board.pathsFromCell destination
-                        |> Seq.collect (fun path -> path |> Seq.takeWhile (fun cell -> (pieceIndex.TryFind cell.id).IsNone))
-                        |> Seq.filter (fun cell -> not cell.isCenter)
-                        |> Seq.map (fun cell -> cell.id)
-                        |> Seq.toList
-                    | _ -> List.empty
-
+            else 
+                let board = BoardModelUtility.getBoardMetadata game.parameters.regionCount
+                let pieceIndex = game.piecesIndexedByCell
+                board.pathsFromCell destination
+                |> Seq.collect (fun path -> path |> Seq.takeWhile (fun cell -> (pieceIndex.TryFind cell.id).IsNone))
+                |> Seq.filter (fun cell -> not cell.isCenter)
+                |> Seq.map (fun cell -> cell.id)
+                |> Seq.toList
+                
 let getSelectableCellsFromState(game : Game) : (int list * SelectionKind option) =
     let currentTurn = game.currentTurn.Value
     let currentPlayerId = game.currentPlayerId
