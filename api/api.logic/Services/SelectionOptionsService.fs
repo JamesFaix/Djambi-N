@@ -37,7 +37,8 @@ let private getMoveSelectionOptions(game : Game, piece : Piece) : int list =
         else 
             match pieceIndex.TryFind cell.id with
             | None -> strategy.canStayInSeat
-            | Some p -> strategy.canEnterSeatToEvictPiece piece p
+            | Some p -> strategy.canTargetPiece piece p
+                        && strategy.canEnterSeatToEvictPiece
     )
     |> Seq.map (fun cell -> cell.id)
     |> Seq.toList
@@ -102,42 +103,54 @@ let private getVacateSelectionOptions(game : Game, turn : Turn) : int list =
 let getSelectableCellsFromState(game : Game) : (int list * SelectionKind option) =
     let currentTurn = game.currentTurn.Value
     let currentPlayerId = game.currentPlayerId
+    let empty = (List.empty, None)
+
     match currentTurn.selections.Length with
-    | 0 -> let cellIds = game.piecesControlledBy currentPlayerId
-                            |> Seq.map (fun piece -> (piece, getMoveSelectionOptions(game, piece)))
-                            |> Seq.filter (fun (_, cells) -> cells.IsEmpty |> not)
-                            |> Seq.map (fun (piece, _) -> piece.cellId)
-                            |> Seq.toList
-           (cellIds, Some Subject)
-    | 1 -> let subject = currentTurn.subjectPiece(game).Value
-           let cellIds = getMoveSelectionOptions(game, subject)
-           (cellIds, Some Move)
-    | 2 -> let subject = currentTurn.subjectPiece(game).Value
-           match (subject.kind, currentTurn.selections.[1]) with
-            | Reporter, _ ->
-                let cellIds = getTargetSelectionOptions(game, currentTurn)
-                if cellIds.IsEmpty
-                then (List.empty, None)
-                else (cellIds, Some Target)
-            | Thug, sel
-            | Chief, sel
-            | Diplomat, sel
-            | Gravedigger, sel when sel.pieceId.IsSome ->
+    //Selection 0 is always the subject piece
+    | 0 -> 
+        let cellIds = 
+            game.piecesControlledBy currentPlayerId
+            |> Seq.map (fun piece -> (piece, getMoveSelectionOptions(game, piece)))
+            |> Seq.filter (fun (_, cells) -> cells.IsEmpty |> not)
+            |> Seq.map (fun (piece, _) -> piece.cellId)
+            |> Seq.toList
+        (cellIds, Some Subject)
+    //Selection 1 is always a cell to move the subject to. It may contain a target piece
+    | 1 -> 
+        let subject = currentTurn.subjectPiece(game).Value
+        let cellIds = getMoveSelectionOptions(game, subject)
+        (cellIds, Some Move)
+    //Selection 2 can be either
+    //  -Targeting piece after move
+    //  -Selecting cell to drop target if last selection had target and piece drops target
+    //  -Vacating seat if last selection was in Seat and piece moves target to origin
+    | 2 -> 
+        let subject = currentTurn.subjectPiece(game).Value
+        let strategy = PieceService.getStrategy subject
+        if strategy.canTargetAfterMove then
+            let cellIds = getTargetSelectionOptions(game, currentTurn)
+            if cellIds.IsEmpty then empty
+            else (cellIds, Some Target)
+        elif currentTurn.selections.[1].pieceId.IsSome then
+            if strategy.canDropTarget then
                 let cellIds = getDropSelectionOptions(game, currentTurn)
                 (cellIds, Some Drop)
-            | Assassin, sel when sel.pieceId.IsSome ->
+            elif strategy.movesTargetToOrigin then
                 let cellIds = getVacateSelectionOptions(game, currentTurn)
-                if cellIds.IsEmpty
-                then (List.empty, None)
+                if cellIds.IsEmpty then empty
                 else (cellIds, Some Vacate)
-            | _ -> (List.empty, None)
-    | 3 -> let subject = currentTurn.subjectPiece(game).Value
-           match (subject.kind, currentTurn.selections.[1]) with
-            | Diplomat, sel
-            | Gravedigger, sel when sel.pieceId.IsSome ->
-                let cellIds = getVacateSelectionOptions(game, currentTurn)
-                if cellIds.IsEmpty
-                then (List.empty, None)
-                else (cellIds, Some Vacate)
-            | _ -> (List.empty, None)
-    | _ -> (List.empty, None)
+            else empty            
+        else empty
+    //Selection 3 is always vacating the Seat if the subject piece drops its target and the target was in the Seat
+    | 3 -> 
+        let subject = currentTurn.subjectPiece(game).Value
+        let strategy = PieceService.getStrategy subject
+        if strategy.canEnterSeatToEvictPiece 
+            && not strategy.canStayInSeat
+            && strategy.canDropTarget
+        then
+            let cellIds = getVacateSelectionOptions(game, currentTurn)
+            if cellIds.IsEmpty then empty
+            else (cellIds, Some Vacate)
+        else empty
+    | _ -> empty
