@@ -113,7 +113,13 @@ let applyStartGame (game : Game) : Game =
                     |> List.filter (fun p -> p.startingTurnNumber.IsSome)
                     |> List.sortBy (fun p -> p.startingTurnNumber.Value)
                     |> List.map (fun p -> p.id)
-                currentTurn = Some Turn.empty
+                currentTurn = 
+                    Some {
+                        status = AwaitingSelection
+                        selections = List.empty
+                        selectionOptions = List.empty
+                        requiredSelectionKind = Some Subject
+                    }
         }
 
     let (selectionOptions, _) = SelectionOptionsService.getSelectableCellsFromState game

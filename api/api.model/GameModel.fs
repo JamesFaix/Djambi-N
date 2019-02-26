@@ -110,8 +110,14 @@ module Selection =
         }
 
 [<ClientType(ClientSection.Turn)>]
+type TurnStatus =
+    | AwaitingSelection
+    | AwaitingConfirmation
+
+[<ClientType(ClientSection.Turn)>]
 type Turn =
     {
+        status : TurnStatus
         selections : Selection list
         selectionOptions : int list
         requiredSelectionKind : SelectionKind option
@@ -120,6 +126,7 @@ type Turn =
 module Turn =
     let empty =
         {
+            status = AwaitingSelection
             selections = List.empty
             selectionOptions = List.empty
             requiredSelectionKind = Some Subject
