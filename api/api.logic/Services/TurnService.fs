@@ -23,73 +23,73 @@ let getCellSelectedEvent(game : Game, cellId : int) (session: Session) : CreateE
         if currentTurn.selectionOptions |> List.contains cellId |> not
         then Error <| HttpException(400, (sprintf "Cell %i is not currently selectable." cellId))
         else
-            if currentTurn.status = AwaitingConfirmation
-            then Error <| HttpException(400, "Cannot make seletion when awaiting turn confirmation.")
-            else
-            let pieceIndex = game.piecesIndexedByCell
-            let board = BoardModelUtility.getBoardMetadata game.parameters.regionCount
+            match currentTurn.requiredSelectionKind with
+            | None ->
+                Error <| HttpException(400, "Cannot make selection when awaiting turn confirmation.")
+            | Some k ->
+                let pieceIndex = game.piecesIndexedByCell
+                let board = BoardModelUtility.getBoardMetadata game.parameters.regionCount
 
-            match currentTurn.selections.Length with
-            | 0 -> Ok (Selection.subject(cellId, pieceIndex.Item(cellId).id), AwaitingSelection)
-            | 1 -> let subject = currentTurn.subjectPiece(game).Value
-                   match pieceIndex.TryFind(cellId) with
-                    | None -> match subject.kind with
-                                | Reporter ->
-                                    if board.neighborsFromCellId cellId
-                                        |> Seq.map (fun c -> pieceIndex.TryFind c.id)
-                                        |> Seq.filter (fun o -> o.IsSome)
-                                        |> Seq.map (fun o -> o.Value)
-                                        |> Seq.filter (fun p -> p.isAlive && p.playerId <> subject.playerId)
-                                        |> Seq.isEmpty
-                                    then Ok (Selection.move(cellId), AwaitingConfirmation)
-                                    else Ok (Selection.move(cellId), AwaitingSelection) //Awaiting target
-                                | _ -> Ok <| (Selection.move(cellId), AwaitingConfirmation)
-                    | Some target when subject.kind = Assassin ->
-                        match board.cell cellId with
-                        | None -> Error <| HttpException(404, "Cell not found.")
-                        | Some c when c.isCenter ->
-                            Ok (Selection.moveWithTarget(cellId, target.id), AwaitingSelection) //Awaiting vacate
-                        | _ ->
-                            Ok (Selection.moveWithTarget(cellId, target.id), AwaitingConfirmation)
-                    | Some piece -> Ok (Selection.moveWithTarget(cellId, piece.id), AwaitingSelection) //Awaiting drop
-            | 2 -> match (currentTurn.subjectPiece game).Value.kind with
-                    | Thug
-                    | Chief
-                    | Diplomat
-                    | Gravedigger -> Ok (Selection.drop(cellId), AwaitingConfirmation)
-                    | Assassin -> Ok (Selection.move(cellId), AwaitingConfirmation) //Vacate
-                    | Reporter -> Ok (Selection.target(cellId, pieceIndex.Item(cellId).id), AwaitingConfirmation)
-                    | Corpse -> Error <| HttpException(400, "Subject cannot be corpse")
-            | 3 -> match (currentTurn.subjectPiece game).Value.kind with
-                    | Diplomat
-                    | Gravedigger -> Ok (Selection.move(cellId), AwaitingConfirmation) //Vacate
-                    | _ -> Error <| HttpException(400, "Cannot make fourth selection unless vacating center")
-            | _ -> Error <| HttpException(400, "Cannot make more than 4 selections")
+                match currentTurn.selections.Length with
+                | 0 -> Ok (Selection.subject(cellId, pieceIndex.Item(cellId).id), Some Move)
+                | 1 -> let subject = currentTurn.subjectPiece(game).Value
+                       match pieceIndex.TryFind(cellId) with
+                        | None -> match subject.kind with
+                                    | Reporter ->
+                                        if board.neighborsFromCellId cellId
+                                            |> Seq.map (fun c -> pieceIndex.TryFind c.id)
+                                            |> Seq.filter (fun o -> o.IsSome)
+                                            |> Seq.map (fun o -> o.Value)
+                                            |> Seq.filter (fun p -> p.isAlive && p.playerId <> subject.playerId)
+                                            |> Seq.isEmpty
+                                        then Ok (Selection.move(cellId), None)
+                                        else Ok (Selection.move(cellId), Some Target)
+                                    | _ -> Ok <| (Selection.move(cellId), None)
+                        | Some target when subject.kind = Assassin ->
+                            match board.cell cellId with
+                            | None -> Error <| HttpException(404, "Cell not found.")
+                            | Some c when c.isCenter ->
+                                Ok (Selection.moveWithTarget(cellId, target.id), Some Vacate)
+                            | _ ->
+                                Ok (Selection.moveWithTarget(cellId, target.id), None)
+                        | Some piece -> Ok (Selection.moveWithTarget(cellId, piece.id), Some Drop)
+                | 2 -> match (currentTurn.subjectPiece game).Value.kind with
+                        | Thug
+                        | Chief
+                        | Diplomat
+                        | Gravedigger -> Ok (Selection.drop(cellId), None)
+                        | Assassin -> Ok (Selection.move(cellId), None) //Vacate
+                        | Reporter -> Ok (Selection.target(cellId, pieceIndex.Item(cellId).id), None)
+                        | Corpse -> Error <| HttpException(400, "Subject cannot be corpse")
+                | 3 -> match (currentTurn.subjectPiece game).Value.kind with
+                        | Diplomat
+                        | Gravedigger -> Ok (Selection.move(cellId), None) //Vacate
+                        | _ -> Error <| HttpException(400, "Cannot make fourth selection unless vacating center")
+                | _ -> Error <| HttpException(400, "Cannot make more than 4 selections")
 
-            |> Result.map (fun (selection, turnStatus) ->
-                    let turnWithNewSelection =
-                        {
-                            status = turnStatus
-                            selections = List.append currentTurn.selections [selection]
-                            selectionOptions = List.empty
-                            requiredSelectionKind = None
-                        }
-                    let updatedGame = { game with currentTurn = Some turnWithNewSelection }
-                    let (selectionOptions, requiredSelectionType) = SelectionOptionsService.getSelectableCellsFromState updatedGame
+                |> Result.map (fun (selection, requiredSelectionKind) ->
+                        let turnWithNewSelection =
+                            {
+                                selections = List.append currentTurn.selections [selection]
+                                selectionOptions = List.empty
+                                requiredSelectionKind = requiredSelectionKind
+                            }
+                        let updatedGame = { game with currentTurn = Some turnWithNewSelection }
+                        let (selectionOptions, requiredSelectionType) = SelectionOptionsService.getSelectableCellsFromState updatedGame
 
-                    let updatedTurn = 
-                        { turnWithNewSelection with
-                            selectionOptions = selectionOptions
-                            requiredSelectionKind = requiredSelectionType
-                        }
+                        let updatedTurn = 
+                            { turnWithNewSelection with
+                                selectionOptions = selectionOptions
+                                requiredSelectionKind = requiredSelectionType
+                            }
                     
-                    {
-                        kind = EventKind.CellSelected
-                        effects = [Effect.CurrentTurnChanged { oldValue = game.currentTurn; newValue = Some updatedTurn }]
-                        createdByUserId = session.user.id     
-                        actingPlayerId = ContextService.getActingPlayerId session game
-                    }
-                    ))
+                        {
+                            kind = EventKind.CellSelected
+                            effects = [Effect.CurrentTurnChanged { oldValue = game.currentTurn; newValue = Some updatedTurn }]
+                            createdByUserId = session.user.id     
+                            actingPlayerId = ContextService.getActingPlayerId session game
+                        }
+                        ))
 
 let private applyTurnToPieces(game : Game) : (Piece list * Effect list) =
     let pieces = game.pieces.ToDictionary(fun p -> p.id)
