@@ -1,18 +1,18 @@
 # Djambi-N
 <img src="docs/djambi6.png">
 
-Djambi-N is a variation of the Chess-inspired board game, [Djambi][1], by Jean Anesto.
+Djambi-N is like Chess, except
 
-Complete rules for Djambi and Djambi-N can be found [here][2]. Basically Djambi-N is _kind of_ like Chess except:
-1. It is designed for 3 to 8 players. You can play with 2 players if you want, but it's less fun.
+1. It is designed for more than two players. You can play with two players if you want, but it's less fun.
 2. Pieces never leave the board. You can kill can enemy piece, but its corpse still takes up space on the board.
 3. The board is always made out of squares, but the board itself isn't always square.
 
-Current progress on Djambi-N can be found [here][3].
+Points 1 and 2 are the premise of [Djambi][1], by Jean Anesto. Djambi-N adds point 3.
 
-Developer setup instructions can be found [here][4].
+[Rules][2]
+
+[Developer Setup][3]
 
 [1]: https://en.wikipedia.org/wiki/Djambi
 [2]: docs/Rules.md
-[3]: docs/Progress.md
-[4]: docs/DevSetup.md
+[3]: docs/DevSetup.md
