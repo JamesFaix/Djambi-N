@@ -63,7 +63,7 @@ module BoardModelExtensions =
         member this.colocations(location : Location) : Location list =
             //Empty list if out of bounds
             if this.contains(location) |> not
-            then List.empty
+            then []
 
             //Center for each region if center
             else if location.isCenter()
@@ -148,7 +148,7 @@ module BoardModelExtensions =
         member this.neighborsFromCellId(cellId : int) : Cell list =
             match this.cell cellId with
             | Some c -> this.neighborsFromCell c
-            | None -> List.empty
+            | None -> []
 
         member this.neighborsFromCell(cell : Cell) : Cell list =
             if cell.isCenter
@@ -229,7 +229,7 @@ module BoardModelExtensions =
         member this.pathsFromCellId(cellId : int) : Cell list list =
             match this.cell cellId with
             | Some c -> this.pathsFromCell c
-            | None -> List.empty
+            | None -> []
 
         member this.pathsFromCell(cell : Cell) : Cell list list =
             if cell.isCenter

@@ -80,7 +80,7 @@ let getGames (query : GamesQuery) : Game list AsyncHttpResult =
                 let playersOpt = playersByGame |> List.tryFind (fun (gameId, _) -> gameId = g.id) 
                 let ps = match playersOpt with 
                          | Some (_, players) -> players
-                         | _ -> List.empty
+                         | _ -> []
                 { g with players = ps}
             )
         )

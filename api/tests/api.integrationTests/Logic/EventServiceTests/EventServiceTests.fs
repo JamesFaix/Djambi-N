@@ -416,7 +416,7 @@ type EventServiceTests() =
         let effect = Effect.TurnCycleAdvanced { oldValue = game.turnCycle; newValue = newCycle }
         let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
 
-        game.turnCycle |> shouldBe List.empty
+        game.turnCycle |> shouldBe []
 
         //Act
         let newGame = EventService.applyEvent game eventRequest
@@ -434,7 +434,7 @@ type EventServiceTests() =
         let effect = Effect.TurnCyclePlayerFellFromPower { oldValue = game.turnCycle; newValue = newCycle; playerId = 1 } //PlayerID is just informative, doesn't effect processing
         let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
 
-        game.turnCycle |> shouldBe List.empty
+        game.turnCycle |> shouldBe []
 
         //Act
         let newGame = EventService.applyEvent game eventRequest
@@ -452,7 +452,7 @@ type EventServiceTests() =
         let effect = Effect.TurnCyclePlayerRemoved { oldValue = game.turnCycle; newValue = newCycle; playerId = 1 } //PlayerID is just informative, doesn't effect processing
         let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
 
-        game.turnCycle |> shouldBe List.empty
+        game.turnCycle |> shouldBe []
 
         //Act
         let newGame = EventService.applyEvent game eventRequest
@@ -470,7 +470,7 @@ type EventServiceTests() =
         let effect = Effect.TurnCyclePlayerRoseToPower { oldValue = game.turnCycle; newValue = newCycle; playerId = 1 } //PlayerID is just informative, doesn't effect processing
         let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
 
-        game.turnCycle |> shouldBe List.empty
+        game.turnCycle |> shouldBe []
 
         //Act
         let newGame = EventService.applyEvent game eventRequest

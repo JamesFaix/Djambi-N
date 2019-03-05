@@ -45,14 +45,14 @@ let private getMoveSelectionOptions(game : Game, piece : Piece) : int list =
 
 let private getTargetSelectionOptions(game : Game, turn : Turn) : int list =
     match turn.destinationCellId with
-    | None -> List.empty
+    | None -> []
     | Some destinationCellId ->
         match turn.subjectPiece game with
-        | None -> list.Empty
+        | None -> []
         | Some subject ->
             let strategy = PieceService.getStrategy(subject)
             if not strategy.canTargetAfterMove then
-                List.empty
+                []
             else
                 let board = BoardModelUtility.getBoardMetadata game.parameters.regionCount
                 let neighbors = board.neighborsFromCellId destinationCellId
@@ -67,10 +67,10 @@ let private getTargetSelectionOptions(game : Game, turn : Turn) : int list =
 
 let private getDropSelectionOptions(game : Game, turn : Turn) : int list =
     match turn.subjectPiece game with
-    | None -> List.empty
+    | None -> []
     | Some subject ->
         match turn.destinationCellId with
-        | None -> List.empty
+        | None -> []
         | Some _ ->
             let pieceIndex = game.piecesIndexedByCell
             let board = BoardModelUtility.getBoardMetadata game.parameters.regionCount
@@ -83,14 +83,14 @@ let private getDropSelectionOptions(game : Game, turn : Turn) : int list =
 
 let private getVacateSelectionOptions(game : Game, turn : Turn) : int list =
     match turn.subjectPiece game with
-    | None -> List.empty
+    | None -> []
     | Some subject ->
         match turn.destinationCell game.parameters.regionCount with
-        | None -> List.empty
+        | None -> []
         | Some destination ->
             let strategy = PieceService.getStrategy subject
             if not destination.isCenter || strategy.canStayInSeat
-            then List.empty
+            then []
             else 
                 let board = BoardModelUtility.getBoardMetadata game.parameters.regionCount
                 let pieceIndex = game.piecesIndexedByCell
@@ -103,7 +103,7 @@ let private getVacateSelectionOptions(game : Game, turn : Turn) : int list =
 let getSelectableCellsFromState(game : Game) : (int list * SelectionKind option) =
     let currentTurn = game.currentTurn.Value
     let currentPlayerId = game.currentPlayerId
-    let empty = (List.empty, None)
+    let empty = ([], None)
 
     match currentTurn.selections.Length with
     //Selection 0 is always the subject piece

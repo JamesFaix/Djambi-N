@@ -71,7 +71,7 @@ let getCellSelectedEvent(game : Game, cellId : int) (session: Session) : CreateE
                         {
                             status = turnStatus
                             selections = List.append currentTurn.selections [selection]
-                            selectionOptions = List.empty
+                            selectionOptions = []
                             requiredSelectionKind = None
                         }
                     let updatedGame = { game with currentTurn = Some turnWithNewSelection }

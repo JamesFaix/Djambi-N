@@ -116,8 +116,8 @@ let applyStartGame (game : Game) : Game =
                 currentTurn = 
                     Some {
                         status = AwaitingSelection
-                        selections = List.empty
-                        selectionOptions = List.empty
+                        selections = []
+                        selectionOptions = []
                         requiredSelectionKind = Some Subject
                     }
         }

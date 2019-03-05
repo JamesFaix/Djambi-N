@@ -128,8 +128,8 @@ module Turn =
     let empty =
         {
             status = AwaitingSelection
-            selections = List.empty
-            selectionOptions = List.empty
+            selections = []
+            selectionOptions = []
             requiredSelectionKind = Some Subject
         }
 
