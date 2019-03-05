@@ -133,6 +133,14 @@ module Turn =
             requiredSelectionKind = Some Subject
         }
 
+    let deadEnd (selections) =
+        {
+            status = DeadEnd
+            selections = selections
+            selectionOptions = []
+            requiredSelectionKind = None
+        }
+
 [<ClientType(ClientSection.Game)>]
 type GameStatus =
     | Pending
