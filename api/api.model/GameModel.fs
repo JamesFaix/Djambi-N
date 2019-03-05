@@ -112,7 +112,8 @@ module Selection =
 [<ClientType(ClientSection.Turn)>]
 type TurnStatus =
     | AwaitingSelection
-    | AwaitingConfirmation
+    | AwaitingCommit
+    | DeadEnd
 
 [<ClientType(ClientSection.Turn)>]
 type Turn =

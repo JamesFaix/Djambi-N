@@ -167,8 +167,9 @@ export interface Turn {
 }
 
 export enum TurnStatus {
-	AwaitingConfirmation = "AwaitingConfirmation",
+	AwaitingCommit = "AwaitingCommit",
 	AwaitingSelection = "AwaitingSelection",
+	DeadEnd = "DeadEnd",
 }
 
 //-------- EVENTS --------

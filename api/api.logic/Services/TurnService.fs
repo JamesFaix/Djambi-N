@@ -23,7 +23,7 @@ let getCellSelectedEvent(game : Game, cellId : int) (session: Session) : CreateE
         if currentTurn.selectionOptions |> List.contains cellId |> not
         then Error <| HttpException(400, (sprintf "Cell %i is not currently selectable." cellId))
         else
-            if currentTurn.status = AwaitingConfirmation
+            if currentTurn.status = AwaitingCommit
             then Error <| HttpException(400, "Cannot make seletion when awaiting turn confirmation.")
             else
             let pieceIndex = game.piecesIndexedByCell
@@ -41,28 +41,28 @@ let getCellSelectedEvent(game : Game, cellId : int) (session: Session) : CreateE
                                         |> Seq.map (fun o -> o.Value)
                                         |> Seq.filter (fun p -> p.isAlive && p.playerId <> subject.playerId)
                                         |> Seq.isEmpty
-                                    then Ok (Selection.move(cellId), AwaitingConfirmation)
+                                    then Ok (Selection.move(cellId), AwaitingCommit)
                                     else Ok (Selection.move(cellId), AwaitingSelection) //Awaiting target
-                                | _ -> Ok <| (Selection.move(cellId), AwaitingConfirmation)
+                                | _ -> Ok <| (Selection.move(cellId), AwaitingCommit)
                     | Some target when subject.kind = Assassin ->
                         match board.cell cellId with
                         | None -> Error <| HttpException(404, "Cell not found.")
                         | Some c when c.isCenter ->
                             Ok (Selection.moveWithTarget(cellId, target.id), AwaitingSelection) //Awaiting vacate
                         | _ ->
-                            Ok (Selection.moveWithTarget(cellId, target.id), AwaitingConfirmation)
+                            Ok (Selection.moveWithTarget(cellId, target.id), AwaitingCommit)
                     | Some piece -> Ok (Selection.moveWithTarget(cellId, piece.id), AwaitingSelection) //Awaiting drop
             | 2 -> match (currentTurn.subjectPiece game).Value.kind with
                     | Thug
                     | Chief
                     | Diplomat
-                    | Gravedigger -> Ok (Selection.drop(cellId), AwaitingConfirmation)
-                    | Assassin -> Ok (Selection.move(cellId), AwaitingConfirmation) //Vacate
-                    | Reporter -> Ok (Selection.target(cellId, pieceIndex.Item(cellId).id), AwaitingConfirmation)
+                    | Gravedigger -> Ok (Selection.drop(cellId), AwaitingCommit)
+                    | Assassin -> Ok (Selection.move(cellId), AwaitingCommit) //Vacate
+                    | Reporter -> Ok (Selection.target(cellId, pieceIndex.Item(cellId).id), AwaitingCommit)
                     | Corpse -> Error <| HttpException(400, "Subject cannot be corpse")
             | 3 -> match (currentTurn.subjectPiece game).Value.kind with
                     | Diplomat
-                    | Gravedigger -> Ok (Selection.move(cellId), AwaitingConfirmation) //Vacate
+                    | Gravedigger -> Ok (Selection.move(cellId), AwaitingCommit) //Vacate
                     | _ -> Error <| HttpException(400, "Cannot make fourth selection unless vacating center")
             | _ -> Error <| HttpException(400, "Cannot make more than 4 selections")
 
