@@ -51,8 +51,8 @@ let private getTargetSelectionOptions(game : Game, turn : Turn) : int list =
         | None -> []
         | Some subject ->
             let strategy = PieceService.getStrategy(subject)
-            if not strategy.canTargetAfterMove then
-                []
+            if not strategy.canTargetAfterMove 
+            then []
             else
                 let board = BoardModelUtility.getBoardMetadata game.parameters.regionCount
                 let neighbors = board.neighborsFromCellId destinationCellId
@@ -75,9 +75,10 @@ let private getDropSelectionOptions(game : Game, turn : Turn) : int list =
             let pieceIndex = game.piecesIndexedByCell
             let board = BoardModelUtility.getBoardMetadata game.parameters.regionCount
             board.cells()
-            |> Seq.filter (fun c -> match pieceIndex.TryFind c.id with
-                                    | None -> true
-                                    | Some occupant -> occupant.id = subject.id)
+            |> Seq.filter (fun c -> 
+                match pieceIndex.TryFind c.id with
+                | None -> true
+                | Some occupant -> occupant.id = subject.id)
             |> Seq.map (fun c -> c.id)
             |> Seq.toList
 

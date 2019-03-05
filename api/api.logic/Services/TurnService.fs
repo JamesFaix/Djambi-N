@@ -33,17 +33,18 @@ let getCellSelectedEvent(game : Game, cellId : int) (session: Session) : CreateE
             | 0 -> Ok (Selection.subject(cellId, pieceIndex.Item(cellId).id), AwaitingSelection)
             | 1 -> let subject = currentTurn.subjectPiece(game).Value
                    match pieceIndex.TryFind(cellId) with
-                    | None -> match subject.kind with
-                                | Reporter ->
-                                    if board.neighborsFromCellId cellId
-                                        |> Seq.map (fun c -> pieceIndex.TryFind c.id)
-                                        |> Seq.filter (fun o -> o.IsSome)
-                                        |> Seq.map (fun o -> o.Value)
-                                        |> Seq.filter (fun p -> p.isAlive && p.playerId <> subject.playerId)
-                                        |> Seq.isEmpty
-                                    then Ok (Selection.move(cellId), AwaitingCommit)
-                                    else Ok (Selection.move(cellId), AwaitingSelection) //Awaiting target
-                                | _ -> Ok <| (Selection.move(cellId), AwaitingCommit)
+                    | None -> 
+                        match subject.kind with
+                        | Reporter ->
+                            if board.neighborsFromCellId cellId
+                                |> Seq.map (fun c -> pieceIndex.TryFind c.id)
+                                |> Seq.filter (fun o -> o.IsSome)
+                                |> Seq.map (fun o -> o.Value)
+                                |> Seq.filter (fun p -> p.isAlive && p.playerId <> subject.playerId)
+                                |> Seq.isEmpty
+                            then Ok (Selection.move(cellId), AwaitingCommit)
+                            else Ok (Selection.move(cellId), AwaitingSelection) //Awaiting target
+                        | _ -> Ok <| (Selection.move(cellId), AwaitingCommit)
                     | Some target when subject.kind = Assassin ->
                         match board.cell cellId with
                         | None -> Error <| HttpException(404, "Cell not found.")
@@ -226,14 +227,22 @@ let private applyTurnToTurnCycle(game : Game) : (int list * Effect list) =
 let private killCurrentPlayer(game : Game) : (Game * Effect list) =
     let playerId = game.turnCycle.Head
 
-    let pieces = game.pieces
-                    |> List.map (fun p -> if p.playerId = Some(playerId) then p.abandon else p)
-    let players = game.players
-                    |> List.map (fun p -> if p.id = playerId then p.kill else p)
+    let pieces =
+        game.pieces 
+        |> List.replaceIf
+            (fun p -> p.playerId = Some(playerId))
+            (fun p -> p.abandon)
 
-    let turns = game.turnCycle
-                |> List.filter (fun t -> t <> playerId)
-                |> removeSequentialDuplicates
+    let players = 
+        game.players
+        |> List.replaceIf
+            (fun p -> p.id = playerId)
+            (fun p -> p.kill)
+
+    let turns = 
+        game.turnCycle
+        |> List.filter (fun t -> t <> playerId)
+        |> removeSequentialDuplicates
 
     let effects = new ArrayList<Effect>()
     effects.Add(Effect.PlayerOutOfMoves { playerId = playerId })
