@@ -113,7 +113,7 @@ let getSelectableCellsFromState(game : Game) : int list HttpResult =
     let turn = game.currentTurn.Value
     match turn.requiredSelectionKind with
     | None -> 
-        ErrorService.turnStatusDoesNotAllowSelection()
+        Ok []
     | Some Subject ->
         Ok <| getSubjectSelectionOptions (game, turn)
     | Some Move ->
