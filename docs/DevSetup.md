@@ -13,8 +13,9 @@
 - Requires .NET Core 2.1 SDK
 
 ## Database
-- SQL Server Express or Developer Edition 2016 or newer
-- Currently there is some non-ANSI SQL that uses TSQL 2016 language features. This should be removed eventually.
+- SQL Server Express or Developer Edition.
+- SQL code sticks to ANSI constructs as much as possible, but in some cases T-SQL constructs are used. This should be avoided so vendors can be changed if needed later.
+- TSQL compatabilty level is set to T-SQL 2014.
 
 ## Environment configuration
 - At the repository root, create an `environment.json` file for some global configuration. This file is not checked into source control, but is required. Each application uses this file to communicate with the other applications.
