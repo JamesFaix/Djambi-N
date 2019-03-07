@@ -7,10 +7,10 @@
   <ItemGroup>
     <Compile Include="Routes.fs" />
     <Compile Include="Marker.fs" />
+    <Compile Include="PieceStrategies.fs" />
     <Compile Include="ModelExtensions\BoardModelExtensions.fs" />
     <Compile Include="ModelExtensions\BoardModelUtility.fs" />
     <Compile Include="ModelExtensions\GameModelExtensions.fs" />
-    <Compile Include="PieceStrategies.fs" />
     <Compile Include="Services\ErrorService.fs" />
     <Compile Include="Services\ContextService.fs" />
     <Compile Include="Services\SecurityService.fs" />

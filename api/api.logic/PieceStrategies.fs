@@ -10,18 +10,24 @@ type PieceStrategy() =
     abstract member canTargetAfterMove : bool
     abstract member canTargetPiece : Piece -> Piece -> bool
     abstract member canStayInCenter : bool
-    abstract member canEnterSeatToEvictPiece : bool
+    abstract member canEnterCenterToEvictPiece : bool
     abstract member canDropTarget : bool
     abstract member movesTargetToOrigin : bool
+    abstract member killsTarget : bool
+    abstract member killsControllingPlayerWhenKilled : bool
+    abstract member isAlive : bool
     
     default x.moveMaxDistance = Int32.MaxValue
     default x.canTargetWithMove = false
     default x.canTargetAfterMove = false
     default x.canTargetPiece (subject : Piece) (target : Piece) = false
     default x.canStayInCenter = false
-    default x.canEnterSeatToEvictPiece = false
+    default x.canEnterCenterToEvictPiece = false
     default x.canDropTarget = false
     default x.movesTargetToOrigin = false
+    default x.killsTarget = false
+    default x.killsControllingPlayerWhenKilled = false
+    default x.isAlive = true
 
 type AssassinStrategy() =
     inherit PieceStrategy() with
@@ -29,8 +35,9 @@ type AssassinStrategy() =
         override x.canTargetPiece (subject : Piece) (target : Piece) =
             target.kind <> Corpse &&
             target.playerId <> subject.playerId
-        override x.canEnterSeatToEvictPiece = true
+        override x.canEnterCenterToEvictPiece = true
         override x.movesTargetToOrigin = true
+        override x.killsTarget = true
 
 type ChiefStrategy() =
     inherit PieceStrategy() with
@@ -39,11 +46,14 @@ type ChiefStrategy() =
             target.kind <> Corpse &&
             target.playerId <> subject.playerId
         override x.canStayInCenter = true
-        override x.canEnterSeatToEvictPiece = true
-        override x.canDropTarget = true
+        override x.canEnterCenterToEvictPiece = true
+        override x.canDropTarget = true     
+        override x.killsTarget = true
+        override x.killsControllingPlayerWhenKilled = true
 
 type CorpseStrategy() =
     inherit PieceStrategy()
+        override x.isAlive = false
 
 type DiplomatStrategy() =
     inherit PieceStrategy() with
@@ -51,7 +61,7 @@ type DiplomatStrategy() =
         override x.canTargetPiece (subject : Piece) (target : Piece) =
             target.kind <> Corpse &&
             target.playerId = subject.playerId
-        override x.canEnterSeatToEvictPiece = true
+        override x.canEnterCenterToEvictPiece = true
         override x.canDropTarget = true
             
 type GravediggerStrategy() =
@@ -59,7 +69,7 @@ type GravediggerStrategy() =
         override x.canTargetWithMove = true
         override x.canTargetPiece (subject : Piece) (target : Piece) =
             target.kind = Corpse
-        override x.canEnterSeatToEvictPiece = true
+        override x.canEnterCenterToEvictPiece = true
         override x.canDropTarget = true
 
 type ReporterStrategy() =
@@ -68,6 +78,7 @@ type ReporterStrategy() =
         override x.canTargetPiece (subject : Piece) (target : Piece) =
             target.kind <> Corpse &&
             target.playerId <> subject.playerId
+        override x.killsTarget = true
 
 type ThugStrategy() =
     inherit PieceStrategy() with
@@ -77,6 +88,7 @@ type ThugStrategy() =
             target.kind <> Corpse &&
             target.playerId <> subject.playerId
         override x.canDropTarget = true
+        override x.killsTarget = true
 
 module PieceService =
 

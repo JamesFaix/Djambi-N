@@ -39,7 +39,7 @@ let private getMoveSelectionOptions(game : Game, piece : Piece) : int list =
             match pieceIndex.TryFind cell.id with
             | None -> strategy.canStayInCenter
             | Some p -> strategy.canTargetPiece piece p
-                        && strategy.canEnterSeatToEvictPiece
+                        && strategy.canEnterCenterToEvictPiece
     )
     |> Seq.map (fun cell -> cell.id)
     |> Seq.toList
