@@ -292,6 +292,20 @@ let private killCurrentPlayer(game : Game) : (Game * Effect list) =
 
     (updatedGame, effects |> Seq.toList)
 
+let private detectPlayersOutOfMoves(game : Game, effects : Effect seq) : Game * Effect list * int list =
+    //While next player has no moves, kill chief and abandon all pieces
+    let mutable game = game
+    let mutable selectionOptions = (SelectionOptionsService.getSelectableCellsFromState game) |> Result.value
+    let effects = new ArrayList<Effect>(effects)
+
+    while selectionOptions.IsEmpty && game.turnCycle.Length > 1 do
+        let (g, fx) = killCurrentPlayer game
+        effects.AddRange(fx)
+        game <- g
+        selectionOptions <- (SelectionOptionsService.getSelectableCellsFromState) game |> Result.value
+
+    (game, effects |> Seq.toList, selectionOptions)
+
 let getCommitTurnEvent(game : Game) (session : Session) : CreateEventRequest HttpResult =
     SecurityService.ensureAdminOrCurrentPlayer session game
     |> Result.map (fun _ ->
@@ -315,7 +329,7 @@ let getCommitTurnEvent(game : Game) (session : Session) : CreateEventRequest Htt
                 players <- players |> List.map (fun p -> if p.id = target.playerId.Value then p.kill else p)
         | _ -> ()
 
-        let mutable updatedGame : Game =
+        let updatedGame =
             { game with 
                 pieces = pieces
                 turnCycle = turnCycle
@@ -323,30 +337,16 @@ let getCommitTurnEvent(game : Game) (session : Session) : CreateEventRequest Htt
                 currentTurn = Some Turn.empty
             }
 
-        
-
-        //While next player has no moves, kill chief and abandon all pieces
-        let (options, reqSelType) = SelectionOptionsService.getSelectableCellsFromState updatedGame
-        let mutable selectionOptions = options
-        let mutable requiredSelectionType = reqSelType
-
-        while selectionOptions.IsEmpty && updatedGame.turnCycle.Length > 1 do
-            let (g, fx) = killCurrentPlayer updatedGame
-            effects.AddRange(fx)
-            updatedGame <- g
-            let (opt, rst) = SelectionOptionsService.getSelectableCellsFromState updatedGame
-            selectionOptions <- opt
-            requiredSelectionType <- rst
+        let (updatedGame, effects, selectionOptions) = detectPlayersOutOfMoves(updatedGame, effects)
+        let effects = new ArrayList<Effect>(effects)
 
         //TODO: If only 1 player, game over
+        let updatedTurn = { Turn.empty with selectionOptions = selectionOptions }
 
-        let updatedTurn =  
-            { Turn.empty with
-                selectionOptions = selectionOptions
-                requiredSelectionKind = requiredSelectionType
-            }
-
-        effects.Add(Effect.CurrentTurnChanged { oldValue = game.currentTurn; newValue = Some updatedTurn })
+        effects.Add(Effect.CurrentTurnChanged { 
+            oldValue = game.currentTurn; 
+            newValue = Some updatedTurn 
+        })
 
         {
             kind = EventKind.TurnCommitted
