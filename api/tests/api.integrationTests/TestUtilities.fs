@@ -104,7 +104,7 @@ let fillEmptyPlayerSlots (game : Game) : Game AsyncHttpResult =
 let emptyEventRequest : CreateEventRequest =
     {
         kind = EventKind.CellSelected //Kind shouldn't matter
-        effects = List.empty
+        effects = []
         createdByUserId = 1
         actingPlayerId = None
     }
@@ -125,9 +125,9 @@ let defaultGame : Game =
                 isPublic = false
                 regionCount = 0
             }
-        players = List.empty
-        pieces = List.empty
-        turnCycle = List.empty
+        players = []
+        pieces = []
+        turnCycle = []
         currentTurn = None
     }
 

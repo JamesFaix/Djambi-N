@@ -11,6 +11,7 @@
     <Compile Include="ModelExtensions\BoardModelUtility.fs" />
     <Compile Include="ModelExtensions\GameModelExtensions.fs" />
     <Compile Include="PieceStrategies.fs" />
+    <Compile Include="Services\ErrorService.fs" />
     <Compile Include="Services\ContextService.fs" />
     <Compile Include="Services\SecurityService.fs" />
     <Compile Include="Services\UserService.fs" />

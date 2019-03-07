@@ -78,7 +78,7 @@ let getRemovePlayerEvent (game : Game, playerId : int) (session : Session) : Cre
                             |> List.filter (fun p -> p.userId = player.userId) 
                             |> List.map (fun p -> p.id)
                         | Guest -> [playerId]
-                        | _ -> List.empty //Already eliminated this case in validation above
+                        | _ -> [] //Already eliminated this case in validation above
 
                     for pId in playerIdsToRemove do
                         effects.Add(Effect.PlayerRemoved { playerId = pId })
@@ -111,7 +111,7 @@ let fillEmptyPlayerSlots (game : Game) : Effect list AsyncHttpResult =
         |> Seq.take missingPlayerCount
 
     if missingPlayerCount = 0
-    then okTask List.empty
+    then okTask []
     else
         GameRepository.getNeutralPlayerNames()
         |> thenMap getNeutralPlayerNamesToUse

@@ -116,12 +116,6 @@ let applyStartGame (game : Game) : Game =
                 currentTurn = Some Turn.empty
         }
 
-    let (selectionOptions, _) = SelectionOptionsService.getSelectableCellsFromState game
-        
-    { 
-        game with 
-            currentTurn = 
-                Some {
-                    game.currentTurn.Value with selectionOptions = selectionOptions
-                }        
-    }   
+    let options = (SelectionOptionsService.getSelectableCellsFromState game) |> Result.value
+    let turn = { game.currentTurn.Value with selectionOptions = options }  
+    { game with  currentTurn =  Some turn }

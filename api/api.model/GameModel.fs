@@ -110,8 +110,15 @@ module Selection =
         }
 
 [<ClientType(ClientSection.Turn)>]
+type TurnStatus =
+    | AwaitingSelection
+    | AwaitingCommit
+    | DeadEnd
+
+[<ClientType(ClientSection.Turn)>]
 type Turn =
     {
+        status : TurnStatus
         selections : Selection list
         selectionOptions : int list
         requiredSelectionKind : SelectionKind option
@@ -120,9 +127,18 @@ type Turn =
 module Turn =
     let empty =
         {
-            selections = List.empty
-            selectionOptions = List.empty
+            status = AwaitingSelection
+            selections = []
+            selectionOptions = []
             requiredSelectionKind = Some Subject
+        }
+
+    let deadEnd (selections) =
+        {
+            status = DeadEnd
+            selections = selections
+            selectionOptions = []
+            requiredSelectionKind = None
         }
 
 [<ClientType(ClientSection.Game)>]

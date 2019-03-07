@@ -4,11 +4,73 @@ open System.Collections.Generic
 open System.Linq
 open Djambi.Api.Common.Collections
 open Djambi.Api.Common.Control
+open Djambi.Api.Logic
 open Djambi.Api.Logic.ModelExtensions
 open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
 open Djambi.Api.Logic.ModelExtensions.GameModelExtensions
+open Djambi.Api.Logic.PieceStrategies
+open Djambi.Api.Logic.Services
 open Djambi.Api.Model
-open Djambi.Api.Logic
+
+let getSubjectSelectionEventDetails (game : Game, cellId : int) : (Selection * TurnStatus * SelectionKind option) HttpResult =
+    let pieces = game.piecesIndexedByCell
+    match pieces.TryFind(cellId) with
+    | None -> ErrorService.noPieceInCell()
+    | Some p -> 
+        let selection = Selection.subject(cellId, p.id)
+        Ok (selection, AwaitingSelection, Some Move)
+
+let getMoveSelectionEventDetails (game : Game, cellId : int) : (Selection * TurnStatus * SelectionKind option) HttpResult =
+    let pieces = game.piecesIndexedByCell
+    let board = BoardModelUtility.getBoardMetadata game.parameters.regionCount
+    let subject = game.currentTurn.Value.subjectPiece(game).Value
+    let subjectStrategy = PieceService.getStrategy subject
+    match pieces.TryFind(cellId) with
+    | None -> 
+        let selection = Selection.move(cellId)
+        if subjectStrategy.canTargetAfterMove
+            && board.neighborsFromCellId cellId
+                |> Seq.map (fun c -> pieces.TryFind c.id)
+                |> Seq.filter (fun o -> o.IsSome)
+                |> Seq.map (fun o -> o.Value)
+                |> Seq.filter (fun p -> p.isAlive && p.playerId <> subject.playerId)
+                |> (not << Seq.isEmpty)
+        then Ok (selection, AwaitingSelection, Some Target)
+        else Ok (selection, AwaitingCommit, None)
+    | Some target ->
+        let selection = Selection.moveWithTarget(cellId, target.id)
+        if subjectStrategy.movesTargetToOrigin then
+            match board.cell cellId with
+            | None -> ErrorService.cellNotFound()
+            | Some c when c.isCenter ->
+                Ok (selection, AwaitingSelection, Some Vacate)
+            | _ ->
+                Ok (selection, AwaitingCommit, None)
+        else Ok (selection, AwaitingSelection, Some Drop)
+
+let getTargetSelectionEventDetails (game : Game, cellId : int) : (Selection * TurnStatus * SelectionKind option) HttpResult =
+    let pieces = game.piecesIndexedByCell
+    match pieces.TryFind(cellId) with
+    | None -> ErrorService.noPieceInCell()
+    | Some target ->
+        let selection = Selection.target(cellId, target.id)
+        Ok (selection, AwaitingCommit, None)
+
+let getDropSelectionEventDetails (game : Game, cellId : int) : (Selection * TurnStatus * SelectionKind option) HttpResult =
+    let turn = game.currentTurn.Value
+    let subject = turn.subjectPiece(game).Value
+    let destination = turn.destinationCell(game.parameters.regionCount).Value
+    let subjectStrategy = PieceService.getStrategy subject
+    let selection = Selection.drop(cellId)
+    if subjectStrategy.canEnterSeatToEvictPiece 
+        && (not subjectStrategy.canStayInCenter) 
+        && destination.isCenter
+    then Ok (selection, AwaitingSelection, Some Vacate)
+    else Ok (selection, AwaitingCommit, None)
+
+let getVacateSelectionEventDetails (game : Game, cellId : int) : (Selection * TurnStatus * SelectionKind option) HttpResult =
+    let selection = Selection.vacate(cellId)
+    Ok (selection, AwaitingCommit, None)
 
 let getCellSelectedEvent(game : Game, cellId : int) (session: Session) : CreateEventRequest HttpResult =
     SecurityService.ensureAdminOrCurrentPlayer session game
@@ -16,80 +78,48 @@ let getCellSelectedEvent(game : Game, cellId : int) (session: Session) : CreateE
         let board = BoardModelUtility.getBoardMetadata game.parameters.regionCount
         match board.cell cellId with
         | Some _ -> Ok ()
-        | None -> Error <| HttpException(404, "Cell not found.")
+        | None -> ErrorService.cellNotFound()
     )
     |> Result.bind (fun _ ->
         let currentTurn = game.currentTurn.Value
         if currentTurn.selectionOptions |> List.contains cellId |> not
         then Error <| HttpException(400, (sprintf "Cell %i is not currently selectable." cellId))
+        elif currentTurn.status <> AwaitingSelection || currentTurn.requiredSelectionKind.IsNone
+        then ErrorService.turnStatusDoesNotAllowSelection()
         else
             match currentTurn.requiredSelectionKind with
-            | None ->
-                Error <| HttpException(400, "Cannot make selection when awaiting turn confirmation.")
-            | Some k ->
-                let pieceIndex = game.piecesIndexedByCell
-                let board = BoardModelUtility.getBoardMetadata game.parameters.regionCount
-
-                match currentTurn.selections.Length with
-                | 0 -> Ok (Selection.subject(cellId, pieceIndex.Item(cellId).id), Some Move)
-                | 1 -> let subject = currentTurn.subjectPiece(game).Value
-                       match pieceIndex.TryFind(cellId) with
-                        | None -> match subject.kind with
-                                    | Reporter ->
-                                        if board.neighborsFromCellId cellId
-                                            |> Seq.map (fun c -> pieceIndex.TryFind c.id)
-                                            |> Seq.filter (fun o -> o.IsSome)
-                                            |> Seq.map (fun o -> o.Value)
-                                            |> Seq.filter (fun p -> p.isAlive && p.playerId <> subject.playerId)
-                                            |> Seq.isEmpty
-                                        then Ok (Selection.move(cellId), None)
-                                        else Ok (Selection.move(cellId), Some Target)
-                                    | _ -> Ok <| (Selection.move(cellId), None)
-                        | Some target when subject.kind = Assassin ->
-                            match board.cell cellId with
-                            | None -> Error <| HttpException(404, "Cell not found.")
-                            | Some c when c.isCenter ->
-                                Ok (Selection.moveWithTarget(cellId, target.id), Some Vacate)
-                            | _ ->
-                                Ok (Selection.moveWithTarget(cellId, target.id), None)
-                        | Some piece -> Ok (Selection.moveWithTarget(cellId, piece.id), Some Drop)
-                | 2 -> match (currentTurn.subjectPiece game).Value.kind with
-                        | Thug
-                        | Chief
-                        | Diplomat
-                        | Gravedigger -> Ok (Selection.drop(cellId), None)
-                        | Assassin -> Ok (Selection.move(cellId), None) //Vacate
-                        | Reporter -> Ok (Selection.target(cellId, pieceIndex.Item(cellId).id), None)
-                        | Corpse -> Error <| HttpException(400, "Subject cannot be corpse")
-                | 3 -> match (currentTurn.subjectPiece game).Value.kind with
-                        | Diplomat
-                        | Gravedigger -> Ok (Selection.move(cellId), None) //Vacate
-                        | _ -> Error <| HttpException(400, "Cannot make fourth selection unless vacating center")
-                | _ -> Error <| HttpException(400, "Cannot make more than 4 selections")
-
-                |> Result.map (fun (selection, requiredSelectionKind) ->
-                        let turnWithNewSelection =
-                            {
-                                selections = List.append currentTurn.selections [selection]
-                                selectionOptions = List.empty
-                                requiredSelectionKind = requiredSelectionKind
-                            }
-                        let updatedGame = { game with currentTurn = Some turnWithNewSelection }
-                        let (selectionOptions, requiredSelectionType) = SelectionOptionsService.getSelectableCellsFromState updatedGame
-
-                        let updatedTurn = 
-                            { turnWithNewSelection with
-                                selectionOptions = selectionOptions
-                                requiredSelectionKind = requiredSelectionType
-                            }
-                    
-                        {
-                            kind = EventKind.CellSelected
-                            effects = [Effect.CurrentTurnChanged { oldValue = game.currentTurn; newValue = Some updatedTurn }]
-                            createdByUserId = session.user.id     
-                            actingPlayerId = ContextService.getActingPlayerId session game
-                        }
-                        ))
+            | None -> ErrorService.turnStatusDoesNotAllowSelection()
+            | Some Subject -> getSubjectSelectionEventDetails (game, cellId)
+            | Some Move -> getMoveSelectionEventDetails (game, cellId)
+            | Some Target -> getTargetSelectionEventDetails (game, cellId)
+            | Some Drop -> getDropSelectionEventDetails (game, cellId)
+            | Some Vacate -> getVacateSelectionEventDetails (game, cellId)
+                
+            |> Result.bind (fun (selection, turnStatus, requiredSelectionKind) ->
+                let turn =
+                    {
+                        status = turnStatus
+                        selections = List.append currentTurn.selections [selection]
+                        selectionOptions = []
+                        requiredSelectionKind = requiredSelectionKind
+                    }
+                let updatedGame = { game with currentTurn = Some turn }
+                SelectionOptionsService.getSelectableCellsFromState updatedGame
+                |> Result.map (fun selectionOptions -> 
+                    let turn =
+                        if selectionOptions.IsEmpty && turn.status = AwaitingSelection
+                        then Turn.deadEnd turn.selections
+                        else { turn with selectionOptions = selectionOptions }
+                                      
+                    {
+                        kind = EventKind.CellSelected
+                        effects = [Effect.CurrentTurnChanged { oldValue = game.currentTurn; newValue = Some turn }]
+                        createdByUserId = session.user.id     
+                        actingPlayerId = ContextService.getActingPlayerId session game
+                    }
+                )                
+            )
+    )
 
 let private applyTurnToPieces(game : Game) : (Piece list * Effect list) =
     let pieces = game.pieces.ToDictionary(fun p -> p.id)
@@ -226,14 +256,22 @@ let private applyTurnToTurnCycle(game : Game) : (int list * Effect list) =
 let private killCurrentPlayer(game : Game) : (Game * Effect list) =
     let playerId = game.turnCycle.Head
 
-    let pieces = game.pieces
-                    |> List.map (fun p -> if p.playerId = Some(playerId) then p.abandon else p)
-    let players = game.players
-                    |> List.map (fun p -> if p.id = playerId then p.kill else p)
+    let pieces =
+        game.pieces 
+        |> List.replaceIf
+            (fun p -> p.playerId = Some(playerId))
+            (fun p -> p.abandon)
 
-    let turns = game.turnCycle
-                |> List.filter (fun t -> t <> playerId)
-                |> removeSequentialDuplicates
+    let players = 
+        game.players
+        |> List.replaceIf
+            (fun p -> p.id = playerId)
+            (fun p -> p.kill)
+
+    let turns = 
+        game.turnCycle
+        |> List.filter (fun t -> t <> playerId)
+        |> removeSequentialDuplicates
 
     let effects = new ArrayList<Effect>()
     effects.Add(Effect.PlayerOutOfMoves { playerId = playerId })
@@ -253,6 +291,20 @@ let private killCurrentPlayer(game : Game) : (Game * Effect list) =
         }
 
     (updatedGame, effects |> Seq.toList)
+
+let private detectPlayersOutOfMoves(game : Game, effects : Effect seq) : Game * Effect list * int list =
+    //While next player has no moves, kill chief and abandon all pieces
+    let mutable game = game
+    let mutable selectionOptions = (SelectionOptionsService.getSelectableCellsFromState game) |> Result.value
+    let effects = new ArrayList<Effect>(effects)
+
+    while selectionOptions.IsEmpty && game.turnCycle.Length > 1 do
+        let (g, fx) = killCurrentPlayer game
+        effects.AddRange(fx)
+        game <- g
+        selectionOptions <- (SelectionOptionsService.getSelectableCellsFromState) game |> Result.value
+
+    (game, effects |> Seq.toList, selectionOptions)
 
 let getCommitTurnEvent(game : Game) (session : Session) : CreateEventRequest HttpResult =
     SecurityService.ensureAdminOrCurrentPlayer session game
@@ -277,7 +329,7 @@ let getCommitTurnEvent(game : Game) (session : Session) : CreateEventRequest Htt
                 players <- players |> List.map (fun p -> if p.id = target.playerId.Value then p.kill else p)
         | _ -> ()
 
-        let mutable updatedGame : Game =
+        let updatedGame =
             { game with 
                 pieces = pieces
                 turnCycle = turnCycle
@@ -285,28 +337,16 @@ let getCommitTurnEvent(game : Game) (session : Session) : CreateEventRequest Htt
                 currentTurn = Some Turn.empty
             }
 
-        //While next player has no moves, kill chief and abandon all pieces
-        let (options, reqSelType) = SelectionOptionsService.getSelectableCellsFromState updatedGame
-        let mutable selectionOptions = options
-        let mutable requiredSelectionType = reqSelType
-
-        while selectionOptions.IsEmpty && updatedGame.turnCycle.Length > 1 do
-            let (g, fx) = killCurrentPlayer updatedGame
-            effects.AddRange(fx)
-            updatedGame <- g
-            let (opt, rst) = SelectionOptionsService.getSelectableCellsFromState updatedGame
-            selectionOptions <- opt
-            requiredSelectionType <- rst
+        let (updatedGame, effects, selectionOptions) = detectPlayersOutOfMoves(updatedGame, effects)
+        let effects = new ArrayList<Effect>(effects)
 
         //TODO: If only 1 player, game over
+        let updatedTurn = { Turn.empty with selectionOptions = selectionOptions }
 
-        let updatedTurn =  
-            { Turn.empty with
-                selectionOptions = selectionOptions
-                requiredSelectionKind = requiredSelectionType
-            }
-
-        effects.Add(Effect.CurrentTurnChanged { oldValue = game.currentTurn; newValue = Some updatedTurn })
+        effects.Add(Effect.CurrentTurnChanged { 
+            oldValue = game.currentTurn; 
+            newValue = Some updatedTurn 
+        })
 
         {
             kind = EventKind.TurnCommitted
@@ -318,19 +358,19 @@ let getCommitTurnEvent(game : Game) (session : Session) : CreateEventRequest Htt
 
 let getResetTurnEvent(game : Game) (session : Session) : CreateEventRequest HttpResult =
     SecurityService.ensureAdminOrCurrentPlayer session game
-    |> Result.map (fun _ ->
+    |> Result.bind (fun _ ->
         let updatedGame = { game with currentTurn = Some Turn.empty }
-        let (selectionOptions, requiredSelectionType) = SelectionOptionsService.getSelectableCellsFromState updatedGame
-        let turn = 
+        SelectionOptionsService.getSelectableCellsFromState updatedGame
+        |> Result.map (fun selectionOptions -> 
+            let turn = { Turn.empty with selectionOptions = selectionOptions }
+            let effects = [ 
+                Effect.CurrentTurnChanged { oldValue = game.currentTurn; newValue = Some turn } 
+            ]
             {
-                Turn.empty with
-                    selectionOptions = selectionOptions
-                    requiredSelectionKind = requiredSelectionType
+                kind = EventKind.TurnReset
+                effects = effects
+                createdByUserId = session.user.id
+                actingPlayerId = ContextService.getActingPlayerId session game
             }
-        {
-            kind = EventKind.TurnReset
-            effects = [ Effect.CurrentTurnChanged { oldValue = game.currentTurn; newValue = Some turn } ]
-            createdByUserId = session.user.id
-            actingPlayerId = ContextService.getActingPlayerId session game
-        }
+        )
     )

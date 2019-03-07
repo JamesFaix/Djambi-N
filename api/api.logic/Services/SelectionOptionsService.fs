@@ -5,6 +5,7 @@ open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
 open Djambi.Api.Logic.ModelExtensions.GameModelExtensions
 open Djambi.Api.Model
 open Djambi.Api.Logic.PieceStrategies
+open Djambi.Api.Common.Control
 
 let private getMoveSelectionOptions(game : Game, piece : Piece) : int list =
     let board = BoardModelUtility.getBoardMetadata game.parameters.regionCount
@@ -36,23 +37,30 @@ let private getMoveSelectionOptions(game : Game, piece : Piece) : int list =
         if not cell.isCenter then true
         else 
             match pieceIndex.TryFind cell.id with
-            | None -> strategy.canStayInSeat
+            | None -> strategy.canStayInCenter
             | Some p -> strategy.canTargetPiece piece p
                         && strategy.canEnterSeatToEvictPiece
     )
     |> Seq.map (fun cell -> cell.id)
     |> Seq.toList
 
+let private getSubjectSelectionOptions (game : Game, turn : Turn) : int list =
+    game.piecesControlledBy game.currentPlayerId
+    |> Seq.map (fun piece -> (piece, getMoveSelectionOptions(game, piece)))
+    |> Seq.filter (fun (_, cells) -> cells.IsEmpty |> not)
+    |> Seq.map (fun (piece, _) -> piece.cellId)
+    |> Seq.toList
+
 let private getTargetSelectionOptions(game : Game, turn : Turn) : int list =
     match turn.destinationCellId with
-    | None -> List.empty
+    | None -> []
     | Some destinationCellId ->
         match turn.subjectPiece game with
-        | None -> list.Empty
+        | None -> []
         | Some subject ->
             let strategy = PieceService.getStrategy(subject)
-            if not strategy.canTargetAfterMove then
-                List.empty
+            if not strategy.canTargetAfterMove 
+            then []
             else
                 let board = BoardModelUtility.getBoardMetadata game.parameters.regionCount
                 let neighbors = board.neighborsFromCellId destinationCellId
@@ -67,30 +75,31 @@ let private getTargetSelectionOptions(game : Game, turn : Turn) : int list =
 
 let private getDropSelectionOptions(game : Game, turn : Turn) : int list =
     match turn.subjectPiece game with
-    | None -> List.empty
+    | None -> []
     | Some subject ->
         match turn.destinationCellId with
-        | None -> List.empty
+        | None -> []
         | Some _ ->
             let pieceIndex = game.piecesIndexedByCell
             let board = BoardModelUtility.getBoardMetadata game.parameters.regionCount
             board.cells()
-            |> Seq.filter (fun c -> match pieceIndex.TryFind c.id with
-                                    | None -> true
-                                    | Some occupant -> occupant.id = subject.id)
+            |> Seq.filter (fun c -> 
+                match pieceIndex.TryFind c.id with
+                | None -> true
+                | Some occupant -> occupant.id = subject.id)
             |> Seq.map (fun c -> c.id)
             |> Seq.toList
 
 let private getVacateSelectionOptions(game : Game, turn : Turn) : int list =
     match turn.subjectPiece game with
-    | None -> List.empty
+    | None -> []
     | Some subject ->
         match turn.destinationCell game.parameters.regionCount with
-        | None -> List.empty
+        | None -> []
         | Some destination ->
             let strategy = PieceService.getStrategy subject
-            if not destination.isCenter || strategy.canStayInSeat
-            then List.empty
+            if not destination.isCenter || strategy.canStayInCenter
+            then []
             else 
                 let board = BoardModelUtility.getBoardMetadata game.parameters.regionCount
                 let pieceIndex = game.piecesIndexedByCell
@@ -100,57 +109,20 @@ let private getVacateSelectionOptions(game : Game, turn : Turn) : int list =
                 |> Seq.map (fun cell -> cell.id)
                 |> Seq.toList
                 
-let getSelectableCellsFromState(game : Game) : (int list * SelectionKind option) =
-    let currentTurn = game.currentTurn.Value
-    let currentPlayerId = game.currentPlayerId
-    let empty = (List.empty, None)
-
-    match currentTurn.selections.Length with
-    //Selection 0 is always the subject piece
-    | 0 -> 
-        let cellIds = 
-            game.piecesControlledBy currentPlayerId
-            |> Seq.map (fun piece -> (piece, getMoveSelectionOptions(game, piece)))
-            |> Seq.filter (fun (_, cells) -> cells.IsEmpty |> not)
-            |> Seq.map (fun (piece, _) -> piece.cellId)
-            |> Seq.toList
-        (cellIds, Some Subject)
-    //Selection 1 is always a cell to move the subject to. It may contain a target piece
-    | 1 -> 
-        let subject = currentTurn.subjectPiece(game).Value
-        let cellIds = getMoveSelectionOptions(game, subject)
-        (cellIds, Some Move)
-    //Selection 2 can be either
-    //  -Targeting piece after move
-    //  -Selecting cell to drop target if last selection had target and piece drops target
-    //  -Vacating seat if last selection was in Seat and piece moves target to origin
-    | 2 -> 
-        let subject = currentTurn.subjectPiece(game).Value
-        let strategy = PieceService.getStrategy subject
-        if strategy.canTargetAfterMove then
-            let cellIds = getTargetSelectionOptions(game, currentTurn)
-            if cellIds.IsEmpty then empty
-            else (cellIds, Some Target)
-        elif currentTurn.selections.[1].pieceId.IsSome then
-            if strategy.canDropTarget then
-                let cellIds = getDropSelectionOptions(game, currentTurn)
-                (cellIds, Some Drop)
-            elif strategy.movesTargetToOrigin then
-                let cellIds = getVacateSelectionOptions(game, currentTurn)
-                if cellIds.IsEmpty then empty
-                else (cellIds, Some Vacate)
-            else empty            
-        else empty
-    //Selection 3 is always vacating the Seat if the subject piece drops its target and the target was in the Seat
-    | 3 -> 
-        let subject = currentTurn.subjectPiece(game).Value
-        let strategy = PieceService.getStrategy subject
-        if strategy.canEnterSeatToEvictPiece 
-            && not strategy.canStayInSeat
-            && strategy.canDropTarget
-        then
-            let cellIds = getVacateSelectionOptions(game, currentTurn)
-            if cellIds.IsEmpty then empty
-            else (cellIds, Some Vacate)
-        else empty
-    | _ -> empty
+let getSelectableCellsFromState(game : Game) : int list HttpResult =
+    let turn = game.currentTurn.Value
+    match turn.requiredSelectionKind with
+    | None -> 
+        Ok []
+    | Some Subject ->
+        Ok <| getSubjectSelectionOptions (game, turn)
+    | Some Move ->
+        let subject = turn.subjectPiece(game).Value
+        Ok <| getMoveSelectionOptions (game, subject)
+    | Some Target ->
+        Ok <| getTargetSelectionOptions (game, turn)
+    | Some Drop ->
+        Ok <| getDropSelectionOptions (game, turn)
+    | Some Vacate ->
+        Ok <| getVacateSelectionOptions (game, turn)
+         

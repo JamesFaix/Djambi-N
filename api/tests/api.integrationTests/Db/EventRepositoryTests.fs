@@ -64,7 +64,7 @@ type EventRepositoryTests() =
             let! _ = GameRepository.addPlayer(game.id, playerRequest) |> thenValue
             let! game = GameRepository.getGame game.id |> thenValue
 
-            let newGame = { game with players = List.empty }
+            let newGame = { game with players = [] }
 
             //Act
             let! resp = EventRepository.persistEvent (TestUtilities.emptyEventRequest, game, newGame) |> thenValue
@@ -143,8 +143,8 @@ type EventRepositoryTests() =
                     description = Some "Test"
                 }
             game.currentTurn |> shouldBe None
-            game.turnCycle |> shouldBe List.empty
-            game.pieces |> shouldBe List.empty
+            game.turnCycle |> shouldBe []
+            game.pieces |> shouldBe []
             
             let newGame = 
                 { game with

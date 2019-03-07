@@ -160,9 +160,16 @@ export interface SelectionRequest {
 }
 
 export interface Turn {
+	status : TurnStatus,
 	selections : Selection[],
 	selectionOptions : number[],
 	requiredSelectionKind : SelectionKind,
+}
+
+export enum TurnStatus {
+	AwaitingCommit = "AwaitingCommit",
+	AwaitingSelection = "AwaitingSelection",
+	DeadEnd = "DeadEnd",
 }
 
 //-------- EVENTS --------

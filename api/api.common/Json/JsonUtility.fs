@@ -18,7 +18,7 @@ let serialize<'a> (value : 'a) : string =
 
 let deserializeList<'a> (json : string) : 'a list =
     if json = null || json = ""
-    then List.empty
+    then []
     else deserialize json
 
 let deserializeOption<'a> (json : string) : 'a option =

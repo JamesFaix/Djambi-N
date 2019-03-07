@@ -9,7 +9,7 @@ type PieceStrategy() =
     abstract member canTargetWithMove : bool
     abstract member canTargetAfterMove : bool
     abstract member canTargetPiece : Piece -> Piece -> bool
-    abstract member canStayInSeat : bool
+    abstract member canStayInCenter : bool
     abstract member canEnterSeatToEvictPiece : bool
     abstract member canDropTarget : bool
     abstract member movesTargetToOrigin : bool
@@ -18,7 +18,7 @@ type PieceStrategy() =
     default x.canTargetWithMove = false
     default x.canTargetAfterMove = false
     default x.canTargetPiece (subject : Piece) (target : Piece) = false
-    default x.canStayInSeat = false
+    default x.canStayInCenter = false
     default x.canEnterSeatToEvictPiece = false
     default x.canDropTarget = false
     default x.movesTargetToOrigin = false
@@ -38,7 +38,7 @@ type ChiefStrategy() =
         override x.canTargetPiece (subject : Piece) (target : Piece) =
             target.kind <> Corpse &&
             target.playerId <> subject.playerId
-        override x.canStayInSeat = true
+        override x.canStayInCenter = true
         override x.canEnterSeatToEvictPiece = true
         override x.canDropTarget = true
 

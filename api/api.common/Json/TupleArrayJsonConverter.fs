@@ -29,7 +29,7 @@ type TupleArrayJsonConverter() =
                     advance()
                     read (index + 1) (acc @ [value])
             advance()
-            read 0 List.empty
+            read 0 []
 
         match reader.TokenType with
         | JsonToken.StartArray ->

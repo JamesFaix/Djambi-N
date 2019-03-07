@@ -37,5 +37,5 @@ module List =
 
     let skipSafe<'a> (count : int) (xs : 'a list) : 'a list =
         if count > xs.Length
-        then List.empty
+        then []
         else xs |> List.skip count
