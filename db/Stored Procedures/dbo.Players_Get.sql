@@ -1,5 +1,9 @@
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_NULLS ON
+GO
 CREATE PROCEDURE [dbo].[Players_Get]
-	@GameIds NVARCHAR(MAX),
+	@GameIds dbo.Int32List READONLY,
 	@PlayerId INT
 AS
 BEGIN
@@ -20,12 +24,8 @@ BEGIN
 		WHERE PlayerId = @PlayerId
 	END
 
-	ELSE IF @GameIds IS NOT NULL
+	ELSE IF EXISTS(SELECT 1 FROM @GameIds)
 	BEGIN
-		SELECT value
-		INTO #GameIds
-		FROM STRING_SPLIT(@GameIds, ',') --TODO: Vendor dependency
-
 		SELECT p.GameId,
 			p.PlayerId,
 			p.UserId,
@@ -36,10 +36,11 @@ BEGIN
 			p.StartingRegion,
 			p.StartingTurnNumber
 		FROM Players p
-			INNER JOIN #GameIds g
-				ON p.GameId = g.value
+			INNER JOIN @GameIds g
+				ON p.GameId = g.N
 		ORDER BY p.PlayerId
 	END
 	ELSE
 		THROW 50500, 'Invalid parameters for player query.', 1
 END
+GO

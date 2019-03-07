@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="TableValuedParameter.fs" />
     <Compile Include="CommandDefinition.fs" />
     <Compile Include="Model.fs" />
     <Compile Include="Mapping.fs" />

@@ -38,7 +38,8 @@ let private dropAndCreateDb() : unit =
     printfn "Dropping and creating database"
     let sql = "IF EXISTS(SELECT * FROM sys.databases WHERE name='Djambi')
                DROP DATABASE Djambi;
-               CREATE DATABASE Djambi;"
+               CREATE DATABASE Djambi;
+               ALTER DATABASE Djambi SET COMPATIBILITY_LEVEL = 120" //120 = SQL Server 2014
     executeCommand masterConnectionString sql
 
 let private loadFile (relativePath : string) : unit =
@@ -78,6 +79,7 @@ let getFilesInOrder : string seq =
             |> Seq.map (fun path -> Path.Combine(folder, Path.GetFileName(path)))
 
         let folders = [
+            "Types\\User-defined Data Types"
             "Stored Procedures"
             "Data"
         ]

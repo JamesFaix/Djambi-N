@@ -44,7 +44,7 @@ let getGameWithoutPlayers (gameId : int) : Game AsyncHttpResult =
         
 let getPlayersForGames (gameIds : int list) : Player List AsyncHttpResult =
     let param = DynamicParameters()
-                    .add("GameIds", String.Join(',', gameIds))
+                    .add("GameIds", TableValuedParameter.int32list gameIds)
                     .add("PlayerId", null);
 
     let cmd = proc("Players_Get", param)
@@ -54,7 +54,7 @@ let getPlayersForGames (gameIds : int list) : Player List AsyncHttpResult =
 
 let getPlayer (gameId : int, playerId : int) : Player AsyncHttpResult =
     let param = DynamicParameters()
-                    .add("GameIds", gameId.ToString())
+                    .add("GameIds", TableValuedParameter.int32list [gameId])
                     .add("PlayerId", playerId);
 
     let cmd = proc("Players_Get", param)

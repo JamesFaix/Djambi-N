@@ -1,0 +1,6 @@
+CREATE TYPE [dbo].[Int32List] AS TABLE
+(
+[N] [int] NOT NULL,
+PRIMARY KEY CLUSTERED  ([N])
+)
+GO
