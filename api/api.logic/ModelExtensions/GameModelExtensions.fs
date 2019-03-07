@@ -18,16 +18,6 @@ module GameModelExtensions =
         member this.abandon =
             { this with playerId = None }
 
-        member this.isKiller =
-            match this.kind with
-            | Chief | Thug | Reporter | Assassin -> true
-            | _ -> false
-
-        member this.isAlive =
-            match this.kind with
-            | Corpse -> false
-            | _ -> true
-
     type Player with
         member this.kill : Player =
             { this with status = PlayerStatus.Eliminated }

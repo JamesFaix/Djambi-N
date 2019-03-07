@@ -31,10 +31,11 @@ let getMoveSelectionEventDetails (game : Game, cellId : int) : (Selection * Turn
         if subjectStrategy.canTargetAfterMove
             && board.neighborsFromCellId cellId
                 |> Seq.map (fun c -> pieces.TryFind c.id)
-                |> Seq.filter (fun o -> o.IsSome)
-                |> Seq.map (fun o -> o.Value)
-                |> Seq.filter (fun p -> p.isAlive && p.playerId <> subject.playerId)
-                |> (not << Seq.isEmpty)
+                |> Seq.values
+                |> Seq.exists (fun p -> 
+                    let str = PieceService.getStrategy p
+                    str.isAlive && p.playerId <> subject.playerId
+                )
         then Ok (selection, AwaitingSelection, Some Target)
         else Ok (selection, AwaitingCommit, None)
     | Some target ->
@@ -62,7 +63,7 @@ let getDropSelectionEventDetails (game : Game, cellId : int) : (Selection * Turn
     let destination = turn.destinationCell(game.parameters.regionCount).Value
     let subjectStrategy = PieceService.getStrategy subject
     let selection = Selection.drop(cellId)
-    if subjectStrategy.canEnterSeatToEvictPiece 
+    if subjectStrategy.canEnterCenterToEvictPiece 
         && (not subjectStrategy.canStayInCenter) 
         && destination.isCenter
     then Ok (selection, AwaitingSelection, Some Vacate)
@@ -145,8 +146,11 @@ let private applyTurnToPieces(game : Game) : (Piece list * Effect list) =
         match currentTurn.targetPiece game with
         | None -> ()
         | Some target ->
+            let subjectStrategy = PieceService.getStrategy subject
+            let targetStrategy = PieceService.getStrategy target
+
             //Kill target
-            if subject.isKiller
+            if subjectStrategy.killsTarget
             then 
                 pieces.[target.id] <- target.kill
                 effects.Add(Effect.PieceKilled { 
@@ -154,7 +158,8 @@ let private applyTurnToPieces(game : Game) : (Piece list * Effect list) =
                 })
 
             //Enlist players pieces if killing chief
-            if subject.isKiller && target.kind = Chief
+            if subjectStrategy.killsTarget 
+                && targetStrategy.killsControllingPlayerWhenKilled
             then 
                 let enlistedPieces = game.piecesControlledBy target.playerId.Value
                 for p in enlistedPieces do
@@ -172,7 +177,7 @@ let private applyTurnToPieces(game : Game) : (Piece list * Effect list) =
             | None -> ()
 
             //Move target back to origin if subject is assassin
-            if subject.kind = Assassin
+            if subjectStrategy.movesTargetToOrigin
             then 
                 pieces.[target.id] <- pieces.[target.id].moveTo originCellId
                 effects.Add(Effect.PieceDropped { oldPiece = target; newCellId = originCellId })
@@ -221,30 +226,51 @@ let private applyTurnToTurnCycle(game : Game) : (int list * Effect list) =
         let newTurns = stack |> Seq.toList |> removeSequentialDuplicates
         effects.Add(Effect.TurnCyclePlayerRoseToPower { oldValue = turns; newValue = newTurns; playerId = playerId })
         turns <- newTurns
+    
+    match currentTurn.subjectPiece game with
+    | None -> ()
+    | Some subject ->    
+        let subjectStrategy = PieceService.getStrategy subject
 
-    match (currentTurn.subjectPiece game, currentTurn.targetPiece game, currentTurn.dropCell regions) with
-    //If chief being killed, remove all its turns
-    | (Some subject, Some target, _)
-        when subject.isKiller && target.kind = Chief ->
-        removeAllTurnsForPlayer target.playerId.Value
+        match currentTurn.targetPiece game with
+        | None -> ()
+        | Some target -> 
+            let targetStrategy = PieceService.getStrategy target
 
-    //If chief being forced out of power, remove its bonus turns only
-    | (Some subject, Some target, Some drop)
-        when subject.kind = Diplomat && target.kind = Chief && not drop.isCenter ->
-        removeBonusTurnsForPlayer target.playerId.Value
-    | _ -> ()
+            //If chief being killed, remove all its turns
+            if subjectStrategy.killsTarget 
+                && targetStrategy.killsControllingPlayerWhenKilled
+                then removeAllTurnsForPlayer target.playerId.Value
 
-    match (currentTurn.subjectPiece game, currentTurn.subjectCell regions, currentTurn.destinationCell regions) with
-    //If subject is chief in center and destination is not center, remove extra turns
-    | (Some subject, Some origin, Some destination)
-        when subject.kind = Chief && origin.isCenter && not destination.isCenter ->
-        removeBonusTurnsForPlayer subject.playerId.Value
-
-    //If subject is chief and destination is center, add extra turns to queue
-    | (Some subject, _, Some destination)
-        when subject.kind = Chief && destination.isCenter ->
-        addBonusTurnsForPlayer subject.playerId.Value
-    | _ -> ()
+            //If chief being forced out of power, remove its bonus turns only
+            else 
+                match (currentTurn.destinationCell regions, currentTurn.dropCell regions) with
+                | (Some destination, Some drop) ->
+                    if targetStrategy.canStayInCenter 
+                        && destination.isCenter
+                        && not drop.isCenter
+                        && not subjectStrategy.killsTarget
+                        then removeBonusTurnsForPlayer target.playerId.Value
+                    else ()
+                | _ -> ()
+        
+        match currentTurn.destinationCell regions with
+        | None -> ()
+        | Some destination ->
+            match currentTurn.subjectCell regions with
+            | Some origin ->
+                //If subject is chief in center and destination is not center, remove extra turns
+                if subjectStrategy.canStayInCenter
+                    && origin.isCenter
+                    && not destination.isCenter
+                    then removeBonusTurnsForPlayer subject.playerId.Value
+                else ()
+            | _ ->                
+                //If subject is chief and destination is center, add extra turns to queue
+                if subjectStrategy.canStayInCenter
+                    && destination.isCenter
+                    then addBonusTurnsForPlayer subject.playerId.Value
+                else ()
 
     //Cycle turn queue
     let newTurns = List.append turns.Tail [turns.Head]
@@ -323,10 +349,16 @@ let getCommitTurnEvent(game : Game) (session : Session) : CreateEventRequest Htt
 
         //Kill player if chief killed
         match (currentTurn.subjectPiece game, currentTurn.targetPiece game) with
-        | (Some subject, Some target) 
-            when subject.isKiller && target.kind = Chief ->
+        | (Some subject, Some target) ->
+            let subjectStrategy = PieceService.getStrategy subject
+            let targetStrategy = PieceService.getStrategy target
+
+            if subjectStrategy.killsTarget
+                && targetStrategy.killsControllingPlayerWhenKilled
+            then
                 effects.Add(Effect.PlayerEliminated { playerId = target.playerId.Value })
                 players <- players |> List.map (fun p -> if p.id = target.playerId.Value then p.kill else p)
+            else ()
         | _ -> ()
 
         let updatedGame =

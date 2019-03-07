@@ -5,12 +5,11 @@ type ArrayList<'a> = System.Collections.Generic.List<'a>
 module List =
 
     open System
-    open System.Linq
 
     let private random = new Random()
 
     let shuffle<'a> (xs : 'a list) : 'a list =
-        let list = xs.ToList()
+        let list = new ArrayList<'a>(xs)
         let mutable n = list.Count
         while (n > 1) do
             n <- n - 1
@@ -28,14 +27,34 @@ module List =
             else x
         )
 
-    let exceptWithKey<'a, 'key when 'key : equality> (keySelector : 'a -> 'key) (keyList : 'key list) (list : 'a list) : 'a list =
-        list 
-        |> List.filter (fun x -> 
+module Seq =
+    let replaceIf<'a> (predicate : 'a -> bool) (replace : 'a -> 'a) (list : 'a seq) : 'a seq =
+        list
+        |> Seq.map (fun x -> 
+            if predicate x
+            then replace x
+            else x
+        )
+
+    let exceptWithKey<'a, 'key when 'key : equality> (keySelector : 'a -> 'key) (keys : 'key seq) (xs : 'a seq) : 'a seq =
+        let keyList = keys |> Seq.toList
+        xs 
+        |> Seq.filter (fun x -> 
             let key = keySelector x
             keyList |> List.contains key |> not
         )
 
-    let skipSafe<'a> (count : int) (xs : 'a list) : 'a list =
-        if count > xs.Length
-        then []
-        else xs |> List.skip count
+    let skipSafe<'a> (count : int) (xs : 'a seq) : 'a seq =
+        use e = xs.GetEnumerator()
+        let mutable n = 0
+        seq {
+            while e.MoveNext() do
+                n <- n+1
+                if n > count then
+                    yield e.Current
+        }
+
+    let values<'a> (xs : 'a option seq) : 'a seq =
+        xs 
+        |> Seq.filter Option.isSome 
+        |> Seq.map (fun o -> o.Value)

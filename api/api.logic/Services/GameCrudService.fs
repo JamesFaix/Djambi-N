@@ -38,7 +38,7 @@ let getUpdateGameParametersEvent (game : Game, parameters : GameParameters) (ses
         //If lowering region count, extra players are ejected
         let truncatedPlayers = 
             game.players 
-            |> List.skipSafe parameters.regionCount 
+            |> Seq.skipSafe parameters.regionCount 
 
         //If disabling AllowGuests, guests are ejected
         let ejectedGuests =
