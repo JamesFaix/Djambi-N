@@ -292,7 +292,7 @@ let private killCurrentPlayer(game : Game) : (Game * Effect list) =
         game.players
         |> List.replaceIf
             (fun p -> p.id = playerId)
-            (fun p -> p.kill)
+            (fun p -> { p with status = Eliminated })
 
     let turns = 
         game.turnCycle
@@ -357,7 +357,10 @@ let getCommitTurnEvent(game : Game) (session : Session) : CreateEventRequest Htt
                 && targetStrategy.killsControllingPlayerWhenKilled
             then
                 effects.Add(Effect.PlayerEliminated { playerId = target.playerId.Value })
-                players <- players |> List.map (fun p -> if p.id = target.playerId.Value then p.kill else p)
+                players <- players 
+                           |> List.replaceIf 
+                                (fun p -> p.id = target.playerId.Value)
+                                (fun p -> { p with status = Eliminated })
             else ()
         | _ -> ()
 

@@ -15,6 +15,10 @@ type PlayerStatus =
     | Pending
     | Alive
     | Eliminated
+    | Conceded
+    | WillConcede
+    | AcceptsDraw
+    | Victorious
     
 [<ClientType(ClientSection.Player)>]
 type Player =
