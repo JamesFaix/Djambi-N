@@ -12,6 +12,8 @@ open Djambi.Api.Logic.PieceStrategies
 open Djambi.Api.Logic.Services
 open Djambi.Api.Model
 
+//--- Selection
+
 let getSubjectSelectionEventDetails (game : Game, cellId : int) : (Selection * TurnStatus * SelectionKind option) HttpResult =
     let pieces = game.piecesIndexedByCell
     match pieces.TryFind(cellId) with
@@ -122,7 +124,9 @@ let getCellSelectedEvent(game : Game, cellId : int) (session: Session) : CreateE
             )
     )
 
-let private applyTurnToPieces(game : Game) : (Piece list * Effect list) =
+//--- Commit
+
+let private getPrimaryEffects (game : Game) : Effect list =
     let pieces = game.pieces.ToDictionary(fun p -> p.id)
     let currentTurn = game.currentTurn.Value
 
@@ -161,7 +165,7 @@ let private applyTurnToPieces(game : Game) : (Piece list * Effect list) =
             if subjectStrategy.killsTarget 
                 && targetStrategy.killsControllingPlayerWhenKilled
             then 
-                let enlistedPieces = game.piecesControlledBy target.playerId.Value
+                let enlistedPieces = pieces.Values |> Seq.filter(fun p -> p.playerId = target.playerId)
                 for p in enlistedPieces do
                     pieces.[p.id] <- pieces.[p.id].enlistBy subject.playerId.Value
                     effects.Add(Effect.PieceEnlisted{
@@ -181,7 +185,8 @@ let private applyTurnToPieces(game : Game) : (Piece list * Effect list) =
             then 
                 pieces.[target.id] <- pieces.[target.id].moveTo originCellId
                 effects.Add(Effect.PieceDropped { oldPiece = target; newCellId = originCellId })
-        (pieces.Values |> Seq.toList, effects |> Seq.toList)
+
+        effects |> Seq.toList
 
 let private removeSequentialDuplicates(turnCycle : int list) : int list =
     if turnCycle.Length = 1 then turnCycle
@@ -340,8 +345,9 @@ let getCommitTurnEvent(game : Game) (session : Session) : CreateEventRequest Htt
         let (turnCycle, turnEffects) = applyTurnToTurnCycle game
         effects.AddRange(turnEffects)
 
-        let (pieces, pieceEffects) = applyTurnToPieces game
+        let pieceEffects = getPrimaryEffects game
         effects.AddRange(pieceEffects)
+        let game = EventService.applyEffects pieceEffects game
 
         let currentTurn = game.currentTurn.Value
         
@@ -372,7 +378,6 @@ let getCommitTurnEvent(game : Game) (session : Session) : CreateEventRequest Htt
 
         let updatedGame =
             { game with 
-                pieces = pieces
                 turnCycle = turnCycle
                 players = players
                 currentTurn = Some Turn.empty
@@ -396,6 +401,66 @@ let getCommitTurnEvent(game : Game) (session : Session) : CreateEventRequest Htt
             actingPlayerId = ContextService.getActingPlayerId session game
         }
     )
+
+let getCommitTurnEvent2 (game : Game) (session : Session) : CreateEventRequest HttpResult =
+    (*
+        The order of effects is important, both for the implementation and clarity of the event log to users.
+
+        Primary effects
+          Move subject to destination
+          Kill target (option)
+          Move target to drop (option)
+          Move subject to vacate (option)
+
+        Secondary effects
+          [Eliminate target's player] (option)
+            Change player status
+            Remove player from turn cycle
+            Enlist pieces controlled by player
+          Enlist pieces if killing neutral Chief (option)
+          Player rises/falls from power (option)
+
+        Ternary effects
+          Victory (option)
+          Advance turn cycle
+          [Eliminate player out of moves] (option, repeat as necessary)
+            Change player status
+            Remove from turn cycle
+            Abandon pieces
+            Victory (option)
+          Current turn changed   
+    *)
+
+    let getSecondaryEffects game session =
+        
+        []
+
+    let getTernaryEffects game session =
+        
+        []
+
+    let effects = new ArrayList<Effect>()
+
+    let primaryEffects = getPrimaryEffects game
+    effects.AddRange(primaryEffects)
+    let game = EventService.applyEffects primaryEffects game
+
+    let secondaryEffects = getSecondaryEffects game session
+    effects.AddRange(secondaryEffects)
+    let game = EventService.applyEffects secondaryEffects game
+
+    let ternaryEffects = getTernaryEffects game session
+    effects.AddRange(ternaryEffects)
+    let game = EventService.applyEffects ternaryEffects game
+    
+    Ok {
+        kind = EventKind.TurnCommitted
+        effects = effects |> Seq.toList
+        createdByUserId = session.user.id
+        actingPlayerId = ContextService.getActingPlayerId session game
+    }
+    
+//--- Reset
 
 let getResetTurnEvent(game : Game) (session : Session) : CreateEventRequest HttpResult =
     SecurityService.ensureAdminOrCurrentPlayer session game

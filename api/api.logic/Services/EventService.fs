@@ -120,7 +120,7 @@ let private applyTurnCyclePlayerRemovedEffect (effect : TurnCyclePlayerRemovedEf
 let private applyTurnCyclePlayerRoseToPowerEffect (effect : TurnCyclePlayerRoseToPowerEffect) (game : Game) : Game =
     { game with turnCycle = effect.newValue }
 
-let private applyEffect (effect : Effect) (game : Game) : Game =
+let applyEffect (effect : Effect) (game : Game) : Game =
     match effect with 
     | Effect.CurrentTurnChanged e -> applyCurrentTurnChangedEffect e game
     | Effect.GameStatusChanged e -> applyGameStatusChangedEffect e game
@@ -141,8 +141,11 @@ let private applyEffect (effect : Effect) (game : Game) : Game =
     | Effect.TurnCyclePlayerRemoved e -> applyTurnCyclePlayerRemovedEffect e game
     | Effect.TurnCyclePlayerRoseToPower e -> applyTurnCyclePlayerRoseToPowerEffect e game
 
-let applyEvent (game : Game) (eventRequest : CreateEventRequest) : Game =
+let applyEffects (effects : Effect seq) (game : Game) : Game =
     let mutable game = game
-    for ef in eventRequest.effects do
+    for ef in effects do
         game <- applyEffect ef game
     game
+
+let applyEvent (game : Game) (eventRequest : CreateEventRequest) : Game =
+    applyEffects eventRequest.effects game
