@@ -20,9 +20,9 @@ let private findLeft<'a, 'b when 'b : equality> (map : ('a * 'b) list) (key : 'b
     
 let private playerKindsMap =
     [
-        1uy, PlayerKind.User
-        2uy, PlayerKind.Guest
-        3uy, PlayerKind.Neutral
+        1uy, User
+        2uy, Guest
+        3uy, Neutral
     ]
 
 let mapPlayerKindId (playerKindId : byte) : PlayerKind =
@@ -34,8 +34,12 @@ let mapPlayerKindToId (kind : PlayerKind) : byte =
 let private playerStatusMap =
     [
         1uy, PlayerStatus.Pending
-        2uy, PlayerStatus.Alive
-        3uy, PlayerStatus.Eliminated
+        2uy, Alive
+        3uy, Eliminated
+        4uy, Conceded
+        5uy, WillConcede
+        6uy, AcceptsDraw
+        7uy, Victorious
     ]
     
 let mapPlayerStatusId (playerStatusId : byte) : PlayerStatus =
@@ -47,10 +51,10 @@ let mapPlayerStatusToId (status : PlayerStatus) : byte =
 let private gameStatusMap =
     [
         1uy, GameStatus.Pending
-        2uy, GameStatus.AbortedWhilePending
-        3uy, GameStatus.Started
-        4uy, GameStatus.Aborted
-        5uy, GameStatus.Finished
+        2uy, AbortedWhilePending
+        3uy, Started
+        4uy, Aborted
+        5uy, Finished
     ]
 
 let mapGameStatusId (gameStatusId : byte) : GameStatus =

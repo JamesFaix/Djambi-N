@@ -134,9 +134,13 @@ export enum PlayerKind {
 }
 
 export enum PlayerStatus {
+	AcceptsDraw = "AcceptsDraw",
 	Alive = "Alive",
+	Conceded = "Conceded",
 	Eliminated = "Eliminated",
 	Pending = "Pending",
+	Victorious = "Victorious",
+	WillConcede = "WillConcede",
 }
 
 //-------- TURN --------

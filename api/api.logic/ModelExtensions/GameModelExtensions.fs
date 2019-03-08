@@ -18,10 +18,6 @@ module GameModelExtensions =
         member this.abandon =
             { this with playerId = None }
 
-    type Player with
-        member this.kill : Player =
-            { this with status = PlayerStatus.Eliminated }
-
     type Turn with
 
         member this.subject : Selection option =
