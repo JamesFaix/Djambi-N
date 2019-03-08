@@ -200,9 +200,9 @@ export type EffectCase =
 	PieceMovedEffect |
 	PieceVacatedEffect |
 	PlayerAddedEffect |
-	PlayerEliminatedEffect |
 	PlayerOutOfMovesEffect |
 	PlayerRemovedEffect |
+	PlayerStatusChangedEffect |
 	TurnCycleAdvancedEffect |
 	TurnCyclePlayerFellFromPowerEffect |
 	TurnCyclePlayerRemovedEffect |
@@ -220,9 +220,9 @@ export enum EffectKind {
 	PieceMoved = "PieceMoved",
 	PieceVacated = "PieceVacated",
 	PlayerAdded = "PlayerAdded",
-	PlayerEliminated = "PlayerEliminated",
 	PlayerOutOfMoves = "PlayerOutOfMoves",
 	PlayerRemoved = "PlayerRemoved",
+	PlayerStatusChanged = "PlayerStatusChanged",
 	TurnCycleAdvanced = "TurnCycleAdvanced",
 	TurnCyclePlayerFellFromPower = "TurnCyclePlayerFellFromPower",
 	TurnCyclePlayerRemoved = "TurnCyclePlayerRemoved",
@@ -305,16 +305,18 @@ export interface PlayerAddedEffect {
 	kind : PlayerKind,
 }
 
-export interface PlayerEliminatedEffect {
-	playerId : number,
-}
-
 export interface PlayerOutOfMovesEffect {
 	playerId : number,
 }
 
 export interface PlayerRemovedEffect {
 	playerId : number,
+}
+
+export interface PlayerStatusChangedEffect {
+	playerId : number,
+	oldStatus : PlayerStatus,
+	newStatus : PlayerStatus,
 }
 
 export interface StateAndEventResponse {

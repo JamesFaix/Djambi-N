@@ -338,7 +338,7 @@ type EventServiceTests() =
         p.startingTurnNumber |> shouldBe None
 
     [<Fact>]
-    let ``Should apply PlayerEliminated effect``() =
+    let ``Should apply PlayerStatusChanged effect``() =
         //Arrange
         let player : Player = 
             {
@@ -353,7 +353,11 @@ type EventServiceTests() =
                 startingTurnNumber = None
             }
         let game = { TestUtilities.defaultGame with players = [player] }
-        let effect = Effect.PlayerEliminated { playerId = player.id }
+        let effect = Effect.PlayerStatusChanged { 
+                playerId = player.id 
+                oldStatus = player.status
+                newStatus = Eliminated
+            }
         let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
 
         //Act

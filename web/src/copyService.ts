@@ -21,10 +21,10 @@ import {
     PieceVacatedEffect,
     Player,
     PlayerAddedEffect,
-    PlayerEliminatedEffect,
     PlayerKind,
     PlayerOutOfMovesEffect,
     PlayerRemovedEffect,
+    PlayerStatusChangedEffect,
     Selection,
     SelectionKind,
     TurnCycleAdvancedEffect,
@@ -189,12 +189,12 @@ export default class CopyService {
                 return this.getPieceVacatedMessage(game, effect);
             case EffectKind.PlayerAdded:
                 return this.getPlayerAddedMessage(game, effect);
-            case EffectKind.PlayerEliminated:
-                return this.getPlayerEliminatedMessage(game, effect);
             case EffectKind.PlayerOutOfMoves:
                 return this.getPlayerOutOfMovesMessages(game, effect);
             case EffectKind.PlayerRemoved:
                 return this.getPlayerRemovedMessage(game, effect);
+            case EffectKind.PlayerStatusChanged:
+                return this.getPlayerStatusChangedMessage(game, effect);
             case EffectKind.TurnCycleAdvanced:
                 return this.getTurnCycleAdvancedMessage(game, effect);
             case EffectKind.TurnCyclePlayerFellFromPower:
@@ -287,14 +287,6 @@ export default class CopyService {
         });
     }
 
-    private getPlayerEliminatedMessage(game : Game, effect : Effect) : string {
-        const template = this.theme.getEffectMessageTemplate(effect);
-        const f = effect.value as PlayerEliminatedEffect;
-        return Sprintf.sprintf(template, {
-            player: this.getPlayerLabel(f.playerId, game)
-        });
-    }
-
     private getPlayerOutOfMovesMessages(game : Game, effect : Effect) : string {
         const template = this.theme.getEffectMessageTemplate(effect);
         const f = effect.value as PlayerOutOfMovesEffect;
@@ -308,6 +300,16 @@ export default class CopyService {
         const f = effect.value as PlayerRemovedEffect;
         return Sprintf.sprintf(template,  {
             player: this.getPlayerLabel(f.playerId, game)
+        });
+    }
+
+    private getPlayerStatusChangedMessage(game : Game, effect : Effect) : string {
+        const template = this.theme.getEffectMessageTemplate(effect);
+        const f = effect.value as PlayerStatusChangedEffect;
+        return Sprintf.sprintf(template, {
+            player: this.getPlayerLabel(f.playerId, game),
+            oldStatus: f.oldStatus,
+            newStatus: f.newStatus
         });
     }
 

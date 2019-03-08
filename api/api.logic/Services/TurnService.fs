@@ -356,7 +356,13 @@ let getCommitTurnEvent(game : Game) (session : Session) : CreateEventRequest Htt
             if subjectStrategy.killsTarget
                 && targetStrategy.killsControllingPlayerWhenKilled
             then
-                effects.Add(Effect.PlayerEliminated { playerId = target.playerId.Value })
+                let playerId = target.playerId.Value
+                let player = game.players |> List.find (fun p -> p.id = playerId)
+                effects.Add(Effect.PlayerStatusChanged { 
+                    playerId = playerId
+                    oldStatus = player.status
+                    newStatus = Eliminated
+                })
                 players <- players 
                            |> List.replaceIf 
                                 (fun p -> p.id = target.playerId.Value)
