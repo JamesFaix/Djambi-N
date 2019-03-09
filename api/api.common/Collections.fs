@@ -26,6 +26,12 @@ module List =
             then replace x
             else x
         )
+    
+    let rotate<'a> (places : int) (xs : 'a list) : 'a list =
+        let mutable xs = xs
+        for _ in [1..places] do
+            xs <- List.append (xs |> List.tail) [(xs |> List.head)]
+        xs
 
 module Seq =
     let replaceIf<'a> (predicate : 'a -> bool) (replace : 'a -> 'a) (list : 'a seq) : 'a seq =
