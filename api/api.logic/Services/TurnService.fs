@@ -236,8 +236,8 @@ let private getEliminatePlayerEffects (game : Game) (playerId : int) (killingPla
     effects |> Seq.toList
 
 let private getRiseOrFallFromPowerEffects (game : Game) : Effect list =
+    //Copy only the last turn of the given player, plus all other turns
     let removeBonusTurnsForPlayer playerId turns =
-        //Copy only the last turn of the given player, plus all other turns
         let stack = new Stack<int>()
         let mutable hasAddedTargetPlayer = false
         for t in turns |> Seq.rev do
@@ -248,13 +248,29 @@ let private getRiseOrFallFromPowerEffects (game : Game) : Effect list =
             else stack.Push t
         stack |> Seq.toList |> removeSequentialDuplicates
 
+    //Insert a turn for the given player before every turn, except the current one
     let addBonusTurnsForPlayer playerId turns =
-        //Insert a turn for the given player before every turn, except the current one
         let stack = new Stack<int>()
         for t in turns |> Seq.skip(1) |> Seq.rev do
             stack.Push t
             stack.Push playerId
         stack |> Seq.toList |> removeSequentialDuplicates
+
+    //A player in power has multiple turns
+    let hasPower (g : Game) (pId : int) =
+        let turns = 
+            g.turnCycle 
+            |> Seq.filter (fun n -> n = pId) 
+            |> Seq.length 
+        turns > 1
+
+    //Players can only rise to power if there are more than 2 left
+    let powerCanBeHad (g : Game) =
+        let players = 
+            g.turnCycle 
+            |> Seq.distinct 
+            |> Seq.length 
+        players > 2
 
     let turn = game.currentTurn.Value
     let subject = (turn.subjectPiece game).Value
@@ -268,13 +284,17 @@ let private getRiseOrFallFromPowerEffects (game : Game) : Effect list =
     let subjectPlayerId = subject.playerId.Value
     if subjectStrategy.canStayInCenter 
     then
-        if origin.isCenter && not destination.isCenter
+        if origin.isCenter 
+            && not destination.isCenter
+            && hasPower game subjectPlayerId
         then 
             //If chief subject leaves power, remove bonus turns
             let newTurns = removeBonusTurnsForPlayer subjectPlayerId turns
             effects.Add(Effect.TurnCyclePlayerFellFromPower { playerId = subjectPlayerId; oldValue = turns; newValue = newTurns })
             turns <- newTurns
-        elif not origin.isCenter && destination.isCenter
+        elif not origin.isCenter 
+            && destination.isCenter
+            && powerCanBeHad game
         then 
             //If chief subject rises to power, add bonus turns
             let newTurns = addBonusTurnsForPlayer subjectPlayerId turns
@@ -292,13 +312,17 @@ let private getRiseOrFallFromPowerEffects (game : Game) : Effect list =
             && targetStrategy.canStayInCenter
         then
             //If chief target is moved out of power and not killed, remove bonus turns
-            if destination.isCenter && not drop.isCenter
+            if destination.isCenter 
+                && not drop.isCenter
+                && hasPower game subjectPlayerId
             then
                 let newTurns = removeBonusTurnsForPlayer subjectPlayerId turns
                 effects.Add(Effect.TurnCyclePlayerFellFromPower { playerId = subjectPlayerId; oldValue = turns; newValue = newTurns })
                 turns <- newTurns
             //If chief target is dropped in power and not killed, add bonus turns
-            elif not destination.isCenter && drop.isCenter
+            elif not destination.isCenter 
+                && drop.isCenter
+                && powerCanBeHad game
             then
                 let newTurns = addBonusTurnsForPlayer subjectPlayerId turns
                 effects.Add(Effect.TurnCyclePlayerRoseToPower { playerId = subjectPlayerId; oldValue = turns; newValue = newTurns })
