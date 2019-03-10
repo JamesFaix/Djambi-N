@@ -94,11 +94,7 @@ let getFilesInOrder : string seq =
 let createAdminUser() : unit =
     printfn "Creating admin user"
 
-    let cmd = sprintf 
-                "INSERT INTO dbo.Users ([Name], [Password], [CreatedOn], [FailedLoginAttempts], [LastFailedLoginAttemptOn]) 
-                 VALUES (N'%s', N'%s', GETUTCDATE(), 0, NULL)"
-                env.adminUsername
-                env.adminPassword
+    let cmd = sprintf "EXEC Users_Create %s, %s" env.adminUsername env.adminPassword
 
     executeCommand djambiConnectionString cmd
 
