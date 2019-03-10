@@ -8,14 +8,12 @@ BEGIN
 	INSERT INTO Users (
 		[Name],
 		CreatedOn,
-		IsAdmin,
 		[Password],
 		FailedLoginAttempts,
 		LastFailedLoginAttemptOn)
 	VALUES (
 		@Name,
 		GETUTCDATE(),
-		0,
 		@Password,
 		0,
 		NULL)

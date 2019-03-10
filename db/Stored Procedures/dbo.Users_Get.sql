@@ -7,7 +7,6 @@ BEGIN
 
 	SELECT UserId,
 		[Name],
-		IsAdmin,
 		[Password],
 		FailedLoginAttempts,
 		LastFailedLoginAttemptOn
