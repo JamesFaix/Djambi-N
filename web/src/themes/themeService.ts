@@ -182,12 +182,12 @@ export default class ThemeService {
                 return this.getValue(t => t.effectMessagePieceVacated);
             case EffectKind.PlayerAdded:
                 return this.getValue(t => t.effectMessagePlayerAdded);
-            case EffectKind.PlayerEliminated:
-                return this.getValue(t => t.effectMessagePlayerEliminated);
             case EffectKind.PlayerOutOfMoves:
                 return this.getValue(t => t.effectMessagePlayerOutOfMoves);
             case EffectKind.PlayerRemoved:
                 return this.getValue(t => t.effectMessagePlayerRemoved);
+            case EffectKind.PlayerStatusChanged:
+                return this.getValue(t => t.effectMessagePlayerStatusChanged);
             case EffectKind.TurnCycleAdvanced:
                 return this.getValue(t => t.effectMessageTurnCycleAdvanced);
             case EffectKind.TurnCyclePlayerFellFromPower:

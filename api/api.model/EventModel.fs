@@ -80,12 +80,6 @@ type PlayerAddedEffect =
     }
 
 [<ClientType(ClientSection.Events)>]
-type PlayerEliminatedEffect =
-    {
-        playerId : int
-    }
-
-[<ClientType(ClientSection.Events)>]
 type PlayerOutOfMovesEffect =
     {
         playerId : int
@@ -95,6 +89,14 @@ type PlayerOutOfMovesEffect =
 type PlayerRemovedEffect =
     {
         playerId : int
+    }
+
+[<ClientType(ClientSection.Events)>]
+type PlayerStatusChangedEffect =
+    {
+        playerId : int
+        oldStatus : PlayerStatus
+        newStatus : PlayerStatus
     }
 
 [<ClientType(ClientSection.Events)>]
@@ -141,9 +143,9 @@ type Effect =
     | PieceMoved of PieceMovedEffect
     | PieceVacated of PieceVacatedEffect
     | PlayerAdded of PlayerAddedEffect
-    | PlayerEliminated of PlayerEliminatedEffect
     | PlayerOutOfMoves of PlayerOutOfMovesEffect
     | PlayerRemoved of PlayerRemovedEffect
+    | PlayerStatusChanged of PlayerStatusChangedEffect
     | TurnCycleAdvanced of TurnCycleAdvancedEffect
     | TurnCyclePlayerFellFromPower of TurnCyclePlayerFellFromPowerEffect
     | TurnCyclePlayerRemoved of TurnCyclePlayerRemovedEffect

@@ -12,6 +12,8 @@ open Djambi.Api.Logic.PieceStrategies
 open Djambi.Api.Logic.Services
 open Djambi.Api.Model
 
+//--- Selection
+
 let getSubjectSelectionEventDetails (game : Game, cellId : int) : (Selection * TurnStatus * SelectionKind option) HttpResult =
     let pieces = game.piecesIndexedByCell
     match pieces.TryFind(cellId) with
@@ -122,7 +124,9 @@ let getCellSelectedEvent(game : Game, cellId : int) (session: Session) : CreateE
             )
     )
 
-let private applyTurnToPieces(game : Game) : (Piece list * Effect list) =
+//--- Commit
+
+let private getPrimaryEffects (game : Game) : Effect list =
     let pieces = game.pieces.ToDictionary(fun p -> p.id)
     let currentTurn = game.currentTurn.Value
 
@@ -147,28 +151,13 @@ let private applyTurnToPieces(game : Game) : (Piece list * Effect list) =
         | None -> ()
         | Some target ->
             let subjectStrategy = PieceService.getStrategy subject
-            let targetStrategy = PieceService.getStrategy target
 
             //Kill target
             if subjectStrategy.killsTarget
             then 
                 pieces.[target.id] <- target.kill
-                effects.Add(Effect.PieceKilled { 
-                    oldPiece = target
-                })
-
-            //Enlist players pieces if killing chief
-            if subjectStrategy.killsTarget 
-                && targetStrategy.killsControllingPlayerWhenKilled
-            then 
-                let enlistedPieces = game.piecesControlledBy target.playerId.Value
-                for p in enlistedPieces do
-                    pieces.[p.id] <- pieces.[p.id].enlistBy subject.playerId.Value
-                    effects.Add(Effect.PieceEnlisted{
-                                oldPiece = p
-                                newPlayerId = subject.playerId
-                            })
-
+                effects.Add(Effect.PieceKilled { oldPiece = target })
+                
             //Drop target if drop cell exists
             match currentTurn.dropCellId with
             | Some dropCellId ->  
@@ -181,7 +170,8 @@ let private applyTurnToPieces(game : Game) : (Piece list * Effect list) =
             then 
                 pieces.[target.id] <- pieces.[target.id].moveTo originCellId
                 effects.Add(Effect.PieceDropped { oldPiece = target; newCellId = originCellId })
-        (pieces.Values |> Seq.toList, effects |> Seq.toList)
+
+        effects |> Seq.toList
 
 let private removeSequentialDuplicates(turnCycle : int list) : int list =
     if turnCycle.Length = 1 then turnCycle
@@ -192,19 +182,62 @@ let private removeSequentialDuplicates(turnCycle : int list) : int list =
             then list.RemoveAt(i)
         list |> Seq.toList
 
-let private applyTurnToTurnCycle(game : Game) : (int list * Effect list) =
-    let mutable turns = game.turnCycle
-    let currentTurn = game.currentTurn.Value
-    let regions = game.parameters.regionCount
-    let effects = ArrayList<Effect>()
+let private getKillAbandonedChiefEffects (game : Game) (chiefOriginalPlayerId : int) (killingPlayerId : int) : Effect list =
+    game.pieces 
+    |> List.filter (fun p -> 
+        p.originalPlayerId = chiefOriginalPlayerId 
+        && p.playerId = None)
+    |> List.map (fun p ->
+        Effect.PieceEnlisted {
+            oldPiece = p
+            newPlayerId = Some killingPlayerId
+        }
+    )
 
-    let removeAllTurnsForPlayer playerId = 
-        let newTurns = turns |> Seq.filter(fun playerId -> playerId <> playerId) |> Seq.toList |> removeSequentialDuplicates
-        effects.Add(Effect.TurnCyclePlayerRemoved { oldValue = turns; newValue = newTurns; playerId = playerId })
-        turns <- newTurns
+let private getEliminatePlayerEffects (game : Game) (playerId : int) (killingPlayerId : int option) : Effect list =
+    let p = game.players |> List.find (fun p -> p.id = playerId)
+    
+    let effects = new ArrayList<Effect>()
+    
+    effects.Add(Effect.PlayerStatusChanged {
+        playerId = p.id
+        oldStatus = p.status
+        newStatus = Eliminated
+    })
 
-    let removeBonusTurnsForPlayer playerId =
-        //Copy only the last turn of the given player, plus all other turns
+    let newCycle = 
+        game.turnCycle 
+        |> List.filter (fun pId -> pId <> p.id) 
+        |> removeSequentialDuplicates
+
+    effects.Add(Effect.TurnCyclePlayerRemoved {
+        playerId = p.id
+        oldValue = game.turnCycle
+        newValue = newCycle
+    })
+
+    let pieces = game.pieces |> List.filter (fun piece -> piece.playerId = Some p.id)
+
+    let addPieceEffect =
+        if killingPlayerId.IsSome
+        then
+            (fun piece -> effects.Add(Effect.PieceEnlisted {
+                oldPiece = piece
+                newPlayerId = killingPlayerId
+            }))
+        else
+            (fun piece -> effects.Add(Effect.PieceAbandoned {
+                oldPiece = piece
+            }))
+    
+    for piece in pieces do
+        addPieceEffect piece
+
+    effects |> Seq.toList
+
+let private getRiseOrFallFromPowerEffects (game : Game) : Effect list =
+    //Copy only the last turn of the given player, plus all other turns
+    let removeBonusTurnsForPlayer playerId turns =
         let stack = new Stack<int>()
         let mutable hasAddedTargetPlayer = false
         for t in turns |> Seq.rev do
@@ -213,183 +246,237 @@ let private applyTurnToTurnCycle(game : Game) : (int list * Effect list) =
                 hasAddedTargetPlayer <- true
                 stack.Push t
             else stack.Push t
-        let newTurns = stack |> Seq.toList |> removeSequentialDuplicates
-        effects.Add(Effect.TurnCyclePlayerFellFromPower { oldValue = turns; newValue = newTurns; playerId = playerId })
-        turns <- newTurns
+        stack |> Seq.toList |> removeSequentialDuplicates
 
-    let addBonusTurnsForPlayer playerId =
-        //Insert a turn for the given player before every turn, except the current one
+    //Insert a turn for the given player before every turn, except the current one
+    let addBonusTurnsForPlayer playerId turns =
         let stack = new Stack<int>()
         for t in turns |> Seq.skip(1) |> Seq.rev do
             stack.Push t
             stack.Push playerId
-        let newTurns = stack |> Seq.toList |> removeSequentialDuplicates
-        effects.Add(Effect.TurnCyclePlayerRoseToPower { oldValue = turns; newValue = newTurns; playerId = playerId })
-        turns <- newTurns
-    
-    match currentTurn.subjectPiece game with
-    | None -> ()
-    | Some subject ->    
-        let subjectStrategy = PieceService.getStrategy subject
+        stack |> Seq.toList |> removeSequentialDuplicates
 
-        match currentTurn.targetPiece game with
-        | None -> ()
-        | Some target -> 
-            let targetStrategy = PieceService.getStrategy target
+    //A player in power has multiple turns
+    let hasPower (g : Game) (pId : int) =
+        let turns = 
+            g.turnCycle 
+            |> Seq.filter (fun n -> n = pId) 
+            |> Seq.length 
+        turns > 1
 
-            //If chief being killed, remove all its turns
-            if subjectStrategy.killsTarget 
-                && targetStrategy.killsControllingPlayerWhenKilled
-                then removeAllTurnsForPlayer target.playerId.Value
+    //Players can only rise to power if there are more than 2 left
+    let powerCanBeHad (g : Game) =
+        let players = 
+            g.turnCycle 
+            |> Seq.distinct 
+            |> Seq.length 
+        players > 2
 
-            //If chief being forced out of power, remove its bonus turns only
-            else 
-                match (currentTurn.destinationCell regions, currentTurn.dropCell regions) with
-                | (Some destination, Some drop) ->
-                    if targetStrategy.canStayInCenter 
-                        && destination.isCenter
-                        && not drop.isCenter
-                        && not subjectStrategy.killsTarget
-                        then removeBonusTurnsForPlayer target.playerId.Value
-                    else ()
-                | _ -> ()
-        
-        match currentTurn.destinationCell regions with
-        | None -> ()
-        | Some destination ->
-            match currentTurn.subjectCell regions with
-            | Some origin ->
-                //If subject is chief in center and destination is not center, remove extra turns
-                if subjectStrategy.canStayInCenter
-                    && origin.isCenter
-                    && not destination.isCenter
-                    then removeBonusTurnsForPlayer subject.playerId.Value
-                else ()
-            | _ ->                
-                //If subject is chief and destination is center, add extra turns to queue
-                if subjectStrategy.canStayInCenter
-                    && destination.isCenter
-                    then addBonusTurnsForPlayer subject.playerId.Value
-                else ()
-
-    //Cycle turn queue
-    let newTurns = List.append turns.Tail [turns.Head]
-    effects.Add(Effect.TurnCycleAdvanced { oldValue = turns; newValue = newTurns })
-    turns <- newTurns
-
-    (turns, effects |> Seq.toList)
-
-let private killCurrentPlayer(game : Game) : (Game * Effect list) =
-    let playerId = game.turnCycle.Head
-
-    let pieces =
-        game.pieces 
-        |> List.replaceIf
-            (fun p -> p.playerId = Some(playerId))
-            (fun p -> p.abandon)
-
-    let players = 
-        game.players
-        |> List.replaceIf
-            (fun p -> p.id = playerId)
-            (fun p -> { p with status = Eliminated })
-
-    let turns = 
-        game.turnCycle
-        |> List.filter (fun t -> t <> playerId)
-        |> removeSequentialDuplicates
+    let turn = game.currentTurn.Value
+    let subject = (turn.subjectPiece game).Value
+    let destination = (turn.destinationCell game.parameters.regionCount).Value
+    let origin = (turn.subjectCell game.parameters.regionCount).Value
+    let subjectStrategy = PieceService.getStrategy subject
 
     let effects = new ArrayList<Effect>()
-    effects.Add(Effect.PlayerOutOfMoves { playerId = playerId })
-    effects.Add(Effect.TurnCyclePlayerRemoved { oldValue = game.turnCycle; newValue = turns; playerId = playerId })
+    let mutable turns = game.turnCycle
 
-    let abandonedPieces = game.pieces |> List.filter (fun p -> p.playerId = Some playerId)
+    let subjectPlayerId = subject.playerId.Value
+    if subjectStrategy.canStayInCenter 
+    then
+        if origin.isCenter 
+            && not destination.isCenter
+            && hasPower game subjectPlayerId
+        then 
+            //If chief subject leaves power, remove bonus turns
+            let newTurns = removeBonusTurnsForPlayer subjectPlayerId turns
+            effects.Add(Effect.TurnCyclePlayerFellFromPower { playerId = subjectPlayerId; oldValue = turns; newValue = newTurns })
+            turns <- newTurns
+        elif not origin.isCenter 
+            && destination.isCenter
+            && powerCanBeHad game
+        then 
+            //If chief subject rises to power, add bonus turns
+            let newTurns = addBonusTurnsForPlayer subjectPlayerId turns
+            effects.Add(Effect.TurnCyclePlayerRoseToPower { playerId = subjectPlayerId; oldValue = turns; newValue = newTurns })
+            turns <- newTurns
+        else ()
 
-    for p in abandonedPieces do
-        effects.Add(Effect.PieceAbandoned { oldPiece = p })
-
-    let updatedGame =
-        { game with
-            pieces = pieces
-            players = players
-            turnCycle = turns
-            currentTurn = Some Turn.empty
-        }
-
-    (updatedGame, effects |> Seq.toList)
-
-let private detectPlayersOutOfMoves(game : Game, effects : Effect seq) : Game * Effect list * int list =
-    //While next player has no moves, kill chief and abandon all pieces
-    let mutable game = game
-    let mutable selectionOptions = (SelectionOptionsService.getSelectableCellsFromState game) |> Result.value
-    let effects = new ArrayList<Effect>(effects)
-
-    while selectionOptions.IsEmpty && game.turnCycle.Length > 1 do
-        let (g, fx) = killCurrentPlayer game
-        effects.AddRange(fx)
-        game <- g
-        selectionOptions <- (SelectionOptionsService.getSelectableCellsFromState) game |> Result.value
-
-    (game, effects |> Seq.toList, selectionOptions)
-
-let getCommitTurnEvent(game : Game) (session : Session) : CreateEventRequest HttpResult =
-    SecurityService.ensureCurrentPlayerOrOpenParticipation session game
-    |> Result.map (fun _ ->
-        let effects = new ArrayList<Effect>()
+    match (turn.targetPiece game, turn.dropCell game.parameters.regionCount) with
+    | (Some target, Some drop) ->
+        let targetStrategy = PieceService.getStrategy target
         
-        let (turnCycle, turnEffects) = applyTurnToTurnCycle game
-        effects.AddRange(turnEffects)
+        if subjectStrategy.canEnterCenterToEvictPiece 
+            && not subjectStrategy.killsTarget
+            && subjectStrategy.canDropTarget
+            && targetStrategy.canStayInCenter
+        then
+            //If chief target is moved out of power and not killed, remove bonus turns
+            if destination.isCenter 
+                && not drop.isCenter
+                && hasPower game subjectPlayerId
+            then
+                let newTurns = removeBonusTurnsForPlayer subjectPlayerId turns
+                effects.Add(Effect.TurnCyclePlayerFellFromPower { playerId = subjectPlayerId; oldValue = turns; newValue = newTurns })
+                turns <- newTurns
+            //If chief target is dropped in power and not killed, add bonus turns
+            elif not destination.isCenter 
+                && drop.isCenter
+                && powerCanBeHad game
+            then
+                let newTurns = addBonusTurnsForPlayer subjectPlayerId turns
+                effects.Add(Effect.TurnCyclePlayerRoseToPower { playerId = subjectPlayerId; oldValue = turns; newValue = newTurns })
+                turns <- newTurns
+            else ()
+        else ()
+    | _ -> ()
 
-        let (pieces, pieceEffects) = applyTurnToPieces game
-        effects.AddRange(pieceEffects)
+    effects |> Seq.toList
 
-        let currentTurn = game.currentTurn.Value
-        
-        let mutable players = game.players
+let private getSecondaryEffects (game : Game) : Effect list =
+    let effects = new ArrayList<Effect>()
+    
+    let turn = game.currentTurn.Value
+    let subject = (turn.subjectPiece game).Value
+    let subjectStrategy = PieceService.getStrategy subject
 
-        //Kill player if chief killed
-        match (currentTurn.subjectPiece game, currentTurn.targetPiece game) with
-        | (Some subject, Some target) ->
-            let subjectStrategy = PieceService.getStrategy subject
+    let killChiefEffects = 
+        match turn.targetPiece game with
+        | Some target ->
             let targetStrategy = PieceService.getStrategy target
 
-            if subjectStrategy.killsTarget
+            if subjectStrategy.killsTarget 
                 && targetStrategy.killsControllingPlayerWhenKilled
-            then
-                effects.Add(Effect.PlayerEliminated { playerId = target.playerId.Value })
-                players <- players 
-                           |> List.replaceIf 
-                                (fun p -> p.id = target.playerId.Value)
-                                (fun p -> { p with status = Eliminated })
-            else ()
-        | _ -> ()
+            then 
+                if target.playerId.IsSome
+                then getEliminatePlayerEffects game target.playerId.Value subject.playerId
+                else getKillAbandonedChiefEffects game target.originalPlayerId subject.playerId.Value
+            else []
+        | _ -> []
 
-        let updatedGame =
-            { game with 
-                pieces = pieces
-                turnCycle = turnCycle
-                players = players
-                currentTurn = Some Turn.empty
-            }
+    effects.AddRange killChiefEffects
+    let game = EventService.applyEffects killChiefEffects game
 
-        let (updatedGame, effects, selectionOptions) = detectPlayersOutOfMoves(updatedGame, effects)
-        let effects = new ArrayList<Effect>(effects)
+    let riseFallEffects = getRiseOrFallFromPowerEffects game
+    effects.AddRange riseFallEffects
+    
+    effects |> Seq.toList
 
-        //TODO: If only 1 player, game over
-        let updatedTurn = { Turn.empty with selectionOptions = selectionOptions }
+let private getVictoryEffects (game : Game) : Effect list =
+    let remainingPlayers = game.players |> List.filter (fun p -> p.status = Alive)
+    if remainingPlayers.Length = 1        
+    then
+        let p = remainingPlayers.[0]
+        [
+            Effect.PlayerStatusChanged { oldStatus = p.status; newStatus = Victorious; playerId = p.id}
+            Effect.GameStatusChanged { oldValue = game.status; newValue = Finished }
+            Effect.CurrentTurnChanged { oldValue = game.currentTurn; newValue = None }
+        ]
+    else []
 
-        effects.Add(Effect.CurrentTurnChanged { 
-            oldValue = game.currentTurn; 
-            newValue = Some updatedTurn 
-        })
+let private getOutOfMovesEffects (game : Game) : Effect list =
+    let effects = new ArrayList<Effect>()
+    let mutable game = game
+    let mutable selectionOptions = (SelectionOptionsService.getSelectableCellsFromState game) |> Result.value
+   
+    while selectionOptions.IsEmpty && game.turnCycle.Length > 1 do
+        let currentPlayerId = game.turnCycle.[0]
+        let fx = [Effect.PlayerOutOfMoves { playerId = currentPlayerId }]
+        let fx = List.append fx (getEliminatePlayerEffects game currentPlayerId None)
+        effects.AddRange(fx)
+        game <- EventService.applyEffects fx game
+        selectionOptions <- (SelectionOptionsService.getSelectableCellsFromState) game |> Result.value
 
-        {
-            kind = EventKind.TurnCommitted
-            effects = effects |> Seq.toList
-            createdByUserId = session.user.id
-            actingPlayerId = ContextService.getActingPlayerId session game
+    effects |> Seq.toList
+
+let private getTernaryEffects (game : Game) : Effect list = 
+    
+    let effects = new ArrayList<Effect>()
+
+    let victoryEffects = getVictoryEffects game
+    effects.AddRange victoryEffects
+
+    if victoryEffects.IsEmpty
+    then
+        let advanceEffect = Effect.TurnCycleAdvanced { 
+            oldValue = game.turnCycle
+            newValue = game.turnCycle |> List.rotate 1
         }
-    )
+        effects.Add advanceEffect
+        let g = EventService.applyEffect advanceEffect game
+
+        let outOfMovesEffects = getOutOfMovesEffects g
+        effects.AddRange outOfMovesEffects
+        let g = EventService.applyEffects outOfMovesEffects g
+
+        //Check for victory caused by players being out of moves
+        let victoryEffects = getVictoryEffects g
+        effects.AddRange victoryEffects
+        let g = EventService.applyEffects victoryEffects g
+
+        if victoryEffects.IsEmpty
+        then 
+            let seletionOptions = SelectionOptionsService.getSelectableCellsFromState g |> Result.value
+            let turn = { Turn.empty with selectionOptions = seletionOptions }
+            effects.Add(Effect.CurrentTurnChanged { oldValue = g.currentTurn; newValue = Some turn })
+        else ()
+    else ()
+
+    effects |> Seq.toList
+    
+let getCommitTurnEvent (game : Game) (session : Session) : CreateEventRequest HttpResult =
+    (*
+        The order of effects is important, both for the implementation and clarity of the event log to users.
+
+        Primary effects
+          Move subject to destination
+          Kill target (option)
+          Move target to drop (option)
+          Move subject to vacate (option)
+
+        Secondary effects
+          [Eliminate target's player] (option)
+            Change player status
+            Remove player from turn cycle
+            Enlist pieces controlled by player
+          Enlist pieces if killing neutral Chief (option)
+          Player rises/falls from power (option)
+
+        Ternary effects
+          Victory (option)
+          Advance turn cycle
+          [Eliminate player out of moves] (option, repeat as necessary)
+            Change player status
+            Remove from turn cycle
+            Abandon pieces
+          Victory due to out-of-moves (option)
+          Current turn changed   
+    *)
+    
+    let effects = new ArrayList<Effect>()
+
+    let primaryEffects = getPrimaryEffects game
+    effects.AddRange(primaryEffects)
+    let game = EventService.applyEffects primaryEffects game
+
+    let secondaryEffects = getSecondaryEffects game
+    effects.AddRange(secondaryEffects)
+    let game = EventService.applyEffects secondaryEffects game
+
+    let game = { game with currentTurn = Some Turn.empty } //This is required so that selection options come back
+
+    let ternaryEffects = getTernaryEffects game
+    effects.AddRange(ternaryEffects)
+    let game = EventService.applyEffects ternaryEffects game
+    
+    Ok {
+        kind = EventKind.TurnCommitted
+        effects = effects |> Seq.toList
+        createdByUserId = session.user.id
+        actingPlayerId = ContextService.getActingPlayerId session game
+    }
+    
+//--- Reset
 
 let getResetTurnEvent(game : Game) (session : Session) : CreateEventRequest HttpResult =
     SecurityService.ensureCurrentPlayerOrOpenParticipation session game

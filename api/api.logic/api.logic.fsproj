@@ -21,8 +21,8 @@
     <Compile Include="Services\PlayerService.fs" />
     <Compile Include="Services\SelectionOptionsService.fs" />
     <Compile Include="Services\GameStartService.fs" />
-    <Compile Include="Services\TurnService.fs" />
     <Compile Include="Services\EventService.fs" />
+    <Compile Include="Services\TurnService.fs" />
     <Compile Include="Managers\BoardManager.fs" />
     <Compile Include="Managers\GameManager.fs" />
     <Compile Include="Managers\SessionManager.fs" />

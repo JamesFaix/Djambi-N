@@ -91,13 +91,6 @@ let private applyPlayerAddedEffect (effect : PlayerAddedEffect) (game : Game) : 
 
     { game with players = List.append game.players [player] }
 
-let private applyPlayerEliminatedEffect (effect : PlayerEliminatedEffect) (game : Game) : Game =
-    { game with 
-        players = game.players |> List.replaceIf 
-            (fun p -> p.id = effect.playerId) 
-            (fun p -> { p with status = PlayerStatus.Eliminated })
-    }
-
 let private applyPlayerOutOfMovesEffect (effect : PlayerOutOfMovesEffect) (game : Game) : Game =
     //This effect is just to communicate what happened,
     //the same event should also create a PlayerEliminated and PiecesOwnershipChanged effect
@@ -106,6 +99,13 @@ let private applyPlayerOutOfMovesEffect (effect : PlayerOutOfMovesEffect) (game 
 let private applyPlayerRemovedEffect (effect : PlayerRemovedEffect) (game : Game) : Game =
     { game with 
         players = game.players |> List.filter (fun p -> p.id <> effect.playerId)
+    }
+
+let private applyPlayerStatusChangedEffect (effect : PlayerStatusChangedEffect) (game : Game) : Game =
+    { game with 
+        players = game.players |> List.replaceIf 
+            (fun p -> p.id = effect.playerId) 
+            (fun p -> { p with status = effect.newStatus })
     }
 
 let private applyTurnCycleAdvancedEffect (effect : TurnCycleAdvancedEffect) (game : Game) : Game =
@@ -120,7 +120,7 @@ let private applyTurnCyclePlayerRemovedEffect (effect : TurnCyclePlayerRemovedEf
 let private applyTurnCyclePlayerRoseToPowerEffect (effect : TurnCyclePlayerRoseToPowerEffect) (game : Game) : Game =
     { game with turnCycle = effect.newValue }
 
-let private applyEffect (effect : Effect) (game : Game) : Game =
+let applyEffect (effect : Effect) (game : Game) : Game =
     match effect with 
     | Effect.CurrentTurnChanged e -> applyCurrentTurnChangedEffect e game
     | Effect.GameStatusChanged e -> applyGameStatusChangedEffect e game
@@ -133,16 +133,19 @@ let private applyEffect (effect : Effect) (game : Game) : Game =
     | Effect.PieceMoved e -> applyPieceMovedEffect e game
     | Effect.PieceVacated e -> applyPieceVacatedEffect e game
     | Effect.PlayerAdded e -> applyPlayerAddedEffect e game
-    | Effect.PlayerEliminated e -> applyPlayerEliminatedEffect e game
     | Effect.PlayerOutOfMoves e -> applyPlayerOutOfMovesEffect e game
     | Effect.PlayerRemoved e -> applyPlayerRemovedEffect e game
+    | Effect.PlayerStatusChanged e -> applyPlayerStatusChangedEffect e game
     | Effect.TurnCycleAdvanced e -> applyTurnCycleAdvancedEffect e game
     | Effect.TurnCyclePlayerFellFromPower e -> applyTurnCyclePlayerFellFromPowerEffect e game
     | Effect.TurnCyclePlayerRemoved e -> applyTurnCyclePlayerRemovedEffect e game
     | Effect.TurnCyclePlayerRoseToPower e -> applyTurnCyclePlayerRoseToPowerEffect e game
 
-let applyEvent (game : Game) (eventRequest : CreateEventRequest) : Game =
+let applyEffects (effects : Effect seq) (game : Game) : Game =
     let mutable game = game
-    for ef in eventRequest.effects do
+    for ef in effects do
         game <- applyEffect ef game
     game
+
+let applyEvent (game : Game) (eventRequest : CreateEventRequest) : Game =
+    applyEffects eventRequest.effects game
