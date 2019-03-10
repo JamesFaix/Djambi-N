@@ -57,11 +57,12 @@ let getFilesInOrder : string seq =
         let tables = [
 
             //Static data first
-            "GameStatuses"
-            "PlayerKinds"
-            "NeutralPlayerNames"
-            "PlayerStatuses"
             "EventKinds"
+            "GameStatuses"
+            "NeutralPlayerNames"
+            "PlayerKinds"
+            "PlayerStatuses"
+            "Privileges"
 
             //Then entities
             "Users"
@@ -69,6 +70,9 @@ let getFilesInOrder : string seq =
             "Games"
             "Players"
             "Events"
+
+            //Then relations
+            "UserPrivileges"
         ]
 
         yield! tables |> Seq.map (fun name -> sprintf "Tables\\dbo.%s.sql" name)
@@ -106,6 +110,6 @@ let main argv =
         loadFile f
 
     createAdminUser()
-        
+ 
     printfn "Done"
     0
