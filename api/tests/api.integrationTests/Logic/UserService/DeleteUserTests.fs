@@ -5,21 +5,20 @@ open Xunit
 open Djambi.Api.Common.Control
 open Djambi.Api.IntegrationTests
 open Djambi.Api.Logic.Services
+open Djambi.Api.Model
 
 type DeleteUserTests() =
     inherit TestsBase()
 
-    [<Theory>]
-    [<InlineData(true)>]
-    [<InlineData(false)>]
-    let ``Delete user should work if deleting self`` (isAdmin : bool) =
+    [<Fact>]
+    let ``Delete user should work if deleting self`` =
         task {
             //Arrange
             let request = getCreateUserRequest()
             let! user = UserService.createUser request None
                         |> AsyncHttpResult.thenValue
 
-            let session = getSessionForUser user.id |> TestUtilities.setSessionIsAdmin isAdmin
+            let session = getSessionForUser user.id |> TestUtilities.setSessionPrivileges []
 
             //Act
             let! response = UserService.deleteUser user.id session
@@ -36,7 +35,7 @@ type DeleteUserTests() =
             let! user = UserService.createUser request None
                         |> AsyncHttpResult.thenValue
 
-            let session = getSessionForUser (user.id + 1) |> TestUtilities.setSessionIsAdmin true
+            let session = getSessionForUser (user.id + 1) |> TestUtilities.setSessionPrivileges [EditUsers]
 
             //Act
             let! response = UserService.deleteUser user.id session
@@ -53,7 +52,7 @@ type DeleteUserTests() =
             let! user = UserService.createUser request None
                         |> AsyncHttpResult.thenValue
 
-            let session = getSessionForUser (user.id + 1) |> TestUtilities.setSessionIsAdmin false
+            let session = getSessionForUser (user.id + 1) |> TestUtilities.setSessionPrivileges []
 
             //Act
             let! response = UserService.deleteUser user.id session
@@ -70,7 +69,7 @@ type DeleteUserTests() =
             let! user = UserService.createUser request None
                         |> AsyncHttpResult.thenValue
 
-            let session = getSessionForUser 1 |> TestUtilities.setSessionIsAdmin true
+            let session = getSessionForUser 1 |> TestUtilities.setSessionPrivileges [EditUsers]
 
             let! _ = UserService.deleteUser user.id session
 

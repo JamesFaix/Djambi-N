@@ -36,7 +36,6 @@
     <Compile Include="Logic\UserService\CreateUserTests.fs" />
     <Compile Include="Logic\UserService\DeleteUserTests.fs" />
     <Compile Include="Logic\UserService\GetUserTests.fs" />
-    <Compile Include="Logic\UserService\GetUsersTests.fs" />
     <Compile Include="Db\EventRepositoryTests.fs" />
     <Compile Include="Db\GameRepositoryTests.fs" />
     <Compile Include="Db\UserRepositoryTests.fs" />

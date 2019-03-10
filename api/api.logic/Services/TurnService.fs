@@ -76,7 +76,7 @@ let getVacateSelectionEventDetails (game : Game, cellId : int) : (Selection * Tu
     Ok (selection, AwaitingCommit, None)
 
 let getCellSelectedEvent(game : Game, cellId : int) (session: Session) : CreateEventRequest HttpResult =
-    SecurityService.ensureAdminOrCurrentPlayer session game
+    SecurityService.ensureCurrentPlayerOrOpenParticipation session game
     |> Result.bind (fun _ ->
         let board = BoardModelUtility.getBoardMetadata game.parameters.regionCount
         match board.cell cellId with
@@ -479,7 +479,7 @@ let getCommitTurnEvent (game : Game) (session : Session) : CreateEventRequest Ht
 //--- Reset
 
 let getResetTurnEvent(game : Game) (session : Session) : CreateEventRequest HttpResult =
-    SecurityService.ensureAdminOrCurrentPlayer session game
+    SecurityService.ensureCurrentPlayerOrOpenParticipation session game
     |> Result.bind (fun _ ->
         let updatedGame = { game with currentTurn = Some Turn.empty }
         SelectionOptionsService.getSelectableCellsFromState updatedGame

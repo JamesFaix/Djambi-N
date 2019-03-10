@@ -10,14 +10,26 @@ open Djambi.Api.Model
 
 module UserRepository =
 
-    let getUser(id : int) : UserDetails AsyncHttpResult =
+    let private getUserPrivileges (userId : int) : Privilege list AsyncHttpResult =
         let param = DynamicParameters()
-                        .add("UserId", id)
+                        .add("UserId", userId)
+                        .add("Name", null)
+        let cmd = proc("Users_GetPrivileges", param)
+
+        queryMany<byte>(cmd, "Privilege")
+        |> thenMap (List.map mapPrivilegeId)
+
+    let getUser(userId : int) : UserDetails AsyncHttpResult =
+        let param = DynamicParameters()
+                        .add("UserId", userId)
                         .add("Name", null)        
         let cmd = proc("Users_Get", param)
 
         querySingle<UserSqlModel>(cmd, "User")
-        |> thenMap mapUserResponse
+        |> thenBindAsync (fun userSqlModel -> 
+            getUserPrivileges userId
+            |> thenMap (mapUserResponse userSqlModel)        
+        )
     
     let getUserByName(name : string) : UserDetails AsyncHttpResult =
         let param = DynamicParameters()
@@ -26,21 +38,10 @@ module UserRepository =
         let cmd = proc("Users_Get", param)
 
         querySingle<UserSqlModel>(cmd, "User")
-        |> thenMap mapUserResponse
-
-    let getUsers() : UserDetails list AsyncHttpResult =
-        let param = DynamicParameters()
-                        .add("UserId", null)
-                        .add("Name", null)        
-        let cmd = proc("Users_Get", param)
-
-        let mapUsers (xs : UserSqlModel list) =
-            xs
-            |> List.map mapUserResponse
-            |> List.sortBy (fun u -> u.id)
-            
-        queryMany<UserSqlModel>(cmd, "User")
-        |> thenMap mapUsers
+        |> thenBindAsync (fun userSqlModel -> 
+            getUserPrivileges userSqlModel.userId
+            |> thenMap (mapUserResponse userSqlModel)        
+        )
 
     let createUser(request : CreateUserRequest) : UserDetails AsyncHttpResult =
         let param = DynamicParameters()

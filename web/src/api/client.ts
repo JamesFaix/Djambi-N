@@ -34,12 +34,6 @@ export default class ApiClient {
 			HttpMethod.Get, route);
 	}
 
-	async getUsers() : Promise<Model.User[]> {
-		const route = "/users";
-		return await ApiClientCore.sendRequest<{}, Model.User[]>(
-			HttpMethod.Get, route);
-	}
-
 //-------- SESSION --------
 
 	async login(request : Model.LoginRequest) : Promise<Model.Session> {

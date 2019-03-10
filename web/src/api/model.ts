@@ -10,10 +10,17 @@ export interface CreateUserRequest {
 	password : string,
 }
 
+export enum Privilege {
+	EditPendingGames = "EditPendingGames",
+	EditUsers = "EditUsers",
+	OpenParticipation = "OpenParticipation",
+	ViewGames = "ViewGames",
+}
+
 export interface User {
 	id : number,
 	name : string,
-	isAdmin : boolean,
+	privileges : Privilege[],
 }
 
 //-------- SESSION --------

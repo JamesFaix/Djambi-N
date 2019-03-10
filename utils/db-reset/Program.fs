@@ -57,11 +57,12 @@ let getFilesInOrder : string seq =
         let tables = [
 
             //Static data first
-            "GameStatuses"
-            "PlayerKinds"
-            "NeutralPlayerNames"
-            "PlayerStatuses"
             "EventKinds"
+            "GameStatuses"
+            "NeutralPlayerNames"
+            "PlayerKinds"
+            "PlayerStatuses"
+            "Privileges"
 
             //Then entities
             "Users"
@@ -69,6 +70,9 @@ let getFilesInOrder : string seq =
             "Games"
             "Players"
             "Events"
+
+            //Then relations
+            "UserPrivileges"
         ]
 
         yield! tables |> Seq.map (fun name -> sprintf "Tables\\dbo.%s.sql" name)
@@ -90,11 +94,7 @@ let getFilesInOrder : string seq =
 let createAdminUser() : unit =
     printfn "Creating admin user"
 
-    let cmd = sprintf 
-                "INSERT INTO dbo.Users ([Name], [Password], [CreatedOn], [IsAdmin], [FailedLoginAttempts], [LastFailedLoginAttemptOn]) 
-                 VALUES (N'%s', N'%s', GETUTCDATE(), 1, 0, NULL)"
-                env.adminUsername
-                env.adminPassword
+    let cmd = sprintf "EXEC Users_Create %s, %s" env.adminUsername env.adminPassword
 
     executeCommand djambiConnectionString cmd
 
@@ -106,6 +106,6 @@ let main argv =
         loadFile f
 
     createAdminUser()
-        
+ 
     printfn "Done"
     0

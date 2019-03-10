@@ -42,7 +42,7 @@ type GetAddPlayerEventTests() =
         task {
             //Arrange
             let! (_, session, game) = createuserSessionAndGame(false) |> thenValue
-            let session = session |> TestUtilities.setSessionIsAdmin true
+            let session = session |> TestUtilities.setSessionPrivileges [EditPendingGames]
             let! user = createUser() |> thenValue
             let request = CreatePlayerRequest.user user.id
             
@@ -58,7 +58,7 @@ type GetAddPlayerEventTests() =
         task {
             //Arrange
             let! (_, session, game) = createuserSessionAndGame(false) |> thenValue
-            let session = session |> TestUtilities.setSessionIsAdmin false
+            let session = session |> TestUtilities.setSessionPrivileges []
 
             let! user = createUser() |> thenValue
             let request = CreatePlayerRequest.user user.id
@@ -75,7 +75,7 @@ type GetAddPlayerEventTests() =
         task {
             //Arrange
             let! (_, session, game) = createuserSessionAndGame(false) |> thenValue
-            let session = session |> TestUtilities.setSessionIsAdmin true
+            let session = session |> TestUtilities.setSessionPrivileges [EditPendingGames]
 
             let! user = createUser() |> thenValue
 
@@ -98,7 +98,7 @@ type GetAddPlayerEventTests() =
         task {
             //Arrange
             let! (_, session, game) = createuserSessionAndGame(false) |> thenValue
-            let session = session |> TestUtilities.setSessionIsAdmin true
+            let session = session |> TestUtilities.setSessionPrivileges [EditPendingGames]
 
             let! user = createUser() |> thenValue
 
@@ -121,7 +121,7 @@ type GetAddPlayerEventTests() =
         task {
             //Arrange
             let! (user, session, game) = createuserSessionAndGame(false) |> thenValue
-            let session = session |> TestUtilities.setSessionIsAdmin true
+            let session = session |> TestUtilities.setSessionPrivileges [EditPendingGames]
             let request = CreatePlayerRequest.user user.id
 
             //Act
@@ -152,7 +152,7 @@ type GetAddPlayerEventTests() =
         task {
             //Arrange
             let! (_, session, game) = createuserSessionAndGame(true) |> thenValue
-            let session = session |> TestUtilities.setSessionIsAdmin true
+            let session = session |> TestUtilities.setSessionPrivileges [EditPendingGames]
 
             let! user = createUser() |> thenValue
             let request = CreatePlayerRequest.guest (user.id, "test")
@@ -169,7 +169,7 @@ type GetAddPlayerEventTests() =
         task {
             //Arrange
             let! (_, session, game) = createuserSessionAndGame(true) |> thenValue
-            let session = session |> TestUtilities.setSessionIsAdmin false
+            let session = session |> TestUtilities.setSessionPrivileges []
 
             let! user = createUser() |> thenValue
             let request = CreatePlayerRequest.guest (user.id, "test")
@@ -256,7 +256,7 @@ type GetAddPlayerEventTests() =
         task {
             //Arrange
             let! (_, session, game) = createuserSessionAndGame(false) |> thenValue
-            let session = session |> TestUtilities.setSessionIsAdmin true
+            let session = session |> TestUtilities.setSessionPrivileges [EditPendingGames]
             let request = CreatePlayerRequest.neutral ("test")
 
             //Act

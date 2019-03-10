@@ -18,7 +18,7 @@ let private isGameViewableByActiveUser (session : Session) (game : Game) : bool 
 let getGames (query : GamesQuery) (session : Session) : Game list AsyncHttpResult =
     GameRepository.getGames query
     |> thenMap (fun games ->
-        if session.user.isAdmin
+        if session.user.has ViewGames
         then games
         else games |> List.filter (isGameViewableByActiveUser session)
     )
@@ -40,7 +40,7 @@ let createGame (parameters : GameParameters) (session : Session) : Game AsyncHtt
 [<ClientFunction(HttpMethod.Post, Routes.eventsQuery, ClientSection.Events)>]
 let getEvents (gameId : int, query : EventsQuery) (session : Session) : Event list AsyncHttpResult =
     GameRepository.getGame gameId
-    |> thenBind (SecurityService.ensureAdminOrPlayer session)
+    |> thenBind (SecurityService.ensurePlayerOrHas ViewGames session)
     |> thenBindAsync (fun _ -> EventRepository.getEvents (gameId, query))
 
 let private processEvent (gameId : int) (getCreateEventRequest : Game -> CreateEventRequest HttpResult) : StateAndEventResponse AsyncHttpResult = 

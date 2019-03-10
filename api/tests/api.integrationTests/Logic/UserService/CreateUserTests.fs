@@ -5,6 +5,7 @@ open Xunit
 open Djambi.Api.Common.Control
 open Djambi.Api.IntegrationTests
 open Djambi.Api.Logic.Services
+open Djambi.Api.Model
 
 type CreateUserTests() =
     inherit TestsBase()
@@ -43,7 +44,7 @@ type CreateUserTests() =
         task {
             //Arrange
             let request = getCreateUserRequest()
-            let session = getSessionForUser 1 |> TestUtilities.setSessionIsAdmin false
+            let session = getSessionForUser 1 |> TestUtilities.setSessionPrivileges []
 
             //Act
             let! error = UserService.createUser request (Some session)
@@ -57,7 +58,7 @@ type CreateUserTests() =
         task {
             //Arrange
             let request = getCreateUserRequest()
-            let session = getSessionForUser 1 |> TestUtilities.setSessionIsAdmin true
+            let session = getSessionForUser 1 |> TestUtilities.setSessionPrivileges [EditUsers]
 
             //Act
             let! user = UserService.createUser request (Some session)

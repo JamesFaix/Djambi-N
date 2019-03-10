@@ -27,12 +27,6 @@ let getUser(userId : int) =
         |> thenBindAsync (UserManager.getUser userId)
     handle func
 
-let getUsers : HttpFunc -> HttpContext -> HttpContext option Task =
-    let func ctx =
-        getSessionFromContext ctx
-        |> thenBindAsync UserManager.getUsers
-    handle func
-
 let getCurrentUser : HttpFunc -> HttpContext -> HttpContext option Task =
     let func ctx =
         getSessionFromContext ctx
