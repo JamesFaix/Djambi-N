@@ -95,8 +95,8 @@ let createAdminUser() : unit =
     printfn "Creating admin user"
 
     let cmd = sprintf 
-                "INSERT INTO dbo.Users ([Name], [Password], [CreatedOn], [IsAdmin], [FailedLoginAttempts], [LastFailedLoginAttemptOn]) 
-                 VALUES (N'%s', N'%s', GETUTCDATE(), 1, 0, NULL)"
+                "INSERT INTO dbo.Users ([Name], [Password], [CreatedOn], [FailedLoginAttempts], [LastFailedLoginAttemptOn]) 
+                 VALUES (N'%s', N'%s', GETUTCDATE(), 0, NULL)"
                 env.adminUsername
                 env.adminPassword
 
