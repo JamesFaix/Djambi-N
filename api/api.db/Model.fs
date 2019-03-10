@@ -7,7 +7,6 @@ type UserSqlModel =
     {
         userId : int
         name : string
-        isAdmin : bool
         password : string
         failedLoginAttempts : byte
         lastFailedLoginAttemptOn : DateTime Nullable
@@ -19,7 +18,6 @@ type SessionSqlModel =
         sessionId : int
         userId : int
         userName : string
-        isAdmin : bool
         token : string
         createdOn : DateTime
         expiresOn : DateTime

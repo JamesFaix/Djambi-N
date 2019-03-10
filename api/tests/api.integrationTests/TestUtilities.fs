@@ -64,7 +64,7 @@ let getSessionForUser (userId : int) : Session =
             {
                 id = userId
                 name = ""
-                isAdmin = false
+                privileges = []
             }
         id = 0
         token = ""
@@ -138,9 +138,9 @@ let setSessionUserId (userId : int) (session : Session) : Session=
                }
     }
     
-let setSessionIsAdmin (isAdmin : bool) (session : Session) : Session =
+let setSessionPrivileges (privileges : Privilege list) (session : Session) : Session =
     { session with
         user = { session.user with
-                    isAdmin = isAdmin
-               }
+                    privileges = privileges
+        }
     }

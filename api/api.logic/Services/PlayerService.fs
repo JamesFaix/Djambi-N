@@ -27,7 +27,7 @@ let getAddPlayerEvent (game : Game, request : CreatePlayerRequest) (session : Se
             then Error <| HttpException(400, "Cannot provide name when adding a user player.")
             elif game.players |> List.exists (fun p -> p.kind = PlayerKind.User && p.userId = request.userId)
             then Error <| HttpException(409, "User is already a player.")
-            elif not self.isAdmin && request.userId.Value <> self.id
+            elif not (self.has EditPendingGames) && request.userId.Value <> self.id
             then Error <| HttpException(403, "Cannot add other users to a game.")
             else Ok ()
 
@@ -38,7 +38,7 @@ let getAddPlayerEvent (game : Game, request : CreatePlayerRequest) (session : Se
             then Error <| HttpException(400, "UserID must be provided when adding a guest player.")
             elif request.name.IsNone
             then Error <| HttpException(400, "Must provide name when adding a guest player.")
-            elif not self.isAdmin && request.userId.Value <> self.id
+            elif not (self.has EditPendingGames) && request.userId.Value <> self.id
             then Error <| HttpException(403, "Cannot add guests for other users to a game.")
             else Ok ()
 
@@ -64,7 +64,7 @@ let getRemovePlayerEvent (game : Game, playerId : int) (session : Session) : Cre
             match player.userId with
             | None -> Error <| HttpException(400, "Cannot remove neutral players from game.")
             | Some x ->
-                if not <| (self.isAdmin
+                if not <| (self.has EditPendingGames
                     || game.createdByUserId = self.id
                     || x = self.id)
                 then Error <| HttpException(403, "Cannot remove other users from game.")        

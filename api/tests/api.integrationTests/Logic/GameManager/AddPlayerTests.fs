@@ -42,7 +42,7 @@ type AddPlayerTests() =
             //Arrange
             let! (user, session, _) = createuserSessionAndGame(true) |> thenValue
             let request = CreatePlayerRequest.guest (user.id, "test")
-            let session = session |> TestUtilities.setSessionIsAdmin true
+            let session = session |> TestUtilities.setSessionPrivileges [EditPendingGames]
             //Act
             let! error = GameManager.addPlayer Int32.MinValue request session
 

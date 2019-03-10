@@ -20,7 +20,6 @@ module Routing =
                     POST >=> route Routes.users >=> UserController.createUser
                     GET >=> routef Routes.userFormat UserController.getUser
                     GET >=> route Routes.currentUser >=> UserController.getCurrentUser
-                    GET >=> route Routes.users >=> UserController.getUsers
                     DELETE >=> routef Routes.userFormat UserController.deleteUser
                     
                 //Board

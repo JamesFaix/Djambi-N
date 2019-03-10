@@ -13,29 +13,29 @@ let notAdminOrCurrentPlayerErrorMessage = "You must have admin privileges or be 
 
 let notAdminOrSelfErrorMessage = "You must have admin privileges or be the target user to complete the requested action."
 
-let ensureAdmin (session : Session) : Unit HttpResult =
-    if session.user.isAdmin
+let ensureHas (privilege : Privilege) (session : Session) : Unit HttpResult =
+    if session.user.has privilege
     then Ok ()
     else Error <| HttpException(403, notAdminErrorMessage)
 
-let ensureAdminOrCreator (session : Session) (game : Game) : Unit HttpResult =
+let ensureCreatorOrEditPendingGames (session : Session) (game : Game) : Unit HttpResult =
     let self = session.user
-    if self.isAdmin 
+    if self.has EditPendingGames
         || self.id = game.createdByUserId
     then Ok ()
     else Error <| HttpException(403, notAdminOrCreatorErrorMessage)
 
-let ensureAdminOrPlayer (session : Session) (game : Game) : Unit HttpResult =
+let ensurePlayerOrHas (privilege : Privilege) (session : Session) (game : Game) : Unit HttpResult =
     let self = session.user
-    if self.isAdmin
+    if self.has privilege
         || game.players |> List.exists (fun p -> p.userId = Some self.id)
     then Ok ()
     else Error <| HttpException(403, notAdminOrPlayerErrorMessage)
 
-let ensureAdminOrCurrentPlayer (session : Session) (game : Game) : Unit HttpResult =
+let ensureCurrentPlayerOrOpenParticipation (session : Session) (game : Game) : Unit HttpResult =
     let self = session.user
     let pass = 
-        if self.isAdmin
+        if self.has OpenParticipation
         then true
         elif not game.turnCycle.IsEmpty
         then         
@@ -46,9 +46,9 @@ let ensureAdminOrCurrentPlayer (session : Session) (game : Game) : Unit HttpResu
     if pass then Ok ()
     else Error <| HttpException(403, notAdminOrCurrentPlayerErrorMessage)
 
-let ensureAdminOrSelf (session : Session) (userId : int) : Unit HttpResult =
+let ensureSelfOrHas (privilege : Privilege) (session : Session) (userId : int) : Unit HttpResult =
     let self = session.user
-    if self.isAdmin
+    if self.has privilege
         || self.id = userId
     then Ok ()
     else Error <| HttpException(403, notAdminOrSelfErrorMessage)

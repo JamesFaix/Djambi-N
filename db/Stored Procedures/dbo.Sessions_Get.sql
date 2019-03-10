@@ -9,7 +9,6 @@ BEGIN
 	SELECT s.SessionId,
 		u.UserId,
 		u.Name AS UserName,
-		u.IsAdmin,
 		s.Token,
 		s.CreatedOn,
 		s.ExpiresOn

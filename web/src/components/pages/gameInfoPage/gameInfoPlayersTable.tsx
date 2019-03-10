@@ -11,7 +11,8 @@ import {
     GameStatus,
     Player,
     PlayerKind,
-    User
+    User,
+    Privilege
     } from '../../../api/model';
 import { Kernel as K } from '../../../kernel';
 
@@ -63,7 +64,7 @@ export default class GameInfoPlayersTable extends React.Component<GameInfoPlayer
                     action : SeatActionType.None
                 };
 
-                if (self.isAdmin
+                if (self.privileges.find(p => p === Privilege.EditPendingGames)
                     || game.createdByUserId === self.id
                     || seat.player.name === self.name
                     || (seat.player.kind === PlayerKind.Guest

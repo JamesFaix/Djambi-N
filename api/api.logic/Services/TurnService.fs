@@ -74,7 +74,7 @@ let getVacateSelectionEventDetails (game : Game, cellId : int) : (Selection * Tu
     Ok (selection, AwaitingCommit, None)
 
 let getCellSelectedEvent(game : Game, cellId : int) (session: Session) : CreateEventRequest HttpResult =
-    SecurityService.ensureAdminOrCurrentPlayer session game
+    SecurityService.ensureCurrentPlayerOrOpenParticipation session game
     |> Result.bind (fun _ ->
         let board = BoardModelUtility.getBoardMetadata game.parameters.regionCount
         match board.cell cellId with
@@ -333,7 +333,7 @@ let private detectPlayersOutOfMoves(game : Game, effects : Effect seq) : Game * 
     (game, effects |> Seq.toList, selectionOptions)
 
 let getCommitTurnEvent(game : Game) (session : Session) : CreateEventRequest HttpResult =
-    SecurityService.ensureAdminOrCurrentPlayer session game
+    SecurityService.ensureCurrentPlayerOrOpenParticipation session game
     |> Result.map (fun _ ->
         let effects = new ArrayList<Effect>()
         
@@ -392,7 +392,7 @@ let getCommitTurnEvent(game : Game) (session : Session) : CreateEventRequest Htt
     )
 
 let getResetTurnEvent(game : Game) (session : Session) : CreateEventRequest HttpResult =
-    SecurityService.ensureAdminOrCurrentPlayer session game
+    SecurityService.ensureCurrentPlayerOrOpenParticipation session game
     |> Result.bind (fun _ ->
         let updatedGame = { game with currentTurn = Some Turn.empty }
         SelectionOptionsService.getSelectableCellsFromState updatedGame

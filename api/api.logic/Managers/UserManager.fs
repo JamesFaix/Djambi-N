@@ -21,11 +21,6 @@ let getUser (userId : int) (session : Session) : User AsyncHttpResult =
     UserService.getUser userId session
     |> thenMap UserDetails.hideDetails
     
-[<ClientFunction(HttpMethod.Get, Routes.users, ClientSection.User)>]
-let getUsers (session : Session) : User list AsyncHttpResult =
-    UserService.getUsers session
-    |> thenMap (List.map UserDetails.hideDetails)
-    
 [<ClientFunction(HttpMethod.Get, Routes.currentUser, ClientSection.User)>]
 let getCurrentUser (session : Session) : User AsyncHttpResult =
     UserService.getUser session.user.id session
