@@ -92,7 +92,7 @@ type SelectCellTests() =
                 match updatedGame.turnCycle.Head with
                 | x when x = player2.id -> session1
                 | _ -> session2
-                |> TestUtilities.setSessionIsAdmin true
+                |> TestUtilities.setSessionPrivileges [OpenParticipation]
 
             //Act
             let! result = GameManager.selectCell (updatedGame.id, cellId) sessionWithoutActivePlayer

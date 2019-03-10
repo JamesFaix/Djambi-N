@@ -18,7 +18,7 @@ type GetGamesTests() =
             //Arrange
             let! (user1, _, game1) = TestUtilities.createuserSessionAndGame(false) |> thenValue
             let! (_, _, game2) = TestUtilities.createuserSessionAndGame(false) |> thenValue
-            let adminSession = getSessionForUser 3 |> TestUtilities.setSessionIsAdmin true
+            let adminSession = getSessionForUser 3 |> TestUtilities.setSessionPrivileges [ViewGames]
             let query = { GamesQuery.empty with createdByUserName = Some user1.name }
 
             //Act
@@ -36,7 +36,7 @@ type GetGamesTests() =
             //Arrange
             let! (_, _, game1) = TestUtilities.createuserSessionAndGame(false) |> thenValue
             let! (_, _, game2) = TestUtilities.createuserSessionAndGame(true) |> thenValue
-            let adminSession = getSessionForUser 3 |> TestUtilities.setSessionIsAdmin true
+            let adminSession = getSessionForUser 3 |> TestUtilities.setSessionPrivileges [ViewGames]
 
             let query = { GamesQuery.empty with allowGuests = Some true }
 
@@ -58,7 +58,7 @@ type GetGamesTests() =
             let! (_, _, game2) = TestUtilities.createuserSessionAndGame(true) |> thenValue
             let! _ = GameRepository.updateGame({ game2 with parameters = { game2.parameters with isPublic = true }}) |> thenValue
 
-            let adminSession = getSessionForUser 3 |> TestUtilities.setSessionIsAdmin true
+            let adminSession = getSessionForUser 3 |> TestUtilities.setSessionPrivileges [ViewGames]
             let query = { GamesQuery.empty with isPublic = Some true }
 
             //Act
@@ -76,7 +76,7 @@ type GetGamesTests() =
             //Arrange
             let! (user1, _, game1) = TestUtilities.createuserSessionAndGame(false) |> thenValue
             let! (user2, _, game2) = TestUtilities.createuserSessionAndGame(false) |> thenValue
-            let adminSession = getSessionForUser 3 |> TestUtilities.setSessionIsAdmin true
+            let adminSession = getSessionForUser 3 |> TestUtilities.setSessionPrivileges [EditPendingGames; ViewGames]
 
             let playerRequest = { getCreatePlayerRequest with userId = Some user2.id }
             let! _ = GameManager.addPlayer game1.id playerRequest adminSession
@@ -98,7 +98,7 @@ type GetGamesTests() =
             //Arrange
             let! (_, _, game1) = TestUtilities.createuserSessionAndGame(false) |> thenValue
             let! (_, _, game2) = TestUtilities.createuserSessionAndGame(false) |> thenValue
-            let adminSession = getSessionForUser 3 |> TestUtilities.setSessionIsAdmin true
+            let adminSession = getSessionForUser 3 |> TestUtilities.setSessionPrivileges [ViewGames]
 
             let! _ = GameRepository.updateGame({ game1 with status = GameStatus.AbortedWhilePending });
 

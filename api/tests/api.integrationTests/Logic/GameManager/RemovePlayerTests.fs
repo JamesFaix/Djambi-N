@@ -41,7 +41,7 @@ type RemovePlayerTests() =
 
             let! user = createUser() |> thenValue
             let request = CreatePlayerRequest.user user.id
-            let session = session |> TestUtilities.setSessionIsAdmin true
+            let session = session |> TestUtilities.setSessionPrivileges [EditPendingGames]
 
             let! player = GameManager.addPlayer game.id request session
                           |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)

@@ -29,7 +29,7 @@ let getUpdateGameParametersEvent (game : Game, parameters : GameParameters) (ses
     if game.status <> GameStatus.Pending
     then Error <| HttpException (400, "Cannot change game parameters unless game is Pending.")
     else Ok ()
-    |> Result.bind (fun _ -> SecurityService.ensureAdminOrCreator session game)
+    |> Result.bind (fun _ -> SecurityService.ensureCreatorOrEditPendingGames session game)
     |> Result.map (fun _ ->
         let effects = new ArrayList<Effect>()
 

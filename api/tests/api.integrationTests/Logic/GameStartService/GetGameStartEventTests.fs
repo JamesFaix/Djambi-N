@@ -64,7 +64,7 @@ type GetGameStartEventTests() =
             //Arrange
             let! (user, session, game) = createUserSessionAndGameWith3Players() |> thenValue
             let session = session |> TestUtilities.setSessionUserId (session.user.id+1)
-                                  |> TestUtilities.setSessionIsAdmin true
+                                  |> TestUtilities.setSessionPrivileges [EditPendingGames]
 
             //Act
             let! event = GameStartService.getGameStartEvent game session |> thenValue

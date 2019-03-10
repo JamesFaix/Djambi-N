@@ -5,18 +5,29 @@ open System
 open Djambi.ClientGenerator.Annotations
 
 [<ClientType(ClientSection.User)>]
+type Privilege =
+    | EditUsers
+    | EditPendingGames
+    | OpenParticipation
+    | ViewGames
+
+[<ClientType(ClientSection.User)>]
 type User =
     {
         id : int
         name : string
-        isAdmin : bool
+        privileges : Privilege list
     }
+
+type User with
+    member x.has (p : Privilege) =
+        x.privileges |> List.contains p
 
 type UserDetails = 
     {
         id : int
         name : string
-        isAdmin : bool
+        privileges : Privilege list
         password : string
         failedLoginAttempts : int
         lastFailedLoginAttemptOn : DateTime option
@@ -27,7 +38,7 @@ module UserDetails =
         {
             id = user.id
             name = user.name
-            isAdmin = user.isAdmin
+            privileges = user.privileges
         }
 
 [<CLIMutable>]  

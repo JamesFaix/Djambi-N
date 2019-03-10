@@ -19,7 +19,13 @@ let getSession(query : SessionQuery) : Session AsyncHttpResult =
     let cmd = proc("Sessions_Get", param)
 
     querySingle<SessionSqlModel>(cmd, "Session")
-    |> thenMap mapSessionResponse
+    |> thenBindAsync (fun sessionSqlModel -> 
+        UserRepository.getUser sessionSqlModel.userId
+        |> thenMap (fun userDetails ->
+            let user = userDetails |> UserDetails.hideDetails
+            mapSessionResponse sessionSqlModel user
+        )
+    )
 
 let createSession(request : CreateSessionRequest) : Session AsyncHttpResult =
     let param = DynamicParameters()

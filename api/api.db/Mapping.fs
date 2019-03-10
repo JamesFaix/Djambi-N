@@ -81,28 +81,37 @@ let mapEventKindId (eventKindId : byte) : EventKind =
 let mapEventKindToId (kind : EventKind) : byte =
     findLeft eventKindsMap kind
 
-let mapUserResponse (sqlModel : UserSqlModel) : UserDetails =
+let privilegeMap =
+    [
+        1uy, Privilege.EditUsers
+        2uy, Privilege.EditPendingGames
+        3uy, Privilege.OpenParticipation  
+        4uy, Privilege.ViewGames
+    ]
+
+let mapPrivilegeId (privilegeId : byte) : Privilege =
+    findRight privilegeMap privilegeId
+
+let mapPrivilegeToId (privilege : Privilege) : byte =
+    findLeft privilegeMap privilege
+
+let mapUserResponse (sqlModel : UserSqlModel) (privileges : Privilege list) : UserDetails =
     {
         id = sqlModel.userId
         name = sqlModel.name
-        isAdmin = sqlModel.isAdmin
+        privileges = privileges
         password = sqlModel.password
         failedLoginAttempts = int sqlModel.failedLoginAttempts
         lastFailedLoginAttemptOn = sqlModel.lastFailedLoginAttemptOn |> Option.ofNullable
     }
 
-let mapSessionResponse (sqlModel : SessionSqlModel) : Session =
+let mapSessionResponse (sqlModel : SessionSqlModel) (user : User) : Session =
     {
         id = sqlModel.sessionId
         token = sqlModel.token
         createdOn = sqlModel.createdOn
         expiresOn = sqlModel.expiresOn
-        user = 
-            {
-                id = sqlModel.userId
-                name = sqlModel.userName
-                isAdmin = sqlModel.isAdmin
-            }
+        user = user
     }
 
 let mapPlayerResponse (sqlModel : PlayerSqlModel) : Player =

@@ -20,7 +20,7 @@ let ``Create user should work`` () =
 
         let user = response.bodyValue
         user.name |> shouldBe request.name
-        user.isAdmin |> shouldBe false
+        user.privileges |> shouldBe []
     } :> Task
 
 [<Test>]
@@ -86,5 +86,5 @@ let ``Get user should work`` () =
 
         let responseUser = response.bodyValue
         responseUser.name |> shouldBe request.name
-        responseUser.isAdmin |> shouldBe false
+        responseUser.privileges |> shouldBe []
     } :> Task

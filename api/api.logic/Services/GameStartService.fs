@@ -12,7 +12,7 @@ open Djambi.Api.Model
 open Djambi.Api.Logic
  
 let getGameStartEvent (game : Game) (session : Session) : CreateEventRequest AsyncHttpResult =    
-    SecurityService.ensureAdminOrCreator session game
+    SecurityService.ensureCreatorOrEditPendingGames session game
     |> Result.bindAsync (fun _ ->    
         if game.players
             |> List.filter (fun p -> p.kind <> PlayerKind.Neutral)

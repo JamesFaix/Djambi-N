@@ -1,4 +1,4 @@
-CREATE PROCEDURE [dbo].[UserPrivileges_Get]
+CREATE PROCEDURE [dbo].[Users_GetPrivileges]
 	@UserId INT,
 	@Name NVARCHAR(50)
 AS
