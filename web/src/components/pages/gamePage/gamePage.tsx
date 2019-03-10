@@ -21,6 +21,7 @@ import {
     User
     } from '../../../api/model';
 import { Kernel as K } from '../../../kernel';
+import ActionPanel from './actionPanel';
 
 export interface GamePageProps {
     user : User,
@@ -170,6 +171,12 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                         height={"150px"}
                         width={"100%"}
                         textStyle={textStyle}
+                    />
+                    <ActionPanel
+                        game={this.state.game}
+                        user={this.props.user}
+                        height={"150px"}
+                        width={"100%"}
                     />
                     <HistoryPanel
                         game={this.state.game}
