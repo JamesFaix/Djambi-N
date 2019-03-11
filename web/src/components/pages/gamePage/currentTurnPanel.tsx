@@ -5,8 +5,6 @@ import { Kernel as K } from '../../../kernel';
 export interface CurrentTurnPanelProps {
     game : Game,
     user : User,
-    commitTurn : (gameId : number) => void,
-    resetTurn : (gameId : number) => void
     height : string,
     width : string,
     textStyle : React.CSSProperties
@@ -39,17 +37,11 @@ export default class CurrentTurnPanel extends React.Component<CurrentTurnPanelPr
                         <div style={K.styles.width("10%")}/>
                         <div style={K.styles.width("45%")}>
                             {this.getSelectionPrompt()}
-                            {this.renderActionButtons()}
                         </div>
                     </div>
                 </div>
             </div>
         );
-    }
-
-    private isCurrentPlayerSelfOrGuest() {
-        const currentPlayer = this.getCurrentPlayer(this.props.game);
-        return currentPlayer.userId === this.props.user.id;
     }
 
     private getCurrentPlayer(game : Game) {
@@ -83,40 +75,5 @@ export default class CurrentTurnPanel extends React.Component<CurrentTurnPanelPr
             this.props.game.currentTurn.requiredSelectionKind);
 
         return prompt;
-    }
-
-    private renderActionButtons() {
-        if (!this.isCurrentPlayerSelfOrGuest()) {
-            return "";
-        }
-
-        const gameId = this.props.game.id;
-        const turn = this.props.game.currentTurn;
-
-        return (
-            <div style={K.styles.grid()}>
-                {
-                    turn.requiredSelectionKind === null
-                        ? <button
-                            onClick={_ => this.props.commitTurn(gameId)}
-                            style={K.styles.width("70%")}
-                        >
-                            Commit
-                        </button>
-                        : ""
-                }
-                <br/>
-                {
-                    turn.selections.length > 0
-                        ? <button
-                            onClick={_ => this.props.resetTurn(gameId)}
-                            style={K.styles.width("70%")}
-                        >
-                            Reset
-                        </button>
-                        : ""
-                }
-            </div>
-        );
     }
 }

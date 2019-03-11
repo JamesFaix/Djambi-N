@@ -8,7 +8,8 @@ export interface ActionPanelProps {
     user : User,
     game : Game,
     width : string,
-    height : string
+    height : string,
+    playerActionsService : PlayerActionsService
 }
 
 export interface ActionPanelState {
@@ -27,8 +28,7 @@ export default class ActionPanel extends React.Component<ActionPanelProps, Actio
 
     render() {
         const style = K.styles.combine([K.styles.height(this.props.height + "px"), K.styles.width(this.props.width + "px")]);
-        const service = new PlayerActionsService(this.props.user, this.props.game);
-        const visibleActions = service.getVisibleActions(this.state.showAllActions);
+        const visibleActions = this.props.playerActionsService.getVisibleActions(this.state.showAllActions);
         return (
             <div className={K.classes.thinBorder} style={style}>
                 {
@@ -36,7 +36,7 @@ export default class ActionPanel extends React.Component<ActionPanelProps, Actio
                         this.renderAction(a, i)
                     )
                 }
-                {this.renderExpandCollapseButton(service)}
+                {this.renderExpandCollapseButton()}
             </div>
         );
     }
@@ -51,15 +51,15 @@ export default class ActionPanel extends React.Component<ActionPanelProps, Actio
         );
     }
 
-    private renderExpandCollapseButton(service : PlayerActionsService) {
-        const status = service.getHiddenActionsState(this.state.showAllActions);
+    private renderExpandCollapseButton() {
+        const status = this.props.playerActionsService.getHiddenActionsState(this.state.showAllActions);
         switch(status) {
             case HiddenActionsState.NoneHideable:
                 return undefined; //Don't show this component
             case HiddenActionsState.SomeHidden:
                 return (
                     <ActionButton
-                        label=">"
+                        label="..."
                         onClick={() => this.setState({showAllActions:true})}
                     />
                 );

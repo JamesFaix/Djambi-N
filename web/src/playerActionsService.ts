@@ -1,11 +1,10 @@
-import { User, Game } from "./api/model";
+import { User, Game, Privilege, TurnStatus } from "./api/model";
 
 export interface PlayerAction {
     name : string,
     onClick : () => void,
     hideByDefault : boolean,
-    isAvailable : boolean,
-    isEnabled : boolean
+    isAvailable : boolean
 }
 
 export enum HiddenActionsState {
@@ -18,45 +17,83 @@ export default class PlayerActionsService {
     private readonly actions : PlayerAction[];
     constructor(
         private readonly user : User,
-        private readonly game : Game
+        private readonly game : Game,
+        private readonly commitTurn : (gameId : number) => void,
+        private readonly resetTurn : (gameId : number) => void
     ) {
         this.actions = this.createActions();
+    }
+
+    private hasPrivilege(p : Privilege) : boolean {
+        const match = this.user.privileges.find(p2 => p2 === p);
+        return match !== undefined;
+    }
+
+    private canParticipateInGame() : boolean {
+        if (this.hasPrivilege(Privilege.OpenParticipation)) {
+            return true;
+        }
+
+        const currentPlayer = this.game.players.find(p => p.id === this.game.turnCycle[0]);
+
+        if (currentPlayer === undefined) {
+            return false;
+        }
+
+        return currentPlayer.userId === this.user.id;
+    }
+
+    private canCommit() {
+        const turn = this.game.currentTurn;
+        if (turn === null) {
+            return false;
+        }
+
+        return turn.status === TurnStatus.AwaitingCommit
+            && this.canParticipateInGame();
+    }
+
+    private canReset() {
+        const turn = this.game.currentTurn;
+        if (turn === null) {
+            return false;
+        }
+
+        return turn.selections.length > 0
+            && this.canParticipateInGame();
     }
 
     private createActions() : PlayerAction[] {
         return [
             {
                 name: "Commit",
-                onClick: () => alert("Commit"),
+                onClick: () => this.commitTurn(this.game.id),
                 hideByDefault: false,
-                isAvailable: true,
-                isEnabled: false
+                isAvailable: this.canCommit()
             },
             {
                 name: "Reset",
-                onClick: () => alert("Reset"),
+                onClick: () => this.resetTurn(this.game.id),
                 hideByDefault: false,
-                isAvailable: true,
-                isEnabled: false
+                isAvailable: this.canReset()
             },
             {
                 name: "PlaceholderHiddenAction",
                 onClick: () => alert("Placeholder"),
                 hideByDefault: true,
-                isAvailable: true,
-                isEnabled: true
+                isAvailable: this.hasPrivilege(Privilege.OpenParticipation)
             }
         ];
     }
 
     getVisibleActions(showAllActions : boolean) : PlayerAction[] {
         return showAllActions
-            ? this.actions
-            : this.actions.filter(a => !a.hideByDefault);
+            ? this.actions.filter(a => a.isAvailable)
+            : this.actions.filter(a => a.isAvailable && !a.hideByDefault);
     }
 
     getHiddenActionsState(showAllActions : boolean) : HiddenActionsState {
-        const hideableActions = this.actions.filter(a => a.hideByDefault);
+        const hideableActions = this.actions.filter(a => a.isAvailable && a.hideByDefault);
 
         if (hideableActions.length === 0) {
             return HiddenActionsState.NoneHideable;
