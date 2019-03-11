@@ -5,6 +5,7 @@ open System.Data
 open System.Data.SqlClient
 open System.Linq
 open System.Text.RegularExpressions
+open System.Threading.Tasks
 open Dapper
 open FSharp.Control.Tasks
 open Djambi.Api.Common.Control
@@ -68,7 +69,15 @@ type DynamicParameters with
         | None -> this.Add(name, null)
         this
 
-let executeTransactionally<'a> (commands : CommandDefinition seq) (resultEntityName : string) : 'a AsyncHttpResult =
+let private executeCommandsInTransaction (cmds : CommandDefinition seq) (conn : IDbConnection) (tran : IDbTransaction) : Unit Task =
+    task {
+        for cmd in cmds do
+            let cmd = cmd |> CommandDefinition.withTransaction tran
+            let! _ = conn.ExecuteAsync cmd
+            ()
+    }
+
+let executeTransactionallyAndReturnLastResult<'a> (commands : CommandDefinition seq) (resultEntityName : string) : 'a AsyncHttpResult =
     task {
         use conn = getConnection()
         use tran = conn.BeginTransaction()
@@ -76,19 +85,25 @@ let executeTransactionally<'a> (commands : CommandDefinition seq) (resultEntityN
         try
             let commands = commands |> Seq.toList
             let mostCommands = commands |> Seq.take (commands.Length-1)
-
-            for cmd in mostCommands do
-                let cmd = cmd |> CommandDefinition.withTransaction tran
-                let! _ = conn.ExecuteAsync cmd
-                ()
-
-            let lastCommand = commands |> Enumerable.Last
-            let lastCommand = lastCommand |> CommandDefinition.withTransaction tran
-            let! result = conn.QuerySingleAsync<'a> lastCommand
-
+            let! _ = executeCommandsInTransaction mostCommands conn tran
+            let lastCommand = commands |> Enumerable.Last |> CommandDefinition.withTransaction tran
+            let! lastResult = conn.QuerySingleAsync<'a> lastCommand
             tran.Commit()
+            return Ok lastResult
+        
+        with 
+        | _ as ex -> return Error <| (catchSqlException ex resultEntityName)
+    }
+    
+let executeTransactionally (commands : CommandDefinition seq) (resultEntityName : string) : Unit AsyncHttpResult =
+    task {
+        use conn = getConnection()
+        use tran = conn.BeginTransaction()
 
-            return Ok result
+        try            
+            let! _ = executeCommandsInTransaction commands conn tran
+            tran.Commit()
+            return Ok ()
         
         with 
         | _ as ex -> return Error <| (catchSqlException ex resultEntityName)

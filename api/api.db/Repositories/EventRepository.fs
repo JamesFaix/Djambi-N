@@ -84,7 +84,7 @@ let private getCommands (request : CreateEventRequest, oldGame : Game, newGame :
 
 let persistEvent (request : CreateEventRequest, oldGame : Game, newGame : Game) : StateAndEventResponse AsyncHttpResult =
     let commands = getCommands (request, oldGame, newGame)
-    executeTransactionally commands "Event"
+    executeTransactionallyAndReturnLastResult commands "Event"
     |> thenBindAsync (fun eventId -> 
         GameRepository.getGame newGame.id
         |> thenMap (fun game -> 
