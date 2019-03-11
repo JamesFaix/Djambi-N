@@ -34,6 +34,32 @@ export default class ApiClient {
 			HttpMethod.Get, route);
 	}
 
+//-------- SNAPSHOTS --------
+
+	async createSnapshot(gameId : number, request : Model.CreateSnapshotRequest) : Promise<Model.SnapshotInfo> {
+		const route = "/games/" + gameId + "/snapshots";
+		return await ApiClientCore.sendRequest<Model.CreateSnapshotRequest, Model.SnapshotInfo>(
+			HttpMethod.Post, route, request);
+	}
+
+	async deleteSnapshot(gameId : number, snapshotId : number) : Promise<{}> {
+		const route = "/games/" + gameId + "/snapshots/" + snapshotId + "";
+		return await ApiClientCore.sendRequest<{}, {}>(
+			HttpMethod.Delete, route);
+	}
+
+	async getSnapshotsForGame(gameId : number) : Promise<Model.SnapshotInfo[]> {
+		const route = "/games/" + gameId + "/snapshots";
+		return await ApiClientCore.sendRequest<{}, Model.SnapshotInfo[]>(
+			HttpMethod.Get, route);
+	}
+
+	async loadSnapshot(gameId : number, snapshotId : number) : Promise<{}> {
+		const route = "/games/" + gameId + "/snapshots/" + snapshotId + "/load-request";
+		return await ApiClientCore.sendRequest<{}, {}>(
+			HttpMethod.Post, route);
+	}
+
 //-------- SESSION --------
 
 	async login(request : Model.LoginRequest) : Promise<Model.Session> {

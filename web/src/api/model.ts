@@ -14,6 +14,7 @@ export enum Privilege {
 	EditPendingGames = "EditPendingGames",
 	EditUsers = "EditUsers",
 	OpenParticipation = "OpenParticipation",
+	Snapshots = "Snapshots",
 	ViewGames = "ViewGames",
 }
 
@@ -352,6 +353,19 @@ export interface TurnCyclePlayerRoseToPowerEffect {
 	oldValue : number[],
 	newValue : number[],
 	playerId : number,
+}
+
+//-------- SNAPSHOTS --------
+
+export interface CreateSnapshotRequest {
+	description : string,
+}
+
+export interface SnapshotInfo {
+	id : number,
+	createdByUserId : number,
+	createdOn : Date,
+	description : string,
 }
 
 //-------- MISC --------

@@ -70,6 +70,7 @@ let getFilesInOrder : string seq =
             "Games"
             "Players"
             "Events"
+            "Snapshots"
 
             //Then relations
             "UserPrivileges"

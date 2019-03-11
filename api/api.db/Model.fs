@@ -1,6 +1,7 @@
 ﻿module Djambi.Api.Db.Model
 
 open System
+open Djambi.Api.Model
 
 [<CLIMutable>]
 type UserSqlModel = 
@@ -65,4 +66,22 @@ type EventSqlModel =
         createdOn : DateTime
         eventKindId : byte
         effectsJson : string
+    }
+
+[<CLIMutable>]
+type SnapshotSqlModel =
+    {
+        snapshotId : int
+        gameId : int
+        createdByUserId : int
+        createdOn : DateTime
+        description : string
+        snapshotJson : string    
+    }
+    
+[<CLIMutable>]
+type SnapshotJson = 
+    {
+        game : Game
+        history : Event list
     }
