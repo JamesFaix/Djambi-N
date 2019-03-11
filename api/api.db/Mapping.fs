@@ -88,6 +88,7 @@ let privilegeMap =
         2uy, Privilege.EditPendingGames
         3uy, Privilege.OpenParticipation  
         4uy, Privilege.ViewGames
+        5uy, Privilege.Snapshots
     ]
 
 let mapPrivilegeId (privilegeId : byte) : Privilege =

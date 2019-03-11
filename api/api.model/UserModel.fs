@@ -10,6 +10,7 @@ type Privilege =
     | EditPendingGames
     | OpenParticipation
     | ViewGames
+    | Snapshots
 
 [<ClientType(ClientSection.User)>]
 type User =
