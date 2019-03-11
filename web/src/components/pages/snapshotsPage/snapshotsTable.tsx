@@ -14,7 +14,7 @@ export default class SnapshotsTable extends React.Component<SnapshotsTableProps>
     render() {
         if (this.props.snapshots.length === 0) {
             return (
-                <div className={K.classes.lightText}>
+                <div className={K.classes.combine([K.classes.table, K.classes.lightText])}>
                     (No snapshots saved for this game.)
                 </div>
             );

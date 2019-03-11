@@ -235,7 +235,7 @@ let private getEliminatePlayerEffects (game : Game) (playerId : int) (killingPla
 
     effects |> Seq.toList
 
-let private getRiseOrFallFromPowerEffects (game : Game) : Effect list =
+let private getRiseOrFallFromPowerEffects (game : Game, updatedGame : Game) : Effect list =
     //Copy only the last turn of the given player, plus all other turns
     let removeBonusTurnsForPlayer playerId turns =
         let stack = new Stack<int>()
@@ -272,21 +272,21 @@ let private getRiseOrFallFromPowerEffects (game : Game) : Effect list =
             |> Seq.length 
         players > 2
 
-    let turn = game.currentTurn.Value
+    let turn = updatedGame.currentTurn.Value
     let subject = (turn.subjectPiece game).Value
     let destination = (turn.destinationCell game.parameters.regionCount).Value
     let origin = (turn.subjectCell game.parameters.regionCount).Value
     let subjectStrategy = PieceService.getStrategy subject
 
     let effects = new ArrayList<Effect>()
-    let mutable turns = game.turnCycle
+    let mutable turns = updatedGame.turnCycle
 
     let subjectPlayerId = subject.playerId.Value
     if subjectStrategy.canStayInCenter 
     then
         if origin.isCenter 
             && not destination.isCenter
-            && hasPower game subjectPlayerId
+            && hasPower updatedGame subjectPlayerId
         then 
             //If chief subject leaves power, remove bonus turns
             let newTurns = removeBonusTurnsForPlayer subjectPlayerId turns
@@ -294,7 +294,7 @@ let private getRiseOrFallFromPowerEffects (game : Game) : Effect list =
             turns <- newTurns
         elif not origin.isCenter 
             && destination.isCenter
-            && powerCanBeHad game
+            && powerCanBeHad updatedGame
         then 
             //If chief subject rises to power, add bonus turns
             let newTurns = addBonusTurnsForPlayer subjectPlayerId turns
@@ -314,7 +314,7 @@ let private getRiseOrFallFromPowerEffects (game : Game) : Effect list =
             //If chief target is moved out of power and not killed, remove bonus turns
             if destination.isCenter 
                 && not drop.isCenter
-                && hasPower game subjectPlayerId
+                && hasPower updatedGame subjectPlayerId
             then
                 let newTurns = removeBonusTurnsForPlayer subjectPlayerId turns
                 effects.Add(Effect.TurnCyclePlayerFellFromPower { playerId = subjectPlayerId; oldValue = turns; newValue = newTurns })
@@ -322,7 +322,7 @@ let private getRiseOrFallFromPowerEffects (game : Game) : Effect list =
             //If chief target is dropped in power and not killed, add bonus turns
             elif not destination.isCenter 
                 && drop.isCenter
-                && powerCanBeHad game
+                && powerCanBeHad updatedGame
             then
                 let newTurns = addBonusTurnsForPlayer subjectPlayerId turns
                 effects.Add(Effect.TurnCyclePlayerRoseToPower { playerId = subjectPlayerId; oldValue = turns; newValue = newTurns })
@@ -333,10 +333,10 @@ let private getRiseOrFallFromPowerEffects (game : Game) : Effect list =
 
     effects |> Seq.toList
 
-let private getSecondaryEffects (game : Game) : Effect list =
+let private getSecondaryEffects (game : Game, updatedGame : Game) : Effect list =
     let effects = new ArrayList<Effect>()
     
-    let turn = game.currentTurn.Value
+    let turn = updatedGame.currentTurn.Value
     let subject = (turn.subjectPiece game).Value
     let subjectStrategy = PieceService.getStrategy subject
 
@@ -355,9 +355,9 @@ let private getSecondaryEffects (game : Game) : Effect list =
         | _ -> []
 
     effects.AddRange killChiefEffects
-    let game = EventService.applyEffects killChiefEffects game
+    let updatedGame = EventService.applyEffects killChiefEffects updatedGame
 
-    let riseFallEffects = getRiseOrFallFromPowerEffects game
+    let riseFallEffects = getRiseOrFallFromPowerEffects (game, updatedGame)
     effects.AddRange riseFallEffects
     
     effects |> Seq.toList
@@ -389,36 +389,36 @@ let private getOutOfMovesEffects (game : Game) : Effect list =
 
     effects |> Seq.toList
 
-let private getTernaryEffects (game : Game) : Effect list = 
+let private getTernaryEffects (updatedGame : Game) : Effect list = 
     
     let effects = new ArrayList<Effect>()
 
-    let victoryEffects = getVictoryEffects game
+    let victoryEffects = getVictoryEffects updatedGame
     effects.AddRange victoryEffects
 
     if victoryEffects.IsEmpty
     then
         let advanceEffect = Effect.TurnCycleAdvanced { 
-            oldValue = game.turnCycle
-            newValue = game.turnCycle |> List.rotate 1
+            oldValue = updatedGame.turnCycle
+            newValue = updatedGame.turnCycle |> List.rotate 1
         }
         effects.Add advanceEffect
-        let g = EventService.applyEffect advanceEffect game
+        let updatedGame = EventService.applyEffect advanceEffect updatedGame
 
-        let outOfMovesEffects = getOutOfMovesEffects g
+        let outOfMovesEffects = getOutOfMovesEffects updatedGame
         effects.AddRange outOfMovesEffects
-        let g = EventService.applyEffects outOfMovesEffects g
+        let updatedGame = EventService.applyEffects outOfMovesEffects updatedGame
 
         //Check for victory caused by players being out of moves
-        let victoryEffects = getVictoryEffects g
+        let victoryEffects = getVictoryEffects updatedGame
         effects.AddRange victoryEffects
-        let g = EventService.applyEffects victoryEffects g
+        let updatedGame = EventService.applyEffects victoryEffects updatedGame
 
         if victoryEffects.IsEmpty
         then 
-            let seletionOptions = SelectionOptionsService.getSelectableCellsFromState g |> Result.value
+            let seletionOptions = SelectionOptionsService.getSelectableCellsFromState updatedGame |> Result.value
             let turn = { Turn.empty with selectionOptions = seletionOptions }
-            effects.Add(Effect.CurrentTurnChanged { oldValue = g.currentTurn; newValue = Some turn })
+            effects.Add(Effect.CurrentTurnChanged { oldValue = updatedGame.currentTurn; newValue = Some turn })
         else ()
     else ()
 
@@ -457,23 +457,23 @@ let getCommitTurnEvent (game : Game) (session : Session) : CreateEventRequest Ht
 
     let primaryEffects = getPrimaryEffects game
     effects.AddRange(primaryEffects)
-    let game = EventService.applyEffects primaryEffects game
+    let updatedGame = EventService.applyEffects primaryEffects game
 
-    let secondaryEffects = getSecondaryEffects game
+    let secondaryEffects = getSecondaryEffects (game, updatedGame)
     effects.AddRange(secondaryEffects)
-    let game = EventService.applyEffects secondaryEffects game
+    let updatedGame = EventService.applyEffects secondaryEffects updatedGame
 
-    let game = { game with currentTurn = Some Turn.empty } //This is required so that selection options come back
+    let updatedGame = { updatedGame with currentTurn = Some Turn.empty } //This is required so that selection options come back
 
-    let ternaryEffects = getTernaryEffects game
+    let ternaryEffects = getTernaryEffects updatedGame
     effects.AddRange(ternaryEffects)
-    let game = EventService.applyEffects ternaryEffects game
+    let updatedGame = EventService.applyEffects ternaryEffects updatedGame
     
     Ok {
         kind = EventKind.TurnCommitted
         effects = effects |> Seq.toList
         createdByUserId = session.user.id
-        actingPlayerId = ContextService.getActingPlayerId session game
+        actingPlayerId = ContextService.getActingPlayerId session game //Important to use un-updated game, because there is no turn cycle in the updated game
     }
     
 //--- Reset
