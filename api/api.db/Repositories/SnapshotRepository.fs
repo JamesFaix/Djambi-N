@@ -44,7 +44,7 @@ let createSnapshot (request : CreateSnapshotRequest) (game : Game, history : Eve
     let json = JsonUtility.serialize jsonModel
 
     let param = DynamicParameters()
-                    .add("GameId", request.gameId)
+                    .add("GameId", game.id)
                     .add("CreatedByUserId", request.createdByUserId)
                     .add("Description", request.description)
                     .add("SnapshotJson", json)

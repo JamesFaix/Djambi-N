@@ -26,8 +26,7 @@ type SnapshotInfo =
 type CreateSnapshotRequest =
     {
         createdByUserId : int
-        description : string    
-        gameId : int
+        description : string
     }
 
 module Snapshot =

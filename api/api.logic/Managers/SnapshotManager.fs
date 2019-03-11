@@ -13,9 +13,9 @@ open Djambi.Api.Db.Repositories
 let createSnapshot (gameId : int) (request : CreateSnapshotRequest) (session : Session) : SnapshotInfo AsyncHttpResult =
     SecurityService.ensureHas Privilege.Snapshots session
     |> Result.bindAsync (fun _ ->
-        GameRepository.getGame request.gameId
+        GameRepository.getGame gameId
         |> thenBindAsync (fun game -> 
-            EventRepository.getEvents (request.gameId, EventsQuery.empty)
+            EventRepository.getEvents (gameId, EventsQuery.empty)
             |> thenBindAsync (fun history -> 
                 SnapshotRepository.createSnapshot request (game, history)
             )
