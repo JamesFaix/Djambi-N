@@ -10,11 +10,21 @@ BEGIN
 	SET NOCOUNT ON;
 
     IF @SnapshotId IS NOT NULL
-        SELECT SnapshotId, GameId, Description, SnapshotJson
+        SELECT SnapshotId,
+            GameId,
+            CreatedByUserId,
+            CreatedOn,
+            Description,
+            SnapshotJson
         FROM Snapshots
         WHERE SnapshotId = @SnapshotId
     ELSE IF @GameId IS NOT NULL
-        SELECT SnapshotId, GameId, Description, SnapshotJson
+        SELECT SnapshotId,
+            GameId,
+            CreatedByUserId,
+            CreatedOn,
+            Description,
+            SnapshotJson
         FROM Snapshots
         WHERE GameId = @GameId
     ELSE

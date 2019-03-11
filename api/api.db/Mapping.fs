@@ -1,6 +1,7 @@
 ﻿module Djambi.Api.Db.Mapping
 
 open Djambi.Api.Common
+open Djambi.Api.Common.Control
 open Djambi.Api.Common.Json
 open Djambi.Api.Db.Model
 open Djambi.Api.Model
@@ -158,3 +159,40 @@ let mapEventResponse (sqlModel : EventSqlModel) : Event =
 
 let mapResultsDirectionToAscendingBool (direction : ResultsDirection) : bool =
     direction = ResultsDirection.Ascending
+
+let mapSnapshotFromSql (sqlModel : SnapshotSqlModel) : Snapshot =
+    let data : SnapshotJson = JsonUtility.deserialize sqlModel.snapshotJson
+    {
+        id = sqlModel.snapshotId
+        createdByUserId = sqlModel.createdByUserId
+        createdOn = sqlModel.createdOn
+        description = sqlModel.description
+        game = data.game
+        history = data.history
+    }
+
+let mapSnapshotToSql (snapshot : Snapshot) : SnapshotSqlModel =
+    let jsonModel = 
+        {
+            game = snapshot.game
+            history = snapshot.history
+        }
+
+    let json = JsonUtility.serialize jsonModel
+
+    {
+        snapshotId = snapshot.id
+        createdByUserId = snapshot.createdByUserId
+        createdOn = snapshot.createdOn
+        gameId = snapshot.game.id
+        description = snapshot.description
+        snapshotJson = json
+    }
+
+let mapSnapshotInfoFromSql (sqlModel : SnapshotSqlModel) : SnapshotInfo =
+    {
+        id = sqlModel.snapshotId
+        createdByUserId = sqlModel.createdByUserId
+        createdOn = sqlModel.createdOn
+        description = sqlModel.description
+    }
