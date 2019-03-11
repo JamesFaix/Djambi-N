@@ -172,24 +172,6 @@ let mapSnapshotFromSql (sqlModel : SnapshotSqlModel) : Snapshot =
         history = data.history
     }
 
-let mapSnapshotToSql (snapshot : Snapshot) : SnapshotSqlModel =
-    let jsonModel = 
-        {
-            game = snapshot.game
-            history = snapshot.history
-        }
-
-    let json = JsonUtility.serialize jsonModel
-
-    {
-        snapshotId = snapshot.id
-        createdByUserId = snapshot.createdByUserId
-        createdOn = snapshot.createdOn
-        gameId = snapshot.game.id
-        description = snapshot.description
-        snapshotJson = json
-    }
-
 let mapSnapshotInfoFromSql (sqlModel : SnapshotSqlModel) : SnapshotInfo =
     {
         id = sqlModel.snapshotId

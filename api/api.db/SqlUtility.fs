@@ -68,7 +68,7 @@ type DynamicParameters with
         | None -> this.Add(name, null)
         this
 
-let executeTransactionally<'a> (commands : CommandDefinition seq) (resultEntityName : string): 'a AsyncHttpResult =
+let executeTransactionally<'a> (commands : CommandDefinition seq) (resultEntityName : string) : 'a AsyncHttpResult =
     task {
         use conn = getConnection()
         use tran = conn.BeginTransaction()
