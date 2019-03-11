@@ -60,7 +60,7 @@ type DiplomatStrategy() =
         override x.canTargetWithMove = true
         override x.canTargetPiece (subject : Piece) (target : Piece) =
             target.kind <> Corpse &&
-            target.playerId = subject.playerId
+            target.playerId <> subject.playerId
         override x.canEnterCenterToEvictPiece = true
         override x.canDropTarget = true
             

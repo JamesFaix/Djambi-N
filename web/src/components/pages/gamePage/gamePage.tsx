@@ -21,6 +21,8 @@ import {
     User
     } from '../../../api/model';
 import { Kernel as K } from '../../../kernel';
+import ActionPanel from './actionPanel';
+import PlayerActionsService from '../../../playerActionsService';
 
 export interface GamePageProps {
     user : User,
@@ -138,6 +140,13 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
             y: this.contentSize.y
         };
 
+        const playerActionsService = new PlayerActionsService(
+            this.props.user,
+            this.state.game,
+            gameId => this.commitTurn(gameId),
+            gameId => this.resetTurn(gameId)
+        );
+
         return (
             <div className={K.classes.flex} style={containerStyle}>
                 <div style={K.styles.width("70%")}>
@@ -165,11 +174,16 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                     <CurrentTurnPanel
                         game={this.state.game}
                         user={this.props.user}
-                        commitTurn={gameId => this.commitTurn(gameId)}
-                        resetTurn={gameId => this.resetTurn(gameId)}
                         height={"150px"}
                         width={"100%"}
                         textStyle={textStyle}
+                    />
+                    <ActionPanel
+                        game={this.state.game}
+                        user={this.props.user}
+                        height={"150px"}
+                        width={"100%"}
+                        playerActionsService={playerActionsService}
                     />
                     <HistoryPanel
                         game={this.state.game}
