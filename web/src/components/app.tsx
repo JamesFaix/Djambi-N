@@ -14,7 +14,7 @@ import { Route, Switch } from 'react-router-dom';
 import { User } from '../api/model';
 import '../index.css';
 import Debug from '../debug';
-import SnapshotsPage from './pages/snapshotsPage';
+import SnapshotsPage from './pages/snapshotsPage/snapshotsPage';
 
 export interface AppProps {
 
