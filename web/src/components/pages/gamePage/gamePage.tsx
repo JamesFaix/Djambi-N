@@ -23,6 +23,8 @@ import {
 import { Kernel as K } from '../../../kernel';
 import ActionPanel from './actionPanel';
 import PlayerActionsService from '../../../playerActionsService';
+import { Redirect } from 'react-router';
+import Routes from '../../../routes';
 
 export interface GamePageProps {
     user : User,
@@ -32,7 +34,8 @@ export interface GamePageProps {
 export interface GamePageState {
     game : Game,
     boardView : BoardView,
-    events : Event[]
+    events : Event[],
+    redirectUrl : string
 }
 
 export default class GamePage extends React.Component<GamePageProps, GamePageState> {
@@ -45,9 +48,10 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
         this.boardViewService = new BoardViewService(K.boards);
 
         this.state = {
-            game : null,
-            boardView : null,
-            events: []
+            game: null,
+            boardView: null,
+            events: [],
+            redirectUrl: null
         };
 
         const windowSize = {
@@ -97,6 +101,10 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
             .then(response => this.updateGame(response.game));
     }
 
+    private navigateToSnapshotsPage(gameId : number) : void {
+        this.setState({redirectUrl: K.routes.snapshots(gameId)});
+    }
+
     componentDidMount() {
         K.api
             .getGame(this.props.gameId)
@@ -105,6 +113,10 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
     }
 
     render() {
+        if (this.state.redirectUrl !== null) {
+            return <Redirect to={this.state.redirectUrl}/>;
+        }
+
         return (
             <div>
                 <br/>
@@ -144,7 +156,8 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
             this.props.user,
             this.state.game,
             gameId => this.commitTurn(gameId),
-            gameId => this.resetTurn(gameId)
+            gameId => this.resetTurn(gameId),
+            gameId => this.navigateToSnapshotsPage(gameId)
         );
 
         return (

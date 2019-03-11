@@ -19,7 +19,8 @@ export default class PlayerActionsService {
         private readonly user : User,
         private readonly game : Game,
         private readonly commitTurn : (gameId : number) => void,
-        private readonly resetTurn : (gameId : number) => void
+        private readonly resetTurn : (gameId : number) => void,
+        private readonly navigateToSnapshotsPage : (gameId : number) => void
     ) {
         this.actions = this.createActions();
     }
@@ -78,10 +79,10 @@ export default class PlayerActionsService {
                 isAvailable: this.canReset()
             },
             {
-                name: "PlaceholderHiddenAction",
-                onClick: () => alert("Placeholder"),
+                name: "Snapshots",
+                onClick: () => this.navigateToSnapshotsPage(this.game.id),
                 hideByDefault: true,
-                isAvailable: this.hasPrivilege(Privilege.OpenParticipation)
+                isAvailable: this.hasPrivilege(Privilege.Snapshots)
             }
         ];
     }
