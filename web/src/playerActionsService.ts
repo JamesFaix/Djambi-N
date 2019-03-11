@@ -18,9 +18,9 @@ export default class PlayerActionsService {
     constructor(
         private readonly user : User,
         private readonly game : Game,
-        private readonly commitTurn : (gameId : number) => void,
-        private readonly resetTurn : (gameId : number) => void,
-        private readonly navigateToSnapshotsPage : (gameId : number) => void
+        private readonly commitTurn : () => void,
+        private readonly resetTurn : () => void,
+        private readonly navigateToSnapshotsPage : () => void
     ) {
         this.actions = this.createActions();
     }
@@ -68,19 +68,19 @@ export default class PlayerActionsService {
         return [
             {
                 name: "Commit",
-                onClick: () => this.commitTurn(this.game.id),
+                onClick: () => this.commitTurn(),
                 hideByDefault: false,
                 isAvailable: this.canCommit()
             },
             {
                 name: "Reset",
-                onClick: () => this.resetTurn(this.game.id),
+                onClick: () => this.resetTurn(),
                 hideByDefault: false,
                 isAvailable: this.canReset()
             },
             {
                 name: "Snapshots",
-                onClick: () => this.navigateToSnapshotsPage(this.game.id),
+                onClick: () => this.navigateToSnapshotsPage(),
                 hideByDefault: true,
                 isAvailable: this.hasPrivilege(Privilege.Snapshots)
             }

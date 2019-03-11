@@ -101,6 +101,8 @@ export default class App extends React.Component<AppProps, AppState> {
                             />
                         }
                     />
+
+                    {/* Order here is really important, longer routes must go first. */}
                     <Route
                         path={K.routes.gameInfoTemplate()}
                         render={props =>
@@ -111,18 +113,18 @@ export default class App extends React.Component<AppProps, AppState> {
                         }
                     />
                     <Route
-                        path={K.routes.gameTemplate()}
+                        path={K.routes.snapshotsTemplate()}
                         render={props =>
-                            <GamePage
+                            <SnapshotsPage
                                 user={this.state.user}
                                 gameId={props.match.params.gameId}
                             />
                         }
                     />
                     <Route
-                        path={K.routes.snapshotsTemplate()}
+                        path={K.routes.gameTemplate()}
                         render={props =>
-                            <SnapshotsPage
+                            <GamePage
                                 user={this.state.user}
                                 gameId={props.match.params.gameId}
                             />
