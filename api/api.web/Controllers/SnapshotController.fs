@@ -17,15 +17,17 @@ let createSnapshot (gameId : int) : HttpHandler =
 let getSnapshotsForGame (gameId : int) : HttpHandler =
     let func ctx =
         getSessionFromContext ctx
-        |> thenBindAsync (fun session ->
-            SnapshotManager.getSnapshotsForGame gameId session
-        )
+        |> thenBindAsync (SnapshotManager.getSnapshotsForGame gameId)
     handle func
 
 let deleteSnapshot (gameId : int, snapshotId : int) : HttpHandler =
     let func ctx =
         getSessionFromContext ctx
-        |> thenBindAsync (fun session ->
-            SnapshotManager.deleteSnapshot gameId snapshotId session
-        )
+        |> thenBindAsync (SnapshotManager.deleteSnapshot gameId snapshotId)
+    handle func
+
+let loadSnapshot (gameId : int, snapshotId : int) : HttpHandler =
+    let func ctx =
+        getSessionFromContext ctx 
+        |> thenBindAsync (SnapshotManager.loadSnapshot gameId snapshotId)
     handle func

@@ -81,3 +81,7 @@
  [<Literal>]
  let snapshot = "/games/%i/snapshots/%i"
  let snapshotFormat = create2<int, int>(snapshot)
+
+ [<Literal>]
+ let snapshotLoad = "/games/%i/snapshots/%i/load-request"
+ let snapshotLoadFormat = create2<int, int>(snapshotLoad)

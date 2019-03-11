@@ -1,13 +1,16 @@
 ﻿module Djambi.Ap.Db.Repositories.SnapshotRepository
 
 open Dapper
+open Djambi.Api.Common.Collections
 open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Common.Json
 open Djambi.Api.Db.Mapping
 open Djambi.Api.Db.Model
+open Djambi.Api.Db.Repositories
 open Djambi.Api.Db.SqlUtility
 open Djambi.Api.Model
+open Djambi.Api.Db
 
 let getSnapshot (snapshotId : int) : Snapshot AsyncHttpResult =
     let param = DynamicParameters()
@@ -51,3 +54,20 @@ let createSnapshot (request : CreateSnapshotRequest) (game : Game, history : Eve
     let cmd = proc("Snapshots_Create", param)
 
     querySingle<int>(cmd, "Snapshot")
+
+let private getReplaceEventHistoryCommand (gameId : int, history : Event list) : CommandDefinition =  
+    let param = DynamicParameters()
+                    .add("GameId", gameId)
+                    .add("History", TableValuedParameter.eventList history)
+    proc("Snapshots_ReplaceEventHistory", param)
+
+let loadSnapshot (gameId : int, snapshotId : int) : Unit AsyncHttpResult =
+    getSnapshot snapshotId
+    |> thenBindAsync (fun snapshot ->
+        let commands = 
+            getReplaceEventHistoryCommand(gameId, snapshot.history) ::
+            GameRepository.getUpdateGameCommand snapshot.game ::
+            (snapshot.game.players |> List.map GameRepository.getUpdatePlayerCommand)
+
+        executeTransactionally commands "Snapshot"
+    )

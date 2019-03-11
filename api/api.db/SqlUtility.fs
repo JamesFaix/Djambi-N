@@ -3,6 +3,7 @@
 open System
 open System.Data
 open System.Data.SqlClient
+open System.Linq
 open System.Text.RegularExpressions
 open Dapper
 open FSharp.Control.Tasks
@@ -66,3 +67,29 @@ type DynamicParameters with
         | Some x -> this.Add(name, x)
         | None -> this.Add(name, null)
         this
+
+let executeTransactionally<'a> (commands : CommandDefinition seq) (resultEntityName : string): 'a AsyncHttpResult =
+    task {
+        use conn = getConnection()
+        use tran = conn.BeginTransaction()
+
+        try
+            let commands = commands |> Seq.toList
+            let mostCommands = commands |> Seq.take (commands.Length-1)
+
+            for cmd in mostCommands do
+                let cmd = cmd |> CommandDefinition.withTransaction tran
+                let! _ = conn.ExecuteAsync cmd
+                ()
+
+            let lastCommand = commands |> Enumerable.Last
+            let lastCommand = lastCommand |> CommandDefinition.withTransaction tran
+            let! result = conn.QuerySingleAsync<'a> lastCommand
+
+            tran.Commit()
+
+            return Ok result
+        
+        with 
+        | _ as ex -> return Error <| (catchSqlException ex resultEntityName)
+    }

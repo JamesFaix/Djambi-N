@@ -39,3 +39,10 @@ let deleteSnapshot (gameId : int) (snapshotId : int) (session : Session) : Unit 
     |> Result.bindAsync (fun _ ->
         SnapshotRepository.deleteSnapshot snapshotId
     )
+
+[<ClientFunction(HttpMethod.Post, Routes.snapshotLoad, ClientSection.Misc)>]
+let loadSnapshot (gameId : int) (snapshotId : int) (session : Session) : Unit AsyncHttpResult =
+    SecurityService.ensureHas Privilege.Snapshots session
+    |> Result.bindAsync (fun _ ->
+        SnapshotRepository.loadSnapshot (gameId, snapshotId)
+    )

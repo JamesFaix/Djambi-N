@@ -1,15 +1,12 @@
 ﻿module Djambi.Api.Db.Repositories.EventRepository
 
 open System
-open System.Data
 open System.Linq
 open Dapper
-open FSharp.Control.Tasks
 open Djambi.Api.Common.Collections
 open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Common.Json
-open Djambi.Api.Db
 open Djambi.Api.Db.Mapping
 open Djambi.Api.Db.SqlUtility
 open Djambi.Api.Model
@@ -36,7 +33,7 @@ let private getCreateEventCommand (gameId : int, request : CreateEventRequest) :
                     .add("EffectsJson", JsonUtility.serialize request.effects)
     proc("Events_Create", param)
 
-let private getCommands (oldGame : Game, newGame : Game, transaction : IDbTransaction) : CommandDefinition seq = 
+let private getCommands (request : CreateEventRequest, oldGame : Game, newGame : Game) : CommandDefinition seq = 
     let commands = new ArrayList<CommandDefinition>()
 
     //remove players
@@ -79,30 +76,21 @@ let private getCommands (oldGame : Game, newGame : Game, transaction : IDbTransa
     then
         commands.Add (GameRepository.getUpdateGameCommand newGame) 
     else ()
+    
+    commands.Add (getCreateEventCommand(oldGame.id, request))
 
-    commands 
-    |> Enumerable.AsEnumerable 
-    |> Seq.map (CommandDefinition.withTransaction transaction)
+    commands |> Enumerable.AsEnumerable
+
 
 let persistEvent (request : CreateEventRequest, oldGame : Game, newGame : Game) : StateAndEventResponse AsyncHttpResult =
-    task {
-        use conn = SqlUtility.getConnection()
-        use tran = conn.BeginTransaction()
-        let commands = getCommands (oldGame, newGame, tran)   
-    
-        try 
-            for cmd in commands do
-                let! _ = conn.ExecuteAsync cmd
-                ()
-
-            let cmd = getCreateEventCommand(oldGame.id, request) 
-                      |> CommandDefinition.withTransaction tran
-            let! eventId = conn.ExecuteScalarAsync<int> cmd
-
-            tran.Commit()
-
-            let event : Event = 
-                {
+    let commands = getCommands (request, oldGame, newGame)
+    executeTransactionally commands "Event"
+    |> thenBindAsync (fun eventId -> 
+        GameRepository.getGame newGame.id
+        |> thenMap (fun game -> 
+            {
+                game = game
+                event = {
                     id = eventId
                     createdByUserId = request.createdByUserId
                     createdOn = DateTime.UtcNow
@@ -110,16 +98,5 @@ let persistEvent (request : CreateEventRequest, oldGame : Game, newGame : Game) 
                     kind = request.kind
                     effects = request.effects
                 }
-
-            return Ok event
-        with 
-        | _ as ex -> return Error <| (SqlUtility.catchSqlException ex "Effect")
-    }
-    |> thenBindAsync (fun event -> 
-        GameRepository.getGame newGame.id
-        |> thenMap (fun game -> 
-            {
-                game = game
-                event = event
             })
     )

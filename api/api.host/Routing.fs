@@ -49,6 +49,6 @@ module Routing =
                     POST >=> routef Routes.snapshotsFormat SnapshotController.createSnapshot
                     GET >=> routef Routes.snapshotsFormat SnapshotController.getSnapshotsForGame
                     DELETE >=> routef Routes.snapshotFormat SnapshotController.deleteSnapshot
-
+                    POST >=> routef Routes.snapshotLoadFormat SnapshotController.loadSnapshot
                 ])
             setStatusCode 404 >=> text "Not Found" ]
