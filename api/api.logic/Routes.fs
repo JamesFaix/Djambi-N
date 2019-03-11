@@ -73,3 +73,11 @@
  [<Literal>]
  let eventsQuery = "/games/%i/events/query"
  let eventsQueryFormat = create1<int>(eventsQuery)
+
+ [<Literal>]
+ let snapshots = "/games/%i/snapshots"
+ let snapshotsFormat = create1<int>(snapshots)
+
+ [<Literal>]
+ let snapshot = "/games/%i/snapshots/%i"
+ let snapshotFormat = create2<int, int>(snapshot)

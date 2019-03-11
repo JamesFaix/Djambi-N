@@ -26,7 +26,7 @@ module Routing =
                     GET >=> routef Routes.boardFormat BoardController.getBoard
                     GET >=> routef Routes.pathsFormat BoardController.getCellPaths
 
-                //Game
+                //Game lobby
                     POST >=> route Routes.gamesQuery >=> GameController.getGames
                     POST >=> route Routes.games >=> GameController.createGame
                     GET >=> routef Routes.gameFormat GameController.getGame
@@ -37,10 +37,18 @@ module Routing =
 
                     POST >=> routef Routes.startGameFormat GameController.startGame
 
+                //Turn actions
                     POST >=> routef Routes.selectCellFormat GameController.selectCell
                     POST >=> routef Routes.resetTurnFormat GameController.resetTurn
                     POST >=> routef Routes.commitTurnFormat GameController.commitTurn
 
+                //Events
                     POST >=> routef Routes.eventsQueryFormat GameController.getEvents
+
+                //Snapshots
+                    POST >=> routef Routes.snapshotsFormat SnapshotController.createSnapshot
+                    GET >=> routef Routes.snapshotsFormat SnapshotController.getSnapshotsForGame
+                    DELETE >=> routef Routes.snapshotFormat SnapshotController.deleteSnapshot
+
                 ])
             setStatusCode 404 >=> text "Not Found" ]

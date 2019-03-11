@@ -10,6 +10,7 @@
     <Compile Include="Controllers\SessionController.fs" />
     <Compile Include="Controllers\BoardController.fs" />
     <Compile Include="Controllers\GameController.fs" />
+    <Compile Include="Controllers\SnapshotController.fs" />
   </ItemGroup>
 
   <ItemGroup>

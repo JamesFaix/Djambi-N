@@ -27,6 +27,14 @@ type CreateSnapshotRequest =
     {
         createdByUserId : int
         description : string    
-        game : Game
-        history : Event list
+        gameId : int
     }
+
+module Snapshot =
+    let hideDetails (snapshot : Snapshot) : SnapshotInfo =
+        {
+            id = snapshot.id
+            createdByUserId = snapshot.createdByUserId
+            createdOn = snapshot.createdOn
+            description = snapshot.description
+        }
