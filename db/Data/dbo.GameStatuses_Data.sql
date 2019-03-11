@@ -1,5 +1,4 @@
 INSERT INTO [dbo].[GameStatuses] ([GameStatusId], [Name]) VALUES (1, N'Pending')
-INSERT INTO [dbo].[GameStatuses] ([GameStatusId], [Name]) VALUES (2, N'AbortedWhilePending')
-INSERT INTO [dbo].[GameStatuses] ([GameStatusId], [Name]) VALUES (3, N'Started')
-INSERT INTO [dbo].[GameStatuses] ([GameStatusId], [Name]) VALUES (4, N'Aborted')
-INSERT INTO [dbo].[GameStatuses] ([GameStatusId], [Name]) VALUES (5, N'Finished')
+INSERT INTO [dbo].[GameStatuses] ([GameStatusId], [Name]) VALUES (2, N'Started')
+INSERT INTO [dbo].[GameStatuses] ([GameStatusId], [Name]) VALUES (3, N'Aborted')
+INSERT INTO [dbo].[GameStatuses] ([GameStatusId], [Name]) VALUES (4, N'Finished')

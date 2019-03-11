@@ -100,7 +100,7 @@ type GetGamesTests() =
             let! (_, _, game2) = TestUtilities.createuserSessionAndGame(false) |> thenValue
             let adminSession = getSessionForUser 3 |> TestUtilities.setSessionPrivileges [ViewGames]
 
-            let! _ = GameRepository.updateGame({ game1 with status = GameStatus.AbortedWhilePending });
+            let! _ = GameRepository.updateGame({ game1 with status = GameStatus.Aborted });
 
             let query = { GamesQuery.empty with status = Some GameStatus.Pending }
 
