@@ -27,4 +27,6 @@ export default class Routes {
     public signup() { return "/signup"; }
 
     public snapshots(gameId : number) { return Sprintf.sprintf("/games/%i/snapshots", gameId); }
+
+    public snapshotsTemplate() { return "/games/:gameId/snapshots"; }
 }
