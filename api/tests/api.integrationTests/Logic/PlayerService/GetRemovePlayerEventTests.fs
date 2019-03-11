@@ -262,7 +262,7 @@ type GetRemovePlayerEventTests() =
                 f1.playerId |> shouldBe creator.id
 
                 f2.oldValue |> shouldBe GameStatus.Pending
-                f2.newValue |> shouldBe GameStatus.AbortedWhilePending
+                f2.newValue |> shouldBe GameStatus.Aborted
 
             | _ -> failwith "Incorrect effects"
         }

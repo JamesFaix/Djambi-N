@@ -58,8 +58,7 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
     }
 
     private updateGame(newGame : Game) {
-        if (newGame.status === GameStatus.Aborted
-            || newGame.status === GameStatus.AbortedWhilePending) {
+        if (newGame.status === GameStatus.Aborted) {
             this.setState({
                 game : newGame,
                 redirectUrl: K.routes.home()
@@ -156,7 +155,6 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
                     </div>
                 );
             case GameStatus.Aborted:
-            case GameStatus.AbortedWhilePending:
                 return (
                     <div className={K.classes.centerAligned}>
                         Aborted

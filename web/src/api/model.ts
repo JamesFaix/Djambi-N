@@ -81,7 +81,6 @@ export interface GameParameters {
 
 export enum GameStatus {
 	Aborted = "Aborted",
-	AbortedWhilePending = "AbortedWhilePending",
 	Finished = "Finished",
 	Pending = "Pending",
 	Started = "Started",
