@@ -51,20 +51,27 @@ export default class SnapshotsPage extends React.Component<SnapshotsPageProps, S
                     <LinkButton label="My Games" to={K.routes.myGames()}/>
                     <LinkButton label="Find Game" to={K.routes.findGame()}/>
                 </div>
+                <br/>
                 <SnapshotsTable
                     snapshots={this.state.snapshots}
                     loadSnapshot={id => this.loadSnapshot(id)}
                     deleteSnapshot={id => this.deleteSnapshot(id)}
                 />
-                <LabeledInput
-                    label="Description"
-                    type={InputTypes.Text}
-                    onChange={e => this.descriptionChanged(e)}
-                />
-                <ActionButton
-                    label="Create"
-                    onClick={() => this.createSnapshot()}
-                />
+                <br/>
+                <div className={K.classes.form}>
+                    <LabeledInput
+                        label="Description"
+                        type={InputTypes.Text}
+                        onChange={e => this.descriptionChanged(e)}
+                    />
+                </div>
+                <br/>
+                <div className={K.classes.centerAligned}>
+                    <ActionButton
+                        label="Create"
+                        onClick={() => this.createSnapshot()}
+                    />
+                </div>
             </div>
         );
     }
