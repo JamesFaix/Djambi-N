@@ -1,3 +1,5 @@
+import * as Sprintf from 'sprintf-js';
+
 export default class Routes {
 
     public createGame() { return "/games/create"; }
@@ -6,11 +8,11 @@ export default class Routes {
 
     public findGame() { return "/games/find"; }
 
-    public game(gameId : number) { return "/games/" + gameId; }
+    public game(gameId : number) { return Sprintf.sprintf("/games/%i", gameId); }
 
     public gameTemplate() { return "/games/:gameId"; }
 
-    public gameInfo(gameId : number) { return "/games/" + gameId + "/info"; }
+    public gameInfo(gameId : number) { return Sprintf.sprintf("/games/%i/info", gameId); }
 
     public gameInfoTemplate() { return "/games/:gameId/info"; }
 
@@ -23,4 +25,8 @@ export default class Routes {
     public rules() { return "https://github.com/GamesFaix/Djambi3/blob/master/docs/Rules.md"; }
 
     public signup() { return "/signup"; }
+
+    public snapshots(gameId : number) { return Sprintf.sprintf("/games/%i/snapshots", gameId); }
+
+    public snapshotsTemplate() { return "/games/:gameId/snapshots"; }
 }

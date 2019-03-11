@@ -14,6 +14,7 @@ import { Route, Switch } from 'react-router-dom';
 import { User } from '../api/model';
 import '../index.css';
 import Debug from '../debug';
+import SnapshotsPage from './pages/snapshotsPage/snapshotsPage';
 
 export interface AppProps {
 
@@ -100,10 +101,21 @@ export default class App extends React.Component<AppProps, AppState> {
                             />
                         }
                     />
+
+                    {/* Order here is really important, longer routes must go first. */}
                     <Route
                         path={K.routes.gameInfoTemplate()}
                         render={props =>
                             <GameInfoPage
+                                user={this.state.user}
+                                gameId={props.match.params.gameId}
+                            />
+                        }
+                    />
+                    <Route
+                        path={K.routes.snapshotsTemplate()}
+                        render={props =>
+                            <SnapshotsPage
                                 user={this.state.user}
                                 gameId={props.match.params.gameId}
                             />

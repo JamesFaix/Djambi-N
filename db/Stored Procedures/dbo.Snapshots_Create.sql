@@ -1,7 +1,7 @@
 CREATE PROCEDURE [dbo].[Snapshots_Create]
     @GameId INT,
     @CreatedByUserId INT,
-    @Description NVARCHAR(MAX),
+    @Description NVARCHAR(100),
     @SnapshotJson NVARCHAR(MAX)
 AS
 BEGIN

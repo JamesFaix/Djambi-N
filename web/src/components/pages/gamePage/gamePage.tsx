@@ -23,6 +23,7 @@ import {
 import { Kernel as K } from '../../../kernel';
 import ActionPanel from './actionPanel';
 import PlayerActionsService from '../../../playerActionsService';
+import { Redirect } from 'react-router';
 
 export interface GamePageProps {
     user : User,
@@ -32,7 +33,8 @@ export interface GamePageProps {
 export interface GamePageState {
     game : Game,
     boardView : BoardView,
-    events : Event[]
+    events : Event[],
+    redirectUrl : string
 }
 
 export default class GamePage extends React.Component<GamePageProps, GamePageState> {
@@ -45,9 +47,10 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
         this.boardViewService = new BoardViewService(K.boards);
 
         this.state = {
-            game : null,
-            boardView : null,
-            events: []
+            game: null,
+            boardView: null,
+            events: [],
+            redirectUrl: null
         };
 
         const windowSize = {
@@ -84,17 +87,21 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
         }
     }
 
-    private commitTurn(gameId : number) : void {
+    private commitTurn() : void {
         K.api
-            .commitTurn(gameId)
+            .commitTurn(this.props.gameId)
             .then(response => this.updateGame(response.game))
-            .then(_ => this.updateEvents(gameId));
+            .then(_ => this.updateEvents(this.props.gameId));
     }
 
-    private resetTurn(gameId : number) : void {
+    private resetTurn() : void {
         K.api
-            .resetTurn(gameId)
+            .resetTurn(this.props.gameId)
             .then(response => this.updateGame(response.game));
+    }
+
+    private navigateToSnapshotsPage() : void {
+        this.setState({redirectUrl: K.routes.snapshots(this.props.gameId)});
     }
 
     componentDidMount() {
@@ -105,6 +112,10 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
     }
 
     render() {
+        if (this.state.redirectUrl !== null) {
+            return <Redirect to={this.state.redirectUrl}/>;
+        }
+
         return (
             <div>
                 <br/>
@@ -143,8 +154,9 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
         const playerActionsService = new PlayerActionsService(
             this.props.user,
             this.state.game,
-            gameId => this.commitTurn(gameId),
-            gameId => this.resetTurn(gameId)
+            () => this.commitTurn(),
+            () => this.resetTurn(),
+            () => this.navigateToSnapshotsPage()
         );
 
         return (

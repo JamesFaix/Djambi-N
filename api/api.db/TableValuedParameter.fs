@@ -22,6 +22,11 @@ type TableValuedParameter(table : DataTable) =
 module TableValuedParameter =
     open Djambi.Api.Common.Json
 
+    let private toValueOrDbNull<'a> (x : 'a option) : obj =
+        match x with
+        | Some value -> value :> obj
+        | None -> DBNull.Value :> obj
+
     let int32list (xs : int seq) = 
         let dt = new DataTable()
         dt.TableName <- "Int32List"
@@ -42,7 +47,7 @@ module TableValuedParameter =
         for x in xs do
             dt.Rows.Add(
                 x.createdByUserId,
-                x.actingPlayerId,
+                x.actingPlayerId |> toValueOrDbNull,
                 x.createdOn,
                 Mapping.mapEventKindToId x.kind,
                 JsonUtility.serialize x.effects) 
