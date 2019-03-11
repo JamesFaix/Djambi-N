@@ -14,7 +14,7 @@ type Snapshot =
         history : Event list
     }
     
-[<ClientType(ClientSection.Misc)>]
+[<ClientType(ClientSection.Snapshots)>]
 type SnapshotInfo =
     {
         id : int
@@ -22,9 +22,17 @@ type SnapshotInfo =
         createdOn : DateTime
         description : string    
     }
-
+    
+[<ClientType(ClientSection.Snapshots)>]
 type CreateSnapshotRequest =
     {
+        description : string
+    }
+
+type InternalCreateSnapshotRequest = 
+    {
+        game : Game
+        history : Event list
         createdByUserId : int
         description : string
     }

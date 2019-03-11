@@ -9,7 +9,7 @@ open Djambi.ClientGenerator.Annotations
 open Djambi.Ap.Db.Repositories
 open Djambi.Api.Db.Repositories
 
-[<ClientFunction(HttpMethod.Post, Routes.snapshots, ClientSection.Misc)>]
+[<ClientFunction(HttpMethod.Post, Routes.snapshots, ClientSection.Snapshots)>]
 let createSnapshot (gameId : int) (request : CreateSnapshotRequest) (session : Session) : SnapshotInfo AsyncHttpResult =
     SecurityService.ensureHas Privilege.Snapshots session
     |> Result.bindAsync (fun _ ->
@@ -17,7 +17,14 @@ let createSnapshot (gameId : int) (request : CreateSnapshotRequest) (session : S
         |> thenBindAsync (fun game -> 
             EventRepository.getEvents (gameId, EventsQuery.empty)
             |> thenBindAsync (fun history -> 
-                SnapshotRepository.createSnapshot request (game, history)
+                let request = 
+                    {
+                        game = game
+                        history = history
+                        description = request.description
+                        createdByUserId = session.user.id
+                    }
+                SnapshotRepository.createSnapshot request
             )
         )
         |> thenBindAsync (fun snapshotId ->
@@ -26,21 +33,21 @@ let createSnapshot (gameId : int) (request : CreateSnapshotRequest) (session : S
         )
     )
     
-[<ClientFunction(HttpMethod.Get, Routes.snapshots, ClientSection.Misc)>]
+[<ClientFunction(HttpMethod.Get, Routes.snapshots, ClientSection.Snapshots)>]
 let getSnapshotsForGame (gameId : int) (session : Session) : SnapshotInfo list AsyncHttpResult =
     SecurityService.ensureHas Privilege.Snapshots session
     |> Result.bindAsync (fun _ ->
         SnapshotRepository.getSnapshotsForGame gameId
     )
     
-[<ClientFunction(HttpMethod.Delete, Routes.snapshot, ClientSection.Misc)>]
+[<ClientFunction(HttpMethod.Delete, Routes.snapshot, ClientSection.Snapshots)>]
 let deleteSnapshot (gameId : int) (snapshotId : int) (session : Session) : Unit AsyncHttpResult =
     SecurityService.ensureHas Privilege.Snapshots session
     |> Result.bindAsync (fun _ ->
         SnapshotRepository.deleteSnapshot snapshotId
     )
 
-[<ClientFunction(HttpMethod.Post, Routes.snapshotLoad, ClientSection.Misc)>]
+[<ClientFunction(HttpMethod.Post, Routes.snapshotLoad, ClientSection.Snapshots)>]
 let loadSnapshot (gameId : int) (snapshotId : int) (session : Session) : Unit AsyncHttpResult =
     SecurityService.ensureHas Privilege.Snapshots session
     |> Result.bindAsync (fun _ ->

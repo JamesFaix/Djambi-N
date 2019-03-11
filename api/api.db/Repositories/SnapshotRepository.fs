@@ -37,17 +37,17 @@ let deleteSnapshot (snapshotId : int) : Unit AsyncHttpResult =
 
     queryUnit(cmd, "Snapshot")
 
-let createSnapshot (request : CreateSnapshotRequest) (game : Game, history : Event list) : int AsyncHttpResult =
+let createSnapshot (request : InternalCreateSnapshotRequest) : int AsyncHttpResult =
     let jsonModel = 
         {
-            game = game
-            history = history
+            game = request.game
+            history = request.history
         }
 
     let json = JsonUtility.serialize jsonModel
 
     let param = DynamicParameters()
-                    .add("GameId", game.id)
+                    .add("GameId", request.game.id)
                     .add("CreatedByUserId", request.createdByUserId)
                     .add("Description", request.description)
                     .add("SnapshotJson", json)
