@@ -161,6 +161,7 @@ type EventKind =
     | TurnCommitted
     | TurnReset
     | CellSelected
+    | PlayerStatusChanged
 
 [<ClientType(ClientSection.Events)>]
 type Event =
