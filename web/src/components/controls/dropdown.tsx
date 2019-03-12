@@ -1,8 +1,13 @@
 import * as React from 'react';
 
+export interface DropdownItem<T> {
+    value : T,
+    label : string
+}
+
 export interface DropdownProps<T> {
     name : string,
-    items : [string, T][],
+    items : DropdownItem<T>[],
     onChange(name : string, item : T) : void,
     currentValue : T
 }
@@ -10,11 +15,11 @@ export interface DropdownProps<T> {
 export default class Dropdown<T> extends React.Component<DropdownProps<T>> {
 
     private getLabelOfValue(value : T) : string {
-        return this.props.items.find(x => x[1] === value)[0];
+        return this.props.items.find(x => x.value === value).label;
     }
 
     private getValueOfLabel(label : string) : T {
-        return this.props.items.find(x => x[0] === label)[1];
+        return this.props.items.find(x => x.label === label).value;
     }
 
     private onChange(event : React.ChangeEvent<HTMLSelectElement>) {
@@ -34,9 +39,9 @@ export default class Dropdown<T> extends React.Component<DropdownProps<T>> {
                 this.props.items.map((item, i) =>
                     <option
                         key={"option" + i}
-                        value={item[0]}
+                        value={item.label}
                     >
-                    {item[0]}
+                    {item.label}
                     </option>
                 )
             }

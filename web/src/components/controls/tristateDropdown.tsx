@@ -9,11 +9,20 @@ export interface TristateDropdownProps {
 
 export default class TristateDropdown extends React.Component<TristateDropdownProps> {
 
-    private static readonly items : [string, boolean][] =
+    private static readonly items =
         [
-            ["(Any)", null],
-            ["Yes", true],
-            ["No", false]
+            {
+                label: "(Any)",
+                value: null
+            },
+            {
+                label: "Yes",
+                value: true
+            },
+            {
+                label: "No",
+                value: false
+            }
         ];
 
     render() {

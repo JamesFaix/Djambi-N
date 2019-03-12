@@ -2,8 +2,9 @@ import * as React from 'react';
 import * as Modal from 'react-modal';
 import ActionButton from '../../controls/actionButton';
 import { Player, PlayerStatus } from '../../../api/model';
-import Dropdown from '../../controls/dropdown';
+import Dropdown, { DropdownItem } from '../../controls/dropdown';
 import * as Sprintf from 'sprintf-js';
+import { Kernel as K } from '../../../kernel';
 
 export interface StatusChangeModalProps {
     onOk : (playerId : number) => void,
@@ -39,60 +40,208 @@ export default class StatusChangeModal extends React.Component<StatusChangeModal
     }
 
     render() {
-       return (
+
+        const style = {
+            content : {
+            top: "30%",
+            bottom: "30%",
+            left: "30%",
+            right: "30%"
+            }
+        };
+
+        return (
             <Modal
                 isOpen={true}
+                style={style}
             >
-                {this.renderMessage()}
+                {this.renderHeader()}
+                {this.renderBody()}
                 <br/>
-                {this.renderPlayerDropdown()}
-                <div>
-                    {this.renderOkButton()}
-                    <ActionButton
-                        label="Cancel"
-                        onClick={() => this.props.onCancel()}
-                    />
+                <div className={K.classes.combine([K.classes.table, K.classes.centerAligned])}>
+                    {this.renderPlayerDropdown()}
+                    <br/>
+                    <br/>
+                    <div>
+                        {this.renderOkButton()}
+                        <ActionButton
+                            label="No, go back to the game"
+                            onClick={() => this.props.onCancel()}
+                        />
+                    </div>
                 </div>
             </Modal>
         );
     }
 
-    private renderMessage() {
+    private renderHeader() {
         const p = this.state.actingPlayer;
-        const status = this.props.targetStatus;
 
-        if (status === PlayerStatus.AcceptsDraw) {
-            if (p === null) {
-                return <div>{Sprintf.sprintf("Select a player to accept a draw.")}</div>;
-            } else {
+        let text : string;
+
+        if (p === null) {
+            switch (this.props.targetStatus) {
+                case PlayerStatus.AcceptsDraw:
+                    text = "Select a player to accept a draw.";
+                    break;
+                case PlayerStatus.Alive:
+                    text = "Select a player to decline a draw.";
+                    break;
+                case PlayerStatus.Conceded:
+                    text = "Select a player to concede";
+                    break;
+                default:
+                    throw "Unsupported player status";
+            }
+        } else {
+            switch (this.props.targetStatus) {
+                case PlayerStatus.AcceptsDraw:
+                    text = Sprintf.sprintf("%s, are you sure you want to accept a draw?", p.name);
+                    break;
+                case PlayerStatus.Alive:
+                    text = Sprintf.sprintf("%s, are you sure you want to decline a draw?", p.name);
+                    break;
+                case PlayerStatus.Conceded:
+                    text = Sprintf.sprintf("%s, are you sure you want to concede?", p.name);
+                    break;
+                default:
+                    throw "Unsupported player status";
+            }
+        }
+
+        return (
+            <div
+                className={K.classes.centerAligned}
+                style={K.styles.bold()}
+            >
+                {text}
+            </div>
+        );
+    }
+
+    private renderBody() {
+        const p = this.state.actingPlayer;
+        if (p === null) {
+            return undefined;
+        }
+
+        switch (this.props.targetStatus) {
+            case PlayerStatus.AcceptsDraw:
                 return (
                     <div>
-                        <p>{Sprintf.sprintf("%s, are you sure you want to accept a draw?", p.name)}</p>
                         <p>
                             If all other remaining players also accept a draw, the game will end and
-                            no one will win or lose. You can undo this as long as all other
+                            no one will win or lose.
+                        </p>
+                        <p>
+                            You can undo this as long as all other
                             remaining players have not already accepted a draw.
                         </p>
                     </div>
                 );
-            }
-        } else if (status === PlayerStatus.Conceded) {
-            if (p === null) {
-                return <div>{Sprintf.sprintf("Select a player to concede.")}</div>;
-            } else {
+
+            case PlayerStatus.Alive:
                 return (
                     <div>
-                        <p>{Sprintf.sprintf("%s, are you sure you want to concede?", p.name)}</p>
                         <p>
-                            This cannot be undone. If it is not currently your turn,
+                            You can accept a draw again later, if you change your mind.
+                        </p>
+                    </div>
+                );
+
+            case PlayerStatus.Conceded:
+                return (
+                    <div>
+                        <p>
+                            This cannot be undone.
+                        </p>
+                        <p>
+                            If it is not currently your turn,
                             this will take effect as soon as your next turn starts.
+                        </p>
+                        <p>
                             You will still be able to watch other players finish the game.
                         </p>
                     </div>
                 );
-            }
-        } else {
-            throw "Unsupported player status";
+
+            default:
+                throw "Unsupported player status";
+        }
+    }
+
+    private renderMessage() {
+        const p = this.state.actingPlayer;
+
+        switch (this.props.targetStatus) {
+            case PlayerStatus.AcceptsDraw:
+                if (p === null) {
+                    return (
+                        <div className={K.classes.centerAligned}>
+                            Select a player to accept a draw.
+                        </div>
+                    );
+                } else {
+                    return (
+                        <div>
+                            <p>{Sprintf.sprintf("%s, are you sure you want to accept a draw?", p.name)}</p>
+                            <p>
+                                If all other remaining players also accept a draw, the game will end and
+                                no one will win or lose.
+                            </p>
+                            <p>
+                                You can undo this as long as all other
+                                remaining players have not already accepted a draw.
+                            </p>
+                        </div>
+                    );
+                }
+
+            case PlayerStatus.Alive:
+                if (p === null) {
+                    return (
+                        <div className={K.classes.centerAligned}>
+                            Select a player to decline a draw.
+                        </div>
+                    );
+                } else {
+                    return (
+                        <div>
+                            <p>{Sprintf.sprintf("%s, are you sure you want to decline a draw?", p.name)}</p>
+                            <p>
+                                You can accept a draw again later, if you change your mind.
+                            </p>
+                        </div>
+                    );
+                }
+
+            case PlayerStatus.Conceded:
+                if (p === null) {
+                    return (
+                        <div className={K.classes.centerAligned}>
+                            Select a player to concede.
+                        </div>
+                    );
+                } else {
+                    return (
+                        <div>
+                            <p>{Sprintf.sprintf("%s, are you sure you want to concede?", p.name)}</p>
+                            <p>
+                                This cannot be undone.
+                            </p>
+                            <p>
+                                If it is not currently your turn,
+                                this will take effect as soon as your next turn starts.
+                            </p>
+                            <p>
+                                You will still be able to watch other players finish the game.
+                            </p>
+                        </div>
+                    );
+                }
+
+            default:
+                throw "Unsupported player status";
         }
     }
 
@@ -101,24 +250,34 @@ export default class StatusChangeModal extends React.Component<StatusChangeModal
             return undefined;
         }
 
-        let items : [string, Player][] = [];
-        items.push(["(Choose player)", null]);
+        let items : DropdownItem<Player>[] = [];
+
+        items.push({
+            label: "(Choose player)",
+            value: null
+        });
+
         items = items.concat(
             this.props.playerOptions
             .map(p => {
-                //Without the annotation, TypeScript interprets this
-                //as an array of a union type rather than a single tuple type.
-                let tup : [string, Player] = [p.name, p];
-                return tup;
+                const result = {
+                    label: p.name,
+                    value: p
+                };
+                return result;
             }));
 
-        const current = items
-            .find(tup => tup[1].id === this.state.actingPlayer.id);
+        const current = this.state.actingPlayer !== null
+            ? items
+                .find(x => x.value !== null
+                    && x.value.id === this.state.actingPlayer.id)
+                .value
+            : null;
 
         return (
             <Dropdown
                 name="ActingPlayer"
-                currentValue={current[1]}
+                currentValue={current}
                 onChange={(_, player) => this.setState({actingPlayer: player})}
                 items={items}
             />
@@ -132,7 +291,7 @@ export default class StatusChangeModal extends React.Component<StatusChangeModal
 
         return (
             <ActionButton
-                label="OK"
+                label="Yes, I'm sure"
                 onClick={() => this.props.onOk(this.state.actingPlayer.id)}
             />
         );

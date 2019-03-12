@@ -1,4 +1,4 @@
-import { User, Game, Privilege, TurnStatus, GameStatus, PlayerStatus } from "./api/model";
+import { User, Game, Privilege, TurnStatus, GameStatus, PlayerStatus, Player } from "./api/model";
 
 export interface PlayerAction {
     name : string,
@@ -16,8 +16,7 @@ export enum HiddenActionsState {
 export interface PlayerActionsController {
     commitTurn : () => void,
     resetTurn : () => void,
-    openAcceptDrawModal : () => void,
-    openRevokeDrawModal : () => void,
+    setStatus : (status : PlayerStatus) => void,
     navigateToSnapshotsPage : () => void
 }
 
@@ -74,29 +73,75 @@ export default class PlayerActionsService {
             && this.canParticipateInGame();
     }
 
-    private anyControllablePlayersOfStatus(status : PlayerStatus) : boolean {
+    private getControllablePlayers() {
+        if (this.hasPrivilege(Privilege.OpenParticipation)) {
+            return this.game.players;
+        } else {
+            return this.game.players
+                .filter(p => p.userId === this.user.id);
+        }
+    }
+
+    public controllablePlayersThatCanChangeToStatus(status : PlayerStatus) : Player[] {
+        if (this.game.status !== GameStatus.Started) {
+            return [];
+        }
+
+        const players = this.getControllablePlayers();
+
+        switch (status) {
+            case PlayerStatus.Alive:
+                return players.filter(p => p.status === PlayerStatus.AcceptsDraw);
+
+            case PlayerStatus.AcceptsDraw:
+                return players.filter(p => p.status === PlayerStatus.Alive);
+
+            case PlayerStatus.Conceded:
+                return players.filter(p => p.status === PlayerStatus.AcceptsDraw
+                                        || p.status === PlayerStatus.Alive);
+
+            default:
+                return [];
+        }
+    }
+
+    private anyControllablePlayersOfStatus(status : PlayerStatus) {
         if (this.game.status !== GameStatus.Started) {
             return false;
         }
 
-        if (this.hasPrivilege(Privilege.OpenParticipation)) {
-            return this.game.players
-                .filter(p => p.status === status)
-                .length > 0;
-        } else {
-            return this.game.players
-                .filter(p => p.status === status
-                        && p.userId === this.user.id)
-                .length > 0;
+        return this.getControllablePlayers()
+            .filter(p => p.status === status)
+            .length > 0;
+    }
+
+    private canChangeStatus(status : PlayerStatus) {
+        if (this.game.status !== GameStatus.Started) {
+            return false;
         }
-    }
 
-    private canAcceptDraw() {
-        return this.anyControllablePlayersOfStatus(PlayerStatus.Alive);
-    }
+        const players = this.getControllablePlayers();
 
-    private canRevokeDraw() {
-        return this.anyControllablePlayersOfStatus(PlayerStatus.AcceptsDraw);
+        switch (status) {
+            case PlayerStatus.AcceptsDraw:
+                return players
+                    .filter(p => p.status === PlayerStatus.Alive)
+                    .length > 0;
+
+            case PlayerStatus.Alive:
+                return players
+                    .filter(p => p.status === PlayerStatus.AcceptsDraw)
+                    .length > 0;
+
+            case PlayerStatus.Conceded:
+                return players
+                    .filter(p => p.status === PlayerStatus.AcceptsDraw
+                              || p.status === PlayerStatus.Alive)
+                    .length > 0;
+
+            default:
+                return false;
+        }
     }
 
     private createActions() : PlayerAction[] {
@@ -115,15 +160,21 @@ export default class PlayerActionsService {
             },
             {
                 name: "Accept Draw",
-                onClick: () => this.controller.openAcceptDrawModal(),
+                onClick: () => this.controller.setStatus(PlayerStatus.AcceptsDraw),
                 hideByDefault: true,
-                isAvailable: this.canAcceptDraw()
+                isAvailable: this.canChangeStatus(PlayerStatus.AcceptsDraw)
             },
             {
                 name: "Revoke Draw",
-                onClick: () => this.controller.openRevokeDrawModal(),
+                onClick: () => this.controller.setStatus(PlayerStatus.Alive),
                 hideByDefault: true,
-                isAvailable: this.canRevokeDraw()
+                isAvailable: this.canChangeStatus(PlayerStatus.Alive)
+            },
+            {
+                name: "Concede",
+                onClick: () => this.controller.setStatus(PlayerStatus.Conceded),
+                hideByDefault: true,
+                isAvailable: this.canChangeStatus(PlayerStatus.Conceded)
             },
             {
                 name: "Snapshots",

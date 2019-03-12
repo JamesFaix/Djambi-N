@@ -18,12 +18,14 @@ import {
     EventsQuery,
     Game,
     ResultsDirection,
-    User
+    User,
+    PlayerStatus
     } from '../../../api/model';
 import { Kernel as K } from '../../../kernel';
 import ActionPanel from './actionPanel';
 import PlayerActionsService from '../../../playerActionsService';
 import { Redirect } from 'react-router';
+import StatusChangeModal from './statusChangeModal';
 
 export interface GamePageProps {
     user : User,
@@ -34,7 +36,8 @@ export interface GamePageState {
     game : Game,
     boardView : BoardView,
     events : Event[],
-    redirectUrl : string
+    redirectUrl : string,
+    statusChangeModalStatus : PlayerStatus
 }
 
 export default class GamePage extends React.Component<GamePageProps, GamePageState> {
@@ -50,7 +53,8 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
             game: null,
             boardView: null,
             events: [],
-            redirectUrl: null
+            redirectUrl: null,
+            statusChangeModalStatus: null
         };
 
         const windowSize = {
@@ -102,12 +106,8 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
             .then(response => this.updateGame(response.game));
     }
 
-    openAcceptDrawModal() : void {
-        alert("Accept draw?");
-    }
-
-    openRevokeDrawModal() : void {
-        alert("Revoke draw?");
+    setStatus(status : PlayerStatus) : void {
+        this.setState({statusChangeModalStatus: status});
     }
 
     navigateToSnapshotsPage() : void {
@@ -140,6 +140,7 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                 </div>
                 <br/>
                 {this.renderPanels()}
+                {this.renderStatusChangeModal()}
             </div>
         );
     }
@@ -217,6 +218,25 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                     />
                 </div>
             </div>
+        );
+    }
+
+    private renderStatusChangeModal() {
+        const status = this.state.statusChangeModalStatus;
+        if (status === null) {
+            return undefined;
+        }
+
+        const service = new PlayerActionsService(this.props.user, this.state.game, this);
+        const players = service.controllablePlayersThatCanChangeToStatus(status);
+
+        return (
+            <StatusChangeModal
+                onOk={() => null}
+                onCancel={() => null}
+                targetStatus={status}
+                playerOptions={players}
+            />
         );
     }
 }

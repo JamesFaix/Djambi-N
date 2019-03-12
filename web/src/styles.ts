@@ -79,6 +79,10 @@ export class Styles {
         return { display: "grid" };
     }
 
+    public bold() : React.CSSProperties {
+        return { fontWeight: "bold" };
+    }
+
     public combine(styles : React.CSSProperties[]) : React.CSSProperties {
         const len = styles.length;
         switch (len) {
