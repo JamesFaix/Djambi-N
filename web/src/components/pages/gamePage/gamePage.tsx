@@ -87,20 +87,30 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
         }
     }
 
-    private commitTurn() : void {
+    //--- PlayerActionsController ---
+
+    commitTurn() : void {
         K.api
             .commitTurn(this.props.gameId)
             .then(response => this.updateGame(response.game))
             .then(_ => this.updateEvents(this.props.gameId));
     }
 
-    private resetTurn() : void {
+    resetTurn() : void {
         K.api
             .resetTurn(this.props.gameId)
             .then(response => this.updateGame(response.game));
     }
 
-    private navigateToSnapshotsPage() : void {
+    openAcceptDrawModal() : void {
+        alert("Accept draw?");
+    }
+
+    openRevokeDrawModal() : void {
+        alert("Revoke draw?");
+    }
+
+    navigateToSnapshotsPage() : void {
         this.setState({redirectUrl: K.routes.snapshots(this.props.gameId)});
     }
 
@@ -110,6 +120,8 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
             .then(game => this.updateGame(game))
             .then(_ => this.updateEvents(this.props.gameId));
     }
+
+    //--- ---
 
     render() {
         if (this.state.redirectUrl !== null) {
@@ -154,9 +166,7 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
         const playerActionsService = new PlayerActionsService(
             this.props.user,
             this.state.game,
-            () => this.commitTurn(),
-            () => this.resetTurn(),
-            () => this.navigateToSnapshotsPage()
+            this
         );
 
         return (
