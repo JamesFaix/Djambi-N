@@ -19,7 +19,8 @@ import {
     Game,
     ResultsDirection,
     User,
-    PlayerStatus
+    PlayerStatus,
+    Player
     } from '../../../api/model';
 import { Kernel as K } from '../../../kernel';
 import ActionPanel from './actionPanel';
@@ -37,7 +38,8 @@ export interface GamePageState {
     boardView : BoardView,
     events : Event[],
     redirectUrl : string,
-    statusChangeModalStatus : PlayerStatus
+    statusChangeModalStatus : PlayerStatus,
+    statusChangeModalPlayer : Player
 }
 
 export default class GamePage extends React.Component<GamePageProps, GamePageState> {
@@ -54,7 +56,8 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
             boardView: null,
             events: [],
             redirectUrl: null,
-            statusChangeModalStatus: null
+            statusChangeModalStatus: null,
+            statusChangeModalPlayer: null
         };
 
         const windowSize = {
@@ -106,7 +109,7 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
             .then(response => this.updateGame(response.game));
     }
 
-    setStatus(status : PlayerStatus) : void {
+    openStatusModal(status : PlayerStatus) : void {
         this.setState({statusChangeModalStatus: status});
     }
 
@@ -122,6 +125,25 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
     }
 
     //--- ---
+
+    private onModalSelectPlayer(player : Player) {
+        this.setState({statusChangeModalPlayer: player});
+    }
+
+    private onModalCancel() {
+        this.setState({
+            statusChangeModalStatus: null,
+            statusChangeModalPlayer: null
+        });
+    }
+
+    private onModalOk() {
+        K.api
+            .updatePlayerStatus(this.props.gameId, this.state.statusChangeModalPlayer.id, this.state.statusChangeModalStatus)
+            .then(response => this.updateGame(response.game))
+            .then(_ => this.updateEvents(this.props.gameId))
+            .then(_ => this.onModalCancel());
+    }
 
     render() {
         if (this.state.redirectUrl !== null) {
@@ -232,10 +254,11 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
 
         return (
             <StatusChangeModal
-                onOk={() => null}
-                onCancel={() => null}
                 targetStatus={status}
                 playerOptions={players}
+                setPlayer={player => this.onModalSelectPlayer(player)}
+                onOk={() => this.onModalOk()}
+                onCancel={() => this.onModalCancel()}
             />
         );
     }

@@ -10,7 +10,8 @@ export interface StatusChangeModalProps {
     onOk : (playerId : number) => void,
     onCancel : () => void,
     targetStatus : PlayerStatus,
-    playerOptions : Player[]
+    playerOptions : Player[],
+    setPlayer: (player : Player) => void
 }
 
 export interface StatusChangeModalState {
@@ -38,6 +39,13 @@ export default class StatusChangeModal extends React.Component<StatusChangeModal
                 break;
         }
     }
+
+    private onPlayerSelected(player : Player) {
+        this.props.setPlayer(player);
+        this.setState({actingPlayer: player});
+    }
+
+    //--- Rendering ---
 
     render() {
 
@@ -170,81 +178,6 @@ export default class StatusChangeModal extends React.Component<StatusChangeModal
         }
     }
 
-    private renderMessage() {
-        const p = this.state.actingPlayer;
-
-        switch (this.props.targetStatus) {
-            case PlayerStatus.AcceptsDraw:
-                if (p === null) {
-                    return (
-                        <div className={K.classes.centerAligned}>
-                            Select a player to accept a draw.
-                        </div>
-                    );
-                } else {
-                    return (
-                        <div>
-                            <p>{Sprintf.sprintf("%s, are you sure you want to accept a draw?", p.name)}</p>
-                            <p>
-                                If all other remaining players also accept a draw, the game will end and
-                                no one will win or lose.
-                            </p>
-                            <p>
-                                You can undo this as long as all other
-                                remaining players have not already accepted a draw.
-                            </p>
-                        </div>
-                    );
-                }
-
-            case PlayerStatus.Alive:
-                if (p === null) {
-                    return (
-                        <div className={K.classes.centerAligned}>
-                            Select a player to decline a draw.
-                        </div>
-                    );
-                } else {
-                    return (
-                        <div>
-                            <p>{Sprintf.sprintf("%s, are you sure you want to decline a draw?", p.name)}</p>
-                            <p>
-                                You can accept a draw again later, if you change your mind.
-                            </p>
-                        </div>
-                    );
-                }
-
-            case PlayerStatus.Conceded:
-                if (p === null) {
-                    return (
-                        <div className={K.classes.centerAligned}>
-                            Select a player to concede.
-                        </div>
-                    );
-                } else {
-                    return (
-                        <div>
-                            <p>{Sprintf.sprintf("%s, are you sure you want to concede?", p.name)}</p>
-                            <p>
-                                This cannot be undone.
-                            </p>
-                            <p>
-                                If it is not currently your turn,
-                                this will take effect as soon as your next turn starts.
-                            </p>
-                            <p>
-                                You will still be able to watch other players finish the game.
-                            </p>
-                        </div>
-                    );
-                }
-
-            default:
-                throw "Unsupported player status";
-        }
-    }
-
     private renderPlayerDropdown() {
         if (this.props.playerOptions.length < 2) {
             return undefined;
@@ -278,7 +211,7 @@ export default class StatusChangeModal extends React.Component<StatusChangeModal
             <Dropdown
                 name="ActingPlayer"
                 currentValue={current}
-                onChange={(_, player) => this.setState({actingPlayer: player})}
+                onChange={(_, player) => this.onPlayerSelected(player)}
                 items={items}
             />
         );

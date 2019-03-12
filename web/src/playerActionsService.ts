@@ -16,7 +16,7 @@ export enum HiddenActionsState {
 export interface PlayerActionsController {
     commitTurn : () => void,
     resetTurn : () => void,
-    setStatus : (status : PlayerStatus) => void,
+    openStatusModal : (status : PlayerStatus) => void,
     navigateToSnapshotsPage : () => void
 }
 
@@ -160,19 +160,19 @@ export default class PlayerActionsService {
             },
             {
                 name: "Accept Draw",
-                onClick: () => this.controller.setStatus(PlayerStatus.AcceptsDraw),
+                onClick: () => this.controller.openStatusModal(PlayerStatus.AcceptsDraw),
                 hideByDefault: true,
                 isAvailable: this.canChangeStatus(PlayerStatus.AcceptsDraw)
             },
             {
                 name: "Revoke Draw",
-                onClick: () => this.controller.setStatus(PlayerStatus.Alive),
+                onClick: () => this.controller.openStatusModal(PlayerStatus.Alive),
                 hideByDefault: true,
                 isAvailable: this.canChangeStatus(PlayerStatus.Alive)
             },
             {
                 name: "Concede",
-                onClick: () => this.controller.setStatus(PlayerStatus.Conceded),
+                onClick: () => this.controller.openStatusModal(PlayerStatus.Conceded),
                 hideByDefault: true,
                 isAvailable: this.canChangeStatus(PlayerStatus.Conceded)
             },
