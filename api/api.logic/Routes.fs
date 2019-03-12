@@ -11,6 +11,9 @@
  let private create2<'a, 'b> (value : string) : PrintfFormat<'a->'b->obj, obj, obj, obj, 'a * 'b> = 
     PrintfFormat<'a->'b->obj, obj, obj, obj, 'a * 'b>(value)
 
+ let private create3<'a, 'b, 'c> (value : string) : PrintfFormat<'a->'b->'c->obj, obj, obj, obj, 'a * 'b * 'c> = 
+    PrintfFormat<'a->'b->'c->obj, obj, obj, obj, 'a * 'b *'c>(value)
+
  [<Literal>]
  let sessions = "/sessions"
 
@@ -53,6 +56,10 @@
  [<Literal>]
  let player = "/games/%i/players/%i"
  let playerFormat = create2<int, int>(player)
+
+ [<Literal>]
+ let playerStatusChange = "/games/%i/players/%i/status/%s"
+ let playerStatusChangeFormat = create3<int, int, string>(playerStatusChange)
 
  [<Literal>]
  let startGame = "/games/%i/start-request"

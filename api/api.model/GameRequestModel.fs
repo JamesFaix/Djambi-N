@@ -35,7 +35,14 @@ module CreatePlayerRequest =
             userId = None
             name = Some name
         }   
-        
+    
+type PlayerStatusChangeRequest =
+    {
+        gameId : int
+        playerId : int
+        status : PlayerStatus
+    }
+
 [<CLIMutable>]
 [<ClientType(ClientSection.Game)>]
 type GamesQuery =

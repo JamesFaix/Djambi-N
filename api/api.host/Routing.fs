@@ -31,11 +31,12 @@ module Routing =
                     POST >=> route Routes.games >=> GameController.createGame
                     GET >=> routef Routes.gameFormat GameController.getGame
                     PUT >=> routef Routes.gameParametersFormat GameController.updateGameParameters
+                    POST >=> routef Routes.startGameFormat GameController.startGame
 
+                //Players
                     POST >=> routef Routes.playersFormat GameController.addPlayer
                     DELETE >=> routef Routes.playerFormat GameController.removePlayer
-
-                    POST >=> routef Routes.startGameFormat GameController.startGame
+                    PUT >=> routef Routes.playerStatusChangeFormat GameController.updatePlayerStatus
 
                 //Turn actions
                     POST >=> routef Routes.selectCellFormat GameController.selectCell

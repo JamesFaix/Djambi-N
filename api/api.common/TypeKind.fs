@@ -1,4 +1,4 @@
-﻿namespace Djambi.ClientGenerator
+﻿namespace Djambi.Api.Common
     
 open System
 open FSharp.Reflection

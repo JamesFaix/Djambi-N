@@ -117,3 +117,20 @@ let fillEmptyPlayerSlots (game : Game) : Effect list AsyncHttpResult =
         |> thenMap getNeutralPlayerNamesToUse
         |> thenMap (Seq.map (fun name -> PlayerAddedEffect.fromRequest <| CreatePlayerRequest.neutral name ))    
         |> thenMap Seq.toList
+
+let private allowedPlayerStatusTransitions : (PlayerStatus * PlayerStatus) list = 
+    []
+
+let getUpdatePlayerStatusEvent (game : Game, request : PlayerStatusChangeRequest) (session : Session) : CreateEventRequest HttpResult = 
+    SecurityService.ensurePlayerOrHas OpenParticipation session game
+    |> Result.bind (fun _ ->
+        let player = game.players |> List.find (fun p -> p.id = request.playerId)
+        let oldStatus = player.status
+        let newStatus = request.status
+
+        if oldStatus = newStatus
+            then Error <| HttpException(400, "Cannot change player status to current status.")
+        elif allowedPlayerStatusTransitions |> List.contains (oldStatus, newStatus) |> not
+            then Error <| HttpException(400, "Status transition not allowed.")
+        else Error <| HttpException(500, "Not yet implemented.")
+    )
