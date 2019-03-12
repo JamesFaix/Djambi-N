@@ -253,6 +253,7 @@ export enum EventKind {
 	GameStarted = "GameStarted",
 	PlayerJoined = "PlayerJoined",
 	PlayerRemoved = "PlayerRemoved",
+	PlayerStatusChanged = "PlayerStatusChanged",
 	TurnCommitted = "TurnCommitted",
 	TurnReset = "TurnReset",
 }

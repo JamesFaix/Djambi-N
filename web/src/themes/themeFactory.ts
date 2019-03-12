@@ -33,6 +33,7 @@ export default class ThemeFactory {
 
             eventMessageGameStarted : "Game started",
             eventMessageTurnCommitted : "%(player)s took a turn",
+            eventMessagePlayerStatusChanged : "%(player)s changed their status",
 
             pieceImageAssassin : "../resources/daggerEmoji.png",
             pieceImageChief : "../resources/crownEmoji.png",
@@ -106,7 +107,7 @@ export default class ThemeFactory {
             effectMessageTurnCyclePlayerRoseToPower : null,
             eventMessageGameStarted : null,
             eventMessageTurnCommitted : null,
-
+            eventMessagePlayerStatusChanged: null,
 
             pieceImageAssassin : null,
             pieceImageChief : null,

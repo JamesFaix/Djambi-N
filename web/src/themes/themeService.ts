@@ -157,6 +157,8 @@ export default class ThemeService {
                 return this.getValue(t => t.eventMessageGameStarted);
             case EventKind.TurnCommitted:
                 return this.getValue(t => t.eventMessageTurnCommitted);
+            case EventKind.PlayerStatusChanged:
+                return this.getValue(t => t.eventMessagePlayerStatusChanged);
             default:
                 throw "Unsupported event kind.";
         }

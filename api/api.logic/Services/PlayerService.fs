@@ -118,19 +118,46 @@ let fillEmptyPlayerSlots (game : Game) : Effect list AsyncHttpResult =
         |> thenMap (Seq.map (fun name -> PlayerAddedEffect.fromRequest <| CreatePlayerRequest.neutral name ))    
         |> thenMap Seq.toList
 
-let private allowedPlayerStatusTransitions : (PlayerStatus * PlayerStatus) list = 
-    []
-
 let getUpdatePlayerStatusEvent (game : Game, request : PlayerStatusChangeRequest) (session : Session) : CreateEventRequest HttpResult = 
-    SecurityService.ensurePlayerOrHas OpenParticipation session game
-    |> Result.bind (fun _ ->
-        let player = game.players |> List.find (fun p -> p.id = request.playerId)
-        let oldStatus = player.status
-        let newStatus = request.status
+    if game.status <> Started then
+        Error <| HttpException(400, "Cannot change player status unless game is Started.")
+    else    
+        SecurityService.ensurePlayerOrHas OpenParticipation session game
+        |> Result.bind (fun _ ->
+            let player = game.players |> List.find (fun p -> p.id = request.playerId)
+            let oldStatus = player.status
+            let newStatus = request.status
 
-        if oldStatus = newStatus
-            then Error <| HttpException(400, "Cannot change player status to current status.")
-        elif allowedPlayerStatusTransitions |> List.contains (oldStatus, newStatus) |> not
-            then Error <| HttpException(400, "Status transition not allowed.")
-        else Error <| HttpException(500, "Not yet implemented.")
-    )
+            if oldStatus = newStatus
+                then Error <| HttpException(400, "Cannot change player status to current status.")
+            else 
+                let event = {
+                        kind = EventKind.PlayerStatusChanged
+                        effects = [ 
+                            Effect.PlayerStatusChanged { 
+                                oldStatus = oldStatus
+                                newStatus = newStatus
+                                playerId = player.id 
+                            } 
+                        ]
+                        createdByUserId = session.user.id
+                        actingPlayerId = Some request.playerId
+                    }
+
+                match (oldStatus, newStatus) with
+                | (Alive, AcceptsDraw) ->
+                    let nonAcceptingPlayers = game.players |> List.filter (fun p -> p.status = Alive)
+                    if nonAcceptingPlayers.IsEmpty
+                    then
+                        //If accepting draw, and everyone has accepted
+                        let f = Effect.GameStatusChanged { oldValue = Started; newValue = Finished }
+                        Ok { event with effects = List.append event.effects [f] }
+                    else
+                        //If accepting draw, and not the last person to accept
+                        Ok event
+                | (AcceptsDraw, Alive) ->
+                    //If revoking draw, just change status
+                    Ok event
+                | _ -> 
+                    Error <| HttpException(400, "Player status transition not allowed.")
+        )

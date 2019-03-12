@@ -30,6 +30,7 @@ export default interface Theme {
 
     eventMessageGameStarted : string,
     eventMessageTurnCommitted : string,
+    eventMessagePlayerStatusChanged : string,
 
     pieceImageAssassin : string,
     pieceImageChief : string,
