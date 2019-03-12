@@ -73,6 +73,7 @@ let private eventKindsMap =
         6uy, EventKind.TurnCommitted
         7uy, EventKind.TurnReset
         8uy, EventKind.CellSelected
+        9uy, EventKind.PlayerStatusChanged
     ]
 
 let mapEventKindId (eventKindId : byte) : EventKind =
