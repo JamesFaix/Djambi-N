@@ -75,6 +75,16 @@ let addPlayer (gameId : int) (request : CreatePlayerRequest) (session : Session)
 [<ClientFunction(HttpMethod.Delete, Routes.player, ClientSection.Player)>]
 let removePlayer (gameId : int, playerId : int) (session : Session) : StateAndEventResponse AsyncHttpResult =
     processEvent gameId (fun game -> PlayerService.getRemovePlayerEvent (game, playerId) session)
+    
+[<ClientFunction(HttpMethod.Put, Routes.playerStatusChange, ClientSection.Player)>]
+let updatePlayerStatus (gameId : int, playerId : int, status : PlayerStatus) (session : Session) : StateAndEventResponse AsyncHttpResult =
+    let request =   
+        {
+            gameId = gameId
+            playerId = playerId
+            status = status
+        }    
+    processEvent request.gameId (fun game -> PlayerService.getUpdatePlayerStatusEvent (game, request) session)
 
 [<ClientFunction(HttpMethod.Post, Routes.startGame, ClientSection.Game)>]
 let startGame (gameId: int) (session : Session) : StateAndEventResponse AsyncHttpResult =

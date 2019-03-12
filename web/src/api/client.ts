@@ -128,6 +128,12 @@ export default class ApiClient {
 			HttpMethod.Delete, route);
 	}
 
+	async updatePlayerStatus(gameId : number, playerId : number, status : Model.PlayerStatus) : Promise<Model.StateAndEventResponse> {
+		const route = "/games/" + gameId + "/players/" + playerId + "/status/" + status + "";
+		return await ApiClientCore.sendRequest<{}, Model.StateAndEventResponse>(
+			HttpMethod.Put, route);
+	}
+
 //-------- TURN --------
 
 	async commitTurn(gameId : number) : Promise<Model.StateAndEventResponse> {
