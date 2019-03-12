@@ -52,6 +52,7 @@ export default class HistoryTable extends React.Component<HistoryTableProps> {
         switch (event.kind) {
             case EventKind.GameStarted:
             case EventKind.TurnCommitted:
+            case EventKind.PlayerStatusChanged:
                 return true;
             default:
                 return false;

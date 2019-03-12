@@ -118,11 +118,6 @@ let fillEmptyPlayerSlots (game : Game) : Effect list AsyncHttpResult =
         |> thenMap (Seq.map (fun name -> PlayerAddedEffect.fromRequest <| CreatePlayerRequest.neutral name ))    
         |> thenMap Seq.toList
 
-let private allowedPlayerStatusTransitions : (PlayerStatus * PlayerStatus) list = 
-    [
-        (Alive, AcceptsDraw); (AcceptsDraw, Alive)
-    ]
-
 let getUpdatePlayerStatusEvent (game : Game, request : PlayerStatusChangeRequest) (session : Session) : CreateEventRequest HttpResult = 
     if game.status <> Started then
         Error <| HttpException(400, "Cannot change player status unless game is Started.")
@@ -135,8 +130,6 @@ let getUpdatePlayerStatusEvent (game : Game, request : PlayerStatusChangeRequest
 
             if oldStatus = newStatus
                 then Error <| HttpException(400, "Cannot change player status to current status.")
-            elif allowedPlayerStatusTransitions |> List.contains (oldStatus, newStatus) |> not
-                then Error <| HttpException(400, "Status transition not allowed.")
             else 
                 let event = {
                         kind = EventKind.PlayerStatusChanged
@@ -166,5 +159,5 @@ let getUpdatePlayerStatusEvent (game : Game, request : PlayerStatusChangeRequest
                     //If revoking draw, just change status
                     Ok event
                 | _ -> 
-                    Error <| HttpException(500, "Not yet implemented.")
+                    Error <| HttpException(400, "Player status transition not allowed.")
         )

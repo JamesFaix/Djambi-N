@@ -162,6 +162,11 @@ export default class CopyService {
                     player: actingPlayerName
                 });
 
+            case EventKind.PlayerStatusChanged:
+                return Sprintf.sprintf(template, {
+                    player: actingPlayerName
+                });
+
             default:
                 throw "Unsupported event kind.";
         }
