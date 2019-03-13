@@ -118,6 +118,40 @@ let fillEmptyPlayerSlots (game : Game) : Effect list AsyncHttpResult =
         |> thenMap (Seq.map (fun name -> PlayerAddedEffect.fromRequest <| CreatePlayerRequest.neutral name ))    
         |> thenMap Seq.toList
 
+let private getFinalAcceptDrawEffects(game : Game, request : PlayerStatusChangeRequest) : Effect list =
+    let otherLivingPlayers = 
+        game.players 
+        |> List.filter (fun p -> 
+            p.id <> request.playerId &&
+            p.status = Alive
+        )
+
+    let nonNeutralPlayers = 
+        otherLivingPlayers
+        |> List.filter (fun p -> p.userId.IsSome)
+
+    let neutralPlayers = 
+        otherLivingPlayers
+        |> List.filter (fun p -> p.userId.IsNone)
+
+    if nonNeutralPlayers.IsEmpty
+    then
+        //If accepting draw, and everyone has accepted
+        let neutralPlayerConcedeEffects = 
+            neutralPlayers 
+            |> List.map (fun p -> 
+                Effect.PlayerStatusChanged{ 
+                    playerId = p.id
+                    oldStatus=p.status
+                    newStatus=Conceded
+                }
+            )
+
+        let finalEffect = Effect.GameStatusChanged { oldValue = Started; newValue = Finished }
+        let fx = List.append neutralPlayerConcedeEffects [finalEffect]
+        fx
+    else [] //If not last player to accept, nothing special happens
+   
 let getUpdatePlayerStatusEvent (game : Game, request : PlayerStatusChangeRequest) (session : Session) : CreateEventRequest HttpResult = 
     if game.status <> Started then
         Error <| HttpException(400, "Cannot change player status unless game is Started.")
@@ -146,46 +180,13 @@ let getUpdatePlayerStatusEvent (game : Game, request : PlayerStatusChangeRequest
 
                 match (oldStatus, newStatus) with
                 | (Alive, AcceptsDraw) ->
-                    let otherLivingPlayers = 
-                        game.players 
-                        |> List.filter (fun p -> 
-                            p.id <> request.playerId &&
-                            p.status = Alive
-                        )
-
-                    let nonNeutralPlayers = 
-                        otherLivingPlayers
-                        |> List.filter (fun p -> p.userId.IsSome)
-
-                    let neutralPlayers = 
-                        otherLivingPlayers
-                        |> List.filter (fun p -> p.userId.IsNone)
-
-                    if nonNeutralPlayers.IsEmpty
-                    then
-                        //If accepting draw, and everyone has accepted
-
-                        let neutralPlayerConcedeEffects = 
-                            neutralPlayers 
-                            |> List.map (fun p -> 
-                                Effect.PlayerStatusChanged{ 
-                                    playerId = p.id
-                                    oldStatus=p.status
-                                    newStatus=Conceded
-                                }
-                            )
-
-                        let finalEffect = Effect.GameStatusChanged { oldValue = Started; newValue = Finished }
-
-                        let fx = primaryEffect :: neutralPlayerConcedeEffects
-                        let fx = List.append fx [finalEffect]
-                        Ok { event with effects = fx }
-                    else
-                        //If accepting draw, and not the last person to accept
-                        Ok event
+                    let finalAcceptDrawEffects = getFinalAcceptDrawEffects (game, request)
+                    Ok { event with effects = primaryEffect :: finalAcceptDrawEffects }
                 | (AcceptsDraw, Alive) ->
                     //If revoking draw, just change status
                     Ok event
+
+
                 | _ -> 
                     Error <| HttpException(400, "Player status transition not allowed.")
         )
