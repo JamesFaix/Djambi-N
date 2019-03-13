@@ -13,6 +13,7 @@ export interface ButtonProps {
     //Content
     label? : string,
     icon? : IconKind,
+    hint?: string,
 
     //Action button properties
     onClick? () : void,
@@ -23,6 +24,25 @@ export interface ButtonProps {
 }
 
 export default class Button extends React.Component<ButtonProps> {
+    constructor(props : ButtonProps) {
+        super(props);
+
+        if (props.label === undefined && props.icon === undefined) {
+            throw "ButtonProps must have either an 'icon' or a 'label'.";
+        }
+
+        if (props.label !== undefined && props.icon !== undefined) {
+            throw "ButtonProps must have either an 'icon' or a 'label', but not both.";
+        }
+
+        if (props.kind === ButtonKind.Action && props.onClick === undefined) {
+            throw "ButtonProps of kind Action must have an 'onClick' callback.";
+        }
+
+        if (props.kind === ButtonKind.Link && props.to === undefined) {
+            throw "ButtonProps of kind Link must have a 'to' url.";
+        }
+    }
 
     private newWindowOnClick(){
         const win = window.open(this.props.to, '_blank');
@@ -38,7 +58,7 @@ export default class Button extends React.Component<ButtonProps> {
             return <Icon kind={this.props.icon}/>;
         }
 
-        throw "";
+        return undefined;
     }
 
     render() {
@@ -46,9 +66,11 @@ export default class Button extends React.Component<ButtonProps> {
             case ButtonKind.Action:
                 return this.renderActionButton();
             case ButtonKind.Link:
-                return this.renderLinkButton();
+                return this.props.newWindow
+                    ? this.renderExternalLinkButton()
+                    : this.renderInternalLinkButton();
             default:
-                throw "";
+                return undefined;
         }
     }
 
@@ -60,21 +82,21 @@ export default class Button extends React.Component<ButtonProps> {
         );
     }
 
-    private renderLinkButton() {
-        if (this.props.newWindow) {
-            return (
-                <button onClick={() => this.newWindowOnClick()}>
+    private renderInternalLinkButton() {
+        return (
+            <Link to={this.props.to}>
+                <button>
                     {this.getContent()}
                 </button>
-            );
-        } else {
-            return (
-                <Link to={this.props.to}>
-                    <button>
-                        {this.getContent()}
-                    </button>
-                </Link>
-            );
-        }
+            </Link>
+        );
+    }
+
+    private renderExternalLinkButton() {
+        return (
+            <button onClick={() => this.newWindowOnClick()}>
+                {this.getContent()}
+            </button>
+        );
     }
 }
