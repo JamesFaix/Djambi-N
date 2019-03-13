@@ -3,9 +3,6 @@ import Button, { ButtonKind } from './button';
 import { IconKind } from '../icon';
 import { Kernel as K } from '../../kernel';
 
-export interface EmptyProps {
-}
-
 export interface LinkButtonProps {
     to : string
 }
@@ -14,7 +11,7 @@ export interface ActionButtonProps {
     onClick : () => void
 }
 
-export class CreateGamePageButton extends React.Component<EmptyProps> {
+export class CreateGamePageButton extends React.Component<{}> {
     render() {
         return (
             <Button
@@ -26,7 +23,7 @@ export class CreateGamePageButton extends React.Component<EmptyProps> {
     }
 }
 
-export class DashboardPageButton extends React.Component<EmptyProps> {
+export class DashboardPageButton extends React.Component<{}> {
     render() {
         return (
             <Button
@@ -50,7 +47,7 @@ export class EnterButton extends React.Component<LinkButtonProps> {
     }
 }
 
-export class FindGamesPageButton extends React.Component<EmptyProps> {
+export class FindGamesPageButton extends React.Component<{}> {
     render() {
         return (
             <Button
@@ -62,7 +59,7 @@ export class FindGamesPageButton extends React.Component<EmptyProps> {
     }
 }
 
-export class HomePageButton extends React.Component<EmptyProps> {
+export class HomePageButton extends React.Component<{}> {
     render() {
         return (
             <Button
@@ -74,7 +71,7 @@ export class HomePageButton extends React.Component<EmptyProps> {
     }
 }
 
-export class LoginPageButton extends React.Component<EmptyProps> {
+export class LoginPageButton extends React.Component<{}> {
     render() {
         return (
             <Button
@@ -86,7 +83,7 @@ export class LoginPageButton extends React.Component<EmptyProps> {
     }
 }
 
-export class MyGamesPageButton extends React.Component<EmptyProps> {
+export class MyGamesPageButton extends React.Component<{}> {
     render() {
         return (
             <Button
@@ -110,7 +107,7 @@ export class ResetButton extends React.Component<ActionButtonProps> {
     }
 }
 
-export class RulesPageButton extends React.Component<EmptyProps> {
+export class RulesPageButton extends React.Component<{}> {
     render() {
         return (
             <Button
@@ -123,7 +120,7 @@ export class RulesPageButton extends React.Component<EmptyProps> {
     }
 }
 
-export class SignupPageButton extends React.Component<EmptyProps> {
+export class SignupPageButton extends React.Component<{}> {
     render() {
         return (
             <Button
