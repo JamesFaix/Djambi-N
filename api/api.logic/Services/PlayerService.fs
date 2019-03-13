@@ -131,27 +131,55 @@ let getUpdatePlayerStatusEvent (game : Game, request : PlayerStatusChangeRequest
             if oldStatus = newStatus
                 then Error <| HttpException(400, "Cannot change player status to current status.")
             else 
+                let primaryEffect = Effect.PlayerStatusChanged { 
+                    oldStatus = oldStatus
+                    newStatus = newStatus
+                    playerId = player.id 
+                } 
+
                 let event = {
-                        kind = EventKind.PlayerStatusChanged
-                        effects = [ 
-                            Effect.PlayerStatusChanged { 
-                                oldStatus = oldStatus
-                                newStatus = newStatus
-                                playerId = player.id 
-                            } 
-                        ]
-                        createdByUserId = session.user.id
-                        actingPlayerId = Some request.playerId
-                    }
+                    kind = EventKind.PlayerStatusChanged
+                    effects = [ primaryEffect ]
+                    createdByUserId = session.user.id
+                    actingPlayerId = Some request.playerId
+                }
 
                 match (oldStatus, newStatus) with
                 | (Alive, AcceptsDraw) ->
-                    let nonAcceptingPlayers = game.players |> List.filter (fun p -> p.status = Alive)
-                    if nonAcceptingPlayers.IsEmpty
+                    let otherLivingPlayers = 
+                        game.players 
+                        |> List.filter (fun p -> 
+                            p.id <> request.playerId &&
+                            p.status = Alive
+                        )
+
+                    let nonNeutralPlayers = 
+                        otherLivingPlayers
+                        |> List.filter (fun p -> p.userId.IsSome)
+
+                    let neutralPlayers = 
+                        otherLivingPlayers
+                        |> List.filter (fun p -> p.userId.IsNone)
+
+                    if nonNeutralPlayers.IsEmpty
                     then
                         //If accepting draw, and everyone has accepted
-                        let f = Effect.GameStatusChanged { oldValue = Started; newValue = Finished }
-                        Ok { event with effects = List.append event.effects [f] }
+
+                        let neutralPlayerConcedeEffects = 
+                            neutralPlayers 
+                            |> List.map (fun p -> 
+                                Effect.PlayerStatusChanged{ 
+                                    playerId = p.id
+                                    oldStatus=p.status
+                                    newStatus=Conceded
+                                }
+                            )
+
+                        let finalEffect = Effect.GameStatusChanged { oldValue = Started; newValue = Finished }
+
+                        let fx = primaryEffect :: neutralPlayerConcedeEffects
+                        let fx = List.append fx [finalEffect]
+                        Ok { event with effects = fx }
                     else
                         //If accepting draw, and not the last person to accept
                         Ok event

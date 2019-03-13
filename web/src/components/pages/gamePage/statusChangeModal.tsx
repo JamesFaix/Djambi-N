@@ -27,15 +27,13 @@ export default class StatusChangeModal extends React.Component<StatusChangeModal
                 throw "Cannot show status change modal if no player options.";
 
             case 1:
-                this.state = {
-                    actingPlayer: props.playerOptions[0]
-                };
+                const p = props.playerOptions[0];
+                this.props.setPlayer(p);
+                this.state = { actingPlayer: p };
                 break;
 
             default:
-                this.state = {
-                    actingPlayer: null
-                };
+                this.state = { actingPlayer: null };
                 break;
         }
     }
