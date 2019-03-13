@@ -148,6 +148,7 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
                 return (
                     <div className={K.classes.centerAligned}>
                         Started
+                        <br/>
                         <EnterButton
                             to={K.routes.game(this.state.game.id)}
                             hint="View game"
