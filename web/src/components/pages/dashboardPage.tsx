@@ -5,6 +5,7 @@ import PageTitle from '../pageTitle';
 import { Kernel as K } from '../../kernel';
 import { Redirect } from 'react-router';
 import { User } from '../../api/model';
+import Icon, { IconKind } from '../icon';
 
 export interface DashboardPageProps {
     user : User,
@@ -35,10 +36,10 @@ export default class DashboardPage extends React.Component<DashboardPageProps> {
                 <PageTitle label={"Welcome, " + this.props.user.name}/>
                 <br/>
                 <div className={K.classes.centerAligned}>
-                    <LinkButton label="My Games" to={K.routes.myGames()}/>
-                    <LinkButton label="Create Game" to={K.routes.createGame()}/>
-                    <LinkButton label="Find Game" to={K.routes.findGame()}/>
-                    <LinkButton label="Rules" to={K.routes.rules()} newWindow={true}/>
+                    <LinkButton icon={IconKind.MyGames} to={K.routes.myGames()}/>
+                    <LinkButton icon={IconKind.New} to={K.routes.createGame()}/>
+                    <LinkButton icon={IconKind.Find} to={K.routes.findGame()}/>
+                    <LinkButton icon={IconKind.Rules} to={K.routes.rules()} newWindow={true}/>
                     <ActionButton label="Log out" onClick={() => this.logoutOnClick()}/>
                 </div>
             </div>
