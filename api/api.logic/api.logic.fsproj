@@ -20,6 +20,7 @@
     <Compile Include="Services\GameCrudService.fs" />
     <Compile Include="Services\PlayerService.fs" />
     <Compile Include="Services\SelectionOptionsService.fs" />
+    <Compile Include="Services\SelectionService.fs" />
     <Compile Include="Services\GameStartService.fs" />
     <Compile Include="Services\EventService.fs" />
     <Compile Include="Services\TurnService.fs" />

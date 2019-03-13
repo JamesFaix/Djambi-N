@@ -92,7 +92,7 @@ let startGame (gameId: int) (session : Session) : StateAndEventResponse AsyncHtt
 
 [<ClientFunction(HttpMethod.Post, Routes.selectCell, ClientSection.Turn)>]
 let selectCell (gameId : int, cellId : int) (session : Session) : StateAndEventResponse AsyncHttpResult =
-    processEvent gameId (fun game -> TurnService.getCellSelectedEvent (game, cellId) session)
+    processEvent gameId (fun game -> SelectionService.getCellSelectedEvent (game, cellId) session)
 
 [<ClientFunction(HttpMethod.Post, Routes.resetTurn, ClientSection.Turn)>]
 let resetTurn (gameId : int) (session : Session) : StateAndEventResponse AsyncHttpResult =
