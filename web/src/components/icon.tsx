@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Kernel as K } from '../kernel';
 
 export enum IconKind {
     Commit,
@@ -84,6 +85,7 @@ export default class Icon extends React.Component<IconnProps> {
 
     render() {
         const className = "fas fa-" + this.getIconName(this.props.kind);
-        return <i className={className}></i>;
+        const style = K.styles.fontSize(20);
+        return <i className={className} style={style}></i>;
     }
 }

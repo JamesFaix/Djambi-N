@@ -83,6 +83,10 @@ export class Styles {
         return { fontWeight: "bold" };
     }
 
+    public fontSize(pixels : number) : React.CSSProperties {
+        return { fontSize: pixels + "px" };
+    }
+
     public combine(styles : React.CSSProperties[]) : React.CSSProperties {
         const len = styles.length;
         switch (len) {
