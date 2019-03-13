@@ -1,7 +1,8 @@
 import { User, Game, Privilege, TurnStatus, GameStatus, PlayerStatus, Player } from "./api/model";
+import { IconKind } from "./components/icon";
 
 export interface PlayerAction {
-    name : string,
+    icon : IconKind,
     onClick : () => void,
     hideByDefault : boolean,
     isAvailable : boolean
@@ -147,37 +148,37 @@ export default class PlayerActionsService {
     private createActions() : PlayerAction[] {
         return [
             {
-                name: "Commit",
+                icon: IconKind.Commit,
                 onClick: () => this.controller.commitTurn(),
                 hideByDefault: false,
                 isAvailable: this.canCommit()
             },
             {
-                name: "Reset",
+                icon: IconKind.Reset,
                 onClick: () => this.controller.resetTurn(),
                 hideByDefault: false,
                 isAvailable: this.canReset()
             },
             {
-                name: "Accept Draw",
+                icon: IconKind.AcceptDraw,
                 onClick: () => this.controller.openStatusModal(PlayerStatus.AcceptsDraw),
                 hideByDefault: true,
                 isAvailable: this.canChangeStatus(PlayerStatus.AcceptsDraw)
             },
             {
-                name: "Revoke Draw",
+                icon: IconKind.RevokeDraw,
                 onClick: () => this.controller.openStatusModal(PlayerStatus.Alive),
                 hideByDefault: true,
                 isAvailable: this.canChangeStatus(PlayerStatus.Alive)
             },
             {
-                name: "Concede",
+                icon: IconKind.Concede,
                 onClick: () => this.controller.openStatusModal(PlayerStatus.Conceded),
                 hideByDefault: true,
                 isAvailable: this.canChangeStatus(PlayerStatus.Conceded)
             },
             {
-                name: "Snapshots",
+                icon: IconKind.Snapshots,
                 onClick: () => this.controller.navigateToSnapshotsPage(),
                 hideByDefault: true,
                 isAvailable: this.hasPrivilege(Privilege.Snapshots)

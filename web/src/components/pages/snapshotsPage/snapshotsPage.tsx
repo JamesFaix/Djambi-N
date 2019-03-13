@@ -4,10 +4,10 @@ import SnapshotsTable from './snapshotsTable';
 import { Kernel as K } from '../../../kernel';
 import { Redirect } from 'react-router';
 import PageTitle from '../../pageTitle';
-import LinkButton from '../../controls/linkButton';
 import LabeledInput from '../../controls/labeledInput';
 import { InputTypes } from '../../../constants';
-import ActionButton from '../../controls/actionButton';
+import Button, { ButtonKind } from '../../controls/button';
+import { IconKind } from '../../icon';
 
 export interface SnapshotsPageProps {
     user : User,
@@ -46,10 +46,26 @@ export default class SnapshotsPage extends React.Component<SnapshotsPageProps, S
                 <PageTitle label={title}/>
                 <br/>
                 <div className={K.classes.centerAligned}>
-                    <LinkButton label="Home" to={K.routes.dashboard()}/>
-                    <LinkButton label="Back to Game" to={K.routes.game(this.props.gameId)}/>
-                    <LinkButton label="My Games" to={K.routes.myGames()}/>
-                    <LinkButton label="Find Game" to={K.routes.findGame()}/>
+                    <Button
+                        kind={ButtonKind.Link}
+                        icon={IconKind.Home}
+                        to={K.routes.dashboard()}
+                    />
+                    <Button
+                        kind={ButtonKind.Link}
+                        icon={IconKind.Enter}
+                        to={K.routes.game(this.props.gameId)}
+                    />
+                    <Button
+                        kind={ButtonKind.Link}
+                        icon={IconKind.MyGames}
+                        to={K.routes.myGames()}
+                    />
+                    <Button
+                        kind={ButtonKind.Link}
+                        icon={IconKind.Find}
+                        to={K.routes.findGame()}
+                    />
                 </div>
                 <br/>
                 <SnapshotsTable
@@ -67,8 +83,9 @@ export default class SnapshotsPage extends React.Component<SnapshotsPageProps, S
                 </div>
                 <br/>
                 <div className={K.classes.centerAligned}>
-                    <ActionButton
-                        label="Create"
+                    <Button
+                        kind={ButtonKind.Action}
+                        icon={IconKind.Save}
                         onClick={() => this.createSnapshot()}
                     />
                 </div>

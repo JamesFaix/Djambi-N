@@ -1,8 +1,9 @@
 import * as React from 'react';
-import ActionButton from '../../controls/actionButton';
 import PlayerActionsService, { PlayerAction, HiddenActionsState } from '../../../playerActionsService';
 import { User, Game } from '../../../api/model';
 import { Kernel as K } from '../../../kernel';
+import Button, { ButtonKind } from '../../controls/button';
+import { IconKind } from '../../icon';
 
 export interface ActionPanelProps {
     user : User,
@@ -43,9 +44,10 @@ export default class ActionPanel extends React.Component<ActionPanelProps, Actio
 
     private renderAction(action : PlayerAction, keyId : number) {
         return (
-            <ActionButton
+            <Button
                 key={"action" + keyId}
-                label={action.name}
+                kind={ButtonKind.Action}
+                icon={action.icon}
                 onClick={() => action.onClick()}
             />
         );
@@ -58,15 +60,17 @@ export default class ActionPanel extends React.Component<ActionPanelProps, Actio
                 return undefined; //Don't show this component
             case HiddenActionsState.SomeHidden:
                 return (
-                    <ActionButton
-                        label="..."
+                    <Button
+                        kind={ButtonKind.Action}
+                        icon={IconKind.Expand}
                         onClick={() => this.setState({showAllActions:true})}
                     />
                 );
             case HiddenActionsState.HideableShown:
                 return (
-                    <ActionButton
-                        label="<"
+                    <Button
+                        kind={ButtonKind.Action}
+                        icon={IconKind.Collapse}
                         onClick={() => this.setState({showAllActions:false})}
                     />
                 );

@@ -17,7 +17,10 @@ export enum IconKind {
     Rules,
     MyGames,
     Logout,
-    Start
+    Start,
+    Expand,
+    Collapse,
+    Remove
 }
 
 export interface IconnProps {
@@ -62,13 +65,19 @@ export default class Icon extends React.Component<IconnProps> {
                 return "sign-out-alt";
             case IconKind.Start:
                 return "play";
+            case IconKind.Expand:
+                return "ellipsis-h";
+            case IconKind.Collapse:
+                return "angle-left";
+            case IconKind.Remove:
+                return "minus";
             default:
                 throw "Unsupported icon.";
         }
     }
 
     render() {
-        const className = "fas fa-" + this.getIconName(this.props.kind);
+        const className = "fa fa-" + this.getIconName(this.props.kind);
         return <i className={className}></i>;
     }
 }

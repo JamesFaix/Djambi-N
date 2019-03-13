@@ -1,12 +1,12 @@
 import * as React from 'react';
-import ActionButton from '../controls/actionButton';
 import LabeledInput from '../controls/labeledInput';
-import LinkButton from '../controls/linkButton';
 import PageTitle from '../pageTitle';
 import { CreateUserRequest, LoginRequest, User } from '../../api/model';
 import { InputTypes } from '../../constants';
 import { Kernel as K } from '../../kernel';
 import { Redirect } from 'react-router';
+import Button, { ButtonKind } from '../controls/button';
+import { IconKind } from '../icon';
 
 export interface SignupPageProps {
     user : User,
@@ -84,8 +84,16 @@ export default class SignupPage extends React.Component<SignupPageProps, SignupP
                 <PageTitle label="Sign up"/>
                 <br/>
                 <div className={K.classes.centerAligned}>
-                    <LinkButton label="Home" to={K.routes.home()} />
-                    <LinkButton label="Login" to={K.routes.login()} />
+                    <Button
+                        kind={ButtonKind.Link}
+                        icon={IconKind.Home}
+                        to={K.routes.home()}
+                    />
+                    <Button
+                        kind={ButtonKind.Link}
+                        label="Login"
+                        to={K.routes.login()}
+                    />
                 </div>
                 <br/>
                 <br/>
@@ -106,7 +114,11 @@ export default class SignupPage extends React.Component<SignupPageProps, SignupP
                     <br/>
                 </div>
                 <div className={K.classes.centerAligned}>
-                    <ActionButton label="Submit" onClick={() => this.submitOnClick()}/>
+                    <Button
+                        kind={ButtonKind.Action}
+                        icon={IconKind.Commit}
+                        onClick={() => this.submitOnClick()}
+                    />
                 </div>
             </div>
         );

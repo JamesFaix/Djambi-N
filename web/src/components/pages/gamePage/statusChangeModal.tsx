@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as Modal from 'react-modal';
-import ActionButton from '../../controls/actionButton';
 import { Player, PlayerStatus } from '../../../api/model';
 import Dropdown, { DropdownItem } from '../../controls/dropdown';
 import * as Sprintf from 'sprintf-js';
 import { Kernel as K } from '../../../kernel';
+import Button, { ButtonKind } from '../../controls/button';
 
 export interface StatusChangeModalProps {
     onOk : (playerId : number) => void,
@@ -70,7 +70,8 @@ export default class StatusChangeModal extends React.Component<StatusChangeModal
                     <br/>
                     <div>
                         {this.renderOkButton()}
-                        <ActionButton
+                        <Button
+                            kind={ButtonKind.Action}
                             label="No, go back to the game"
                             onClick={() => this.props.onCancel()}
                         />
@@ -221,7 +222,8 @@ export default class StatusChangeModal extends React.Component<StatusChangeModal
         }
 
         return (
-            <ActionButton
+            <Button
+                kind={ButtonKind.Action}
                 label="Yes, I'm sure"
                 onClick={() => this.props.onOk(this.state.actingPlayer.id)}
             />

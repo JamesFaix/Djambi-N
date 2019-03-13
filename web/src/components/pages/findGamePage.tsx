@@ -1,9 +1,7 @@
 import * as React from 'react';
-import ActionButton from '../controls/actionButton';
 import GamesQueryResultsTable from '../gamesQueryResultsTable';
 import LabeledInput from '../controls/labeledInput';
 import LabeledTristateDropdown from '../controls/labeledTristateDropdown';
-import LinkButton from '../controls/linkButton';
 import PageTitle from '../pageTitle';
 import Util from '../../util';
 import {
@@ -15,6 +13,8 @@ import {
 import { InputTypes } from '../../constants';
 import { Kernel as K } from '../../kernel';
 import { Redirect } from 'react-router';
+import Button, { ButtonKind } from '../controls/button';
+import { IconKind } from '../icon';
 
 export interface FindGamePageProps {
     user : User
@@ -135,14 +135,16 @@ export default class FindGamePage extends React.Component<FindGamePageProps, Fin
                         </tr>
                         <tr>
                             <td className={K.classes.combine([K.classes.borderless, K.classes.rightAligned])}>
-                                <ActionButton
-                                    label="Search"
+                                <Button
+                                    kind={ButtonKind.Action}
+                                    icon={IconKind.Find}
                                     onClick={() => this.refreshResults()}
                                 />
                             </td>
                             <td className={K.classes.borderless}>
-                                <ActionButton
-                                    label="Reset"
+                                <Button
+                                    kind={ButtonKind.Action}
+                                    icon={IconKind.Reset}
                                     onClick={() => this.resetOnClick()}
                                 />
                             </td>
@@ -164,9 +166,21 @@ export default class FindGamePage extends React.Component<FindGamePageProps, Fin
                 <PageTitle label={"Find Game"}/>
                 <br/>
                 <div className={K.classes.centerAligned}>
-                    <LinkButton label="Home" to={K.routes.dashboard()}/>
-                    <LinkButton label="My Games" to={K.routes.myGames()}/>
-                    <LinkButton label="Create Game" to={K.routes.createGame()}/>
+                    <Button
+                        kind={ButtonKind.Link}
+                        icon={IconKind.Home}
+                        to={K.routes.dashboard()}
+                    />
+                    <Button
+                        kind={ButtonKind.Link}
+                        icon={IconKind.MyGames}
+                        to={K.routes.myGames()}
+                     />
+                    <Button
+                        kind={ButtonKind.Link}
+                        icon={IconKind.New}
+                        to={K.routes.createGame()}
+                    />
                 </div>
                 <br/>
                 {this.renderQueryFilters()}

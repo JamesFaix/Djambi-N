@@ -1,12 +1,12 @@
 import * as React from 'react';
-import ActionButton from '../controls/actionButton';
 import Constants, { InputTypes } from '../../constants';
 import LabeledInput from '../controls/labeledInput';
-import LinkButton from '../controls/linkButton';
 import PageTitle from '../pageTitle';
 import { GameParameters, User } from '../../api/model';
 import { Kernel as K } from '../../kernel';
 import { Redirect } from 'react-router';
+import Button, { ButtonKind } from '../controls/button';
+import { IconKind } from '../icon';
 
 export interface CreateGamePageProps {
     user : User
@@ -97,9 +97,21 @@ export default class CreateGamePage extends React.Component<CreateGamePageProps,
                 <PageTitle label={"Create Game"}/>
                 <br/>
                 <div className={K.classes.centerAligned}>
-                    <LinkButton label="Home" to={K.routes.dashboard()}/>
-                    <LinkButton label="My Games" to={K.routes.myGames()}/>
-                    <LinkButton label="Find Game" to={K.routes.findGame()}/>
+                    <Button
+                        kind={ButtonKind.Link}
+                        icon={IconKind.Home}
+                        to={K.routes.dashboard()}
+                    />
+                    <Button
+                        kind={ButtonKind.Link}
+                        icon={IconKind.MyGames}
+                        to={K.routes.myGames()}
+                    />
+                    <Button
+                        kind={ButtonKind.Link}
+                        icon={IconKind.Find}
+                        to={K.routes.findGame()}
+                    />
                 </div>
                 <br/>
                 <br/>
@@ -141,7 +153,11 @@ export default class CreateGamePage extends React.Component<CreateGamePageProps,
                     <br/>
                 </div>
                 <div className={K.classes.centerAligned}>
-                    <ActionButton label="Submit" onClick={() => this.submitOnClick()}/>
+                    <Button
+                        kind={ButtonKind.Action}
+                        icon={IconKind.Commit}
+                        onClick={() => this.submitOnClick()}
+                    />
                 </div>
             </div>
         );

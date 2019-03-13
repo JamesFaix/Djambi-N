@@ -1,7 +1,5 @@
 import * as React from 'react';
-import ActionButton from '../../controls/actionButton';
 import GameInfoPlayersTable from './gameInfoPlayersTable';
-import LinkButton from '../../controls/linkButton';
 import PageTitle from '../../pageTitle';
 import {
     CreatePlayerRequest,
@@ -11,6 +9,8 @@ import {
     } from '../../../api/model';
 import { Kernel as K } from '../../../kernel';
 import { Redirect } from 'react-router';
+import Button, { ButtonKind } from '../../controls/button';
+import { IconKind } from '../../icon';
 
 export interface GameInfoPageProps {
     user : User,
@@ -131,8 +131,9 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
                         Pending
                         { this.props.user.id === game.createdByUserId
                             && game.players.length >= 2
-                            ? <ActionButton
-                                label="Start"
+                            ? <Button
+                                kind={ButtonKind.Action}
+                                icon={IconKind.Start}
                                 onClick={() => this.startOnClick()}
                             />
                             : ""
@@ -144,7 +145,11 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
                 return (
                     <div className={K.classes.centerAligned}>
                         Started
-                        <LinkButton label="Enter" to={K.routes.game(this.state.game.id)} />
+                        <Button
+                            kind={ButtonKind.Link}
+                            icon={IconKind.Enter}
+                            to={K.routes.game(this.state.game.id)}
+                        />
                     </div>
                 );
 
@@ -180,10 +185,26 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
                 <PageTitle label={title}/>
                 <br/>
                 <div className={K.classes.centerAligned}>
-                    <LinkButton label="Home" to={K.routes.dashboard()}/>
-                    <LinkButton label="My Games" to={K.routes.myGames()}/>
-                    <LinkButton label="Create Game" to={K.routes.createGame()}/>
-                    <LinkButton label="Find Game" to={K.routes.findGame()}/>
+                    <Button
+                        kind={ButtonKind.Link}
+                        icon={IconKind.Home}
+                        to={K.routes.dashboard()}
+                    />
+                    <Button
+                        kind={ButtonKind.Link}
+                        icon={IconKind.MyGames}
+                        to={K.routes.myGames()}
+                    />
+                   <Button
+                        kind={ButtonKind.Link}
+                        icon={IconKind.New}
+                        to={K.routes.createGame()}
+                    />
+                   <Button
+                        kind={ButtonKind.Link}
+                        icon={IconKind.Find}
+                        to={K.routes.findGame()}
+                    />
                 </div>
                 {this.renderLobbyDetails(this.state.game)}
                 <br/>

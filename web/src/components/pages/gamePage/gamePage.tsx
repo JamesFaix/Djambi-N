@@ -4,7 +4,6 @@ import BoardViewService from '../../../boardRendering/boardViewService';
 import CurrentTurnPanel from './currentTurnPanel';
 import Geometry from '../../../boardRendering/geometry';
 import HistoryPanel from './historyPanel/historyPanel';
-import LinkButton from '../../controls/linkButton';
 import PlayersPanel from './playersPanel/playersPanel';
 import TurnCyclePanel from './turnCyclePanel';
 import {
@@ -27,6 +26,8 @@ import ActionPanel from './actionPanel';
 import PlayerActionsService from '../../../playerActionsService';
 import { Redirect } from 'react-router';
 import StatusChangeModal from './statusChangeModal';
+import Button, { ButtonKind } from '../../controls/button';
+import { IconKind } from '../../icon';
 
 export interface GamePageProps {
     user : User,
@@ -157,8 +158,17 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                 <br/>
                 <br/>
                 <div className={K.classes.centerAligned}>
-                    <LinkButton label="Home" to={K.routes.dashboard()}/>
-                    <LinkButton label="Rules" to={K.routes.rules()} newWindow={true}/>
+                    <Button
+                        kind={ButtonKind.Link}
+                        icon={IconKind.Home}
+                        to={K.routes.dashboard()}
+                    />
+                    <Button
+                        kind={ButtonKind.Link}
+                        icon={IconKind.Rules}
+                        to={K.routes.rules()}
+                        newWindow={true}
+                    />
                 </div>
                 <br/>
                 {this.renderPanels()}

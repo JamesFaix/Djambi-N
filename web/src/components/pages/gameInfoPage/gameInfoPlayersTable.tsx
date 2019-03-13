@@ -1,5 +1,4 @@
 import * as React from 'react';
-import ActionButtonCell from '../../tables/actionButtonCell';
 import EmphasizedTextCell from '../../tables/emphasizedTextCell';
 import EmptyCell from '../../tables/emptyCell';
 import HintCell from '../../tables/hintCell';
@@ -15,6 +14,8 @@ import {
     Privilege
     } from '../../../api/model';
 import { Kernel as K } from '../../../kernel';
+import Button, { ButtonKind } from '../../controls/button';
+import { IconKind } from '../../icon';
 
 export interface GameInfoPlayersTableProps {
     user : User,
@@ -173,10 +174,13 @@ export default class GameInfoPlayersTable extends React.Component<GameInfoPlayer
                         <HintCell text="(Empty)" />
                         <EmptyCell/>
                         {status === GameStatus.Pending ?
-                            <ActionButtonCell
-                                label="Join"
-                                onClick={() => this.addSelfOnClick()}
-                            />
+                            <td className={K.classes.centerAligned}>
+                                <Button
+                                    kind={ButtonKind.Action}
+                                    icon={IconKind.New}
+                                    onClick={() => this.addSelfOnClick()}
+                                />
+                            </td>
                             : undefined
                         }
                     </tr>
@@ -191,10 +195,13 @@ export default class GameInfoPlayersTable extends React.Component<GameInfoPlayer
                         />
                         <EmptyCell/>
                         {status === GameStatus.Pending ?
-                            <ActionButtonCell
-                                label="Add Guest"
-                                onClick={() => this.addGuestOnClick()}
-                            />
+                            <td className={K.classes.centerAligned}>
+                                <Button
+                                    kind={ButtonKind.Action}
+                                    icon={IconKind.New}
+                                    onClick={() => this.addGuestOnClick()}
+                                />
+                            </td>
                             : undefined
                         }
                     </tr>
@@ -206,10 +213,13 @@ export default class GameInfoPlayersTable extends React.Component<GameInfoPlayer
                         <EmphasizedTextCell text={seat.player.name}/>
                         <TextCell text={seat.note} />
                         {status === GameStatus.Pending ?
-                            <ActionButtonCell
-                                label={this.isSeatSelf(seat) ? "Quit" : "Remove"}
-                                onClick={() => this.removeOnClick(seat.player.id)}
-                            />
+                            <td className={K.classes.centerAligned}>
+                                <Button
+                                    kind={ButtonKind.Action}
+                                    icon={IconKind.Remove}
+                                    onClick={() => this.removeOnClick(seat.player.id)}
+                                />
+                            </td>
                             : undefined
                         }
                     </tr>
