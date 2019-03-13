@@ -35,7 +35,7 @@ type ParametersChangedEffect =
 type PieceEnlistedEffect =
     {
         oldPiece : Piece
-        newPlayerId : int option
+        newPlayerId : int
     }
     
 [<ClientType(ClientSection.Events)>]

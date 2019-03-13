@@ -208,7 +208,7 @@ type EventServiceTests() =
                 }
             ]
         let game = { TestUtilities.defaultGame with pieces = pieces}
-        let newPlayerId = Some 1
+        let newPlayerId = 1
         let effect = Effect.PieceEnlisted { oldPiece = pieces.[0]; newPlayerId = newPlayerId }
         let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
 
@@ -220,7 +220,7 @@ type EventServiceTests() =
 
         newGame.pieces.Length |> shouldBe 2
         
-        newGame.pieces.[0] |> shouldBe { pieces.[0] with playerId = newPlayerId }
+        newGame.pieces.[0] |> shouldBe { pieces.[0] with playerId = Some newPlayerId }
         newGame.pieces.[1] |> shouldBe pieces.[1]
 
     [<Fact>]
