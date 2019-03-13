@@ -185,7 +185,33 @@ let getUpdatePlayerStatusEvent (game : Game, request : PlayerStatusChangeRequest
                 | (AcceptsDraw, Alive) ->
                     //If revoking draw, just change status
                     Ok event
+                | (Alive, Conceded)
+                | (AcceptsDraw, Conceded)
+                | (Alive, WillConcede)
+                | (AcceptsDraw, WillConcede) ->
+                    let isPlayersTurn = game.turnCycle.[0] = request.playerId
+                    if isPlayersTurn
+                    then
+                        let primary = Effect.PlayerStatusChanged { 
+                            oldStatus = oldStatus
+                            newStatus = Conceded
+                            playerId = player.id 
+                        } 
+                        //Remove from turn cycle
+                        //Abandon pieces
+                        //Check for victory and draw
+                        //End turn
+                        //Check for player out of moves
 
+                        let fx = [primary]
+                        Ok { event with effects = fx }
+                    else
+                        let primary = Effect.PlayerStatusChanged { 
+                            oldStatus = oldStatus
+                            newStatus = WillConcede
+                            playerId = player.id 
+                        } 
+                        Ok { event with effects = [primary] }
 
                 | _ -> 
                     Error <| HttpException(400, "Player status transition not allowed.")
