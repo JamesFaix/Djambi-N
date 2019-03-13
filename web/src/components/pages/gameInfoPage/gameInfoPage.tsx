@@ -1,7 +1,5 @@
 import * as React from 'react';
-import ActionButton from '../../controls/actionButton';
 import GameInfoPlayersTable from './gameInfoPlayersTable';
-import LinkButton from '../../controls/linkButton';
 import PageTitle from '../../pageTitle';
 import {
     CreatePlayerRequest,
@@ -11,6 +9,9 @@ import {
     } from '../../../api/model';
 import { Kernel as K } from '../../../kernel';
 import { Redirect } from 'react-router';
+import Button, { ButtonKind } from '../../controls/button';
+import { IconKind } from '../../icon';
+import { EnterButton, FindGamesPageButton, CreateGamePageButton, MyGamesPageButton, DashboardPageButton } from '../../controls/navigationButtons';
 
 export interface GameInfoPageProps {
     user : User,
@@ -129,11 +130,14 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
                     //Only creator can start game, and only with > 1 players
                     <div className={K.classes.centerAligned}>
                         Pending
+                        <br/>
                         { this.props.user.id === game.createdByUserId
                             && game.players.length >= 2
-                            ? <ActionButton
-                                label="Start"
+                            ? <Button
+                                kind={ButtonKind.Action}
+                                icon={IconKind.Start}
                                 onClick={() => this.startOnClick()}
+                                hint="Start game"
                             />
                             : ""
                         }
@@ -144,7 +148,10 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
                 return (
                     <div className={K.classes.centerAligned}>
                         Started
-                        <LinkButton label="Enter" to={K.routes.game(this.state.game.id)} />
+                        <EnterButton
+                            to={K.routes.game(this.state.game.id)}
+                            hint="View game"
+                        />
                     </div>
                 );
 
@@ -180,10 +187,10 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
                 <PageTitle label={title}/>
                 <br/>
                 <div className={K.classes.centerAligned}>
-                    <LinkButton label="Home" to={K.routes.dashboard()}/>
-                    <LinkButton label="My Games" to={K.routes.myGames()}/>
-                    <LinkButton label="Create Game" to={K.routes.createGame()}/>
-                    <LinkButton label="Find Game" to={K.routes.findGame()}/>
+                    <DashboardPageButton/>
+                    <MyGamesPageButton/>
+                    <CreateGamePageButton/>
+                    <FindGamesPageButton/>
                 </div>
                 {this.renderLobbyDetails(this.state.game)}
                 <br/>

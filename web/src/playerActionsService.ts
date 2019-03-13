@@ -1,10 +1,12 @@
 import { User, Game, Privilege, TurnStatus, GameStatus, PlayerStatus, Player } from "./api/model";
+import { IconKind } from "./components/icon";
 
 export interface PlayerAction {
-    name : string,
+    icon : IconKind,
     onClick : () => void,
     hideByDefault : boolean,
-    isAvailable : boolean
+    isAvailable : boolean,
+    name : string
 }
 
 export enum HiddenActionsState {
@@ -147,37 +149,43 @@ export default class PlayerActionsService {
     private createActions() : PlayerAction[] {
         return [
             {
-                name: "Commit",
+                name: "End turn",
+                icon: IconKind.Submit,
                 onClick: () => this.controller.commitTurn(),
                 hideByDefault: false,
                 isAvailable: this.canCommit()
             },
             {
-                name: "Reset",
+                name: "Reset turn",
+                icon: IconKind.Reset,
                 onClick: () => this.controller.resetTurn(),
                 hideByDefault: false,
                 isAvailable: this.canReset()
             },
             {
-                name: "Accept Draw",
+                name: "Accept draw",
+                icon: IconKind.AcceptDraw,
                 onClick: () => this.controller.openStatusModal(PlayerStatus.AcceptsDraw),
                 hideByDefault: true,
                 isAvailable: this.canChangeStatus(PlayerStatus.AcceptsDraw)
             },
             {
-                name: "Revoke Draw",
+                name: "Revoke draw",
+                icon: IconKind.RevokeDraw,
                 onClick: () => this.controller.openStatusModal(PlayerStatus.Alive),
                 hideByDefault: true,
                 isAvailable: this.canChangeStatus(PlayerStatus.Alive)
             },
             {
                 name: "Concede",
+                icon: IconKind.Concede,
                 onClick: () => this.controller.openStatusModal(PlayerStatus.Conceded),
                 hideByDefault: true,
                 isAvailable: this.canChangeStatus(PlayerStatus.Conceded)
             },
             {
-                name: "Snapshots",
+                name: "Manage snapshots",
+                icon: IconKind.Snapshots,
                 onClick: () => this.controller.navigateToSnapshotsPage(),
                 hideByDefault: true,
                 isAvailable: this.hasPrivilege(Privilege.Snapshots)

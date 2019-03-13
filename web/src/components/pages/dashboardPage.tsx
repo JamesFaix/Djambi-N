@@ -1,10 +1,11 @@
 import * as React from 'react';
-import ActionButton from '../controls/actionButton';
-import LinkButton from '../controls/linkButton';
 import PageTitle from '../pageTitle';
 import { Kernel as K } from '../../kernel';
 import { Redirect } from 'react-router';
 import { User } from '../../api/model';
+import { MyGamesPageButton, FindGamesPageButton, CreateGamePageButton, RulesPageButton } from '../controls/navigationButtons';
+import Button, { ButtonKind } from '../controls/button';
+import { IconKind } from '../icon';
 
 export interface DashboardPageProps {
     user : User,
@@ -35,11 +36,16 @@ export default class DashboardPage extends React.Component<DashboardPageProps> {
                 <PageTitle label={"Welcome, " + this.props.user.name}/>
                 <br/>
                 <div className={K.classes.centerAligned}>
-                    <LinkButton label="My Games" to={K.routes.myGames()}/>
-                    <LinkButton label="Create Game" to={K.routes.createGame()}/>
-                    <LinkButton label="Find Game" to={K.routes.findGame()}/>
-                    <LinkButton label="Rules" to={K.routes.rules()} newWindow={true}/>
-                    <ActionButton label="Log out" onClick={() => this.logoutOnClick()}/>
+                    <MyGamesPageButton/>
+                    <CreateGamePageButton/>
+                    <FindGamesPageButton/>
+                    <RulesPageButton/>
+                    <Button
+                        kind={ButtonKind.Action}
+                        icon={IconKind.Logout}
+                        onClick={() => this.logoutOnClick()}
+                        hint="Log out"
+                    />
                 </div>
             </div>
         );

@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { SnapshotInfo } from '../../../api/model';
 import { Kernel as K } from '../../../kernel';
-import ActionButtonCell from '../../tables/actionButtonCell';
+import Button, { ButtonKind } from '../../controls/button';
+import { IconKind } from '../../icon';
 
 export interface SnapshotsTableProps {
     snapshots : SnapshotInfo[],
@@ -57,14 +58,22 @@ export default class SnapshotsTable extends React.Component<SnapshotsTableProps>
                 <td className={K.classes.rightAligned}>
                     {snapshot.createdByUserId}
                 </td>
-                <ActionButtonCell
-                    label="Load"
-                    onClick={() => this.props.loadSnapshot(snapshot.id)}
-                />
-                <ActionButtonCell
-                    label="Delete"
-                    onClick={() => this.props.deleteSnapshot(snapshot.id)}
-                />
+                <td className={K.classes.centerAligned}>
+                    <Button
+                        kind={ButtonKind.Action}
+                        icon={IconKind.Load}
+                        onClick={() => this.props.loadSnapshot(snapshot.id)}
+                        hint="Load snapshot"
+                    />
+                </td>
+                <td className={K.classes.centerAligned}>
+                    <Button
+                        kind={ButtonKind.Action}
+                        icon={IconKind.Delete}
+                        onClick={() => this.props.deleteSnapshot(snapshot.id)}
+                        hint="Delete snapshot"
+                    />
+                </td>
             </tr>
         );
     }

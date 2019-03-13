@@ -4,10 +4,11 @@ import SnapshotsTable from './snapshotsTable';
 import { Kernel as K } from '../../../kernel';
 import { Redirect } from 'react-router';
 import PageTitle from '../../pageTitle';
-import LinkButton from '../../controls/linkButton';
 import LabeledInput from '../../controls/labeledInput';
 import { InputTypes } from '../../../constants';
-import ActionButton from '../../controls/actionButton';
+import Button, { ButtonKind } from '../../controls/button';
+import { IconKind } from '../../icon';
+import { FindGamesPageButton, MyGamesPageButton, DashboardPageButton, EnterButton } from '../../controls/navigationButtons';
 
 export interface SnapshotsPageProps {
     user : User,
@@ -46,10 +47,13 @@ export default class SnapshotsPage extends React.Component<SnapshotsPageProps, S
                 <PageTitle label={title}/>
                 <br/>
                 <div className={K.classes.centerAligned}>
-                    <LinkButton label="Home" to={K.routes.dashboard()}/>
-                    <LinkButton label="Back to Game" to={K.routes.game(this.props.gameId)}/>
-                    <LinkButton label="My Games" to={K.routes.myGames()}/>
-                    <LinkButton label="Find Game" to={K.routes.findGame()}/>
+                    <DashboardPageButton/>
+                    <EnterButton
+                        to={K.routes.game(this.props.gameId)}
+                        hint="Return to game"
+                    />
+                    <MyGamesPageButton/>
+                    <FindGamesPageButton/>
                 </div>
                 <br/>
                 <SnapshotsTable
@@ -67,9 +71,11 @@ export default class SnapshotsPage extends React.Component<SnapshotsPageProps, S
                 </div>
                 <br/>
                 <div className={K.classes.centerAligned}>
-                    <ActionButton
-                        label="Create"
+                    <Button
+                        kind={ButtonKind.Action}
+                        icon={IconKind.Save}
                         onClick={() => this.createSnapshot()}
+                        hint={"Create snapshot from current game state"}
                     />
                 </div>
             </div>

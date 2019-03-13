@@ -1,9 +1,9 @@
 import * as React from 'react';
-import LinkButton from '../controls/linkButton';
 import PageTitle from '../pageTitle';
 import { Kernel as K } from '../../kernel';
 import { Redirect } from 'react-router';
 import { User } from '../../api/model';
+import { RulesPageButton, SignupPageButton, LoginPageButton } from '../controls/navigationButtons';
 
 export interface HomePageProps {
     user : User,
@@ -31,9 +31,9 @@ export default class HomePage extends React.Component<HomePageProps> {
                 <PageTitle label="Greetings, visitor"/>
                 <br/>
                 <div className={K.classes.centerAligned}>
-                    <LinkButton label="Sign up" to={K.routes.signup()}/>
-                    <LinkButton label="Login" to={K.routes.login()}/>
-                    <LinkButton label="Rules" to={K.routes.rules()} newWindow={true}/>
+                    <SignupPageButton/>
+                    <LoginPageButton/>
+                    <RulesPageButton/>
                 </div>
                 <br/>
                 <br/>

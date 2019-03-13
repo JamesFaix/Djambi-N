@@ -1,9 +1,7 @@
 import * as React from 'react';
-import ActionButton from '../controls/actionButton';
 import GamesQueryResultsTable from '../gamesQueryResultsTable';
 import LabeledInput from '../controls/labeledInput';
 import LabeledTristateDropdown from '../controls/labeledTristateDropdown';
-import LinkButton from '../controls/linkButton';
 import PageTitle from '../pageTitle';
 import Util from '../../util';
 import {
@@ -15,6 +13,9 @@ import {
 import { InputTypes } from '../../constants';
 import { Kernel as K } from '../../kernel';
 import { Redirect } from 'react-router';
+import Button, { ButtonKind } from '../controls/button';
+import { IconKind } from '../icon';
+import { ResetButton, DashboardPageButton, MyGamesPageButton, CreateGamePageButton } from '../controls/navigationButtons';
 
 export interface FindGamePageProps {
     user : User
@@ -135,15 +136,17 @@ export default class FindGamePage extends React.Component<FindGamePageProps, Fin
                         </tr>
                         <tr>
                             <td className={K.classes.combine([K.classes.borderless, K.classes.rightAligned])}>
-                                <ActionButton
-                                    label="Search"
+                                <Button
+                                    kind={ButtonKind.Action}
+                                    icon={IconKind.Find}
                                     onClick={() => this.refreshResults()}
+                                    hint="Refresh results"
                                 />
                             </td>
                             <td className={K.classes.borderless}>
-                                <ActionButton
-                                    label="Reset"
+                                <ResetButton
                                     onClick={() => this.resetOnClick()}
+                                    hint="Clear filters"
                                 />
                             </td>
                         </tr>
@@ -164,9 +167,9 @@ export default class FindGamePage extends React.Component<FindGamePageProps, Fin
                 <PageTitle label={"Find Game"}/>
                 <br/>
                 <div className={K.classes.centerAligned}>
-                    <LinkButton label="Home" to={K.routes.dashboard()}/>
-                    <LinkButton label="My Games" to={K.routes.myGames()}/>
-                    <LinkButton label="Create Game" to={K.routes.createGame()}/>
+                    <DashboardPageButton/>
+                    <MyGamesPageButton/>
+                    <CreateGamePageButton/>
                 </div>
                 <br/>
                 {this.renderQueryFilters()}

@@ -1,12 +1,11 @@
 import * as React from 'react';
-import ActionButton from '../controls/actionButton';
 import LabeledInput from '../controls/labeledInput';
-import LinkButton from '../controls/linkButton';
 import PageTitle from '../pageTitle';
 import { CreateUserRequest, LoginRequest, User } from '../../api/model';
 import { InputTypes } from '../../constants';
 import { Kernel as K } from '../../kernel';
 import { Redirect } from 'react-router';
+import { LoginPageButton, HomePageButton, SubmitButton } from '../controls/navigationButtons';
 
 export interface SignupPageProps {
     user : User,
@@ -84,8 +83,8 @@ export default class SignupPage extends React.Component<SignupPageProps, SignupP
                 <PageTitle label="Sign up"/>
                 <br/>
                 <div className={K.classes.centerAligned}>
-                    <LinkButton label="Home" to={K.routes.home()} />
-                    <LinkButton label="Login" to={K.routes.login()} />
+                    <HomePageButton/>
+                    <LoginPageButton/>
                 </div>
                 <br/>
                 <br/>
@@ -106,7 +105,10 @@ export default class SignupPage extends React.Component<SignupPageProps, SignupP
                     <br/>
                 </div>
                 <div className={K.classes.centerAligned}>
-                    <ActionButton label="Submit" onClick={() => this.submitOnClick()}/>
+                    <SubmitButton
+                        onClick={() => this.submitOnClick()}
+                        hint="Create account"
+                    />
                 </div>
             </div>
         );
