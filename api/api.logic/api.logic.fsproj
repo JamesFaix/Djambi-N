@@ -23,6 +23,7 @@
     <Compile Include="Services\SelectionService.fs" />
     <Compile Include="Services\GameStartService.fs" />
     <Compile Include="Services\EventService.fs" />
+    <Compile Include="Services\IndirectEffectsService.fs" />
     <Compile Include="Services\TurnService.fs" />
     <Compile Include="Services\PlayerStatusChangeService.fs" />
     <Compile Include="Managers\BoardManager.fs" />
