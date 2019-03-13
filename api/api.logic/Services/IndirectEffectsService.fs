@@ -158,7 +158,7 @@ let private getRiseOrFallFromPowerEffects (game : Game, updatedGame : Game) : Ef
     effects |> Seq.toList
 
 let private getVictoryEffects (game : Game) : Effect list =
-    let remainingPlayers = game.players |> List.filter (fun p -> p.status = Alive)
+    let remainingPlayers = game.players |> List.filter (fun p -> p.status = Alive && p.userId.IsSome)
     if remainingPlayers.Length = 1        
     then
         let p = remainingPlayers.[0]
@@ -184,29 +184,29 @@ let private getOutOfMovesEffects (game : Game) : Effect list =
 
     effects |> Seq.toList
 
-let private getTernaryEffects (game : Game, updatedGame : Game) : Effect list =
+let private getTernaryEffects (game : Game) : Effect list =
     let effects = new ArrayList<Effect>()
-    let updatedGame = { updatedGame with currentTurn = Some Turn.empty } //This is required so that selection options come back
+    let game = { game with currentTurn = Some Turn.empty } //This is required so that selection options come back
 
     let victoryEffects = getVictoryEffects game
     effects.AddRange victoryEffects
 
     if victoryEffects.IsEmpty
     then
-        let outOfMovesEffects = getOutOfMovesEffects updatedGame
+        let outOfMovesEffects = getOutOfMovesEffects game
         effects.AddRange outOfMovesEffects
-        let updatedGame = EventService.applyEffects outOfMovesEffects updatedGame
+        let game = EventService.applyEffects outOfMovesEffects game
 
         //Check for victory caused by players being out of moves
-        let victoryEffects = getVictoryEffects updatedGame
+        let victoryEffects = getVictoryEffects game
         effects.AddRange victoryEffects
-        let updatedGame = EventService.applyEffects victoryEffects updatedGame
+        let game = EventService.applyEffects victoryEffects game
 
         if victoryEffects.IsEmpty
         then 
-            let seletionOptions = SelectionOptionsService.getSelectableCellsFromState updatedGame |> Result.value
+            let seletionOptions = SelectionOptionsService.getSelectableCellsFromState game |> Result.value
             let turn = { Turn.empty with selectionOptions = seletionOptions }
-            effects.Add(Effect.CurrentTurnChanged { oldValue = updatedGame.currentTurn; newValue = Some turn })
+            effects.Add(Effect.CurrentTurnChanged { oldValue = game.currentTurn; newValue = Some turn })
         else ()
     else ()
     effects |> Seq.toList
@@ -259,7 +259,7 @@ let getIndirectEffectsForTurnCommit (game : Game, updatedGame : Game) : Effect l
     effects.AddRange riseFallEffects
     let updatedGame = EventService.applyEffects riseFallEffects updatedGame
 
-    effects.AddRange (getTernaryEffects (game, updatedGame))
+    effects.AddRange (getTernaryEffects updatedGame)
 
     effects |> Seq.toList
 
@@ -288,8 +288,8 @@ let getIndirectEffectsForConcede (game : Game, request : PlayerStatusChangeReque
 
     effects.AddRange (getAbandonPiecesEffects(game, request.playerId))
 
-    let updatedGame = EventService.applyEffects effects game
+    let game = EventService.applyEffects effects game
     
-    effects.AddRange (getTernaryEffects (game, updatedGame))
+    effects.AddRange (getTernaryEffects game)
 
     effects |> Seq.toList

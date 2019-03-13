@@ -87,7 +87,7 @@ let getUpdatePlayerStatusEvent (game : Game, request : PlayerStatusChangeRequest
                         } 
 
                         effects.Add(primary)
-                        let updatedGame = EventService.applyEffect primary game
+                        let game = EventService.applyEffect primary game
                         effects.AddRange (IndirectEffectsService.getIndirectEffectsForConcede (game, request))
                         Ok { event with effects = effects |> Seq.toList }
                     else
