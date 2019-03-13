@@ -63,6 +63,7 @@ export default class SnapshotsTable extends React.Component<SnapshotsTableProps>
                         kind={ButtonKind.Action}
                         icon={IconKind.Load}
                         onClick={() => this.props.loadSnapshot(snapshot.id)}
+                        hint="Load snapshot"
                     />
                 </td>
                 <td className={K.classes.centerAligned}>
@@ -70,6 +71,7 @@ export default class SnapshotsTable extends React.Component<SnapshotsTableProps>
                         kind={ButtonKind.Action}
                         icon={IconKind.Delete}
                         onClick={() => this.props.deleteSnapshot(snapshot.id)}
+                        hint="Delete snapshot"
                     />
                 </td>
             </tr>

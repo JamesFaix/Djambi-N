@@ -49,6 +49,7 @@ export default class ActionPanel extends React.Component<ActionPanelProps, Actio
                 kind={ButtonKind.Action}
                 icon={action.icon}
                 onClick={() => action.onClick()}
+                hint={action.name}
             />
         );
     }
@@ -64,6 +65,7 @@ export default class ActionPanel extends React.Component<ActionPanelProps, Actio
                         kind={ButtonKind.Action}
                         icon={IconKind.Expand}
                         onClick={() => this.setState({showAllActions:true})}
+                        hint="Show more"
                     />
                 );
             case HiddenActionsState.HideableShown:
@@ -72,6 +74,7 @@ export default class ActionPanel extends React.Component<ActionPanelProps, Actio
                         kind={ButtonKind.Action}
                         icon={IconKind.Collapse}
                         onClick={() => this.setState({showAllActions:false})}
+                        hint="Show less"
                     />
                 );
         }

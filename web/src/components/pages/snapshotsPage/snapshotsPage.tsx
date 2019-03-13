@@ -48,7 +48,10 @@ export default class SnapshotsPage extends React.Component<SnapshotsPageProps, S
                 <br/>
                 <div className={K.classes.centerAligned}>
                     <DashboardPageButton/>
-                    <EnterButton to={K.routes.game(this.props.gameId)}/>
+                    <EnterButton
+                        to={K.routes.game(this.props.gameId)}
+                        hint="Return to game"
+                    />
                     <MyGamesPageButton/>
                     <FindGamesPageButton/>
                 </div>
@@ -72,6 +75,7 @@ export default class SnapshotsPage extends React.Component<SnapshotsPageProps, S
                         kind={ButtonKind.Action}
                         icon={IconKind.Save}
                         onClick={() => this.createSnapshot()}
+                        hint={"Create snapshot from current game state"}
                     />
                 </div>
             </div>

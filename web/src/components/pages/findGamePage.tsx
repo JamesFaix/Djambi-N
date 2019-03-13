@@ -140,11 +140,13 @@ export default class FindGamePage extends React.Component<FindGamePageProps, Fin
                                     kind={ButtonKind.Action}
                                     icon={IconKind.Find}
                                     onClick={() => this.refreshResults()}
+                                    hint="Refresh results"
                                 />
                             </td>
                             <td className={K.classes.borderless}>
                                 <ResetButton
                                     onClick={() => this.resetOnClick()}
+                                    hint="Clear filters"
                                 />
                             </td>
                         </tr>

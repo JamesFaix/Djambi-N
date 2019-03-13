@@ -76,7 +76,10 @@ export default class Button extends React.Component<ButtonProps> {
 
     private renderActionButton() {
         return (
-            <button onClick={_ => this.props.onClick()}>
+            <button
+                onClick={_ => this.props.onClick()}
+                title={this.props.hint}
+            >
                 {this.getContent()}
             </button>
         );
@@ -85,7 +88,9 @@ export default class Button extends React.Component<ButtonProps> {
     private renderInternalLinkButton() {
         return (
             <Link to={this.props.to}>
-                <button>
+                <button
+                    title={this.props.hint}
+                >
                     {this.getContent()}
                 </button>
             </Link>
@@ -94,7 +99,10 @@ export default class Button extends React.Component<ButtonProps> {
 
     private renderExternalLinkButton() {
         return (
-            <button onClick={() => this.newWindowOnClick()}>
+            <button
+                onClick={() => this.newWindowOnClick()}
+                title={this.props.hint}
+            >
                 {this.getContent()}
             </button>
         );

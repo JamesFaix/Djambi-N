@@ -44,6 +44,7 @@ export default class DashboardPage extends React.Component<DashboardPageProps> {
                         kind={ButtonKind.Action}
                         icon={IconKind.Logout}
                         onClick={() => this.logoutOnClick()}
+                        hint="Log out"
                     />
                 </div>
             </div>

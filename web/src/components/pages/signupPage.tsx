@@ -107,6 +107,7 @@ export default class SignupPage extends React.Component<SignupPageProps, SignupP
                 <div className={K.classes.centerAligned}>
                     <SubmitButton
                         onClick={() => this.submitOnClick()}
+                        hint="Create account"
                     />
                 </div>
             </div>

@@ -130,12 +130,14 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
                     //Only creator can start game, and only with > 1 players
                     <div className={K.classes.centerAligned}>
                         Pending
+                        <br/>
                         { this.props.user.id === game.createdByUserId
                             && game.players.length >= 2
                             ? <Button
                                 kind={ButtonKind.Action}
                                 icon={IconKind.Start}
                                 onClick={() => this.startOnClick()}
+                                hint="Start game"
                             />
                             : ""
                         }
@@ -148,6 +150,7 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
                         Started
                         <EnterButton
                             to={K.routes.game(this.state.game.id)}
+                            hint="View game"
                         />
                     </div>
                 );

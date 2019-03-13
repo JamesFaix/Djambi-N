@@ -179,6 +179,7 @@ export default class GameInfoPlayersTable extends React.Component<GameInfoPlayer
                                     kind={ButtonKind.Action}
                                     icon={IconKind.New}
                                     onClick={() => this.addSelfOnClick()}
+                                    hint="Join"
                                 />
                             </td>
                             : undefined
@@ -200,6 +201,7 @@ export default class GameInfoPlayersTable extends React.Component<GameInfoPlayer
                                     kind={ButtonKind.Action}
                                     icon={IconKind.New}
                                     onClick={() => this.addGuestOnClick()}
+                                    hint="Add guest"
                                 />
                             </td>
                             : undefined
@@ -218,6 +220,7 @@ export default class GameInfoPlayersTable extends React.Component<GameInfoPlayer
                                     kind={ButtonKind.Action}
                                     icon={IconKind.Remove}
                                     onClick={() => this.removeOnClick(seat.player.id)}
+                                    hint={this.isSeatSelf(seat) ? "Quit" : "Remove"}
                                 />
                             </td>
                             : undefined

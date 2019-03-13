@@ -35,7 +35,10 @@ export default class GamesQueryResultsTable extends React.Component<GamesQueryRe
         return (
             <tr key={"row" + rowNumber}>
                 <td>
-                    <EnterButton to={K.routes.gameInfo(game.id)}/>
+                    <EnterButton
+                        to={K.routes.gameInfo(game.id)}
+                        hint="View game info"
+                    />
                 </td>
                 <td className={K.classes.rightAligned}>
                     {game.id}

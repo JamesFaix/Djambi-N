@@ -97,6 +97,7 @@ export default class LoginPage extends React.Component<LoginPageProps, LoginPage
                 <div className={K.classes.centerAligned}>
                     <SubmitButton
                         onClick={() => this.submitOnClick()}
+                        hint="Log in"
                     />
                 </div>
             </div>

@@ -5,7 +5,8 @@ export interface PlayerAction {
     icon : IconKind,
     onClick : () => void,
     hideByDefault : boolean,
-    isAvailable : boolean
+    isAvailable : boolean,
+    name : string
 }
 
 export enum HiddenActionsState {
@@ -148,36 +149,42 @@ export default class PlayerActionsService {
     private createActions() : PlayerAction[] {
         return [
             {
+                name: "End turn",
                 icon: IconKind.Submit,
                 onClick: () => this.controller.commitTurn(),
                 hideByDefault: false,
                 isAvailable: this.canCommit()
             },
             {
+                name: "Reset turn",
                 icon: IconKind.Reset,
                 onClick: () => this.controller.resetTurn(),
                 hideByDefault: false,
                 isAvailable: this.canReset()
             },
             {
+                name: "Accept draw",
                 icon: IconKind.AcceptDraw,
                 onClick: () => this.controller.openStatusModal(PlayerStatus.AcceptsDraw),
                 hideByDefault: true,
                 isAvailable: this.canChangeStatus(PlayerStatus.AcceptsDraw)
             },
             {
+                name: "Revoke draw",
                 icon: IconKind.RevokeDraw,
                 onClick: () => this.controller.openStatusModal(PlayerStatus.Alive),
                 hideByDefault: true,
                 isAvailable: this.canChangeStatus(PlayerStatus.Alive)
             },
             {
+                name: "Concede",
                 icon: IconKind.Concede,
                 onClick: () => this.controller.openStatusModal(PlayerStatus.Conceded),
                 hideByDefault: true,
                 isAvailable: this.canChangeStatus(PlayerStatus.Conceded)
             },
             {
+                name: "Manage snapshots",
                 icon: IconKind.Snapshots,
                 onClick: () => this.controller.navigateToSnapshotsPage(),
                 hideByDefault: true,

@@ -142,6 +142,7 @@ export default class CreateGamePage extends React.Component<CreateGamePageProps,
                 <div className={K.classes.centerAligned}>
                     <SubmitButton
                         onClick={() => this.submitOnClick()}
+                        hint="Create game"
                     />
                 </div>
             </div>
