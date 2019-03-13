@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Game, Player } from '../../../../api/model';
 import { Kernel as K } from '../../../../kernel';
+import PlayerStatusIcon from './playerStatusIcon';
 
 export interface PlayersPanelTableProps {
     game : Game
@@ -15,7 +16,10 @@ export default class PlayersPanelTable extends React.Component<PlayersPanelTable
                 style={K.styles.playerGlow(color)}
                 key={"row" + rowNumber}
             >
-                <td className={K.classes.borderless}>
+                <td className={K.classes.borderless} style={K.styles.combine([K.styles.width("5px"), K.styles.padRight("0px")])}>
+                    <PlayerStatusIcon status={player.status}/>
+                </td>
+                <td className={K.classes.borderless} style={K.styles.padLeft("0px")}>
                     {player.name}
                 </td>
                 <td className={K.classes.combine([K.classes.borderless, K.classes.lightText])}>

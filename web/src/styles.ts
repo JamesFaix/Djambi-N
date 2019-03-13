@@ -75,6 +75,14 @@ export class Styles {
         return { padding : padding };
     }
 
+    public padLeft(padding : string) : React.CSSProperties {
+        return { paddingRight : padding };
+    }
+
+    public padRight(padding : string) : React.CSSProperties {
+        return { paddingRight : padding };
+    }
+
     public grid() : React.CSSProperties {
         return { display: "grid" };
     }

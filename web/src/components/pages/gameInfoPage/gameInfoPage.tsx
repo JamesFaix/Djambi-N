@@ -131,6 +131,7 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
                     <div className={K.classes.centerAligned}>
                         Pending
                         <br/>
+                        <br/>
                         { this.props.user.id === game.createdByUserId
                             && game.players.length >= 2
                             ? <Button
@@ -148,6 +149,7 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
                 return (
                     <div className={K.classes.centerAligned}>
                         Started
+                        <br/>
                         <br/>
                         <EnterButton
                             to={K.routes.game(this.state.game.id)}
