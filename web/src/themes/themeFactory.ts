@@ -14,8 +14,9 @@ export default class ThemeFactory {
 
             centerCellName : "The Seat",
 
-            effectMessageGameStatusChanged :  "Game status changed from %(oldStatus)s to %(newStatus)s.",
-            effectMessagePieceAbandoned :  "%(piece)s was abandoned.",
+            effectMessageGameStatusChangedStarted : "Game started.",
+            effectMessageGameStatusChangedFinished : "Game over.",
+            effectMessagePieceAbandoned : "%(piece)s was abandoned.",
             effectMessagePieceDropped : "%(piece)s was dropped at %(newCell)s.",
             effectMessagePieceEnlisted : "%(piece)s was enlisted by player %(newPlayer)s.",
             effectMessagePieceKilled : "%(piece)s was killed.",
@@ -25,7 +26,12 @@ export default class ThemeFactory {
             effectMessageNeutralPlayerAdded : "Neutral player %(player)s added to the game.",
             effectMessagePlayerOutOfMoves : "%(player)s is out of moves.",
             effectMessagePlayerRemoved : "%(player)s was removed from the game.",
-            effectMessagePlayerStatusChanged : "%(player)s's status changed from %(oldStatus)s to %(newStatus)s.",
+            effectMessagePlayerStatusChangedAlive : "%(player)s will no longer accept a draw.",
+            effectMessagePlayerStatusChangedAcceptsDraw : "%(player)s will accept a draw.",
+            effectMessagePlayerStatusChangedConceded : "%(player)s conceded.",
+            effectMessagePlayerStatusChangedWillConcede : "%(player)s will concede at the start of their next turn.",
+            effectMessagePlayerStatusChangedEliminated : "%(player)s was eliminated.",
+            effectMessagePlayerStatusChangedVictorious : "%(player)s won.",
             effectMessageTurnCycleAdvanced : "Turn cycle advanced by 1. [%(newCycle)s]",
             effectMessageTurnCyclePlayerFellFromPower : "%(player)s fell from power. [%(newCycle)s]",
             effectMessageTurnCyclePlayerRemoved : "%(player)s removed from the turn cycle. [%(newCycle)s]",
@@ -78,44 +84,7 @@ export default class ThemeFactory {
 
     public static getHotDogTownTheme() : Theme {
         return {
-            cellColorEven : null,
-            cellColorCenter : null,
-            cellColorOdd : null,
-
-            cellHighlightSelectedColor : null,
-            cellHighlightSelectedIntensity : null,
-            cellHighlightSelectionOptionColor : null,
-            cellHighlightSelectionOptionIntensity : null,
-
             centerCellName : "The Booth",
-
-            effectMessageGameStatusChanged : null,
-            effectMessagePieceAbandoned : null,
-            effectMessagePieceDropped : null,
-            effectMessagePieceEnlisted : null,
-            effectMessagePieceKilled : null,
-            effectMessagePieceMoved : null,
-            effectMessagePieceVacated : null,
-            effectMessagePlayerAdded : null,
-            effectMessageNeutralPlayerAdded : null,
-            effectMessagePlayerOutOfMoves : null,
-            effectMessagePlayerRemoved : null,
-            effectMessagePlayerStatusChanged : null,
-            effectMessageTurnCycleAdvanced : null,
-            effectMessageTurnCyclePlayerFellFromPower : null,
-            effectMessageTurnCyclePlayerRemoved : null,
-            effectMessageTurnCyclePlayerRoseToPower : null,
-            eventMessageGameStarted : null,
-            eventMessageTurnCommitted : null,
-            eventMessagePlayerStatusChanged: null,
-
-            pieceImageAssassin : null,
-            pieceImageChief : null,
-            pieceImageCorpse : null,
-            pieceImageDiplomat : null,
-            pieceImageGravedigger : null,
-            pieceImageReporter : null,
-            pieceImageThug: null,
 
             pieceNameAssassin : "Fork",
             pieceNameChief : "Sauce",
@@ -124,29 +93,6 @@ export default class ThemeFactory {
             pieceNameGravedigger : "Eater",
             pieceNameReporter : "Fart",
             pieceNameThug : "Fries",
-
-            playerColor0 : null,
-            playerColor1 : null,
-            playerColor2 : null,
-            playerColor3 : null,
-            playerColor4 : null,
-            playerColor5 : null,
-            playerColor6 : null,
-            playerColor7 : null,
-
-            selectionDescriptionSubject : null,
-            selectionDescriptionMove : null,
-            selectionDescriptionMoveAndTarget : null,
-            selectionDescriptionTarget : null,
-            selectionDescriptionDrop : null,
-            selectionDescriptionVacate: null,
-
-            selectionPromptDrop : null,
-            selectionPromptMove : null,
-            selectionPromptNull : null,
-            selectionPromptSubject : null,
-            selectionPromptTarget : null,
-            selectionPromptVacate : null,
         };
     }
 }

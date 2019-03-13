@@ -199,17 +199,21 @@ export default class StatusChangeModal extends React.Component<StatusChangeModal
                 return result;
             }));
 
-        const current = this.state.actingPlayer !== null
-            ? items
+        let currentPlayer = null;
+
+        if (this.state.actingPlayer) {
+            const item = items
                 .find(x => x.value !== null
-                    && x.value.id === this.state.actingPlayer.id)
-                .value
-            : null;
+                    && x.value.id === this.state.actingPlayer.id);
+            if (item) {
+                currentPlayer = item.value;
+            }
+        }
 
         return (
             <Dropdown
                 name="ActingPlayer"
-                currentValue={current}
+                currentValue={currentPlayer}
                 onChange={(_, player) => this.onPlayerSelected(player)}
                 items={items}
             />
