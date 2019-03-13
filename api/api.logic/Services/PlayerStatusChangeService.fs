@@ -78,19 +78,18 @@ let getUpdatePlayerStatusEvent (game : Game, request : PlayerStatusChangeRequest
                     let isPlayersTurn = game.turnCycle.[0] = request.playerId
                     if isPlayersTurn
                     then
+                        let effects = new ArrayList<Effect>()
+
                         let primary = Effect.PlayerStatusChanged { 
                             oldStatus = oldStatus
                             newStatus = Conceded
                             playerId = player.id 
                         } 
-                        //Remove from turn cycle
-                        //Abandon pieces
-                        //Check for victory and draw
-                        //End turn
-                        //Check for player out of moves
 
-                        let fx = [primary]
-                        Ok { event with effects = fx }
+                        effects.Add(primary)
+                        let updatedGame = EventService.applyEffect primary game
+                        effects.AddRange (IndirectEffectsService.getIndirectEffectsForConcede (game, request))
+                        Ok { event with effects = effects |> Seq.toList }
                     else
                         let primary = Effect.PlayerStatusChanged { 
                             oldStatus = oldStatus

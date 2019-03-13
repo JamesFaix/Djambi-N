@@ -62,46 +62,19 @@ let getCommitTurnEvent (game : Game) (session : Session) : CreateEventRequest Ht
     (*
         The order of effects is important, both for the implementation and clarity of the event log to users.
 
-        Primary effects
-          Move subject to destination
-          Kill target (option)
-          Move target to drop (option)
-          Move subject to vacate (option)
-
-        Secondary effects
-          [Eliminate target's player] (option)
-            Change player status
-            Remove player from turn cycle
-            Enlist pieces controlled by player
-          Enlist pieces if killing neutral Chief (option)
-          Player rises/falls from power (option)
-
-        Ternary effects
-          Victory (option)
-          Advance turn cycle
-          [Eliminate player out of moves] (option, repeat as necessary)
-            Change player status
-            Remove from turn cycle
-            Abandon pieces
-          Victory due to out-of-moves (option)
-          Current turn changed   
+        Move subject to destination
+        Kill target (option)
+        Move target to drop (option)
+        Move subject to vacate (option)
     *)
     
     let effects = new ArrayList<Effect>()
 
     let primaryEffects = getPrimaryEffects game
-    effects.AddRange(primaryEffects)
+    effects.AddRange primaryEffects 
     let updatedGame = EventService.applyEffects primaryEffects game
 
-    let secondaryEffects = IndirectEffectsService.getSecondaryEffects (game, updatedGame)
-    effects.AddRange(secondaryEffects)
-    let updatedGame = EventService.applyEffects secondaryEffects updatedGame
-
-    let updatedGame = { updatedGame with currentTurn = Some Turn.empty } //This is required so that selection options come back
-
-    let ternaryEffects = IndirectEffectsService.getTernaryEffects updatedGame
-    effects.AddRange(ternaryEffects)
-    let updatedGame = EventService.applyEffects ternaryEffects updatedGame
+    effects.AddRange (IndirectEffectsService.getIndirectEffectsForTurnCommit (game, updatedGame))
     
     Ok {
         kind = EventKind.TurnCommitted

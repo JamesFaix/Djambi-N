@@ -51,7 +51,7 @@ let private applyPieceEnlistedEffect (effect : PieceEnlistedEffect) (game : Game
     { game with 
         pieces = game.pieces |> List.replaceIf
             (fun p -> p.id = effect.oldPiece.id)
-            (fun p -> { p with playerId = effect.newPlayerId })
+            (fun p -> { p with playerId = Some effect.newPlayerId })
     }
 
 let private applyPieceKilledEffect (effect : PieceKilledEffect) (game : Game) : Game =

@@ -19,18 +19,16 @@ let private removeSequentialDuplicates(turnCycle : int list) : int list =
             then list.RemoveAt(i)
         list |> Seq.toList
 
-let private getKillAbandonedChiefEffects (game : Game) (chiefOriginalPlayerId : int) (killingPlayerId : int) : Effect list =
+let private getAbandonPiecesEffects (game : Game, oldPlayerId : int) : Effect list =
     game.pieces 
-    |> List.filter (fun p -> 
-        p.originalPlayerId = chiefOriginalPlayerId 
-        && p.playerId = None)
-    |> List.map (fun p ->
-        Effect.PieceEnlisted {
-            oldPiece = p
-            newPlayerId = Some killingPlayerId
-        }
-    )
+    |> List.filter (fun piece -> piece.playerId = Some oldPlayerId)
+    |> List.map (fun p -> Effect.PieceAbandoned { oldPiece = p })
 
+let private getEnlistPiecesEffects (game : Game, oldPlayerId : int option, newPlayerId : int) : Effect list =
+    game.pieces 
+    |> List.filter (fun piece -> piece.playerId = oldPlayerId)
+    |> List.map (fun p -> Effect.PieceEnlisted { oldPiece = p; newPlayerId = newPlayerId })
+    
 let private getEliminatePlayerEffects (game : Game) (playerId : int) (killingPlayerId : int option) : Effect list =
     let p = game.players |> List.find (fun p -> p.id = playerId)
     
@@ -53,22 +51,11 @@ let private getEliminatePlayerEffects (game : Game) (playerId : int) (killingPla
         newValue = newCycle
     })
 
-    let pieces = game.pieces |> List.filter (fun piece -> piece.playerId = Some p.id)
-
-    let addPieceEffect =
-        if killingPlayerId.IsSome
-        then
-            (fun piece -> effects.Add(Effect.PieceEnlisted {
-                oldPiece = piece
-                newPlayerId = killingPlayerId
-            }))
-        else
-            (fun piece -> effects.Add(Effect.PieceAbandoned {
-                oldPiece = piece
-            }))
-    
-    for piece in pieces do
-        addPieceEffect piece
+    match killingPlayerId with
+    | Some kpId -> 
+        effects.AddRange (getEnlistPiecesEffects (game, Some p.id, kpId))
+    | None ->
+        effects.AddRange (getAbandonPiecesEffects (game, p.id))
 
     effects |> Seq.toList
 
@@ -170,35 +157,6 @@ let private getRiseOrFallFromPowerEffects (game : Game, updatedGame : Game) : Ef
 
     effects |> Seq.toList
 
-let getSecondaryEffects (game : Game, updatedGame : Game) : Effect list =
-    let effects = new ArrayList<Effect>()
-    
-    let turn = updatedGame.currentTurn.Value
-    let subject = (turn.subjectPiece game).Value
-    let subjectStrategy = PieceService.getStrategy subject
-
-    let killChiefEffects = 
-        match turn.targetPiece game with
-        | Some target ->
-            let targetStrategy = PieceService.getStrategy target
-
-            if subjectStrategy.killsTarget 
-                && targetStrategy.killsControllingPlayerWhenKilled
-            then 
-                if target.playerId.IsSome
-                then getEliminatePlayerEffects game target.playerId.Value subject.playerId
-                else getKillAbandonedChiefEffects game target.originalPlayerId subject.playerId.Value
-            else []
-        | _ -> []
-
-    effects.AddRange killChiefEffects
-    let updatedGame = EventService.applyEffects killChiefEffects updatedGame
-
-    let riseFallEffects = getRiseOrFallFromPowerEffects (game, updatedGame)
-    effects.AddRange riseFallEffects
-    
-    effects |> Seq.toList
-
 let private getVictoryEffects (game : Game) : Effect list =
     let remainingPlayers = game.players |> List.filter (fun p -> p.status = Alive)
     if remainingPlayers.Length = 1        
@@ -226,22 +184,15 @@ let private getOutOfMovesEffects (game : Game) : Effect list =
 
     effects |> Seq.toList
 
-let getTernaryEffects (updatedGame : Game) : Effect list = 
-    
+let private getTernaryEffects (game : Game, updatedGame : Game) : Effect list =
     let effects = new ArrayList<Effect>()
+    let updatedGame = { updatedGame with currentTurn = Some Turn.empty } //This is required so that selection options come back
 
-    let victoryEffects = getVictoryEffects updatedGame
+    let victoryEffects = getVictoryEffects game
     effects.AddRange victoryEffects
 
     if victoryEffects.IsEmpty
     then
-        let advanceEffect = Effect.TurnCycleAdvanced { 
-            oldValue = updatedGame.turnCycle
-            newValue = updatedGame.turnCycle |> List.rotate 1
-        }
-        effects.Add advanceEffect
-        let updatedGame = EventService.applyEffect advanceEffect updatedGame
-
         let outOfMovesEffects = getOutOfMovesEffects updatedGame
         effects.AddRange outOfMovesEffects
         let updatedGame = EventService.applyEffects outOfMovesEffects updatedGame
@@ -258,5 +209,87 @@ let getTernaryEffects (updatedGame : Game) : Effect list =
             effects.Add(Effect.CurrentTurnChanged { oldValue = updatedGame.currentTurn; newValue = Some turn })
         else ()
     else ()
+    effects |> Seq.toList
+
+let getIndirectEffectsForTurnCommit (game : Game, updatedGame : Game) : Effect list =
+    (*
+        The order of effects is important, both for the implementation and clarity of the event log to users.
+
+        [Eliminate target's player] (option)
+            Change player status
+            Remove player from turn cycle
+            Enlist pieces controlled by player
+        Enlist pieces if killing neutral Chief (option)
+        Player rises/falls from power (option)
+
+        Victory (option)
+        Advance turn cycle
+        [Eliminate player out of moves] (option, repeat as necessary)
+            Change player status
+            Remove from turn cycle
+            Abandon pieces
+        Victory due to out-of-moves (option)
+        Current turn changed   
+    *)
+
+    let effects = new ArrayList<Effect>()
+
+    let turn = updatedGame.currentTurn.Value
+    let subject = (turn.subjectPiece game).Value
+    let subjectStrategy = PieceService.getStrategy subject
+
+    let killChiefEffects = 
+        match turn.targetPiece game with
+        | Some target ->
+            let targetStrategy = PieceService.getStrategy target
+
+            if subjectStrategy.killsTarget 
+                && targetStrategy.killsControllingPlayerWhenKilled
+            then 
+                if target.playerId.IsSome
+                then getEliminatePlayerEffects game target.playerId.Value subject.playerId
+                else getEnlistPiecesEffects (game, Some target.originalPlayerId, subject.playerId.Value)
+            else []
+        | _ -> []
+
+    effects.AddRange killChiefEffects
+    let updatedGame = EventService.applyEffects killChiefEffects updatedGame
+
+    let riseFallEffects = getRiseOrFallFromPowerEffects (game, updatedGame)
+    effects.AddRange riseFallEffects
+    let updatedGame = EventService.applyEffects riseFallEffects updatedGame
+
+    effects.AddRange (getTernaryEffects (game, updatedGame))
+
+    effects |> Seq.toList
+
+let getIndirectEffectsForConcede (game : Game, request : PlayerStatusChangeRequest) : Effect list =
+    (*
+        The order of effects is important, both for the implementation and clarity of the event log to users.
+
+        Remove player from turn cycle
+        Abandon pieces controlled by player
+        Victory/draw (option)
+        Reset current turn
+        [Eliminate player out of moves] (option, repeat as necessary)
+            Change player status
+            Remove from turn cycle
+            Abandon pieces
+        Victory due to out-of-moves (option)
+        Current turn changed   
+    *)
+    let effects = new ArrayList<Effect>()
+    
+    effects.Add (Effect.TurnCyclePlayerRemoved { 
+        playerId = request.playerId
+        oldValue = game.turnCycle
+        newValue = game.turnCycle |> List.filter (fun pId -> pId <> request.playerId)
+    })
+
+    effects.AddRange (getAbandonPiecesEffects(game, request.playerId))
+
+    let updatedGame = EventService.applyEffects effects game
+    
+    effects.AddRange (getTernaryEffects (game, updatedGame))
 
     effects |> Seq.toList
