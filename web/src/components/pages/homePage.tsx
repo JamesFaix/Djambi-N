@@ -34,12 +34,12 @@ export default class HomePage extends React.Component<HomePageProps> {
                 <div className={K.classes.centerAligned}>
                     <Button
                         kind={ButtonKind.Link}
-                        label="Sign up"
+                        icon={IconKind.Signup}
                         to={K.routes.signup()}
                     />
                     <Button
                         kind={ButtonKind.Link}
-                        label="Login"
+                        icon={IconKind.Login}
                         to={K.routes.login()}/>
                     <Button
                         kind={ButtonKind.Link}

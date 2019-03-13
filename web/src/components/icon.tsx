@@ -20,7 +20,9 @@ export enum IconKind {
     Start,
     Expand,
     Collapse,
-    Remove
+    Remove,
+    Login,
+    Signup
 }
 
 export interface IconnProps {
@@ -71,13 +73,17 @@ export default class Icon extends React.Component<IconnProps> {
                 return "angle-left";
             case IconKind.Remove:
                 return "minus";
+            case IconKind.Login:
+                return "sign-in-alt";
+            case IconKind.Signup:
+                return "user-plus";
             default:
                 throw "Unsupported icon.";
         }
     }
 
     render() {
-        const className = "fa fa-" + this.getIconName(this.props.kind);
+        const className = "fas fa-" + this.getIconName(this.props.kind);
         return <i className={className}></i>;
     }
 }

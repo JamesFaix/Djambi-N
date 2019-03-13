@@ -91,7 +91,7 @@ export default class SignupPage extends React.Component<SignupPageProps, SignupP
                     />
                     <Button
                         kind={ButtonKind.Link}
-                        label="Login"
+                        icon={IconKind.Login}
                         to={K.routes.login()}
                     />
                 </div>
