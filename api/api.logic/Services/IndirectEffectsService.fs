@@ -162,25 +162,55 @@ let private getVictoryEffects (game : Game) : Effect list =
     if remainingPlayers.Length = 1        
     then
         let p = remainingPlayers.[0]
-        [
+        let finishConcedeEffects =
+            game.players 
+            |> List.filter (fun p -> p.status = WillConcede) 
+            |> List.map (fun p -> Effect.PlayerStatusChanged {
+                playerId = p.id
+                oldStatus = WillConcede
+                newStatus = Conceded
+            })
+        let mainEffects = [
             Effect.PlayerStatusChanged { oldStatus = p.status; newStatus = Victorious; playerId = p.id}
             Effect.GameStatusChanged { oldValue = game.status; newValue = Finished }
             Effect.CurrentTurnChanged { oldValue = game.currentTurn; newValue = None }
         ]
+        List.append finishConcedeEffects mainEffects
     else []
 
-let private getOutOfMovesEffects (game : Game) : Effect list =
+let private getSecondaryEffectsForConcede (game : Game, request : PlayerStatusChangeRequest) : Effect list =
+    let f = Effect.TurnCyclePlayerRemoved { 
+        playerId = request.playerId
+        oldValue = game.turnCycle
+        newValue = game.turnCycle |> List.filter (fun pId -> pId <> request.playerId)
+    }
+    f :: getAbandonPiecesEffects (game, request.playerId)
+
+let private getBeginningOfNextTurnEffects (game : Game) : Effect list =
     let effects = new ArrayList<Effect>()
+
     let mutable game = game
-    let mutable selectionOptions = (SelectionOptionsService.getSelectableCellsFromState game) |> Result.value
-   
-    while selectionOptions.IsEmpty && game.turnCycle.Length > 1 do
-        let currentPlayerId = game.turnCycle.[0]
-        let fx = [Effect.PlayerOutOfMoves { playerId = currentPlayerId }]
-        let fx = List.append fx (getEliminatePlayerEffects game currentPlayerId None)
-        effects.AddRange(fx)
-        game <- EventService.applyEffects fx game
-        selectionOptions <- (SelectionOptionsService.getSelectableCellsFromState) game |> Result.value
+    let mutable stop = false
+
+    while game.turnCycle.Length > 1 && not stop do
+        let player = game.players |> List.find (fun p -> p.id = game.turnCycle.[0])
+        //Check for players who conceded before their turn
+        if player.status = WillConcede then
+            let fx = Effect.PlayerStatusChanged { playerId = player.id; oldStatus = WillConcede; newStatus = Conceded } ::
+                     getSecondaryEffectsForConcede(game, {playerId = player.id; gameId = game.id; status = Conceded})
+            effects.AddRange fx
+            game <- EventService.applyEffects fx game
+        else
+        //Then check for out of moves
+            let selectionOptions = (SelectionOptionsService.getSelectableCellsFromState game) |> Result.value
+            if selectionOptions.IsEmpty then
+                let fx = Effect.PlayerOutOfMoves { playerId = player.id } ::
+                         (getEliminatePlayerEffects game player.id None)
+                effects.AddRange fx
+                game <- EventService.applyEffects fx game
+            else 
+        //Stop when you find a player who isn't affected
+                stop <- true
 
     effects |> Seq.toList
 
@@ -193,9 +223,9 @@ let private getTernaryEffects (game : Game) : Effect list =
 
     if victoryEffects.IsEmpty
     then
-        let outOfMovesEffects = getOutOfMovesEffects game
-        effects.AddRange outOfMovesEffects
-        let game = EventService.applyEffects outOfMovesEffects game
+        let nextTurnEffects = getBeginningOfNextTurnEffects game
+        effects.AddRange nextTurnEffects
+        let game = EventService.applyEffects nextTurnEffects game
 
         //Check for victory caused by players being out of moves
         let victoryEffects = getVictoryEffects game
@@ -279,17 +309,7 @@ let getIndirectEffectsForConcede (game : Game, request : PlayerStatusChangeReque
         Current turn changed   
     *)
     let effects = new ArrayList<Effect>()
-    
-    effects.Add (Effect.TurnCyclePlayerRemoved { 
-        playerId = request.playerId
-        oldValue = game.turnCycle
-        newValue = game.turnCycle |> List.filter (fun pId -> pId <> request.playerId)
-    })
-
-    effects.AddRange (getAbandonPiecesEffects(game, request.playerId))
-
-    let game = EventService.applyEffects effects game
-    
+    effects.AddRange (getSecondaryEffectsForConcede (game, request))
+    let game = EventService.applyEffects effects game    
     effects.AddRange (getTernaryEffects game)
-
     effects |> Seq.toList
