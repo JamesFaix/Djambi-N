@@ -5,8 +5,7 @@ import PageTitle from '../pageTitle';
 import { GameParameters, User } from '../../api/model';
 import { Kernel as K } from '../../kernel';
 import { Redirect } from 'react-router';
-import Button, { ButtonKind } from '../controls/button';
-import { IconKind } from '../icon';
+import { DashboardPageButton, MyGamesPageButton, FindGamesPageButton, SubmitButton } from '../controls/navigationButtons';
 
 export interface CreateGamePageProps {
     user : User
@@ -97,21 +96,9 @@ export default class CreateGamePage extends React.Component<CreateGamePageProps,
                 <PageTitle label={"Create Game"}/>
                 <br/>
                 <div className={K.classes.centerAligned}>
-                    <Button
-                        kind={ButtonKind.Link}
-                        icon={IconKind.Home}
-                        to={K.routes.dashboard()}
-                    />
-                    <Button
-                        kind={ButtonKind.Link}
-                        icon={IconKind.MyGames}
-                        to={K.routes.myGames()}
-                    />
-                    <Button
-                        kind={ButtonKind.Link}
-                        icon={IconKind.Find}
-                        to={K.routes.findGame()}
-                    />
+                    <DashboardPageButton/>
+                    <MyGamesPageButton/>
+                    <FindGamesPageButton/>
                 </div>
                 <br/>
                 <br/>
@@ -153,9 +140,7 @@ export default class CreateGamePage extends React.Component<CreateGamePageProps,
                     <br/>
                 </div>
                 <div className={K.classes.centerAligned}>
-                    <Button
-                        kind={ButtonKind.Action}
-                        icon={IconKind.Commit}
+                    <SubmitButton
                         onClick={() => this.submitOnClick()}
                     />
                 </div>

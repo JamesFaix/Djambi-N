@@ -15,6 +15,7 @@ import { Kernel as K } from '../../kernel';
 import { Redirect } from 'react-router';
 import Button, { ButtonKind } from '../controls/button';
 import { IconKind } from '../icon';
+import { ResetButton, DashboardPageButton, MyGamesPageButton, CreateGamePageButton } from '../controls/navigationButtons';
 
 export interface FindGamePageProps {
     user : User
@@ -142,9 +143,7 @@ export default class FindGamePage extends React.Component<FindGamePageProps, Fin
                                 />
                             </td>
                             <td className={K.classes.borderless}>
-                                <Button
-                                    kind={ButtonKind.Action}
-                                    icon={IconKind.Reset}
+                                <ResetButton
                                     onClick={() => this.resetOnClick()}
                                 />
                             </td>
@@ -166,21 +165,9 @@ export default class FindGamePage extends React.Component<FindGamePageProps, Fin
                 <PageTitle label={"Find Game"}/>
                 <br/>
                 <div className={K.classes.centerAligned}>
-                    <Button
-                        kind={ButtonKind.Link}
-                        icon={IconKind.Home}
-                        to={K.routes.dashboard()}
-                    />
-                    <Button
-                        kind={ButtonKind.Link}
-                        icon={IconKind.MyGames}
-                        to={K.routes.myGames()}
-                     />
-                    <Button
-                        kind={ButtonKind.Link}
-                        icon={IconKind.New}
-                        to={K.routes.createGame()}
-                    />
+                    <DashboardPageButton/>
+                    <MyGamesPageButton/>
+                    <CreateGamePageButton/>
                 </div>
                 <br/>
                 {this.renderQueryFilters()}

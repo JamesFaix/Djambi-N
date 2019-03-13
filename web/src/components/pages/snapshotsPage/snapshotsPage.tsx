@@ -8,6 +8,7 @@ import LabeledInput from '../../controls/labeledInput';
 import { InputTypes } from '../../../constants';
 import Button, { ButtonKind } from '../../controls/button';
 import { IconKind } from '../../icon';
+import { FindGamesPageButton, MyGamesPageButton, DashboardPageButton, EnterButton } from '../../controls/navigationButtons';
 
 export interface SnapshotsPageProps {
     user : User,
@@ -46,26 +47,10 @@ export default class SnapshotsPage extends React.Component<SnapshotsPageProps, S
                 <PageTitle label={title}/>
                 <br/>
                 <div className={K.classes.centerAligned}>
-                    <Button
-                        kind={ButtonKind.Link}
-                        icon={IconKind.Home}
-                        to={K.routes.dashboard()}
-                    />
-                    <Button
-                        kind={ButtonKind.Link}
-                        icon={IconKind.Enter}
-                        to={K.routes.game(this.props.gameId)}
-                    />
-                    <Button
-                        kind={ButtonKind.Link}
-                        icon={IconKind.MyGames}
-                        to={K.routes.myGames()}
-                    />
-                    <Button
-                        kind={ButtonKind.Link}
-                        icon={IconKind.Find}
-                        to={K.routes.findGame()}
-                    />
+                    <DashboardPageButton/>
+                    <EnterButton to={K.routes.game(this.props.gameId)}/>
+                    <MyGamesPageButton/>
+                    <FindGamesPageButton/>
                 </div>
                 <br/>
                 <SnapshotsTable

@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { Game } from '../api/model';
 import { Kernel as K } from '../kernel';
-import Button, { ButtonKind } from './controls/button';
-import { IconKind } from './icon';
+import { GameInfoPageButton, EnterButton } from './controls/navigationButtons';
 
 export interface GamesQueryResultsTableProps {
     games : Game[]
@@ -36,11 +35,7 @@ export default class GamesQueryResultsTable extends React.Component<GamesQueryRe
         return (
             <tr key={"row" + rowNumber}>
                 <td>
-                    <Button
-                        kind={ButtonKind.Link}
-                        icon={IconKind.Enter}
-                        to={K.routes.gameInfo(game.id)}
-                    />
+                    <EnterButton to={K.routes.gameInfo(game.id)}/>
                 </td>
                 <td className={K.classes.rightAligned}>
                     {game.id}

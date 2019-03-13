@@ -4,8 +4,7 @@ import PageTitle from '../pageTitle';
 import { Game, GamesQuery, User } from '../../api/model';
 import { Kernel as K } from '../../kernel';
 import { Redirect } from 'react-router';
-import Button, { ButtonKind } from '../controls/button';
-import { IconKind } from '../icon';
+import { FindGamesPageButton, CreateGamePageButton, DashboardPageButton } from '../controls/navigationButtons';
 
 export interface MyGamesPageProps {
     user : User
@@ -59,21 +58,9 @@ export default class MyGamesPage extends React.Component<MyGamesPageProps, MyGam
                 <PageTitle label={"My Games"}/>
                 <br/>
                 <div className={K.classes.centerAligned}>
-                    <Button
-                        kind={ButtonKind.Link}
-                        icon={IconKind.Home}
-                        to={K.routes.dashboard()}
-                    />
-                    <Button
-                        kind={ButtonKind.Link}
-                        icon={IconKind.New}
-                        to={K.routes.createGame()}
-                    />
-                    <Button
-                        kind={ButtonKind.Link}
-                        icon={IconKind.Find}
-                        to={K.routes.findGame()}
-                    />
+                    <DashboardPageButton/>
+                    <CreateGamePageButton/>
+                    <FindGamesPageButton/>
                 </div>
                 <br/>
                 <GamesQueryResultsTable

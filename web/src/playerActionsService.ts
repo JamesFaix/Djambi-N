@@ -148,7 +148,7 @@ export default class PlayerActionsService {
     private createActions() : PlayerAction[] {
         return [
             {
-                icon: IconKind.Commit,
+                icon: IconKind.Submit,
                 onClick: () => this.controller.commitTurn(),
                 hideByDefault: false,
                 isAvailable: this.canCommit()

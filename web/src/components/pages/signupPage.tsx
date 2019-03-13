@@ -5,8 +5,7 @@ import { CreateUserRequest, LoginRequest, User } from '../../api/model';
 import { InputTypes } from '../../constants';
 import { Kernel as K } from '../../kernel';
 import { Redirect } from 'react-router';
-import Button, { ButtonKind } from '../controls/button';
-import { IconKind } from '../icon';
+import { LoginPageButton, HomePageButton, SubmitButton } from '../controls/navigationButtons';
 
 export interface SignupPageProps {
     user : User,
@@ -84,16 +83,8 @@ export default class SignupPage extends React.Component<SignupPageProps, SignupP
                 <PageTitle label="Sign up"/>
                 <br/>
                 <div className={K.classes.centerAligned}>
-                    <Button
-                        kind={ButtonKind.Link}
-                        icon={IconKind.Home}
-                        to={K.routes.home()}
-                    />
-                    <Button
-                        kind={ButtonKind.Link}
-                        icon={IconKind.Login}
-                        to={K.routes.login()}
-                    />
+                    <HomePageButton/>
+                    <LoginPageButton/>
                 </div>
                 <br/>
                 <br/>
@@ -114,9 +105,7 @@ export default class SignupPage extends React.Component<SignupPageProps, SignupP
                     <br/>
                 </div>
                 <div className={K.classes.centerAligned}>
-                    <Button
-                        kind={ButtonKind.Action}
-                        icon={IconKind.Commit}
+                    <SubmitButton
                         onClick={() => this.submitOnClick()}
                     />
                 </div>

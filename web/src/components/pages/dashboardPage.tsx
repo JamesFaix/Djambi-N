@@ -3,8 +3,9 @@ import PageTitle from '../pageTitle';
 import { Kernel as K } from '../../kernel';
 import { Redirect } from 'react-router';
 import { User } from '../../api/model';
-import Icon, { IconKind } from '../icon';
+import { MyGamesPageButton, FindGamesPageButton, CreateGamePageButton, RulesPageButton } from '../controls/navigationButtons';
 import Button, { ButtonKind } from '../controls/button';
+import { IconKind } from '../icon';
 
 export interface DashboardPageProps {
     user : User,
@@ -35,31 +36,14 @@ export default class DashboardPage extends React.Component<DashboardPageProps> {
                 <PageTitle label={"Welcome, " + this.props.user.name}/>
                 <br/>
                 <div className={K.classes.centerAligned}>
-                    <Button
-                        kind={ButtonKind.Link}
-                        icon={IconKind.MyGames}
-                        to={K.routes.myGames()}
-                    />
-                    <Button
-                        kind={ButtonKind.Link}
-                        icon={IconKind.New}
-                        to={K.routes.createGame()}
-                    />
-                    <Button
-                        kind={ButtonKind.Link}
-                        icon={IconKind.Find}
-                        to={K.routes.findGame()}
-                    />
-                    <Button
-                        kind={ButtonKind.Link}
-                        icon={IconKind.Rules}
-                        to={K.routes.rules()}
-                        newWindow={true}
-                    />
+                    <MyGamesPageButton/>
+                    <CreateGamePageButton/>
+                    <FindGamesPageButton/>
+                    <RulesPageButton/>
                     <Button
                         kind={ButtonKind.Action}
                         icon={IconKind.Logout}
-                       onClick={() => this.logoutOnClick()}
+                        onClick={() => this.logoutOnClick()}
                     />
                 </div>
             </div>

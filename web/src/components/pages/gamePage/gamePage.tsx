@@ -26,8 +26,7 @@ import ActionPanel from './actionPanel';
 import PlayerActionsService from '../../../playerActionsService';
 import { Redirect } from 'react-router';
 import StatusChangeModal from './statusChangeModal';
-import Button, { ButtonKind } from '../../controls/button';
-import { IconKind } from '../../icon';
+import { RulesPageButton, DashboardPageButton } from '../../controls/navigationButtons';
 
 export interface GamePageProps {
     user : User,
@@ -158,17 +157,8 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                 <br/>
                 <br/>
                 <div className={K.classes.centerAligned}>
-                    <Button
-                        kind={ButtonKind.Link}
-                        icon={IconKind.Home}
-                        to={K.routes.dashboard()}
-                    />
-                    <Button
-                        kind={ButtonKind.Link}
-                        icon={IconKind.Rules}
-                        to={K.routes.rules()}
-                        newWindow={true}
-                    />
+                    <DashboardPageButton/>
+                    <RulesPageButton/>
                 </div>
                 <br/>
                 {this.renderPanels()}
