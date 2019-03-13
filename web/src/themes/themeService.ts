@@ -8,7 +8,11 @@ import {
     EventKind,
     PieceKind,
     Selection,
-    SelectionKind
+    SelectionKind,
+    PlayerStatusChangedEffect,
+    PlayerStatus,
+    GameStatusChangedEffect,
+    GameStatus
     } from '../api/model';
 
 export default class ThemeService {
@@ -167,7 +171,7 @@ export default class ThemeService {
     public getEffectMessageTemplate(effect : Effect) : string {
         switch (effect.kind) {
             case EffectKind.GameStatusChanged:
-                return this.getValue(t => t.effectMessageGameStatusChanged);
+                return this.getGameStatusChangedMessageTemplate(effect);
             case EffectKind.NeutralPlayerAdded:
                 return this.getValue(t => t.effectMessageNeutralPlayerAdded);
             case EffectKind.PieceAbandoned:
@@ -189,7 +193,7 @@ export default class ThemeService {
             case EffectKind.PlayerRemoved:
                 return this.getValue(t => t.effectMessagePlayerRemoved);
             case EffectKind.PlayerStatusChanged:
-                return this.getValue(t => t.effectMessagePlayerStatusChanged);
+                return this.getPlayerStatusChangedMessageTemplate(effect);
             case EffectKind.TurnCycleAdvanced:
                 return this.getValue(t => t.effectMessageTurnCycleAdvanced);
             case EffectKind.TurnCyclePlayerFellFromPower:
@@ -200,6 +204,39 @@ export default class ThemeService {
                 return this.getValue(t => t.effectMessageTurnCyclePlayerRoseToPower);
             default:
                 throw "Unsupported effect kind.";
+        }
+    }
+
+    private getGameStatusChangedMessageTemplate(effect : Effect) : string {
+        const f = effect.value as GameStatusChangedEffect;
+
+        switch (f.newValue) {
+            case GameStatus.Started:
+                return this.getValue(t => t.effectMessageGameStatusChangedStarted);
+            case GameStatus.Finished:
+                return this.getValue(t => t.effectMessageGameStatusChangedFinished);
+            default:
+                throw "Unsupported game status.";
+        }
+    }
+
+    private getPlayerStatusChangedMessageTemplate(effect : Effect) : string {
+        const f = effect.value as PlayerStatusChangedEffect;
+        switch (f.newStatus) {
+            case PlayerStatus.AcceptsDraw:
+                return this.getValue(t => t.effectMessagePlayerStatusChangedAcceptsDraw);
+            case PlayerStatus.Alive:
+                return this.getValue(t => t.effectMessagePlayerStatusChangedAlive);
+            case PlayerStatus.Conceded:
+                return this.getValue(t => t.effectMessagePlayerStatusChangedConceded);
+            case PlayerStatus.WillConcede:
+                return this.getValue(t => t.effectMessagePlayerStatusChangedWillConcede);
+            case PlayerStatus.Eliminated:
+                return this.getValue(t => t.effectMessagePlayerStatusChangedEliminated);
+            case PlayerStatus.Victorious:
+                return this.getValue(t => t.effectMessagePlayerStatusChangedVictorious);
+            default:
+                throw "Unsupported player status.";
         }
     }
 }
