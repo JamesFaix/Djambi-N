@@ -84,7 +84,7 @@ let updatePlayerStatus (gameId : int, playerId : int, status : PlayerStatus) (se
             playerId = playerId
             status = status
         }    
-    processEvent request.gameId (fun game -> PlayerService.getUpdatePlayerStatusEvent (game, request) session)
+    processEvent request.gameId (fun game -> PlayerStatusChangeService.getUpdatePlayerStatusEvent (game, request) session)
 
 [<ClientFunction(HttpMethod.Post, Routes.startGame, ClientSection.Game)>]
 let startGame (gameId: int) (session : Session) : StateAndEventResponse AsyncHttpResult =

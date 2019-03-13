@@ -5,7 +5,6 @@ open System.Linq
 open Djambi.Api.Common.Collections
 open Djambi.Api.Common.Control
 open Djambi.Api.Logic
-open Djambi.Api.Logic.ModelExtensions
 open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
 open Djambi.Api.Logic.ModelExtensions.GameModelExtensions
 open Djambi.Api.Logic.PieceStrategies
