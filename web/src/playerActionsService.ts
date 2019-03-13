@@ -1,4 +1,4 @@
-import { User, Game, Privilege, TurnStatus } from "./api/model";
+import { User, Game, Privilege, TurnStatus, GameStatus, PlayerStatus, Player } from "./api/model";
 
 export interface PlayerAction {
     name : string,
@@ -13,14 +13,19 @@ export enum HiddenActionsState {
     SomeHidden
 }
 
+export interface PlayerActionsController {
+    commitTurn : () => void,
+    resetTurn : () => void,
+    openStatusModal : (status : PlayerStatus) => void,
+    navigateToSnapshotsPage : () => void
+}
+
 export default class PlayerActionsService {
     private readonly actions : PlayerAction[];
     constructor(
         private readonly user : User,
         private readonly game : Game,
-        private readonly commitTurn : () => void,
-        private readonly resetTurn : () => void,
-        private readonly navigateToSnapshotsPage : () => void
+        private readonly controller : PlayerActionsController
     ) {
         this.actions = this.createActions();
     }
@@ -31,6 +36,10 @@ export default class PlayerActionsService {
     }
 
     private canParticipateInGame() : boolean {
+        if (this.game.status !== GameStatus.Started) {
+            return false;
+        }
+
         if (this.hasPrivilege(Privilege.OpenParticipation)) {
             return true;
         }
@@ -64,23 +73,112 @@ export default class PlayerActionsService {
             && this.canParticipateInGame();
     }
 
+    private getControllablePlayers() {
+        if (this.hasPrivilege(Privilege.OpenParticipation)) {
+            return this.game.players;
+        } else {
+            return this.game.players
+                .filter(p => p.userId === this.user.id);
+        }
+    }
+
+    public controllablePlayersThatCanChangeToStatus(status : PlayerStatus) : Player[] {
+        if (this.game.status !== GameStatus.Started) {
+            return [];
+        }
+
+        const players = this.getControllablePlayers();
+
+        switch (status) {
+            case PlayerStatus.Alive:
+                return players.filter(p => p.status === PlayerStatus.AcceptsDraw);
+
+            case PlayerStatus.AcceptsDraw:
+                return players.filter(p => p.status === PlayerStatus.Alive);
+
+            case PlayerStatus.Conceded:
+                return players.filter(p => p.status === PlayerStatus.AcceptsDraw
+                                        || p.status === PlayerStatus.Alive);
+
+            default:
+                return [];
+        }
+    }
+
+    private anyControllablePlayersOfStatus(status : PlayerStatus) {
+        if (this.game.status !== GameStatus.Started) {
+            return false;
+        }
+
+        return this.getControllablePlayers()
+            .filter(p => p.status === status)
+            .length > 0;
+    }
+
+    private canChangeStatus(status : PlayerStatus) {
+        if (this.game.status !== GameStatus.Started) {
+            return false;
+        }
+
+        const players = this.getControllablePlayers();
+
+        switch (status) {
+            case PlayerStatus.AcceptsDraw:
+                return players
+                    .filter(p => p.status === PlayerStatus.Alive)
+                    .length > 0;
+
+            case PlayerStatus.Alive:
+                return players
+                    .filter(p => p.status === PlayerStatus.AcceptsDraw)
+                    .length > 0;
+
+            case PlayerStatus.Conceded:
+                return players
+                    .filter(p => p.status === PlayerStatus.AcceptsDraw
+                              || p.status === PlayerStatus.Alive)
+                    .length > 0;
+
+            default:
+                return false;
+        }
+    }
+
     private createActions() : PlayerAction[] {
         return [
             {
                 name: "Commit",
-                onClick: () => this.commitTurn(),
+                onClick: () => this.controller.commitTurn(),
                 hideByDefault: false,
                 isAvailable: this.canCommit()
             },
             {
                 name: "Reset",
-                onClick: () => this.resetTurn(),
+                onClick: () => this.controller.resetTurn(),
                 hideByDefault: false,
                 isAvailable: this.canReset()
             },
             {
+                name: "Accept Draw",
+                onClick: () => this.controller.openStatusModal(PlayerStatus.AcceptsDraw),
+                hideByDefault: true,
+                isAvailable: this.canChangeStatus(PlayerStatus.AcceptsDraw)
+            },
+            {
+                name: "Revoke Draw",
+                onClick: () => this.controller.openStatusModal(PlayerStatus.Alive),
+                hideByDefault: true,
+                isAvailable: this.canChangeStatus(PlayerStatus.Alive)
+            },
+            {
+                name: "Concede",
+                onClick: () => this.controller.openStatusModal(PlayerStatus.Conceded),
+                hideByDefault: true,
+                isAvailable: this.canChangeStatus(PlayerStatus.Conceded)
+            },
+            {
                 name: "Snapshots",
-                onClick: () => this.navigateToSnapshotsPage(),
+                onClick: () => this.controller.navigateToSnapshotsPage(),
                 hideByDefault: true,
                 isAvailable: this.hasPrivilege(Privilege.Snapshots)
             }

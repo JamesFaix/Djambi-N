@@ -18,12 +18,15 @@ import {
     EventsQuery,
     Game,
     ResultsDirection,
-    User
+    User,
+    PlayerStatus,
+    Player
     } from '../../../api/model';
 import { Kernel as K } from '../../../kernel';
 import ActionPanel from './actionPanel';
 import PlayerActionsService from '../../../playerActionsService';
 import { Redirect } from 'react-router';
+import StatusChangeModal from './statusChangeModal';
 
 export interface GamePageProps {
     user : User,
@@ -34,7 +37,9 @@ export interface GamePageState {
     game : Game,
     boardView : BoardView,
     events : Event[],
-    redirectUrl : string
+    redirectUrl : string,
+    statusChangeModalStatus : PlayerStatus,
+    statusChangeModalPlayer : Player
 }
 
 export default class GamePage extends React.Component<GamePageProps, GamePageState> {
@@ -50,7 +55,9 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
             game: null,
             boardView: null,
             events: [],
-            redirectUrl: null
+            redirectUrl: null,
+            statusChangeModalStatus: null,
+            statusChangeModalPlayer: null
         };
 
         const windowSize = {
@@ -87,20 +94,26 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
         }
     }
 
-    private commitTurn() : void {
+    //--- PlayerActionsController ---
+
+    commitTurn() : void {
         K.api
             .commitTurn(this.props.gameId)
             .then(response => this.updateGame(response.game))
             .then(_ => this.updateEvents(this.props.gameId));
     }
 
-    private resetTurn() : void {
+    resetTurn() : void {
         K.api
             .resetTurn(this.props.gameId)
             .then(response => this.updateGame(response.game));
     }
 
-    private navigateToSnapshotsPage() : void {
+    openStatusModal(status : PlayerStatus) : void {
+        this.setState({statusChangeModalStatus: status});
+    }
+
+    navigateToSnapshotsPage() : void {
         this.setState({redirectUrl: K.routes.snapshots(this.props.gameId)});
     }
 
@@ -109,6 +122,27 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
             .getGame(this.props.gameId)
             .then(game => this.updateGame(game))
             .then(_ => this.updateEvents(this.props.gameId));
+    }
+
+    //--- ---
+
+    private onModalSelectPlayer(player : Player) {
+        this.setState({statusChangeModalPlayer: player});
+    }
+
+    private onModalCancel() {
+        this.setState({
+            statusChangeModalStatus: null,
+            statusChangeModalPlayer: null
+        });
+    }
+
+    private onModalOk() {
+        K.api
+            .updatePlayerStatus(this.props.gameId, this.state.statusChangeModalPlayer.id, this.state.statusChangeModalStatus)
+            .then(response => this.updateGame(response.game))
+            .then(_ => this.updateEvents(this.props.gameId))
+            .then(_ => this.onModalCancel());
     }
 
     render() {
@@ -128,6 +162,7 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                 </div>
                 <br/>
                 {this.renderPanels()}
+                {this.renderStatusChangeModal()}
             </div>
         );
     }
@@ -154,9 +189,7 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
         const playerActionsService = new PlayerActionsService(
             this.props.user,
             this.state.game,
-            () => this.commitTurn(),
-            () => this.resetTurn(),
-            () => this.navigateToSnapshotsPage()
+            this
         );
 
         return (
@@ -207,6 +240,26 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                     />
                 </div>
             </div>
+        );
+    }
+
+    private renderStatusChangeModal() {
+        const status = this.state.statusChangeModalStatus;
+        if (status === null) {
+            return undefined;
+        }
+
+        const service = new PlayerActionsService(this.props.user, this.state.game, this);
+        const players = service.controllablePlayersThatCanChangeToStatus(status);
+
+        return (
+            <StatusChangeModal
+                targetStatus={status}
+                playerOptions={players}
+                setPlayer={player => this.onModalSelectPlayer(player)}
+                onOk={() => this.onModalOk()}
+                onCancel={() => this.onModalCancel()}
+            />
         );
     }
 }
