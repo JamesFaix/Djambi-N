@@ -93,6 +93,14 @@ export default class ThemeFactory {
             pieceNameGravedigger : "Eater",
             pieceNameReporter : "Fart",
             pieceNameThug : "Fries",
+
+            pieceImageAssassin : "../resources/forkEmoji.png",
+            pieceImageChief : "../resources/ketchupEmoji.png",
+            pieceImageCorpse : "../resources/hotdogEmoji.png",
+            pieceImageDiplomat : "../resources/hugEmoji.png",
+            pieceImageGravedigger : "../resources/droolEmoji.png",
+            pieceImageReporter : "../resources/fartEmoji.png",
+            pieceImageThug : "../resources/friesEmoji.png",
         };
     }
 }
