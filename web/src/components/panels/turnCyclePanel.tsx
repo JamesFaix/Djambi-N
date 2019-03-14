@@ -29,11 +29,11 @@ export default class TurnCyclePanel extends React.Component<TurnCyclePanelProps>
 
         return (
             <div className={K.classes.thinBorder} style={style}>
-                <Icon
-                    kind={IconKind.TurnCycle}
-                    hint="Turn cycle"
-                />
                 <div className={K.classes.flex}>
+                    <Icon
+                        kind={IconKind.TurnCycle}
+                        hint="Turn cycle"
+                    />
                     {
                         this.getPlayerViews()
                             .map((pv, i) => this.renderCell(i, pv, rowClass))
