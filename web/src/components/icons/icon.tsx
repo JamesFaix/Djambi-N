@@ -12,6 +12,7 @@ export enum IconKind {
     Enter,
     Expand,
     Find,
+    GuestOf,
     Home,
     Load,
     Login,
@@ -19,7 +20,6 @@ export enum IconKind {
     MyGames,
     New,
     Pending,
-    Player,
     Players,
     Remove,
     Reset,
@@ -52,6 +52,7 @@ export default class Icon extends React.Component<IconnProps> {
             case IconKind.Enter: return "door-open";
             case IconKind.Expand: return "ellipsis-h";
             case IconKind.Find: return "search";
+            case IconKind.GuestOf: return "id-badge";
             case IconKind.Home: return "home";
             case IconKind.Load: return "folder-open";
             case IconKind.Login: return "sign-in-alt";
@@ -59,7 +60,6 @@ export default class Icon extends React.Component<IconnProps> {
             case IconKind.MyGames: return "inbox";
             case IconKind.New: return "plus";
             case IconKind.Pending: return "clock";
-            case IconKind.Player: return "user";
             case IconKind.Players: return "users";
             case IconKind.Remove: return "minus";
             case IconKind.Reset: return "undo";

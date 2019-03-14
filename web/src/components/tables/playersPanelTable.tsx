@@ -105,7 +105,7 @@ export default class PlayersPanelTable extends React.Component<PlayersPanelTable
         const style = {color: hostColor};
         return (
             <div style={style}>
-                <Icon kind={IconKind.Player}/>
+                <Icon kind={IconKind.GuestOf}/>
             </div>
         );
     }
