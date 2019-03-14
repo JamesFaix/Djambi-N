@@ -12,6 +12,7 @@ import { Redirect } from 'react-router';
 import Button, { ButtonKind } from '../controls/button';
 import { IconKind } from '../icons/icon';
 import { EnterButton, FindGamesPageButton, CreateGamePageButton, MyGamesPageButton, DashboardPageButton } from '../controls/navigationButtons';
+import GameStatusIcon from '../icons/gameStatusIcon';
 
 export interface GameInfoPageProps {
     user : User,
@@ -92,7 +93,6 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
                 <div className={K.classes.centerAligned}>
                     {this.renderGameDescription(game)}
                     {this.renderGameOptions(game)}
-                    <p>{game.parameters.regionCount + " regions"}</p>
                     {this.renderGameStatus(game)}
                 </div>
             </div>
@@ -108,14 +108,16 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
     }
 
     private renderGameOptions(game : Game) {
+        const regions = game.parameters.regionCount + " regions";
+
         if (game.parameters.isPublic && game.parameters.allowGuests) {
-            return <p>{"Public, guests allowed"}</p>;
+            return <p>{"Public, guests allowed, " + regions}</p>;
         } else if (game.parameters.isPublic) {
-            return <p>{"Public"}</p>;
+            return <p>{"Public, " + regions}</p>;
         } else if (game.parameters.allowGuests) {
-            return <p>{"Guests allowed"}</p>;
+            return <p>{"Guests allowed, " + regions}</p>;
         } else {
-            return "";
+            return regions;
         }
     }
 
@@ -124,48 +126,46 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
             return "";
         }
 
-        switch (game.status) {
-            case GameStatus.Pending:
-                return (
-                    //Only creator can start game, and only with > 1 players
-                    <div className={K.classes.centerAligned}>
-                        {game.status}
-                        <br/>
-                        <br/>
-                        { this.props.user.id === game.createdByUserId
-                            && game.players.length >= 2
-                            ? <Button
-                                kind={ButtonKind.Action}
-                                icon={IconKind.Start}
-                                onClick={() => this.startOnClick()}
-                                hint="Start game"
-                            />
-                            : ""
-                        }
-                    </div>
-                );
+        return (
+            <div
+                className={K.classes.centerAligned}
+                style={{display:"inline-flex"}}
+            >
+                <div style={{padding:"6px 10px 6px 10px"}}>
+                    <GameStatusIcon status={game.status}/>
+                </div>
+                {this.renderActionButton(game)}
+            </div>
+        );
+    }
 
-            case GameStatus.Started:
-            case GameStatus.Finished:
-                return (
-                    <div className={K.classes.centerAligned}>
-                        {game.status}
-                        <br/>
-                        <br/>
-                        <EnterButton
-                            to={K.routes.game(this.state.game.id)}
-                            hint="View game"
-                        />
-                    </div>
-                );
+    private renderActionButton(game : Game) {
+        if (game.status === GameStatus.Started ||
+            game.status === GameStatus.Finished) {
 
-            case GameStatus.Aborted:
-                return (
-                    <div className={K.classes.centerAligned}>
-                        {game.status}
-                    </div>
-                );
+            return (
+                <EnterButton
+                    to={K.routes.game(this.state.game.id)}
+                    hint="View game"
+                />
+            );
         }
+
+        if (game.status === GameStatus.Pending &&
+            game.players.length > 1 &&
+            this.props.user.id === game.createdByUserId) {
+
+            return (
+                <Button
+                    kind={ButtonKind.Action}
+                    icon={IconKind.Started}
+                    onClick={() => this.startOnClick()}
+                    hint="Start game"
+                />
+            );
+        }
+
+        return undefined;
     }
 
     render() {

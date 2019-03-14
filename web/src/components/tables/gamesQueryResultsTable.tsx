@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Game } from '../../api/model';
 import { Kernel as K } from '../../kernel';
 import { EnterButton } from '../controls/navigationButtons';
+import GameStatusIcon from '../icons/gameStatusIcon';
 
 export interface GamesQueryResultsTableProps {
     games : Game[]
@@ -44,8 +45,8 @@ export default class GamesQueryResultsTable extends React.Component<GamesQueryRe
                 <td className={K.classes.rightAligned}>
                     {game.id}
                 </td>
-                <td>
-                    {game.status}
+                <td className={K.classes.centerAligned}>
+                    <GameStatusIcon status={game.status}/>
                 </td>
                 <td>
                     {K.dates.format(game.createdOn)}
