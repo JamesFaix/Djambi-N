@@ -4,6 +4,7 @@ import { Kernel as K } from '../kernel';
 export enum IconKind {
     AcceptDraw,
     Alive,
+    Close,
     Collapse,
     Concede,
     Delete,
@@ -41,6 +42,7 @@ export default class Icon extends React.Component<IconnProps> {
         switch (kind) {
             case IconKind.AcceptDraw: return "handshake";
             case IconKind.Alive: return "heart";
+            case IconKind.Close: return "times";
             case IconKind.Collapse: return "angle-left";
             case IconKind.Concede: return "flag";
             case IconKind.Delete: return "trash-alt";

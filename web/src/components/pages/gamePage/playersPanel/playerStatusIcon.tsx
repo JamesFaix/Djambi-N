@@ -1,7 +1,6 @@
 import * as React from 'react';
 import Icon, { IconKind } from '../../../icon';
-import { PlayerStatus } from '../../../../api/model';
-import { Kernel as K } from '../../../../kernel';
+import { PlayerStatus, Player, PlayerKind } from '../../../../api/model';
 
 interface IconDetails {
     hint : string,
@@ -10,13 +9,13 @@ interface IconDetails {
 }
 
 export interface PlayerStatusIconProps {
-    status : PlayerStatus
+    player : Player
 }
 
 export default class PlayerStatusIcon extends React.Component<PlayerStatusIconProps> {
 
-    private getDetails(status : PlayerStatus) : IconDetails {
-        switch (status) {
+    private getDetails(player : Player) : IconDetails {
+        switch (player.status) {
             case PlayerStatus.Pending:
                 return {
                     hint: "Pending",
@@ -27,7 +26,7 @@ export default class PlayerStatusIcon extends React.Component<PlayerStatusIconPr
                 return {
                     hint: "Alive",
                     kind: IconKind.Alive,
-                    isActive: true
+                    isActive: player.kind !== PlayerKind.Neutral
                 };
             case PlayerStatus.AcceptsDraw:
                 return {
@@ -65,7 +64,7 @@ export default class PlayerStatusIcon extends React.Component<PlayerStatusIconPr
     }
 
     render() {
-        const details = this.getDetails(this.props.status);
+        const details = this.getDetails(this.props.player);
         const style = details.isActive
             ? undefined
             : {color: "silver"};

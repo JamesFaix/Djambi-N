@@ -19,7 +19,8 @@ import {
     ResultsDirection,
     User,
     PlayerStatus,
-    Player
+    Player,
+    GameStatus
     } from '../../../api/model';
 import { Kernel as K } from '../../../kernel';
 import ActionPanel from './actionPanel';
@@ -27,6 +28,7 @@ import PlayerActionsService from '../../../playerActionsService';
 import { Redirect } from 'react-router';
 import StatusChangeModal from './statusChangeModal';
 import { RulesPageButton, DashboardPageButton } from '../../controls/navigationButtons';
+import GameOverModal from './gameOverModal';
 
 export interface GamePageProps {
     user : User,
@@ -39,7 +41,8 @@ export interface GamePageState {
     events : Event[],
     redirectUrl : string,
     statusChangeModalStatus : PlayerStatus,
-    statusChangeModalPlayer : Player
+    statusChangeModalPlayer : Player,
+    showGameOverModal : boolean
 }
 
 export default class GamePage extends React.Component<GamePageProps, GamePageState> {
@@ -57,7 +60,8 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
             events: [],
             redirectUrl: null,
             statusChangeModalStatus: null,
-            statusChangeModalPlayer: null
+            statusChangeModalPlayer: null,
+            showGameOverModal: false
         };
 
         const windowSize = {
@@ -71,7 +75,8 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
         const boardView = await this.boardViewService.getBoardView(game);
         this.setState({
             boardView : boardView,
-            game : game
+            game : game,
+            showGameOverModal : game.status === GameStatus.Finished
         });
     }
 
@@ -126,23 +131,27 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
 
     //--- ---
 
-    private onModalSelectPlayer(player : Player) {
+    private onStatusChangeModalSelectPlayer(player : Player) {
         this.setState({statusChangeModalPlayer: player});
     }
 
-    private onModalCancel() {
+    private onStatusChangeModalCancel() {
         this.setState({
             statusChangeModalStatus: null,
             statusChangeModalPlayer: null
         });
     }
 
-    private onModalOk() {
+    private onStatusChangeModalOk() {
         K.api
             .updatePlayerStatus(this.props.gameId, this.state.statusChangeModalPlayer.id, this.state.statusChangeModalStatus)
             .then(response => this.updateGame(response.game))
             .then(_ => this.updateEvents(this.props.gameId))
-            .then(_ => this.onModalCancel());
+            .then(_ => this.onStatusChangeModalCancel());
+    }
+
+    private onGameOverModalOk() {
+        this.setState({showGameOverModal: false});
     }
 
     render() {
@@ -163,6 +172,7 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                 <br/>
                 {this.renderPanels()}
                 {this.renderStatusChangeModal()}
+                {this.renderGameOverModal()}
             </div>
         );
     }
@@ -256,9 +266,22 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
             <StatusChangeModal
                 targetStatus={status}
                 playerOptions={players}
-                setPlayer={player => this.onModalSelectPlayer(player)}
-                onOk={() => this.onModalOk()}
-                onCancel={() => this.onModalCancel()}
+                setPlayer={player => this.onStatusChangeModalSelectPlayer(player)}
+                onOk={() => this.onStatusChangeModalOk()}
+                onCancel={() => this.onStatusChangeModalCancel()}
+            />
+        );
+    }
+
+    private renderGameOverModal() {
+        if (!this.state.showGameOverModal) {
+            return undefined;
+        }
+
+        return (
+            <GameOverModal
+                game={this.state.game}
+                closeWindow={() => this.onGameOverModalOk()}
             />
         );
     }
