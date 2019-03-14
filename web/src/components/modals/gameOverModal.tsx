@@ -1,11 +1,11 @@
 import * as React from 'react';
 import * as Modal from 'react-modal';
-import { Kernel as K } from '../../../kernel';
-import Button, { ButtonKind } from '../../controls/button';
-import { Game, PlayerStatus } from '../../../api/model';
-import { HomePageButton, MyGamesPageButton, FindGamesPageButton } from '../../controls/navigationButtons';
-import PlayersPanelTable from './playersPanel/playersPanelTable';
-import { IconKind } from '../../icon';
+import { Kernel as K } from '../../kernel';
+import Button, { ButtonKind } from '../controls/button';
+import { Game, PlayerStatus } from '../../api/model';
+import { HomePageButton, MyGamesPageButton, FindGamesPageButton } from '../controls/navigationButtons';
+import PlayersPanelTable from '../tables/playersPanelTable';
+import { IconKind } from '../icon';
 import * as Sprintf from 'sprintf-js';
 
 export interface GameOverModalProps {

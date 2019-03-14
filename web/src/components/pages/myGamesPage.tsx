@@ -1,5 +1,5 @@
 import * as React from 'react';
-import GamesQueryResultsTable from '../gamesQueryResultsTable';
+import GamesQueryResultsTable from '../tables/gamesQueryResultsTable';
 import PageTitle from '../pageTitle';
 import { Game, GamesQuery, User } from '../../api/model';
 import { Kernel as K } from '../../kernel';

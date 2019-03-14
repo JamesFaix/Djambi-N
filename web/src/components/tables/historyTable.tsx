@@ -7,8 +7,8 @@ import {
     Event,
     EventKind,
     Game
-    } from '../../../../api/model';
-import { Kernel as K } from '../../../../kernel';
+    } from '../../api/model';
+import { Kernel as K } from '../../kernel';
 
 export interface HistoryTableProps {
     game : Game,

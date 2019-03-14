@@ -3,12 +3,12 @@ import CanvasCell from './canvasCell';
 import CanvasLabel from './canvasLabel';
 import CanvasPiece from './canvasPiece';
 import CanvasPolygon from './canvasPolygon';
-import Debug from '../../../../../debug';
-import Geometry from '../../../../../boardRendering/geometry';
-import { BoardView, CellType, CellView } from '../../../../../boardRendering/model';
-import { Kernel as K } from '../../../../../kernel';
+import Debug from '../../debug';
+import Geometry from '../../boardRendering/geometry';
+import { BoardView, CellType, CellView } from '../../boardRendering/model';
+import { Kernel as K } from '../../kernel';
 import { Layer, Stage } from 'react-konva';
-import { Point } from '../../../../../boardRendering/model';
+import { Point } from '../../boardRendering/model';
 
 export interface CanvasBoardProps {
     board : BoardView,

@@ -1,14 +1,14 @@
 import * as React from 'react';
-import { User, SnapshotInfo, CreateSnapshotRequest } from '../../../api/model';
-import SnapshotsTable from './snapshotsTable';
-import { Kernel as K } from '../../../kernel';
+import { User, SnapshotInfo, CreateSnapshotRequest } from '../../api/model';
+import SnapshotsTable from '../tables/snapshotsTable';
+import { Kernel as K } from '../../kernel';
 import { Redirect } from 'react-router';
-import PageTitle from '../../pageTitle';
-import LabeledInput from '../../controls/labeledInput';
-import { InputTypes } from '../../../constants';
-import Button, { ButtonKind } from '../../controls/button';
-import { IconKind } from '../../icon';
-import { FindGamesPageButton, MyGamesPageButton, DashboardPageButton, EnterButton } from '../../controls/navigationButtons';
+import PageTitle from '../pageTitle';
+import LabeledInput from '../controls/labeledInput';
+import { InputTypes } from '../../constants';
+import Button, { ButtonKind } from '../controls/button';
+import { IconKind } from '../icon';
+import { FindGamesPageButton, MyGamesPageButton, DashboardPageButton, EnterButton } from '../controls/navigationButtons';
 
 export interface SnapshotsPageProps {
     user : User,

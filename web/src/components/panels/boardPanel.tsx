@@ -1,13 +1,13 @@
 import * as React from 'react';
-import CanvasBoard from './canvas/canvasBoard';
-import CanvasTransformService from '../../../../boardRendering/canvasTransformService';
-import Geometry from '../../../../boardRendering/geometry';
+import CanvasBoard from '../canvas/canvasBoard';
+import CanvasTransformService from '../../boardRendering/canvasTransformService';
+import Geometry from '../../boardRendering/geometry';
 import Scrollbars, { positionValues } from 'react-custom-scrollbars';
-import { BoardView, CellView } from '../../../../boardRendering/model';
-import { Game } from '../../../../api/model';
-import { InputTypes } from '../../../../constants';
-import { Kernel as K } from '../../../../kernel';
-import { Point } from '../../../../boardRendering/model';
+import { BoardView, CellView } from '../../boardRendering/model';
+import { Game } from '../../api/model';
+import { InputTypes } from '../../constants';
+import { Kernel as K } from '../../kernel';
+import { Point } from '../../boardRendering/model';
 
 export interface BoardPanelProps {
     game : Game,

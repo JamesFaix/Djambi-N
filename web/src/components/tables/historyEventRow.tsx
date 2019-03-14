@@ -6,8 +6,8 @@ import {
     Event,
     Game,
     Player
-    } from '../../../../api/model';
-import { Kernel as K } from '../../../../kernel';
+    } from '../../api/model';
+import { Kernel as K } from '../../kernel';
 
 export interface HistoryEventRowProps {
     game : Game,

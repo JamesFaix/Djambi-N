@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Game } from '../api/model';
-import { Kernel as K } from '../kernel';
-import { EnterButton } from './controls/navigationButtons';
+import { Game } from '../../api/model';
+import { Kernel as K } from '../../kernel';
+import { EnterButton } from '../controls/navigationButtons';
 
 export interface GamesQueryResultsTableProps {
     games : Game[]

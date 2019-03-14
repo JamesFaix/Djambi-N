@@ -1,8 +1,8 @@
 import * as React from 'react';
-import Debug from '../../../../../debug';
-import Geometry from '../../../../../boardRendering/geometry';
-import { CellView } from '../../../../../boardRendering/model';
-import { Kernel as K } from '../../../../../kernel';
+import Debug from '../../debug';
+import Geometry from '../../boardRendering/geometry';
+import { CellView } from '../../boardRendering/model';
+import { Kernel as K } from '../../kernel';
 import { Text } from 'react-konva';
 
 export interface CanvasLabelProps {

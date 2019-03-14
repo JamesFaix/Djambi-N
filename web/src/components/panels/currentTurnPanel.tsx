@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Game, Player, User } from '../../../api/model';
-import { Kernel as K } from '../../../kernel';
+import { Game, Player, User } from '../../api/model';
+import { Kernel as K } from '../../kernel';
 
 export interface CurrentTurnPanelProps {
     game : Game,

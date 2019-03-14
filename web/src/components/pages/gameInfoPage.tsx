@@ -1,17 +1,17 @@
 import * as React from 'react';
-import GameInfoPlayersTable from './gameInfoPlayersTable';
-import PageTitle from '../../pageTitle';
+import GameInfoPlayersTable from '../tables/gameInfoPlayersTable';
+import PageTitle from '../pageTitle';
 import {
     CreatePlayerRequest,
     Game,
     GameStatus,
     User
-    } from '../../../api/model';
-import { Kernel as K } from '../../../kernel';
+    } from '../../api/model';
+import { Kernel as K } from '../../kernel';
 import { Redirect } from 'react-router';
-import Button, { ButtonKind } from '../../controls/button';
-import { IconKind } from '../../icon';
-import { EnterButton, FindGamesPageButton, CreateGamePageButton, MyGamesPageButton, DashboardPageButton } from '../../controls/navigationButtons';
+import Button, { ButtonKind } from '../controls/button';
+import { IconKind } from '../icon';
+import { EnterButton, FindGamesPageButton, CreateGamePageButton, MyGamesPageButton, DashboardPageButton } from '../controls/navigationButtons';
 
 export interface GameInfoPageProps {
     user : User,
