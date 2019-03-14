@@ -17,7 +17,7 @@ export default class PlayersPanelTable extends React.Component<PlayersPanelTable
                 key={"row" + rowNumber}
             >
                 <td className={K.classes.borderless} style={K.styles.combine([K.styles.width("5px"), K.styles.padRight("0px")])}>
-                    <PlayerStatusIcon status={player.status}/>
+                    <PlayerStatusIcon player={player}/>
                 </td>
                 <td className={K.classes.borderless} style={K.styles.padLeft("0px")}>
                     {player.name}

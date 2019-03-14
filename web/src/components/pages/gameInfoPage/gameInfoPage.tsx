@@ -129,7 +129,7 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
                 return (
                     //Only creator can start game, and only with > 1 players
                     <div className={K.classes.centerAligned}>
-                        Pending
+                        {game.status}
                         <br/>
                         <br/>
                         { this.props.user.id === game.createdByUserId
@@ -146,9 +146,10 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
                 );
 
             case GameStatus.Started:
+            case GameStatus.Finished:
                 return (
                     <div className={K.classes.centerAligned}>
-                        Started
+                        {game.status}
                         <br/>
                         <br/>
                         <EnterButton
@@ -158,16 +159,10 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
                     </div>
                 );
 
-            case GameStatus.Finished:
-                return (
-                    <div className={K.classes.centerAligned}>
-                        Finished
-                    </div>
-                );
             case GameStatus.Aborted:
                 return (
                     <div className={K.classes.centerAligned}>
-                        Aborted
+                        {game.status}
                     </div>
                 );
         }
