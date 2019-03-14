@@ -1,6 +1,13 @@
 import * as React from 'react';
 import { Game } from '../../api/model';
 import { Kernel as K } from '../../kernel';
+import Icon, { IconKind } from '../icons/icon';
+
+interface PlayerView {
+    id : number,
+    name : string,
+    color : string,
+}
 
 export interface TurnCyclePanelProps {
     game : Game,
@@ -22,25 +29,32 @@ export default class TurnCyclePanel extends React.Component<TurnCyclePanelProps>
 
         return (
             <div className={K.classes.thinBorder} style={style}>
-                Turn Cycle
+                <Icon
+                    kind={IconKind.TurnCycle}
+                    hint="Turn cycle"
+                />
                 <div className={K.classes.flex}>
                     {
                         this.getPlayerViews()
-                            .map((pv, i) => {
-                                const style = K.styles.combine([
-                                    K.styles.playerGlow(pv.color),
-                                    K.styles.height(this.props.iconSize),
-                                    K.styles.width(this.props.iconSize)
-                                ]);
-                                return (
-                                    <div key={"turn" + i}
-                                        className={rowClass}
-                                        style={style}>
-                                    </div>
-                                );
-                            })
+                            .map((pv, i) => this.renderCell(i, pv, rowClass))
                     }
                 </div>
+            </div>
+        );
+    }
+
+    private renderCell(rowNumber : number, playerView : PlayerView, rowClass : string) {
+        const style = K.styles.combine([
+            K.styles.playerGlow(playerView.color),
+            K.styles.height(this.props.iconSize),
+            K.styles.width(this.props.iconSize)
+        ]);
+        return (
+            <div key={"turn" + rowNumber}
+                className={rowClass}
+                style={style}
+                title={playerView.name}
+            >
             </div>
         );
     }
@@ -58,10 +72,4 @@ export default class TurnCyclePanel extends React.Component<TurnCyclePanelProps>
                 }
             });
     }
-}
-
-interface PlayerView {
-    id : number,
-    name : string,
-    color : string,
 }

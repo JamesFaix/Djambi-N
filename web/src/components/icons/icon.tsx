@@ -30,6 +30,7 @@ export enum IconKind {
     Snapshots,
     Start,
     Submit,
+    TurnCycle,
     Victorious
 }
 
@@ -59,7 +60,7 @@ export default class Icon extends React.Component<IconnProps> {
             case IconKind.Logout: return "sign-out-alt";
             case IconKind.MyGames: return "inbox";
             case IconKind.New: return "plus";
-            case IconKind.Pending: return "clock";
+            case IconKind.Pending: return "spinner";
             case IconKind.Players: return "users";
             case IconKind.Remove: return "minus";
             case IconKind.Reset: return "undo";
@@ -70,6 +71,7 @@ export default class Icon extends React.Component<IconnProps> {
             case IconKind.Snapshots: return "camera";
             case IconKind.Start: return "play";
             case IconKind.Submit: return "check";
+            case IconKind.TurnCycle: return "clock";
             case IconKind.Victorious: return "trophy";
             default: throw "Unsupported icon.";
         }
