@@ -15,7 +15,7 @@ import {
     } from '../../api/model';
 import { Kernel as K } from '../../kernel';
 import Button, { ButtonKind } from '../controls/button';
-import { IconKind } from '../icon';
+import { IconKind } from '../icons/icon';
 
 export interface GameInfoPlayersTableProps {
     user : User,

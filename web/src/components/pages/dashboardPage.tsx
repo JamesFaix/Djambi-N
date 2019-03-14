@@ -5,7 +5,7 @@ import { Redirect } from 'react-router';
 import { User } from '../../api/model';
 import { MyGamesPageButton, FindGamesPageButton, CreateGamePageButton, RulesPageButton } from '../controls/navigationButtons';
 import Button, { ButtonKind } from '../controls/button';
-import { IconKind } from '../icon';
+import { IconKind } from '../icons/icon';
 
 export interface DashboardPageProps {
     user : User,

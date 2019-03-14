@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Button, { ButtonKind } from './button';
-import { IconKind } from '../icon';
+import { IconKind } from '../icons/icon';
 import { Kernel as K } from '../../kernel';
 
 export interface LinkButtonProps {

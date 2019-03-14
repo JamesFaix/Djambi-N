@@ -2,6 +2,7 @@ import * as React from 'react';
 import PlayersPanelTable from '../tables/playersPanelTable';
 import { Game } from '../../api/model';
 import { Kernel as K } from '../../kernel';
+import Icon, { IconKind } from '../icons/icon';
 
 export interface PlayersPanelProps {
     game : Game,
@@ -21,7 +22,10 @@ export default class PlayersPanel extends React.Component<PlayersPanelProps> {
 
         return (
             <div className={K.classes.thinBorder} style={style}>
-                Players
+                <Icon
+                    kind={IconKind.Players}
+                    hint="Players"
+                />
                 <PlayersPanelTable
                     game={this.props.game}
                 />

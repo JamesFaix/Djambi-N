@@ -14,7 +14,7 @@ import { InputTypes } from '../../constants';
 import { Kernel as K } from '../../kernel';
 import { Redirect } from 'react-router';
 import Button, { ButtonKind } from '../controls/button';
-import { IconKind } from '../icon';
+import { IconKind } from '../icons/icon';
 import { ResetButton, DashboardPageButton, MyGamesPageButton, CreateGamePageButton } from '../controls/navigationButtons';
 
 export interface FindGamePageProps {

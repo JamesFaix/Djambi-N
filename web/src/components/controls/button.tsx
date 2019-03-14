@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Icon, { IconKind } from '../icon';
+import Icon, { IconKind } from '../icons/icon';
 import { Link } from 'react-router-dom';
 
 export enum ButtonKind {

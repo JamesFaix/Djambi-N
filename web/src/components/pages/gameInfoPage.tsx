@@ -10,7 +10,7 @@ import {
 import { Kernel as K } from '../../kernel';
 import { Redirect } from 'react-router';
 import Button, { ButtonKind } from '../controls/button';
-import { IconKind } from '../icon';
+import { IconKind } from '../icons/icon';
 import { EnterButton, FindGamesPageButton, CreateGamePageButton, MyGamesPageButton, DashboardPageButton } from '../controls/navigationButtons';
 
 export interface GameInfoPageProps {

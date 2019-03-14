@@ -7,7 +7,7 @@ import PageTitle from '../pageTitle';
 import LabeledInput from '../controls/labeledInput';
 import { InputTypes } from '../../constants';
 import Button, { ButtonKind } from '../controls/button';
-import { IconKind } from '../icon';
+import { IconKind } from '../icons/icon';
 import { FindGamesPageButton, MyGamesPageButton, DashboardPageButton, EnterButton } from '../controls/navigationButtons';
 
 export interface SnapshotsPageProps {

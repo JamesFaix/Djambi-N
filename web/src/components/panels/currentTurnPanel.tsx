@@ -59,9 +59,9 @@ export default class CurrentTurnPanel extends React.Component<CurrentTurnPanelPr
                 <p>
                     {Sprintf.sprintf(K.theme.getTurnPrompt(turn), player.name)}
                 </p>
-                <p>
+                <div>
                     {this.getSelectionsDescription(turn)}
-                </p>
+                </div>
             </div>
         );
     }
