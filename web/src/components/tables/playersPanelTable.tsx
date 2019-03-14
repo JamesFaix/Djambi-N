@@ -77,7 +77,10 @@ export default class PlayersPanelTable extends React.Component<PlayersPanelTable
     }
 
     private renderGuestOfCell(player : Player) {
-        const className = K.classes.borderless;
+        const className = K.classes.combine([
+            K.classes.borderless,
+            K.classes.rightAligned
+        ]);
 
         return (
             <td
