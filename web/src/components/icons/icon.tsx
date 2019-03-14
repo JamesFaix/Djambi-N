@@ -2,35 +2,47 @@ import * as React from 'react';
 import { Kernel as K } from '../../kernel';
 
 export enum IconKind {
+    //Player status
     AcceptDraw,
     Alive,
-    Close,
-    Collapse,
     Concede,
-    Delete,
     Eliminated,
-    Enter,
-    Expand,
+    RevokeDraw,
+    Victorious,
+
+    //Game status
+    Aborted,
+    Finished,
+    Pending, //Also player status
+    Started,
+
+    //Panels & Pages
     Find,
-    GuestOf,
     Home,
-    Load,
     Login,
     Logout,
     MyGames,
-    New,
-    Pending,
     Players,
-    Remove,
-    Reset,
-    RevokeDraw,
     Rules,
-    Save,
     Signup,
     Snapshots,
-    Start,
+    TurnCycle,
+
+    //Actions
+    Close,
+    Collapse,
+    Delete,
+    Enter,
+    Expand,
+    Load,
+    New,
+    Remove,
+    Reset,
+    Save,
     Submit,
-    Victorious
+
+    //Misc
+    GuestOf,
 }
 
 export interface IconnProps {
@@ -42,35 +54,48 @@ export default class Icon extends React.Component<IconnProps> {
 
     private getIconName(kind : IconKind) {
         switch (kind) {
+            //Player status
             case IconKind.AcceptDraw: return "handshake";
             case IconKind.Alive: return "heart";
-            case IconKind.Close: return "times";
-            case IconKind.Collapse: return "angle-left";
             case IconKind.Concede: return "flag";
-            case IconKind.Delete: return "trash-alt";
             case IconKind.Eliminated: return "skull";
-            case IconKind.Enter: return "door-open";
-            case IconKind.Expand: return "ellipsis-h";
+            case IconKind.RevokeDraw: return "hand-middle-finger";
+            case IconKind.Victorious: return "trophy";
+
+            //Game status
+            case IconKind.Aborted: return "ban";
+            case IconKind.Finished: return "award";
+            case IconKind.Pending: return "spinner"; //Also player status
+            case IconKind.Started: return "play";
+
+            //Pages & Panels
             case IconKind.Find: return "search";
-            case IconKind.GuestOf: return "id-badge";
             case IconKind.Home: return "home";
-            case IconKind.Load: return "folder-open";
             case IconKind.Login: return "sign-in-alt";
             case IconKind.Logout: return "sign-out-alt";
             case IconKind.MyGames: return "inbox";
-            case IconKind.New: return "plus";
-            case IconKind.Pending: return "clock";
             case IconKind.Players: return "users";
-            case IconKind.Remove: return "minus";
-            case IconKind.Reset: return "undo";
-            case IconKind.RevokeDraw: return "hand-middle-finger";
             case IconKind.Rules: return "scroll";
-            case IconKind.Save: return "save";
             case IconKind.Signup: return "user-plus";
             case IconKind.Snapshots: return "camera";
-            case IconKind.Start: return "play";
+            case IconKind.TurnCycle: return "clock";
+
+            //Actions
+            case IconKind.Close: return "times";
+            case IconKind.Collapse: return "angle-left";
+            case IconKind.Delete: return "trash-alt";
+            case IconKind.Enter: return "door-open";
+            case IconKind.Expand: return "ellipsis-h";
+            case IconKind.Load: return "folder-open";
+            case IconKind.New: return "plus";
+            case IconKind.Remove: return "minus";
+            case IconKind.Reset: return "undo";
+            case IconKind.Save: return "save";
             case IconKind.Submit: return "check";
-            case IconKind.Victorious: return "trophy";
+
+            //Misc
+            case IconKind.GuestOf: return "id-badge";
+
             default: throw "Unsupported icon.";
         }
     }
