@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { Game, Player, User } from '../../api/model';
+import { Game, Player, User, Turn, TurnStatus } from '../../api/model';
 import { Kernel as K } from '../../kernel';
+import * as Sprintf from "sprintf-js";
 
 export interface CurrentTurnPanelProps {
     game : Game,
@@ -13,32 +14,27 @@ export interface CurrentTurnPanelProps {
 export default class CurrentTurnPanel extends React.Component<CurrentTurnPanelProps> {
 
     render() {
-        if (this.props.game.currentTurn === null){
-            return <div></div>;
+        const turn = this.props.game.currentTurn;
+        if(turn === null) {
+            return undefined;
         }
 
-        const currentPlayer = this.getCurrentPlayer(this.props.game);
-        const color = K.theme.getPlayerColor(currentPlayer.colorId);
+        const player = this.getCurrentPlayer(this.props.game);
+        const color = K.theme.getPlayerColor(player.colorId);
         const style = K.styles.combine([
             K.styles.playerGlow(color),
             K.styles.width(this.props.width),
             K.styles.height(this.props.height)
         ]);
+
         return (
             <div className={K.classes.thinBorder} style={style}>
                 <div style={K.styles.margin("10px")}>
-                    {this.getPlayerNameHeader(currentPlayer)}
-                    <br/>
-                    <br/>
-                    <div className={K.classes.flex}>
-                        <div style={K.styles.width("45%")}>
-                            {this.getSelectionsDescription()}
-                        </div>
-                        <div style={K.styles.width("10%")}/>
-                        <div style={K.styles.width("45%")}>
-                            {this.getSelectionPrompt()}
-                        </div>
-                    </div>
+                    {
+                        player.userId === this.props.user.id
+                            ? this.renderForCurrentPlayer(player, turn)
+                            : this.renderForOtherPlayer(player)
+                    }
                 </div>
             </div>
         );
@@ -49,31 +45,50 @@ export default class CurrentTurnPanel extends React.Component<CurrentTurnPanelPr
             .find(p => p.id === game.turnCycle[0]);
     }
 
-    private getPlayerNameHeader(player : Player) {
-        return player.name + "'s turn";
+    private renderForOtherPlayer(player : Player) {
+        return (
+            <div>
+                {Sprintf.sprintf("Waiting on %s...", player.name)}
+            </div>
+        );
     }
 
-    private getSelectionsDescription() {
+    private renderForCurrentPlayer(player : Player, turn : Turn) {
+        return (
+            <div>
+                <p>
+                    {Sprintf.sprintf(K.theme.getTurnPrompt(turn), player.name)}
+                </p>
+                <p>
+                    {this.getSelectionsDescription(turn)}
+                </p>
+            </div>
+        );
+    }
+
+    private getSelectionsDescription(turn : Turn) {
         const game = this.props.game;
 
-        const descriptions = game.currentTurn.selections
+        const descriptions = turn.selections
             .map((s, i) => <p key={"row" + i}>{K.copy.getSelectionDescription(s, game)}</p>);
 
+        const style = K.styles.combine([this.props.textStyle, {fontStyle: "italic"}]);
+
         return (
-            <div style={this.props.textStyle}>
-                Selections:
+            <div style={style}>
+                Pending turn:
                 <br/>
                 <div className={K.classes.indented}>
                     {descriptions}
+                    {this.renderEllipsisIfSelectionRequired(turn)}
                 </div>
             </div>
         );
     }
 
-    private getSelectionPrompt() {
-        const prompt = K.theme.getSelectionPrompt(
-            this.props.game.currentTurn.requiredSelectionKind);
-
-        return prompt;
+    private renderEllipsisIfSelectionRequired(turn : Turn) {
+        return turn.status === TurnStatus.AwaitingSelection
+            ? <p>...</p>
+            : undefined;
     }
 }

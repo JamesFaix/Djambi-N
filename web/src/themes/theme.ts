@@ -76,4 +76,7 @@ export default interface Theme {
     selectionPromptSubject? : string,
     selectionPromptTarget? : string,
     selectionPromptVacate? : string,
+
+    turnPromptCommit? : string,
+    turnPromptDeadEnd? : string
 }
