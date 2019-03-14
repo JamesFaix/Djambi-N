@@ -3,7 +3,7 @@ import PlayerActionsService, { PlayerAction, HiddenActionsState } from '../../pl
 import { User, Game } from '../../api/model';
 import { Kernel as K } from '../../kernel';
 import Button, { ButtonKind } from '../controls/button';
-import { IconKind } from '../icons/icon';
+import Icon, { IconKind } from '../icons/icon';
 
 export interface ActionPanelProps {
     user : User,

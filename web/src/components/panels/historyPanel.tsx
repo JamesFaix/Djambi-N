@@ -4,6 +4,7 @@ import Scrollbars from 'react-custom-scrollbars';
 import { Board, Event, Game, User } from '../../api/model';
 import { Kernel as K } from '../../kernel';
 import CurrentTurnPanel from './currentTurnPanel';
+import Icon, { IconKind } from '../icons/icon';
 
 export interface HistoryPanelProps {
     game : Game,
@@ -29,7 +30,10 @@ export default class HistoryPanel extends React.Component<HistoryPanelProps> {
 
         return (
             <div className={K.classes.thinBorder} style={panelStyle}>
-                History
+                <Icon
+                    kind={IconKind.History}
+                    hint="History"
+                />
                 <Scrollbars style={scrollStyle}>
                     <CurrentTurnPanel
                         game={this.props.game}

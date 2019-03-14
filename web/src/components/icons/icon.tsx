@@ -18,6 +18,7 @@ export enum IconKind {
 
     //Panels & Pages
     Find,
+    History,
     Home,
     Login,
     Logout,
@@ -70,6 +71,7 @@ export default class Icon extends React.Component<IconnProps> {
 
             //Pages & Panels
             case IconKind.Find: return "search";
+            case IconKind.History: return "list";
             case IconKind.Home: return "home";
             case IconKind.Login: return "sign-in-alt";
             case IconKind.Logout: return "sign-out-alt";
