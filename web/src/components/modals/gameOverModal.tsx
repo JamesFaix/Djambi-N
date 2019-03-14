@@ -5,7 +5,7 @@ import Button, { ButtonKind } from '../controls/button';
 import { Game, PlayerStatus } from '../../api/model';
 import { HomePageButton, MyGamesPageButton, FindGamesPageButton } from '../controls/navigationButtons';
 import PlayersPanelTable from '../tables/playersPanelTable';
-import { IconKind } from '../icon';
+import { IconKind } from '../icons/icon';
 import * as Sprintf from 'sprintf-js';
 
 export interface GameOverModalProps {

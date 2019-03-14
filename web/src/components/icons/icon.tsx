@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Kernel as K } from '../kernel';
+import { Kernel as K } from '../../kernel';
 
 export enum IconKind {
     AcceptDraw,
@@ -19,6 +19,8 @@ export enum IconKind {
     MyGames,
     New,
     Pending,
+    Player,
+    Players,
     Remove,
     Reset,
     RevokeDraw,
@@ -57,6 +59,8 @@ export default class Icon extends React.Component<IconnProps> {
             case IconKind.MyGames: return "inbox";
             case IconKind.New: return "plus";
             case IconKind.Pending: return "clock";
+            case IconKind.Player: return "user";
+            case IconKind.Players: return "users";
             case IconKind.Remove: return "minus";
             case IconKind.Reset: return "undo";
             case IconKind.RevokeDraw: return "hand-middle-finger";

@@ -1,5 +1,5 @@
 import { User, Game, Privilege, TurnStatus, GameStatus, PlayerStatus, Player } from "./api/model";
-import { IconKind } from "./components/icon";
+import { IconKind } from "./components/icons/icon";
 
 export interface PlayerAction {
     icon : IconKind,
