@@ -108,4 +108,8 @@ export class Styles {
                 return result;
         }
     }
+
+    public flex(portion : number) : React.CSSProperties {
+        return { flex: portion };
+    }
 }

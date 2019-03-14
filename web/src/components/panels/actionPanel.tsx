@@ -9,7 +9,7 @@ export interface ActionPanelProps {
     user : User,
     game : Game,
     width : string,
-    height : string,
+    height? : string,
     playerActionsService : PlayerActionsService
 }
 
@@ -28,7 +28,14 @@ export default class ActionPanel extends React.Component<ActionPanelProps, Actio
 //--- Rendering ---
 
     render() {
-        const style = K.styles.combine([K.styles.height(this.props.height + "px"), K.styles.width(this.props.width + "px")]);
+        let style = K.styles.combine([
+            K.styles.flex(0),
+            K.styles.width(this.props.width)
+        ]);
+        if (this.props.height) {
+            style = K.styles.combine([style, K.styles.height(this.props.height)]);
+        }
+
         const visibleActions = this.props.playerActionsService.getVisibleActions(this.state.showAllActions);
         return (
             <div className={K.classes.thinBorder} style={style}>

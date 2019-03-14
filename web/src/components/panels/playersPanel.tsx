@@ -5,13 +5,20 @@ import { Kernel as K } from '../../kernel';
 
 export interface PlayersPanelProps {
     game : Game,
-    height : string,
+    height? : string,
     width : string
 }
 
 export default class PlayersPanel extends React.Component<PlayersPanelProps> {
     render() {
-        const style = K.styles.combine([K.styles.height(this.props.height), K.styles.width(this.props.width)]);
+        let style = K.styles.combine([
+            K.styles.flex(0),
+            K.styles.width(this.props.width)
+        ]);
+        if (this.props.height) {
+            style = K.styles.combine([style, K.styles.height(this.props.height)]);
+        }
+
         return (
             <div className={K.classes.thinBorder} style={style}>
                 Players

@@ -12,7 +12,9 @@ import {
     PlayerStatusChangedEffect,
     PlayerStatus,
     GameStatusChangedEffect,
-    GameStatus
+    GameStatus,
+    Turn,
+    TurnStatus
     } from '../api/model';
 
 export default class ThemeService {
@@ -143,7 +145,20 @@ export default class ThemeService {
         }
     }
 
-    public getSelectionPrompt(kind : SelectionKind) : string {
+    public getTurnPrompt(turn : Turn) : string {
+        switch (turn.status) {
+            case TurnStatus.AwaitingSelection:
+                return this.getSelectionPrompt(turn.requiredSelectionKind);
+            case TurnStatus.AwaitingCommit:
+                return this.getValue(t => t.turnPromptCommit);
+            case TurnStatus.DeadEnd:
+                return this.getValue(t => t.turnPromptDeadEnd);
+            default:
+                throw "Invalid turn status.";
+        }
+    }
+
+    private getSelectionPrompt(kind : SelectionKind) : string {
         switch (kind) {
             case SelectionKind.Drop: return this.getValue(t => t.selectionPromptDrop);
             case SelectionKind.Move: return this.getValue(t => t.selectionPromptMove);

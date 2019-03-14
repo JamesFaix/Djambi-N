@@ -73,12 +73,14 @@ export default class ThemeFactory {
             selectionDescriptionDrop : "Drop target piece at cell %s",
             selectionDescriptionVacate: "Vacate %s to cell %s",
 
-            selectionPromptDrop : "Select a cell to drop the target piece in",
-            selectionPromptMove : "Select a cell to move to",
-            selectionPromptNull : "",
-            selectionPromptSubject : "Select a piece to move",
-            selectionPromptTarget : "Select a piece to target",
-            selectionPromptVacate : "Select a cell to vacate to",
+            selectionPromptDrop : "%s, select a cell to drop the target piece in.",
+            selectionPromptMove : "%s, select a cell to move to.",
+            selectionPromptSubject : "%s, select a piece to move.",
+            selectionPromptTarget : "%s, select a piece to target.",
+            selectionPromptVacate : "%s, select a cell to vacate to.",
+
+            turnPromptCommit: "%s, end your turn or reset.",
+            turnPromptDeadEnd: "%s, no further selections are available. You must reset."
         };
     }
 

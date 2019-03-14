@@ -214,23 +214,30 @@ let private getBeginningOfNextTurnEffects (game : Game) : Effect list =
 
     effects |> Seq.toList
 
-let private getTernaryEffects (game : Game) : Effect list =
+let private getTernaryEffects (game : Game, advanceTurn : bool) : Effect list =
     let effects = new ArrayList<Effect>()
-    let game = { game with currentTurn = Some Turn.empty } //This is required so that selection options come back
+    let mutable game = { game with currentTurn = Some Turn.empty } //This is required so that selection options come back
 
     let victoryEffects = getVictoryEffects game
     effects.AddRange victoryEffects
 
     if victoryEffects.IsEmpty
     then
+        if advanceTurn 
+        then 
+            let f = Effect.TurnCycleAdvanced { oldValue = game.turnCycle; newValue = game.turnCycle |> List.rotate 1 }
+            effects.Add f
+            game <- EventService.applyEffect f game
+        else ()
+
         let nextTurnEffects = getBeginningOfNextTurnEffects game
         effects.AddRange nextTurnEffects
-        let game = EventService.applyEffects nextTurnEffects game
+        game <- EventService.applyEffects nextTurnEffects game
 
         //Check for victory caused by players being out of moves
         let victoryEffects = getVictoryEffects game
         effects.AddRange victoryEffects
-        let game = EventService.applyEffects victoryEffects game
+        game <- EventService.applyEffects victoryEffects game
 
         if victoryEffects.IsEmpty
         then 
@@ -289,7 +296,7 @@ let getIndirectEffectsForTurnCommit (game : Game, updatedGame : Game) : Effect l
     effects.AddRange riseFallEffects
     let updatedGame = EventService.applyEffects riseFallEffects updatedGame
 
-    effects.AddRange (getTernaryEffects updatedGame)
+    effects.AddRange (getTernaryEffects (updatedGame, true))
 
     effects |> Seq.toList
 
@@ -311,5 +318,5 @@ let getIndirectEffectsForConcede (game : Game, request : PlayerStatusChangeReque
     let effects = new ArrayList<Effect>()
     effects.AddRange (getSecondaryEffectsForConcede (game, request))
     let game = EventService.applyEffects effects game    
-    effects.AddRange (getTernaryEffects game)
+    effects.AddRange (getTernaryEffects (game, false))
     effects |> Seq.toList
