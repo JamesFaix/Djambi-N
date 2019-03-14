@@ -38,9 +38,11 @@ export default class GameOverModal extends React.Component<GameOverModalProps> {
                     {this.getBodyText()}
                     <br/>
                     <br/>
-                    <PlayersPanelTable
-                        game={this.props.game}
-                    />
+                    <div style={{width: "200px", margin: "0 auto"}}>
+                        <PlayersPanelTable
+                            game={this.props.game}
+                        />
+                    </div>
                     <br/>
                     <div>
                         <HomePageButton/>

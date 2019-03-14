@@ -17,6 +17,7 @@ export default class GamesQueryResultsTable extends React.Component<GamesQueryRe
                         <tr>
                             <th></th>
                             <th>Game #</th>
+                            <th>Status</th>
                             <th>Created on</th>
                             <th>Created by</th>
                             <th>Regions</th>
@@ -42,6 +43,9 @@ export default class GamesQueryResultsTable extends React.Component<GamesQueryRe
                 </td>
                 <td className={K.classes.rightAligned}>
                     {game.id}
+                </td>
+                <td>
+                    {game.status}
                 </td>
                 <td>
                     {K.dates.format(game.createdOn)}
