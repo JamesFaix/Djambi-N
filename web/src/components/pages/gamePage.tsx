@@ -214,36 +214,30 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                         boardMargin={5}
                     />
                 </div>
-                <div style={K.styles.width("30%")}>
+                <div style={{
+                    width: "30%",
+                    display: "flex",
+                    flexDirection: "column"
+                }}>
                     <TurnCyclePanel
                         game={this.state.game}
                         iconSize={"20px"}
-                        height={"50px"}
                         width={"100%"}
                     />
                     <PlayersPanel
                         game={this.state.game}
-                        height={"100px"}
                         width={"100%"}
-                    />
-                    <CurrentTurnPanel
-                        game={this.state.game}
-                        user={this.props.user}
-                        height={"150px"}
-                        width={"100%"}
-                        textStyle={textStyle}
                     />
                     <ActionPanel
                         game={this.state.game}
                         user={this.props.user}
-                        height={"150px"}
                         width={"100%"}
                         playerActionsService={playerActionsService}
                     />
                     <HistoryPanel
                         game={this.state.game}
+                        user={this.props.user}
                         events={this.state.events}
-                        height={"350px"}
                         width={"100%"}
                         textStyle={textStyle}
                         getBoard={n => K.boards.getBoardIfCached(n)}

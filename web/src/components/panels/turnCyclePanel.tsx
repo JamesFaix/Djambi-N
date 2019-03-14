@@ -5,14 +5,20 @@ import { Kernel as K } from '../../kernel';
 export interface TurnCyclePanelProps {
     game : Game,
     iconSize : string,
-    height : string,
+    height? : string,
     width : string
 }
 
 export default class TurnCyclePanel extends React.Component<TurnCyclePanelProps> {
     render() {
         const rowClass = K.classes.combine([K.classes.thinBorder, K.classes.centerAligned]);
-        const style = K.styles.combine([K.styles.height(this.props.height), K.styles.width(this.props.width)]);
+        let style = K.styles.combine([
+            K.styles.flex(0),
+            K.styles.width(this.props.width)
+        ]);
+        if (this.props.height) {
+            style = K.styles.combine([style, K.styles.height(this.props.height)]);
+        }
 
         return (
             <div className={K.classes.thinBorder} style={style}>
