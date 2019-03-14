@@ -1,6 +1,6 @@
 import * as React from 'react';
-import Icon, { IconKind } from '../../../icon';
-import { PlayerStatus, Player, PlayerKind } from '../../../../api/model';
+import Icon, { IconKind } from '../icon';
+import { PlayerStatus, Player, PlayerKind } from '../../api/model';
 
 interface IconDetails {
     hint : string,

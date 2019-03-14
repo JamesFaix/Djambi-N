@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { SnapshotInfo } from '../../../api/model';
-import { Kernel as K } from '../../../kernel';
-import Button, { ButtonKind } from '../../controls/button';
-import { IconKind } from '../../icon';
+import { SnapshotInfo } from '../../api/model';
+import { Kernel as K } from '../../kernel';
+import Button, { ButtonKind } from '../controls/button';
+import { IconKind } from '../icon';
 
 export interface SnapshotsTableProps {
     snapshots : SnapshotInfo[],

@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Game, Player } from '../../../../api/model';
-import { Kernel as K } from '../../../../kernel';
-import PlayerStatusIcon from './playerStatusIcon';
+import { Game, Player } from '../../api/model';
+import { Kernel as K } from '../../kernel';
+import PlayerStatusIcon from '../panels/playerStatusIcon';
 
 export interface PlayersPanelTableProps {
     game : Game

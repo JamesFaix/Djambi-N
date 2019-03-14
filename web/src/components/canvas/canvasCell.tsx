@@ -1,9 +1,9 @@
 import * as React from 'react';
 import CanvasPolygon from './canvasPolygon';
-import Color from '../../../../../boardRendering/color';
-import { CellView } from '../../../../../boardRendering/model';
+import Color from '../../boardRendering/color';
+import { CellView } from '../../boardRendering/model';
 import { Group } from 'react-konva';
-import { Kernel as K } from '../../../../../kernel';
+import { Kernel as K } from '../../kernel';
 
 export interface CanvasCellProps {
     cell: CellView,

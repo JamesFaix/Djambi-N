@@ -1,5 +1,5 @@
 import * as React from 'react';
-import GamesQueryResultsTable from '../gamesQueryResultsTable';
+import GamesQueryResultsTable from '../tables/gamesQueryResultsTable';
 import LabeledInput from '../controls/labeledInput';
 import LabeledTristateDropdown from '../controls/labeledTristateDropdown';
 import PageTitle from '../pageTitle';

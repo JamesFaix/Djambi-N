@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as Modal from 'react-modal';
-import { Player, PlayerStatus } from '../../../api/model';
-import Dropdown, { DropdownItem } from '../../controls/dropdown';
+import { Player, PlayerStatus } from '../../api/model';
+import Dropdown, { DropdownItem } from '../controls/dropdown';
 import * as Sprintf from 'sprintf-js';
-import { Kernel as K } from '../../../kernel';
-import Button, { ButtonKind } from '../../controls/button';
+import { Kernel as K } from '../../kernel';
+import Button, { ButtonKind } from '../controls/button';
 
 export interface StatusChangeModalProps {
     onOk : (playerId : number) => void,

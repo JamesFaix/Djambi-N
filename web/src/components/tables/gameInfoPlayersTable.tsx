@@ -1,9 +1,9 @@
 import * as React from 'react';
-import EmphasizedTextCell from '../../tables/emphasizedTextCell';
-import EmptyCell from '../../tables/emptyCell';
-import HintCell from '../../tables/hintCell';
-import TextCell from '../../tables/textCell';
-import TextFieldCell from '../../tables/textFieldCell';
+import EmphasizedTextCell from '../tableCells/emphasizedTextCell';
+import EmptyCell from '../tableCells/emptyCell';
+import HintCell from '../tableCells/hintCell';
+import TextCell from '../tableCells/textCell';
+import TextFieldCell from '../tableCells/textFieldCell';
 import {
     CreatePlayerRequest,
     Game,
@@ -12,10 +12,10 @@ import {
     PlayerKind,
     User,
     Privilege
-    } from '../../../api/model';
-import { Kernel as K } from '../../../kernel';
-import Button, { ButtonKind } from '../../controls/button';
-import { IconKind } from '../../icon';
+    } from '../../api/model';
+import { Kernel as K } from '../../kernel';
+import Button, { ButtonKind } from '../controls/button';
+import { IconKind } from '../icon';
 
 export interface GameInfoPlayersTableProps {
     user : User,

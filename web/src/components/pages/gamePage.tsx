@@ -1,17 +1,17 @@
 import * as React from 'react';
-import BoardPanel from './boardPanel/boardPanel';
-import BoardViewService from '../../../boardRendering/boardViewService';
-import CurrentTurnPanel from './currentTurnPanel';
-import Geometry from '../../../boardRendering/geometry';
-import HistoryPanel from './historyPanel/historyPanel';
-import PlayersPanel from './playersPanel/playersPanel';
-import TurnCyclePanel from './turnCyclePanel';
+import BoardPanel from '../panels/boardPanel';
+import BoardViewService from '../../boardRendering/boardViewService';
+import CurrentTurnPanel from '../panels/currentTurnPanel';
+import Geometry from '../../boardRendering/geometry';
+import HistoryPanel from '../panels/historyPanel';
+import PlayersPanel from '../panels/playersPanel';
+import TurnCyclePanel from '../panels/turnCyclePanel';
 import {
     BoardView,
     CellState,
     CellView,
     Point
-    } from '../../../boardRendering/model';
+    } from '../../boardRendering/model';
 import {
     Event,
     EventsQuery,
@@ -21,14 +21,14 @@ import {
     PlayerStatus,
     Player,
     GameStatus
-    } from '../../../api/model';
-import { Kernel as K } from '../../../kernel';
-import ActionPanel from './actionPanel';
-import PlayerActionsService from '../../../playerActionsService';
+    } from '../../api/model';
+import { Kernel as K } from '../../kernel';
+import ActionPanel from '../panels/actionPanel';
+import PlayerActionsService from '../../playerActionsService';
 import { Redirect } from 'react-router';
-import StatusChangeModal from './statusChangeModal';
-import { RulesPageButton, DashboardPageButton } from '../../controls/navigationButtons';
-import GameOverModal from './gameOverModal';
+import StatusChangeModal from '../modals/statusChangeModal';
+import { RulesPageButton, DashboardPageButton } from '../controls/navigationButtons';
+import GameOverModal from '../modals/gameOverModal';
 
 export interface GamePageProps {
     user : User,

@@ -2,8 +2,8 @@ import * as React from 'react';
 import CreateGamePage from './pages/createGamePage';
 import DashboardPage from './pages/dashboardPage';
 import FindGamePage from './pages/findGamePage';
-import GameInfoPage from './pages/gameInfoPage/gameInfoPage';
-import GamePage from './pages/gamePage/gamePage';
+import GameInfoPage from './pages/gameInfoPage';
+import GamePage from './pages/gamePage';
 import HomePage from './pages/homePage';
 import LoginPage from './pages/loginPage';
 import MyGamesPage from './pages/myGamesPage';
@@ -14,7 +14,7 @@ import { Route, Switch } from 'react-router-dom';
 import { User } from '../api/model';
 import '../index.css';
 import Debug from '../debug';
-import SnapshotsPage from './pages/snapshotsPage/snapshotsPage';
+import SnapshotsPage from './pages/snapshotsPage';
 
 export interface AppProps {
 
