@@ -11,10 +11,10 @@ export enum IconKind {
     Victorious,
 
     //Game status
-    Aborted,
-    Finished,
+    Canceled,
+    InProgress,
+    Over,
     Pending, //Also player status
-    Started,
 
     //Panels & Pages
     Find,
@@ -64,10 +64,10 @@ export default class Icon extends React.Component<IconnProps> {
             case IconKind.Victorious: return "trophy";
 
             //Game status
-            case IconKind.Aborted: return "ban";
-            case IconKind.Finished: return "award";
+            case IconKind.Canceled: return "ban";
+            case IconKind.InProgress: return "play";
+            case IconKind.Over: return "award";
             case IconKind.Pending: return "spinner"; //Also player status
-            case IconKind.Started: return "play";
 
             //Pages & Panels
             case IconKind.Find: return "search";

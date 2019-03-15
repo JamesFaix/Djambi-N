@@ -12,7 +12,7 @@ type GetUserTests() =
     inherit TestsBase()
 
     [<Fact>]
-    let ``Get user should work if admin`` () =
+    let ``Get user should work if EditUsers`` () =
         task {
             //Arrange
             let request = getCreateUserRequest()
@@ -31,7 +31,7 @@ type GetUserTests() =
         }
 
     [<Fact>]
-    let ``Get user should fail if not admin`` () =
+    let ``Get user should fail if not EditUsers`` () =
         task {
             //Arrange
             let request = getCreateUserRequest()
@@ -44,7 +44,7 @@ type GetUserTests() =
             let! error = UserService.getUser user.id session
 
             //Assert
-            error |> shouldBeError 403 SecurityService.notAdminOrSelfErrorMessage
+            error |> shouldBeError 403 SecurityService.noPrivilegeOrSelfErrorMessage
         }
 
     [<Fact>]

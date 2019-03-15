@@ -52,9 +52,9 @@ let mapPlayerStatusToId (status : PlayerStatus) : byte =
 let private gameStatusMap =
     [
         1uy, GameStatus.Pending
-        2uy, Started
-        3uy, Aborted
-        4uy, Finished
+        2uy, InProgress
+        3uy, Canceled
+        4uy, Over
     ]
 
 let mapGameStatusId (gameStatusId : byte) : GameStatus =

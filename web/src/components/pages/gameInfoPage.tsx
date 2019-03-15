@@ -60,7 +60,7 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
     }
 
     private updateGame(newGame : Game) {
-        if (newGame.status === GameStatus.Aborted) {
+        if (newGame.status === GameStatus.Canceled) {
             this.setState({
                 game : newGame,
                 redirectUrl: K.routes.home()
@@ -140,8 +140,8 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
     }
 
     private renderActionButton(game : Game) {
-        if (game.status === GameStatus.Started ||
-            game.status === GameStatus.Finished) {
+        if (game.status === GameStatus.InProgress ||
+            game.status === GameStatus.Over) {
 
             return (
                 <EnterButton
@@ -158,7 +158,7 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
             return (
                 <Button
                     kind={ButtonKind.Action}
-                    icon={IconKind.Started}
+                    icon={IconKind.InProgress}
                     onClick={() => this.startOnClick()}
                     hint="Start game"
                 />

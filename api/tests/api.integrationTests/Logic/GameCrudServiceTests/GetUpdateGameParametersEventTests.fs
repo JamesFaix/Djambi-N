@@ -127,7 +127,7 @@ type GetUpdateGameParametersEventTests() =
         task {
             //Arrange
             let! (_, session, game) = TestUtilities.createuserSessionAndGame(true) |> thenValue
-            let newGame = { game with status = GameStatus.Started }
+            let newGame = { game with status = GameStatus.InProgress }
             let! _ = GameRepository.updateGame newGame |> thenValue
             let! game = GameRepository.getGame game.id |> thenValue
             let newParameters = game.parameters
@@ -140,7 +140,7 @@ type GetUpdateGameParametersEventTests() =
         }
 
     [<Fact>]
-    let ``Should fail if not admin or game creator``() =
+    let ``Should fail if not game creator and no EditPendingGames privilege``() =
         task {
             //Arrange
             let! (_, session, game) = TestUtilities.createuserSessionAndGame(true) |> thenValue
@@ -153,5 +153,5 @@ type GetUpdateGameParametersEventTests() =
             let result = GameCrudService.getUpdateGameParametersEvent (game, newParameters) otherSession
 
             //Assert
-            result |> shouldBeError 403 SecurityService.notAdminOrCreatorErrorMessage
+            result |> shouldBeError 403 SecurityService.noPrivilegeOrCreatorErrorMessage
         }

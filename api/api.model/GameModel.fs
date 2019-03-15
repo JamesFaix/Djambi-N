@@ -148,9 +148,9 @@ module Turn =
 [<ClientType(ClientSection.Game)>]
 type GameStatus =
     | Pending
-    | Started
-    | Aborted
-    | Finished
+    | InProgress
+    | Canceled
+    | Over
     
 [<CLIMutable>]
 [<ClientType(ClientSection.Game)>]

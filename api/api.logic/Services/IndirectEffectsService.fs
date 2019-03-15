@@ -172,7 +172,7 @@ let private getVictoryEffects (game : Game) : Effect list =
             })
         let mainEffects = [
             Effect.PlayerStatusChanged { oldStatus = p.status; newStatus = Victorious; playerId = p.id}
-            Effect.GameStatusChanged { oldValue = game.status; newValue = Finished }
+            Effect.GameStatusChanged { oldValue = game.status; newValue = Over }
             Effect.CurrentTurnChanged { oldValue = game.currentTurn; newValue = None }
         ]
         List.append finishConcedeEffects mainEffects

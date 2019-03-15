@@ -33,14 +33,14 @@ let private getFinalAcceptDrawEffects(game : Game, request : PlayerStatusChangeR
                 }
             )
 
-        let finalEffect = Effect.GameStatusChanged { oldValue = Started; newValue = Finished }
+        let finalEffect = Effect.GameStatusChanged { oldValue = InProgress; newValue = Over }
         let fx = List.append neutralPlayerConcedeEffects [finalEffect]
         fx
     else [] //If not last player to accept, nothing special happens
    
 let getUpdatePlayerStatusEvent (game : Game, request : PlayerStatusChangeRequest) (session : Session) : CreateEventRequest HttpResult = 
-    if game.status <> Started then
-        Error <| HttpException(400, "Cannot change player status unless game is Started.")
+    if game.status <> InProgress then
+        Error <| HttpException(400, "Cannot change player status unless game is InProgress.")
     else    
         SecurityService.ensurePlayerOrHas OpenParticipation session game
         |> Result.bind (fun _ ->

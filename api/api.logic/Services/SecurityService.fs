@@ -3,34 +3,34 @@
 open Djambi.Api.Common.Control
 open Djambi.Api.Model
 
-let notAdminErrorMessage = "You must have admin privileges to complete the requested action."
+let noPrivilegeErrorMessage = "You do not have the required privilege to complete the requested action."
 
-let notAdminOrCreatorErrorMessage = "You must have admin privileges or be the game's creator to complete the requested action."
+let noPrivilegeOrCreatorErrorMessage = "You must be the game's creator or have the required privilege to complete the requested action."
 
-let notAdminOrPlayerErrorMessage = "You must have admin privileges or be a player in the game to complete the requested action."
+let noPrivilegeOrPlayerErrorMessage = "You must be a player in the game or have the required privilege to complete the requested action."
     
-let notAdminOrCurrentPlayerErrorMessage = "You must have admin privileges or be the current player in the game to complete the requested action."
+let noPrivilegeOrCurrentPlayerErrorMessage = "You must be the current player in the game or have the required privilege to complete the requested action."
 
-let notAdminOrSelfErrorMessage = "You must have admin privileges or be the target user to complete the requested action."
+let noPrivilegeOrSelfErrorMessage = "You must be the target user or have the required privilege to complete the requested action."
 
 let ensureHas (privilege : Privilege) (session : Session) : Unit HttpResult =
     if session.user.has privilege
     then Ok ()
-    else Error <| HttpException(403, notAdminErrorMessage)
+    else Error <| HttpException(403, noPrivilegeErrorMessage)
 
 let ensureCreatorOrEditPendingGames (session : Session) (game : Game) : Unit HttpResult =
     let self = session.user
     if self.has EditPendingGames
         || self.id = game.createdByUserId
     then Ok ()
-    else Error <| HttpException(403, notAdminOrCreatorErrorMessage)
+    else Error <| HttpException(403, noPrivilegeOrCreatorErrorMessage)
 
 let ensurePlayerOrHas (privilege : Privilege) (session : Session) (game : Game) : Unit HttpResult =
     let self = session.user
     if self.has privilege
         || game.players |> List.exists (fun p -> p.userId = Some self.id)
     then Ok ()
-    else Error <| HttpException(403, notAdminOrPlayerErrorMessage)
+    else Error <| HttpException(403, noPrivilegeOrPlayerErrorMessage)
 
 let ensureCurrentPlayerOrOpenParticipation (session : Session) (game : Game) : Unit HttpResult =
     let self = session.user
@@ -44,11 +44,11 @@ let ensureCurrentPlayerOrOpenParticipation (session : Session) (game : Game) : U
         else false
 
     if pass then Ok ()
-    else Error <| HttpException(403, notAdminOrCurrentPlayerErrorMessage)
+    else Error <| HttpException(403, noPrivilegeOrCurrentPlayerErrorMessage)
 
 let ensureSelfOrHas (privilege : Privilege) (session : Session) (userId : int) : Unit HttpResult =
     let self = session.user
     if self.has privilege
         || self.id = userId
     then Ok ()
-    else Error <| HttpException(403, notAdminOrSelfErrorMessage)
+    else Error <| HttpException(403, noPrivilegeOrSelfErrorMessage)

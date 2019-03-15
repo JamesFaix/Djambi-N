@@ -11,8 +11,8 @@ export default interface Theme {
 
     centerCellName? : string,
 
-    effectMessageGameStatusChangedStarted? : string,
-    effectMessageGameStatusChangedFinished? : string,
+    effectMessageGameStatusChangedInProgress? : string,
+    effectMessageGameStatusChangedOver? : string,
     effectMessageNeutralPlayerAdded? : string,
     effectMessagePieceAbandoned? : string,
     effectMessagePieceDropped? : string,

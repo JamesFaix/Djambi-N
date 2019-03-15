@@ -40,7 +40,7 @@ type CreateUserTests() =
         }
 
     [<Fact>]
-    let ``Create user should fail if signed in and not admin``() =
+    let ``Create user should fail if signed in and not EditUsers``() =
         task {
             //Arrange
             let request = getCreateUserRequest()
@@ -54,7 +54,7 @@ type CreateUserTests() =
         }
 
     [<Fact>]
-    let ``Create user should work if signed in and admin``() =
+    let ``Create user should work if signed in and EditUsers``() =
         task {
             //Arrange
             let request = getCreateUserRequest()

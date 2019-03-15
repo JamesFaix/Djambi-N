@@ -226,10 +226,10 @@ export default class ThemeService {
         const f = effect.value as GameStatusChangedEffect;
 
         switch (f.newValue) {
-            case GameStatus.Started:
-                return this.getValue(t => t.effectMessageGameStatusChangedStarted);
-            case GameStatus.Finished:
-                return this.getValue(t => t.effectMessageGameStatusChangedFinished);
+            case GameStatus.InProgress:
+                return this.getValue(t => t.effectMessageGameStatusChangedInProgress);
+            case GameStatus.Over:
+                return this.getValue(t => t.effectMessageGameStatusChangedOver);
             default:
                 throw "Unsupported game status.";
         }

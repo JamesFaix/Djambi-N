@@ -32,7 +32,7 @@ type GetGameStartEventTests() =
         }
 
     [<Fact>]
-    let ``Should fail not admin or creator``() =
+    let ``Should fail not creator or EditPendingGames privilege``() =
         task {
             //Arrange            
             let! (user, session, game) = createUserSessionAndGameWith3Players() |> thenValue
@@ -42,7 +42,7 @@ type GetGameStartEventTests() =
             let! result = GameStartService.getGameStartEvent game session
 
             //Assert
-            result |> shouldBeError 403 SecurityService.notAdminOrCreatorErrorMessage
+            result |> shouldBeError 403 SecurityService.noPrivilegeOrCreatorErrorMessage
         }
         
     [<Fact>]
@@ -59,7 +59,7 @@ type GetGameStartEventTests() =
         }
 
     [<Fact>]
-    let ``Should work if admin``() =
+    let ``Should work if EditPendingGames privilege``() =
         task {
             //Arrange
             let! (user, session, game) = createUserSessionAndGameWith3Players() |> thenValue
@@ -75,7 +75,7 @@ type GetGameStartEventTests() =
             match event.effects.[0] with
             | Effect.GameStatusChanged f ->
                 f.oldValue |> shouldBe GameStatus.Pending
-                f.newValue |> shouldBe GameStatus.Started
+                f.newValue |> shouldBe GameStatus.InProgress
 
             | _ -> failwith "Incorrect effects"
         }
@@ -95,7 +95,7 @@ type GetGameStartEventTests() =
             match event.effects.[0] with
             | Effect.GameStatusChanged f ->
                 f.oldValue |> shouldBe GameStatus.Pending
-                f.newValue |> shouldBe GameStatus.Started
+                f.newValue |> shouldBe GameStatus.InProgress
 
             | _ -> failwith "Incorrect effects"
         }
@@ -125,7 +125,7 @@ type GetGameStartEventTests() =
             match (event.effects.[0], event.effects.[1]) with
             | (Effect.NeutralPlayerAdded f1, Effect.GameStatusChanged f2) ->
                 f2.oldValue |> shouldBe GameStatus.Pending
-                f2.newValue |> shouldBe GameStatus.Started
+                f2.newValue |> shouldBe GameStatus.InProgress
                 
             | _ -> failwith "Incorrect effects"
         }

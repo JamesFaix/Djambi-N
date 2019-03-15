@@ -80,10 +80,10 @@ export interface GameParameters {
 }
 
 export enum GameStatus {
-	Aborted = "Aborted",
-	Finished = "Finished",
+	Canceled = "Canceled",
+	InProgress = "InProgress",
+	Over = "Over",
 	Pending = "Pending",
-	Started = "Started",
 }
 
 export interface GamesQuery {

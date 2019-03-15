@@ -76,7 +76,7 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
         this.setState({
             boardView : boardView,
             game : game,
-            showGameOverModal : game.status === GameStatus.Finished
+            showGameOverModal : game.status === GameStatus.Over
         });
     }
 

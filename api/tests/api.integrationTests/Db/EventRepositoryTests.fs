@@ -148,7 +148,7 @@ type EventRepositoryTests() =
             
             let newGame = 
                 { game with
-                    status = GameStatus.Aborted
+                    status = GameStatus.Canceled
                     parameters =    
                         {
                             allowGuests = true
