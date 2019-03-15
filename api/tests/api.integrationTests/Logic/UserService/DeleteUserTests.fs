@@ -28,7 +28,7 @@ type DeleteUserTests() =
         }
 
     [<Fact>]
-    let ``Delete user should work if admin and deleting other user`` () =
+    let ``Delete user should work if EditUsers and deleting other user`` () =
         task {
             //Arrange
             let request = getCreateUserRequest()
@@ -45,7 +45,7 @@ type DeleteUserTests() =
         }
 
     [<Fact>]
-    let ``Delete user should fail if not admin and deleting other user`` () =
+    let ``Delete user should fail if not EditUsers and deleting other user`` () =
         task {
             //Arrange
             let request = getCreateUserRequest()
@@ -58,7 +58,7 @@ type DeleteUserTests() =
             let! response = UserService.deleteUser user.id session
 
             //Assert
-            response |> shouldBeError 403 SecurityService.notAdminOrSelfErrorMessage
+            response |> shouldBeError 403 SecurityService.noPrivilegeOrSelfErrorMessage
         }
 
     [<Fact>]

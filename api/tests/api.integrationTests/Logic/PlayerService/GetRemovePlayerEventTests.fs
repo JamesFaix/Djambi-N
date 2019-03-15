@@ -61,7 +61,7 @@ type GetRemovePlayerEventTests() =
         }
 
     [<Fact>]
-    let ``Should fail if removing different user and not admin or creator``() =
+    let ``Should fail if removing different user and not EditPendingGames or creator``() =
         task {
             //Arrange
             let! (_, session, game) = createuserSessionAndGame(false) |> thenValue
@@ -113,7 +113,7 @@ type GetRemovePlayerEventTests() =
         }
 
     [<Fact>]
-    let ``Should work if admin and removing different user``() =
+    let ``Should work if EditPendingGames and removing different user``() =
         task {
             //Arrange
             let! (_, session, game) = createuserSessionAndGame(false) |> thenValue
@@ -245,7 +245,7 @@ type GetRemovePlayerEventTests() =
         }
     
     [<Fact>]
-    let ``Should abort game if creating user and game is pending``() =
+    let ``Should cancel game if creating user and game is pending``() =
         task {
             //Arrange
             let! (_, session, game) = createuserSessionAndGame(false) |> thenValue
@@ -262,13 +262,13 @@ type GetRemovePlayerEventTests() =
                 f1.playerId |> shouldBe creator.id
 
                 f2.oldValue |> shouldBe GameStatus.Pending
-                f2.newValue |> shouldBe GameStatus.Aborted
+                f2.newValue |> shouldBe GameStatus.Canceled
 
             | _ -> failwith "Incorrect effects"
         }
            
     [<Fact>]
-    let ``Should fali if game started``() =
+    let ``Should fali if game InProgress``() =
         task {
             //Arrange
             let! (user, session, game) = createuserSessionAndGame(true) |> thenValue

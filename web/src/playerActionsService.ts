@@ -38,7 +38,7 @@ export default class PlayerActionsService {
     }
 
     private canParticipateInGame() : boolean {
-        if (this.game.status !== GameStatus.Started) {
+        if (this.game.status !== GameStatus.InProgress) {
             return false;
         }
 
@@ -85,7 +85,7 @@ export default class PlayerActionsService {
     }
 
     public controllablePlayersThatCanChangeToStatus(status : PlayerStatus) : Player[] {
-        if (this.game.status !== GameStatus.Started) {
+        if (this.game.status !== GameStatus.InProgress) {
             return [];
         }
 
@@ -108,7 +108,7 @@ export default class PlayerActionsService {
     }
 
     private anyControllablePlayersOfStatus(status : PlayerStatus) {
-        if (this.game.status !== GameStatus.Started) {
+        if (this.game.status !== GameStatus.InProgress) {
             return false;
         }
 
@@ -118,7 +118,7 @@ export default class PlayerActionsService {
     }
 
     private canChangeStatus(status : PlayerStatus) {
-        if (this.game.status !== GameStatus.Started) {
+        if (this.game.status !== GameStatus.InProgress) {
             return false;
         }
 

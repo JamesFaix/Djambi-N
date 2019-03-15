@@ -14,8 +14,8 @@ export default class ThemeFactory {
 
             centerCellName : "The Seat",
 
-            effectMessageGameStatusChangedStarted : "Game started.",
-            effectMessageGameStatusChangedFinished : "Game over.",
+            effectMessageGameStatusChangedInProgress : "Game started.",
+            effectMessageGameStatusChangedOver : "Game over.",
             effectMessagePieceAbandoned : "%(piece)s was abandoned.",
             effectMessagePieceDropped : "%(piece)s was dropped at %(newCell)s.",
             effectMessagePieceEnlisted : "%(piece)s was enlisted by player %(newPlayer)s.",

@@ -20,20 +20,20 @@ export default class GameStatusIcon extends React.Component<GameStatusIconProps>
                     hint: "Pending",
                     kind: IconKind.Pending,
                 };
-            case GameStatus.Started:
+            case GameStatus.InProgress:
                 return {
-                    hint: "Started",
-                    kind: IconKind.Started,
+                    hint: "In progress",
+                    kind: IconKind.InProgress,
                 };
-            case GameStatus.Aborted:
+            case GameStatus.Canceled:
                 return {
-                     hint: "Aborted",
-                    kind: IconKind.Aborted,
+                     hint: "Canceled",
+                    kind: IconKind.Canceled,
                 };
-            case GameStatus.Finished:
+            case GameStatus.Over:
                 return {
-                    hint: "Finished",
-                    kind: IconKind.Finished,
+                    hint: "Over",
+                    kind: IconKind.Over,
                 };
             default:
                 throw "Invalid game status.";

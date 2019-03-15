@@ -100,7 +100,7 @@ type GetGamesTests() =
             let! (_, _, game2) = TestUtilities.createuserSessionAndGame(false) |> thenValue
             let adminSession = getSessionForUser 3 |> TestUtilities.setSessionPrivileges [ViewGames]
 
-            let! _ = GameRepository.updateGame({ game1 with status = GameStatus.Aborted });
+            let! _ = GameRepository.updateGame({ game1 with status = GameStatus.Canceled });
 
             let query = { GamesQuery.empty with status = Some GameStatus.Pending }
 
@@ -114,7 +114,7 @@ type GetGamesTests() =
         }
 
     [<Fact>]
-    let ``Get games should filter non-public games current user is not in, if not admin``() =
+    let ``Get games should filter non-public games current user is not in, if no ViewGames privilege``() =
         task {
             //Arrange
             let! (_, session1, game1) = TestUtilities.createuserSessionAndGame(true) |> thenValue

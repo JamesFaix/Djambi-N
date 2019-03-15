@@ -87,7 +87,7 @@ let getRemovePlayerEvent (game : Game, playerId : int) (session : Session) : Cre
                     if game.createdByUserId = player.userId.Value
                         && player.kind = PlayerKind.User
                     then 
-                        effects.Add(Effect.GameStatusChanged { oldValue = GameStatus.Pending; newValue = GameStatus.Aborted })
+                        effects.Add(Effect.GameStatusChanged { oldValue = GameStatus.Pending; newValue = GameStatus.Canceled })
                     else ()
 
                     {

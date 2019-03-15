@@ -28,7 +28,7 @@ type StartGameTests() =
 
             //Assert
             let updatedGame = resp.game
-            updatedGame.status |> shouldBe GameStatus.Started
+            updatedGame.status |> shouldBe GameStatus.InProgress
             updatedGame.players.Length |> shouldBe game.parameters.regionCount
             updatedGame.pieces.Length |> shouldBe (9 * game.parameters.regionCount)
 

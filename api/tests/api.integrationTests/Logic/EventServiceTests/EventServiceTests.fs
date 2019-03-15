@@ -17,9 +17,9 @@ type EventServiceTests() =
 
         let effects = 
             [
-                //If the status Started is used here additional setup is required to make `game` valid
-                Effect.GameStatusChanged { oldValue = GameStatus.Pending; newValue = GameStatus.Aborted }
-                Effect.GameStatusChanged { oldValue = GameStatus.Aborted; newValue = GameStatus.Finished }
+                //If the status InProgress is used here additional setup is required to make `game` valid
+                Effect.GameStatusChanged { oldValue = GameStatus.Pending; newValue = GameStatus.Canceled }
+                Effect.GameStatusChanged { oldValue = GameStatus.Canceled; newValue = GameStatus.Over }
             ]
         let eventRequest = TestUtilities.createEventRequest(effects) //Kind doesn't matter
         
@@ -27,7 +27,7 @@ type EventServiceTests() =
         let newGame = EventService.applyEvent game eventRequest
 
         //Assert
-        newGame.status |> shouldBe GameStatus.Finished
+        newGame.status |> shouldBe GameStatus.Over
 
     [<Fact>]
     let ``Should apply CurrentTurnChanged effect``() =
@@ -51,7 +51,7 @@ type EventServiceTests() =
     let ``Should apply GameStatusChanged effect``() =
         //Arrange
         let game = TestUtilities.defaultGame
-        let newStatus = GameStatus.Aborted //Can't use Started here because that case is more complicated
+        let newStatus = GameStatus.Canceled //Can't use InProgress here because that case is more complicated
         let effect = Effect.GameStatusChanged { oldValue = game.status; newValue = newStatus }
         let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
         

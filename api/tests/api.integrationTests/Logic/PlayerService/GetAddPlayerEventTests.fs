@@ -38,7 +38,7 @@ type GetAddPlayerEventTests() =
         }
 
     [<Fact>]
-    let ``Add user player should work if admin and adding different user``() =
+    let ``Add user player should work if EditPendingGames and adding different user``() =
         task {
             //Arrange
             let! (_, session, game) = createuserSessionAndGame(false) |> thenValue
@@ -54,7 +54,7 @@ type GetAddPlayerEventTests() =
         }
 
     [<Fact>]
-    let ``Add user player should fail if not admin and adding different user``() =
+    let ``Add user player should fail if not EditPendingGames and adding different user``() =
         task {
             //Arrange
             let! (_, session, game) = createuserSessionAndGame(false) |> thenValue
@@ -148,7 +148,7 @@ type GetAddPlayerEventTests() =
         }
 
     [<Fact>]
-    let ``Add guest player should work if admin and adding guest to different user``() =
+    let ``Add guest player should work if EditPendingGames and adding guest to different user``() =
         task {
             //Arrange
             let! (_, session, game) = createuserSessionAndGame(true) |> thenValue
@@ -165,7 +165,7 @@ type GetAddPlayerEventTests() =
         }
 
     [<Fact>]
-    let ``Add guest player should fail if not admin and adding guest to different user``() =
+    let ``Add guest player should fail if not EditPendingGames and adding guest to different user``() =
         task {
             //Arrange
             let! (_, session, game) = createuserSessionAndGame(true) |> thenValue
@@ -291,12 +291,12 @@ type GetAddPlayerEventTests() =
         }
 
     [<Fact>]
-    let ``Add player should fail if game already started``() =
+    let ``Add player should fail if game already InProgress``() =
         task {
             //Arrange
             let! (user, session, game) = createuserSessionAndGame(true) |> thenValue
             let request = CreatePlayerRequest.guest (user.id, "test")
-            let game = { game with status = GameStatus.Started }
+            let game = { game with status = GameStatus.InProgress }
 
             //Act
             let error = PlayerService.getAddPlayerEvent (game, request) session

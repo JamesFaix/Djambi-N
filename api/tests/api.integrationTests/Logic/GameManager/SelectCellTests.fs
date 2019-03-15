@@ -67,11 +67,11 @@ type SelectCellTests() =
             let! result = GameManager.selectCell (updatedGame.id, cellId) sessionWithoutActivePlayer
 
             //Assert
-            result |> shouldBeError 403 SecurityService.notAdminOrCurrentPlayerErrorMessage
+            result |> shouldBeError 403 SecurityService.noPrivilegeOrCurrentPlayerErrorMessage
         }
 
     [<Fact>]
-    let ``Select cell should work if admin and current player is not active user or guest of active user``() =
+    let ``Select cell should work if OpenParticipation and current player is not active user or guest of active user``() =
         task {
             //Arrange
             let! (user1, session1, game) = createuserSessionAndGame(true) |> thenValue

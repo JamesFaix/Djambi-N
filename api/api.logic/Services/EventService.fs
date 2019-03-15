@@ -8,7 +8,7 @@ let private applyCurrentTurnChangedEffect (effect : CurrentTurnChangedEffect) (g
 
 let private applyGameStatusChangedEffect (effect : GameStatusChangedEffect) (game : Game) : Game =
     match (effect.oldValue, effect.newValue) with
-    | (Pending, Started) ->
+    | (Pending, InProgress) ->
         //This case is a lot more complicated
         GameStartService.applyStartGame game
     | _ ->
