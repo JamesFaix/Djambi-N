@@ -2,10 +2,9 @@
 
 open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
-open Djambi.Api.Logic.Services
 open Djambi.Api.Logic.Interfaces
 
-type SessionManager(sessionServ : SessionService) =
+type SessionManager(sessionServ : ISessionService) =
     interface ISessionManager with
         member x.login request =
             sessionServ.openSession request

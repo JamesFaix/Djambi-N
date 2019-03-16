@@ -5,6 +5,7 @@ open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Db.Repositories
 open Djambi.Api.Model
+open Djambi.Api.Logic.Interfaces
 
 type SessionService() =
     let maxFailedLoginAttempts = 5
@@ -79,3 +80,9 @@ type SessionService() =
 
     member x.closeSession(session : Session) : Unit AsyncHttpResult =
         SessionRepository.deleteSession(None, Some session.token)
+
+    interface ISessionService with
+        member x.openSession request = x.openSession request
+        member x.renewSession token = x.renewSession token
+        member x.getSession token = x.getSession token
+        member x.closeSession session = x.closeSession session

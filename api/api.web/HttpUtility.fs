@@ -10,13 +10,13 @@ open Djambi.Api.Common
 open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Common.Json
-open Djambi.Api.Logic.Services
+open Djambi.Api.Logic.Interfaces
 open Djambi.Api.Model.SessionModel
 
 type HttpHandler = HttpFunc -> HttpContext -> HttpContext option Task
 
 type HttpUtility(cookieDomain : string,
-                 sessionServ : SessionService) =
+                 sessionServ : ISessionService) =
 
     let converters = 
         [|
