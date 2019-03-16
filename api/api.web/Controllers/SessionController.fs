@@ -1,32 +1,34 @@
-﻿module Djambi.Api.Web.Controllers.SessionController
+﻿namespace Djambi.Api.Web.Controllers
 
-open System
 open Microsoft.AspNetCore.Http
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Logic.Managers
-open Djambi.Api.Model.SessionModel
+open Djambi.Api.Model
+open Djambi.Api.Web.Interfaces
 open Djambi.Api.Web
-open Djambi.Api.Web.HttpUtility
 
-let openSession : HttpHandler =
-    let func (ctx : HttpContext) =
-        getSessionOptionAndModelFromContext<LoginRequest> ctx
-        |> thenBindAsync (fun (request, session) ->
-            match session with
-            | Some s -> SessionManager.logout s
-            | None -> okTask ()
+type SessionController(u : HttpUtility) =
+    interface ISessionController with
 
-            |> thenBindAsync (fun _ -> SessionManager.login request)
-            |> thenDo (fun session -> appendCookie ctx (session.token, session.expiresOn))
-        )
-    handle func
+        member x.openSession =
+            let func (ctx : HttpContext) =
+                u.getSessionOptionAndModelFromContext<LoginRequest> ctx
+                |> thenBindAsync (fun (request, session) ->
+                    match session with
+                    | Some s -> SessionManager.logout s
+                    | None -> okTask ()
 
-let closeSession : HttpHandler =
-    let func (ctx : HttpContext) =
-        //Always clear the cookie, even if the DB does not have a session matching it
-        appendEmptyCookie ctx
+                    |> thenBindAsync (fun _ -> SessionManager.login request)
+                    |> thenDo (fun session -> u.appendCookie ctx (session.token, session.expiresOn))
+                )
+            u.handle func
 
-        getSessionFromContext ctx
-        |> thenBindAsync SessionManager.logout
+        member x.closeSession =
+            let func (ctx : HttpContext) =
+                //Always clear the cookie, even if the DB does not have a session matching it
+                u.appendEmptyCookie ctx
 
-    handle func
+                u.getSessionFromContext ctx
+                |> thenBindAsync SessionManager.logout
+
+            u.handle func

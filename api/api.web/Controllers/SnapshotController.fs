@@ -1,33 +1,35 @@
-﻿module Djambi.Api.Web.Controllers.SnapshotController
+﻿namespace Djambi.Api.Web.Controllers
 
-open Giraffe
 open Djambi.Api.Common.Control.AsyncHttpResult
-open Djambi.Api.Web.HttpUtility
 open Djambi.Api.Logic.Managers
 open Djambi.Api.Model
+open Djambi.Api.Web.Interfaces
+open Djambi.Api.Web
 
-let createSnapshot (gameId : int) : HttpHandler =
-    let func ctx =
-        getSessionAndModelFromContext<CreateSnapshotRequest> ctx
-        |> thenBindAsync (fun (request, session) ->
-            SnapshotManager.createSnapshot gameId request session
-        )
-    handle func
+type SnapshotController(u : HttpUtility) =
+    interface ISnapshotController with
+        member x.createSnapshot gameId =
+            let func ctx =
+                u.getSessionAndModelFromContext<CreateSnapshotRequest> ctx
+                |> thenBindAsync (fun (request, session) ->
+                    SnapshotManager.createSnapshot gameId request session
+                )
+            u.handle func
 
-let getSnapshotsForGame (gameId : int) : HttpHandler =
-    let func ctx =
-        getSessionFromContext ctx
-        |> thenBindAsync (SnapshotManager.getSnapshotsForGame gameId)
-    handle func
+        member x.getSnapshotsForGame gameId =
+            let func ctx =
+                u.getSessionFromContext ctx
+                |> thenBindAsync (SnapshotManager.getSnapshotsForGame gameId)
+            u.handle func
 
-let deleteSnapshot (gameId : int, snapshotId : int) : HttpHandler =
-    let func ctx =
-        getSessionFromContext ctx
-        |> thenBindAsync (SnapshotManager.deleteSnapshot gameId snapshotId)
-    handle func
+        member x.deleteSnapshot (gameId, snapshotId) =
+            let func ctx =
+                u.getSessionFromContext ctx
+                |> thenBindAsync (SnapshotManager.deleteSnapshot gameId snapshotId)
+            u.handle func
 
-let loadSnapshot (gameId : int, snapshotId : int) : HttpHandler =
-    let func ctx =
-        getSessionFromContext ctx 
-        |> thenBindAsync (SnapshotManager.loadSnapshot gameId snapshotId)
-    handle func
+        member x.loadSnapshot (gameId, snapshotId) =
+            let func ctx =
+                u.getSessionFromContext ctx 
+                |> thenBindAsync (SnapshotManager.loadSnapshot gameId snapshotId)
+            u.handle func
