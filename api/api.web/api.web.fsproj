@@ -6,11 +6,14 @@
 
   <ItemGroup>
     <Compile Include="HttpUtility.fs" />
-    <Compile Include="Controllers\UserController.fs" />
-    <Compile Include="Controllers\SessionController.fs" />
     <Compile Include="Controllers\BoardController.fs" />
+    <Compile Include="Controllers\EventController.fs" />
     <Compile Include="Controllers\GameController.fs" />
+    <Compile Include="Controllers\PlayerController.fs" />
+    <Compile Include="Controllers\SessionController.fs" />
     <Compile Include="Controllers\SnapshotController.fs" />
+    <Compile Include="Controllers\TurnController.fs" />
+    <Compile Include="Controllers\UserController.fs" />
     <Compile Include="WebRoot.fs" />
   </ItemGroup>
 
