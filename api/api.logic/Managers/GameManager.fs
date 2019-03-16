@@ -8,7 +8,13 @@ open Djambi.Api.Db.Repositories
 open Djambi.Api.Logic.Interfaces
 open Djambi.Api.Logic
 
-type GameManager() =
+type GameManager(eventServ : EventService,
+                 gameCrudServ : GameCrudService,
+                 gameStartServ : GameStartService,
+                 playerServ : PlayerService,
+                 playerStatusChangeServ : PlayerStatusChangeService,
+                 selectionServ : SelectionService,
+                 turnServ : TurnService) =
 
     let isGameViewableByActiveUser (session : Session) (game : Game) : bool =
         let self = session.user
@@ -21,7 +27,7 @@ type GameManager() =
         |> thenBindAsync (fun game -> 
             getCreateEventRequest game
             |> Result.bindAsync (fun eventRequest -> 
-                let newGame = EventService.applyEvent game eventRequest
+                let newGame = eventServ.applyEvent game eventRequest
                 EventRepository.persistEvent (eventRequest, game, newGame)
             )
         )
@@ -31,7 +37,7 @@ type GameManager() =
         |> thenBindAsync (fun game -> 
             getCreateEventRequest game
             |> thenBindAsync (fun eventRequest -> 
-                let newGame = EventService.applyEvent game eventRequest
+                let newGame = eventServ.applyEvent game eventRequest
                 EventRepository.persistEvent (eventRequest, game, newGame)
             )
         )
@@ -61,21 +67,21 @@ type GameManager() =
             )
     
         member x.createGame parameters session =
-            GameCrudService.createGame parameters session
+            gameCrudServ.createGame parameters session
             
         //TODO: Requires integration tests
         member x.updateGameParameters gameId parameters session =
-            processEvent gameId (fun game -> GameCrudService.getUpdateGameParametersEvent (game, parameters) session)
+            processEvent gameId (fun game -> gameCrudServ.getUpdateGameParametersEvent (game, parameters) session)
 
         member x.startGame gameId session =
-            processEventAsync gameId (fun game -> GameStartService.getGameStartEvent game session)
+            processEventAsync gameId (fun game -> gameStartServ.getGameStartEvent game session)
    
     interface IPlayerManager with
         member x.addPlayer gameId request session =
-            processEvent gameId (fun game -> PlayerService.getAddPlayerEvent (game, request) session)
+            processEvent gameId (fun game -> playerServ.getAddPlayerEvent (game, request) session)
 
         member x.removePlayer (gameId, playerId) session =
-            processEvent gameId (fun game -> PlayerService.getRemovePlayerEvent (game, playerId) session)
+            processEvent gameId (fun game -> playerServ.getRemovePlayerEvent (game, playerId) session)
     
         member x.updatePlayerStatus (gameId, playerId, status) session =
             let request =   
@@ -84,14 +90,14 @@ type GameManager() =
                     playerId = playerId
                     status = status
                 }    
-            processEvent request.gameId (fun game -> PlayerStatusChangeService.getUpdatePlayerStatusEvent (game, request) session)
+            processEvent request.gameId (fun game -> playerStatusChangeServ.getUpdatePlayerStatusEvent (game, request) session)
 
     interface ITurnManager with
         member x.selectCell (gameId, cellId) session =
-            processEvent gameId (fun game -> SelectionService.getCellSelectedEvent (game, cellId) session)
+            processEvent gameId (fun game -> selectionServ.getCellSelectedEvent (game, cellId) session)
 
         member x.resetTurn gameId session =
-            processEvent gameId (fun game -> TurnService.getResetTurnEvent game session)
+            processEvent gameId (fun game -> turnServ.getResetTurnEvent game session)
 
         member x.commitTurn gameId session =
-            processEvent gameId (fun game -> TurnService.getCommitTurnEvent game session)
+            processEvent gameId (fun game -> turnServ.getCommitTurnEvent game session)

@@ -12,7 +12,7 @@ type UserService() =
         | Some s when not (s.user.has EditUsers) -> errorTask <| HttpException(403, "Cannot create user if logged in.")
         | _ -> UserRepository.createUser request
 
-    member x deleteUser (userId : int) (session : Session) : Unit AsyncHttpResult =
+    member x.deleteUser (userId : int) (session : Session) : Unit AsyncHttpResult =
         Security.ensureSelfOrHas EditUsers session userId
         |> Result.bindAsync (fun _ -> UserRepository.deleteUser userId)
 

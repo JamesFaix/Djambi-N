@@ -146,8 +146,8 @@ type EventService(gameStartServ : GameStartService) =
     member x.applyEffects (effects : Effect seq) (game : Game) : Game =
         let mutable game = game
         for ef in effects do
-            game <- applyEffect ef game
+            game <- x.applyEffect ef game
         game
 
     member x.applyEvent (game : Game) (eventRequest : CreateEventRequest) : Game =
-        applyEffects eventRequest.effects game
+        x.applyEffects eventRequest.effects game

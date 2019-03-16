@@ -64,8 +64,9 @@ let configureApp (app : IApplicationBuilder) =
     //See HttpUtility for deserialization.
     configureNewtonsoft()
 
-    let manRoot = ManagerRoot()
-    let webRoot = WebRoot(env.cookieDomain, manRoot)
+    let servRoot = ServiceRoot()
+    let manRoot = ManagerRoot(servRoot)
+    let webRoot = WebRoot(env.cookieDomain, manRoot, servRoot)
     let routing = RoutingTable(webRoot)
 
     app.UseGiraffeErrorHandler(errorHandler)

@@ -5,19 +5,19 @@ open Djambi.Api.Logic.Services
 open Djambi.Api.Model
 open Djambi.Api.Logic.Interfaces
 
-type UserManager() =
+type UserManager(userServ : UserService) =
     interface IUserManager with
         member x.createUser request sessionOption =
-            UserService.createUser request sessionOption
+            userServ.createUser request sessionOption
             |> thenMap UserDetails.hideDetails
 
         member x.deleteUser userId session =
-            UserService.deleteUser userId session
+            userServ.deleteUser userId session
     
         member x.getUser userId session =
-            UserService.getUser userId session
+            userServ.getUser userId session
             |> thenMap UserDetails.hideDetails
     
         member x.getCurrentUser session =
-            UserService.getUser session.user.id session
+            userServ.getUser session.user.id session
             |> thenMap UserDetails.hideDetails

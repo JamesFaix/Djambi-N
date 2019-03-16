@@ -5,7 +5,8 @@ open Djambi.Api.Common.Control
 open Djambi.Api.Model
 open Djambi.Api.Logic
 
-type PlayerStatusChangeService() =
+type PlayerStatusChangeService(eventServ : EventService,
+                               indirectEffectsServ : IndirectEffectsService) =
 
     let getFinalAcceptDrawEffects(game : Game, request : PlayerStatusChangeRequest) : Effect list =
         let otherLivingPlayers = 
@@ -90,8 +91,8 @@ type PlayerStatusChangeService() =
                             } 
 
                             effects.Add(primary)
-                            let game = EventService.applyEffect primary game
-                            effects.AddRange (IndirectEffectsService.getIndirectEffectsForConcede (game, request))
+                            let game = eventServ.applyEffect primary game
+                            effects.AddRange (indirectEffectsServ.getIndirectEffectsForConcede (game, request))
                             Ok { event with effects = effects |> Seq.toList }
                         else
                             let primary = Effect.PlayerStatusChanged { 

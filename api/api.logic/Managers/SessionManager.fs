@@ -5,12 +5,12 @@ open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Logic.Services
 open Djambi.Api.Logic.Interfaces
 
-type SessionManager() =
+type SessionManager(sessionServ : SessionService) =
     interface ISessionManager with
         member x.login request =
-            SessionService.openSession request
+            sessionServ.openSession request
             |> thenReplaceError 409 (HttpException(409, "Already signed in."))
 
         member x.logout session =
-            SessionService.closeSession session
+            sessionServ.closeSession session
             |> thenMap ignore

@@ -4,10 +4,12 @@ open Djambi.Api.Web.Controllers
 open Djambi.Api.Web.Interfaces
 open Djambi.Api.Web
 open Djambi.Api.Logic.Interfaces
+open Djambi.Api.Logic
 
 type WebRoot(cookieDomain : string,
-             managers : IManagerRoot) =
-    member x.util = HttpUtility(cookieDomain)
+             managers : IManagerRoot,
+             services : ServiceRoot) =
+    member x.util = HttpUtility(cookieDomain, services.sessions)
     member x.boards = BoardController(managers.boards, x.util)
     member x.events = EventController(managers.events, x.util)
     member x.games = GameController(managers.games, x.util)
