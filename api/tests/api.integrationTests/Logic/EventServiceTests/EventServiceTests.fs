@@ -1,9 +1,8 @@
-﻿namespace Djambi.Api.IntegrationTests.Logic.EventServiceTests
+﻿namespace Djambi.Api.IntegrationTests.Logic.services.eventsTests
 
 open Xunit
 open Djambi.Api.IntegrationTests
 open Djambi.Api.Model
-open Djambi.Api.Logic.Services
 
 //TODO: Move to unit test project
 
@@ -24,7 +23,7 @@ type EventServiceTests() =
         let eventRequest = TestUtilities.createEventRequest(effects) //Kind doesn't matter
         
         //Act
-        let newGame = EventService.applyEvent game eventRequest
+        let newGame = services.events.applyEvent game eventRequest
 
         //Assert
         newGame.status |> shouldBe GameStatus.Over
@@ -40,7 +39,7 @@ type EventServiceTests() =
         game.currentTurn |> shouldBe None
 
         //Act
-        let newGame = EventService.applyEvent game eventRequest
+        let newGame = services.events.applyEvent game eventRequest
 
         //Assert
         { game with currentTurn = newGame.currentTurn } |> shouldBe newGame
@@ -58,7 +57,7 @@ type EventServiceTests() =
         game.status |> shouldBe GameStatus.Pending
 
         //Act
-        let newGame = EventService.applyEvent game eventRequest
+        let newGame = services.events.applyEvent game eventRequest
 
         //Assert
         { game with status = newGame.status } |> shouldBe newGame
@@ -76,7 +75,7 @@ type EventServiceTests() =
         game.players.Length |> shouldBe 0
 
         //Act
-        let newGame = EventService.applyEvent game eventRequest
+        let newGame = services.events.applyEvent game eventRequest
 
         //Assert
         { game with players = newGame.players } |> shouldBe newGame
@@ -118,7 +117,7 @@ type EventServiceTests() =
             }
 
         //Act
-        let newGame = EventService.applyEvent game eventRequest
+        let newGame = services.events.applyEvent game eventRequest
 
         //Assert
         { game with parameters = newGame.parameters } |> shouldBe newGame
@@ -150,7 +149,7 @@ type EventServiceTests() =
         let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
 
         //Act
-        let newGame = EventService.applyEvent game eventRequest
+        let newGame = services.events.applyEvent game eventRequest
 
         //Assert
         { game with pieces = newGame.pieces } |> shouldBe newGame
@@ -177,7 +176,7 @@ type EventServiceTests() =
         let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
 
         //Act
-        let newGame = EventService.applyEvent game eventRequest
+        let newGame = services.events.applyEvent game eventRequest
 
         //Assert
         { game with pieces = newGame.pieces } |> shouldBe newGame
@@ -213,7 +212,7 @@ type EventServiceTests() =
         let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
 
         //Act
-        let newGame = EventService.applyEvent game eventRequest
+        let newGame = services.events.applyEvent game eventRequest
 
         //Assert
         { game with pieces = newGame.pieces } |> shouldBe newGame
@@ -242,7 +241,7 @@ type EventServiceTests() =
         let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
 
         //Act
-        let newGame = EventService.applyEvent game eventRequest
+        let newGame = services.events.applyEvent game eventRequest
 
         //Assert
         { game with pieces = newGame.pieces } |> shouldBe newGame
@@ -269,7 +268,7 @@ type EventServiceTests() =
         let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
 
         //Act
-        let newGame = EventService.applyEvent game eventRequest
+        let newGame = services.events.applyEvent game eventRequest
 
         //Assert
         { game with pieces = newGame.pieces } |> shouldBe newGame
@@ -296,7 +295,7 @@ type EventServiceTests() =
         let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
 
         //Act
-        let newGame = EventService.applyEvent game eventRequest
+        let newGame = services.events.applyEvent game eventRequest
 
         //Assert
         { game with pieces = newGame.pieces } |> shouldBe newGame
@@ -318,7 +317,7 @@ type EventServiceTests() =
         game.players.Length |> shouldBe 0
 
         //Act
-        let newGame = EventService.applyEvent game eventRequest
+        let newGame = services.events.applyEvent game eventRequest
 
         //Assert
         { game with players = newGame.players } |> shouldBe newGame
@@ -361,7 +360,7 @@ type EventServiceTests() =
         let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
 
         //Act
-        let newGame = EventService.applyEvent game eventRequest
+        let newGame = services.events.applyEvent game eventRequest
 
         //Assert
         { game with players = newGame.players } |> shouldBe newGame
@@ -404,7 +403,7 @@ type EventServiceTests() =
         let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
 
         //Act
-        let newGame = EventService.applyEvent game eventRequest
+        let newGame = services.events.applyEvent game eventRequest
 
         //Assert
         { game with players = newGame.players } |> shouldBe newGame
@@ -423,7 +422,7 @@ type EventServiceTests() =
         game.turnCycle |> shouldBe []
 
         //Act
-        let newGame = EventService.applyEvent game eventRequest
+        let newGame = services.events.applyEvent game eventRequest
 
         //Assert
         { game with turnCycle = newGame.turnCycle } |> shouldBe newGame
@@ -441,7 +440,7 @@ type EventServiceTests() =
         game.turnCycle |> shouldBe []
 
         //Act
-        let newGame = EventService.applyEvent game eventRequest
+        let newGame = services.events.applyEvent game eventRequest
 
         //Assert
         { game with turnCycle = newGame.turnCycle } |> shouldBe newGame
@@ -459,7 +458,7 @@ type EventServiceTests() =
         game.turnCycle |> shouldBe []
 
         //Act
-        let newGame = EventService.applyEvent game eventRequest
+        let newGame = services.events.applyEvent game eventRequest
 
         //Assert
         { game with turnCycle = newGame.turnCycle } |> shouldBe newGame
@@ -477,7 +476,7 @@ type EventServiceTests() =
         game.turnCycle |> shouldBe []
 
         //Act
-        let newGame = EventService.applyEvent game eventRequest
+        let newGame = services.events.applyEvent game eventRequest
 
         //Assert
         { game with turnCycle = newGame.turnCycle } |> shouldBe newGame

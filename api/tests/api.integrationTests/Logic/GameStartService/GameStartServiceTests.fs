@@ -6,7 +6,6 @@ open Djambi.Api.Common
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.IntegrationTests
 open Djambi.Api.Logic.ModelExtensions
-open Djambi.Api.Logic.Services
 open Djambi.Api.Model
 
 type GameStartServiceTests() =
@@ -23,7 +22,7 @@ type GameStartServiceTests() =
                         |> thenValue
 
             //Act
-            let playersWithStartConditions = GameStartService.assignStartingConditions game.players
+            let playersWithStartConditions = services.gameStart.assignStartingConditions game.players
 
             //Assert
             Assert.Equal(game.parameters.regionCount, playersWithStartConditions.Length)
@@ -44,11 +43,11 @@ type GameStartServiceTests() =
             let! game = managers.games.createGame parameters session 
                         |> thenBindAsync TestUtilities.fillEmptyPlayerSlots
                         |> thenValue
-            let playersWithStartConditions = GameStartService.assignStartingConditions game.players
+            let playersWithStartConditions = services.gameStart.assignStartingConditions game.players
             let board = BoardModelUtility.getBoardMetadata(game.parameters.regionCount)
 
             //Act
-            let pieces = GameStartService.createPieces(board, playersWithStartConditions)
+            let pieces = services.gameStart.createPieces(board, playersWithStartConditions)
 
             //Assert
             Assert.Equal(game.parameters.regionCount * Constants.piecesPerPlayer, pieces.Length)
@@ -76,7 +75,7 @@ type GameStartServiceTests() =
             let! _ = managers.players.addPlayer game.id playerRequest session |> thenValue
 
             //Act
-            let updatedGame = GameStartService.applyStartGame game
+            let updatedGame = services.gameStart.applyStartGame game
 
             //Assert
             let neutralPlayerIds =

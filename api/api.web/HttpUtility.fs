@@ -15,7 +15,8 @@ open Djambi.Api.Model.SessionModel
 
 type HttpHandler = HttpFunc -> HttpContext -> HttpContext option Task
 
-type HttpUtility(cookieDomain : string) =
+type HttpUtility(cookieDomain : string,
+                 sessionServ : SessionService) =
 
     let converters = 
         [|
@@ -83,7 +84,7 @@ type HttpUtility(cookieDomain : string) =
         then okTask <| None
         else
             task {
-                let! result = SessionService.getSession token
+                let! result = sessionServ.getSession token
                 return match result with
                         | Ok session -> Ok <| Some(session)
                         | Error ex when ex.statusCode = 404 -> Ok(None)

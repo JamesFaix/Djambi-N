@@ -1,10 +1,9 @@
-﻿namespace Djambi.Api.IntegrationTests.Logic.SessionService
+﻿namespace Djambi.Api.IntegrationTests.Logic.services.sessions
 
 open FSharp.Control.Tasks
 open Xunit
 open Djambi.Api.Common.Control
 open Djambi.Api.IntegrationTests
-open Djambi.Api.Logic.Services
 
 type CloseSessionTests() =
     inherit TestsBase()
@@ -14,15 +13,15 @@ type CloseSessionTests() =
         task {
             //Arrange
             let userRequest = getCreateUserRequest()
-            let! _ = UserService.createUser userRequest None
+            let! _ = services.users.createUser userRequest None
                      |> AsyncHttpResult.thenValue
 
             let loginRequest = getLoginRequest userRequest
-            let! session = SessionService.openSession loginRequest
+            let! session = services.sessions.openSession loginRequest
                            |> AsyncHttpResult.thenValue
 
             //Act
-            let! result = SessionService.closeSession session
+            let! result = services.sessions.closeSession session
 
             //Assert
             result |> Result.isOk |> shouldBeTrue
@@ -35,7 +34,7 @@ type CloseSessionTests() =
             let session = getSessionForUser 1
 
             //Act
-            let! result = SessionService.closeSession session
+            let! result = services.sessions.closeSession session
 
             //Assert
             result |> shouldBeError 404 "Session not found."

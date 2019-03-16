@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.IntegrationTests.Logic.PlayerService
+﻿namespace Djambi.Api.IntegrationTests.Logic.services.players
 
 open System
 open FSharp.Control.Tasks
@@ -6,7 +6,6 @@ open Xunit
 open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.IntegrationTests
-open Djambi.Api.Logic.Services
 open Djambi.Api.Model
 open Djambi.Api.Db.Repositories
 
@@ -31,7 +30,7 @@ type GetRemovePlayerEventTests() =
                           |> thenValue
 
             //Act
-            let error = PlayerService.getRemovePlayerEvent (game2, player.id) session
+            let error = services.players.getRemovePlayerEvent (game2, player.id) session
 
             //Assert
             error |> shouldBeError 404 "Player not found."
@@ -53,7 +52,7 @@ type GetRemovePlayerEventTests() =
             let! game = GameRepository.getGame game.id |> thenValue
 
             //Act
-            let error = PlayerService.getRemovePlayerEvent (game, neutralPlayer.id) session
+            let error = services.players.getRemovePlayerEvent (game, neutralPlayer.id) session
 
             //Assert
             error |> shouldBeError 400 "Cannot remove neutral players from game."
@@ -79,7 +78,7 @@ type GetRemovePlayerEventTests() =
             let! game = GameRepository.getGame game.id |> thenValue
 
             //Act
-            let error = PlayerService.getRemovePlayerEvent (game, player.id) session
+            let error = services.players.getRemovePlayerEvent (game, player.id) session
 
             //Assert
             error |> shouldBeError 403 "Cannot remove other users from game."
@@ -99,7 +98,7 @@ type GetRemovePlayerEventTests() =
             let! game = GameRepository.getGame game.id |> thenValue
 
             //Act
-            let event = PlayerService.getRemovePlayerEvent (game, player.id) session |> Result.value
+            let event = services.players.getRemovePlayerEvent (game, player.id) session |> Result.value
 
             //Assert
             event.kind |> shouldBe EventKind.PlayerRemoved
@@ -128,7 +127,7 @@ type GetRemovePlayerEventTests() =
             let! game = GameRepository.getGame game.id |> thenValue
 
             //Act
-            let event = PlayerService.getRemovePlayerEvent (game, player.id) session |> Result.value
+            let event = services.players.getRemovePlayerEvent (game, player.id) session |> Result.value
 
             //Assert
             event.kind |> shouldBe EventKind.PlayerRemoved
@@ -157,7 +156,7 @@ type GetRemovePlayerEventTests() =
             let! game = GameRepository.getGame game.id |> thenValue
 
             //Act
-            let event = PlayerService.getRemovePlayerEvent (game, player.id) session |> Result.value
+            let event = services.players.getRemovePlayerEvent (game, player.id) session |> Result.value
 
             //Assert
             event.kind |> shouldBe EventKind.PlayerRemoved
@@ -193,7 +192,7 @@ type GetRemovePlayerEventTests() =
 
             let! game = GameRepository.getGame game.id |> thenValue
 
-            let event = PlayerService.getRemovePlayerEvent (game, userPlayer.id) session |> Result.value
+            let event = services.players.getRemovePlayerEvent (game, userPlayer.id) session |> Result.value
 
             //Assert
             event.kind |> shouldBe EventKind.PlayerRemoved
@@ -231,7 +230,7 @@ type GetRemovePlayerEventTests() =
             let! game = GameRepository.getGame game.id |> thenValue
 
             //Act
-            let event = PlayerService.getRemovePlayerEvent (game, guestPlayer.id) session |> Result.value
+            let event = services.players.getRemovePlayerEvent (game, guestPlayer.id) session |> Result.value
 
             //Assert
             event.kind |> shouldBe EventKind.PlayerRemoved
@@ -251,7 +250,7 @@ type GetRemovePlayerEventTests() =
             let creator = game.players |> List.head
 
             //Act
-            let event = PlayerService.getRemovePlayerEvent (game, creator.id) session |> Result.value
+            let event = services.players.getRemovePlayerEvent (game, creator.id) session |> Result.value
 
             //Assert
             event.kind |> shouldBe EventKind.PlayerRemoved
@@ -285,7 +284,7 @@ type GetRemovePlayerEventTests() =
             let game = resp.game
 
             //Act
-            let result = PlayerService.getRemovePlayerEvent (game, game.players.[0].id) session
+            let result = services.players.getRemovePlayerEvent (game, game.players.[0].id) session
 
             //Assert
             result |> shouldBeError 400 "Cannot remove players unless game is Pending."
