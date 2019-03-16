@@ -14,6 +14,7 @@ open Djambi.Api.Db
 open Djambi.Utilities
 open Djambi.Api.Common.Json
 open Djambi.Api.Web
+open Djambi.Api.Logic
 
 // ---------------------------------
 // Error handler
@@ -63,7 +64,8 @@ let configureApp (app : IApplicationBuilder) =
     //See HttpUtility for deserialization.
     configureNewtonsoft()
 
-    let webRoot = WebRoot(env.cookieDomain)
+    let manRoot = ManagerRoot()
+    let webRoot = WebRoot(env.cookieDomain, manRoot)
     let routing = RoutingTable(webRoot)
 
     app.UseGiraffeErrorHandler(errorHandler)

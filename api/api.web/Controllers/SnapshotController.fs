@@ -1,35 +1,36 @@
 ﻿namespace Djambi.Api.Web.Controllers
 
 open Djambi.Api.Common.Control.AsyncHttpResult
-open Djambi.Api.Logic.Managers
 open Djambi.Api.Model
 open Djambi.Api.Web.Interfaces
 open Djambi.Api.Web
+open Djambi.Api.Logic.Interfaces
 
-type SnapshotController(u : HttpUtility) =
+type SnapshotController(u : HttpUtility,
+                        snapshotMan : ISnapshotManager) =
     interface ISnapshotController with
         member x.createSnapshot gameId =
             let func ctx =
                 u.getSessionAndModelFromContext<CreateSnapshotRequest> ctx
                 |> thenBindAsync (fun (request, session) ->
-                    SnapshotManager.createSnapshot gameId request session
+                    snapshotMan.createSnapshot gameId request session
                 )
             u.handle func
 
         member x.getSnapshotsForGame gameId =
             let func ctx =
                 u.getSessionFromContext ctx
-                |> thenBindAsync (SnapshotManager.getSnapshotsForGame gameId)
+                |> thenBindAsync (snapshotMan.getSnapshotsForGame gameId)
             u.handle func
 
         member x.deleteSnapshot (gameId, snapshotId) =
             let func ctx =
                 u.getSessionFromContext ctx
-                |> thenBindAsync (SnapshotManager.deleteSnapshot gameId snapshotId)
+                |> thenBindAsync (snapshotMan.deleteSnapshot gameId snapshotId)
             u.handle func
 
         member x.loadSnapshot (gameId, snapshotId) =
             let func ctx =
                 u.getSessionFromContext ctx 
-                |> thenBindAsync (SnapshotManager.loadSnapshot gameId snapshotId)
+                |> thenBindAsync (snapshotMan.loadSnapshot gameId snapshotId)
             u.handle func

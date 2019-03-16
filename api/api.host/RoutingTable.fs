@@ -3,7 +3,7 @@
 open Giraffe
 open Microsoft.AspNetCore.Http
 open Djambi.Api.Web.Interfaces
-open Djambi.Api.Logic
+open Djambi.Api.Logic.Interfaces
 
 type RoutingTable (web : IWebRoot) =
     member x.getHandler : HttpFunc -> HttpContext -> HttpFuncResult =
