@@ -3,32 +3,32 @@
 open Microsoft.AspNetCore.Http
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Logic.Managers
-open Djambi.Api.Model.SessionModel
-open Djambi.Api.Web.HttpUtility
+open Djambi.Api.Model
 open Djambi.Api.Web.Interfaces
+open Djambi.Api.Web
 
-type SessionController() =
+type SessionController(u : HttpUtility) =
     interface ISessionController with
 
         member x.openSession =
             let func (ctx : HttpContext) =
-                getSessionOptionAndModelFromContext<LoginRequest> ctx
+                u.getSessionOptionAndModelFromContext<LoginRequest> ctx
                 |> thenBindAsync (fun (request, session) ->
                     match session with
                     | Some s -> SessionManager.logout s
                     | None -> okTask ()
 
                     |> thenBindAsync (fun _ -> SessionManager.login request)
-                    |> thenDo (fun session -> appendCookie ctx (session.token, session.expiresOn))
+                    |> thenDo (fun session -> u.appendCookie ctx (session.token, session.expiresOn))
                 )
-            handle func
+            u.handle func
 
         member x.closeSession =
             let func (ctx : HttpContext) =
                 //Always clear the cookie, even if the DB does not have a session matching it
-                appendEmptyCookie ctx
+                u.appendEmptyCookie ctx
 
-                getSessionFromContext ctx
+                u.getSessionFromContext ctx
                 |> thenBindAsync SessionManager.logout
 
-            handle func
+            u.handle func

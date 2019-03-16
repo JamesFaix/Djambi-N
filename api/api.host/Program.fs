@@ -35,8 +35,6 @@ let config = ConfigurationBuilder()
 SqlUtility.connectionString <- config.GetConnectionString("Main")
                                      .Replace("{sqlAddress}", env.sqlAddress)
 
-HttpUtility.cookieDomain <- env.cookieDomain
-
 let configureCors (builder : CorsPolicyBuilder) =
     builder.WithOrigins(env.webAddress)
            .AllowAnyMethod()
@@ -65,7 +63,7 @@ let configureApp (app : IApplicationBuilder) =
     //See HttpUtility for deserialization.
     configureNewtonsoft()
 
-    let webRoot = WebRoot()
+    let webRoot = WebRoot(env.cookieDomain)
     let routing = RoutingTable(webRoot)
 
     app.UseGiraffeErrorHandler(errorHandler)

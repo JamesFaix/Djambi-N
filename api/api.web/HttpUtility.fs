@@ -15,25 +15,47 @@ open Djambi.Api.Model.SessionModel
 
 type HttpHandler = HttpFunc -> HttpContext -> HttpContext option Task
 
-module HttpUtility =
+type HttpUtility(cookieDomain : string) =
 
-    let cookieName = "DjambiSession"
+    let converters = 
+        [|
+            OptionJsonConverter() :> JsonConverter
+            TupleArrayJsonConverter() :> JsonConverter
+            UnionEnumJsonConverter() :> JsonConverter
+            SingleFieldUnionJsonConverter() :> JsonConverter
+        |]
 
-    let mutable cookieDomain : string = ""
+    let readJsonBody (ctx : HttpContext) : 'a AsyncHttpResult =
+        try 
+            use reader = new StreamReader(ctx.Request.Body)
+            let json = reader.ReadToEnd()
+            let value = JsonConvert.DeserializeObject<'a>(json, converters)
+            okTask value
+        with
+        | ex -> errorTask <| HttpException(400, ex.Message)
 
-    let appendCookie (ctx : HttpContext) (token : string, expiration : DateTime) =
+    let tupleWithModel (ctx : HttpContext) (result : 'b AsyncHttpResult): ('a * 'b) AsyncHttpResult =
+        result
+        |> thenBindAsync (fun value ->
+            readJsonBody ctx
+            |> thenBindAsync (fun body -> okTask (body, value))
+        )
+
+    member x.cookieName = "DjambiSession"
+
+    member x.appendCookie (ctx : HttpContext) (token : string, expiration : DateTime) =
         let cookieOptions = new CookieOptions()
         cookieOptions.Domain <- cookieDomain
         cookieOptions.Path <- "/"
         cookieOptions.Secure <- false
         cookieOptions.HttpOnly <- true
         cookieOptions.Expires <- DateTimeOffset(expiration) |> Nullable.ofValue
-        ctx.Response.Cookies.Append(cookieName, token, cookieOptions);
+        ctx.Response.Cookies.Append(x.cookieName, token, cookieOptions);
 
-    let appendEmptyCookie (ctx : HttpContext) =
-        appendCookie ctx ("", DateTime.MinValue)
+    member x.appendEmptyCookie (ctx : HttpContext) =
+        x.appendCookie ctx ("", DateTime.MinValue)
 
-    let handle<'a> (func : HttpContext -> 'a AsyncHttpResult) : HttpHandler =
+    member x.handle<'a> (func : HttpContext -> 'a AsyncHttpResult) : HttpHandler =
 
         fun (next : HttpFunc) (ctx : HttpContext) ->
             task {
@@ -54,8 +76,8 @@ module HttpUtility =
                     return! json ex.Message next ctx
             }
 
-    let getSessionOptionFromContext (ctx : HttpContext) : Session option AsyncHttpResult =
-        let token = ctx.Request.Cookies.Item(cookieName)
+    member x.getSessionOptionFromContext (ctx : HttpContext) : Session option AsyncHttpResult =
+        let token = ctx.Request.Cookies.Item(x.cookieName)
 
         if token |> String.IsNullOrEmpty
         then okTask <| None
@@ -66,59 +88,35 @@ module HttpUtility =
                         | Ok session -> Ok <| Some(session)
                         | Error ex when ex.statusCode = 404 -> Ok(None)
                         | Error ex -> 
-                            appendEmptyCookie ctx
+                            x.appendEmptyCookie ctx
                             Error ex
             }
 
-    let getSessionFromContext (ctx : HttpContext) : Session AsyncHttpResult =
-        getSessionOptionFromContext ctx
+    member x.getSessionFromContext (ctx : HttpContext) : Session AsyncHttpResult =
+        x.getSessionOptionFromContext ctx
         |> thenBind (fun opt ->
             match opt with
             | None -> 
-                appendEmptyCookie ctx
+                x.appendEmptyCookie ctx
                 Error <| HttpException(401, "Not signed in.")
             | Some session -> Ok session
         )
 
-    let private converters = 
-        [|
-            OptionJsonConverter() :> JsonConverter
-            TupleArrayJsonConverter() :> JsonConverter
-            UnionEnumJsonConverter() :> JsonConverter
-            SingleFieldUnionJsonConverter() :> JsonConverter
-        |]
-
-    let private readJsonBody<'a> (ctx : HttpContext) : 'a AsyncHttpResult =
-        try 
-            use reader = new StreamReader(ctx.Request.Body)
-            let json = reader.ReadToEnd()
-            let value = JsonConvert.DeserializeObject<'a>(json, converters)
-            okTask value
-        with
-        | ex -> errorTask <| HttpException(400, ex.Message)
-
-    let private tupleWithModel<'a, 'b> (ctx : HttpContext) (result : 'b AsyncHttpResult): ('a * 'b) AsyncHttpResult =
-        result
-        |> thenBindAsync (fun value ->
-            readJsonBody<'a> ctx
-            |> thenBindAsync (fun body -> okTask (body, value))
-        )
-
-    let getSessionAndModelFromContext<'a> (ctx : HttpContext) : ('a * Session) AsyncHttpResult =
-        getSessionFromContext ctx
+    member x.getSessionAndModelFromContext<'a> (ctx : HttpContext) : ('a * Session) AsyncHttpResult =
+        x.getSessionFromContext ctx
         |> tupleWithModel ctx
 
-    let getSessionOptionAndModelFromContext<'a> (ctx : HttpContext) : ('a * Session option) AsyncHttpResult =
-        getSessionOptionFromContext ctx
+    member x.getSessionOptionAndModelFromContext<'a> (ctx : HttpContext) : ('a * Session option) AsyncHttpResult =
+        x.getSessionOptionFromContext ctx
         |> tupleWithModel ctx
 
-    let ensureNotSignedIn (ctx : HttpContext) : Result<Unit, HttpException> =
-        let token = ctx.Request.Cookies.Item(cookieName)
+    member x.ensureNotSignedIn (ctx : HttpContext) : Result<Unit, HttpException> =
+        let token = ctx.Request.Cookies.Item(x.cookieName)
         if token |> String.IsNullOrEmpty |> not
         then Error <| HttpException(401, "Operation not allowed if already signed in.")
         else Ok ()
 
-    let ensureNotSignedInAndGetModel<'a> (ctx : HttpContext) : 'a AsyncHttpResult =
-        match ensureNotSignedIn ctx with
+    member x.ensureNotSignedInAndGetModel<'a> (ctx : HttpContext) : 'a AsyncHttpResult =
+        match x.ensureNotSignedIn ctx with
         | Error ex -> errorTask ex
-        | Ok _ -> readJsonBody<'a> ctx
+        | Ok _ -> readJsonBody ctx

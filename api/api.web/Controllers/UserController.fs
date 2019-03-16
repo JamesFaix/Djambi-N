@@ -2,34 +2,34 @@
 
 open Microsoft.AspNetCore.Http
 open Djambi.Api.Common.Control.AsyncHttpResult
-open Djambi.Api.Web.HttpUtility
 open Djambi.Api.Logic.Managers
 open Djambi.Api.Model
 open Djambi.Api.Web.Interfaces
+open Djambi.Api.Web
 
-type UserController() =
+type UserController(u : HttpUtility) =
     interface IUserController with
         member x.createUser =
             let func (ctx : HttpContext) =
-                getSessionOptionAndModelFromContext<CreateUserRequest> ctx
+                u.getSessionOptionAndModelFromContext<CreateUserRequest> ctx
                 |> thenBindAsync (fun (model, sessionOption) -> UserManager.createUser model sessionOption)
-            handle func
+            u.handle func
 
         member x.deleteUser userId =
             let func ctx =
-                getSessionFromContext ctx
+                u.getSessionFromContext ctx
                 |> thenBindAsync (UserManager.deleteUser userId)
                 //TODO: Log out if non-admin deleting self
-            handle func
+            u.handle func
 
         member x.getUser userId =
             let func ctx =
-                getSessionFromContext ctx
+                u.getSessionFromContext ctx
                 |> thenBindAsync (UserManager.getUser userId)
-            handle func
+            u.handle func
 
         member x.getCurrentUser =
             let func ctx =
-                getSessionFromContext ctx
+                u.getSessionFromContext ctx
                 |> thenBindAsync UserManager.getCurrentUser
-            handle func
+            u.handle func
