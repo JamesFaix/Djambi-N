@@ -3,11 +3,13 @@
 open System
 open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
-open Djambi.Api.Db.Repositories
+open Djambi.Api.Db.Interfaces
 open Djambi.Api.Model
 open Djambi.Api.Logic.Interfaces
 
-type SessionService() =
+type SessionService(sessionRepo : ISessionRepository,
+                    userRepo : IUserRepository) =
+
     let maxFailedLoginAttempts = 5
     let accountLockTimeout = TimeSpan.FromHours(1.0)
     let sessionTimeout = TimeSpan.FromHours(1.0)
@@ -40,16 +42,16 @@ type SessionService() =
 
                 let request = UpdateFailedLoginsRequest.increment (user.id, attempts)
 
-                UserRepository.updateFailedLoginAttempts request
+                userRepo.updateFailedLoginAttempts request
                 |> thenBind (fun _ -> Error <| HttpException(401, "Incorrect password."))
 
-        UserRepository.getUserByName request.username
+        userRepo.getUserByName request.username
         |> thenBind errorIfLocked
         |> thenBindAsync errorIfInvalidPassword
         |> thenBindAsync (fun user ->
             //If a session already exists for this user, delete it
-            SessionRepository.getSession (SessionQuery.byUserId user.id)
-            |> thenBindAsync(fun session -> SessionRepository.deleteSession (Some session.id, None))
+            sessionRepo.getSession (SessionQuery.byUserId user.id)
+            |> thenBindAsync(fun session -> sessionRepo.deleteSession (Some session.id, None))
             |> thenBindError 404 (fun _ -> Ok ()) //If no session thats fine
             //Create a new session
             |> thenBindAsync(fun _ ->
@@ -59,27 +61,27 @@ type SessionService() =
                         token = Guid.NewGuid().ToString()
                         expiresOn = DateTime.UtcNow.Add(sessionTimeout)
                     }
-                SessionRepository.createSession request
+                sessionRepo.createSession request
             )
             |> thenDoAsync (fun _ -> 
-                UserRepository.updateFailedLoginAttempts (UpdateFailedLoginsRequest.reset user.id)                
+                userRepo.updateFailedLoginAttempts (UpdateFailedLoginsRequest.reset user.id)                
             )
         )
 
     member x.renewSession(token : string) : Session AsyncHttpResult =
         let renew (s : Session) =
-            SessionRepository.renewSessionExpiration(s.id, DateTime.UtcNow.Add(sessionTimeout))
+            sessionRepo.renewSessionExpiration(s.id, DateTime.UtcNow.Add(sessionTimeout))
 
-        SessionRepository.getSession (SessionQuery.byToken token)
+        sessionRepo.getSession (SessionQuery.byToken token)
         |> thenBind errorIfExpired
         |> thenBindAsync renew
 
     member x.getSession(token : string) : Session AsyncHttpResult =
-        SessionRepository.getSession (SessionQuery.byToken token)
+        sessionRepo.getSession (SessionQuery.byToken token)
         |> thenBind errorIfExpired
 
     member x.closeSession(session : Session) : Unit AsyncHttpResult =
-        SessionRepository.deleteSession(None, Some session.token)
+        sessionRepo.deleteSession(None, Some session.token)
 
     interface ISessionService with
         member x.openSession request = x.openSession request

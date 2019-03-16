@@ -4,12 +4,14 @@ open Djambi.Api.Logic.Services
 open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Model
-open Djambi.Api.Db.Repositories
 open Djambi.Api.Logic.Interfaces
 open Djambi.Api.Logic
+open Djambi.Api.Db.Interfaces
 
-type GameManager(eventServ : EventService,
+type GameManager(eventRepo : IEventRepository,
+                 eventServ : EventService,
                  gameCrudServ : GameCrudService,
+                 gameRepo : IGameRepository,
                  gameStartServ : GameStartService,
                  playerServ : PlayerService,
                  playerStatusChangeServ : PlayerStatusChangeService,
@@ -23,34 +25,34 @@ type GameManager(eventServ : EventService,
         || game.players |> List.exists(fun p -> p.userId = Some self.id)
         
     let processEvent (gameId : int) (getCreateEventRequest : Game -> CreateEventRequest HttpResult) : StateAndEventResponse AsyncHttpResult = 
-        GameRepository.getGame gameId
+        gameRepo.getGame gameId
         |> thenBindAsync (fun game -> 
             getCreateEventRequest game
             |> Result.bindAsync (fun eventRequest -> 
                 let newGame = eventServ.applyEvent game eventRequest
-                EventRepository.persistEvent (eventRequest, game, newGame)
+                eventRepo.persistEvent (eventRequest, game, newGame)
             )
         )
     
     let processEventAsync (gameId : int) (getCreateEventRequest : Game -> CreateEventRequest AsyncHttpResult): StateAndEventResponse AsyncHttpResult = 
-        GameRepository.getGame gameId
+        gameRepo.getGame gameId
         |> thenBindAsync (fun game -> 
             getCreateEventRequest game
             |> thenBindAsync (fun eventRequest -> 
                 let newGame = eventServ.applyEvent game eventRequest
-                EventRepository.persistEvent (eventRequest, game, newGame)
+                eventRepo.persistEvent (eventRequest, game, newGame)
             )
         )
 
     interface IEventManager with    
         member x.getEvents (gameId, query) session =
-            GameRepository.getGame gameId
+            gameRepo.getGame gameId
             |> thenBind (Security.ensurePlayerOrHas ViewGames session)
-            |> thenBindAsync (fun _ -> EventRepository.getEvents (gameId, query))
+            |> thenBindAsync (fun _ -> eventRepo.getEvents (gameId, query))
 
     interface IGameManager with
         member x.getGames query session =
-            GameRepository.getGames query
+            gameRepo.getGames query
             |> thenMap (fun games ->
                 if session.user.has ViewGames
                 then games
@@ -59,7 +61,7 @@ type GameManager(eventServ : EventService,
 
         //TODO: Requires integration tests
         member x.getGame gameId session =
-            GameRepository.getGame gameId
+            gameRepo.getGame gameId
             |> thenBind (fun game ->
                 if isGameViewableByActiveUser session game
                 then Ok <| game

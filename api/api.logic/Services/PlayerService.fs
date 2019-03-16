@@ -5,11 +5,11 @@ open System.Linq
 open Djambi.Api.Common.Collections
 open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
-open Djambi.Api.Db.Repositories
+open Djambi.Api.Db.Interfaces
 open Djambi.Api.Model
 open Djambi.Api.Logic
     
-type PlayerService() =
+type PlayerService(gameRepo : IGameRepository) =
     member x.getAddPlayerEvent (game : Game, request : CreatePlayerRequest) (session : Session) : CreateEventRequest HttpResult =
         let self = session.user
         if game.status <> GameStatus.Pending
@@ -114,7 +114,7 @@ type PlayerService() =
         if missingPlayerCount = 0
         then okTask []
         else
-            GameRepository.getNeutralPlayerNames()
+            gameRepo.getNeutralPlayerNames()
             |> thenMap getNeutralPlayerNamesToUse
             |> thenMap (Seq.map (fun name -> PlayerAddedEffect.fromRequest <| CreatePlayerRequest.neutral name ))    
             |> thenMap Seq.toList

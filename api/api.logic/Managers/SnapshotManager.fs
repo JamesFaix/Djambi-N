@@ -4,19 +4,20 @@ open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Logic
 open Djambi.Api.Model
-open Djambi.Ap.Db.Repositories
-open Djambi.Api.Db.Repositories
 open Djambi.Api.Logic.Interfaces
+open Djambi.Api.Db.Interfaces
 
-type SnapshotManager() =
+type SnapshotManager(eventRepo : IEventRepository,
+                     gameRepo : IGameRepository,
+                     snapshotRepo : ISnapshotRepository) =
     interface ISnapshotManager with
 
         member x.createSnapshot gameId request session =
             Security.ensureHas Privilege.Snapshots session
             |> Result.bindAsync (fun _ ->
-                GameRepository.getGame gameId
+                gameRepo.getGame gameId
                 |> thenBindAsync (fun game -> 
-                    EventRepository.getEvents (gameId, EventsQuery.empty)
+                    eventRepo.getEvents (gameId, EventsQuery.empty)
                     |> thenBindAsync (fun history -> 
                         let request = 
                             {
@@ -25,11 +26,11 @@ type SnapshotManager() =
                                 description = request.description
                                 createdByUserId = session.user.id
                             }
-                        SnapshotRepository.createSnapshot request
+                        snapshotRepo.createSnapshot request
                     )
                 )
                 |> thenBindAsync (fun snapshotId ->
-                    SnapshotRepository.getSnapshot snapshotId
+                    snapshotRepo.getSnapshot snapshotId
                     |> thenMap Snapshot.hideDetails
                 )
             )
@@ -37,17 +38,17 @@ type SnapshotManager() =
         member x.getSnapshotsForGame gameId session =
             Security.ensureHas Privilege.Snapshots session
             |> Result.bindAsync (fun _ ->
-                SnapshotRepository.getSnapshotsForGame gameId
+                snapshotRepo.getSnapshotsForGame gameId
             )
     
         member x.deleteSnapshot gameId snapshotId session =
             Security.ensureHas Privilege.Snapshots session
             |> Result.bindAsync (fun _ ->
-                SnapshotRepository.deleteSnapshot snapshotId
+                snapshotRepo.deleteSnapshot snapshotId
             )
 
         member x.loadSnapshot gameId snapshotId session =
             Security.ensureHas Privilege.Snapshots session
             |> Result.bindAsync (fun _ ->
-                SnapshotRepository.loadSnapshot (gameId, snapshotId)
+                snapshotRepo.loadSnapshot (gameId, snapshotId)
             )
