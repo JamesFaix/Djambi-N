@@ -3,11 +3,11 @@
 open Djambi.Api.Common.Collections
 open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
-open Djambi.Api.Db.Repositories
+open Djambi.Api.Db.Interfaces
 open Djambi.Api.Model
 open Djambi.Api.Logic
     
-type GameCrudService() =
+type GameCrudService(gameRepo : IGameRepository) =
     member x.createGame (parameters : GameParameters) (session : Session) : Game AsyncHttpResult =
         let self = session.user
         let gameRequest : CreateGameRequest =   
@@ -23,8 +23,8 @@ type GameCrudService() =
                 name = None
             }
 
-        GameRepository.createGameAndAddPlayer (gameRequest, playerRequest)
-        |> thenBindAsync GameRepository.getGame
+        gameRepo.createGameAndAddPlayer (gameRequest, playerRequest)
+        |> thenBindAsync gameRepo.getGame
 
     member x.getUpdateGameParametersEvent (game : Game, parameters : GameParameters) (session : Session) : CreateEventRequest HttpResult =
         if game.status <> GameStatus.Pending

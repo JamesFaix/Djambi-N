@@ -38,7 +38,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\api.common\api.common.fsproj" />
-    <ProjectReference Include="..\api.db\api.db.fsproj" />
+    <ProjectReference Include="..\api.db.interfaces\api.db.interfaces.fsproj" />
     <ProjectReference Include="..\api.logic.interfaces\api.logic.interfaces.fsproj" />
     <ProjectReference Include="..\api.model\api.model.fsproj" />
   </ItemGroup>

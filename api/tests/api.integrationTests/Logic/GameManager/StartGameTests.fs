@@ -4,7 +4,6 @@ open FSharp.Control.Tasks
 open Xunit
 open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
-open Djambi.Api.Db.Repositories
 open Djambi.Api.IntegrationTests
 open Djambi.Api.Model
 
@@ -49,7 +48,7 @@ type StartGameTests() =
             //Assert
             result |> shouldBeError 400 "Cannot start game with only one player."
 
-            let! lobbyResult = GameRepository.getGame game.id
+            let! lobbyResult = db.games.getGame game.id
             lobbyResult |> Result.isOk |> shouldBeTrue
         }
 
