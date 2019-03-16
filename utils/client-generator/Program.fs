@@ -12,7 +12,10 @@ let renderModel (renderers : IRenderer list, config : IConfigurationRoot, rootPa
 
     let types = 
         assembly.GetTypes()
-        |> Seq.filter (fun t -> t.GetCustomAttribute<ClientTypeAttribute>() <> null)
+        |> Seq.map (fun t -> (t, t.GetCustomAttribute<ClientTypeAttribute>()))
+        |> Seq.filter (fun (_, attr) -> attr <> null)
+        |> Seq.sortBy (fun (t, attr) -> attr.section, t.Name)
+        |> Seq.map (fun (t, _) -> t)
         |> Seq.toList
 
     for r in renderers do
@@ -28,7 +31,10 @@ let renderFunctions (renderers : IRenderer list, config : IConfigurationRoot, ro
     let methods =
         assembly.GetTypes()
         |> Seq.collect (fun t -> t.GetMethods())
-        |> Seq.filter (fun m -> m.GetCustomAttribute<ClientFunctionAttribute>() <> null)
+        |> Seq.map (fun m -> (m, m.GetCustomAttribute<ClientFunctionAttribute>()))
+        |> Seq.filter (fun (_, attr) -> attr <> null)
+        |> Seq.sortBy (fun (m, attr) -> attr.section, m.Name)
+        |> Seq.map (fun (m, _) -> m)
         |> Seq.toList
 
     for r in renderers do
