@@ -6,7 +6,6 @@ open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Db.Repositories
 open Djambi.Api.IntegrationTests
 open Djambi.Api.Model
-open Djambi.Api.Logic.Services
 
 //TODO: Audit test class
 type FillEmptyPlayerSlotsTests() =
@@ -45,7 +44,7 @@ type FillEmptyPlayerSlotsTests() =
             let! game = managers.games.createGame gameRequest session |> thenValue
 
             //Act
-            let! effects = PlayerService.fillEmptyPlayerSlots game |> thenValue
+            let! effects = services.players.fillEmptyPlayerSlots game |> thenValue
 
             //Assert
             effects.Length |> shouldBe 2

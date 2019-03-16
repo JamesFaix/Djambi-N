@@ -1,10 +1,9 @@
-﻿namespace Djambi.Api.IntegrationTests.Logic.SessionService
+﻿namespace Djambi.Api.IntegrationTests.Logic.services.sessions
 
 open FSharp.Control.Tasks
 open Xunit
 open Djambi.Api.Common.Control
 open Djambi.Api.IntegrationTests
-open Djambi.Api.Logic.Services
 
 type GetSessionTests() =
     inherit TestsBase()
@@ -14,15 +13,15 @@ type GetSessionTests() =
         task {
             //Arrange
             let userRequest = getCreateUserRequest()
-            let! _ = UserService.createUser userRequest None
+            let! _ = services.users.createUser userRequest None
                      |> AsyncHttpResult.thenValue
 
             let request = getLoginRequest userRequest
 
-            let! session = SessionService.openSession request
+            let! session = services.sessions.openSession request
                            |> AsyncHttpResult.thenValue
             //Act
-            let! sessionResponse = SessionService.getSession session.token
+            let! sessionResponse = services.sessions.getSession session.token
                                   |> AsyncHttpResult.thenValue
 
             //Assert
@@ -35,7 +34,7 @@ type GetSessionTests() =
             //Arrange
 
             //Act
-            let! result = SessionService.getSession "does not exist"
+            let! result = services.sessions.getSession "does not exist"
 
             //Assert
             result |> shouldBeError 404 "Session not found."
@@ -46,17 +45,17 @@ type GetSessionTests() =
         task {
             //Arrange
             let userRequest = getCreateUserRequest()
-            let! _ = UserService.createUser userRequest None
+            let! _ = services.users.createUser userRequest None
                      |> AsyncHttpResult.thenValue
 
             let loginRequest = getLoginRequest userRequest
-            let! session = SessionService.openSession loginRequest
+            let! session = services.sessions.openSession loginRequest
                            |> AsyncHttpResult.thenValue
 
-            let! _ = SessionService.closeSession session
+            let! _ = services.sessions.closeSession session
 
             //Act
-            let! result = SessionService.getSession session.token
+            let! result = services.sessions.getSession session.token
 
             //Assert
             result |> shouldBeError 404 "Session not found."

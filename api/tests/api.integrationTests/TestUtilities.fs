@@ -24,7 +24,8 @@ let connectionString =
     config.GetConnectionString("Main")
             .Replace("{sqlAddress}", env.sqlAddress)
             
-let managers = ManagerRoot() :> IManagerRoot
+let services = ServiceRoot()
+let managers = ManagerRoot(services) :> IManagerRoot
 
 let getCreateUserRequest() : CreateUserRequest =
     {
@@ -77,7 +78,7 @@ let getSessionForUser (userId : int) : Session =
 
 let createUser() : UserDetails AsyncHttpResult =
     let userRequest = getCreateUserRequest()
-    UserService.createUser userRequest None
+    services.users.createUser userRequest None
 
 let createuserSessionAndGame(allowGuests : bool) : (UserDetails * Session * Game) AsyncHttpResult =
     task {

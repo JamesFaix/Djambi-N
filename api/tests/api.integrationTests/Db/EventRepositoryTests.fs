@@ -5,7 +5,6 @@ open Xunit
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Db.Repositories
 open Djambi.Api.IntegrationTests
-open Djambi.Api.Logic.Services
 open Djambi.Api.Model
 
 type EventRepositoryTests() =
@@ -199,7 +198,7 @@ type EventRepositoryTests() =
                 ]
             let event = TestUtilities.createEventRequest(effects) //EventKind doesn't matter
 
-            let newGame = EventService.applyEvent game event
+            let newGame = services.events.applyEvent game event
             
             //Act
             let! result = EventRepository.persistEvent (TestUtilities.emptyEventRequest, game, newGame)

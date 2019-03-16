@@ -4,7 +4,6 @@ open FSharp.Control.Tasks
 open Xunit
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.IntegrationTests
-open Djambi.Api.Logic.Services
 open Djambi.Api.Model
 open Djambi.Api.Db.Repositories
 open Djambi.Api.Logic
@@ -40,7 +39,7 @@ type GetGameStartEventTests() =
             let session = session |> TestUtilities.setSessionUserId (session.user.id+1)
 
             //Act
-            let! result = GameStartService.getGameStartEvent game session
+            let! result = services.gameStart.getGameStartEvent game session
 
             //Assert
             result |> shouldBeError 403 Security.noPrivilegeOrCreatorErrorMessage
@@ -53,7 +52,7 @@ type GetGameStartEventTests() =
             let! (_, session, game) = createuserSessionAndGame(true) |> thenValue
 
             //Act
-            let! result = GameStartService.getGameStartEvent game session
+            let! result = services.gameStart.getGameStartEvent game session
 
             //Assert
             result |> shouldBeError 400 "Cannot start game with only one player."
@@ -68,7 +67,7 @@ type GetGameStartEventTests() =
                                   |> TestUtilities.setSessionPrivileges [EditPendingGames]
 
             //Act
-            let! event = GameStartService.getGameStartEvent game session |> thenValue
+            let! event = services.gameStart.getGameStartEvent game session |> thenValue
 
             //Assert
             event.kind |> shouldBe EventKind.GameStarted
@@ -88,7 +87,7 @@ type GetGameStartEventTests() =
             let! (user, session, game) = createUserSessionAndGameWith3Players() |> thenValue
 
             //Act
-            let! event = GameStartService.getGameStartEvent game session |> thenValue
+            let! event = services.gameStart.getGameStartEvent game session |> thenValue
 
             //Assert
             event.kind |> shouldBe EventKind.GameStarted
@@ -118,7 +117,7 @@ type GetGameStartEventTests() =
             let! game = GameRepository.getGame game.id |> thenValue
 
             //Act
-            let! event = GameStartService.getGameStartEvent game session |> thenValue
+            let! event = services.gameStart.getGameStartEvent game session |> thenValue
 
             //Assert
             event.kind |> shouldBe EventKind.GameStarted
