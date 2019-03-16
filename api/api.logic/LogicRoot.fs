@@ -18,6 +18,9 @@ type ServiceRoot() =
     member x.selections = SelectionService(x.selectionOptions)
     member x.turns = TurnService(x.events, x.indirectEffects, x.selectionOptions)
 
+    interface IServiceRoot with
+        member x.sessions = x.sessions :> ISessionService
+
 type ManagerRoot(services : ServiceRoot) =
     member x.boards = BoardManager(services.boards)
     member x.games = GameManager(services.events, services.gameCrud, services.gameStart, services.players, services.playerStatusChanges, services.selections, services.turns)

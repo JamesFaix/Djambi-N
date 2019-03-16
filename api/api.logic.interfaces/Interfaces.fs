@@ -4,6 +4,12 @@ open Djambi.Api.Common.Control
 open Djambi.Api.Model
 open Djambi.ClientGenerator.Annotations
 
+type ISessionService =
+    abstract member openSession : request:LoginRequest -> Session AsyncHttpResult
+    abstract member renewSession : token:string -> Session AsyncHttpResult
+    abstract member getSession : token:string -> Session AsyncHttpResult
+    abstract member closeSession : session:Session -> Unit AsyncHttpResult
+
 type IBoardManager =    
     [<ClientFunction(HttpMethod.Get, Routes.board, ClientSection.Board)>]
     abstract member getBoard : regionCount:int -> session:Session -> Board AsyncHttpResult
@@ -83,6 +89,9 @@ type IUserManager =
     
     [<ClientFunction(HttpMethod.Get, Routes.currentUser, ClientSection.User)>]
     abstract member getCurrentUser : session:Session -> User AsyncHttpResult
+
+type IServiceRoot =
+    abstract member sessions : ISessionService
 
 type IManagerRoot =
     abstract member boards : IBoardManager
