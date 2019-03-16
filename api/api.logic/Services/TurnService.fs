@@ -5,7 +5,6 @@ open Djambi.Api.Common.Collections
 open Djambi.Api.Common.Control
 open Djambi.Api.Logic
 open Djambi.Api.Logic.ModelExtensions.GameModelExtensions
-open Djambi.Api.Logic.PieceStrategies
 open Djambi.Api.Logic.Services
 open Djambi.Api.Model
 
@@ -35,7 +34,7 @@ let private getPrimaryEffects (game : Game) : Effect list =
         match currentTurn.targetPiece game with
         | None -> ()
         | Some target ->
-            let subjectStrategy = PieceService.getStrategy subject
+            let subjectStrategy = Pieces.getStrategy subject
 
             //Kill target
             if subjectStrategy.killsTarget
@@ -80,13 +79,13 @@ let getCommitTurnEvent (game : Game) (session : Session) : CreateEventRequest Ht
         kind = EventKind.TurnCommitted
         effects = effects |> Seq.toList
         createdByUserId = session.user.id
-        actingPlayerId = ContextService.getActingPlayerId session game //Important to use un-updated game, because there is no turn cycle in the updated game
+        actingPlayerId = Context.getActingPlayerId session game //Important to use un-updated game, because there is no turn cycle in the updated game
     }
     
 //--- Reset
 
 let getResetTurnEvent(game : Game) (session : Session) : CreateEventRequest HttpResult =
-    SecurityService.ensureCurrentPlayerOrOpenParticipation session game
+    Security.ensureCurrentPlayerOrOpenParticipation session game
     |> Result.bind (fun _ ->
         let updatedGame = { game with currentTurn = Some Turn.empty }
         SelectionOptionsService.getSelectableCellsFromState updatedGame
@@ -99,7 +98,7 @@ let getResetTurnEvent(game : Game) (session : Session) : CreateEventRequest Http
                 kind = EventKind.TurnReset
                 effects = effects
                 createdByUserId = session.user.id
-                actingPlayerId = ContextService.getActingPlayerId session game
+                actingPlayerId = Context.getActingPlayerId session game
             }
         )
     )

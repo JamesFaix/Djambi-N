@@ -8,6 +8,7 @@ open Djambi.Api.IntegrationTests
 open Djambi.Api.Model
 open Djambi.Api.Logic.Services
 open Djambi.Api.Db.Repositories
+open Djambi.Api.Logic
 
 type GetUpdateGameParametersEventTests() =
     inherit TestsBase()
@@ -153,5 +154,5 @@ type GetUpdateGameParametersEventTests() =
             let result = GameCrudService.getUpdateGameParametersEvent (game, newParameters) otherSession
 
             //Assert
-            result |> shouldBeError 403 SecurityService.noPrivilegeOrCreatorErrorMessage
+            result |> shouldBeError 403 Security.noPrivilegeOrCreatorErrorMessage
         }

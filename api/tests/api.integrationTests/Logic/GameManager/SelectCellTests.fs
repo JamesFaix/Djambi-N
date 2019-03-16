@@ -6,7 +6,7 @@ open Xunit
 open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.IntegrationTests
-open Djambi.Api.Logic.Services
+open Djambi.Api.Logic
 open Djambi.Api.Model
 
 type SelectCellTests() =
@@ -66,7 +66,7 @@ type SelectCellTests() =
             let! result = managers.turns.selectCell (updatedGame.id, cellId) sessionWithoutActivePlayer
 
             //Assert
-            result |> shouldBeError 403 SecurityService.noPrivilegeOrCurrentPlayerErrorMessage
+            result |> shouldBeError 403 Security.noPrivilegeOrCurrentPlayerErrorMessage
         }
 
     [<Fact>]

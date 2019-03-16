@@ -6,6 +6,7 @@ open Djambi.Api.Common.Control
 open Djambi.Api.IntegrationTests
 open Djambi.Api.Logic.Services
 open Djambi.Api.Model
+open Djambi.Api.Logic
 
 type DeleteUserTests() =
     inherit TestsBase()
@@ -58,7 +59,7 @@ type DeleteUserTests() =
             let! response = UserService.deleteUser user.id session
 
             //Assert
-            response |> shouldBeError 403 SecurityService.noPrivilegeOrSelfErrorMessage
+            response |> shouldBeError 403 Security.noPrivilegeOrSelfErrorMessage
         }
 
     [<Fact>]

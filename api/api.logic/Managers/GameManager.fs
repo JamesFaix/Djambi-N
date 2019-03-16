@@ -6,6 +6,7 @@ open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Model
 open Djambi.Api.Db.Repositories
 open Djambi.Api.Logic.Interfaces
+open Djambi.Api.Logic
 
 type GameManager() =
 
@@ -38,7 +39,7 @@ type GameManager() =
     interface IEventManager with    
         member x.getEvents (gameId, query) session =
             GameRepository.getGame gameId
-            |> thenBind (SecurityService.ensurePlayerOrHas ViewGames session)
+            |> thenBind (Security.ensurePlayerOrHas ViewGames session)
             |> thenBindAsync (fun _ -> EventRepository.getEvents (gameId, query))
 
     interface IGameManager with

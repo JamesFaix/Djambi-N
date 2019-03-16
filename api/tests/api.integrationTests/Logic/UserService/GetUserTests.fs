@@ -7,6 +7,7 @@ open Djambi.Api.Common.Control
 open Djambi.Api.IntegrationTests
 open Djambi.Api.Logic.Services
 open Djambi.Api.Model
+open Djambi.Api.Logic
 
 type GetUserTests() =
     inherit TestsBase()
@@ -44,7 +45,7 @@ type GetUserTests() =
             let! error = UserService.getUser user.id session
 
             //Assert
-            error |> shouldBeError 403 SecurityService.noPrivilegeOrSelfErrorMessage
+            error |> shouldBeError 403 Security.noPrivilegeOrSelfErrorMessage
         }
 
     [<Fact>]

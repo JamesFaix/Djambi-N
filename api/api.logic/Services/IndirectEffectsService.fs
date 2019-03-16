@@ -6,7 +6,7 @@ open Djambi.Api.Common.Collections
 open Djambi.Api.Common.Control
 open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
 open Djambi.Api.Logic.ModelExtensions.GameModelExtensions
-open Djambi.Api.Logic.PieceStrategies
+open Djambi.Api.Logic
 open Djambi.Api.Logic.Services
 open Djambi.Api.Model
 
@@ -100,7 +100,7 @@ let private getRiseOrFallFromPowerEffects (game : Game, updatedGame : Game) : Ef
     let subject = (turn.subjectPiece game).Value
     let destination = (turn.destinationCell game.parameters.regionCount).Value
     let origin = (turn.subjectCell game.parameters.regionCount).Value
-    let subjectStrategy = PieceService.getStrategy subject
+    let subjectStrategy = Pieces.getStrategy subject
 
     let effects = new ArrayList<Effect>()
     let mutable turns = updatedGame.turnCycle
@@ -128,7 +128,7 @@ let private getRiseOrFallFromPowerEffects (game : Game, updatedGame : Game) : Ef
 
     match (turn.targetPiece game, turn.dropCell game.parameters.regionCount) with
     | (Some target, Some drop) ->
-        let targetStrategy = PieceService.getStrategy target
+        let targetStrategy = Pieces.getStrategy target
         
         if subjectStrategy.canEnterCenterToEvictPiece 
             && not subjectStrategy.killsTarget
@@ -273,12 +273,12 @@ let getIndirectEffectsForTurnCommit (game : Game, updatedGame : Game) : Effect l
 
     let turn = updatedGame.currentTurn.Value
     let subject = (turn.subjectPiece game).Value
-    let subjectStrategy = PieceService.getStrategy subject
+    let subjectStrategy = Pieces.getStrategy subject
 
     let killChiefEffects = 
         match turn.targetPiece game with
         | Some target ->
-            let targetStrategy = PieceService.getStrategy target
+            let targetStrategy = Pieces.getStrategy target
 
             if subjectStrategy.killsTarget 
                 && targetStrategy.killsControllingPlayerWhenKilled

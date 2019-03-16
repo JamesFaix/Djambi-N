@@ -6,14 +6,13 @@ open Djambi.Api.Logic
 open Djambi.Api.Logic.ModelExtensions
 open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
 open Djambi.Api.Logic.ModelExtensions.GameModelExtensions
-open Djambi.Api.Logic.PieceStrategies
 open Djambi.Api.Logic.Services
 open Djambi.Api.Model
 
 let getSubjectSelectionEventDetails (game : Game, cellId : int) : (Selection * TurnStatus * SelectionKind option) HttpResult =
     let pieces = game.piecesIndexedByCell
     match pieces.TryFind(cellId) with
-    | None -> ErrorService.noPieceInCell()
+    | None -> Errors.noPieceInCell()
     | Some p -> 
         let selection = Selection.subject(cellId, p.id)
         Ok (selection, AwaitingSelection, Some Move)
@@ -22,7 +21,7 @@ let getMoveSelectionEventDetails (game : Game, cellId : int) : (Selection * Turn
     let pieces = game.piecesIndexedByCell
     let board = BoardModelUtility.getBoardMetadata game.parameters.regionCount
     let subject = game.currentTurn.Value.subjectPiece(game).Value
-    let subjectStrategy = PieceService.getStrategy subject
+    let subjectStrategy = Pieces.getStrategy subject
     match pieces.TryFind(cellId) with
     | None -> 
         let selection = Selection.move(cellId)
@@ -31,7 +30,7 @@ let getMoveSelectionEventDetails (game : Game, cellId : int) : (Selection * Turn
                 |> Seq.map (fun c -> pieces.TryFind c.id)
                 |> Seq.values
                 |> Seq.exists (fun p -> 
-                    let str = PieceService.getStrategy p
+                    let str = Pieces.getStrategy p
                     str.isAlive && p.playerId <> subject.playerId
                 )
         then Ok (selection, AwaitingSelection, Some Target)
@@ -40,7 +39,7 @@ let getMoveSelectionEventDetails (game : Game, cellId : int) : (Selection * Turn
         let selection = Selection.moveWithTarget(cellId, target.id)
         if subjectStrategy.movesTargetToOrigin then
             match board.cell cellId with
-            | None -> ErrorService.cellNotFound()
+            | None -> Errors.cellNotFound()
             | Some c when c.isCenter ->
                 Ok (selection, AwaitingSelection, Some Vacate)
             | _ ->
@@ -50,7 +49,7 @@ let getMoveSelectionEventDetails (game : Game, cellId : int) : (Selection * Turn
 let getTargetSelectionEventDetails (game : Game, cellId : int) : (Selection * TurnStatus * SelectionKind option) HttpResult =
     let pieces = game.piecesIndexedByCell
     match pieces.TryFind(cellId) with
-    | None -> ErrorService.noPieceInCell()
+    | None -> Errors.noPieceInCell()
     | Some target ->
         let selection = Selection.target(cellId, target.id)
         Ok (selection, AwaitingCommit, None)
@@ -59,7 +58,7 @@ let getDropSelectionEventDetails (game : Game, cellId : int) : (Selection * Turn
     let turn = game.currentTurn.Value
     let subject = turn.subjectPiece(game).Value
     let destination = turn.destinationCell(game.parameters.regionCount).Value
-    let subjectStrategy = PieceService.getStrategy subject
+    let subjectStrategy = Pieces.getStrategy subject
     let selection = Selection.drop(cellId)
     if subjectStrategy.canEnterCenterToEvictPiece 
         && (not subjectStrategy.canStayInCenter) 
@@ -72,22 +71,22 @@ let getVacateSelectionEventDetails (game : Game, cellId : int) : (Selection * Tu
     Ok (selection, AwaitingCommit, None)
 
 let getCellSelectedEvent(game : Game, cellId : int) (session: Session) : CreateEventRequest HttpResult =
-    SecurityService.ensureCurrentPlayerOrOpenParticipation session game
+    Security.ensureCurrentPlayerOrOpenParticipation session game
     |> Result.bind (fun _ ->
         let board = BoardModelUtility.getBoardMetadata game.parameters.regionCount
         match board.cell cellId with
         | Some _ -> Ok ()
-        | None -> ErrorService.cellNotFound()
+        | None -> Errors.cellNotFound()
     )
     |> Result.bind (fun _ ->
         let currentTurn = game.currentTurn.Value
         if currentTurn.selectionOptions |> List.contains cellId |> not
         then Error <| HttpException(400, (sprintf "Cell %i is not currently selectable." cellId))
         elif currentTurn.status <> AwaitingSelection || currentTurn.requiredSelectionKind.IsNone
-        then ErrorService.turnStatusDoesNotAllowSelection()
+        then Errors.turnStatusDoesNotAllowSelection()
         else
             match currentTurn.requiredSelectionKind with
-            | None -> ErrorService.turnStatusDoesNotAllowSelection()
+            | None -> Errors.turnStatusDoesNotAllowSelection()
             | Some Subject -> getSubjectSelectionEventDetails (game, cellId)
             | Some Move -> getMoveSelectionEventDetails (game, cellId)
             | Some Target -> getTargetSelectionEventDetails (game, cellId)
@@ -114,7 +113,7 @@ let getCellSelectedEvent(game : Game, cellId : int) (session: Session) : CreateE
                         kind = EventKind.CellSelected
                         effects = [Effect.CurrentTurnChanged { oldValue = game.currentTurn; newValue = Some turn }]
                         createdByUserId = session.user.id     
-                        actingPlayerId = ContextService.getActingPlayerId session game
+                        actingPlayerId = Context.getActingPlayerId session game
                     }
                 )                
             )

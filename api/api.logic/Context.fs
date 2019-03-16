@@ -1,4 +1,4 @@
-﻿module Djambi.Api.Logic.ContextService
+﻿module Djambi.Api.Logic.Context
 
 open Djambi.Api.Model
 
