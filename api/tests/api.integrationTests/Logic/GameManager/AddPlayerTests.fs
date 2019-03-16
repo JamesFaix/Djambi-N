@@ -6,7 +6,6 @@ open Xunit
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.IntegrationTests
 open Djambi.Api.Model
-open Djambi.Api.Logic.Managers
 
 type AddPlayerTests() =
     inherit TestsBase()
@@ -22,7 +21,7 @@ type AddPlayerTests() =
             let request = CreatePlayerRequest.user user.id
 
             //Act
-            let! resp = GameManager.addPlayer game.id request session |> thenValue
+            let! resp = managers.players.addPlayer game.id request session |> thenValue
 
             //Assert
             let player = resp.game.players |> List.except game.players |> List.head
@@ -44,7 +43,7 @@ type AddPlayerTests() =
             let request = CreatePlayerRequest.guest (user.id, "test")
             let session = session |> TestUtilities.setSessionPrivileges [EditPendingGames]
             //Act
-            let! error = GameManager.addPlayer Int32.MinValue request session
+            let! error = managers.players.addPlayer Int32.MinValue request session
 
             //Assert
             error |> shouldBeError 404 "Game not found."

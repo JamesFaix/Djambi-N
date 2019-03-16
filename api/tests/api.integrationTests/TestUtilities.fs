@@ -10,8 +10,9 @@ open Djambi.Utilities
 open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Logic.Services
-open Djambi.Api.Logic.Managers
+open Djambi.Api.Logic
 open Djambi.Api.Db.Repositories
+open Djambi.Api.Logic.Interfaces
 
 let private env = Environment.load(6)
 let private config =
@@ -22,6 +23,8 @@ let private config =
 let connectionString =
     config.GetConnectionString("Main")
             .Replace("{sqlAddress}", env.sqlAddress)
+            
+let managers = ManagerRoot() :> IManagerRoot
 
 let getCreateUserRequest() : CreateUserRequest =
     {
@@ -83,7 +86,7 @@ let createuserSessionAndGame(allowGuests : bool) : (UserDetails * Session * Game
         let session = getSessionForUser user.id
 
         let parameters = { getGameParameters() with allowGuests = allowGuests }
-        let! game = GameManager.createGame parameters session
+        let! game = managers.games.createGame parameters session
                      |> thenValue
 
         return Ok <| (user, session, game)

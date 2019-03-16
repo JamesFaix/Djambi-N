@@ -6,7 +6,6 @@ open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Db.Repositories
 open Djambi.Api.IntegrationTests
 open Djambi.Api.Model
-open Djambi.Api.Logic.Managers
 open Djambi.Api.Logic.Services
 
 //TODO: Audit test class
@@ -19,7 +18,7 @@ type FillEmptyPlayerSlotsTests() =
         let session = getSessionForUser 1
         let gameRequest = getGameParameters()
         task {
-            let! game = GameManager.createGame gameRequest session |> thenValue
+            let! game = managers.games.createGame gameRequest session |> thenValue
 
             //Act
             let! updatedGame = TestUtilities.fillEmptyPlayerSlots game |> thenValue
@@ -43,7 +42,7 @@ type FillEmptyPlayerSlotsTests() =
         let session = getSessionForUser 1
         let gameRequest = getGameParameters()
         task {
-            let! game = GameManager.createGame gameRequest session |> thenValue
+            let! game = managers.games.createGame gameRequest session |> thenValue
 
             //Act
             let! effects = PlayerService.fillEmptyPlayerSlots game |> thenValue

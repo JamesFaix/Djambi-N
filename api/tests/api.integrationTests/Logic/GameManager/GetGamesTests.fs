@@ -6,7 +6,6 @@ open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.IntegrationTests
 open Djambi.Api.Model
-open Djambi.Api.Logic.Managers
 open Djambi.Api.Db.Repositories
 
 type GetGamesTests() =
@@ -22,7 +21,7 @@ type GetGamesTests() =
             let query = { GamesQuery.empty with createdByUserName = Some user1.name }
 
             //Act
-            let! result = GameManager.getGames query adminSession
+            let! result = managers.games.getGames query adminSession
                           |> AsyncHttpResult.thenValue
 
             //Assert
@@ -41,7 +40,7 @@ type GetGamesTests() =
             let query = { GamesQuery.empty with allowGuests = Some true }
 
             //Act
-            let! result = GameManager.getGames query adminSession
+            let! result = managers.games.getGames query adminSession
                           |> AsyncHttpResult.thenValue
 
             //Assert
@@ -62,7 +61,7 @@ type GetGamesTests() =
             let query = { GamesQuery.empty with isPublic = Some true }
 
             //Act
-            let! result = GameManager.getGames query adminSession
+            let! result = managers.games.getGames query adminSession
                           |> AsyncHttpResult.thenValue
 
             //Assert
@@ -79,12 +78,12 @@ type GetGamesTests() =
             let adminSession = getSessionForUser 3 |> TestUtilities.setSessionPrivileges [EditPendingGames; ViewGames]
 
             let playerRequest = { getCreatePlayerRequest with userId = Some user2.id }
-            let! _ = GameManager.addPlayer game1.id playerRequest adminSession
+            let! _ = managers.players.addPlayer game1.id playerRequest adminSession
 
             let query = { GamesQuery.empty with playerUserName = Some user2.name }
 
             //Act
-            let! result = GameManager.getGames query adminSession
+            let! result = managers.games.getGames query adminSession
                           |> AsyncHttpResult.thenValue
 
             //Assert
@@ -105,7 +104,7 @@ type GetGamesTests() =
             let query = { GamesQuery.empty with status = Some GameStatus.Pending }
 
             //Act
-            let! result = GameManager.getGames query adminSession
+            let! result = managers.games.getGames query adminSession
                           |> AsyncHttpResult.thenValue
 
             //Assert
@@ -119,16 +118,16 @@ type GetGamesTests() =
             //Arrange
             let! (_, session1, game1) = TestUtilities.createuserSessionAndGame(true) |> thenValue
             let! (_, session2, game2) = TestUtilities.createuserSessionAndGame(true) |> thenValue           
-            let! game3 = GameManager.createGame { getGameParameters() with isPublic = true } session2
+            let! game3 = managers.games.createGame { getGameParameters() with isPublic = true } session2
                           |> AsyncHttpResult.thenValue
 
             let playerRequest = { getCreatePlayerRequest with userId = Some 1 }
-            let! _ = GameManager.addPlayer game1.id playerRequest session1
+            let! _ = managers.players.addPlayer game1.id playerRequest session1
 
             let query = GamesQuery.empty
 
             //Act
-            let! result = GameManager.getGames query session1
+            let! result = managers.games.getGames query session1
                           |> AsyncHttpResult.thenValue
 
             //Assert

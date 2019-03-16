@@ -8,7 +8,6 @@ open Djambi.Api.IntegrationTests
 open Djambi.Api.Logic.ModelExtensions
 open Djambi.Api.Logic.Services
 open Djambi.Api.Model
-open Djambi.Api.Logic.Managers
 
 type GameStartServiceTests() =
     inherit TestsBase()
@@ -19,7 +18,7 @@ type GameStartServiceTests() =
             //Arrange
             let session = getSessionForUser 1
             let parameters = getGameParameters()
-            let! game = GameManager.createGame parameters session
+            let! game = managers.games.createGame parameters session
                         |> thenBindAsync TestUtilities.fillEmptyPlayerSlots
                         |> thenValue
 
@@ -42,7 +41,7 @@ type GameStartServiceTests() =
             //Arrange
             let session = getSessionForUser 1
             let parameters = getGameParameters()
-            let! game = GameManager.createGame parameters session 
+            let! game = managers.games.createGame parameters session 
                         |> thenBindAsync TestUtilities.fillEmptyPlayerSlots
                         |> thenValue
             let playersWithStartConditions = GameStartService.assignStartingConditions game.players
@@ -74,7 +73,7 @@ type GameStartServiceTests() =
 
             let playerRequest = CreatePlayerRequest.guest (user.id, "test")
 
-            let! _ = GameManager.addPlayer game.id playerRequest session |> thenValue
+            let! _ = managers.players.addPlayer game.id playerRequest session |> thenValue
 
             //Act
             let updatedGame = GameStartService.applyStartGame game
