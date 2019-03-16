@@ -6,13 +6,17 @@ open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Db.Repositories
 open Djambi.Api.Model
 
-module SessionService =
+type SessionService() =
+    let maxFailedLoginAttempts = 5
+    let accountLockTimeout = TimeSpan.FromHours(1.0)
+    let sessionTimeout = TimeSpan.FromHours(1.0)
 
-    let private maxFailedLoginAttempts = 5
-    let private accountLockTimeout = TimeSpan.FromHours(1.0)
-    let private sessionTimeout = TimeSpan.FromHours(1.0)
+    let errorIfExpired (session : Session) =
+        match session with
+        | s when s.expiresOn >= DateTime.UtcNow -> Ok session
+        | _ -> Error <| HttpException(401, "Session expired.")
 
-    let openSession(request : LoginRequest) : Session AsyncHttpResult =
+    member x.openSession(request : LoginRequest) : Session AsyncHttpResult =
 
         let isWithinLockTimeoutPeriod (u : UserDetails) =
             u.lastFailedLoginAttemptOn.IsNone
@@ -61,12 +65,7 @@ module SessionService =
             )
         )
 
-    let private errorIfExpired (session : Session) =
-        match session with
-        | s when s.expiresOn >= DateTime.UtcNow -> Ok session
-        | _ -> Error <| HttpException(401, "Session expired.")
-
-    let renewSession(token : string) : Session AsyncHttpResult =
+    member x.renewSession(token : string) : Session AsyncHttpResult =
         let renew (s : Session) =
             SessionRepository.renewSessionExpiration(s.id, DateTime.UtcNow.Add(sessionTimeout))
 
@@ -74,9 +73,9 @@ module SessionService =
         |> thenBind errorIfExpired
         |> thenBindAsync renew
 
-    let getSession(token : string) : Session AsyncHttpResult =
+    member x.getSession(token : string) : Session AsyncHttpResult =
         SessionRepository.getSession (SessionQuery.byToken token)
         |> thenBind errorIfExpired
 
-    let closeSession(session : Session) : Unit AsyncHttpResult =
+    member x.closeSession(session : Session) : Unit AsyncHttpResult =
         SessionRepository.deleteSession(None, Some session.token)
