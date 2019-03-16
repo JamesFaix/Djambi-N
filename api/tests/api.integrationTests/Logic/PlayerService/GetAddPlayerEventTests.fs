@@ -7,7 +7,6 @@ open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.IntegrationTests
 open Djambi.Api.Logic.Services
 open Djambi.Api.Model
-open Djambi.Api.Logic.Managers
 open Djambi.Api.Db.Repositories
 
 type GetAddPlayerEventTests() =
@@ -278,8 +277,8 @@ type GetAddPlayerEventTests() =
             let request2 = { request1 with name = Some "test2" }
             let request3 = { request1 with name = Some "test3" }
 
-            let! _ = GameManager.addPlayer game.id request1 session |> thenValue
-            let! _ = GameManager.addPlayer game.id request2 session |> thenValue
+            let! _ = managers.players.addPlayer game.id request1 session |> thenValue
+            let! _ = managers.players.addPlayer game.id request2 session |> thenValue
 
             let! game = GameRepository.getGame game.id |> thenValue
 

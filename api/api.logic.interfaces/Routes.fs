@@ -1,4 +1,4 @@
-﻿module Djambi.Api.Logic.Routes
+﻿module Djambi.Api.Logic.Interfaces.Routes
 
 (*
     This module makes more sense at a higher tier of the application.

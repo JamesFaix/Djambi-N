@@ -4,7 +4,6 @@ open FSharp.Control.Tasks
 open Xunit
 open Djambi.Api.Common.Control
 open Djambi.Api.IntegrationTests
-open Djambi.Api.Logic.Managers
 open Djambi.Api.Model
 
 type CreateGameTests() =
@@ -18,7 +17,7 @@ type CreateGameTests() =
             let session = getSessionForUser 1
 
             //Act
-            let! game = GameManager.createGame parameters session
+            let! game = managers.games.createGame parameters session
                         |> AsyncHttpResult.thenValue
 
             //Assert
@@ -38,7 +37,7 @@ type CreateGameTests() =
             let session = getSessionForUser 1
 
             //Act
-            let! game = GameManager.createGame parameters session
+            let! game = managers.games.createGame parameters session
                         |> AsyncHttpResult.thenValue
 
             //Assert

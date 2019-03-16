@@ -8,7 +8,6 @@ open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.IntegrationTests
 open Djambi.Api.Logic.Services
 open Djambi.Api.Model
-open Djambi.Api.Logic.Managers
 open Djambi.Api.Db.Repositories
 
 type GetRemovePlayerEventTests() =
@@ -22,12 +21,12 @@ type GetRemovePlayerEventTests() =
             let session = session |> TestUtilities.setSessionPrivileges [EditPendingGames]
 
             let gameRequest = getGameParameters()
-            let! game2 = GameManager.createGame gameRequest session |> thenValue
+            let! game2 = managers.games.createGame gameRequest session |> thenValue
 
             let! user = createUser() |> thenValue
             let request = CreatePlayerRequest.user user.id
 
-            let! player = GameManager.addPlayer game1.id request session
+            let! player = managers.players.addPlayer game1.id request session
                           |> thenMap (fun resp -> resp.game.players |> List.except game1.players |> List.head)
                           |> thenValue
 
@@ -73,7 +72,7 @@ type GetRemovePlayerEventTests() =
             let session = session |> TestUtilities.setSessionPrivileges []
                                   |> TestUtilities.setSessionUserId Int32.MinValue
 
-            let! player = GameManager.addPlayer game.id request adminSession
+            let! player = managers.players.addPlayer game.id request adminSession
                           |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                           |> thenValue
 
@@ -93,7 +92,7 @@ type GetRemovePlayerEventTests() =
             let! (user, session, game) = createuserSessionAndGame(true) |> thenValue
             let request = CreatePlayerRequest.guest (user.id, "test")
 
-            let! player = GameManager.addPlayer game.id request session
+            let! player = managers.players.addPlayer game.id request session
                           |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                           |> thenValue
                           
@@ -122,7 +121,7 @@ type GetRemovePlayerEventTests() =
             let! user = createUser() |> thenValue
             let request = CreatePlayerRequest.user user.id
 
-            let! player = GameManager.addPlayer game.id request session
+            let! player = managers.players.addPlayer game.id request session
                           |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                           |> thenValue
 
@@ -151,7 +150,7 @@ type GetRemovePlayerEventTests() =
             let request = CreatePlayerRequest.user user.id
             
             let adminSession = session |> TestUtilities.setSessionPrivileges [EditPendingGames]
-            let! player = GameManager.addPlayer game.id request adminSession
+            let! player = managers.players.addPlayer game.id request adminSession
                           |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                           |> thenValue
 
@@ -183,12 +182,12 @@ type GetRemovePlayerEventTests() =
             let adminSession = session |> TestUtilities.setSessionPrivileges [EditPendingGames]
 
             let! userPlayer =
-                GameManager.addPlayer game.id userPlayerRequest adminSession
+                managers.players.addPlayer game.id userPlayerRequest adminSession
                 |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                 |> thenValue
 
             let! guestPlayer =
-                GameManager.addPlayer game.id guestPlayerRequest adminSession
+                managers.players.addPlayer game.id guestPlayerRequest adminSession
                 |> thenMap (fun resp -> resp.game.players |> List.except (userPlayer :: game.players) |> List.head)
                 |> thenValue
 
@@ -220,12 +219,12 @@ type GetRemovePlayerEventTests() =
             let adminSession = session |> TestUtilities.setSessionPrivileges [EditPendingGames]
 
             let! userPlayer =
-                GameManager.addPlayer game.id userPlayerRequest adminSession
+                managers.players.addPlayer game.id userPlayerRequest adminSession
                 |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                 |> thenValue
 
             let! guestPlayer =
-                GameManager.addPlayer game.id guestPlayerRequest adminSession
+                managers.players.addPlayer game.id guestPlayerRequest adminSession
                 |> thenMap (fun resp -> resp.game.players |> List.except (userPlayer :: game.players) |> List.head)
                 |> thenValue
 
@@ -280,9 +279,9 @@ type GetRemovePlayerEventTests() =
                     name = Some "p2"
                 }
 
-            let! _ = GameManager.addPlayer game.id p2Request session |> thenValue
+            let! _ = managers.players.addPlayer game.id p2Request session |> thenValue
 
-            let! resp = GameManager.startGame game.id session |> thenValue
+            let! resp = managers.games.startGame game.id session |> thenValue
             let game = resp.game
 
             //Act

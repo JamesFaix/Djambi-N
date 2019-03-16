@@ -26,7 +26,7 @@ let renderModel (renderers : IRenderer list, config : IConfigurationRoot, rootPa
 
 let renderFunctions (renderers : IRenderer list, config : IConfigurationRoot, rootPath : string) : Unit =
     printfn "Loading functions assembly..."
-    let assembly = typeof<Djambi.Api.Logic.Marker>.Assembly
+    let assembly = typeof<Djambi.Api.Logic.Interfaces.IManagerRoot>.Assembly
     
     let methods =
         assembly.GetTypes()

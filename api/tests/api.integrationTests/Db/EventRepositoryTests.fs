@@ -7,7 +7,6 @@ open Djambi.Api.Db.Repositories
 open Djambi.Api.IntegrationTests
 open Djambi.Api.Logic.Services
 open Djambi.Api.Model
-open Djambi.Api.Logic.Managers
 
 type EventRepositoryTests() =
     inherit TestsBase()
@@ -228,8 +227,8 @@ type EventRepositoryTests() =
 
             let p3Request = { p2Request with name = Some "p3" }
 
-            let! _ = GameManager.addPlayer game.id p2Request session |> thenValue
-            let! _ = GameManager.addPlayer game.id p3Request session |> thenValue
+            let! _ = managers.players.addPlayer game.id p2Request session |> thenValue
+            let! _ = managers.players.addPlayer game.id p3Request session |> thenValue
             
             let query : EventsQuery = 
                 {

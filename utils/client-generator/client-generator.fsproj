@@ -21,7 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\api\api.common\api.common.fsproj" />
-    <ProjectReference Include="..\..\api\api.logic\api.logic.fsproj" />
+    <ProjectReference Include="..\..\api\api.logic.interfaces\api.logic.interfaces.fsproj" />
     <ProjectReference Include="..\..\api\api.model\api.model.fsproj" />
     <ProjectReference Include="..\client-generator.annotations\client-generator.annotations.fsproj" />
     <ProjectReference Include="..\environment\environment.fsproj" />
