@@ -1,4 +1,4 @@
-module Djambi.Api.App
+module Djambi.Api.Host.App
 
 open System
 open System.Linq
@@ -11,7 +11,6 @@ open Microsoft.Extensions.Logging
 open Microsoft.Extensions.DependencyInjection
 open Newtonsoft.Json
 open Djambi.Api.Db
-open Djambi.Api.Http
 open Djambi.Utilities
 open Djambi.Api.Common.Json
 open Djambi.Api.Web
@@ -66,12 +65,15 @@ let configureApp (app : IApplicationBuilder) =
     //See HttpUtility for deserialization.
     configureNewtonsoft()
 
+    let webRoot = WebRoot()
+    let routing = RoutingTable(webRoot)
+
     app.UseGiraffeErrorHandler(errorHandler)
     //(match env.IsDevelopment() with
     //| true  -> app.UseDeveloperExceptionPage()
     //| false -> app.UseGiraffeErrorHandler errorHandler)
         .UseCors(configureCors)
-        .UseGiraffe(Routing.getRoutingTable)
+        .UseGiraffe(routing.getHandler)
 
 let configureServices (services : IServiceCollection) =
     services.AddCors()    |> ignore
