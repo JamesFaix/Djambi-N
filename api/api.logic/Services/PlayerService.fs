@@ -94,7 +94,7 @@ let getRemovePlayerEvent (game : Game, playerId : int) (session : Session) : Cre
                         kind = EventKind.PlayerRemoved
                         effects = effects |> Seq.toList
                         createdByUserId = self.id
-                        actingPlayerId = ContextService.getActingPlayerId session game
+                        actingPlayerId = Context.getActingPlayerId session game
                     }
                     |> Ok
 

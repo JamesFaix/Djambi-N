@@ -12,7 +12,7 @@ open Djambi.Api.Model
 open Djambi.Api.Logic
  
 let getGameStartEvent (game : Game) (session : Session) : CreateEventRequest AsyncHttpResult =    
-    SecurityService.ensureCreatorOrEditPendingGames session game
+    Security.ensureCreatorOrEditPendingGames session game
     |> Result.bindAsync (fun _ ->    
         if game.players
             |> List.filter (fun p -> p.kind <> PlayerKind.Neutral)
@@ -31,7 +31,7 @@ let getGameStartEvent (game : Game) (session : Session) : CreateEventRequest Asy
                     kind = EventKind.GameStarted
                     effects = effects
                     createdByUserId = session.user.id
-                    actingPlayerId = ContextService.getActingPlayerId session game
+                    actingPlayerId = Context.getActingPlayerId session game
                 }
             )
     )

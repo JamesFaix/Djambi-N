@@ -2,7 +2,7 @@
 
 open Djambi.Api.Common.Control  
 open Djambi.Api.Common.Control.AsyncHttpResult
-open Djambi.Api.Logic.Services
+open Djambi.Api.Logic
 open Djambi.Api.Model
 open Djambi.Ap.Db.Repositories
 open Djambi.Api.Db.Repositories
@@ -12,7 +12,7 @@ type SnapshotManager() =
     interface ISnapshotManager with
 
         member x.createSnapshot gameId request session =
-            SecurityService.ensureHas Privilege.Snapshots session
+            Security.ensureHas Privilege.Snapshots session
             |> Result.bindAsync (fun _ ->
                 GameRepository.getGame gameId
                 |> thenBindAsync (fun game -> 
@@ -35,19 +35,19 @@ type SnapshotManager() =
             )
     
         member x.getSnapshotsForGame gameId session =
-            SecurityService.ensureHas Privilege.Snapshots session
+            Security.ensureHas Privilege.Snapshots session
             |> Result.bindAsync (fun _ ->
                 SnapshotRepository.getSnapshotsForGame gameId
             )
     
         member x.deleteSnapshot gameId snapshotId session =
-            SecurityService.ensureHas Privilege.Snapshots session
+            Security.ensureHas Privilege.Snapshots session
             |> Result.bindAsync (fun _ ->
                 SnapshotRepository.deleteSnapshot snapshotId
             )
 
         member x.loadSnapshot gameId snapshotId session =
-            SecurityService.ensureHas Privilege.Snapshots session
+            Security.ensureHas Privilege.Snapshots session
             |> Result.bindAsync (fun _ ->
                 SnapshotRepository.loadSnapshot (gameId, snapshotId)
             )

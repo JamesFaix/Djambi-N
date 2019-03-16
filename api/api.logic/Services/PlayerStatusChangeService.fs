@@ -3,6 +3,7 @@
 open Djambi.Api.Common.Collections
 open Djambi.Api.Common.Control
 open Djambi.Api.Model
+open Djambi.Api.Logic
 
 let private getFinalAcceptDrawEffects(game : Game, request : PlayerStatusChangeRequest) : Effect list =
     let otherLivingPlayers = 
@@ -42,7 +43,7 @@ let getUpdatePlayerStatusEvent (game : Game, request : PlayerStatusChangeRequest
     if game.status <> InProgress then
         Error <| HttpException(400, "Cannot change player status unless game is InProgress.")
     else    
-        SecurityService.ensurePlayerOrHas OpenParticipation session game
+        Security.ensurePlayerOrHas OpenParticipation session game
         |> Result.bind (fun _ ->
             let player = game.players |> List.find (fun p -> p.id = request.playerId)
             let oldStatus = player.status

@@ -3,7 +3,7 @@
 open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Db.Repositories
-open Djambi.Api.Logic.Services
+open Djambi.Api.Logic
 open Djambi.Api.Model
 
 let createUser (request : CreateUserRequest) (session : Session option) : UserDetails AsyncHttpResult =
@@ -12,9 +12,9 @@ let createUser (request : CreateUserRequest) (session : Session option) : UserDe
     | _ -> UserRepository.createUser request
 
 let deleteUser (userId : int) (session : Session) : Unit AsyncHttpResult =
-    SecurityService.ensureSelfOrHas EditUsers session userId
+    Security.ensureSelfOrHas EditUsers session userId
     |> Result.bindAsync (fun _ -> UserRepository.deleteUser userId)
 
 let getUser (userId : int) (session : Session) : UserDetails AsyncHttpResult =
-    SecurityService.ensureSelfOrHas EditUsers session userId
+    Security.ensureSelfOrHas EditUsers session userId
     |> Result.bindAsync (fun _ -> UserRepository.getUser userId)

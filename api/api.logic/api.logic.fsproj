@@ -5,13 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="PieceStrategies.fs" />
+    <Compile Include="Errors.fs" />
+    <Compile Include="Context.fs" />
+    <Compile Include="Security.fs" />
+    <Compile Include="Pieces.fs" />
     <Compile Include="ModelExtensions\BoardModelExtensions.fs" />
     <Compile Include="ModelExtensions\BoardModelUtility.fs" />
     <Compile Include="ModelExtensions\GameModelExtensions.fs" />
-    <Compile Include="Services\ErrorService.fs" />
-    <Compile Include="Services\ContextService.fs" />
-    <Compile Include="Services\SecurityService.fs" />
     <Compile Include="Services\UserService.fs" />
     <Compile Include="Services\SessionService.fs" />
     <Compile Include="Services\BoardService.fs" />

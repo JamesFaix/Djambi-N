@@ -7,6 +7,7 @@ open Djambi.Api.IntegrationTests
 open Djambi.Api.Logic.Services
 open Djambi.Api.Model
 open Djambi.Api.Db.Repositories
+open Djambi.Api.Logic
 
 type GetGameStartEventTests() =
     inherit TestsBase()
@@ -42,7 +43,7 @@ type GetGameStartEventTests() =
             let! result = GameStartService.getGameStartEvent game session
 
             //Assert
-            result |> shouldBeError 403 SecurityService.noPrivilegeOrCreatorErrorMessage
+            result |> shouldBeError 403 Security.noPrivilegeOrCreatorErrorMessage
         }
         
     [<Fact>]

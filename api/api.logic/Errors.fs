@@ -1,4 +1,4 @@
-﻿module Djambi.Api.Logic.Services.ErrorService
+﻿module Djambi.Api.Logic.Errors
 
 open Djambi.Api.Common.Control
 

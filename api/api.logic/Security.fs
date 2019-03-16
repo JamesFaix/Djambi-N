@@ -1,4 +1,4 @@
-﻿module Djambi.Api.Logic.Services.SecurityService
+﻿module Djambi.Api.Logic.Security
 
 open Djambi.Api.Common.Control
 open Djambi.Api.Model

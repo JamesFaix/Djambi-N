@@ -4,7 +4,7 @@ open Djambi.Api.Logic.ModelExtensions
 open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
 open Djambi.Api.Logic.ModelExtensions.GameModelExtensions
 open Djambi.Api.Model
-open Djambi.Api.Logic.PieceStrategies
+open Djambi.Api.Logic
 open Djambi.Api.Common.Control
 
 let private getMoveSelectionOptions(game : Game, piece : Piece) : int list =
@@ -27,7 +27,7 @@ let private getMoveSelectionOptions(game : Game, piece : Piece) : int list =
                     then yield c
         }
 
-    let strategy = PieceService.getStrategy piece
+    let strategy = Pieces.getStrategy piece
 
     paths
     |> Seq.map (fun path -> path |> List.take (min strategy.moveMaxDistance path.Length))        
@@ -58,7 +58,7 @@ let private getTargetSelectionOptions(game : Game, turn : Turn) : int list =
         match turn.subjectPiece game with
         | None -> []
         | Some subject ->
-            let strategy = PieceService.getStrategy(subject)
+            let strategy = Pieces.getStrategy(subject)
             if not strategy.canTargetAfterMove 
             then []
             else
@@ -97,7 +97,7 @@ let private getVacateSelectionOptions(game : Game, turn : Turn) : int list =
         match turn.destinationCell game.parameters.regionCount with
         | None -> []
         | Some destination ->
-            let strategy = PieceService.getStrategy subject
+            let strategy = Pieces.getStrategy subject
             if not destination.isCenter || strategy.canStayInCenter
             then []
             else 
