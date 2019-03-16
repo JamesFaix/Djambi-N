@@ -6,8 +6,8 @@ open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.IntegrationTests
 open Djambi.Api.Model
-open Djambi.Api.Db.Repositories
 open Djambi.Api.Logic
+open Djambi.Api.Db.Repositories
 
 type GetUpdateGameParametersEventTests() =
     inherit TestsBase()
@@ -53,7 +53,7 @@ type GetUpdateGameParametersEventTests() =
                             { game.parameters with regionCount = 4 } 
                 }
 
-            let! _ = GameRepository.updateGame newGame |> thenValue
+            let! _ = (db.games :?> GameRepository).updateGame newGame |> thenValue
 
             for n in [2..4] do
                 let playerRequest = 
@@ -62,10 +62,10 @@ type GetUpdateGameParametersEventTests() =
                         kind = PlayerKind.Guest; 
                         name = Some (sprintf "p%i" n)
                     }
-                let! _ = GameRepository.addPlayer (game.id, playerRequest)
+                let! _ = db.games.addPlayer (game.id, playerRequest)
                 ()
 
-            let! game = GameRepository.getGame game.id |> thenValue
+            let! game = db.games.getGame game.id |> thenValue
 
             let newParameters = { game.parameters with regionCount = 3}
 
@@ -98,10 +98,10 @@ type GetUpdateGameParametersEventTests() =
                         kind = PlayerKind.Guest; 
                         name = Some (sprintf "p%i" n)
                     }
-                let! _ = GameRepository.addPlayer (game.id, playerRequest)
+                let! _ = db.games.addPlayer (game.id, playerRequest)
                 ()
 
-            let! game = GameRepository.getGame game.id |> thenValue
+            let! game = db.games.getGame game.id |> thenValue
 
             let newParameters = { game.parameters with allowGuests = false }
 
@@ -128,8 +128,8 @@ type GetUpdateGameParametersEventTests() =
             //Arrange
             let! (_, session, game) = TestUtilities.createuserSessionAndGame(true) |> thenValue
             let newGame = { game with status = GameStatus.InProgress }
-            let! _ = GameRepository.updateGame newGame |> thenValue
-            let! game = GameRepository.getGame game.id |> thenValue
+            let! _ = (db.games :?> GameRepository).updateGame newGame |> thenValue
+            let! game = db.games.getGame game.id |> thenValue
             let newParameters = game.parameters
 
             //Act

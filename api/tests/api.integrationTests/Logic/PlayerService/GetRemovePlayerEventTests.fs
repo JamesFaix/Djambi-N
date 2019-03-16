@@ -7,7 +7,6 @@ open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.IntegrationTests
 open Djambi.Api.Model
-open Djambi.Api.Db.Repositories
 
 type GetRemovePlayerEventTests() =
     inherit TestsBase()
@@ -48,8 +47,8 @@ type GetRemovePlayerEventTests() =
                     name = Some "test"
                     userId = None
                 }
-            let! neutralPlayer = GameRepository.addPlayer(game.id, request) |> thenValue
-            let! game = GameRepository.getGame game.id |> thenValue
+            let! neutralPlayer = db.games.addPlayer(game.id, request) |> thenValue
+            let! game = db.games.getGame game.id |> thenValue
 
             //Act
             let error = services.players.getRemovePlayerEvent (game, neutralPlayer.id) session
@@ -75,7 +74,7 @@ type GetRemovePlayerEventTests() =
                           |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                           |> thenValue
 
-            let! game = GameRepository.getGame game.id |> thenValue
+            let! game = db.games.getGame game.id |> thenValue
 
             //Act
             let error = services.players.getRemovePlayerEvent (game, player.id) session
@@ -95,7 +94,7 @@ type GetRemovePlayerEventTests() =
                           |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                           |> thenValue
                           
-            let! game = GameRepository.getGame game.id |> thenValue
+            let! game = db.games.getGame game.id |> thenValue
 
             //Act
             let event = services.players.getRemovePlayerEvent (game, player.id) session |> Result.value
@@ -124,7 +123,7 @@ type GetRemovePlayerEventTests() =
                           |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                           |> thenValue
 
-            let! game = GameRepository.getGame game.id |> thenValue
+            let! game = db.games.getGame game.id |> thenValue
 
             //Act
             let event = services.players.getRemovePlayerEvent (game, player.id) session |> Result.value
@@ -153,7 +152,7 @@ type GetRemovePlayerEventTests() =
                           |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                           |> thenValue
 
-            let! game = GameRepository.getGame game.id |> thenValue
+            let! game = db.games.getGame game.id |> thenValue
 
             //Act
             let event = services.players.getRemovePlayerEvent (game, player.id) session |> Result.value
@@ -190,7 +189,7 @@ type GetRemovePlayerEventTests() =
                 |> thenMap (fun resp -> resp.game.players |> List.except (userPlayer :: game.players) |> List.head)
                 |> thenValue
 
-            let! game = GameRepository.getGame game.id |> thenValue
+            let! game = db.games.getGame game.id |> thenValue
 
             let event = services.players.getRemovePlayerEvent (game, userPlayer.id) session |> Result.value
 
@@ -227,7 +226,7 @@ type GetRemovePlayerEventTests() =
                 |> thenMap (fun resp -> resp.game.players |> List.except (userPlayer :: game.players) |> List.head)
                 |> thenValue
 
-            let! game = GameRepository.getGame game.id |> thenValue
+            let! game = db.games.getGame game.id |> thenValue
 
             //Act
             let event = services.players.getRemovePlayerEvent (game, guestPlayer.id) session |> Result.value

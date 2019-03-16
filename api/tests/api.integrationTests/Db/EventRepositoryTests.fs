@@ -3,7 +3,6 @@
 open FSharp.Control.Tasks
 open Xunit
 open Djambi.Api.Common.Control.AsyncHttpResult
-open Djambi.Api.Db.Repositories
 open Djambi.Api.IntegrationTests
 open Djambi.Api.Model
 
@@ -32,7 +31,7 @@ type EventRepositoryTests() =
             let newGame = { game with players = [player] }
 
             //Act
-            let! resp = EventRepository.persistEvent (TestUtilities.emptyEventRequest, game, newGame) |> thenValue
+            let! resp = db.events.persistEvent (TestUtilities.emptyEventRequest, game, newGame) |> thenValue
 
             //Assert
             let persistedGame = resp.game
@@ -59,13 +58,13 @@ type EventRepositoryTests() =
                     name = Some "p2"
                 }
 
-            let! _ = GameRepository.addPlayer(game.id, playerRequest) |> thenValue
-            let! game = GameRepository.getGame game.id |> thenValue
+            let! _ = db.games.addPlayer(game.id, playerRequest) |> thenValue
+            let! game = db.games.getGame game.id |> thenValue
 
             let newGame = { game with players = [] }
 
             //Act
-            let! resp = EventRepository.persistEvent (TestUtilities.emptyEventRequest, game, newGame) |> thenValue
+            let! resp = db.events.persistEvent (TestUtilities.emptyEventRequest, game, newGame) |> thenValue
 
             //Assert
             let persistedGame = resp.game
@@ -88,8 +87,8 @@ type EventRepositoryTests() =
                     name = Some "p2"
                 }
 
-            let! _ = GameRepository.addPlayer(game.id, p2Request) |> thenValue
-            let! game = GameRepository.getGame game.id |> thenValue
+            let! _ = db.games.addPlayer(game.id, p2Request) |> thenValue
+            let! game = db.games.getGame game.id |> thenValue
 
             let oldP2 = game.players.[1]
             oldP2.status |> shouldBe PlayerStatus.Pending
@@ -114,7 +113,7 @@ type EventRepositoryTests() =
                 }
 
             //Act
-            let! resp = EventRepository.persistEvent (TestUtilities.emptyEventRequest, game, newGame) |> thenValue
+            let! resp = db.events.persistEvent (TestUtilities.emptyEventRequest, game, newGame) |> thenValue
 
             //Assert
             let persistedGame = resp.game
@@ -168,7 +167,7 @@ type EventRepositoryTests() =
                 }
 
             //Act
-            let! resp = EventRepository.persistEvent (TestUtilities.emptyEventRequest, game, newGame) |> thenValue
+            let! resp = db.events.persistEvent (TestUtilities.emptyEventRequest, game, newGame) |> thenValue
 
             //Assert
             let persistedGame = resp.game
@@ -201,12 +200,12 @@ type EventRepositoryTests() =
             let newGame = services.events.applyEvent game event
             
             //Act
-            let! result = EventRepository.persistEvent (TestUtilities.emptyEventRequest, game, newGame)
+            let! result = db.events.persistEvent (TestUtilities.emptyEventRequest, game, newGame)
 
             //Assert
             result |> shouldBeError 409 "Conflict when attempting to write Event."
 
-            let! persistedGame = GameRepository.getGame game.id |> thenValue
+            let! persistedGame = db.games.getGame game.id |> thenValue
             persistedGame.players.Length |> shouldBe 1 //Just the creator
             persistedGame.players |> shouldNotExist (fun p -> p.name = playerRequest.name.Value)
         }
@@ -238,7 +237,7 @@ type EventRepositoryTests() =
                 }
 
             //Act
-            let! events = EventRepository.getEvents (game.id, query) |> thenValue
+            let! events = db.events.getEvents (game.id, query) |> thenValue
 
             //Assert
             events.Length |> shouldBe 2

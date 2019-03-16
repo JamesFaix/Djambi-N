@@ -5,7 +5,6 @@ open Xunit
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.IntegrationTests
 open Djambi.Api.Model
-open Djambi.Api.Db.Repositories
 open Djambi.Api.Logic
 
 type GetGameStartEventTests() =
@@ -21,12 +20,12 @@ type GetGameStartEventTests() =
                     kind = PlayerKind.Guest
                     name = Some "p2"
                 }
-            let! _ = GameRepository.addPlayer (game.id, player2request) |> thenValue
+            let! _ = db.games.addPlayer (game.id, player2request) |> thenValue
             
             let player3request = { player2request with name = Some "p3" }
-            let! _ = GameRepository.addPlayer (game.id, player3request) |> thenValue
+            let! _ = db.games.addPlayer (game.id, player3request) |> thenValue
 
-            let! game = GameRepository.getGame game.id |> thenValue
+            let! game = db.games.getGame game.id |> thenValue
 
             return Ok (user, session, game)
         }
@@ -113,8 +112,8 @@ type GetGameStartEventTests() =
                     name = Some "p2"
                 }
 
-            let! _ = GameRepository.addPlayer(game.id, p2Request)
-            let! game = GameRepository.getGame game.id |> thenValue
+            let! _ = db.games.addPlayer(game.id, p2Request)
+            let! game = db.games.getGame game.id |> thenValue
 
             //Act
             let! event = services.gameStart.getGameStartEvent game session |> thenValue

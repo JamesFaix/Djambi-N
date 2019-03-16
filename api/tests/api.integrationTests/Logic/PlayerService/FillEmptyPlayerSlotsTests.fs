@@ -3,7 +3,6 @@
 open FSharp.Control.Tasks
 open Xunit
 open Djambi.Api.Common.Control.AsyncHttpResult
-open Djambi.Api.Db.Repositories
 open Djambi.Api.IntegrationTests
 open Djambi.Api.Model
 
@@ -23,7 +22,7 @@ type FillEmptyPlayerSlotsTests() =
             let! updatedGame = TestUtilities.fillEmptyPlayerSlots game |> thenValue
 
             //Assert
-            let! doubleCheck = GameRepository.getGame game.id |> thenValue
+            let! doubleCheck = db.games.getGame game.id |> thenValue
 
             updatedGame.players.Length |> shouldBe gameRequest.regionCount
             doubleCheck |> shouldBe updatedGame

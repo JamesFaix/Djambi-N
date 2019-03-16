@@ -6,7 +6,6 @@ open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.IntegrationTests
 open Djambi.Api.Model
-open Djambi.Api.Db.Repositories
 
 type GetAddPlayerEventTests() =
     inherit TestsBase()
@@ -279,7 +278,7 @@ type GetAddPlayerEventTests() =
             let! _ = managers.players.addPlayer game.id request1 session |> thenValue
             let! _ = managers.players.addPlayer game.id request2 session |> thenValue
 
-            let! game = GameRepository.getGame game.id |> thenValue
+            let! game = db.games.getGame game.id |> thenValue
 
             //Act
             let error = services.players.getAddPlayerEvent (game, request3) session

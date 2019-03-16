@@ -9,9 +9,9 @@ open Djambi.Api.Model
 open Djambi.Utilities
 open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
-open Djambi.Api.Logic.Services
 open Djambi.Api.Logic
-open Djambi.Api.Db.Repositories
+open Djambi.Api.Db
+open Djambi.Api.Db.Interfaces
 open Djambi.Api.Logic.Interfaces
 
 let private env = Environment.load(6)
@@ -24,8 +24,9 @@ let connectionString =
     config.GetConnectionString("Main")
             .Replace("{sqlAddress}", env.sqlAddress)
             
-let services = ServiceRoot()
-let managers = ManagerRoot(services) :> IManagerRoot
+let db = DbRoot() :> IDbRoot
+let services = ServiceRoot(db)
+let managers = ManagerRoot(db, services) :> IManagerRoot
 
 let getCreateUserRequest() : CreateUserRequest =
     {
@@ -99,10 +100,10 @@ let fillEmptyPlayerSlots (game : Game) : Game AsyncHttpResult =
         for i in Enumerable.Range(0, missingPlayerCount) do
             let name = sprintf "neutral%i" (i+1)
             let request = CreatePlayerRequest.neutral name
-            let! _ = GameRepository.addPlayer (game.id, request) |> thenValue
+            let! _ = db.games.addPlayer (game.id, request) |> thenValue
             ()
         
-        return! GameRepository.getGame game.id
+        return! db.games.getGame game.id
     }
 
 let emptyEventRequest : CreateEventRequest =
