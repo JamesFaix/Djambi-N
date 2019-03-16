@@ -15,6 +15,7 @@
     <Compile Include="Repositories\GameRepository.fs" />
     <Compile Include="Repositories\EventRepository.fs" />
     <Compile Include="Repositories\SnapshotRepository.fs" />
+    <Compile Include="DbRoot.fs" />
   </ItemGroup>
 
   <ItemGroup>

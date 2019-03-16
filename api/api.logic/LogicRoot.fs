@@ -3,14 +3,15 @@
 open Djambi.Api.Logic.Interfaces
 open Djambi.Api.Logic.Managers
 open Djambi.Api.Logic.Services
+open Djambi.Api.Db.Interfaces
 
-type ServiceRoot() =
+type ServiceRoot(db : IDbRoot) =
     member x.boards = BoardService()
-    member x.gameCrud = GameCrudService()
-    member x.players = PlayerService()
+    member x.gameCrud = GameCrudService(db.games)
+    member x.players = PlayerService(db.games)
     member x.selectionOptions = SelectionOptionsService()
-    member x.sessions = SessionService()
-    member x.users = UserService()
+    member x.sessions = SessionService(db.sessions, db.users)
+    member x.users = UserService(db.users)
     member x.gameStart = GameStartService(x.players, x.selectionOptions)
     member x.events = EventService(x.gameStart)
     member x.indirectEffects = IndirectEffectsService(x.events, x.selectionOptions)
@@ -21,11 +22,19 @@ type ServiceRoot() =
     interface IServiceRoot with
         member x.sessions = x.sessions :> ISessionService
 
-type ManagerRoot(services : ServiceRoot) =
+type ManagerRoot(db : IDbRoot, services : ServiceRoot) =
     member x.boards = BoardManager(services.boards)
-    member x.games = GameManager(services.events, services.gameCrud, services.gameStart, services.players, services.playerStatusChanges, services.selections, services.turns)
+    member x.games = GameManager(db.events,
+                                 services.events, 
+                                 services.gameCrud, 
+                                 db.games,
+                                 services.gameStart, 
+                                 services.players, 
+                                 services.playerStatusChanges,
+                                 services.selections,
+                                 services.turns)
     member x.sessions = SessionManager(services.sessions)
-    member x.snapshots = SnapshotManager()
+    member x.snapshots = SnapshotManager(db.events, db.games, db.snapshots)
     member x.users = UserManager(services.users)
 
     interface IManagerRoot with

@@ -36,3 +36,10 @@ type IUserRepository =
     abstract member createUser : request:CreateUserRequest -> UserDetails AsyncHttpResult
     abstract member deleteUser : id:int -> unit AsyncHttpResult
     abstract member updateFailedLoginAttempts : request:UpdateFailedLoginsRequest -> unit AsyncHttpResult
+
+type IDbRoot =
+    abstract member events : IEventRepository
+    abstract member games : IGameRepository
+    abstract member sessions : ISessionRepository
+    abstract member snapshots : ISnapshotRepository
+    abstract member users : IUserRepository

@@ -1,4 +1,4 @@
-﻿namespace Djambi.Ap.Db.Repositories
+﻿namespace Djambi.Api.Db.Repositories
 
 open Dapper
 open Djambi.Api.Common.Collections

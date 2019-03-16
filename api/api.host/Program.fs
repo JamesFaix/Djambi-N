@@ -15,6 +15,7 @@ open Djambi.Utilities
 open Djambi.Api.Common.Json
 open Djambi.Api.Web
 open Djambi.Api.Logic
+open Djambi.Api.Db
 
 // ---------------------------------
 // Error handler
@@ -64,8 +65,9 @@ let configureApp (app : IApplicationBuilder) =
     //See HttpUtility for deserialization.
     configureNewtonsoft()
 
-    let servRoot = ServiceRoot()
-    let manRoot = ManagerRoot(servRoot)
+    let dbRoot = DbRoot()
+    let servRoot = ServiceRoot(dbRoot)
+    let manRoot = ManagerRoot(dbRoot, servRoot)
     let webRoot = WebRoot(env.cookieDomain, manRoot, servRoot)
     let routing = RoutingTable(webRoot)
 
