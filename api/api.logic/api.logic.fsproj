@@ -5,15 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Routes.fs" />
-    <Compile Include="Marker.fs" />
-    <Compile Include="PieceStrategies.fs" />
+    <Compile Include="Errors.fs" />
+    <Compile Include="Context.fs" />
+    <Compile Include="Security.fs" />
+    <Compile Include="Pieces.fs" />
     <Compile Include="ModelExtensions\BoardModelExtensions.fs" />
     <Compile Include="ModelExtensions\BoardModelUtility.fs" />
     <Compile Include="ModelExtensions\GameModelExtensions.fs" />
-    <Compile Include="Services\ErrorService.fs" />
-    <Compile Include="Services\ContextService.fs" />
-    <Compile Include="Services\SecurityService.fs" />
     <Compile Include="Services\UserService.fs" />
     <Compile Include="Services\SessionService.fs" />
     <Compile Include="Services\BoardService.fs" />
@@ -31,6 +29,7 @@
     <Compile Include="Managers\SessionManager.fs" />
     <Compile Include="Managers\SnapshotManager.fs" />
     <Compile Include="Managers\UserManager.fs" />
+    <Compile Include="LogicRoot.fs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -38,9 +37,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\utils\client-generator.annotations\client-generator.annotations.fsproj" />
     <ProjectReference Include="..\api.common\api.common.fsproj" />
-    <ProjectReference Include="..\api.db\api.db.fsproj" />
+    <ProjectReference Include="..\api.db.interfaces\api.db.interfaces.fsproj" />
+    <ProjectReference Include="..\api.logic.interfaces\api.logic.interfaces.fsproj" />
     <ProjectReference Include="..\api.model\api.model.fsproj" />
   </ItemGroup>
 

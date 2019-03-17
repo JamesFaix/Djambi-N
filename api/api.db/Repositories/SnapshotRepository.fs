@@ -1,8 +1,7 @@
-﻿module Djambi.Ap.Db.Repositories.SnapshotRepository
+﻿namespace Djambi.Api.Db.Repositories
 
 open Dapper
 open Djambi.Api.Common.Collections
-open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Common.Json
 open Djambi.Api.Db.Mapping
@@ -11,63 +10,66 @@ open Djambi.Api.Db.Repositories
 open Djambi.Api.Db.SqlUtility
 open Djambi.Api.Model
 open Djambi.Api.Db
+open Djambi.Api.Db.Interfaces
 
-let getSnapshot (snapshotId : int) : Snapshot AsyncHttpResult =
-    let param = DynamicParameters()
-                    .add("SnapshotId", snapshotId)
-                    .add("GameId", null)
-    let cmd = proc("Snapshots_Get", param)
+type SnapshotRepository(gameRepo : GameRepository) =
+    interface ISnapshotRepository with
+        member x.getSnapshot snapshotId =
+            let param = DynamicParameters()
+                            .add("SnapshotId", snapshotId)
+                            .add("GameId", null)
+            let cmd = proc("Snapshots_Get", param)
 
-    querySingle<SnapshotSqlModel>(cmd, "Snapshot")
-    |> thenMap mapSnapshotFromSql
+            querySingle<SnapshotSqlModel>(cmd, "Snapshot")
+            |> thenMap mapSnapshotFromSql
 
-let getSnapshotsForGame (gameId : int) : SnapshotInfo list AsyncHttpResult =
-    let param = DynamicParameters()
-                    .add("SnapshotId", null)
-                    .add("GameId", gameId)
-    let cmd = proc("Snapshots_Get", param)
+        member x.getSnapshotsForGame gameId =
+            let param = DynamicParameters()
+                            .add("SnapshotId", null)
+                            .add("GameId", gameId)
+            let cmd = proc("Snapshots_Get", param)
 
-    queryMany<SnapshotSqlModel>(cmd, "Snapshot")
-    |> thenMap (List.map mapSnapshotInfoFromSql)
+            queryMany<SnapshotSqlModel>(cmd, "Snapshot")
+            |> thenMap (List.map mapSnapshotInfoFromSql)
 
-let deleteSnapshot (snapshotId : int) : Unit AsyncHttpResult =
-    let param = DynamicParameters()
-                    .add("SnapshotId", snapshotId)
-    let cmd = proc("Snapshots_Delete", param)
+        member x.deleteSnapshot snapshotId =
+            let param = DynamicParameters()
+                            .add("SnapshotId", snapshotId)
+            let cmd = proc("Snapshots_Delete", param)
 
-    queryUnit(cmd, "Snapshot")
+            queryUnit(cmd, "Snapshot")
 
-let createSnapshot (request : InternalCreateSnapshotRequest) : int AsyncHttpResult =
-    let jsonModel = 
-        {
-            game = request.game
-            history = request.history
-        }
+        member x.createSnapshot request =
+            let jsonModel = 
+                {
+                    game = request.game
+                    history = request.history
+                }
 
-    let json = JsonUtility.serialize jsonModel
+            let json = JsonUtility.serialize jsonModel
 
-    let param = DynamicParameters()
-                    .add("GameId", request.game.id)
-                    .add("CreatedByUserId", request.createdByUserId)
-                    .add("Description", request.description)
-                    .add("SnapshotJson", json)
-    let cmd = proc("Snapshots_Create", param)
+            let param = DynamicParameters()
+                            .add("GameId", request.game.id)
+                            .add("CreatedByUserId", request.createdByUserId)
+                            .add("Description", request.description)
+                            .add("SnapshotJson", json)
+            let cmd = proc("Snapshots_Create", param)
 
-    querySingle<int>(cmd, "Snapshot")
+            querySingle<int>(cmd, "Snapshot")
 
-let private getReplaceEventHistoryCommand (gameId : int, history : Event list) : CommandDefinition =  
-    let param = DynamicParameters()
-                    .add("GameId", gameId)
-                    .add("History", TableValuedParameter.eventList history)
-    proc("Snapshots_ReplaceEventHistory", param)
+        member x.loadSnapshot (gameId, snapshotId) =
+            let getReplaceEventHistoryCommand (gameId : int, history : Event list) : CommandDefinition =  
+                let param = DynamicParameters()
+                                .add("GameId", gameId)
+                                .add("History", TableValuedParameter.eventList history)
+                proc("Snapshots_ReplaceEventHistory", param)
 
-let loadSnapshot (gameId : int, snapshotId : int) : Unit AsyncHttpResult =
-    getSnapshot snapshotId
-    |> thenBindAsync (fun snapshot ->
-        let commands = 
-            getReplaceEventHistoryCommand(gameId, snapshot.history) ::
-            GameRepository.getUpdateGameCommand snapshot.game ::
-            (snapshot.game.players |> List.map GameRepository.getUpdatePlayerCommand)
+            (x :> ISnapshotRepository).getSnapshot snapshotId
+            |> thenBindAsync (fun snapshot ->
+                let commands = 
+                    getReplaceEventHistoryCommand(gameId, snapshot.history) ::
+                    gameRepo.getUpdateGameCommand snapshot.game ::
+                    (snapshot.game.players |> List.map gameRepo.getUpdatePlayerCommand)
 
-        executeTransactionally commands "Snapshot"
-    )
+                executeTransactionally commands "Snapshot"
+            )

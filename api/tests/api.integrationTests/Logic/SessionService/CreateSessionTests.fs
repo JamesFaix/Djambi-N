@@ -1,10 +1,8 @@
-﻿namespace Djambi.Api.IntegrationTests.Logic.SessionService
+﻿namespace Djambi.Api.IntegrationTests.Logic.services.sessions
 
 open FSharp.Control.Tasks
 open Xunit
-open Djambi.Api.Common
 open Djambi.Api.IntegrationTests
-open Djambi.Api.Logic.Services
 open Djambi.Api.Common.Control.AsyncHttpResult;
 
 type CreateSessionTests() =
@@ -15,13 +13,13 @@ type CreateSessionTests() =
         task {
             //Arrange
             let userRequest = getCreateUserRequest()
-            let! user = UserService.createUser userRequest None
+            let! user = services.users.createUser userRequest None
                         |> thenValue
 
             let request = getLoginRequest userRequest
 
             //Act
-            let! session = SessionService.openSession request
+            let! session = services.sessions.openSession request
                            |> thenValue
 
             //Assert
@@ -35,16 +33,16 @@ type CreateSessionTests() =
         task {
             //Arrange
             let userRequest = getCreateUserRequest()
-            let! user = UserService.createUser userRequest None
+            let! user = services.users.createUser userRequest None
                         |> thenValue
 
             let request = getLoginRequest userRequest
 
-            let! oldSession = SessionService.openSession request
+            let! oldSession = services.sessions.openSession request
                               |> thenValue
 
             //Act
-            let! newSession = SessionService.openSession request |> thenValue
+            let! newSession = services.sessions.openSession request |> thenValue
 
             //Assert
             newSession.token |> shouldNotBe oldSession.token
@@ -55,13 +53,13 @@ type CreateSessionTests() =
         task {
             //Arrange
             let userRequest = getCreateUserRequest()
-            let! _ = UserService.createUser userRequest None
+            let! _ = services.users.createUser userRequest None
                         |> thenValue
 
             let request = { getLoginRequest userRequest with password = "wrong" }
 
             //Act
-            let! error = SessionService.openSession request
+            let! error = services.sessions.openSession request
 
             //Assert
             error |> shouldBeError 401 "Incorrect password."
@@ -72,19 +70,19 @@ type CreateSessionTests() =
         task {
              //Arrange
             let userRequest = getCreateUserRequest()
-            let! _ = UserService.createUser userRequest None
+            let! _ = services.users.createUser userRequest None
                         |> thenValue
 
             let request = { getLoginRequest userRequest with password = "wrong" }
 
-            let! _ = SessionService.openSession request
-            let! _ = SessionService.openSession request
-            let! _ = SessionService.openSession request
-            let! _ = SessionService.openSession request
-            let! _ = SessionService.openSession request
+            let! _ = services.sessions.openSession request
+            let! _ = services.sessions.openSession request
+            let! _ = services.sessions.openSession request
+            let! _ = services.sessions.openSession request
+            let! _ = services.sessions.openSession request
 
             //Act
-            let! error = SessionService.openSession request
+            let! error = services.sessions.openSession request
 
             //Assert
             error |> shouldBeError 401 "Account locked."

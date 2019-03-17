@@ -5,7 +5,6 @@ open FSharp.Control.Tasks
 open Xunit
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.IntegrationTests
-open Djambi.Api.Logic.Managers
 open Djambi.Api.Model
 
 type RemovePlayerTests() =
@@ -21,12 +20,12 @@ type RemovePlayerTests() =
             let session = getSessionForUser user.id
             let request = CreatePlayerRequest.user user.id
 
-            let! player = GameManager.addPlayer game.id request session
+            let! player = managers.players.addPlayer game.id request session
                           |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                           |> thenValue
 
             //Act
-            let! resp = GameManager.removePlayer (game.id, player.id) session
+            let! resp = managers.players.removePlayer (game.id, player.id) session
                         |> thenValue
 
             //Assert
@@ -43,16 +42,16 @@ type RemovePlayerTests() =
             let request = CreatePlayerRequest.user user.id
             let session = session |> TestUtilities.setSessionPrivileges [EditPendingGames]
 
-            let! player = GameManager.addPlayer game.id request session
+            let! player = managers.players.addPlayer game.id request session
                           |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                           |> thenValue
 
             //Act
-            let! error = GameManager.removePlayer (Int32.MinValue, player.id) session
+            let! error = managers.players.removePlayer (Int32.MinValue, player.id) session
 
             //Assert
             error |> shouldBeError 404 "Game not found."
             
-            let! game = GameManager.getGame game.id session |> thenValue
+            let! game = managers.games.getGame game.id session |> thenValue
             game.players |> shouldExist (fun p -> p.id = player.id)
         }

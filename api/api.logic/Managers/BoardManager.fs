@@ -1,15 +1,12 @@
-﻿module Djambi.Api.Logic.Managers.BoardManager
+﻿namespace Djambi.Api.Logic.Managers
 
-open Djambi.Api.Common.Control
-open Djambi.Api.Logic
 open Djambi.Api.Logic.Services
-open Djambi.Api.Model
-open Djambi.ClientGenerator.Annotations
+open Djambi.Api.Logic.Interfaces
 
-[<ClientFunction(HttpMethod.Get, Routes.board, ClientSection.Board)>]
-let getBoard (regionCount : int) (session : Session) : Board AsyncHttpResult =
-    BoardService.getBoard regionCount session
+type BoardManager(boardServ : BoardService) =
+    interface IBoardManager with
+        member x.getBoard regionCount session =
+            boardServ.getBoard regionCount session
             
-[<ClientFunction(HttpMethod.Get, Routes.paths, ClientSection.Board)>]
-let getCellPaths(regionCount : int, cellId : int) (session : Session) : int list list AsyncHttpResult =
-    BoardService.getCellPaths (regionCount, cellId) session
+        member x.getCellPaths (regionCount, cellId) session =
+            boardServ.getCellPaths (regionCount, cellId) session

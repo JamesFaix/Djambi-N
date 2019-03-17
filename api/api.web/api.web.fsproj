@@ -6,11 +6,15 @@
 
   <ItemGroup>
     <Compile Include="HttpUtility.fs" />
-    <Compile Include="Controllers\UserController.fs" />
-    <Compile Include="Controllers\SessionController.fs" />
     <Compile Include="Controllers\BoardController.fs" />
+    <Compile Include="Controllers\EventController.fs" />
     <Compile Include="Controllers\GameController.fs" />
+    <Compile Include="Controllers\PlayerController.fs" />
+    <Compile Include="Controllers\SessionController.fs" />
     <Compile Include="Controllers\SnapshotController.fs" />
+    <Compile Include="Controllers\TurnController.fs" />
+    <Compile Include="Controllers\UserController.fs" />
+    <Compile Include="WebRoot.fs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,8 +24,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\api.common\api.common.fsproj" />
-    <ProjectReference Include="..\api.logic\api.logic.fsproj" />
+    <ProjectReference Include="..\api.logic.interfaces\api.logic.interfaces.fsproj" />
     <ProjectReference Include="..\api.model\api.model.fsproj" />
+    <ProjectReference Include="..\api.web.interfaces\api.web.interfaces.fsproj" />
   </ItemGroup>
 
 </Project>

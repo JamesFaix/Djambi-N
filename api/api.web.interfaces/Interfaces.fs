@@ -1,0 +1,53 @@
+namespace Djambi.Api.Web.Interfaces
+
+open Giraffe
+
+type IBoardController =
+    abstract member getBoard : regionCount:int -> HttpHandler
+    abstract member getCellPaths : regionCount:int * cellId:int -> HttpHandler
+
+type IEventController =
+    abstract member getEvents : gameId:int -> HttpHandler
+
+type IGameController =
+    abstract member getGames : HttpHandler
+    abstract member getGame : gameId:int -> HttpHandler
+    abstract member createGame : HttpHandler
+    abstract member updateGameParameters : gameId:int -> HttpHandler
+    abstract member startGame : gameId:int -> HttpHandler
+
+type IPlayerController =
+    abstract member addPlayer : gameId:int -> HttpHandler
+    abstract member removePlayer : gameId:int * playerId:int -> HttpHandler
+    abstract member updatePlayerStatus : gameId:int * playerId:int * statusName:string -> HttpHandler
+
+type ISessionController =
+    abstract member openSession : HttpHandler
+    abstract member closeSession : HttpHandler
+
+type ISnapshotController =
+    abstract member createSnapshot : gameId:int -> HttpHandler
+    abstract member getSnapshotsForGame : gameId:int -> HttpHandler
+    abstract member deleteSnapshot : gameId:int * snapshotId:int -> HttpHandler
+    abstract member loadSnapshot : gameId:int * snapshotId:int -> HttpHandler
+
+type ITurnController =
+    abstract member selectCell : gameId:int * cellId:int -> HttpHandler
+    abstract member resetTurn : gameId:int -> HttpHandler
+    abstract member commitTurn : gameId:int -> HttpHandler
+
+type IUserController =
+    abstract member createUser : HttpHandler
+    abstract member deleteUser : userId:int -> HttpHandler
+    abstract member getUser : userId:int -> HttpHandler
+    abstract member getCurrentUser : HttpHandler
+
+type IWebRoot =
+    abstract member boards : IBoardController
+    abstract member events : IEventController
+    abstract member games : IGameController
+    abstract member players : IPlayerController
+    abstract member sessions : ISessionController
+    abstract member snapshots : ISnapshotController
+    abstract member turns : ITurnController
+    abstract member users : IUserController

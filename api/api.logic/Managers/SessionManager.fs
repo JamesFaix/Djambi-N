@@ -1,18 +1,15 @@
-﻿module Djambi.Api.Logic.Managers.SessionManager
+﻿namespace Djambi.Api.Logic.Managers
 
 open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
-open Djambi.Api.Logic
-open Djambi.Api.Logic.Services
-open Djambi.Api.Model
-open Djambi.ClientGenerator.Annotations
+open Djambi.Api.Logic.Interfaces
 
-[<ClientFunction(HttpMethod.Post, Routes.sessions, ClientSection.Session)>]
-let login (request : LoginRequest) : Session AsyncHttpResult =
-    SessionService.openSession request
-    |> thenReplaceError 409 (HttpException(409, "Already signed in."))
+type SessionManager(sessionServ : ISessionService) =
+    interface ISessionManager with
+        member x.login request =
+            sessionServ.openSession request
+            |> thenReplaceError 409 (HttpException(409, "Already signed in."))
 
-[<ClientFunction(HttpMethod.Delete, Routes.sessions, ClientSection.Session)>]
-let logout (session : Session) : Unit AsyncHttpResult =
-    SessionService.closeSession session
-    |> thenMap ignore
+        member x.logout session =
+            sessionServ.closeSession session
+            |> thenMap ignore

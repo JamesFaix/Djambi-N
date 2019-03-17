@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.Logic.PieceStrategies
+﻿namespace Djambi.Api.Logic
 
 open System
 open System.Collections.Generic
@@ -90,7 +90,7 @@ type ThugStrategy() =
         override x.canDropTarget = true
         override x.killsTarget = true
 
-module PieceService =
+module Pieces =
 
     let private strategies = Dictionary<PieceKind, PieceStrategy>()
     strategies.Add(Assassin, AssassinStrategy())

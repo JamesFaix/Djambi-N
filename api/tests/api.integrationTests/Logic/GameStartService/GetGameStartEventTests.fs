@@ -4,9 +4,8 @@ open FSharp.Control.Tasks
 open Xunit
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.IntegrationTests
-open Djambi.Api.Logic.Services
 open Djambi.Api.Model
-open Djambi.Api.Db.Repositories
+open Djambi.Api.Logic
 
 type GetGameStartEventTests() =
     inherit TestsBase()
@@ -21,12 +20,12 @@ type GetGameStartEventTests() =
                     kind = PlayerKind.Guest
                     name = Some "p2"
                 }
-            let! _ = GameRepository.addPlayer (game.id, player2request) |> thenValue
+            let! _ = db.games.addPlayer (game.id, player2request) |> thenValue
             
             let player3request = { player2request with name = Some "p3" }
-            let! _ = GameRepository.addPlayer (game.id, player3request) |> thenValue
+            let! _ = db.games.addPlayer (game.id, player3request) |> thenValue
 
-            let! game = GameRepository.getGame game.id |> thenValue
+            let! game = db.games.getGame game.id |> thenValue
 
             return Ok (user, session, game)
         }
@@ -39,10 +38,10 @@ type GetGameStartEventTests() =
             let session = session |> TestUtilities.setSessionUserId (session.user.id+1)
 
             //Act
-            let! result = GameStartService.getGameStartEvent game session
+            let! result = services.gameStart.getGameStartEvent game session
 
             //Assert
-            result |> shouldBeError 403 SecurityService.noPrivilegeOrCreatorErrorMessage
+            result |> shouldBeError 403 Security.noPrivilegeOrCreatorErrorMessage
         }
         
     [<Fact>]
@@ -52,7 +51,7 @@ type GetGameStartEventTests() =
             let! (_, session, game) = createuserSessionAndGame(true) |> thenValue
 
             //Act
-            let! result = GameStartService.getGameStartEvent game session
+            let! result = services.gameStart.getGameStartEvent game session
 
             //Assert
             result |> shouldBeError 400 "Cannot start game with only one player."
@@ -67,7 +66,7 @@ type GetGameStartEventTests() =
                                   |> TestUtilities.setSessionPrivileges [EditPendingGames]
 
             //Act
-            let! event = GameStartService.getGameStartEvent game session |> thenValue
+            let! event = services.gameStart.getGameStartEvent game session |> thenValue
 
             //Assert
             event.kind |> shouldBe EventKind.GameStarted
@@ -87,7 +86,7 @@ type GetGameStartEventTests() =
             let! (user, session, game) = createUserSessionAndGameWith3Players() |> thenValue
 
             //Act
-            let! event = GameStartService.getGameStartEvent game session |> thenValue
+            let! event = services.gameStart.getGameStartEvent game session |> thenValue
 
             //Assert
             event.kind |> shouldBe EventKind.GameStarted
@@ -113,11 +112,11 @@ type GetGameStartEventTests() =
                     name = Some "p2"
                 }
 
-            let! _ = GameRepository.addPlayer(game.id, p2Request)
-            let! game = GameRepository.getGame game.id |> thenValue
+            let! _ = db.games.addPlayer(game.id, p2Request)
+            let! game = db.games.getGame game.id |> thenValue
 
             //Act
-            let! event = GameStartService.getGameStartEvent game session |> thenValue
+            let! event = services.gameStart.getGameStartEvent game session |> thenValue
 
             //Assert
             event.kind |> shouldBe EventKind.GameStarted

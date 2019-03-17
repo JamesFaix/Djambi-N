@@ -9,9 +9,10 @@ open Djambi.Api.Model
 open Djambi.Utilities
 open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
-open Djambi.Api.Logic.Services
-open Djambi.Api.Logic.Managers
-open Djambi.Api.Db.Repositories
+open Djambi.Api.Logic
+open Djambi.Api.Db
+open Djambi.Api.Db.Interfaces
+open Djambi.Api.Logic.Interfaces
 
 let private env = Environment.load(6)
 let private config =
@@ -22,6 +23,10 @@ let private config =
 let connectionString =
     config.GetConnectionString("Main")
             .Replace("{sqlAddress}", env.sqlAddress)
+            
+let db = DbRoot() :> IDbRoot
+let services = ServiceRoot(db)
+let managers = ManagerRoot(db, services) :> IManagerRoot
 
 let getCreateUserRequest() : CreateUserRequest =
     {
@@ -74,7 +79,7 @@ let getSessionForUser (userId : int) : Session =
 
 let createUser() : UserDetails AsyncHttpResult =
     let userRequest = getCreateUserRequest()
-    UserService.createUser userRequest None
+    services.users.createUser userRequest None
 
 let createuserSessionAndGame(allowGuests : bool) : (UserDetails * Session * Game) AsyncHttpResult =
     task {
@@ -83,7 +88,7 @@ let createuserSessionAndGame(allowGuests : bool) : (UserDetails * Session * Game
         let session = getSessionForUser user.id
 
         let parameters = { getGameParameters() with allowGuests = allowGuests }
-        let! game = GameManager.createGame parameters session
+        let! game = managers.games.createGame parameters session
                      |> thenValue
 
         return Ok <| (user, session, game)
@@ -95,10 +100,10 @@ let fillEmptyPlayerSlots (game : Game) : Game AsyncHttpResult =
         for i in Enumerable.Range(0, missingPlayerCount) do
             let name = sprintf "neutral%i" (i+1)
             let request = CreatePlayerRequest.neutral name
-            let! _ = GameRepository.addPlayer (game.id, request) |> thenValue
+            let! _ = db.games.addPlayer (game.id, request) |> thenValue
             ()
         
-        return! GameRepository.getGame game.id
+        return! db.games.getGame game.id
     }
 
 let emptyEventRequest : CreateEventRequest =

@@ -34,32 +34,6 @@ export default class ApiClient {
 			HttpMethod.Get, route);
 	}
 
-//-------- SNAPSHOTS --------
-
-	async createSnapshot(gameId : number, request : Model.CreateSnapshotRequest) : Promise<Model.SnapshotInfo> {
-		const route = "/games/" + gameId + "/snapshots";
-		return await ApiClientCore.sendRequest<Model.CreateSnapshotRequest, Model.SnapshotInfo>(
-			HttpMethod.Post, route, request);
-	}
-
-	async deleteSnapshot(gameId : number, snapshotId : number) : Promise<{}> {
-		const route = "/games/" + gameId + "/snapshots/" + snapshotId + "";
-		return await ApiClientCore.sendRequest<{}, {}>(
-			HttpMethod.Delete, route);
-	}
-
-	async getSnapshotsForGame(gameId : number) : Promise<Model.SnapshotInfo[]> {
-		const route = "/games/" + gameId + "/snapshots";
-		return await ApiClientCore.sendRequest<{}, Model.SnapshotInfo[]>(
-			HttpMethod.Get, route);
-	}
-
-	async loadSnapshot(gameId : number, snapshotId : number) : Promise<{}> {
-		const route = "/games/" + gameId + "/snapshots/" + snapshotId + "/load-request";
-		return await ApiClientCore.sendRequest<{}, {}>(
-			HttpMethod.Post, route);
-	}
-
 //-------- SESSION --------
 
 	async login(request : Model.LoginRequest) : Promise<Model.Session> {
@@ -72,6 +46,20 @@ export default class ApiClient {
 		const route = "/sessions";
 		return await ApiClientCore.sendRequest<{}, {}>(
 			HttpMethod.Delete, route);
+	}
+
+//-------- BOARD --------
+
+	async getBoard(regionCount : number) : Promise<Model.Board> {
+		const route = "/boards/" + regionCount + "";
+		return await ApiClientCore.sendRequest<{}, Model.Board>(
+			HttpMethod.Get, route);
+	}
+
+	async getCellPaths(regionCount : number, cellId : number) : Promise<number[][]> {
+		const route = "/boards/" + regionCount + "/cells/" + cellId + "/paths";
+		return await ApiClientCore.sendRequest<{}, number[][]>(
+			HttpMethod.Get, route);
 	}
 
 //-------- GAME --------
@@ -104,14 +92,6 @@ export default class ApiClient {
 		const route = "/games/" + gameId + "/parameters";
 		return await ApiClientCore.sendRequest<Model.GameParameters, Model.StateAndEventResponse>(
 			HttpMethod.Put, route, parameters);
-	}
-
-//-------- EVENTS --------
-
-	async getEvents(gameId : number, query : Model.EventsQuery) : Promise<Model.Event[]> {
-		const route = "/games/" + gameId + "/events/query";
-		return await ApiClientCore.sendRequest<Model.EventsQuery, Model.Event[]>(
-			HttpMethod.Post, route, query);
 	}
 
 //-------- PLAYER --------
@@ -154,18 +134,38 @@ export default class ApiClient {
 			HttpMethod.Post, route);
 	}
 
-//-------- BOARD --------
+//-------- EVENTS --------
 
-	async getBoard(regionCount : number) : Promise<Model.Board> {
-		const route = "/boards/" + regionCount + "";
-		return await ApiClientCore.sendRequest<{}, Model.Board>(
+	async getEvents(gameId : number, query : Model.EventsQuery) : Promise<Model.Event[]> {
+		const route = "/games/" + gameId + "/events/query";
+		return await ApiClientCore.sendRequest<Model.EventsQuery, Model.Event[]>(
+			HttpMethod.Post, route, query);
+	}
+
+//-------- SNAPSHOTS --------
+
+	async createSnapshot(gameId : number, request : Model.CreateSnapshotRequest) : Promise<Model.SnapshotInfo> {
+		const route = "/games/" + gameId + "/snapshots";
+		return await ApiClientCore.sendRequest<Model.CreateSnapshotRequest, Model.SnapshotInfo>(
+			HttpMethod.Post, route, request);
+	}
+
+	async deleteSnapshot(gameId : number, snapshotId : number) : Promise<{}> {
+		const route = "/games/" + gameId + "/snapshots/" + snapshotId + "";
+		return await ApiClientCore.sendRequest<{}, {}>(
+			HttpMethod.Delete, route);
+	}
+
+	async getSnapshotsForGame(gameId : number) : Promise<Model.SnapshotInfo[]> {
+		const route = "/games/" + gameId + "/snapshots";
+		return await ApiClientCore.sendRequest<{}, Model.SnapshotInfo[]>(
 			HttpMethod.Get, route);
 	}
 
-	async getCellPaths(regionCount : number, cellId : number) : Promise<number[][]> {
-		const route = "/boards/" + regionCount + "/cells/" + cellId + "/paths";
-		return await ApiClientCore.sendRequest<{}, number[][]>(
-			HttpMethod.Get, route);
+	async loadSnapshot(gameId : number, snapshotId : number) : Promise<{}> {
+		const route = "/games/" + gameId + "/snapshots/" + snapshotId + "/load-request";
+		return await ApiClientCore.sendRequest<{}, {}>(
+			HttpMethod.Post, route);
 	}
 
 }

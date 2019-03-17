@@ -3,11 +3,8 @@
 open FSharp.Control.Tasks
 open Xunit
 open Djambi.Api.Common.Control.AsyncHttpResult
-open Djambi.Api.Db.Repositories
 open Djambi.Api.IntegrationTests
 open Djambi.Api.Model
-open Djambi.Api.Logic.Managers
-open Djambi.Api.Logic.Services
 
 //TODO: Audit test class
 type FillEmptyPlayerSlotsTests() =
@@ -19,13 +16,13 @@ type FillEmptyPlayerSlotsTests() =
         let session = getSessionForUser 1
         let gameRequest = getGameParameters()
         task {
-            let! game = GameManager.createGame gameRequest session |> thenValue
+            let! game = managers.games.createGame gameRequest session |> thenValue
 
             //Act
             let! updatedGame = TestUtilities.fillEmptyPlayerSlots game |> thenValue
 
             //Assert
-            let! doubleCheck = GameRepository.getGame game.id |> thenValue
+            let! doubleCheck = db.games.getGame game.id |> thenValue
 
             updatedGame.players.Length |> shouldBe gameRequest.regionCount
             doubleCheck |> shouldBe updatedGame
@@ -43,10 +40,10 @@ type FillEmptyPlayerSlotsTests() =
         let session = getSessionForUser 1
         let gameRequest = getGameParameters()
         task {
-            let! game = GameManager.createGame gameRequest session |> thenValue
+            let! game = managers.games.createGame gameRequest session |> thenValue
 
             //Act
-            let! effects = PlayerService.fillEmptyPlayerSlots game |> thenValue
+            let! effects = services.players.fillEmptyPlayerSlots game |> thenValue
 
             //Assert
             effects.Length |> shouldBe 2
