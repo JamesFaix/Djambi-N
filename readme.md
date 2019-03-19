@@ -13,6 +13,9 @@ Points 1 and 2 are the premise of [Djambi][1], by Jean Anesto. Djambi-N adds poi
 
 [Developer Setup][3]
 
+[UI Guide][4]
+
 [1]: https://en.wikipedia.org/wiki/Djambi
 [2]: docs/Rules.md
 [3]: docs/DevSetup.md
+[4]: docs/GameUI.md
