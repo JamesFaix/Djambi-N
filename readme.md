@@ -1,5 +1,5 @@
 # Djambi-N
-<img src="docs/djambi6.png">
+<img src="docs/djambi3-with-ui.png">
 
 Djambi-N is like Chess, except
 
