@@ -8,6 +8,7 @@ open Djambi.Api.Model
 
 //See https://medium.com/dapper-net/sql-server-specific-features-2773d894a6ae
 
+[<AllowNullLiteral>]
 type TableValuedParameter(table : DataTable) =
     interface SqlMapper.ICustomQueryParameter with
         member x.AddParameter(cmd, name) =
@@ -32,8 +33,10 @@ module TableValuedParameter =
         dt.TableName <- "Int32List"
         dt.Columns.Add("N", typeof<int>) |> ignore
         for x in xs do
-            dt.Rows.Add(x) |> ignore            
-        new TableValuedParameter(dt)
+            dt.Rows.Add(x) |> ignore    
+
+        if dt.Rows.Count = 0 then null else
+            new TableValuedParameter(dt)
 
     let eventList (xs : Event list) =
         let dt = new DataTable()
@@ -52,5 +55,6 @@ module TableValuedParameter =
                 Mapping.mapEventKindToId x.kind,
                 JsonUtility.serialize x.effects) 
             |> ignore
-
-        new TableValuedParameter(dt)
+ 
+        if dt.Rows.Count = 0 then null else
+            new TableValuedParameter(dt)

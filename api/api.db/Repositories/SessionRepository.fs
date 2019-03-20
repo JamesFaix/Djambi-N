@@ -1,38 +1,27 @@
 ﻿namespace Djambi.Api.Db.Repositories
 
-open Dapper
 open Djambi.Api.Common.Control.AsyncHttpResult
-open Djambi.Api.Db.Mapping
 open Djambi.Api.Db.Model
 open Djambi.Api.Db.SqlUtility
 open Djambi.Api.Model
 open Djambi.Api.Db.Interfaces
+open Djambi.Api.Db;
 
 type SessionRepository(userRepo : IUserRepository) =
     interface ISessionRepository with
         member x.getSession query =
-            let param = DynamicParameters()
-                            .addOption("SessionId", query.sessionId)
-                            .addOption("Token", query.token)
-                            .addOption("UserId", query.userId)
-            let cmd = proc("Sessions_Get", param)
-
+            let cmd = Commands2.getSession query
             querySingle<SessionSqlModel>(cmd, "Session")
             |> thenBindAsync (fun sessionSqlModel -> 
                 userRepo.getUser sessionSqlModel.userId
                 |> thenMap (fun userDetails ->
                     let user = userDetails |> UserDetails.hideDetails
-                    mapSessionResponse sessionSqlModel user
+                    Mapping.mapSessionResponse sessionSqlModel user
                 )
             )
 
         member x.createSession request =
-            let param = DynamicParameters()
-                            .add("UserId", request.userId)
-                            .add("Token", request.token)
-                            .add("ExpiresOn", request.expiresOn)
-            let cmd = proc("Sessions_Create", param)
-
+            let cmd = Commands2.createSession request
             querySingle<int>(cmd, "Session")
             |> thenBindAsync(fun sessionId -> 
                 let query = 
@@ -45,11 +34,7 @@ type SessionRepository(userRepo : IUserRepository) =
             )
 
         member x.renewSessionExpiration (sessionId, expiresOn) =
-            let param = DynamicParameters()
-                            .add("SessionId", sessionId)
-                            .add("ExpiresOn", expiresOn)
-            let cmd = proc("Sessions_Renew", param)
-
+            let cmd = Commands.renewSessionExpiration (sessionId, expiresOn)
             queryUnit(cmd, "Session")
             |> thenBindAsync (fun _ -> 
                 let query = 
@@ -62,9 +47,5 @@ type SessionRepository(userRepo : IUserRepository) =
             )
 
         member x.deleteSession (sessionId, token) =
-            let param = DynamicParameters()
-                            .addOption("SessionId", sessionId)
-                            .addOption("Token", token)
-            let cmd = proc("Sessions_Delete", param)
-
+            let cmd = Commands.deleteSession (sessionId, token)
             queryUnit(cmd, "Session")
