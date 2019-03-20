@@ -1,70 +1,45 @@
 ﻿namespace Djambi.Api.Db.Repositories
 
-open Dapper
 open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
-open Djambi.Api.Db.Mapping
 open Djambi.Api.Db.Model
 open Djambi.Api.Db.SqlUtility
 open Djambi.Api.Model
 open Djambi.Api.Db.Interfaces
+open Djambi.Api.Db
 
 type UserRepository() =
     let getUserPrivileges (userId : int) : Privilege list AsyncHttpResult =
-        let param = DynamicParameters()
-                        .add("UserId", userId)
-                        .add("Name", null)
-        let cmd = proc("Users_GetPrivileges", param)
-
+        let cmd = Commands.getUserPrivileges (Some userId, None)
         queryMany<byte>(cmd, "Privilege")
-        |> thenMap (List.map mapPrivilegeId)
+        |> thenMap (List.map Mapping.mapPrivilegeId)
 
     interface IUserRepository with
         member x.getUser userId =
-            let param = DynamicParameters()
-                            .add("UserId", userId)
-                            .add("Name", null)        
-            let cmd = proc("Users_Get", param)
-
+            let cmd = Commands.getUser (Some userId, None)
             querySingle<UserSqlModel>(cmd, "User")
             |> thenBindAsync (fun userSqlModel -> 
                 getUserPrivileges userId
-                |> thenMap (mapUserResponse userSqlModel)        
+                |> thenMap (Mapping.mapUserResponse userSqlModel)        
             )
     
         member x.getUserByName name =
-            let param = DynamicParameters()
-                            .add("UserId", null)
-                            .add("Name", name)        
-            let cmd = proc("Users_Get", param)
-
+            let cmd = Commands.getUser (None, Some name)
             querySingle<UserSqlModel>(cmd, "User")
             |> thenBindAsync (fun userSqlModel -> 
                 getUserPrivileges userSqlModel.userId
-                |> thenMap (mapUserResponse userSqlModel)        
+                |> thenMap (Mapping.mapUserResponse userSqlModel)        
             )
 
         member x.createUser request =
-            let param = DynamicParameters()
-                            .add("Name", request.name)
-                            .add("Password", request.password)
-
-            let cmd = proc("Users_Create", param)
-
+            let cmd = Commands2.createUser request
             querySingle<int>(cmd, "User")
             |> thenBindAsync (x :> IUserRepository).getUser
 
-        member x.deleteUser id =
-            let param = DynamicParameters()
-                            .add("UserId", id)
-            let cmd = proc("Users_Delete", param)
+        member x.deleteUser userId =
+            let cmd = Commands.deleteUser userId
             queryUnit(cmd, "User")
 
         member x.updateFailedLoginAttempts request =
-            let param = DynamicParameters()
-                            .add("UserId", request.userId)
-                            .add("FailedLoginAttempts", request.failedLoginAttempts)
-                            .addOption("LastFailedLoginAttemptOn", request.lastFailedLoginAttemptOn)
-
-            let cmd = proc("Users_UpdateFailedLoginAttempts", param)
+            let cmd = Commands2.updateFailedLoginAttempts request
             queryUnit(cmd, "User")

@@ -5,23 +5,13 @@ open System.Linq
 open Dapper
 open Djambi.Api.Common.Collections
 open Djambi.Api.Common.Control.AsyncHttpResult
-open Djambi.Api.Common.Json
-open Djambi.Api.Db.Mapping
 open Djambi.Api.Db.SqlUtility
 open Djambi.Api.Model
 open Djambi.Api.Db.Model
 open Djambi.Api.Db.Interfaces
+open Djambi.Api.Db
 
-type EventRepository(gameRepo : GameRepository) =        
-    let getCreateEventCommand (gameId : int, request : CreateEventRequest) : CommandDefinition = 
-        let param = DynamicParameters()
-                        .add("GameId", gameId)
-                        .add("EventKindId", request.kind |> mapEventKindToId)
-                        .add("CreatedByUserId", request.createdByUserId)
-                        .addOption("ActingPlayerId", request.actingPlayerId)
-                        .add("EffectsJson", JsonUtility.serialize request.effects)
-        proc("Events_Create", param)
-
+type EventRepository(gameRepo : GameRepository) =            
     let getCommands (request : CreateEventRequest, oldGame : Game, newGame : Game) : CommandDefinition seq = 
         let commands = new ArrayList<CommandDefinition>()
 
@@ -33,7 +23,7 @@ type EventRepository(gameRepo : GameRepository) =
                 |> (not << Seq.exists (fun newP -> oldP.id = newP.id )))
             
         for p in removedPlayers do
-            commands.Add (gameRepo.getRemovePlayerCommand (oldGame.id, p.id))
+            commands.Add (Commands.removePlayer (oldGame.id, p.id))
 
         //add players
         let addedPlayers = 
@@ -43,7 +33,7 @@ type EventRepository(gameRepo : GameRepository) =
                 |> (not << Seq.exists (fun oldP -> oldP.id = newP.id)))
 
         for p in addedPlayers do
-            commands.Add (gameRepo.getAddFullPlayerCommand p)
+            commands.Add (Commands2.addFullPlayer p)
 
         //update players
         let modifiedPlayers =
@@ -54,7 +44,7 @@ type EventRepository(gameRepo : GameRepository) =
             )
         
         for p in modifiedPlayers do
-            commands.Add (gameRepo.getUpdatePlayerCommand p)
+            commands.Add (Commands2.updatePlayer p)
  
         //update game
         if oldGame.parameters <> newGame.parameters
@@ -63,10 +53,10 @@ type EventRepository(gameRepo : GameRepository) =
             || oldGame.turnCycle <> newGame.turnCycle
             || oldGame.status <> newGame.status
         then
-            commands.Add (gameRepo.getUpdateGameCommand newGame) 
+            commands.Add (Commands2.updateGame newGame) 
         else ()
     
-        commands.Add (getCreateEventCommand(oldGame.id, request))
+        commands.Add (Commands2.createEvent (oldGame.id, request))
 
         commands |> Enumerable.AsEnumerable
         
@@ -91,13 +81,6 @@ type EventRepository(gameRepo : GameRepository) =
             )
     
         member x.getEvents (gameId, query) =
-            let param = DynamicParameters()
-                            .add("GameId", gameId)
-                            .add("Ascending", query.direction |> mapResultsDirectionToAscendingBool)
-                            .addOption("MaxResults", query.maxResults)
-                            .addOption("ThresholdTime", query.thresholdTime)
-                            .addOption("ThresholdEventId", query.thresholdEventId)
-            let cmd = proc("Events_Get", param)
-
+            let cmd = Commands2.getEvents (gameId, query)
             queryMany<EventSqlModel>(cmd, "Event")
-            |> thenMap (List.map mapEventResponse)
+            |> thenMap (List.map Mapping.mapEventResponse)
