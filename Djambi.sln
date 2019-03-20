@@ -7,12 +7,12 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "db-reset", "utils\db-reset\
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.host", "api\api.host\api.host.fsproj", "{3664C02D-2B0E-4C1B-AE20-CCDEC13105F8}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Api", "Api", "{2FAF11B4-A2BA-48CF-8E4D-766CB7B26A3A}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2 - API", "2 - API", "{2FAF11B4-A2BA-48CF-8E4D-766CB7B26A3A}"
 	ProjectSection(SolutionItems) = preProject
 		api\Readme.md = api\Readme.md
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utils", "Utils", "{12EE890F-7CFC-4DA3-A880-F94AF30F5F34}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4 - Utils", "4 - Utils", "{12EE890F-7CFC-4DA3-A880-F94AF30F5F34}"
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "environment", "utils\environment\environment.fsproj", "{89FD8898-FDD6-4BFE-8049-7AA6305D145A}"
 EndProject
@@ -26,7 +26,7 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.logic", "api\api.logic\
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.web", "api\api.web\api.web.fsproj", "{65271D46-3A49-4CB6-9AA8-61F4509AFC98}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4-Tests", "4-Tests", "{1A1C3DF9-1667-4BA8-88E9-B6A731A25300}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4 - Tests", "4 - Tests", "{1A1C3DF9-1667-4BA8-88E9-B6A731A25300}"
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.contractTests", "api\tests\api.contractTests\api.contractTests.fsproj", "{2EE3FC63-FB01-4D61-A21C-C6BC10EBC6E1}"
 EndProject
@@ -44,13 +44,93 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.web.interfaces", "api\a
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.logic.interfaces", "api\api.logic.interfaces\api.logic.interfaces.fsproj", "{065F3E33-525E-41E5-9924-375F74F0C007}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "api.db.interfaces", "api\api.db.interfaces\api.db.interfaces.fsproj", "{C4D54419-5950-4AF0-B5DF-AB401F4C50CF}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.db.interfaces", "api\api.db.interfaces\api.db.interfaces.fsproj", "{C4D54419-5950-4AF0-B5DF-AB401F4C50CF}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1-Infrastructure", "1-Infrastructure", "{60BF0ACB-4896-4838-B265-10CEE86BA5EA}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1 - Infrastructure", "1 - Infrastructure", "{60BF0ACB-4896-4838-B265-10CEE86BA5EA}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2-Interfaces", "2-Interfaces", "{6272A985-016B-4035-8304-CBB07ACA04A9}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2 - Interfaces", "2 - Interfaces", "{6272A985-016B-4035-8304-CBB07ACA04A9}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3-Implementation", "3-Implementation", "{9EA50670-52CF-43D3-9C40-AF89DD529320}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3 - Implementation", "3 - Implementation", "{9EA50670-52CF-43D3-9C40-AF89DD529320}"
+EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "db", "db\", "{AC29525A-1B27-4843-B4CB-2B2C8586A6A3}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_62803"
+		Debug.AspNetCompiler.PhysicalPath = "db\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_62803\"
+		Debug.AspNetCompiler.Updateable = "false"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_62803"
+		Release.AspNetCompiler.PhysicalPath = "db\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_62803\"
+		Release.AspNetCompiler.Updateable = "false"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "62803"
+		SlnRelativePath = "db\"
+	EndProjectSection
+EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "web", "web\", "{F7277859-040A-4D14-8868-E90B916BE872}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_63567"
+		Debug.AspNetCompiler.PhysicalPath = "web\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_63567\"
+		Debug.AspNetCompiler.Updateable = "false"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_63567"
+		Release.AspNetCompiler.PhysicalPath = "web\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_63567\"
+		Release.AspNetCompiler.Updateable = "false"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "63567"
+		SlnRelativePath = "web\"
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "0 - Solution Items", "0 - Solution Items", "{DA75773D-0313-4002-9587-4D640C91C0D3}"
+	ProjectSection(SolutionItems) = preProject
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		build.cake = build.cake
+		build.ps1 = build.ps1
+		build.sh = build.sh
+		environment.json = environment.json
+		readme.md = readme.md
+		RedGate.ssc = RedGate.ssc
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1 - DB", "1 - DB", "{238AA0D8-A4F9-4353-BE13-181CFD386432}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3 - Web", "3 - Web", "{22874065-26EA-453F-B27A-77A663F29DFC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "5 - Docs", "5 - Docs", "{53908BDB-B427-4C47-8D75-6E67967258C3}"
+EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "docs", "docs\", "{A200C944-6210-4A2D-B200-1FA8B9A9E5CB}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_63907"
+		Debug.AspNetCompiler.PhysicalPath = "docs\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_63907\"
+		Debug.AspNetCompiler.Updateable = "false"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_63907"
+		Release.AspNetCompiler.PhysicalPath = "docs\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_63907\"
+		Release.AspNetCompiler.Updateable = "false"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "63907"
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -126,6 +206,18 @@ Global
 		{C4D54419-5950-4AF0-B5DF-AB401F4C50CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C4D54419-5950-4AF0-B5DF-AB401F4C50CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C4D54419-5950-4AF0-B5DF-AB401F4C50CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC29525A-1B27-4843-B4CB-2B2C8586A6A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC29525A-1B27-4843-B4CB-2B2C8586A6A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC29525A-1B27-4843-B4CB-2B2C8586A6A3}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC29525A-1B27-4843-B4CB-2B2C8586A6A3}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{F7277859-040A-4D14-8868-E90B916BE872}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7277859-040A-4D14-8868-E90B916BE872}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7277859-040A-4D14-8868-E90B916BE872}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7277859-040A-4D14-8868-E90B916BE872}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{A200C944-6210-4A2D-B200-1FA8B9A9E5CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A200C944-6210-4A2D-B200-1FA8B9A9E5CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A200C944-6210-4A2D-B200-1FA8B9A9E5CB}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{A200C944-6210-4A2D-B200-1FA8B9A9E5CB}.Release|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -152,6 +244,9 @@ Global
 		{60BF0ACB-4896-4838-B265-10CEE86BA5EA} = {2FAF11B4-A2BA-48CF-8E4D-766CB7B26A3A}
 		{6272A985-016B-4035-8304-CBB07ACA04A9} = {2FAF11B4-A2BA-48CF-8E4D-766CB7B26A3A}
 		{9EA50670-52CF-43D3-9C40-AF89DD529320} = {2FAF11B4-A2BA-48CF-8E4D-766CB7B26A3A}
+		{AC29525A-1B27-4843-B4CB-2B2C8586A6A3} = {238AA0D8-A4F9-4353-BE13-181CFD386432}
+		{F7277859-040A-4D14-8868-E90B916BE872} = {22874065-26EA-453F-B27A-77A663F29DFC}
+		{A200C944-6210-4A2D-B200-1FA8B9A9E5CB} = {53908BDB-B427-4C47-8D75-6E67967258C3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5C5837E5-44E0-4D02-8AD3-DCFB9460E497}
