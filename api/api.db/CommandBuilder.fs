@@ -44,7 +44,7 @@ type Command with
     member x.withTransaction (tran : IDbTransaction) =
         { x with transaction = Some tran }
 
-    member x.toCommandDefintion () =
+    member x.toCommandDefinition () =
         let dp = new DynamicParameters()
         for (name, value) in x.parameters do
             dp.Add(name, value)

@@ -1,8 +1,7 @@
 ﻿namespace Djambi.Api.Db
 
 open System
-open Dapper
-open Djambi.Api.Db.DapperExtensions
+open Djambi.Api.Db.Command
 
 ///<summary>
 /// This module contains factory methods for SQL commands.
@@ -10,28 +9,28 @@ open Djambi.Api.Db.DapperExtensions
 ///</summary>
 module Commands =
     let getUserPrivileges (userId : int option, name : string option) =
-        Command.proc("Users_GetPrivileges")
+        proc("Users_GetPrivileges")
             .param("UserId", userId)
             .param("Name", name)
 
     let getUser (userId : int option, name : string option)  =
-        Command.proc("Users_Get")
+        proc("Users_Get")
             .param("UserId", userId)
             .param("Name", name)   
 
     let createUser (name : string, password : string) =
-        Command.proc("Users_Create")
+        proc("Users_Create")
             .param("Name", name)
             .param("Password", password)
     
     let deleteUser (userId : int) =
-        Command.proc("Users_Delete")
+        proc("Users_Delete")
             .param("UserId", userId)
 
     let updateFailedLoginAttempts (userId : int, 
                                    failedLoginAttempts : int, 
                                    lastFailedLoginAttemptOn : DateTime option) =
-        Command.proc("Users_UpdateFailedLoginAttempts")
+        proc("Users_UpdateFailedLoginAttempts")
             .param("UserId", userId)
             .param("FailedLoginAttempts", failedLoginAttempts)
             .param("LastFailedLoginAttemptOn", lastFailedLoginAttemptOn)
@@ -39,30 +38,26 @@ module Commands =
     let getSession (sessionId : int option,
                     token : string option,
                     userId : int option) =
-        let param = DynamicParameters()
-                        .addOption("SessionId", sessionId)
-                        .addOption("Token", token)
-                        .addOption("UserId", userId)
-        proc("Sessions_Get", param)
+        proc("Sessions_Get")
+            .param("SessionId", sessionId)
+            .param("Token", token)
+            .param("UserId", userId)
 
     let createSession (userId : int, token : string, expiresOn : DateTime) =
-        let param = DynamicParameters()
-                        .add("UserId", userId)
-                        .add("Token", token)
-                        .add("ExpiresOn", expiresOn)
-        proc("Sessions_Create", param)
+        proc("Sessions_Create")
+            .param("UserId", userId)
+            .param("Token", token)
+            .param("ExpiresOn", expiresOn)
 
     let renewSessionExpiration (sessionId : int, expiresOn : DateTime) =
-        let param = DynamicParameters()
-                        .add("SessionId", sessionId)
-                        .add("ExpiresOn", expiresOn)
-        proc("Sessions_Renew", param)
+        proc("Sessions_Renew")
+            .param("SessionId", sessionId)
+            .param("ExpiresOn", expiresOn)
 
     let deleteSession (sessionId : int option, token : string option) =
-        let param = DynamicParameters()
-                        .addOption("SessionId", sessionId)
-                        .addOption("Token", token)
-        proc("Sessions_Delete", param)
+        proc("Sessions_Delete")
+            .param("SessionId", sessionId)
+            .param("Token", token)
 
     let getGames (gameId : int option,
                   descriptionContains : string option,
@@ -71,34 +66,31 @@ module Commands =
                   isPublic : bool option,
                   allowGuests : bool option,
                   gameStatusId : byte option) =
-        let param = DynamicParameters()
-                        .addOption("GameId", gameId)
-                        .addOption("DescriptionContains", descriptionContains)
-                        .addOption("CreatedByUserName", createdByUserName)
-                        .addOption("PlayerUserName", playerUserName)
-                        .addOption("IsPublic", isPublic)
-                        .addOption("AllowGuests", allowGuests)
-                        .addOption("GameStatusId", gameStatusId)
-        proc("Games_Get", param)
+        proc("Games_Get")
+            .param("GameId", gameId)
+            .param("DescriptionContains", descriptionContains)
+            .param("CreatedByUserName", createdByUserName)
+            .param("PlayerUserName", playerUserName)
+            .param("IsPublic", isPublic)
+            .param("AllowGuests", allowGuests)
+            .param("GameStatusId", gameStatusId)
 
     let getPlayers (gameIds : Int32ListTvp, playerId : int option) =
-        let param = DynamicParameters()
-                        .add("GameIds", gameIds)
-                        .addOption("PlayerId", playerId);
-        proc("Players_Get", param)
+        proc("Players_Get")
+            .param("GameIds", gameIds)
+            .param("PlayerId", playerId);
 
     let createGame (regionCount : int,
                     createdByUserId : int,
                     allowGuests : bool,
                     isPublic : bool,
                     description : string option) =
-        let param = DynamicParameters()
-                        .add("RegionCount", regionCount)
-                        .add("CreatedByUserId", createdByUserId)
-                        .add("AllowGuests", allowGuests)
-                        .add("IsPublic", isPublic)
-                        .addOption("Description", description)
-        proc("Games_Create", param)
+        proc("Games_Create")
+            .param("RegionCount", regionCount)
+            .param("CreatedByUserId", createdByUserId)
+            .param("AllowGuests", allowGuests)
+            .param("IsPublic", isPublic)
+            .param("Description", description)
 
     let addPlayer (gameId : int, 
                    playerKindId : byte, 
@@ -108,22 +100,20 @@ module Commands =
                    colorId : int option,
                    startingRegion : int option,
                    startingTurnNumber : int option) =
-        let param = DynamicParameters()
-                        .add("GameId", gameId)
-                        .add("PlayerKindId", playerKindId)
-                        .addOption("UserId", userId)
-                        .addOption("Name", name)
-                        .add("PlayerStatusId", playerStatusId)
-                        .addOption("ColorId", colorId)
-                        .addOption("StartingRegion", startingRegion)
-                        .addOption("StartingTurnNumber", startingTurnNumber)
-        proc("Players_Add", param)
+        proc("Players_Add")
+            .param("GameId", gameId)
+            .param("PlayerKindId", playerKindId)
+            .param("UserId", userId)
+            .param("Name", name)
+            .param("PlayerStatusId", playerStatusId)
+            .param("ColorId", colorId)
+            .param("StartingRegion", startingRegion)
+            .param("StartingTurnNumber", startingTurnNumber)
 
     let removePlayer (gameId : int, playerId : int) = 
-        let param = DynamicParameters()
-                        .add("GameId", gameId)
-                        .add("PlayerId", playerId)
-        proc("Players_Remove", param)
+        proc("Players_Remove")
+            .param("GameId", gameId)
+            .param("PlayerId", playerId)
     
     let updateGame (gameId : int,
                     description : string option,
@@ -134,17 +124,16 @@ module Commands =
                     piecesJson : string, 
                     currentTurnJson : string,
                     turnCycleJson : string) =
-        let param = DynamicParameters()
-                        .add("GameId", gameId)
-                        .addOption("Description", description)
-                        .add("AllowGuests", allowGuests)
-                        .add("IsPublic", isPublic)
-                        .add("RegionCount", regionCount)
-                        .add("GameStatusId", gameStatusId)
-                        .add("PiecesJson", piecesJson)
-                        .add("CurrentTurnJson", currentTurnJson)
-                        .add("TurnCycleJson", turnCycleJson)
-        proc("Games_Update", param)
+        proc("Games_Update")
+            .param("GameId", gameId)
+            .param("Description", description)
+            .param("AllowGuests", allowGuests)
+            .param("IsPublic", isPublic)
+            .param("RegionCount", regionCount)
+            .param("GameStatusId", gameStatusId)
+            .param("PiecesJson", piecesJson)
+            .param("CurrentTurnJson", currentTurnJson)
+            .param("TurnCycleJson", turnCycleJson)
 
     let updatePlayer (gameId : int,
                       playerId : int,
@@ -152,71 +141,64 @@ module Commands =
                       startingTurnNumber : int option,
                       startingRegion : int option,
                       playerStatusId : byte) =
-        let param = DynamicParameters()
-                        .add("GameId", gameId)
-                        .add("PlayerId", playerId)
-                        .addOption("ColorId", colorId)
-                        .addOption("StartingTurnNumber", startingTurnNumber)
-                        .addOption("StartingRegion", startingRegion)
-                        .add("PlayerStatusId", playerStatusId)
-        proc("Players_Update", param)
+        proc("Players_Update")
+            .param("GameId", gameId)
+            .param("PlayerId", playerId)
+            .param("ColorId", colorId)
+            .param("StartingTurnNumber", startingTurnNumber)
+            .param("StartingRegion", startingRegion)
+            .param("PlayerStatusId", playerStatusId)
 
     let getNeutralPlayerNames () =
-        proc("Players_GetNeutralNames", new DynamicParameters())
+        proc("Players_GetNeutralNames")
 
     let createEvent (gameId : int,
                      eventKindId : byte,
                      createdByUserId : int,
                      actingPlayerId : int option,
-                     effectsJson : string) : CommandDefinition = 
-        let param = DynamicParameters()
-                        .add("GameId", gameId)
-                        .add("EventKindId", eventKindId)
-                        .add("CreatedByUserId", createdByUserId)
-                        .addOption("ActingPlayerId", actingPlayerId)
-                        .add("EffectsJson", effectsJson)
-        proc("Events_Create", param)
+                     effectsJson : string) = 
+        proc("Events_Create")
+            .param("GameId", gameId)
+            .param("EventKindId", eventKindId)
+            .param("CreatedByUserId", createdByUserId)
+            .param("ActingPlayerId", actingPlayerId)
+            .param("EffectsJson", effectsJson)
 
     let getEvents (gameId : int,
                    ascending : bool,
                    maxResults : int option,
                    thresholdTime : DateTime option,
                    thresholdEventId : int option) =
-        let param = DynamicParameters()
-                        .add("GameId", gameId)
-                        .add("Ascending", ascending)
-                        .addOption("MaxResults", maxResults)
-                        .addOption("ThresholdTime", thresholdTime)
-                        .addOption("ThresholdEventId", thresholdEventId)
-        proc("Events_Get", param)
+        proc("Events_Get")
+            .param("GameId", gameId)
+            .param("Ascending", ascending)
+            .param("MaxResults", maxResults)
+            .param("ThresholdTime", thresholdTime)
+            .param("ThresholdEventId", thresholdEventId)
 
     let getSnapshots (snapshotId : int option, gameId : int option) =
-        let param = DynamicParameters()
-                        .addOption("SnapshotId", snapshotId)
-                        .addOption("GameId", gameId)
-        proc("Snapshots_Get", param)
+        proc("Snapshots_Get")
+            .param("SnapshotId", snapshotId)
+            .param("GameId", gameId)
 
     let deleteSnapshot (snapshotId : int) =
-        let param = DynamicParameters()
-                        .add("SnapshotId", snapshotId)
-        proc("Snapshots_Delete", param)
+        proc("Snapshots_Delete")
+            .param("SnapshotId", snapshotId)
 
     let createSnapshot (gameId : int,
                         createdByUserId : int,
                         description : string,
                         snapshotJson : string) = 
-        let param = DynamicParameters()
-                        .add("GameId", gameId)
-                        .add("CreatedByUserId", createdByUserId)
-                        .add("Description", description)
-                        .add("SnapshotJson", snapshotJson)
-        proc("Snapshots_Create", param)
+        proc("Snapshots_Create")
+            .param("GameId", gameId)
+            .param("CreatedByUserId", createdByUserId)
+            .param("Description", description)
+            .param("SnapshotJson", snapshotJson)
 
     let replaceEventHistory (gameId : int, history : EventListTvp) =
-        let param = DynamicParameters()
-                        .add("GameId", gameId)
-                        .add("History", history)
-        proc("Snapshots_ReplaceEventHistory", param)
+        proc("Snapshots_ReplaceEventHistory")
+            .param("GameId", gameId)
+            .param("History", history)
 
 ///<summary>
 /// This module contains convenience methods for factory methods in <c>Commands</c>.

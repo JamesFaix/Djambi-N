@@ -10,7 +10,6 @@ open Dapper
 open FSharp.Control.Tasks
 open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
-open Djambi.Api.Db.DapperExtensions
 
 type SqlUtility(connectionString) =
 
@@ -29,31 +28,28 @@ type SqlUtility(connectionString) =
             HttpException(500, ex.Message)
 
     let executeCommandsInTransaction 
-        (cmds : CommandDefinition seq) 
+        (cmds : Command seq) 
         (conn : IDbConnection) 
         (tran : IDbTransaction)
         : Unit Task =
         task {
             for cmd in cmds do
                 let cmd = cmd.withTransaction tran
-                let! _ = conn.ExecuteAsync cmd
+                let! _ = conn.ExecuteAsync (cmd.toCommandDefinition())
                 ()
         }
 
-    member x.queryMany<'a>(command : CommandDefinition, entityType : string) : 'a list AsyncHttpResult =
+    member x.queryMany<'a>(command : Command, entityType : string) : 'a list AsyncHttpResult =
         task {
             try
                 use connection = getConnection()
-                return! SqlMapper.QueryAsync<'a>(connection, command)
+                return! SqlMapper.QueryAsync<'a>(connection, command.toCommandDefinition())
                         |> Task.map (Seq.toList >> Ok)
             with
             | _ as ex -> return Error <| (catchSqlException ex entityType)
         }
-
-    member x.queryMany<'a>(command : Command, entityType : string) : 'a list AsyncHttpResult =
-        x.queryMany (command.toCommandDefintion(), entityType)
   
-    member x.querySingle<'a>(command : CommandDefinition, entityType : string) : 'a AsyncHttpResult =
+    member x.querySingle<'a>(command : Command, entityType : string) : 'a AsyncHttpResult =
         let singleOrError (xs : 'a list) =
             match xs.Length with
             | 1 -> Ok <| xs.[0]
@@ -61,20 +57,14 @@ type SqlUtility(connectionString) =
             | _ -> Error <| HttpException(500, sprintf "An unknown error occurred when manipulating %s." entityType)
 
         x.queryMany<'a>(command, entityType)
-        |> thenBind singleOrError
-         
-    member x.querySingle<'a>(command : Command, entityType : string) : 'a AsyncHttpResult =
-        x.querySingle (command.toCommandDefintion(), entityType)
+        |> thenBind singleOrError         
 
-    member x.queryUnit(command : CommandDefinition, entityType : string) : Unit AsyncHttpResult =
+    member x.queryUnit(command : Command, entityType : string) : Unit AsyncHttpResult =
         x.queryMany<Unit>(command, entityType)
         |> thenMap ignore
-    
-    member x.queryUnit(command : Command, entityType : string) : Unit AsyncHttpResult =
-        x.queryUnit (command.toCommandDefintion(), entityType)
 
     member x.executeTransactionallyAndReturnLastResult<'a> 
-        (commands : CommandDefinition seq) 
+        (commands : Command seq)
         (resultEntityName : string) 
         : 'a AsyncHttpResult =
         task {
@@ -85,7 +75,7 @@ type SqlUtility(connectionString) =
                 let commands = commands |> Seq.toList
                 let mostCommands = commands |> Seq.take (commands.Length-1)
                 let! _ = executeCommandsInTransaction mostCommands conn tran
-                let lastCommand = (commands |> Enumerable.Last).withTransaction tran
+                let lastCommand = (commands |> Enumerable.Last).withTransaction(tran).toCommandDefinition()
                 let! lastResult = conn.QuerySingleAsync<'a> lastCommand
                 tran.Commit()
                 return Ok lastResult
@@ -93,9 +83,9 @@ type SqlUtility(connectionString) =
             with 
             | _ as ex -> return Error <| (catchSqlException ex resultEntityName)
         }
-    
+        
     member x.executeTransactionally 
-        (commands : CommandDefinition seq) 
+        (commands : Command seq)
         (resultEntityName : string) 
         : Unit AsyncHttpResult =
         task {
@@ -111,9 +101,8 @@ type SqlUtility(connectionString) =
             | _ as ex -> return Error <| (catchSqlException ex resultEntityName)
         }
 
-
     member x.executeTransactionallyButReturnFirstResult<'a> 
-        (command1 : CommandDefinition, getCommand2 : 'a -> CommandDefinition) 
+        (command1 : Command, getCommand2 : 'a -> Command) 
         (resultEntityName : string) 
         : 'a AsyncHttpResult =
         task {
@@ -121,9 +110,9 @@ type SqlUtility(connectionString) =
             use tran = conn.BeginTransaction()
        
             try 
-                let cmd = command1.withTransaction tran
+                let cmd = command1.withTransaction(tran).toCommandDefinition()
                 let! result = conn.QuerySingleAsync<'a> cmd
-                let cmd = (getCommand2 result).withTransaction tran
+                let cmd = (getCommand2 result).withTransaction(tran).toCommandDefinition()
                 let! _ = conn.ExecuteAsync cmd
                 tran.Commit()
                 return Ok result

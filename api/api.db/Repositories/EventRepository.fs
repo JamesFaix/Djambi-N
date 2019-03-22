@@ -2,7 +2,6 @@
 
 open System
 open System.Linq
-open Dapper
 open Djambi.Api.Common.Collections
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Db
@@ -13,8 +12,8 @@ open Djambi.Api.Model
 type EventRepository(u : SqlUtility, 
                      gameRepo : GameRepository) =
 
-    let getCommands (request : CreateEventRequest, oldGame : Game, newGame : Game) : CommandDefinition seq = 
-        let commands = new ArrayList<CommandDefinition>()
+    let getCommands (request : CreateEventRequest, oldGame : Game, newGame : Game) : Command seq = 
+        let commands = new ArrayList<Command>()
 
         //remove players
         let removedPlayers = 
