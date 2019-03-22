@@ -231,7 +231,8 @@ module Commands =
 ///</summary>
 module Commands2 =
 
-    open Djambi.Api.Common.Json
+    open Djambi.Api.Common.Json.JsonUtility
+    open Djambi.Api.Db.Mapping
     open Djambi.Api.Db.Model
     open Djambi.Api.Model
 
@@ -256,7 +257,7 @@ module Commands2 =
                            query.playerUserName,
                            query.isPublic,
                            query.allowGuests,
-                           query.status |> Option.map Mapping.mapGameStatusToId)
+                           query.status |> Option.map mapGameStatusToId)
 
     let getGame (gameId : int) =
         Commands.getGames (Some gameId, None, None, None, None, None, None)
@@ -276,20 +277,20 @@ module Commands2 =
 
     let addPendingPlayer (gameId : int, request : CreatePlayerRequest) =
         Commands.addPlayer (gameId, 
-                            Mapping.mapPlayerKindToId request.kind,
+                            mapPlayerKindToId request.kind,
                             request.userId,
                             request.name,
-                            Mapping.mapPlayerStatusToId PlayerStatus.Pending,
+                            mapPlayerStatusToId PlayerStatus.Pending,
                             None,
                             None,
                             None)
 
     let addFullPlayer (player : Player) =
         Commands.addPlayer (player.gameId,
-                            Mapping.mapPlayerKindToId player.kind,
+                            mapPlayerKindToId player.kind,
                             player.userId,
                             (if player.kind = PlayerKind.User then None else Some player.name),
-                            Mapping.mapPlayerStatusToId player.status,
+                            mapPlayerStatusToId player.status,
                             player.colorId,
                             player.startingRegion, 
                             player.startingTurnNumber)
@@ -300,10 +301,10 @@ module Commands2 =
                              game.parameters.allowGuests,
                              game.parameters.isPublic,
                              game.parameters.regionCount,
-                             Mapping.mapGameStatusToId game.status,
-                             JsonUtility.serialize game.pieces,
-                             JsonUtility.serialize game.currentTurn,
-                             JsonUtility.serialize game.turnCycle)
+                             mapGameStatusToId game.status,
+                             serialize game.pieces,
+                             serialize game.currentTurn,
+                             serialize game.turnCycle)
 
     let updatePlayer (player : Player) =
         Commands.updatePlayer (player.gameId,
@@ -311,18 +312,18 @@ module Commands2 =
                                player.colorId,
                                player.startingTurnNumber,
                                player.startingRegion,
-                               Mapping.mapPlayerStatusToId player.status)
+                               mapPlayerStatusToId player.status)
 
     let createEvent (gameId : int, request : CreateEventRequest) =
         Commands.createEvent (gameId,
-                              Mapping.mapEventKindToId request.kind,
+                              mapEventKindToId request.kind,
                               request.createdByUserId,
                               request.actingPlayerId,
-                              JsonUtility.serialize request.effects)
+                              serialize request.effects)
 
     let getEvents (gameId : int, query : EventsQuery) =
         Commands.getEvents (gameId,
-                            Mapping.mapResultsDirectionToAscendingBool query.direction,
+                            mapResultsDirectionToAscendingBool query.direction,
                             query.maxResults,
                             query.thresholdTime,
                             query.thresholdEventId)
@@ -336,7 +337,7 @@ module Commands2 =
         Commands.createSnapshot (request.game.id, 
                                  request.createdByUserId,
                                  request.description,
-                                 JsonUtility.serialize jsonModel)
+                                 serialize jsonModel)
 
     let replaceEventHistory (gameId : int, history : Event list) =
         Commands.replaceEventHistory (gameId, TableValuedParameter.eventList history)
