@@ -49,6 +49,9 @@ type SqlUtility(connectionString) =
             with
             | _ as ex -> return Error <| (catchSqlException ex entityType)
         }
+
+    member x.queryMany<'a>(command : Command, entityType : string) : 'a list AsyncHttpResult =
+        x.queryMany (command.toCommandDefintion(), entityType)
   
     member x.querySingle<'a>(command : CommandDefinition, entityType : string) : 'a AsyncHttpResult =
         let singleOrError (xs : 'a list) =
@@ -59,11 +62,16 @@ type SqlUtility(connectionString) =
 
         x.queryMany<'a>(command, entityType)
         |> thenBind singleOrError
+         
+    member x.querySingle<'a>(command : Command, entityType : string) : 'a AsyncHttpResult =
+        x.querySingle (command.toCommandDefintion(), entityType)
 
     member x.queryUnit(command : CommandDefinition, entityType : string) : Unit AsyncHttpResult =
         x.queryMany<Unit>(command, entityType)
         |> thenMap ignore
     
+    member x.queryUnit(command : Command, entityType : string) : Unit AsyncHttpResult =
+        x.queryUnit (command.toCommandDefintion(), entityType)
 
     member x.executeTransactionallyAndReturnLastResult<'a> 
         (commands : CommandDefinition seq) 
