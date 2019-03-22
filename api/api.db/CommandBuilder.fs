@@ -7,7 +7,10 @@ open Dapper
 open Djambi.Api.Common
 open Djambi.Api.Common.Control
 
-type Command =
+/// <summary> 
+/// Represents a SQL command with no return type. 
+/// </summary>
+type OpenCommand =
     {
         text : string
         parameters : (string * obj) list
@@ -15,7 +18,10 @@ type Command =
         entityType : string option
     }
 
-type ExecutableCommand<'a> =
+/// <summary> 
+/// Represents a SQL command with a return type. 
+/// </summary>
+type ClosedCommand<'a> =
     {
         text : string        
         parameters : (string * obj) list
@@ -24,7 +30,10 @@ type ExecutableCommand<'a> =
         execute : CommandContextProvider -> 'a AsyncHttpResult
     }
 
-type Command with
+type OpenCommand with
+    /// <summary> 
+    /// Adds a parameter to the command. 
+    /// </summary>
     member x.param (name : string, value : obj) =
         let value =
             if value = null then null
@@ -42,9 +51,16 @@ type Command with
 
         { x with parameters = (name, value) :: x.parameters }
         
-    member x.forEntity (entityType : string) =
-        { x with entityType = Some entityType }
+    /// <summary> 
+    /// Adds an entity name to be used in error messages when executing the command. 
+    /// For example, if <c>entityName</c> was 'User', a message might be 'User not found'.
+    /// </summary>
+    member x.forEntity (entityName : string) =
+        { x with entityType = Some entityName }
 
+    /// <summary>
+    /// Converts the command to a Dapper <c>CommandDefinition</c>.
+    /// </summary>
     member x.toCommandDefinition () =
         let dp = new DynamicParameters()
         for (name, value) in x.parameters do
@@ -56,7 +72,10 @@ type Command with
                           Nullable<int>(),
                           x.commandType |> Nullable.ofValue)
 
-    member x.toExecutable<'a> getResults : ExecutableCommand<'a> =
+    /// <summary> 
+    /// Converts the command to a <c>ClosedCommand</c>.
+    /// </summary>
+    member x.close<'a> (getResults : CommandContextProvider -> 'a AsyncHttpResult) : ClosedCommand<'a> =
         {
             text = x.text
             parameters = x.parameters
@@ -65,25 +84,28 @@ type Command with
             execute = getResults
         }
 
-type ExecutableCommand<'a> with
-    member x.revert() : Command =
+type ClosedCommand<'a> with
+    /// <summary>
+    /// Converts the command back to an <c>OpenCommand</c>.
+    /// </summary>
+    member x.reopen() : OpenCommand =
         {
             text = x.text
             parameters = x.parameters
             commandType = x.commandType
             entityType = x.entityType
         }
-
+        
+    /// <summary>
+    /// Converts the command to a Dapper <c>CommandDefinition</c>.
+    /// </summary>
     member x.toCommandDefinition () =
-        let dp = new DynamicParameters()
-        for (name, value) in x.parameters do
-            dp.Add(name, value)
+        x.reopen().toCommandDefinition()
 
-        CommandDefinition(x.text,
-                          dp,
-                          null,
-                          Nullable<int>(),
-                          x.commandType |> Nullable.ofValue)
+/// <summary>
+/// Encapsulates database access through Dapper.SqlMapper, 
+/// as well as transactional operations.
+/// </summary>
 module SqlUtility =
     open System.Data.SqlClient
     open System.Text.RegularExpressions
@@ -105,7 +127,7 @@ module SqlUtility =
             HttpException(500, ex.Message)
 
     let private executeCommandsInTransaction 
-        (cmds : unit ExecutableCommand seq) 
+        (cmds : unit ClosedCommand seq) 
         (ctx : CommandContext)
         : Unit Task =
         task {
@@ -116,8 +138,12 @@ module SqlUtility =
                 ()
         }
 
+    /// <summary>
+    /// Executes the given command using the given context provider.
+    /// Returns a sequence of results.
+    /// </summary>
     let queryMany<'a>
-        (command : Command)
+        (command : OpenCommand)
         (contextProvider : CommandContextProvider)
         : 'a list AsyncHttpResult =
         task {
@@ -128,9 +154,13 @@ module SqlUtility =
             with
             | _ as ex -> return Error <| (catchSqlException ex command.entityType)
         }
-  
+
+    /// <summary>
+    /// Executes the given command using the given context provider.
+    /// Returns a single result, or an error if there are 0 or many results.
+    /// </summary>
     let querySingle<'a>
-        (command : Command)
+        (command : OpenCommand)
         (contextProvider : CommandContextProvider)
         : 'a AsyncHttpResult =
         let singleOrError (xs : 'a list) =
@@ -142,16 +172,24 @@ module SqlUtility =
         queryMany<'a> command contextProvider
         |> thenBind singleOrError         
 
+    /// <summary>
+    /// Executes the given command using the given context provider.
+    /// Ignores any results and returns <c>()</c>.
+    /// </summary>
     let queryUnit
-        (command : Command)
+        (command : OpenCommand)
         (contextProvider : CommandContextProvider)
         : Unit AsyncHttpResult =
         queryMany<Unit> command contextProvider
         |> thenMap ignore
 
+    /// <summary>
+    /// Executes <c>mostCommands</c> and then <c>lastCommand</c> using the given context provider.
+    /// Returns result of <c>lastCommand</c>.
+    /// </summary>
     let executeTransactionallyAndReturnLastResult<'a>
-        (mostCommands : unit ExecutableCommand seq)
-        (lastCommand : 'a ExecutableCommand)
+        (mostCommands : unit ClosedCommand seq)
+        (lastCommand : 'a ClosedCommand)
         (contextProvider : CommandContextProvider)
         : 'a AsyncHttpResult =
         task {
@@ -167,9 +205,11 @@ module SqlUtility =
             | _ as ex -> 
                 return Error <| (catchSqlException ex lastCommand.entityType)
         }
-        
+    /// <summary>
+    /// Executes the given commands using the given context provider.
+    /// </summary>
     let executeTransactionally
-        (commands : unit ExecutableCommand seq)
+        (commands : unit ClosedCommand seq)
         (resultEntityName : string option)
         (contextProvider : CommandContextProvider)
         : Unit AsyncHttpResult =
@@ -182,9 +222,15 @@ module SqlUtility =
             with 
             | _ as ex -> return Error <| (catchSqlException ex resultEntityName)
         }
-
+    
+    /// <summary>
+    /// Using the given context provider, executes <c>commands1</c>, 
+    /// then generates another command using <c>getCommand2</c> and the result of <c>command1</c>,
+    /// and executes that second command. 
+    /// Returns the result of <c>command1</c>.
+    /// </summary>
     let executeTransactionallyButReturnFirstResult<'a, 'b>
-        (command1 : 'a ExecutableCommand, getCommand2 : 'a -> 'b ExecutableCommand)
+        (command1 : 'a ClosedCommand, getCommand2 : 'a -> 'b ClosedCommand)
         (contextProvider : CommandContextProvider)
         : 'a AsyncHttpResult =
         task {            
@@ -203,18 +249,30 @@ module SqlUtility =
                 return Error <| (catchSqlException ex command1.entityType)
         }
 
-type Command with
+type OpenCommand with
 
-    member x.returnsNothing () : unit ExecutableCommand =
-        x.toExecutable (SqlUtility.queryUnit x)
+    /// <summary>
+    /// Converts the command into a <c>ClosedCommand</c> that returns <c>()</c>.
+    /// </summary>
+    member x.returnsNothing () : unit ClosedCommand =
+        x.close (SqlUtility.queryUnit x)
 
-    member x.returnsSingle<'a> () : 'a ExecutableCommand =
-        x.toExecutable (SqlUtility.querySingle x)
+    /// <summary>
+    /// Converts the command into a <c>ClosedCommand</c> that returns a single <c>'a</c> value.
+    /// </summary>
+    member x.returnsSingle<'a> () : 'a ClosedCommand =
+        x.close (SqlUtility.querySingle x)
 
-    member x.returnsMany<'a> () : 'a list ExecutableCommand =
-        x.toExecutable (SqlUtility.queryMany x)
+    /// <summary>
+    /// Converts the command into a <c>ClosedCommand</c> that returns a sequence of <c>'a</c> values.
+    /// </summary>
+    member x.returnsMany<'a> () : 'a list ClosedCommand =
+        x.close (SqlUtility.queryMany x)
         
 module Command =
+    /// <summary>
+    /// Creates a command for the stored procedure with the given name, with no parameters or entityType.
+    /// </summary>
     let proc (name : string) =
         {
             text = name
@@ -223,8 +281,14 @@ module Command =
             entityType = None
         }
 
-    let execute (ctxProvider : CommandContextProvider) (cmd : 'a ExecutableCommand) =
+    /// <summary>
+    /// Executes the command using the given context provider.
+    /// </summary>
+    let execute (ctxProvider : CommandContextProvider) (cmd : 'a ClosedCommand) =
         cmd.execute ctxProvider
 
-    let ignore (cmd : 'a ExecutableCommand) : unit ExecutableCommand =
-        cmd.revert().returnsNothing()
+    /// <summary>
+    /// Converts the command to a <c>ClosedCommand{Unit}</c>.
+    /// </summary>
+    let ignore (cmd : 'a ClosedCommand) : unit ClosedCommand =
+        cmd.reopen().returnsNothing()

@@ -11,8 +11,8 @@ open Djambi.Api.Model
 type EventRepository(ctxProvider : CommandContextProvider, 
                      gameRepo : GameRepository) =
 
-    let getMostCommands (oldGame : Game, newGame : Game) : unit ExecutableCommand seq = 
-        let commands = new ArrayList<unit ExecutableCommand>()
+    let getMostCommands (oldGame : Game, newGame : Game) : unit ClosedCommand seq = 
+        let commands = new ArrayList<unit ClosedCommand>()
 
         //remove players
         let removedPlayers = 
