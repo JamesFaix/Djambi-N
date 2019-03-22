@@ -25,17 +25,19 @@ module Command =
 
 type Command with
     member x.param (name : string, value : obj) =
-        let t = value.GetType()
-
-        let isOption = 
-            t.IsGenericType && 
-            t.GetGenericTypeDefinition() = typedefof<Option<_>>        
-
         let value =
-            if isOption then
-                let (case, fields) = FSharpValue.GetUnionFields(value, t)
-                if case.Name = "None" then null else fields.[0]
-            else value
+            if value = null then null
+            else
+                let t = value.GetType()
+
+                let isOption = 
+                    t.IsGenericType && 
+                    t.GetGenericTypeDefinition() = typedefof<Option<_>>        
+
+                if isOption then
+                    let (case, fields) = FSharpValue.GetUnionFields(value, t)
+                    if case.Name = "None" then null else fields.[0]
+                else value
 
         { x with parameters = (name, value) :: x.parameters }
 

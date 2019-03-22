@@ -10,38 +10,32 @@ open Djambi.Api.Db.DapperExtensions
 ///</summary>
 module Commands =
     let getUserPrivileges (userId : int option, name : string option) =
-        let param = DynamicParameters()
-                        .addOption("UserId", userId)
-                        .addOption("Name", name)
-        proc("Users_GetPrivileges", param)
+        Command.proc("Users_GetPrivileges")
+            .param("UserId", userId)
+            .param("Name", name)
 
     let getUser (userId : int option, name : string option)  =
-        let param = DynamicParameters()
-                        .addOption("UserId", userId)
-                        .addOption("Name", name)   
-        proc("Users_Get", param)
+        Command.proc("Users_Get")
+            .param("UserId", userId)
+            .param("Name", name)   
 
     let createUser (name : string, password : string) =
-        let param = DynamicParameters()
-                        .add("Name", name)
-                        .add("Password", password)
-        proc("Users_Create", param)
+        Command.proc("Users_Create")
+            .param("Name", name)
+            .param("Password", password)
     
     let deleteUser (userId : int) =
-        let param = DynamicParameters()
-                        .add("UserId", userId)
-        proc("Users_Delete", param)
+        Command.proc("Users_Delete")
+            .param("UserId", userId)
 
     let updateFailedLoginAttempts (userId : int, 
                                    failedLoginAttempts : int, 
                                    lastFailedLoginAttemptOn : DateTime option) =
-        let param = DynamicParameters()
-                        .add("UserId", userId)
-                        .add("FailedLoginAttempts", failedLoginAttempts)
-                        .addOption("LastFailedLoginAttemptOn", lastFailedLoginAttemptOn)
-
-        proc("Users_UpdateFailedLoginAttempts", param)
-
+        Command.proc("Users_UpdateFailedLoginAttempts")
+            .param("UserId", userId)
+            .param("FailedLoginAttempts", failedLoginAttempts)
+            .param("LastFailedLoginAttemptOn", lastFailedLoginAttemptOn)
+       
     let getSession (sessionId : int option,
                     token : string option,
                     userId : int option) =
