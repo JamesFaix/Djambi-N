@@ -9,6 +9,7 @@
     <Compile Include="Model.fs" />
     <Compile Include="Mapping.fs" />
     <Compile Include="TableValuedParameters.fs" />
+    <Compile Include="CommandContext.fs" />
     <Compile Include="CommandBuilder.fs" />
     <Compile Include="Commands.fs" />
     <Compile Include="SqlUtility.fs" />

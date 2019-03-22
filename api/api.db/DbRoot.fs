@@ -4,7 +4,8 @@ open Djambi.Api.Db.Repositories
 open Djambi.Api.Db.Interfaces
 
 type DbRoot(connectionString : string) =
-    let util = SqlUtility(connectionString)
+    let ctxProvider = CommandContextProvider(connectionString)
+    let util = SqlUtility(ctxProvider)
     member x.games = GameRepository(util)
     member x.users = UserRepository(util)
     member x.events = EventRepository(util, x.games)

@@ -1,7 +1,6 @@
 ﻿namespace Djambi.Api.Db
 
 open System
-open System.Data
 open System.Data.SqlClient
 open System.Linq
 open System.Text.RegularExpressions
@@ -10,13 +9,9 @@ open Dapper
 open FSharp.Control.Tasks
 open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
+open Djambi.Api.Db.DapperExtensions
 
-type SqlUtility(connectionString) =
-
-    let getConnection() =
-        let cn = new SqlConnection(connectionString)
-        cn.Open()
-        cn :> IDbConnection
+type SqlUtility(contextProvider : CommandContextProvider) =
 
     let catchSqlException (ex : Exception) (entityType : string) : HttpException =
         match ex with
@@ -29,21 +24,21 @@ type SqlUtility(connectionString) =
 
     let executeCommandsInTransaction 
         (cmds : Command seq) 
-        (conn : IDbConnection) 
-        (tran : IDbTransaction)
+        (ctx : CommandContext)
         : Unit Task =
         task {
             for cmd in cmds do
-                let cmd = cmd.withTransaction tran
-                let! _ = conn.ExecuteAsync (cmd.toCommandDefinition())
+                let cmd = cmd.toCommandDefinition()
+                             .withTransaction(ctx.transaction.Value)
+                let! _ = ctx.connection.ExecuteAsync cmd
                 ()
         }
 
     member x.queryMany<'a>(command : Command, entityType : string) : 'a list AsyncHttpResult =
         task {
             try
-                use connection = getConnection()
-                return! SqlMapper.QueryAsync<'a>(connection, command.toCommandDefinition())
+                use context = contextProvider.getContext()
+                return! SqlMapper.QueryAsync<'a>(context.connection, command.toCommandDefinition())
                         |> Task.map (Seq.toList >> Ok)
             with
             | _ as ex -> return Error <| (catchSqlException ex entityType)
@@ -68,18 +63,18 @@ type SqlUtility(connectionString) =
         (resultEntityName : string) 
         : 'a AsyncHttpResult =
         task {
-            use conn = getConnection()
-            use tran = conn.BeginTransaction()
-
+            use ctx = contextProvider.getContextWithTransaction()
             try
                 let commands = commands |> Seq.toList
                 let mostCommands = commands |> Seq.take (commands.Length-1)
-                let! _ = executeCommandsInTransaction mostCommands conn tran
-                let lastCommand = (commands |> Enumerable.Last).withTransaction(tran).toCommandDefinition()
-                let! lastResult = conn.QuerySingleAsync<'a> lastCommand
-                tran.Commit()
-                return Ok lastResult
-        
+                let! _ = executeCommandsInTransaction mostCommands ctx
+                let lastCommand = 
+                    (commands |> Enumerable.Last)
+                        .toCommandDefinition()
+                        .withTransaction(ctx.transaction.Value)
+                let! lastResult = ctx.connection.QuerySingleAsync<'a> lastCommand
+                ctx.commit()
+                return Ok lastResult        
             with 
             | _ as ex -> return Error <| (catchSqlException ex resultEntityName)
         }
@@ -88,15 +83,12 @@ type SqlUtility(connectionString) =
         (commands : Command seq)
         (resultEntityName : string) 
         : Unit AsyncHttpResult =
-        task {
-            use conn = getConnection()
-            use tran = conn.BeginTransaction()
-
+        task {            
+            use ctx = contextProvider.getContextWithTransaction()
             try            
-                let! _ = executeCommandsInTransaction commands conn tran
-                tran.Commit()
-                return Ok ()
-        
+                let! _ = executeCommandsInTransaction commands ctx
+                ctx.commit()
+                return Ok ()        
             with 
             | _ as ex -> return Error <| (catchSqlException ex resultEntityName)
         }
@@ -105,16 +97,16 @@ type SqlUtility(connectionString) =
         (command1 : Command, getCommand2 : 'a -> Command) 
         (resultEntityName : string) 
         : 'a AsyncHttpResult =
-        task {
-            use conn = getConnection()
-            use tran = conn.BeginTransaction()
-       
+        task {            
+            use ctx = contextProvider.getContextWithTransaction()
             try 
-                let cmd = command1.withTransaction(tran).toCommandDefinition()
-                let! result = conn.QuerySingleAsync<'a> cmd
-                let cmd = (getCommand2 result).withTransaction(tran).toCommandDefinition()
-                let! _ = conn.ExecuteAsync cmd
-                tran.Commit()
+                let cmd = command1.toCommandDefinition()
+                                  .withTransaction(ctx.transaction.Value)
+                let! result = ctx.connection.QuerySingleAsync<'a> cmd
+                let cmd = (getCommand2 result).toCommandDefinition()
+                                              .withTransaction(ctx.transaction.Value)
+                let! _ = ctx.connection.ExecuteAsync cmd
+                ctx.commit()
                 return Ok result
             with 
             | _ as ex -> return Error <| (catchSqlException ex resultEntityName)
