@@ -2,8 +2,7 @@
 
 open System
 open Dapper
-open Djambi.Api.Db.SqlUtility
-open Djambi.Api.Db.Model
+open Djambi.Api.Db.DapperExtensions
 
 ///<summary>
 /// This module contains factory methods for SQL commands.
@@ -232,8 +231,9 @@ module Commands =
 ///</summary>
 module Commands2 =
 
-    open Djambi.Api.Model
     open Djambi.Api.Common.Json
+    open Djambi.Api.Db.Model
+    open Djambi.Api.Model
 
     let createUser (request : CreateUserRequest) =
         Commands.createUser (request.name, request.password)

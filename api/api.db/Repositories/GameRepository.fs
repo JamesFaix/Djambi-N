@@ -5,10 +5,11 @@ open FSharp.Control.Tasks
 open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Db
+open Djambi.Api.Db.DapperExtensions
+open Djambi.Api.Db.Interfaces
 open Djambi.Api.Db.Model
 open Djambi.Api.Db.SqlUtility
 open Djambi.Api.Model
-open Djambi.Api.Db.Interfaces
 
 type GameRepository() =
     
@@ -90,11 +91,9 @@ type GameRepository() =
                 use tran = conn.BeginTransaction()
        
                 try 
-                    let cmd = Commands2.createGame gameRequest
-                              |> CommandDefinition.withTransaction tran
+                    let cmd = (Commands2.createGame gameRequest).withTransaction tran
                     let! gameId = conn.QuerySingleAsync<int> cmd
-                    let cmd = Commands2.addPendingPlayer (gameId, playerRequest)
-                              |> CommandDefinition.withTransaction tran
+                    let cmd = (Commands2.addPendingPlayer (gameId, playerRequest)).withTransaction tran
                     let! _ = conn.ExecuteAsync cmd
                     tran.Commit()
                     return Ok gameId

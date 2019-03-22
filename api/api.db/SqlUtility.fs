@@ -10,6 +10,7 @@ open Dapper
 open FSharp.Control.Tasks
 open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
+open Djambi.Api.Db.DapperExtensions
 
 let mutable connectionString = null
 
@@ -17,13 +18,6 @@ let getConnection() =
     let cn = new SqlConnection(connectionString)
     cn.Open()
     cn :> IDbConnection
-
-let proc(name : string, param : obj) =
-    new CommandDefinition(name,
-                          param,
-                          null,
-                          new Nullable<int>(),
-                          new Nullable<CommandType>(CommandType.StoredProcedure))
 
 let catchSqlException<'a> (ex : Exception) (entityType : string) : HttpException =
     match ex with
@@ -57,22 +51,11 @@ let querySingle<'a>(command : CommandDefinition, entityType : string) : 'a Async
 let queryUnit(command : CommandDefinition, entityType : string) : Unit AsyncHttpResult =
     queryMany<Unit>(command, entityType)
     |> thenMap ignore
-
-type DynamicParameters with
-    member this.add<'a>(name : string, value : 'a) : DynamicParameters =
-        this.Add(name, value)
-        this
-
-    member this.addOption<'a> (name : string, opt : 'a option) : DynamicParameters =
-        match opt with
-        | Some x -> this.Add(name, x)
-        | None -> this.Add(name, null)
-        this
-
+    
 let private executeCommandsInTransaction (cmds : CommandDefinition seq) (conn : IDbConnection) (tran : IDbTransaction) : Unit Task =
     task {
         for cmd in cmds do
-            let cmd = cmd |> CommandDefinition.withTransaction tran
+            let cmd = cmd.withTransaction tran
             let! _ = conn.ExecuteAsync cmd
             ()
     }
@@ -86,7 +69,7 @@ let executeTransactionallyAndReturnLastResult<'a> (commands : CommandDefinition 
             let commands = commands |> Seq.toList
             let mostCommands = commands |> Seq.take (commands.Length-1)
             let! _ = executeCommandsInTransaction mostCommands conn tran
-            let lastCommand = commands |> Enumerable.Last |> CommandDefinition.withTransaction tran
+            let lastCommand = (commands |> Enumerable.Last).withTransaction tran
             let! lastResult = conn.QuerySingleAsync<'a> lastCommand
             tran.Commit()
             return Ok lastResult
