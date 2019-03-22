@@ -11,7 +11,7 @@ type SessionRepository(u : SqlUtility,
     interface ISessionRepository with
         member x.getSession query =
             let cmd = Commands2.getSession query
-            u.querySingle<SessionSqlModel>(cmd, "Session")
+            u.querySingle<SessionSqlModel>(cmd)
             |> thenBindAsync (fun sessionSqlModel -> 
                 userRepo.getUser sessionSqlModel.userId
                 |> thenMap (fun userDetails ->
@@ -22,7 +22,7 @@ type SessionRepository(u : SqlUtility,
 
         member x.createSession request =
             let cmd = Commands2.createSession request
-            u.querySingle<int>(cmd, "Session")
+            u.querySingle<int>(cmd)
             |> thenBindAsync(fun sessionId -> 
                 let query = 
                     {
@@ -35,7 +35,7 @@ type SessionRepository(u : SqlUtility,
 
         member x.renewSessionExpiration (sessionId, expiresOn) =
             let cmd = Commands.renewSessionExpiration (sessionId, expiresOn)
-            u.queryUnit(cmd, "Session")
+            u.queryUnit(cmd)
             |> thenBindAsync (fun _ -> 
                 let query = 
                     {
@@ -48,4 +48,4 @@ type SessionRepository(u : SqlUtility,
 
         member x.deleteSession (sessionId, token) =
             let cmd = Commands.deleteSession (sessionId, token)
-            u.queryUnit(cmd, "Session")
+            u.queryUnit(cmd)

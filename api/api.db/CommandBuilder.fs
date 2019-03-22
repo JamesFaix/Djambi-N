@@ -2,6 +2,7 @@
 
 open System
 open System.Data
+open System.Threading.Tasks
 open FSharp.Reflection
 open Dapper
 open Djambi.Api.Common
@@ -11,7 +12,16 @@ type Command =
         text : string
         parameters : (string * obj) list
         commandType : CommandType
-        transaction : IDbTransaction option
+        entityType : string option
+    }
+
+type ExecutableCommand<'a> =
+    {
+        text : string        
+        parameters : (string * obj) list
+        commandType : CommandType
+        entityType : string option
+        execute : CommandContextProvider -> 'a Task
     }
 
 module Command =
@@ -20,7 +30,7 @@ module Command =
             text = name
             parameters = []
             commandType = CommandType.StoredProcedure
-            transaction = None
+            entityType = None
         }
 
 type Command with
@@ -40,9 +50,9 @@ type Command with
                 else value
 
         { x with parameters = (name, value) :: x.parameters }
-
-    member x.withTransaction (tran : IDbTransaction) =
-        { x with transaction = Some tran }
+        
+    member x.forEntity (entityType : string) =
+        { x with entityType = Some entityType }
 
     member x.toCommandDefinition () =
         let dp = new DynamicParameters()
@@ -51,6 +61,15 @@ type Command with
 
         CommandDefinition(x.text,
                           dp,
-                          x.transaction |> Option.toReference,
+                          null,
                           Nullable<int>(),
                           x.commandType |> Nullable.ofValue)
+
+    member x.toExecutable<'a> getResults : ExecutableCommand<'a> =
+        {
+            text = x.text
+            parameters = x.parameters
+            commandType = x.commandType
+            entityType = x.entityType
+            execute = getResults
+        }

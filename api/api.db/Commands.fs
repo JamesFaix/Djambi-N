@@ -10,27 +10,32 @@ open Djambi.Api.Db.Command
 module Commands =
     let getUserPrivileges (userId : int option, name : string option) =
         proc("Users_GetPrivileges")
+            .forEntity("Privilege")
             .param("UserId", userId)
             .param("Name", name)
 
     let getUser (userId : int option, name : string option)  =
         proc("Users_Get")
+            .forEntity("User")
             .param("UserId", userId)
             .param("Name", name)   
 
     let createUser (name : string, password : string) =
         proc("Users_Create")
+            .forEntity("User")
             .param("Name", name)
             .param("Password", password)
     
     let deleteUser (userId : int) =
         proc("Users_Delete")
+            .forEntity("User")
             .param("UserId", userId)
 
     let updateFailedLoginAttempts (userId : int, 
                                    failedLoginAttempts : int, 
                                    lastFailedLoginAttemptOn : DateTime option) =
         proc("Users_UpdateFailedLoginAttempts")
+            .forEntity("User")
             .param("UserId", userId)
             .param("FailedLoginAttempts", failedLoginAttempts)
             .param("LastFailedLoginAttemptOn", lastFailedLoginAttemptOn)
@@ -39,23 +44,27 @@ module Commands =
                     token : string option,
                     userId : int option) =
         proc("Sessions_Get")
+            .forEntity("Session")
             .param("SessionId", sessionId)
             .param("Token", token)
             .param("UserId", userId)
 
     let createSession (userId : int, token : string, expiresOn : DateTime) =
         proc("Sessions_Create")
+            .forEntity("Session")
             .param("UserId", userId)
             .param("Token", token)
             .param("ExpiresOn", expiresOn)
 
     let renewSessionExpiration (sessionId : int, expiresOn : DateTime) =
         proc("Sessions_Renew")
+            .forEntity("Session")
             .param("SessionId", sessionId)
             .param("ExpiresOn", expiresOn)
 
     let deleteSession (sessionId : int option, token : string option) =
         proc("Sessions_Delete")
+            .forEntity("Session")
             .param("SessionId", sessionId)
             .param("Token", token)
 
@@ -67,6 +76,7 @@ module Commands =
                   allowGuests : bool option,
                   gameStatusId : byte option) =
         proc("Games_Get")
+            .forEntity("Game")
             .param("GameId", gameId)
             .param("DescriptionContains", descriptionContains)
             .param("CreatedByUserName", createdByUserName)
@@ -77,6 +87,7 @@ module Commands =
 
     let getPlayers (gameIds : Int32ListTvp, playerId : int option) =
         proc("Players_Get")
+            .forEntity("Player")
             .param("GameIds", gameIds)
             .param("PlayerId", playerId);
 
@@ -86,6 +97,7 @@ module Commands =
                     isPublic : bool,
                     description : string option) =
         proc("Games_Create")
+            .forEntity("Game")
             .param("RegionCount", regionCount)
             .param("CreatedByUserId", createdByUserId)
             .param("AllowGuests", allowGuests)
@@ -101,6 +113,7 @@ module Commands =
                    startingRegion : int option,
                    startingTurnNumber : int option) =
         proc("Players_Add")
+            .forEntity("Player")
             .param("GameId", gameId)
             .param("PlayerKindId", playerKindId)
             .param("UserId", userId)
@@ -112,6 +125,7 @@ module Commands =
 
     let removePlayer (gameId : int, playerId : int) = 
         proc("Players_Remove")
+            .forEntity("Player")
             .param("GameId", gameId)
             .param("PlayerId", playerId)
     
@@ -125,6 +139,7 @@ module Commands =
                     currentTurnJson : string,
                     turnCycleJson : string) =
         proc("Games_Update")
+            .forEntity("Game")
             .param("GameId", gameId)
             .param("Description", description)
             .param("AllowGuests", allowGuests)
@@ -142,6 +157,7 @@ module Commands =
                       startingRegion : int option,
                       playerStatusId : byte) =
         proc("Players_Update")
+            .forEntity("Player")
             .param("GameId", gameId)
             .param("PlayerId", playerId)
             .param("ColorId", colorId)
@@ -151,6 +167,7 @@ module Commands =
 
     let getNeutralPlayerNames () =
         proc("Players_GetNeutralNames")
+            .forEntity("Neutral player names")
 
     let createEvent (gameId : int,
                      eventKindId : byte,
@@ -158,6 +175,7 @@ module Commands =
                      actingPlayerId : int option,
                      effectsJson : string) = 
         proc("Events_Create")
+            .forEntity("Event")
             .param("GameId", gameId)
             .param("EventKindId", eventKindId)
             .param("CreatedByUserId", createdByUserId)
@@ -170,6 +188,7 @@ module Commands =
                    thresholdTime : DateTime option,
                    thresholdEventId : int option) =
         proc("Events_Get")
+            .forEntity("Event")
             .param("GameId", gameId)
             .param("Ascending", ascending)
             .param("MaxResults", maxResults)
@@ -178,11 +197,13 @@ module Commands =
 
     let getSnapshots (snapshotId : int option, gameId : int option) =
         proc("Snapshots_Get")
+            .forEntity("Snapshot")
             .param("SnapshotId", snapshotId)
             .param("GameId", gameId)
 
     let deleteSnapshot (snapshotId : int) =
         proc("Snapshots_Delete")
+            .forEntity("Snapshot")
             .param("SnapshotId", snapshotId)
 
     let createSnapshot (gameId : int,
@@ -190,6 +211,7 @@ module Commands =
                         description : string,
                         snapshotJson : string) = 
         proc("Snapshots_Create")
+            .forEntity("Snapshot")
             .param("GameId", gameId)
             .param("CreatedByUserId", createdByUserId)
             .param("Description", description)
@@ -197,6 +219,7 @@ module Commands =
 
     let replaceEventHistory (gameId : int, history : EventListTvp) =
         proc("Snapshots_ReplaceEventHistory")
+            .forEntity("Snapshot")
             .param("GameId", gameId)
             .param("History", history)
 

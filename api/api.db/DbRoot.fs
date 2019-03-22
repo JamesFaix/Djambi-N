@@ -10,7 +10,7 @@ type DbRoot(connectionString : string) =
     member x.users = UserRepository(util)
     member x.events = EventRepository(util, x.games)
     member x.sessions = SessionRepository(util, x.users)
-    member x.snapshots = SnapshotRepository(util, x.games)
+    member x.snapshots = SnapshotRepository(util)
 
     interface IDbRoot with  
         member x.events = x.events :> IEventRepository

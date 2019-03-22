@@ -5,29 +5,27 @@ open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Db
 open Djambi.Api.Db.Interfaces
 open Djambi.Api.Db.Model
-open Djambi.Api.Db.Repositories
 
-type SnapshotRepository(u : SqlUtility,
-                        gameRepo : GameRepository) =
+type SnapshotRepository(u : SqlUtility) =
 
     interface ISnapshotRepository with
         member x.getSnapshot snapshotId =
             let cmd = Commands.getSnapshots (Some snapshotId, None)
-            u.querySingle<SnapshotSqlModel>(cmd, "Snapshot")
+            u.querySingle<SnapshotSqlModel>(cmd)
             |> thenMap Mapping.mapSnapshotFromSql
 
         member x.getSnapshotsForGame gameId =
             let cmd = Commands.getSnapshots (None, Some gameId)
-            u.queryMany<SnapshotSqlModel>(cmd, "Snapshot")
+            u.queryMany<SnapshotSqlModel>(cmd)
             |> thenMap (List.map Mapping.mapSnapshotInfoFromSql)
 
         member x.deleteSnapshot snapshotId =
             let cmd = Commands.deleteSnapshot snapshotId
-            u.queryUnit(cmd, "Snapshot")
+            u.queryUnit(cmd)
 
         member x.createSnapshot request =
             let cmd = Commands2.createSnapshot request
-            u.querySingle<int>(cmd, "Snapshot")
+            u.querySingle<int>(cmd)
 
         member x.loadSnapshot (gameId, snapshotId) =            
             (x :> ISnapshotRepository).getSnapshot snapshotId
@@ -37,5 +35,5 @@ type SnapshotRepository(u : SqlUtility,
                     Commands2.updateGame snapshot.game ::
                     (snapshot.game.players |> List.map Commands2.updatePlayer)
 
-                u.executeTransactionally commands "Snapshot"
+                u.executeTransactionally commands (Some "Snapshot")
             )

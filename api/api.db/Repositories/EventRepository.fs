@@ -63,7 +63,7 @@ type EventRepository(u : SqlUtility,
     interface IEventRepository with
         member x.persistEvent (request, oldGame, newGame) =
             let commands = getCommands (request, oldGame, newGame)
-            u.executeTransactionallyAndReturnLastResult commands "Event"
+            u.executeTransactionallyAndReturnLastResult commands
             |> thenBindAsync (fun eventId -> 
                 (gameRepo :> IGameRepository).getGame newGame.id
                 |> thenMap (fun game -> 
@@ -82,5 +82,5 @@ type EventRepository(u : SqlUtility,
     
         member x.getEvents (gameId, query) =
             let cmd = Commands2.getEvents (gameId, query)
-            u.queryMany<EventSqlModel>(cmd, "Event")
+            u.queryMany<EventSqlModel>(cmd)
             |> thenMap (List.map Mapping.mapEventResponse)
