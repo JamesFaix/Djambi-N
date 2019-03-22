@@ -4,18 +4,17 @@ open System
 open System.Linq
 open Giraffe
 open Microsoft.AspNetCore.Builder
-open Microsoft.AspNetCore.Cors.Infrastructure
-open Microsoft.AspNetCore.Hosting
 open Microsoft.Extensions.Configuration
-open Microsoft.Extensions.Logging
+open Microsoft.AspNetCore.Cors.Infrastructure
 open Microsoft.Extensions.DependencyInjection
+open Microsoft.AspNetCore.Hosting
+open Microsoft.Extensions.Logging
 open Newtonsoft.Json
-open Djambi.Api.Db
-open Djambi.Utilities
 open Djambi.Api.Common.Json
-open Djambi.Api.Web
-open Djambi.Api.Logic
 open Djambi.Api.Db
+open Djambi.Api.Logic
+open Djambi.Api.Web
+open Djambi.Utilities
 
 // ---------------------------------
 // Error handler
@@ -33,9 +32,6 @@ let env = Environment.load(5)
 let config = ConfigurationBuilder()
                  .AddJsonFile("appsettings.json", false, true)
                  .Build()
-
-SqlUtility.connectionString <- config.GetConnectionString("Main")
-                                     .Replace("{sqlAddress}", env.sqlAddress)
 
 let configureCors (builder : CorsPolicyBuilder) =
     builder.WithOrigins(env.webAddress)
@@ -65,7 +61,10 @@ let configureApp (app : IApplicationBuilder) =
     //See HttpUtility for deserialization.
     configureNewtonsoft()
 
-    let dbRoot = DbRoot()
+    let connStr = config.GetConnectionString("Main")
+                        .Replace("{sqlAddress}", env.sqlAddress)
+
+    let dbRoot = DbRoot(connStr)
     let servRoot = ServiceRoot(dbRoot)
     let manRoot = ManagerRoot(dbRoot, servRoot)
     let webRoot = WebRoot(env.cookieDomain, manRoot, servRoot)

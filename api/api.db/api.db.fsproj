@@ -5,11 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="CommandDefinition.fs" />
     <Compile Include="Model.fs" />
     <Compile Include="Mapping.fs" />
-    <Compile Include="TableValuedParameter.fs" />
-    <Compile Include="SqlUtility.fs" />
+    <Compile Include="TableValuedParameters.fs" />
+    <Compile Include="CommandContext.fs" />
+    <Compile Include="CommandBuilder.fs" />
     <Compile Include="Commands.fs" />
     <Compile Include="Repositories\UserRepository.fs" />
     <Compile Include="Repositories\SessionRepository.fs" />
