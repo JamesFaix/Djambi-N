@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="DapperExtensions.fs" />
     <Compile Include="Model.fs" />
     <Compile Include="Mapping.fs" />
     <Compile Include="TableValuedParameters.fs" />

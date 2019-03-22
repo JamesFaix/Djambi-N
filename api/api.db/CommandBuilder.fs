@@ -34,7 +34,7 @@ type OpenCommand with
     /// <summary> 
     /// Adds a parameter to the command. 
     /// </summary>
-    member x.param (name : string, value : obj) =
+    member x.param (name : string, value : obj) : OpenCommand =
         let value =
             if value = null then null
             else
@@ -55,20 +55,20 @@ type OpenCommand with
     /// Adds an entity name to be used in error messages when executing the command. 
     /// For example, if <c>entityName</c> was 'User', a message might be 'User not found'.
     /// </summary>
-    member x.forEntity (entityName : string) =
+    member x.forEntity (entityName : string) : OpenCommand =
         { x with entityType = Some entityName }
 
     /// <summary>
     /// Converts the command to a Dapper <c>CommandDefinition</c>.
     /// </summary>
-    member x.toCommandDefinition () =
+    member x.toCommandDefinition (transaction : IDbTransaction option) : CommandDefinition =
         let dp = new DynamicParameters()
         for (name, value) in x.parameters do
             dp.Add(name, value)
 
         CommandDefinition(x.text,
                           dp,
-                          null,
+                          transaction |> Option.toReference,
                           Nullable<int>(),
                           x.commandType |> Nullable.ofValue)
 
@@ -99,8 +99,8 @@ type ClosedCommand<'a> with
     /// <summary>
     /// Converts the command to a Dapper <c>CommandDefinition</c>.
     /// </summary>
-    member x.toCommandDefinition () =
-        x.reopen().toCommandDefinition()
+    member x.toCommandDefinition (transaction : IDbTransaction option) : CommandDefinition =
+        x.reopen().toCommandDefinition(transaction)
 
 /// <summary>
 /// Encapsulates database access through Dapper.SqlMapper, 
@@ -112,7 +112,6 @@ module SqlUtility =
     open System.Threading.Tasks
     open FSharp.Control.Tasks
     open Djambi.Api.Common.Control.AsyncHttpResult
-    open Djambi.Api.Db.DapperExtensions
 
     let private getEntityName (entityName : string option) =
         match entityName with Some x -> x | None -> "?"
@@ -132,8 +131,7 @@ module SqlUtility =
         : Unit Task =
         task {
             for cmd in cmds do
-                let cmd = cmd.toCommandDefinition()
-                             .withTransaction(ctx.transaction.Value)
+                let cmd = cmd.toCommandDefinition ctx.transaction
                 let! _ = ctx.connection.ExecuteAsync cmd
                 ()
         }
@@ -149,7 +147,7 @@ module SqlUtility =
         task {
             try
                 use context = contextProvider.getContext()
-                return! SqlMapper.QueryAsync<'a>(context.connection, command.toCommandDefinition())
+                return! SqlMapper.QueryAsync<'a>(context.connection, command.toCommandDefinition None)
                         |> Task.map (Seq.toList >> Ok)
             with
             | _ as ex -> return Error <| (catchSqlException ex command.entityType)
@@ -196,8 +194,7 @@ module SqlUtility =
             use ctx = contextProvider.getContextWithTransaction()
             try
                 let! _ = executeCommandsInTransaction mostCommands ctx
-                let lastCommand = lastCommand.toCommandDefinition()
-                                             .withTransaction(ctx.transaction.Value)
+                let lastCommand = lastCommand.toCommandDefinition ctx.transaction 
                 let! lastResult = ctx.connection.QuerySingleAsync<'a> lastCommand
                 ctx.commit()
                 return Ok lastResult        
@@ -236,11 +233,9 @@ module SqlUtility =
         task {            
             use ctx = contextProvider.getContextWithTransaction()
             try 
-                let cmd = command1.toCommandDefinition()
-                                  .withTransaction(ctx.transaction.Value)
+                let cmd = command1.toCommandDefinition ctx.transaction 
                 let! result = ctx.connection.QuerySingleAsync<'a> cmd
-                let cmd = (getCommand2 result).toCommandDefinition()
-                                              .withTransaction(ctx.transaction.Value)
+                let cmd = (getCommand2 result).toCommandDefinition ctx.transaction 
                 let! _ = ctx.connection.ExecuteAsync cmd
                 ctx.commit()
                 return Ok result
