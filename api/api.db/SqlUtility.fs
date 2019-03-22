@@ -11,9 +11,9 @@ open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Db.DapperExtensions
 
-type SqlUtility(contextProvider : CommandContextProvider) =
+module SqlUtility2 =
 
-    let catchSqlException (ex : Exception) (entityType : string) : HttpException =
+    let private catchSqlException (ex : Exception) (entityType : string) : HttpException =
         match ex with
         | :? SqlException as ex when ex.Number >= 50400 && ex.Number <= 50599 ->
             HttpException(ex.Number % 50000, ex.Message)
@@ -22,7 +22,7 @@ type SqlUtility(contextProvider : CommandContextProvider) =
         | _ -> 
             HttpException(500, ex.Message)
 
-    let executeCommandsInTransaction 
+    let private executeCommandsInTransaction 
         (cmds : Command seq) 
         (ctx : CommandContext)
         : Unit Task =
@@ -34,7 +34,10 @@ type SqlUtility(contextProvider : CommandContextProvider) =
                 ()
         }
 
-    member x.queryMany<'a>(command : Command, entityType : string) : 'a list AsyncHttpResult =
+    let queryMany<'a>
+        (command : Command, entityType : string)
+        (contextProvider : CommandContextProvider)
+        : 'a list AsyncHttpResult =
         task {
             try
                 use context = contextProvider.getContext()
@@ -44,23 +47,30 @@ type SqlUtility(contextProvider : CommandContextProvider) =
             | _ as ex -> return Error <| (catchSqlException ex entityType)
         }
   
-    member x.querySingle<'a>(command : Command, entityType : string) : 'a AsyncHttpResult =
+    let querySingle<'a>
+        (command : Command, entityType : string)
+        (contextProvider : CommandContextProvider)
+        : 'a AsyncHttpResult =
         let singleOrError (xs : 'a list) =
             match xs.Length with
             | 1 -> Ok <| xs.[0]
             | 0 -> Error <| HttpException(404, sprintf "%s not found." entityType)
             | _ -> Error <| HttpException(500, sprintf "An unknown error occurred when manipulating %s." entityType)
 
-        x.queryMany<'a>(command, entityType)
+        queryMany<'a> (command, entityType) contextProvider
         |> thenBind singleOrError         
 
-    member x.queryUnit(command : Command, entityType : string) : Unit AsyncHttpResult =
-        x.queryMany<Unit>(command, entityType)
+    let queryUnit
+        (command : Command, entityType : string)
+        (contextProvider : CommandContextProvider)
+        : Unit AsyncHttpResult =
+        queryMany<Unit> (command, entityType) contextProvider
         |> thenMap ignore
 
-    member x.executeTransactionallyAndReturnLastResult<'a> 
+    let executeTransactionallyAndReturnLastResult<'a>
         (commands : Command seq)
-        (resultEntityName : string) 
+        (resultEntityName : string)
+        (contextProvider : CommandContextProvider)
         : 'a AsyncHttpResult =
         task {
             use ctx = contextProvider.getContextWithTransaction()
@@ -79,9 +89,10 @@ type SqlUtility(contextProvider : CommandContextProvider) =
             | _ as ex -> return Error <| (catchSqlException ex resultEntityName)
         }
         
-    member x.executeTransactionally 
+    let executeTransactionally
         (commands : Command seq)
-        (resultEntityName : string) 
+        (resultEntityName : string)
+        (contextProvider : CommandContextProvider)
         : Unit AsyncHttpResult =
         task {            
             use ctx = contextProvider.getContextWithTransaction()
@@ -93,9 +104,10 @@ type SqlUtility(contextProvider : CommandContextProvider) =
             | _ as ex -> return Error <| (catchSqlException ex resultEntityName)
         }
 
-    member x.executeTransactionallyButReturnFirstResult<'a> 
-        (command1 : Command, getCommand2 : 'a -> Command) 
-        (resultEntityName : string) 
+    let executeTransactionallyButReturnFirstResult<'a>
+        (command1 : Command, getCommand2 : 'a -> Command)
+        (resultEntityName : string)
+        (contextProvider : CommandContextProvider)
         : 'a AsyncHttpResult =
         task {            
             use ctx = contextProvider.getContextWithTransaction()
@@ -111,3 +123,32 @@ type SqlUtility(contextProvider : CommandContextProvider) =
             with 
             | _ as ex -> return Error <| (catchSqlException ex resultEntityName)
         }
+
+type SqlUtility(contextProvider : CommandContextProvider) =
+    
+    member x.queryMany<'a> (command : Command, entityType : string) : 'a list AsyncHttpResult =
+        SqlUtility2.queryMany (command, entityType) contextProvider
+  
+    member x.querySingle<'a> (command : Command, entityType : string) : 'a AsyncHttpResult =
+        SqlUtility2.querySingle (command, entityType) contextProvider       
+
+    member x.queryUnit (command : Command, entityType : string) : Unit AsyncHttpResult =
+        SqlUtility2.queryUnit (command, entityType) contextProvider
+
+    member x.executeTransactionallyAndReturnLastResult<'a> 
+        (commands : Command seq)
+        (resultEntityName : string) 
+        : 'a AsyncHttpResult =
+        SqlUtility2.executeTransactionallyAndReturnLastResult commands resultEntityName contextProvider
+        
+    member x.executeTransactionally 
+        (commands : Command seq)
+        (resultEntityName : string) 
+        : Unit AsyncHttpResult =
+        SqlUtility2.executeTransactionally commands resultEntityName contextProvider
+
+    member x.executeTransactionallyButReturnFirstResult<'a> 
+        (command1 : Command, getCommand2 : 'a -> Command) 
+        (resultEntityName : string) 
+        : 'a AsyncHttpResult =
+        SqlUtility2.executeTransactionallyButReturnFirstResult (command1, getCommand2) resultEntityName contextProvider
