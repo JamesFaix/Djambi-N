@@ -1,17 +1,17 @@
 ﻿namespace Djambi.Api.Db.Repositories
 
 open Djambi.Api.Common.Control.AsyncHttpResult
-open Djambi.Api.Db.Model
-open Djambi.Api.Db.SqlUtility
-open Djambi.Api.Model
-open Djambi.Api.Db.Interfaces
 open Djambi.Api.Db;
+open Djambi.Api.Db.Interfaces
+open Djambi.Api.Db.Model
+open Djambi.Api.Model
 
-type SessionRepository(userRepo : IUserRepository) =
+type SessionRepository(u : SqlUtility,
+                       userRepo : IUserRepository) =
     interface ISessionRepository with
         member x.getSession query =
             let cmd = Commands2.getSession query
-            querySingle<SessionSqlModel>(cmd, "Session")
+            u.querySingle<SessionSqlModel>(cmd, "Session")
             |> thenBindAsync (fun sessionSqlModel -> 
                 userRepo.getUser sessionSqlModel.userId
                 |> thenMap (fun userDetails ->
@@ -22,7 +22,7 @@ type SessionRepository(userRepo : IUserRepository) =
 
         member x.createSession request =
             let cmd = Commands2.createSession request
-            querySingle<int>(cmd, "Session")
+            u.querySingle<int>(cmd, "Session")
             |> thenBindAsync(fun sessionId -> 
                 let query = 
                     {
@@ -35,7 +35,7 @@ type SessionRepository(userRepo : IUserRepository) =
 
         member x.renewSessionExpiration (sessionId, expiresOn) =
             let cmd = Commands.renewSessionExpiration (sessionId, expiresOn)
-            queryUnit(cmd, "Session")
+            u.queryUnit(cmd, "Session")
             |> thenBindAsync (fun _ -> 
                 let query = 
                     {
@@ -48,4 +48,4 @@ type SessionRepository(userRepo : IUserRepository) =
 
         member x.deleteSession (sessionId, token) =
             let cmd = Commands.deleteSession (sessionId, token)
-            queryUnit(cmd, "Session")
+            u.queryUnit(cmd, "Session")

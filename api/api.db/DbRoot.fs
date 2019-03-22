@@ -3,12 +3,13 @@
 open Djambi.Api.Db.Repositories
 open Djambi.Api.Db.Interfaces
 
-type DbRoot() =
-    member x.games = GameRepository()
-    member x.users = UserRepository()
-    member x.events = EventRepository(x.games)
-    member x.sessions = SessionRepository(x.users)
-    member x.snapshots = SnapshotRepository(x.games)
+type DbRoot(connectionString : string) =
+    let util = SqlUtility(connectionString)
+    member x.games = GameRepository(util)
+    member x.users = UserRepository(util)
+    member x.events = EventRepository(util, x.games)
+    member x.sessions = SessionRepository(util, x.users)
+    member x.snapshots = SnapshotRepository(util, x.games)
 
     interface IDbRoot with  
         member x.events = x.events :> IEventRepository

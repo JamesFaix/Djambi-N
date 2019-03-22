@@ -5,13 +5,14 @@ open System.Linq
 open Dapper
 open Djambi.Api.Common.Collections
 open Djambi.Api.Common.Control.AsyncHttpResult
-open Djambi.Api.Db.SqlUtility
-open Djambi.Api.Model
-open Djambi.Api.Db.Model
-open Djambi.Api.Db.Interfaces
 open Djambi.Api.Db
+open Djambi.Api.Db.Interfaces
+open Djambi.Api.Db.Model
+open Djambi.Api.Model
 
-type EventRepository(gameRepo : GameRepository) =            
+type EventRepository(u : SqlUtility, 
+                     gameRepo : GameRepository) =
+
     let getCommands (request : CreateEventRequest, oldGame : Game, newGame : Game) : CommandDefinition seq = 
         let commands = new ArrayList<CommandDefinition>()
 
@@ -63,7 +64,7 @@ type EventRepository(gameRepo : GameRepository) =
     interface IEventRepository with
         member x.persistEvent (request, oldGame, newGame) =
             let commands = getCommands (request, oldGame, newGame)
-            executeTransactionallyAndReturnLastResult commands "Event"
+            u.executeTransactionallyAndReturnLastResult commands "Event"
             |> thenBindAsync (fun eventId -> 
                 (gameRepo :> IGameRepository).getGame newGame.id
                 |> thenMap (fun game -> 
@@ -82,5 +83,5 @@ type EventRepository(gameRepo : GameRepository) =
     
         member x.getEvents (gameId, query) =
             let cmd = Commands2.getEvents (gameId, query)
-            queryMany<EventSqlModel>(cmd, "Event")
+            u.queryMany<EventSqlModel>(cmd, "Event")
             |> thenMap (List.map Mapping.mapEventResponse)

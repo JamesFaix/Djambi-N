@@ -5,14 +5,14 @@ open System
 open System.Linq
 open FSharp.Control.Tasks
 open Microsoft.Extensions.Configuration
-open Djambi.Api.Model
-open Djambi.Utilities
 open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
-open Djambi.Api.Logic
 open Djambi.Api.Db
 open Djambi.Api.Db.Interfaces
+open Djambi.Api.Logic
 open Djambi.Api.Logic.Interfaces
+open Djambi.Api.Model
+open Djambi.Utilities
 
 let private env = Environment.load(6)
 let private config =
@@ -24,7 +24,7 @@ let connectionString =
     config.GetConnectionString("Main")
             .Replace("{sqlAddress}", env.sqlAddress)
             
-let db = DbRoot() :> IDbRoot
+let db = DbRoot(connectionString) :> IDbRoot
 let services = ServiceRoot(db)
 let managers = ManagerRoot(db, services) :> IManagerRoot
 
