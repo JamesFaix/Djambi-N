@@ -3,15 +3,14 @@
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Db;
 open Djambi.Api.Db.Interfaces
-open Djambi.Api.Db.Model
 open Djambi.Api.Model
 
-type SessionRepository(u : SqlUtility,
+type SessionRepository(ctxProvider : CommandContextProvider,
                        userRepo : IUserRepository) =
     interface ISessionRepository with
         member x.getSession query =
             let cmd = Commands2.getSession query
-            u.querySingle<SessionSqlModel>(cmd)
+            (cmd.execute ctxProvider)
             |> thenBindAsync (fun sessionSqlModel -> 
                 userRepo.getUser sessionSqlModel.userId
                 |> thenMap (fun userDetails ->
@@ -22,7 +21,7 @@ type SessionRepository(u : SqlUtility,
 
         member x.createSession request =
             let cmd = Commands2.createSession request
-            u.querySingle<int>(cmd)
+            (cmd.execute ctxProvider)
             |> thenBindAsync(fun sessionId -> 
                 let query = 
                     {
@@ -35,7 +34,7 @@ type SessionRepository(u : SqlUtility,
 
         member x.renewSessionExpiration (sessionId, expiresOn) =
             let cmd = Commands.renewSessionExpiration (sessionId, expiresOn)
-            u.queryUnit(cmd)
+            (cmd.execute ctxProvider)
             |> thenBindAsync (fun _ -> 
                 let query = 
                     {
@@ -48,4 +47,4 @@ type SessionRepository(u : SqlUtility,
 
         member x.deleteSession (sessionId, token) =
             let cmd = Commands.deleteSession (sessionId, token)
-            u.queryUnit(cmd)
+            cmd.execute ctxProvider

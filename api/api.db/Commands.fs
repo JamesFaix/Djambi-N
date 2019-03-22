@@ -2,34 +2,42 @@
 
 open System
 open Djambi.Api.Db.Command
+open Djambi.Api.Db.Model
 
 ///<summary>
 /// This module contains factory methods for SQL commands.
 /// All method parameters match stored procedure parameters.
 ///</summary>
 module Commands =
+
+    ///--- Users ---
+
     let getUserPrivileges (userId : int option, name : string option) =
         proc("Users_GetPrivileges")
             .forEntity("Privilege")
             .param("UserId", userId)
             .param("Name", name)
+            .returnsMany<byte>()
 
-    let getUser (userId : int option, name : string option)  =
+    let getUser (userId : int option, name : string option) =
         proc("Users_Get")
             .forEntity("User")
             .param("UserId", userId)
             .param("Name", name)   
+            .returnsSingle<UserSqlModel>()
 
     let createUser (name : string, password : string) =
         proc("Users_Create")
             .forEntity("User")
             .param("Name", name)
             .param("Password", password)
+            .returnsSingle<int>()
     
     let deleteUser (userId : int) =
         proc("Users_Delete")
             .forEntity("User")
             .param("UserId", userId)
+            .returnsNothing()
 
     let updateFailedLoginAttempts (userId : int, 
                                    failedLoginAttempts : int, 
@@ -39,7 +47,10 @@ module Commands =
             .param("UserId", userId)
             .param("FailedLoginAttempts", failedLoginAttempts)
             .param("LastFailedLoginAttemptOn", lastFailedLoginAttemptOn)
+            .returnsNothing()
        
+    //--- Sessions ---
+
     let getSession (sessionId : int option,
                     token : string option,
                     userId : int option) =
@@ -48,6 +59,7 @@ module Commands =
             .param("SessionId", sessionId)
             .param("Token", token)
             .param("UserId", userId)
+            .returnsSingle<SessionSqlModel>()
 
     let createSession (userId : int, token : string, expiresOn : DateTime) =
         proc("Sessions_Create")
@@ -55,18 +67,23 @@ module Commands =
             .param("UserId", userId)
             .param("Token", token)
             .param("ExpiresOn", expiresOn)
+            .returnsSingle<int>()
 
     let renewSessionExpiration (sessionId : int, expiresOn : DateTime) =
         proc("Sessions_Renew")
             .forEntity("Session")
             .param("SessionId", sessionId)
             .param("ExpiresOn", expiresOn)
+            .returnsNothing()
 
     let deleteSession (sessionId : int option, token : string option) =
         proc("Sessions_Delete")
             .forEntity("Session")
             .param("SessionId", sessionId)
             .param("Token", token)
+            .returnsNothing()
+
+    //--- Games & Players ---
 
     let getGames (gameId : int option,
                   descriptionContains : string option,
@@ -84,12 +101,14 @@ module Commands =
             .param("IsPublic", isPublic)
             .param("AllowGuests", allowGuests)
             .param("GameStatusId", gameStatusId)
+            //Open for Commands2 to close
 
     let getPlayers (gameIds : Int32ListTvp, playerId : int option) =
         proc("Players_Get")
             .forEntity("Player")
             .param("GameIds", gameIds)
-            .param("PlayerId", playerId);
+            .param("PlayerId", playerId)
+            //Open for Commands2 to close
 
     let createGame (regionCount : int,
                     createdByUserId : int,
@@ -103,6 +122,7 @@ module Commands =
             .param("AllowGuests", allowGuests)
             .param("IsPublic", isPublic)
             .param("Description", description)
+            .returnsSingle<int>()
 
     let addPlayer (gameId : int, 
                    playerKindId : byte, 
@@ -122,12 +142,14 @@ module Commands =
             .param("ColorId", colorId)
             .param("StartingRegion", startingRegion)
             .param("StartingTurnNumber", startingTurnNumber)
+            .returnsSingle<int>()
 
     let removePlayer (gameId : int, playerId : int) = 
         proc("Players_Remove")
             .forEntity("Player")
             .param("GameId", gameId)
             .param("PlayerId", playerId)
+            .returnsNothing()
     
     let updateGame (gameId : int,
                     description : string option,
@@ -149,6 +171,7 @@ module Commands =
             .param("PiecesJson", piecesJson)
             .param("CurrentTurnJson", currentTurnJson)
             .param("TurnCycleJson", turnCycleJson)
+            .returnsNothing()
 
     let updatePlayer (gameId : int,
                       playerId : int,
@@ -164,10 +187,14 @@ module Commands =
             .param("StartingTurnNumber", startingTurnNumber)
             .param("StartingRegion", startingRegion)
             .param("PlayerStatusId", playerStatusId)
+            .returnsNothing()
 
     let getNeutralPlayerNames () =
         proc("Players_GetNeutralNames")
             .forEntity("Neutral player names")
+            .returnsMany<string>()
+
+    //--- Events ---
 
     let createEvent (gameId : int,
                      eventKindId : byte,
@@ -181,6 +208,7 @@ module Commands =
             .param("CreatedByUserId", createdByUserId)
             .param("ActingPlayerId", actingPlayerId)
             .param("EffectsJson", effectsJson)
+            .returnsSingle<int>()
 
     let getEvents (gameId : int,
                    ascending : bool,
@@ -194,17 +222,22 @@ module Commands =
             .param("MaxResults", maxResults)
             .param("ThresholdTime", thresholdTime)
             .param("ThresholdEventId", thresholdEventId)
+            .returnsMany<EventSqlModel>()
+
+    //--- Snapshots ---
 
     let getSnapshots (snapshotId : int option, gameId : int option) =
         proc("Snapshots_Get")
             .forEntity("Snapshot")
             .param("SnapshotId", snapshotId)
             .param("GameId", gameId)
+            //Open for Commands2 to close
 
     let deleteSnapshot (snapshotId : int) =
         proc("Snapshots_Delete")
             .forEntity("Snapshot")
             .param("SnapshotId", snapshotId)
+            .returnsNothing()
 
     let createSnapshot (gameId : int,
                         createdByUserId : int,
@@ -216,12 +249,14 @@ module Commands =
             .param("CreatedByUserId", createdByUserId)
             .param("Description", description)
             .param("SnapshotJson", snapshotJson)
+            .returnsSingle<int>()
 
     let replaceEventHistory (gameId : int, history : EventListTvp) =
         proc("Snapshots_ReplaceEventHistory")
             .forEntity("Snapshot")
             .param("GameId", gameId)
             .param("History", history)
+            .returnsNothing()
 
 ///<summary>
 /// This module contains convenience methods for factory methods in <c>Commands</c>.
@@ -232,7 +267,6 @@ module Commands2 =
 
     open Djambi.Api.Common.Json.JsonUtility
     open Djambi.Api.Db.Mapping
-    open Djambi.Api.Db.Model
     open Djambi.Api.Model
 
     let createUser (request : CreateUserRequest) =
@@ -250,22 +284,26 @@ module Commands2 =
         Commands.createSession (request.userId, request.token, request.expiresOn)
 
     let getGames (query : GamesQuery) =
-        Commands.getGames (query.gameId,
-                           query.descriptionContains,
-                           query.createdByUserName,
-                           query.playerUserName,
-                           query.isPublic,
-                           query.allowGuests,
-                           query.status |> Option.map mapGameStatusToId)
+        let cmd = Commands.getGames (query.gameId,
+                                     query.descriptionContains,
+                                     query.createdByUserName,
+                                     query.playerUserName,
+                                     query.isPublic,
+                                     query.allowGuests,
+                                     query.status |> Option.map mapGameStatusToId)
+        cmd.returnsMany<GameSqlModel>()
 
     let getGame (gameId : int) =
-        Commands.getGames (Some gameId, None, None, None, None, None, None)
+        let cmd = Commands.getGames (Some gameId, None, None, None, None, None, None)
+        cmd.returnsSingle<GameSqlModel>()
 
     let getPlayers (gameIds : int list) =
-        Commands.getPlayers (Int32ListTvp(gameIds), None)
+        let cmd = Commands.getPlayers (Int32ListTvp(gameIds), None)
+        cmd.returnsMany<PlayerSqlModel>()
 
     let getPlayer (gameId : int, playerId : int) =
-        Commands.getPlayers (Int32ListTvp([gameId]), Some playerId)
+        let cmd = Commands.getPlayers (Int32ListTvp([gameId]), Some playerId)
+        cmd.returnsSingle<PlayerSqlModel>()
 
     let createGame (request : CreateGameRequest) =
         Commands.createGame (request.parameters.regionCount,
@@ -326,6 +364,14 @@ module Commands2 =
                             query.maxResults,
                             query.thresholdTime,
                             query.thresholdEventId)
+
+    let getSnapshots (gameId : int) =
+        Commands.getSnapshots(None, Some gameId)
+            .returnsMany<SnapshotSqlModel>()
+
+    let getSnapshot (snapshotId : int) =
+        Commands.getSnapshots(Some snapshotId, None)
+            .returnsSingle<SnapshotSqlModel>()
 
     let createSnapshot (request : InternalCreateSnapshotRequest) =
         let jsonModel = 

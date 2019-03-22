@@ -6,14 +6,13 @@ open Djambi.Api.Common.Collections
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Db
 open Djambi.Api.Db.Interfaces
-open Djambi.Api.Db.Model
 open Djambi.Api.Model
 
-type EventRepository(u : SqlUtility, 
+type EventRepository(ctxProvider : CommandContextProvider, 
                      gameRepo : GameRepository) =
 
-    let getCommands (request : CreateEventRequest, oldGame : Game, newGame : Game) : Command seq = 
-        let commands = new ArrayList<Command>()
+    let getMostCommands (oldGame : Game, newGame : Game) : unit ExecutableCommand seq = 
+        let commands = new ArrayList<unit ExecutableCommand>()
 
         //remove players
         let removedPlayers = 
@@ -33,7 +32,7 @@ type EventRepository(u : SqlUtility,
                 |> (not << Seq.exists (fun oldP -> oldP.id = newP.id)))
 
         for p in addedPlayers do
-            commands.Add (Commands2.addFullPlayer p)
+            commands.Add (Commands2.addFullPlayer p |> Command.ignore)
 
         //update players
         let modifiedPlayers =
@@ -56,31 +55,29 @@ type EventRepository(u : SqlUtility,
             commands.Add (Commands2.updateGame newGame) 
         else ()
     
-        commands.Add (Commands2.createEvent (oldGame.id, request))
-
         commands |> Enumerable.AsEnumerable
         
     interface IEventRepository with
         member x.persistEvent (request, oldGame, newGame) =
-            let commands = getCommands (request, oldGame, newGame)
-            u.executeTransactionallyAndReturnLastResult commands
+            let mostCommands = getMostCommands (oldGame, newGame)
+            let lastCommand = Commands2.createEvent (oldGame.id, request)
+
+            SqlUtility.executeTransactionallyAndReturnLastResult mostCommands lastCommand ctxProvider
             |> thenBindAsync (fun eventId -> 
+                let e = {
+                    id = eventId
+                    createdByUserId = request.createdByUserId
+                    createdOn = DateTime.UtcNow
+                    actingPlayerId = request.actingPlayerId
+                    kind = request.kind
+                    effects = request.effects
+                }
+
                 (gameRepo :> IGameRepository).getGame newGame.id
-                |> thenMap (fun game -> 
-                    {
-                        game = game
-                        event = {
-                            id = eventId
-                            createdByUserId = request.createdByUserId
-                            createdOn = DateTime.UtcNow
-                            actingPlayerId = request.actingPlayerId
-                            kind = request.kind
-                            effects = request.effects
-                        }
-                    })
+                |> thenMap (fun game -> { game = game; event = e })
             )
     
         member x.getEvents (gameId, query) =
             let cmd = Commands2.getEvents (gameId, query)
-            u.queryMany<EventSqlModel>(cmd)
+            (cmd.execute ctxProvider)
             |> thenMap (List.map Mapping.mapEventResponse)
