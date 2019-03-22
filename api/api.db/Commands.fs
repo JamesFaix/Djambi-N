@@ -87,7 +87,7 @@ module Commands =
                         .addOption("GameStatusId", gameStatusId)
         proc("Games_Get", param)
 
-    let getPlayers (gameIds : TableValuedParameter, playerId : int option) =
+    let getPlayers (gameIds : Int32ListTvp, playerId : int option) =
         let param = DynamicParameters()
                         .add("GameIds", gameIds)
                         .addOption("PlayerId", playerId);
@@ -218,7 +218,7 @@ module Commands =
                         .add("SnapshotJson", snapshotJson)
         proc("Snapshots_Create", param)
 
-    let replaceEventHistory (gameId : int, history : TableValuedParameter) =
+    let replaceEventHistory (gameId : int, history : EventListTvp) =
         let param = DynamicParameters()
                         .add("GameId", gameId)
                         .add("History", history)
@@ -263,10 +263,10 @@ module Commands2 =
         Commands.getGames (Some gameId, None, None, None, None, None, None)
 
     let getPlayers (gameIds : int list) =
-        Commands.getPlayers (TableValuedParameter.int32list gameIds, None)
+        Commands.getPlayers (Int32ListTvp(gameIds), None)
 
     let getPlayer (gameId : int, playerId : int) =
-        Commands.getPlayers (TableValuedParameter.int32list [gameId], Some playerId)
+        Commands.getPlayers (Int32ListTvp([gameId]), Some playerId)
 
     let createGame (request : CreateGameRequest) =
         Commands.createGame (request.parameters.regionCount,
@@ -340,4 +340,4 @@ module Commands2 =
                                  serialize jsonModel)
 
     let replaceEventHistory (gameId : int, history : Event list) =
-        Commands.replaceEventHistory (gameId, TableValuedParameter.eventList history)
+        Commands.replaceEventHistory (gameId, EventListTvp(history))

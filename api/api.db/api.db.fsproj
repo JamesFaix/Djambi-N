@@ -8,7 +8,7 @@
     <Compile Include="DapperExtensions.fs" />
     <Compile Include="Model.fs" />
     <Compile Include="Mapping.fs" />
-    <Compile Include="TableValuedParameter.fs" />
+    <Compile Include="TableValuedParameters.fs" />
     <Compile Include="Commands.fs" />
     <Compile Include="SqlUtility.fs" />
     <Compile Include="Repositories\UserRepository.fs" />
