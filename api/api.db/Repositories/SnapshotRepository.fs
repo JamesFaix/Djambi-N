@@ -9,22 +9,22 @@ type SnapshotRepository(ctxProvider : CommandContextProvider) =
 
     interface ISnapshotRepository with
         member x.getSnapshot snapshotId =
-            let cmd = Commands2.getSnapshot snapshotId
-            (cmd.execute ctxProvider)
+            Commands2.getSnapshot snapshotId
+            |> Command.execute ctxProvider
             |> thenMap Mapping.mapSnapshotFromSql
 
         member x.getSnapshotsForGame gameId =
-            let cmd = Commands2.getSnapshots gameId
-            (cmd.execute ctxProvider)
+            Commands2.getSnapshots gameId
+            |> Command.execute ctxProvider
             |> thenMap (List.map Mapping.mapSnapshotInfoFromSql)
 
         member x.deleteSnapshot snapshotId =
-            let cmd = Commands.deleteSnapshot snapshotId
-            (cmd.execute ctxProvider)
+            Commands.deleteSnapshot snapshotId
+            |> Command.execute ctxProvider
 
         member x.createSnapshot request =
-            let cmd = Commands2.createSnapshot request
-            (cmd.execute ctxProvider)
+            Commands2.createSnapshot request
+            |> Command.execute ctxProvider
 
         member x.loadSnapshot (gameId, snapshotId) =            
             (x :> ISnapshotRepository).getSnapshot snapshotId

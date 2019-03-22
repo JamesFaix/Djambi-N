@@ -9,34 +9,34 @@ open Djambi.Api.Model
 type GameRepository(ctxProvider : CommandContextProvider) =
     
     let getGamesWithoutPlayers (query : GamesQuery) : Game List AsyncHttpResult =
-        let cmd = Commands2.getGames query
-        (cmd.execute ctxProvider)
+        Commands2.getGames query
+        |> Command.execute ctxProvider
         |> thenMap (List.map Mapping.mapGameResponse)
 
     let getGameWithoutPlayers (gameId : int) : Game AsyncHttpResult =
-        let cmd = Commands2.getGame gameId
-        (cmd.execute ctxProvider)
+        Commands2.getGame gameId
+        |> Command.execute ctxProvider
         |> thenMap Mapping.mapGameResponse
         
     let getPlayersForGames (gameIds : int list) : Player List AsyncHttpResult =
-        let cmd = Commands2.getPlayers gameIds
-        (cmd.execute ctxProvider)
+        Commands2.getPlayers gameIds
+        |> Command.execute ctxProvider
         |> thenMap (List.map Mapping.mapPlayerResponse)
 
     let getPlayer (gameId : int, playerId : int) : Player AsyncHttpResult =
-        let cmd = Commands2.getPlayer (gameId, playerId)
-        (cmd.execute ctxProvider)
+        Commands2.getPlayer (gameId, playerId)
+        |> Command.execute ctxProvider
         |> thenMap Mapping.mapPlayerResponse
     
     //Exposed for test setup
     member x.updateGame(game : Game) : Unit AsyncHttpResult =
-        let cmd = Commands2.updateGame game
-        (cmd.execute ctxProvider)
+        Commands2.updateGame game
+        |> Command.execute ctxProvider
 
     //Exposed for test setup
     member x.updatePlayer(player : Player) : Unit AsyncHttpResult =
-        let cmd = Commands2.updatePlayer player
-        (cmd.execute ctxProvider)
+        Commands2.updatePlayer player
+        |> Command.execute ctxProvider
 
     interface IGameRepository with
         member x.getGame gameId = 
@@ -64,21 +64,21 @@ type GameRepository(ctxProvider : CommandContextProvider) =
             )
 
         member x.createGame request =
-            let cmd = Commands2.createGame request
-            (cmd.execute ctxProvider)
+            Commands2.createGame request
+            |> Command.execute ctxProvider
 
         member x.addPlayer (gameId, request) =
-            let cmd = Commands2.addPendingPlayer (gameId, request)
-            (cmd.execute ctxProvider)
+            Commands2.addPendingPlayer (gameId, request)
+            |> Command.execute ctxProvider
             |> thenBindAsync (fun pId -> getPlayer (gameId, pId))
 
         member x.removePlayer (gameId, playerId) =
-            let cmd = Commands.removePlayer (gameId, playerId)
-            (cmd.execute ctxProvider)
+            Commands.removePlayer (gameId, playerId)
+            |> Command.execute ctxProvider
 
         member x.getNeutralPlayerNames () =
-            let cmd = Commands.getNeutralPlayerNames ()
-            (cmd.execute ctxProvider)
+            Commands.getNeutralPlayerNames ()
+            |> Command.execute ctxProvider
 
         member x.createGameAndAddPlayer (gameRequest, playerRequest) =
             let cmd1 = Commands2.createGame gameRequest

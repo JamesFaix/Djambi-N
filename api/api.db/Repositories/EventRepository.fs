@@ -78,6 +78,6 @@ type EventRepository(ctxProvider : CommandContextProvider,
             )
     
         member x.getEvents (gameId, query) =
-            let cmd = Commands2.getEvents (gameId, query)
-            (cmd.execute ctxProvider)
+            Commands2.getEvents (gameId, query)
+            |> Command.execute ctxProvider
             |> thenMap (List.map Mapping.mapEventResponse)

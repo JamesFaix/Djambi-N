@@ -9,8 +9,8 @@ type SessionRepository(ctxProvider : CommandContextProvider,
                        userRepo : IUserRepository) =
     interface ISessionRepository with
         member x.getSession query =
-            let cmd = Commands2.getSession query
-            (cmd.execute ctxProvider)
+            Commands2.getSession query
+            |> Command.execute ctxProvider
             |> thenBindAsync (fun sessionSqlModel -> 
                 userRepo.getUser sessionSqlModel.userId
                 |> thenMap (fun userDetails ->
@@ -20,8 +20,8 @@ type SessionRepository(ctxProvider : CommandContextProvider,
             )
 
         member x.createSession request =
-            let cmd = Commands2.createSession request
-            (cmd.execute ctxProvider)
+            Commands2.createSession request
+            |> Command.execute ctxProvider
             |> thenBindAsync(fun sessionId -> 
                 let query = 
                     {
@@ -33,8 +33,8 @@ type SessionRepository(ctxProvider : CommandContextProvider,
             )
 
         member x.renewSessionExpiration (sessionId, expiresOn) =
-            let cmd = Commands.renewSessionExpiration (sessionId, expiresOn)
-            (cmd.execute ctxProvider)
+            Commands.renewSessionExpiration (sessionId, expiresOn)
+            |> Command.execute ctxProvider
             |> thenBindAsync (fun _ -> 
                 let query = 
                     {
@@ -46,5 +46,5 @@ type SessionRepository(ctxProvider : CommandContextProvider,
             )
 
         member x.deleteSession (sessionId, token) =
-            let cmd = Commands.deleteSession (sessionId, token)
-            cmd.execute ctxProvider
+            Commands.deleteSession (sessionId, token)
+            |> Command.execute ctxProvider
