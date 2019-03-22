@@ -9,7 +9,7 @@
     <Compile Include="Mapping.fs" />
     <Compile Include="TableValuedParameters.fs" />
     <Compile Include="CommandContext.fs" />
-    <Compile Include="CommandBuilder.fs" />
+    <Compile Include="Command.fs" />
     <Compile Include="Commands.fs" />
     <Compile Include="Repositories\UserRepository.fs" />
     <Compile Include="Repositories\SessionRepository.fs" />

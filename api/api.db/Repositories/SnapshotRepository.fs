@@ -34,5 +34,5 @@ type SnapshotRepository(ctxProvider : CommandContextProvider) =
                     Commands2.updateGame snapshot.game ::
                     (snapshot.game.players |> List.map Commands2.updatePlayer)
 
-                SqlUtility.executeTransactionally commands (Some "Snapshot") ctxProvider
+                CommandProcessor.executeTransactionally commands (Some "Snapshot") ctxProvider
             )

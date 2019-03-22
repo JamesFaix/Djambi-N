@@ -83,4 +83,4 @@ type GameRepository(ctxProvider : CommandContextProvider) =
         member x.createGameAndAddPlayer (gameRequest, playerRequest) =
             let cmd1 = Commands2.createGame gameRequest
             let getCmd2 = fun gameId -> Commands2.addPendingPlayer (gameId, playerRequest)
-            SqlUtility.executeTransactionallyButReturnFirstResult (cmd1, getCmd2) ctxProvider
+            CommandProcessor.executeTransactionallyButReturnFirstResult (cmd1, getCmd2) ctxProvider

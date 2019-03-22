@@ -62,7 +62,7 @@ type EventRepository(ctxProvider : CommandContextProvider,
             let mostCommands = getMostCommands (oldGame, newGame)
             let lastCommand = Commands2.createEvent (oldGame.id, request)
 
-            SqlUtility.executeTransactionallyAndReturnLastResult mostCommands lastCommand ctxProvider
+            CommandProcessor.executeTransactionallyAndReturnLastResult mostCommands lastCommand ctxProvider
             |> thenBindAsync (fun eventId -> 
                 let e = {
                     id = eventId

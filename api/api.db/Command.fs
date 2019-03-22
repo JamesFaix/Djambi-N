@@ -106,7 +106,7 @@ type ClosedCommand<'a> with
 /// Encapsulates database access through Dapper.SqlMapper, 
 /// as well as transactional operations.
 /// </summary>
-module SqlUtility =
+module CommandProcessor =
     open System.Data.SqlClient
     open System.Text.RegularExpressions
     open System.Threading.Tasks
@@ -250,19 +250,19 @@ type OpenCommand with
     /// Converts the command into a <c>ClosedCommand</c> that returns <c>()</c>.
     /// </summary>
     member x.returnsNothing () : unit ClosedCommand =
-        x.close (SqlUtility.queryUnit x)
+        x.close (CommandProcessor.queryUnit x)
 
     /// <summary>
     /// Converts the command into a <c>ClosedCommand</c> that returns a single <c>'a</c> value.
     /// </summary>
     member x.returnsSingle<'a> () : 'a ClosedCommand =
-        x.close (SqlUtility.querySingle x)
+        x.close (CommandProcessor.querySingle x)
 
     /// <summary>
     /// Converts the command into a <c>ClosedCommand</c> that returns a sequence of <c>'a</c> values.
     /// </summary>
     member x.returnsMany<'a> () : 'a list ClosedCommand =
-        x.close (SqlUtility.queryMany x)
+        x.close (CommandProcessor.queryMany x)
         
 module Command =
     /// <summary>

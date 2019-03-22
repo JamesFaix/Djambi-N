@@ -4,6 +4,9 @@ open System.Data
 open System.Data.SqlClient
 open System
 
+/// <summary>
+/// Encapsulates a database connection, with optional transaction.
+/// </summary>
 type CommandContext(cn, tran) =
     member x.connection : IDbConnection = cn
     member x.transaction : IDbTransaction option = tran
@@ -25,6 +28,9 @@ type CommandContext(cn, tran) =
             | _ -> ()            
             x.connection.Dispose()
 
+/// <summary>
+/// Creates <c>CommandContext</c> instances.
+/// </summary>
 type CommandContextProvider(connectionString) =
     member x.getContext() : CommandContext =
         let cn = new SqlConnection(connectionString)
