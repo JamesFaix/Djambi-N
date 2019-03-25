@@ -31,6 +31,7 @@ type ManagerRoot(db : IDbRoot, services : ServiceRoot) =
                                  services.gameCrud, 
                                  db.games,
                                  services.gameStart, 
+                                 services.notifications,
                                  services.players, 
                                  services.playerStatusChanges,
                                  services.selections,

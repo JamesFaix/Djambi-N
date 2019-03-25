@@ -1,18 +1,19 @@
 ﻿namespace Djambi.Api.Logic.Managers
 
-open Djambi.Api.Logic.Services
 open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
-open Djambi.Api.Model
-open Djambi.Api.Logic.Interfaces
-open Djambi.Api.Logic
 open Djambi.Api.Db.Interfaces
+open Djambi.Api.Logic
+open Djambi.Api.Logic.Interfaces
+open Djambi.Api.Logic.Services
+open Djambi.Api.Model
 
 type GameManager(eventRepo : IEventRepository,
                  eventServ : EventService,
                  gameCrudServ : GameCrudService,
                  gameRepo : IGameRepository,
                  gameStartServ : GameStartService,
+                 notificationServ : INotificationService,
                  playerServ : PlayerService,
                  playerStatusChangeServ : PlayerStatusChangeService,
                  selectionServ : SelectionService,
@@ -33,6 +34,7 @@ type GameManager(eventRepo : IEventRepository,
                 eventRepo.persistEvent (eventRequest, game, newGame)
             )
         )
+        |> thenDoAsync notificationServ.send
     
     let processEventAsync (gameId : int) (getCreateEventRequest : Game -> CreateEventRequest AsyncHttpResult): StateAndEventResponse AsyncHttpResult = 
         gameRepo.getGame gameId
@@ -43,6 +45,7 @@ type GameManager(eventRepo : IEventRepository,
                 eventRepo.persistEvent (eventRequest, game, newGame)
             )
         )
+        |> thenDoAsync notificationServ.send
 
     interface IEventManager with    
         member x.getEvents (gameId, query) session =
