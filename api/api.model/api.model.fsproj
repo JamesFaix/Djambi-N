@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="NotificationModel.fs" />
     <Compile Include="UserModel.fs" />
     <Compile Include="SessionModel.fs" />
     <Compile Include="BoardModel.fs" />

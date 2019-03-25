@@ -12,6 +12,7 @@
     <Compile Include="ModelExtensions\BoardModelExtensions.fs" />
     <Compile Include="ModelExtensions\BoardModelUtility.fs" />
     <Compile Include="ModelExtensions\GameModelExtensions.fs" />
+    <Compile Include="Services\NotificationService.fs" />
     <Compile Include="Services\UserService.fs" />
     <Compile Include="Services\SessionService.fs" />
     <Compile Include="Services\BoardService.fs" />

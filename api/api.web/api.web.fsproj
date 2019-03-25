@@ -6,9 +6,11 @@
 
   <ItemGroup>
     <Compile Include="HttpUtility.fs" />
+    <Compile Include="ServerSideEvents.fs" />
     <Compile Include="Controllers\BoardController.fs" />
     <Compile Include="Controllers\EventController.fs" />
     <Compile Include="Controllers\GameController.fs" />
+    <Compile Include="Controllers\NotificationController.fs" />
     <Compile Include="Controllers\PlayerController.fs" />
     <Compile Include="Controllers\SessionController.fs" />
     <Compile Include="Controllers\SnapshotController.fs" />

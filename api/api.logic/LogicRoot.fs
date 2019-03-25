@@ -1,13 +1,14 @@
 ﻿namespace Djambi.Api.Logic
 
+open Djambi.Api.Db.Interfaces
 open Djambi.Api.Logic.Interfaces
 open Djambi.Api.Logic.Managers
 open Djambi.Api.Logic.Services
-open Djambi.Api.Db.Interfaces
 
 type ServiceRoot(db : IDbRoot) =
     member x.boards = BoardService()
     member x.gameCrud = GameCrudService(db.games)
+    member x.notifications = NotificationService()
     member x.players = PlayerService(db.games)
     member x.selectionOptions = SelectionOptionsService()
     member x.sessions = SessionService(db.sessions, db.users)
@@ -20,6 +21,7 @@ type ServiceRoot(db : IDbRoot) =
     member x.turns = TurnService(x.events, x.indirectEffects, x.selectionOptions)
 
     interface IServiceRoot with
+        member x.notifications = x.notifications :> INotificationService
         member x.sessions = x.sessions :> ISessionService
 
 type ManagerRoot(db : IDbRoot, services : ServiceRoot) =

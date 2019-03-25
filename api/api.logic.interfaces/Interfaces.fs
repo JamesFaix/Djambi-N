@@ -4,6 +4,15 @@ open Djambi.Api.Common.Control
 open Djambi.Api.Model
 open Djambi.ClientGenerator.Annotations
 
+type ISubscriber =
+    abstract member id : SubscriberId
+    abstract member send : response:StateAndEventResponse -> unit AsyncHttpResult
+
+type INotificationService =
+    abstract member add : subscriber:ISubscriber -> unit
+    abstract member remove : subscriberId:SubscriberId -> unit
+    abstract member send : response:StateAndEventResponse -> unit AsyncHttpResult
+
 type ISessionService =
     abstract member openSession : request:LoginRequest -> Session AsyncHttpResult
     abstract member renewSession : token:string -> Session AsyncHttpResult
@@ -91,6 +100,7 @@ type IUserManager =
     abstract member getCurrentUser : session:Session -> User AsyncHttpResult
 
 type IServiceRoot =
+    abstract member notifications : INotificationService
     abstract member sessions : ISessionService
 
 type IManagerRoot =

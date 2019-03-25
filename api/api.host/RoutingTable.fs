@@ -50,5 +50,9 @@ type RoutingTable (web : IWebRoot) =
                     GET >=> routef Routes.snapshotsFormat web.snapshots.getSnapshotsForGame
                     DELETE >=> routef Routes.snapshotFormat web.snapshots.deleteSnapshot
                     POST >=> routef Routes.snapshotLoadFormat web.snapshots.loadSnapshot
+
+                //Notifications
+                    GET >=> route Routes.notificationsForCurrentUser >=> web.notifications.getNotificationsForCurrentUser
+                    GET >=> routef Routes.notificationsForCurrentUserForGameFormat web.notifications.getNotificationsForCurrentUserForGame
                 ])
             setStatusCode 404 >=> text "Not Found" ]
