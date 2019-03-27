@@ -9,11 +9,15 @@ open Djambi.Api.Model
 open Djambi.Api.Web
 open Djambi.Api.Web.Interfaces
 open Djambi.Api.Web.Sse
+open FSharp.Control.Tasks
+open System.Threading.Tasks
+open System
 
 type NotificationController(u : HttpUtility,
-                             notificationService : INotificationService) =    
+                            notificationService : INotificationService) =    
 
     let contentType = "text/event-stream"
+    let checkForCloseDelay = TimeSpan.FromSeconds(3.0)
 
     let checkAcceptHeader (ctx : HttpContext) =
          if not (ctx.Request.Headers.["Accept"] = StringValues(contentType))
@@ -24,8 +28,8 @@ type NotificationController(u : HttpUtility,
         let func (ctx : HttpContext) =
             checkAcceptHeader ctx
             |> Result.bindAsync (fun _ -> u.getSessionFromContext ctx)
-            |> thenBindAsync (fun session ->
-                ctx.Response.ContentType <- contentType
+            |> thenMap (fun session ->
+                ctx.Response.Headers.["Content-Type"] <- StringValues(contentType)
                 ctx.Response.Body.Flush()
 
                 let subscriberId : SubscriberId = 
@@ -33,15 +37,20 @@ type NotificationController(u : HttpUtility,
                         userId = session.user.id
                         gameId = gameId 
                     }
-                let subscriber = new SseSubscriber(subscriberId, ctx.Response)
-                
+                let subscriber = new SseSubscriber(subscriberId, ctx.Response)                
+
                 notificationService.add subscriber
 
-                ctx.RequestAborted.WaitHandle.WaitOne() |> ignore
-
-                notificationService.remove subscriberId
-
-                okTask ()
+                subscriberId
+            )
+            |> thenBindAsync (fun subscriberId ->
+                task {
+                    while not ctx.RequestAborted.IsCancellationRequested do                        
+                        let! _ = Task.Delay checkForCloseDelay
+                        ()
+                    notificationService.remove subscriberId
+                    return Ok ()
+                }
             )
         u.handle func
 

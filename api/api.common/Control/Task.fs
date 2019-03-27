@@ -15,3 +15,6 @@ let bind<'a, 'b> (projection : 'a -> 'b Task) (t : 'a Task) : 'b Task =
         let! result = t
         return! projection result
     }
+
+let toGeneric (t : Task) : unit Task =
+    t.ContinueWith<unit>(ignore, TaskContinuationOptions.OnlyOnRanToCompletion)
