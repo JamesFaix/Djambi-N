@@ -53,6 +53,5 @@ type RoutingTable (web : IWebRoot) =
 
                 //Notifications
                     GET >=> route Routes.notificationsForCurrentUser >=> web.notifications.getNotificationsForCurrentUser
-                    GET >=> routef Routes.notificationsForCurrentUserForGameFormat web.notifications.getNotificationsForCurrentUserForGame
                 ])
             setStatusCode 404 >=> text "Not Found" ]

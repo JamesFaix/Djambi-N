@@ -14,7 +14,7 @@ type SseEvent =
         data : string list
     }
 
-type SseSubscriber(id : SubscriberId, 
+type SseSubscriber(userId : int, 
                    httpResponse : HttpResponse) =
 
     let writeField (name : string, value : string) =
@@ -47,6 +47,6 @@ type SseSubscriber(id : SubscriberId,
         }
 
     interface ISubscriber with
-        member x.id = id
+        member x.userId = userId
         member x.send response =
             response |> mapReponseToSseEvent |> writeSseEvent 

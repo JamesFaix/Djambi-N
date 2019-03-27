@@ -5,12 +5,12 @@ open Djambi.Api.Model
 open Djambi.ClientGenerator.Annotations
 
 type ISubscriber =
-    abstract member id : SubscriberId
+    abstract member userId : int
     abstract member send : response:StateAndEventResponse -> unit AsyncHttpResult
 
 type INotificationService =
     abstract member add : subscriber:ISubscriber -> unit
-    abstract member remove : subscriberId:SubscriberId -> unit
+    abstract member remove : userId:int -> unit
     abstract member send : response:StateAndEventResponse -> unit AsyncHttpResult
 
 type ISessionService =

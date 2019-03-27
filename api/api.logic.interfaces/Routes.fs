@@ -95,7 +95,3 @@
 
  [<Literal>]
  let notificationsForCurrentUser = "/notifications"
- 
- [<Literal>]
- let notificationsForCurrentUserForGame = "/games/%i/notifications"
- let notificationsForCurrentUserForGameFormat = create1<int>(notificationsForCurrentUserForGame)

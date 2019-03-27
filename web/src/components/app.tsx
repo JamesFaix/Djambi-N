@@ -15,13 +15,15 @@ import { User } from '../api/model';
 import '../index.css';
 import Debug from '../debug';
 import SnapshotsPage from './pages/snapshotsPage';
+import Environment from '../environment';
 
 export interface AppProps {
 
 }
 
 export interface AppState {
-    user : User
+    user : User,
+    eventSource : EventSource
 }
 
 export default class App extends React.Component<AppProps, AppState> {
@@ -32,8 +34,34 @@ export default class App extends React.Component<AppProps, AppState> {
         Debug.Initialize();
 
         this.state = {
-            user : null
+            user : null,
+            eventSource : null
         };
+    }
+
+    private setUser (user : User) : void {
+        console.log("set user to " + user);
+        if (user !== null) {
+            const eventSource = new EventSource(
+                Environment.apiAddress() + "/notifications",
+                { withCredentials: true }
+            );
+
+            eventSource.onmessage = (e => console.log(e));
+
+            this.setState({
+                user: user,
+                eventSource: eventSource
+            });
+        } else {
+            if (this.state.eventSource !== null) {
+                this.state.eventSource.close();
+            }
+            this.setState({
+                user: null,
+                eventSource: null
+            });
+        }
     }
 
     render() {
@@ -46,7 +74,7 @@ export default class App extends React.Component<AppProps, AppState> {
                         render={_ =>
                             <HomePage
                                 user={this.state.user}
-                                setUser={user => this.setState({user : user})}
+                                setUser={user => this.setUser(user)}
                             />
                         }
                     />
@@ -55,7 +83,7 @@ export default class App extends React.Component<AppProps, AppState> {
                         render={_ =>
                             <SignupPage
                                 user={this.state.user}
-                                setUser={user => this.setState({user : user})}
+                                setUser={user => this.setUser(user)}
                             />
                         }
                     />
@@ -64,7 +92,7 @@ export default class App extends React.Component<AppProps, AppState> {
                         render={_ =>
                             <LoginPage
                                 user={this.state.user}
-                                setUser={user => this.setState({user : user})}
+                                setUser={user => this.setUser(user)}
                             />
                         }
                     />
@@ -73,7 +101,7 @@ export default class App extends React.Component<AppProps, AppState> {
                         render={_ =>
                             <DashboardPage
                                 user={this.state.user}
-                                setUser={user => this.setState({user : user})}
+                                setUser={user => this.setUser(user)}
                             />
                         }
                     />

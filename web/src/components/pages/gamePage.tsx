@@ -1,7 +1,6 @@
 import * as React from 'react';
 import BoardPanel from '../panels/boardPanel';
 import BoardViewService from '../../boardRendering/boardViewService';
-import CurrentTurnPanel from '../panels/currentTurnPanel';
 import Geometry from '../../boardRendering/geometry';
 import HistoryPanel from '../panels/historyPanel';
 import PlayersPanel from '../panels/playersPanel';

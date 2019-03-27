@@ -18,7 +18,6 @@ type IGameController =
 
 type INotificationsController =
     abstract member getNotificationsForCurrentUser : HttpHandler
-    abstract member getNotificationsForCurrentUserForGame : gameId:int -> HttpHandler
 
 type IPlayerController =
     abstract member addPlayer : gameId:int -> HttpHandler
