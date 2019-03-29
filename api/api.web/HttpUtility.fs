@@ -64,7 +64,11 @@ type HttpUtility(cookieDomain : string,
                     let! result = func ctx
                     match result with
                     | Ok value ->
-                        return! json value next ctx
+                        match ctx.Response.ContentType with
+                        | "text/event-stream" ->
+                            return! next ctx                         
+                        | _ ->
+                            return! json value next ctx
                     | Error ex ->
                         ctx.SetStatusCode ex.statusCode
                         return! json ex.Message next ctx
