@@ -7,12 +7,12 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "db-reset", "utils\db-reset\
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.host", "api\api.host\api.host.fsproj", "{3664C02D-2B0E-4C1B-AE20-CCDEC13105F8}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2 - API", "2 - API", "{2FAF11B4-A2BA-48CF-8E4D-766CB7B26A3A}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{2FAF11B4-A2BA-48CF-8E4D-766CB7B26A3A}"
 	ProjectSection(SolutionItems) = preProject
 		api\Readme.md = api\Readme.md
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4 - Utils", "4 - Utils", "{12EE890F-7CFC-4DA3-A880-F94AF30F5F34}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utils", "Utils", "{12EE890F-7CFC-4DA3-A880-F94AF30F5F34}"
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "environment", "utils\environment\environment.fsproj", "{89FD8898-FDD6-4BFE-8049-7AA6305D145A}"
 EndProject
@@ -52,18 +52,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2 - Interfaces", "2 - Inter
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3 - Implementation", "3 - Implementation", "{9EA50670-52CF-43D3-9C40-AF89DD529320}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "0 - Solution Items", "0 - Solution Items", "{DA75773D-0313-4002-9587-4D640C91C0D3}"
-	ProjectSection(SolutionItems) = preProject
-		.gitattributes = .gitattributes
-		.gitignore = .gitignore
-		build.cake = build.cake
-		build.ps1 = build.ps1
-		build.sh = build.sh
-		environment.json = environment.json
-		readme.md = readme.md
-		RedGate.ssc = RedGate.ssc
-	EndProjectSection
-EndProject
+
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
