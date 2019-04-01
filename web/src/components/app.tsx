@@ -11,11 +11,13 @@ import SignupPage from './pages/signupPage';
 import TopMenu from './topMenu';
 import { Kernel as K } from '../kernel';
 import { Route, Switch } from 'react-router-dom';
-import { User } from '../api/model';
+import { User, Game, Event, StateAndEventResponse } from '../api/model';
 import '../index.css';
 import Debug from '../debug';
 import SnapshotsPage from './pages/snapshotsPage';
 import Environment from '../environment';
+import BoardViewService from '../boardRendering/boardViewService';
+import { BoardView } from '../boardRendering/model';
 
 export interface AppProps {
 
@@ -23,10 +25,15 @@ export interface AppProps {
 
 export interface AppState {
     user : User,
-    eventSource : EventSource
+    eventSource : EventSource,
+    game : Game,
+    history : Event[],
+    boardView : BoardView
 }
 
 export default class App extends React.Component<AppProps, AppState> {
+    private readonly boardViewService : BoardViewService;
+
     constructor(props : AppProps) {
         super(props);
 
@@ -34,20 +41,44 @@ export default class App extends React.Component<AppProps, AppState> {
         Debug.Initialize();
 
         this.state = {
-            user : null,
-            eventSource : null
+            user: null,
+            eventSource: null,
+            game: null,
+            history: [],
+            boardView: null
         };
+
+        this.boardViewService = new BoardViewService(K.boards);
     }
 
     private setUser (user : User) : void {
-        console.log("set user to " + user);
+        console.log("Set user");
+        console.log(user);
+
         if (user !== null) {
             const eventSource = new EventSource(
                 Environment.apiAddress() + "/notifications",
                 { withCredentials: true }
             );
 
-            eventSource.onmessage = (e => console.log(e));
+            eventSource.onopen = (e => {
+                console.log("SSE Open");
+                console.log(e);
+            });
+
+            eventSource.onmessage = (e => {
+                console.log("SSE Message");
+                console.log(e);
+                const updateJson = e.data as string;
+                const update = JSON.parse(updateJson) as StateAndEventResponse;
+                console.log(update);
+                this.updateGame(update);
+            });
+
+            eventSource.onerror = (e => {
+                console.log("SSE Error");
+                console.log(e);
+            });
 
             this.setState({
                 user: user,
@@ -62,6 +93,36 @@ export default class App extends React.Component<AppProps, AppState> {
                 eventSource: null
             });
         }
+    }
+
+    private async updateGame(response : StateAndEventResponse) : Promise<void> {
+        console.log("Update game");
+        console.log(response);
+
+        const boardView = await this.boardViewService.getBoardView(response.game);
+
+        const newHistory = [response.event];
+        newHistory.push(...this.state.history);
+
+        this.setState({
+            game: response.game,
+            history: newHistory,
+            boardView: boardView
+        });
+    }
+
+    private async loadGame(game : Game, history : Event[]) : Promise<void> {
+        console.log("Load game");
+        console.log(game);
+        console.log(history);
+
+        const boardView = await this.boardViewService.getBoardView(game);
+
+        this.setState({
+            game: game,
+            history: history,
+            boardView: boardView
+        });
     }
 
     render() {
@@ -155,6 +216,11 @@ export default class App extends React.Component<AppProps, AppState> {
                             <GamePage
                                 user={this.state.user}
                                 gameId={props.match.params.gameId}
+                                game={this.state.game}
+                                history={this.state.history}
+                                update={response => this.updateGame(response)}
+                                load={(game, history) => this.loadGame(game, history)}
+                                boardView={this.state.boardView}
                             />
                         }
                     />
