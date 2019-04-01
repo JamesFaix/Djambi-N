@@ -25,6 +25,24 @@ type GameManager(eventRepo : IEventRepository,
         || game.createdByUserId = self.id
         || game.players |> List.exists(fun p -> p.userId = Some self.id)
         
+    let isPublishable (event : Event) : bool =
+        match event.kind with
+        | EventKind.GameCanceled
+        | EventKind.GameParametersChanged
+        | EventKind.GameStarted
+        | EventKind.PlayerJoined
+        | EventKind.PlayerRemoved
+        | EventKind.PlayerStatusChanged
+        | EventKind.TurnCommitted
+            -> true
+        | _ -> false
+        
+    let sendIfPublishable (response : StateAndEventResponse) : StateAndEventResponse AsyncHttpResult =
+        if isPublishable response.event
+        then notificationServ.send response
+             |> thenMap (fun _ -> response)
+        else okTask response 
+
     let processEvent (gameId : int) (getCreateEventRequest : Game -> CreateEventRequest HttpResult) : StateAndEventResponse AsyncHttpResult = 
         gameRepo.getGame gameId
         |> thenBindAsync (fun game -> 
@@ -34,7 +52,7 @@ type GameManager(eventRepo : IEventRepository,
                 eventRepo.persistEvent (eventRequest, game, newGame)
             )
         )
-        |> thenDoAsync notificationServ.send
+        |> thenBindAsync sendIfPublishable
     
     let processEventAsync (gameId : int) (getCreateEventRequest : Game -> CreateEventRequest AsyncHttpResult): StateAndEventResponse AsyncHttpResult = 
         gameRepo.getGame gameId
@@ -45,7 +63,7 @@ type GameManager(eventRepo : IEventRepository,
                 eventRepo.persistEvent (eventRequest, game, newGame)
             )
         )
-        |> thenDoAsync notificationServ.send
+        |> thenBindAsync sendIfPublishable
 
     interface IEventManager with    
         member x.getEvents (gameId, query) session =
