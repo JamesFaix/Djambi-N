@@ -189,6 +189,8 @@ export default class App extends React.Component<AppProps, AppState> {
                             <GameInfoPage
                                 user={this.state.user}
                                 gameId={props.match.params.gameId}
+                                game={this.state.game}
+                                load={game => this.loadGame(game, [])}
                             />
                         }
                     />
