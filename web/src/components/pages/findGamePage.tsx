@@ -61,7 +61,7 @@ export default class FindGamePage extends React.Component<FindGamePageProps, Fin
         K.api
             .getGames(query)
             .then(games => {
-                this.setState({games : games});
+                this.setState({games : games.reverse()});
             })
             .catch(reason => {
                 alert("Get games failed because " + reason);
