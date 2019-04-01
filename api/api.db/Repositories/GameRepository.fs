@@ -5,6 +5,7 @@ open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Db
 open Djambi.Api.Db.Interfaces
 open Djambi.Api.Model
+open System
 
 type GameRepository(ctxProvider : CommandContextProvider) =
     
@@ -63,15 +64,18 @@ type GameRepository(ctxProvider : CommandContextProvider) =
                 )
             )
 
+        [<Obsolete>]
         member x.createGame request =
             Commands2.createGame request
             |> Command.execute ctxProvider
 
+        [<Obsolete>]
         member x.addPlayer (gameId, request) =
             Commands2.addPendingPlayer (gameId, request)
             |> Command.execute ctxProvider
             |> thenBindAsync (fun pId -> getPlayer (gameId, pId))
 
+        [<Obsolete>]
         member x.removePlayer (gameId, playerId) =
             Commands.removePlayer (gameId, playerId)
             |> Command.execute ctxProvider

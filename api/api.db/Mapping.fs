@@ -1,7 +1,6 @@
 ﻿module Djambi.Api.Db.Mapping
 
 open Djambi.Api.Common
-open Djambi.Api.Common.Control
 open Djambi.Api.Common.Json
 open Djambi.Api.Db.Model
 open Djambi.Api.Model

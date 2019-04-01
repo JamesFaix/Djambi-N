@@ -9,37 +9,18 @@ type PlayerStatusChangeService(eventServ : EventService,
                                indirectEffectsServ : IndirectEffectsService) =
 
     let getFinalAcceptDrawEffects(game : Game, request : PlayerStatusChangeRequest) : Effect list =
-        let otherLivingPlayers = 
+        let otherLivingPlayersNotAcceptingADraw = 
             game.players 
             |> List.filter (fun p -> 
                 p.id <> request.playerId &&
                 p.status = Alive
             )
-
-        let nonNeutralPlayers = 
-            otherLivingPlayers
-            |> List.filter (fun p -> p.userId.IsSome)
-
-        let neutralPlayers = 
-            otherLivingPlayers
-            |> List.filter (fun p -> p.userId.IsNone)
-
-        if nonNeutralPlayers.IsEmpty
+            
+        if otherLivingPlayersNotAcceptingADraw.IsEmpty
         then
-            //If accepting draw, and everyone has accepted
-            let neutralPlayerConcedeEffects = 
-                neutralPlayers 
-                |> List.map (fun p -> 
-                    Effect.PlayerStatusChanged{ 
-                        playerId = p.id
-                        oldStatus=p.status
-                        newStatus=Conceded
-                    }
-                )
-
-            let finalEffect = Effect.GameStatusChanged { oldValue = InProgress; newValue = Over }
-            let fx = List.append neutralPlayerConcedeEffects [finalEffect]
-            fx
+            [
+                Effect.GameStatusChanged { oldValue = InProgress; newValue = Over }
+            ]
         else [] //If not last player to accept, nothing special happens
    
     member x.getUpdatePlayerStatusEvent (game : Game, request : PlayerStatusChangeRequest) (session : Session) : CreateEventRequest HttpResult = 
