@@ -37,14 +37,12 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
     }
 
     componentDidMount() {
-        if (this.props.game === null) {
-            K.api
-                .getGame(this.props.gameId)
-                .then(game => this.props.load(game))
-                .catch(reason => {
-                    alert("Get game failed because " + reason);
-                });
-        }
+        K.api
+            .getGame(this.props.gameId)
+            .then(game => this.props.load(game))
+            .catch(reason => {
+                alert("Get game failed because " + reason);
+            });
     }
 
 //---Event handlers---

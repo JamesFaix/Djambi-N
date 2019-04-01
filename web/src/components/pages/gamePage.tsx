@@ -118,9 +118,7 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
     }
 
     componentDidMount() {
-        if (this.props.game === null) {
-            this.load();
-        }
+        this.load();
     }
 
     //--- ---

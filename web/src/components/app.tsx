@@ -63,6 +63,8 @@ export default class App extends React.Component<AppProps, AppState> {
             });
 
             eventSource.onmessage = (e => {
+                console.log("SSE Message");
+
                 const updateJson = e.data as string;
                 const update = JSON.parse(updateJson) as StateAndEventResponse;
                 if (this.state.game === null
