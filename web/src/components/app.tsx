@@ -65,7 +65,12 @@ export default class App extends React.Component<AppProps, AppState> {
             eventSource.onmessage = (e => {
                 const updateJson = e.data as string;
                 const update = JSON.parse(updateJson) as StateAndEventResponse;
-                this.updateGame(update);
+                if (this.state.game === null
+                    || update.game.id === this.state.game.id) {
+                    this.updateGame(update);
+                } else {
+                    //TODO: (#266) Show non-disruptive toast notification when another game you are in has been updated
+                }
             });
 
             eventSource.onerror = (e => {
