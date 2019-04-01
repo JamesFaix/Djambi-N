@@ -49,4 +49,5 @@ type SseSubscriber(userId : int,
     interface ISubscriber with
         member x.userId = userId
         member x.send response =
+            Console.WriteLine(printf "Sending event to User %i" userId)
             response |> mapReponseToSseEvent |> writeSseEvent 

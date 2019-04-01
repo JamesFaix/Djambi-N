@@ -59,6 +59,7 @@ type HttpUtility(cookieDomain : string,
     member x.handle<'a> (func : HttpContext -> 'a AsyncHttpResult) : HttpHandler =
 
         fun (next : HttpFunc) (ctx : HttpContext) ->
+            Console.WriteLine(printf "%s %s" ctx.Request.Method (ctx.Request.Path.ToString()))
             task {
                 try
                     let! result = func ctx
