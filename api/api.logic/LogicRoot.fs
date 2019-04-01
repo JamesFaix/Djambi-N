@@ -1,41 +1,64 @@
 ﻿namespace Djambi.Api.Logic
 
+open Djambi.Api.Db.Interfaces
 open Djambi.Api.Logic.Interfaces
 open Djambi.Api.Logic.Managers
 open Djambi.Api.Logic.Services
-open Djambi.Api.Db.Interfaces
 
 type ServiceRoot(db : IDbRoot) =
-    member x.boards = BoardService()
-    member x.gameCrud = GameCrudService(db.games)
-    member x.players = PlayerService(db.games)
-    member x.selectionOptions = SelectionOptionsService()
-    member x.sessions = SessionService(db.sessions, db.users)
-    member x.users = UserService(db.users)
-    member x.gameStart = GameStartService(x.players, x.selectionOptions)
-    member x.events = EventService(x.gameStart)
-    member x.indirectEffects = IndirectEffectsService(x.events, x.selectionOptions)
-    member x.playerStatusChanges = PlayerStatusChangeService(x.events, x.indirectEffects)
-    member x.selections = SelectionService(x.selectionOptions)
-    member x.turns = TurnService(x.events, x.indirectEffects, x.selectionOptions)
+    let _boards = BoardService()
+    let _gameCrud = GameCrudService(db.games)
+    let _notifications = NotificationService()
+    let _players = PlayerService(db.games)
+    let _selectionOptions = SelectionOptionsService()
+    let _sessions = SessionService(db.sessions, db.users)
+    let _users = UserService(db.users)
+    let _gameStart = GameStartService(_players, _selectionOptions)
+    let _events = EventService(_gameStart)
+    let _indirectEffects = IndirectEffectsService(_events, _selectionOptions)
+    let _playerStatusChanges = PlayerStatusChangeService(_events, _indirectEffects)
+    let _selections = SelectionService(_selectionOptions)
+    let _turns = TurnService(_events, _indirectEffects, _selectionOptions)
+
+    member x.boards = _boards
+    member x.events = _events
+    member x.gameCrud = _gameCrud
+    member x.gameStart = _gameStart
+    member x.indirectEffects = _indirectEffects
+    member x.notifications = _notifications
+    member x.players = _players
+    member x.playerStatusChanges = _playerStatusChanges
+    member x.selectionOptions = _selectionOptions
+    member x.selections = _selections
+    member x.sessions = _sessions
+    member x.turns = _turns
+    member x.users = _users
 
     interface IServiceRoot with
+        member x.notifications = x.notifications :> INotificationService
         member x.sessions = x.sessions :> ISessionService
 
 type ManagerRoot(db : IDbRoot, services : ServiceRoot) =
-    member x.boards = BoardManager(services.boards)
-    member x.games = GameManager(db.events,
-                                 services.events, 
-                                 services.gameCrud, 
-                                 db.games,
-                                 services.gameStart, 
-                                 services.players, 
-                                 services.playerStatusChanges,
-                                 services.selections,
-                                 services.turns)
-    member x.sessions = SessionManager(services.sessions)
-    member x.snapshots = SnapshotManager(db.events, db.games, db.snapshots)
-    member x.users = UserManager(services.users)
+    let _boards = BoardManager(services.boards)
+    let _games = GameManager(db.events,
+                             services.events, 
+                             services.gameCrud, 
+                             db.games,
+                             services.gameStart, 
+                             services.notifications,
+                             services.players, 
+                             services.playerStatusChanges,
+                             services.selections,
+                             services.turns)
+    let _sessions = SessionManager(services.sessions)
+    let _snapshots = SnapshotManager(db.events, db.games, db.snapshots)
+    let _users = UserManager(services.users)
+
+    member x.boards = _boards
+    member x.games = _games
+    member x.sessions = _sessions
+    member x.snapshots = _snapshots
+    member x.users = _users
 
     interface IManagerRoot with
         member x.boards = x.boards :> IBoardManager

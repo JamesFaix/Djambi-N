@@ -92,3 +92,6 @@
  [<Literal>]
  let snapshotLoad = "/games/%i/snapshots/%i/load-request"
  let snapshotLoadFormat = create2<int, int>(snapshotLoad)
+
+ [<Literal>]
+ let notificationsForCurrentUser = "/notifications"

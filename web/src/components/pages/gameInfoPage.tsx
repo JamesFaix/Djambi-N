@@ -16,11 +16,12 @@ import GameStatusIcon from '../icons/gameStatusIcon';
 
 export interface GameInfoPageProps {
     user : User,
-    gameId : number
+    gameId : number,
+    game : Game,
+    load : (game:Game) => Promise<void>
 }
 
 export interface GameInfoPageState {
-    game : Game,
     guestName : string,
     redirectUrl : string
 }
@@ -30,7 +31,6 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
     constructor(props : GameInfoPageProps) {
         super(props);
         this.state = {
-            game : null,
             guestName : "",
             redirectUrl : null
         };
@@ -39,9 +39,7 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
     componentDidMount() {
         K.api
             .getGame(this.props.gameId)
-            .then(game => {
-                this.setState({game : game});
-            })
+            .then(game => this.props.load(game))
             .catch(reason => {
                 alert("Get game failed because " + reason);
             });
@@ -60,21 +58,21 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
     }
 
     private updateGame(newGame : Game) {
-        if (newGame.status === GameStatus.Canceled) {
-            this.setState({
-                game : newGame,
-                redirectUrl: K.routes.home()
-            });
-        } else {
-            this.setState({game : newGame});
-        }
+        this.props.load(newGame)
+        .then(_ => {
+            if (newGame.status === GameStatus.Canceled) {
+                this.setState({
+                    redirectUrl: K.routes.home()
+                });
+            }
+        })
     }
 
     private startOnClick() {
         K.api
-            .startGame(this.state.game.id)
+            .startGame(this.props.game.id)
             .then(_ => {
-                this.setState({ redirectUrl : K.routes.game(this.state.game.id) });
+                this.setState({ redirectUrl : K.routes.game(this.props.game.id) });
             })
             .catch(reason => {
                 alert("Game start failed because " + reason);
@@ -145,7 +143,7 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
 
             return (
                 <EnterButton
-                    to={K.routes.game(this.state.game.id)}
+                    to={K.routes.game(this.props.game.id)}
                     hint="View game"
                 />
             );
@@ -190,11 +188,11 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
                     <CreateGamePageButton/>
                     <FindGamesPageButton/>
                 </div>
-                {this.renderLobbyDetails(this.state.game)}
+                {this.renderLobbyDetails(this.props.game)}
                 <br/>
                 <GameInfoPlayersTable
                     user={this.props.user}
-                    game={this.state.game}
+                    game={this.props.game}
                     addPlayer={(gameId, request) => this.addPlayer(gameId, request)}
                     removePlayer={(gameId, playerId) => this.removePlayer(gameId, playerId)}
                 />

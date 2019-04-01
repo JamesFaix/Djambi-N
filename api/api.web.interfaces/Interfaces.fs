@@ -16,6 +16,9 @@ type IGameController =
     abstract member updateGameParameters : gameId:int -> HttpHandler
     abstract member startGame : gameId:int -> HttpHandler
 
+type INotificationsController =
+    abstract member getNotificationsForCurrentUser : HttpHandler
+
 type IPlayerController =
     abstract member addPlayer : gameId:int -> HttpHandler
     abstract member removePlayer : gameId:int * playerId:int -> HttpHandler
@@ -46,6 +49,7 @@ type IWebRoot =
     abstract member boards : IBoardController
     abstract member events : IEventController
     abstract member games : IGameController
+    abstract member notifications : INotificationsController
     abstract member players : IPlayerController
     abstract member sessions : ISessionController
     abstract member snapshots : ISnapshotController

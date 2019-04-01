@@ -1,7 +1,9 @@
 ﻿namespace Djambi.Api.Common.Control
 
+open System
 open System.Threading.Tasks
 open FSharp.Control.Tasks
+open Djambi.Api.Common.Collections
 
 type HttpResult<'a> = Result<'a, HttpException>
 
@@ -163,3 +165,19 @@ module AsyncHttpResult =
 
     let errorTask (ex : HttpException) : 'a AsyncHttpResult =
         ex |> Error |> Task.FromResult
+
+    let whenAll (tasks : unit AsyncHttpResult seq) : unit AsyncHttpResult =
+        task {
+            let errors = new ArrayList<string>()
+                
+            for t in tasks do
+                match! t with
+                | Ok () -> ()
+                | Error x -> errors.Add x.Message
+                ()
+                
+            return 
+                match errors.Count with
+                | 0 -> Ok ()
+                | _ -> Error <| HttpException (500, String.Join("\n", errors))
+        }

@@ -1,27 +1,40 @@
 ﻿namespace Djambi.Api.Web
 
+open Djambi.Api.Logic.Interfaces
+open Djambi.Api.Web
 open Djambi.Api.Web.Controllers
 open Djambi.Api.Web.Interfaces
-open Djambi.Api.Web
-open Djambi.Api.Logic.Interfaces
 
 type WebRoot(cookieDomain : string,
              managers : IManagerRoot,
              services : IServiceRoot) =
-    member x.util = HttpUtility(cookieDomain, services.sessions)
-    member x.boards = BoardController(managers.boards, x.util)
-    member x.events = EventController(managers.events, x.util)
-    member x.games = GameController(managers.games, x.util)
-    member x.players = PlayerController(x.util, managers.players)
-    member x.sessions = SessionController(x.util, managers.sessions)
-    member x.snapshots = SnapshotController(x.util, managers.snapshots)
-    member x.turns = TurnController(x.util, managers.turns)
-    member x.users = UserController(x.util, managers.users)
+    let _util = HttpUtility(cookieDomain, services.sessions)
+    let _boards = BoardController(managers.boards, _util)
+    let _events = EventController(managers.events, _util)
+    let _games = GameController(managers.games, _util)
+    let _notifications = NotificationController(_util, services.notifications)
+    let _players = PlayerController(_util, managers.players)
+    let _sessions = SessionController(_util, managers.sessions)
+    let _snapshots = SnapshotController(_util, managers.snapshots)
+    let _turns = TurnController(_util, managers.turns)
+    let _users = UserController(_util, managers.users)
+
+    member x.util = _util
+    member x.boards = _boards
+    member x.events = _events
+    member x.games = _games
+    member x.notifications = _notifications
+    member x.players = _players
+    member x.sessions = _sessions
+    member x.snapshots = _snapshots
+    member x.turns = _turns
+    member x.users = _users
 
     interface IWebRoot with
         member x.boards = x.boards :> IBoardController
         member x.events = x.events :> IEventController
         member x.games = x.games :> IGameController
+        member x.notifications = x.notifications :> INotificationsController
         member x.players = x.players :> IPlayerController
         member x.sessions = x.sessions :> ISessionController
         member x.snapshots = x.snapshots :> ISnapshotController

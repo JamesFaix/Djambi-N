@@ -1,18 +1,19 @@
 ﻿namespace Djambi.Api.Logic.Managers
 
-open Djambi.Api.Logic.Services
 open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
-open Djambi.Api.Model
-open Djambi.Api.Logic.Interfaces
-open Djambi.Api.Logic
 open Djambi.Api.Db.Interfaces
+open Djambi.Api.Logic
+open Djambi.Api.Logic.Interfaces
+open Djambi.Api.Logic.Services
+open Djambi.Api.Model
 
 type GameManager(eventRepo : IEventRepository,
                  eventServ : EventService,
                  gameCrudServ : GameCrudService,
                  gameRepo : IGameRepository,
                  gameStartServ : GameStartService,
+                 notificationServ : INotificationService,
                  playerServ : PlayerService,
                  playerStatusChangeServ : PlayerStatusChangeService,
                  selectionServ : SelectionService,
@@ -24,6 +25,24 @@ type GameManager(eventRepo : IEventRepository,
         || game.createdByUserId = self.id
         || game.players |> List.exists(fun p -> p.userId = Some self.id)
         
+    let isPublishable (event : Event) : bool =
+        match event.kind with
+        | EventKind.GameCanceled
+        | EventKind.GameParametersChanged
+        | EventKind.GameStarted
+        | EventKind.PlayerJoined
+        | EventKind.PlayerRemoved
+        | EventKind.PlayerStatusChanged
+        | EventKind.TurnCommitted
+            -> true
+        | _ -> false
+        
+    let sendIfPublishable (response : StateAndEventResponse) : StateAndEventResponse AsyncHttpResult =
+        if isPublishable response.event
+        then notificationServ.send response
+             |> thenMap (fun _ -> response)
+        else okTask response 
+
     let processEvent (gameId : int) (getCreateEventRequest : Game -> CreateEventRequest HttpResult) : StateAndEventResponse AsyncHttpResult = 
         gameRepo.getGame gameId
         |> thenBindAsync (fun game -> 
@@ -33,6 +52,7 @@ type GameManager(eventRepo : IEventRepository,
                 eventRepo.persistEvent (eventRequest, game, newGame)
             )
         )
+        |> thenBindAsync sendIfPublishable
     
     let processEventAsync (gameId : int) (getCreateEventRequest : Game -> CreateEventRequest AsyncHttpResult): StateAndEventResponse AsyncHttpResult = 
         gameRepo.getGame gameId
@@ -43,6 +63,7 @@ type GameManager(eventRepo : IEventRepository,
                 eventRepo.persistEvent (eventRequest, game, newGame)
             )
         )
+        |> thenBindAsync sendIfPublishable
 
     interface IEventManager with    
         member x.getEvents (gameId, query) session =

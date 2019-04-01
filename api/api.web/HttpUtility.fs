@@ -59,12 +59,17 @@ type HttpUtility(cookieDomain : string,
     member x.handle<'a> (func : HttpContext -> 'a AsyncHttpResult) : HttpHandler =
 
         fun (next : HttpFunc) (ctx : HttpContext) ->
+            Console.WriteLine(printf "%s %s" ctx.Request.Method (ctx.Request.Path.ToString()))
             task {
                 try
                     let! result = func ctx
                     match result with
                     | Ok value ->
-                        return! json value next ctx
+                        match ctx.Response.ContentType with
+                        | "text/event-stream" ->
+                            return! next ctx                         
+                        | _ ->
+                            return! json value next ctx
                     | Error ex ->
                         ctx.SetStatusCode ex.statusCode
                         return! json ex.Message next ctx
