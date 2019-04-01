@@ -171,10 +171,6 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
     }
 
     private renderPanels() {
-        console.log("Render panels");
-        console.log(this.props.game);
-        console.log(this.props.boardView);
-
         //The game is fetched from the API on page load. There's not much to render before that.
         if (this.props.game === null || this.props.boardView === null) {
             return "";

@@ -52,9 +52,6 @@ export default class App extends React.Component<AppProps, AppState> {
     }
 
     private setUser (user : User) : void {
-        console.log("Set user");
-        console.log(user);
-
         if (user !== null) {
             const eventSource = new EventSource(
                 Environment.apiAddress() + "/notifications",
@@ -63,15 +60,11 @@ export default class App extends React.Component<AppProps, AppState> {
 
             eventSource.onopen = (e => {
                 console.log("SSE Open");
-                console.log(e);
             });
 
             eventSource.onmessage = (e => {
-                console.log("SSE Message");
-                console.log(e);
                 const updateJson = e.data as string;
                 const update = JSON.parse(updateJson) as StateAndEventResponse;
-                console.log(update);
                 this.updateGame(update);
             });
 
@@ -96,9 +89,6 @@ export default class App extends React.Component<AppProps, AppState> {
     }
 
     private async updateGame(response : StateAndEventResponse) : Promise<void> {
-        console.log("Update game");
-        console.log(response);
-
         const boardView = await this.boardViewService.getBoardView(response.game);
 
         const newHistory = [response.event];
@@ -112,10 +102,6 @@ export default class App extends React.Component<AppProps, AppState> {
     }
 
     private async loadGame(game : Game, history : Event[]) : Promise<void> {
-        console.log("Load game");
-        console.log(game);
-        console.log(history);
-
         const boardView = await this.boardViewService.getBoardView(game);
 
         this.setState({
