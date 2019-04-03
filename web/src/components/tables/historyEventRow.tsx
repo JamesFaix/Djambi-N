@@ -38,7 +38,7 @@ export default class HistoryEventRow extends React.Component<HistoryEventRowProp
                                     {K.copy.getEventMessage(this.props.game, e)}
                                 </td>
                                 <td className={K.classes.combine([K.classes.borderless, K.classes.lightText, K.classes.rightAligned])} style={cellStyle}>
-                                    {K.dates.format(e.createdOn)}
+                                    {K.dates.format(e.createdBy.time)}
                                 </td>
                             </tr>
                         </tbody>

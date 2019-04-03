@@ -66,7 +66,7 @@ export default class GameInfoPlayersTable extends React.Component<GameInfoPlayer
                 };
 
                 if (self.privileges.find(p => p === Privilege.EditPendingGames)
-                    || game.createdByUserId === self.id
+                    || game.createdBy.userId === self.id
                     || seat.player.name === self.name
                     || (seat.player.kind === PlayerKind.Guest
                         && seat.player.userId === self.id)) {
