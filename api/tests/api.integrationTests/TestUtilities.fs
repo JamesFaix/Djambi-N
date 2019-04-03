@@ -121,8 +121,11 @@ let defaultGame : Game =
     {
         id = 0
         status = GameStatus.Pending
-        createdOn = DateTime.MinValue
-        createdByUserId = 0
+        createdBy = {
+            userId = 0
+            userName = ""
+            time = DateTime.MinValue
+        }
         parameters = 
             {
                 allowGuests = false

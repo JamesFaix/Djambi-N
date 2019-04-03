@@ -1,4 +1,5 @@
 CREATE PROCEDURE [dbo].[Events_Get]
+    @EventId INT,
     @GameId INT,
     @Ascending BIT = 1,
     @MaxResults INT = NULL,
@@ -11,16 +12,20 @@ BEGIN
     -- Stash all the events for the game in a temp table
 
     SELECT
-        EventId,
-        GameId,
-        CreatedByUserId,
-        ActingPlayerId,
-        CreatedOn,
-        EventKindId,
-        EffectsJson
+        e.EventId,
+        e.GameId,
+        e.CreatedByUserId,
+        u.Name as CreatedByUserName,
+        e.ActingPlayerId,
+        e.CreatedOn,
+        e.EventKindId,
+        e.EffectsJson
     INTO #events
-    FROM Events
+    FROM Events e
+        INNER JOIN Users u
+            ON e.CreatedByUserId = u.UserId
     WHERE GameId = @GameId
+        AND (@EventId IS NULL OR EventId = @EventId)
 
     -- Filter temp table
 

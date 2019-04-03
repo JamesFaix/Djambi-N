@@ -151,7 +151,7 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
 
         if (game.status === GameStatus.Pending &&
             game.players.length > 1 &&
-            this.props.user.id === game.createdByUserId) {
+            this.props.user.id === game.createdBy.userId) {
 
             return (
                 <Button

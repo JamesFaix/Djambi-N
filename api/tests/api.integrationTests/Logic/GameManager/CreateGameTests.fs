@@ -26,7 +26,7 @@ type CreateGameTests() =
             game.parameters.description |> shouldBe parameters.description
             game.parameters.isPublic |> shouldBe parameters.isPublic
             game.parameters.regionCount |> shouldBe parameters.regionCount
-            game.createdByUserId |> shouldBe session.user.id
+            game.createdBy.userId |> shouldBe session.user.id
         }
 
     [<Fact>]

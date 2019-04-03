@@ -21,7 +21,7 @@ let ensureHas (privilege : Privilege) (session : Session) : Unit HttpResult =
 let ensureCreatorOrEditPendingGames (session : Session) (game : Game) : Unit HttpResult =
     let self = session.user
     if self.has EditPendingGames
-        || self.id = game.createdByUserId
+        || self.id = game.createdBy.userId
     then Ok ()
     else Error <| HttpException(403, noPrivilegeOrCreatorErrorMessage)
 

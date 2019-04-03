@@ -49,3 +49,11 @@ type CreateUserRequest =
         name : string
         password : string
     }
+
+[<ClientType(ClientSection.User)>]      
+type CreationSource =
+    {    
+        userId : int
+        userName : string
+        time : DateTime
+    }

@@ -66,7 +66,7 @@ type PlayerService(gameRepo : IGameRepository) =
                 | None -> Error <| HttpException(400, "Cannot remove neutral players from game.")
                 | Some x ->
                     if not <| (self.has EditPendingGames
-                        || game.createdByUserId = self.id
+                        || game.createdBy.userId = self.id
                         || x = self.id)
                     then Error <| HttpException(403, "Cannot remove other users from game.")        
                     else 
@@ -85,7 +85,7 @@ type PlayerService(gameRepo : IGameRepository) =
                             effects.Add(Effect.PlayerRemoved { playerId = pId })
 
                         //Cancel game if creator quit
-                        if game.createdByUserId = player.userId.Value
+                        if game.createdBy.userId = player.userId.Value
                             && player.kind = PlayerKind.User
                         then 
                             effects.Add(Effect.GameStatusChanged { oldValue = GameStatus.Pending; newValue = GameStatus.Canceled })

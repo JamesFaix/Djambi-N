@@ -53,10 +53,10 @@ export default class SnapshotsTable extends React.Component<SnapshotsTableProps>
                     {snapshot.description}
                     </td>
                 <td>
-                    {K.dates.format(snapshot.createdOn)}
+                    {K.dates.format(snapshot.createdBy.time)}
                 </td>
                 <td className={K.classes.rightAligned}>
-                    {snapshot.createdByUserId}
+                    {snapshot.createdBy.userName}
                 </td>
                 <td className={K.classes.centerAligned}>
                     <Button

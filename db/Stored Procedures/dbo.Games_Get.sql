@@ -15,6 +15,7 @@ BEGIN
 		g.[Description],
 		g.RegionCount,
 		g.CreatedByUserId,
+		u.Name as CreatedByUserName,
 		g.CreatedOn,
 		g.AllowGuests,
 		g.IsPublic,
@@ -22,6 +23,8 @@ BEGIN
 		g.PiecesJson,
 		g.CurrentTurnJson
     FROM Games g
+			INNER JOIN Users u
+				ON g.CreatedByUserId = u.UserId
 
 	WHERE (@GameId IS NULL OR @GameId = g.GameId)
 		AND (@DescriptionContains IS NULL OR g.[Description] LIKE '%' + @DescriptionContains + '%')

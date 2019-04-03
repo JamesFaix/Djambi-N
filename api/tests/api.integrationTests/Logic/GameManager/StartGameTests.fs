@@ -33,7 +33,7 @@ type StartGameTests() =
             for p in updatedGame.players do
                 p.colorId |> shouldNotBe None
                 p.startingRegion |> shouldNotBe None
-                p.status |> shouldBe PlayerStatus.Alive
+                p.status |> shouldBe (if p.kind = Neutral then AcceptsDraw else Alive)
         }
 
     [<Fact>]

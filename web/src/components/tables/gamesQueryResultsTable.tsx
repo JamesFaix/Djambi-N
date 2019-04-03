@@ -49,9 +49,9 @@ export default class GamesQueryResultsTable extends React.Component<GamesQueryRe
                     <GameStatusIcon status={game.status}/>
                 </td>
                 <td>
-                    {K.dates.format(game.createdOn)}
+                    {K.dates.format(game.createdBy.time)}
                 </td>
-                <td>{game.createdByUserId}</td>
+                <td>{game.createdBy.userName}</td>
                 <td className={K.classes.centerAligned}>
                     {game.parameters.regionCount}
                 </td>

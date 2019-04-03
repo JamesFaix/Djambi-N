@@ -19,7 +19,7 @@ type NotificationService() =
             |> ignore
 
         member x.send response =
-            let creatorId = response.event.createdByUserId
+            let creatorId = response.event.createdBy.userId
 
             let otherUserIds =
                 response.game.players
