@@ -18,7 +18,7 @@ type GameStartService(playerServ : PlayerService,
         Security.ensureCreatorOrEditPendingGames session game
         |> Result.bindAsync (fun _ ->    
             if game.players
-                |> List.filter (fun p -> p.kind <> PlayerKind.Neutral)
+                |> List.filter (fun p -> p.kind <> Neutral)
                 |> List.length = 1
             then errorTask <| HttpException(400, "Cannot start game with only one player.")
             else 
@@ -28,7 +28,7 @@ type GameStartService(playerServ : PlayerService,
                         //The order is very important for effect processing. Neutral players must be created before the game start.                    
                         List.append 
                             addNeutralPlayerEffects 
-                            [Effect.GameStatusChanged { oldValue = GameStatus.Pending; newValue = GameStatus.InProgress }]
+                            [Effect.GameStatusChanged { oldValue = GameStatus.Pending; newValue = InProgress }]
 
                     {
                         kind = EventKind.GameStarted
@@ -64,7 +64,7 @@ type GameStartService(playerServ : PlayerService,
 
         let nonNeutralPlayers =
             players
-            |> List.filter (fun p -> p.kind <> PlayerKind.Neutral)
+            |> List.filter (fun p -> p.kind <> Neutral)
             |> List.shuffle
             |> Seq.mapi (fun i p -> (i, p))
 
@@ -72,7 +72,10 @@ type GameStartService(playerServ : PlayerService,
             dict.[p.name] <- { dict.[p.name] with startingTurnNumber = Some i }
 
         dict.Values 
-        |> Seq.map (fun p -> { p with status = PlayerStatus.Alive })
+        |> Seq.map (fun p -> 
+            let status =  if p.kind = Neutral then AcceptsDraw else Alive
+            { p with status = status }
+        )
         |> Seq.toList
 
     member x.createPieces(board : BoardMetadata, players : Player list) : Piece list =
@@ -109,7 +112,7 @@ type GameStartService(playerServ : PlayerService,
         let game = 
             { 
                 game with 
-                    status = GameStatus.InProgress
+                    status = InProgress
                     pieces = x.createPieces(board, players) //Starting conditions must first be assigned
                     players = players
                     turnCycle = players //Starting conditions must first be assigned

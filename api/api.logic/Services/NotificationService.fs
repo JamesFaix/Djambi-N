@@ -14,7 +14,7 @@ type NotificationService() =
             subscribers.[subscriber.userId] <- subscriber
 
         member x.remove userId =
-            Console.WriteLine(printf "User %i unsubscribed from notifications%s" userId)
+            Console.WriteLine(printf "User %i unsubscribed from notifications" userId)
             subscribers.TryRemove userId
             |> ignore
 

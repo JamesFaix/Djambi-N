@@ -32,7 +32,7 @@ export default class PlayerStatusIcon extends React.Component<PlayerStatusIconPr
                 return {
                      hint: "Will accept draw",
                     kind: IconKind.AcceptDraw,
-                    isActive: true
+                    isActive: player.kind !== PlayerKind.Neutral
                     };
             case PlayerStatus.Conceded:
                 return {

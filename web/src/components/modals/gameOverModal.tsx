@@ -70,10 +70,9 @@ export default class GameOverModal extends React.Component<GameOverModalProps> {
 
         const drawers = players.filter(p => p.status === PlayerStatus.AcceptsDraw);
         if (drawers.length > 0) {
-            const mostDrawers = drawers.slice(0, drawers.length-2);
-            const lastDrawer = drawers[drawers.length-1];
-            let list = mostDrawers.map(p => p.name).join(", ");
-            list = list + "and " + lastDrawer.name;
+            const last = drawers.pop();
+            let list = drawers.map(p => p.name).join(", ");
+            list = list + " and " + last.name;
             return Sprintf.sprintf("%s accepted a draw.", list);
         }
 

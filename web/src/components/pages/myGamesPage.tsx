@@ -40,7 +40,7 @@ export default class MyGamesPage extends React.Component<MyGamesPageProps, MyGam
         K.api
             .getGames(query)
             .then(games => {
-                this.setState({games : games});
+                this.setState({games : games.reverse()});
             })
             .catch(reason => {
                 alert("Get games failed because " + reason);
