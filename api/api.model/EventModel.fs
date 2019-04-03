@@ -1,7 +1,6 @@
 ﻿[<AutoOpen>]
 module Djambi.Api.Model.EventModel
 
-open System
 open Djambi.ClientGenerator.Annotations
 
 [<ClientType(ClientSection.Events)>]
@@ -167,8 +166,7 @@ type EventKind =
 type Event =
     {
         id : int
-        createdByUserId : int
-        createdOn : DateTime
+        createdBy : CreationSource
         actingPlayerId : int option
         kind : EventKind
         effects : Effect list

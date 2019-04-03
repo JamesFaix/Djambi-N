@@ -44,6 +44,7 @@ type GameSqlModel =
         gameId : int
         createdOn : DateTime
         createdByUserId : int
+        createdByUserName : string
         gameStatusId : byte
         //Game parameters
         description : string
@@ -62,6 +63,7 @@ type EventSqlModel =
         eventId : int
         gameId : int
         createdByUserId : int
+        createdByUserName : string
         actingPlayerId : int Nullable
         createdOn : DateTime
         eventKindId : byte
@@ -74,6 +76,7 @@ type SnapshotSqlModel =
         snapshotId : int
         gameId : int
         createdByUserId : int
+        createdByUserName : string
         createdOn : DateTime
         description : string
         snapshotJson : string    

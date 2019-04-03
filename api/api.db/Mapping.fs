@@ -132,8 +132,11 @@ let mapGameResponse(sqlModel : GameSqlModel) : Game =
     {
         id = sqlModel.gameId
         status = sqlModel.gameStatusId |> mapGameStatusId
-        createdOn = sqlModel.createdOn
-        createdByUserId = sqlModel.createdByUserId
+        createdBy = {
+            userId = sqlModel.createdByUserId
+            userName = sqlModel.createdByUserName
+            time = sqlModel.createdOn
+        }
         parameters = 
             {
                 regionCount = sqlModel.regionCount
@@ -151,9 +154,12 @@ let mapEventResponse (sqlModel : EventSqlModel) : Event =
     {
         id = sqlModel.eventId
         kind = sqlModel.eventKindId |> mapEventKindId
-        createdByUserId = sqlModel.createdByUserId
+        createdBy = {
+            userId = sqlModel.createdByUserId
+            userName = sqlModel.createdByUserName
+            time = sqlModel.createdOn
+        }
         actingPlayerId = sqlModel.actingPlayerId |> Option.ofNullable
-        createdOn = sqlModel.createdOn
         effects = JsonUtility.deserializeList sqlModel.effectsJson
     }
 
@@ -164,8 +170,11 @@ let mapSnapshotFromSql (sqlModel : SnapshotSqlModel) : Snapshot =
     let data : SnapshotJson = JsonUtility.deserialize sqlModel.snapshotJson
     {
         id = sqlModel.snapshotId
-        createdByUserId = sqlModel.createdByUserId
-        createdOn = sqlModel.createdOn
+        createdBy = {
+            userId = sqlModel.createdByUserId
+            userName = sqlModel.createdByUserName
+            time = sqlModel.createdOn
+        }
         description = sqlModel.description
         game = data.game
         history = data.history
@@ -174,7 +183,10 @@ let mapSnapshotFromSql (sqlModel : SnapshotSqlModel) : Snapshot =
 let mapSnapshotInfoFromSql (sqlModel : SnapshotSqlModel) : SnapshotInfo =
     {
         id = sqlModel.snapshotId
-        createdByUserId = sqlModel.createdByUserId
-        createdOn = sqlModel.createdOn
+        createdBy = {
+            userId = sqlModel.createdByUserId
+            userName = sqlModel.createdByUserName
+            time = sqlModel.createdOn
+        }
         description = sqlModel.description
     }

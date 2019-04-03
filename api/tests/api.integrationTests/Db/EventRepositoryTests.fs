@@ -244,14 +244,16 @@ type EventRepositoryTests() =
 
             let e1 = events.[0]
             e1.kind |> shouldBe EventKind.PlayerJoined
-            e1.createdByUserId |> shouldBe user.id
+            e1.createdBy.userId |> shouldBe user.id
+            e1.createdBy.userName |> shouldBe user.name
             e1.effects.Length |> shouldBe 1
             
             e1.effects.[0] |> shouldBe (PlayerAddedEffect.fromRequest p2Request)
             
             let e2 = events.[1]
             e2.kind |> shouldBe EventKind.PlayerJoined
-            e2.createdByUserId |> shouldBe user.id
+            e2.createdBy.userId |> shouldBe user.id
+            e2.createdBy.userName |> shouldBe user.name
             e2.effects.Length |> shouldBe 1
 
             e2.effects.[0] |> shouldBe (PlayerAddedEffect.fromRequest p3Request)

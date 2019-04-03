@@ -22,7 +22,7 @@ type GameManager(eventRepo : IEventRepository,
     let isGameViewableByActiveUser (session : Session) (game : Game) : bool =
         let self = session.user
         game.parameters.isPublic
-        || game.createdByUserId = self.id
+        || game.createdBy.userId = self.id
         || game.players |> List.exists(fun p -> p.userId = Some self.id)
         
     let isPublishable (event : Event) : bool =

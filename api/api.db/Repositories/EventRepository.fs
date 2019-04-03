@@ -1,6 +1,5 @@
 ﻿namespace Djambi.Api.Db.Repositories
 
-open System
 open System.Linq
 open Djambi.Api.Common.Collections
 open Djambi.Api.Common.Control.AsyncHttpResult
@@ -64,17 +63,15 @@ type EventRepository(ctxProvider : CommandContextProvider,
 
             CommandProcessor.executeTransactionallyAndReturnLastResult mostCommands lastCommand ctxProvider
             |> thenBindAsync (fun eventId -> 
-                let e = {
-                    id = eventId
-                    createdByUserId = request.createdByUserId
-                    createdOn = DateTime.UtcNow
-                    actingPlayerId = request.actingPlayerId
-                    kind = request.kind
-                    effects = request.effects
-                }
-
                 (gameRepo :> IGameRepository).getGame newGame.id
-                |> thenMap (fun game -> { game = game; event = e })
+                |> thenBindAsync (fun game -> 
+                    Commands2.getEvent (game.id, eventId)
+                    |> Command.execute ctxProvider
+                    |> thenMap (fun event -> { 
+                        game = game
+                        event = Mapping.mapEventResponse event                     
+                    })
+                )
             )
     
         member x.getEvents (gameId, query) =

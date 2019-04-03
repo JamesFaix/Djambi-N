@@ -210,19 +210,20 @@ module Commands =
             .param("EffectsJson", effectsJson)
             .returnsSingle<int>()
 
-    let getEvents (gameId : int,
+    let getEvents (eventId : int option,
+                   gameId : int,
                    ascending : bool,
                    maxResults : int option,
                    thresholdTime : DateTime option,
                    thresholdEventId : int option) =
         proc("Events_Get")
             .forEntity("Event")
+            .param("EventId", eventId)
             .param("GameId", gameId)
             .param("Ascending", ascending)
             .param("MaxResults", maxResults)
             .param("ThresholdTime", thresholdTime)
             .param("ThresholdEventId", thresholdEventId)
-            .returnsMany<EventSqlModel>()
 
     //--- Snapshots ---
 
@@ -359,11 +360,22 @@ module Commands2 =
                               serialize request.effects)
 
     let getEvents (gameId : int, query : EventsQuery) =
-        Commands.getEvents (gameId,
+        (Commands.getEvents (None,
+                            gameId,
                             mapResultsDirectionToAscendingBool query.direction,
                             query.maxResults,
                             query.thresholdTime,
-                            query.thresholdEventId)
+                            query.thresholdEventId))                          
+            .returnsMany<EventSqlModel>()
+                            
+    let getEvent (gameId : int, eventId : int) =
+        (Commands.getEvents (Some eventId,
+                            gameId,
+                            mapResultsDirectionToAscendingBool Ascending,
+                            None,
+                            None,
+                            None))
+            .returnsSingle<EventSqlModel>()
 
     let getSnapshots (gameId : int) =
         Commands.getSnapshots(None, Some gameId)

@@ -11,21 +11,27 @@ BEGIN
 
     IF @SnapshotId IS NOT NULL
         SELECT SnapshotId,
-            GameId,
-            CreatedByUserId,
-            CreatedOn,
-            Description,
-            SnapshotJson
-        FROM Snapshots
+            s.GameId,
+            s.CreatedByUserId,
+            u.Name as CreatedByUserName,
+            s.CreatedOn,
+            s.Description,
+            s.SnapshotJson
+        FROM Snapshots s
+            INNER JOIN Users u
+                ON s.CreatedByUserId = u.UserId
         WHERE SnapshotId = @SnapshotId
     ELSE IF @GameId IS NOT NULL
-        SELECT SnapshotId,
-            GameId,
-            CreatedByUserId,
-            CreatedOn,
-            Description,
-            SnapshotJson
-        FROM Snapshots
+        SELECT s.SnapshotId,
+            s.GameId,
+            s.CreatedByUserId,
+            u.Name as CreatedByUserName,
+            s.CreatedOn,
+            s.Description,
+            s.SnapshotJson
+        FROM Snapshots s
+            INNER JOIN Users u
+                ON s.CreatedByUserId = u.UserId
         WHERE GameId = @GameId
     ELSE
 		THROW 50500, 'Invalid parameters for snapshot query.', 1

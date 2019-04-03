@@ -59,9 +59,9 @@ type EventListTvp(xs : Event seq) =
 
         for x in xs do
             dt.Rows.Add(
-                x.createdByUserId,
+                x.createdBy.userId,
                 x.actingPlayerId |> Option.toValueOrDbNull,
-                x.createdOn,
+                x.createdBy.time,
                 Mapping.mapEventKindToId x.kind,
                 JsonUtility.serialize x.effects) 
             |> ignore

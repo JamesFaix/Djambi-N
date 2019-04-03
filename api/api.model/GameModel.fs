@@ -1,7 +1,6 @@
 ﻿[<AutoOpen>]
 module Djambi.Api.Model.GameModel
 
-open System
 open Djambi.ClientGenerator.Annotations
 
 [<ClientType(ClientSection.Player)>]
@@ -166,8 +165,7 @@ type GameParameters =
 type Game =
     {
         id : int
-        createdOn : DateTime
-        createdByUserId : int
+        createdBy : CreationSource
         parameters : GameParameters
         status : GameStatus
         players : Player list

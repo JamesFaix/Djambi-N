@@ -10,6 +10,12 @@ export interface CreateUserRequest {
 	password : string,
 }
 
+export interface CreationSource {
+	userId : number,
+	userName : string,
+	time : Date,
+}
+
 export enum Privilege {
 	EditPendingGames = "EditPendingGames",
 	EditUsers = "EditUsers",
@@ -62,8 +68,7 @@ export interface Location {
 
 export interface Game {
 	id : number,
-	createdOn : Date,
-	createdByUserId : number,
+	createdBy : CreationSource,
 	parameters : GameParameters,
 	status : GameStatus,
 	players : Player[],
@@ -239,8 +244,7 @@ export enum EffectKind {
 
 export interface Event {
 	id : number,
-	createdByUserId : number,
-	createdOn : Date,
+	createdBy : CreationSource,
 	actingPlayerId : number,
 	kind : EventKind,
 	effects : Effect[],
@@ -363,8 +367,7 @@ export interface CreateSnapshotRequest {
 
 export interface SnapshotInfo {
 	id : number,
-	createdByUserId : number,
-	createdOn : Date,
+	createdBy : CreationSource,
 	description : string,
 }
 
