@@ -50,18 +50,21 @@ type GameRepository(ctxProvider : CommandContextProvider) =
         member x.getGames query = 
             getGamesWithoutPlayers query
             |> thenBindAsync (fun games -> 
-                getPlayersForGames (games |> List.map (fun g -> g.id))
-                |> thenMap (fun players -> 
-                    let playersByGame = players |> List.groupBy (fun p -> p.gameId)
-                    games 
-                    |> List.map (fun g -> 
-                        let playersOpt = playersByGame |> List.tryFind (fun (gameId, _) -> gameId = g.id) 
-                        let ps = match playersOpt with 
-                                 | Some (_, players) -> players
-                                 | _ -> []
-                        { g with players = ps}
+                match games with
+                | [] -> okTask []
+                | _ ->
+                    getPlayersForGames (games |> List.map (fun g -> g.id))
+                    |> thenMap (fun players -> 
+                        let playersByGame = players |> List.groupBy (fun p -> p.gameId)
+                        games 
+                        |> List.map (fun g -> 
+                            let playersOpt = playersByGame |> List.tryFind (fun (gameId, _) -> gameId = g.id) 
+                            let ps = match playersOpt with 
+                                     | Some (_, players) -> players
+                                     | _ -> []
+                            { g with players = ps}
+                        )
                     )
-                )
             )
 
         [<Obsolete>]
