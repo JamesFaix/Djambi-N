@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { InputTypes } from '../../constants';
-import { Kernel as K } from '../../kernel';
+import LabeledControl from './labeledControl';
 
 export interface LabeledInputProps {
     type : InputTypes,
@@ -17,11 +17,10 @@ export interface LabeledInputProps {
 export default class LabeledInput extends React.Component<LabeledInputProps> {
     render() {
         return (
-            <div
-                className={K.classes.labeledTextBox}
-                title={this.props.tip}
+            <LabeledControl
+                label={this.props.label}
+                tip={this.props.tip}
             >
-                <label>{this.props.label}:</label>
                 <input
                     name={this.props.label}
                     type={this.props.type}
@@ -32,7 +31,7 @@ export default class LabeledInput extends React.Component<LabeledInputProps> {
                     checked={this.props.checked}
                     placeholder={this.props.placeholder}
                 />
-            </div>
+            </LabeledControl>
         );
     }
 }

@@ -16,6 +16,8 @@ import { Redirect } from 'react-router';
 import Button, { ButtonKind } from '../controls/button';
 import { IconKind } from '../icons/icon';
 import { ResetButton, DashboardPageButton, MyGamesPageButton, CreateGamePageButton } from '../controls/navigationButtons';
+import LabeledControl from '../controls/labeledControl';
+import EnumDropdown from '../controls/enumDropdown';
 
 export interface FindGamePageProps {
     user : User
@@ -27,7 +29,8 @@ export interface FindGamePageState {
     playerUserNameFilter : string,
     isPublicFilter : boolean,
     allowGuestsFilter : boolean,
-    descriptionContainsFilter : string
+    descriptionContainsFilter : string,
+    statusFilter : GameStatus
 }
 
 export default class FindGamePage extends React.Component<FindGamePageProps, FindGamePageState> {
@@ -39,7 +42,8 @@ export default class FindGamePage extends React.Component<FindGamePageProps, Fin
             playerUserNameFilter: null,
             isPublicFilter: null,
             allowGuestsFilter: null,
-            descriptionContainsFilter: null
+            descriptionContainsFilter: null,
+            statusFilter: null
         };
     }
 
@@ -55,7 +59,7 @@ export default class FindGamePage extends React.Component<FindGamePageProps, Fin
             isPublic: this.state.isPublicFilter,
             allowGuests: this.state.allowGuestsFilter,
             descriptionContains: this.state.descriptionContainsFilter,
-            status: GameStatus.Pending //Find Games page only shows pending games that you can join
+            status: this.state.statusFilter
         }
 
         K.api
@@ -132,6 +136,16 @@ export default class FindGamePage extends React.Component<FindGamePageProps, Fin
                                 />
                             </td>
                             <td className={K.classes.borderless}>
+                                <LabeledControl
+                                    label="Status"
+                                >
+                                    <EnumDropdown
+                                        enum={GameStatus}
+                                        name="Status"
+                                        value={this.state.statusFilter}
+                                        onChange={(_, value) => this.setState({ statusFilter: value })}
+                                    />
+                                </LabeledControl>
                             </td>
                         </tr>
                         <tr>
