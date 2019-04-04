@@ -23,6 +23,7 @@ export default class ThemeService {
 
     constructor(){
         this.defaultTheme = ThemeFactory.getDefaultTheme();
+        this.theme = ThemeFactory.getVoidTheme();
     }
 
     //Get the custom theme value if it exists, otherwise default value

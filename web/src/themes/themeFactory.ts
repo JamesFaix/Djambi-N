@@ -105,4 +105,30 @@ export default class ThemeFactory {
             pieceImageThug : "../resources/friesEmoji.png",
         };
     }
+
+    public static getVoidTheme() : Theme {
+        return {
+            centerCellName : "The Void",
+
+            cellColorCenter : "#EEEEEE", //Very light gray
+            cellColorEven : "#000000",   //Black
+            cellColorOdd : "#333333",    //Dark gray
+
+            pieceNameAssassin : "Hunter",
+            pieceNameChief : "Conduit",
+            pieceNameCorpse : "Husk",
+            pieceNameDiplomat : "Transporter",
+            pieceNameGravedigger : "Reaper",
+            pieceNameReporter : "Scientist",
+            pieceNameThug : "Zealot",
+
+            pieceImageAssassin : "../resources/daggerEmoji.png",
+            pieceImageChief : "../resources/eyeEmoji.png",
+            pieceImageCorpse : "../resources/skullEmoji.png",
+            pieceImageDiplomat : "../resources/doveEmoji.png",
+            pieceImageGravedigger : "../resources/sicleIcon.png",
+            pieceImageReporter : "../resources/testTubeEmoji.png",
+            pieceImageThug : "../resources/fistEmoji.png",
+        }
+    }
 }
