@@ -22,7 +22,7 @@ export default class Routes {
 
     public myGames() { return "/games/my"; }
 
-    public rules() { return "https://github.com/GamesFaix/Djambi3/blob/master/docs/Rules.md"; }
+    public rules() { return "https://github.com/GamesFaix/Djambi3/wiki/Rules"; }
 
     public signup() { return "/signup"; }
 
