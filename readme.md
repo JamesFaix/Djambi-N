@@ -1,5 +1,5 @@
 # Djambi-N
-<img src="docs/djambi3-with-ui.png">
+<img src="screenshot.png">
 
 Djambi-N is like Chess, except
 
@@ -9,13 +9,7 @@ Djambi-N is like Chess, except
 
 Points 1 and 2 are the premise of [Djambi][1], by Jean Anesto. Djambi-N adds point 3.
 
-[Rules][2]
-
-[Developer Setup][3]
-
-[UI Guide][4]
+For help or more information, see the [wiki][2].
 
 [1]: https://en.wikipedia.org/wiki/Djambi
-[2]: docs/Rules.md
-[3]: docs/DevSetup.md
-[4]: docs/GameUI.md
+[2]: https://github.com/GamesFaix/Djambi3/wiki
