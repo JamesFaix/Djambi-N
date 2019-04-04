@@ -151,7 +151,7 @@ export default class ThemeFactory {
             pieceImageAssassin : "../resources/classicAssassin.png",
             pieceImageChief : "../resources/classicChief.png",
             pieceImageCorpse : "../resources/classicCorpse.png",
-            pieceImageDiplomat : "../resources/clasicDiplomat.png",
+            pieceImageDiplomat : "../resources/classicDiplomat.png",
             pieceImageGravedigger : "../resources/classicNecromobile.png",
             pieceImageReporter : "../resources/classicReporter.png",
             pieceImageThug : "../resources/classicMilitant.png",
