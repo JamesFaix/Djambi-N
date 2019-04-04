@@ -129,6 +129,32 @@ export default class ThemeFactory {
             pieceImageGravedigger : "../resources/sicleIcon.png",
             pieceImageReporter : "../resources/testTubeEmoji.png",
             pieceImageThug : "../resources/fistEmoji.png",
-        }
+        };
+    }
+
+    public static getClassicTheme() : Theme {
+        return {
+            centerCellName : "The Maze",
+
+            cellColorCenter : "#000080", //Navy
+            cellColorEven : "#a7a7a7",   //Medium gray
+            cellColorOdd : "#a7a7a7",    //Medium gray
+
+            pieceNameAssassin : "Assassin",
+            pieceNameChief : "Chief",
+            pieceNameCorpse : "Corpse",
+            pieceNameDiplomat : "Provocateur",
+            pieceNameGravedigger : "Necromobile",
+            pieceNameReporter : "Journalist",
+            pieceNameThug : "Militant",
+
+            pieceImageAssassin : "../resources/classicAssassin.png",
+            pieceImageChief : "../resources/classicChief.png",
+            pieceImageCorpse : "../resources/classicCorpse.png",
+            pieceImageDiplomat : "../resources/clasicDiplomat.png",
+            pieceImageGravedigger : "../resources/classicNecromobile.png",
+            pieceImageReporter : "../resources/classicReporter.png",
+            pieceImageThug : "../resources/classicMilitant.png",
+        };
     }
 }
