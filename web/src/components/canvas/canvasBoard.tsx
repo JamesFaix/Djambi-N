@@ -35,7 +35,7 @@ export default class CanvasBoard extends React.Component<CanvasBoardProps> {
             <Layer>
                 <CanvasPolygon
                     polygon={this.props.board.polygon}
-                    strokeColor={K.theme.getCellBaseColor(CellType.Center)}
+                    strokeColor={K.theme.theme.pageStyle.borderColor}
                     strokeWidth={this.props.boardStrokeWidth}
                 />
             </Layer>

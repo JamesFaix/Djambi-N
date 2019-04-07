@@ -26,8 +26,18 @@ export default class CanvasCell extends React.Component<CanvasCellProps> {
         }
     }
 
+    private getBorderColor() : string {
+        return K.theme.getCellBorderColor(this.props.cell.type);
+    }
+
     render() {
         const color = this.getCellColor();
+        let borderColor = this.getBorderColor();
+
+        if (borderColor === null) {
+            borderColor = color;
+        }
+
         return (
             <Group>
                 {this.props.cell.polygons.map((p, i) =>
@@ -35,7 +45,7 @@ export default class CanvasCell extends React.Component<CanvasCellProps> {
                         key={"polygon" + i}
                         polygon={p}
                         fillColor={color}
-                        strokeColor={color}
+                        strokeColor={borderColor}
                         strokeWidth={1} //Stroke is necessary to fill gaps between polygons belonging to the same cell
                         onClick={() => this.props.selectCell(this.props.cell)}
                     />

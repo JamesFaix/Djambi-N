@@ -176,9 +176,9 @@ export default class ThemeFactory {
                 colorCenter : "#000080", //Navy
                 colorEven : "#a7a7a7",   //Medium gray
                 colorOdd : "#a7a7a7",    //Medium gray
-                borderColorCenter: "#EEEEEE",
-                borderColorEven: "#EEEEEE",
-                borderColorOdd: "#EEEEEE",
+                borderColorCenter: "#FFFFFF",
+                borderColorEven: "#000000",
+                borderColorOdd: "#000000",
                 textColorCenter: "#FFFFFF",
                 textColorEven: "#000000",
                 textColorOdd: "#000000",

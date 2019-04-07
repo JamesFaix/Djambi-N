@@ -18,14 +18,18 @@ import {
     } from '../api/model';
 
 export default class ThemeService {
-    private theme : Theme;
+    private _theme : Theme;
 
     constructor(){
-        this.setTheme(ThemeFactory.voidTheme);
+        this.setTheme(ThemeFactory.classicTheme);
+    }
+
+    public get theme() : Theme {
+        return this._theme;
     }
 
     private setTheme(theme : Theme) : void {
-        this.theme = theme;
+        this._theme = theme;
 
         const docStyle = document.documentElement.style;
 
@@ -45,6 +49,15 @@ export default class ThemeService {
             case CellType.Center: return this.theme.cellStyle.colorCenter;
             case CellType.Even: return this.theme.cellStyle.colorEven;
             case CellType.Odd: return this.theme.cellStyle.colorOdd;
+            default: throw "Invalid cell type.";
+        }
+    }
+
+    public getCellBorderColor(type : CellType) : string {
+        switch(type) {
+            case CellType.Center: return this.theme.cellStyle.borderColorCenter;
+            case CellType.Even: return this.theme.cellStyle.borderColorEven;
+            case CellType.Odd: return this.theme.cellStyle.borderColorOdd;
             default: throw "Invalid cell type.";
         }
     }
