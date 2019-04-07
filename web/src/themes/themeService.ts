@@ -21,7 +21,23 @@ export default class ThemeService {
     private theme : Theme;
 
     constructor(){
-        this.theme = ThemeFactory.voidTheme;
+        this.setTheme(ThemeFactory.voidTheme);
+    }
+
+    private setTheme(theme : Theme) : void {
+        this.theme = theme;
+
+        const docStyle = document.documentElement.style;
+
+        docStyle.setProperty("--background-color", theme.pageStyle.backgroundColor);
+        docStyle.setProperty("--text-color", theme.pageStyle.textColor);
+        docStyle.setProperty("--border-color", theme.pageStyle.borderColor);
+        docStyle.setProperty("--hint-text-color", theme.pageStyle.hintTextColor);
+
+        docStyle.setProperty("--cell-color-even", theme.cellStyle.colorEven);
+        docStyle.setProperty("--cell-color-odd", theme.cellStyle.colorOdd);
+        docStyle.setProperty("--cell-text-color-even", theme.cellStyle.textColorEven);
+        docStyle.setProperty("--cell-text-color-odd", theme.cellStyle.textColorOdd);
     }
 
     public getCellBaseColor(type : CellType) : string {

@@ -1,17 +1,32 @@
+:root {
+    --background-color: white;
+    --text-color: black;
+    --border-color: #eeeeee;
+    --hint-text-color: #aaaaaa;
+
+    --cell-color-odd: white;
+    --cell-color-even: black;
+    --cell-text-color-odd: black;
+    --cell-text-color-even: white;
+}
+
 body {
     font: 14px "Century Gothic", Futura, sans-serif;
     margin: 0;
+    background: var(--background-color);
+    color: var(--text-color);
 }
 
 button {
     font: 14px "Century Gothic", Futura, sans-serif;
     border: 1px;
-    background: #ffffff;
+    background: var(--background-color);
     box-shadow: none;
     border-radius: none;
     border-style: solid;
-    border-color: #eeeeee;
+    border-color: var(--border-color);
     padding: 5px 10px 5px 10px;
+    color: var(--text-color);
 }
 
 table {
@@ -22,7 +37,7 @@ th {
     font-weight: normal;
     border: 1px;
     border-style: solid;
-    border-color: #eeeeee;
+    border-color: var(--border-color);
     padding: 5px 10px 5px 10px;
 }
 
@@ -31,7 +46,7 @@ td {
     text-align: left;
     border: 1px;
     border-style: solid;
-    border-color: #eeeeee;
+    border-color: var(--border-color);
     padding: 5px 10px 5px 10px;
 }
 
@@ -62,26 +77,26 @@ td {
 
     border: 1px;
     border-style: solid;
-    border-color: #eeeeee;
+    border-color: var(--border-color);
     text-align: center;
     top: 0;
 }
 
 .appTitleCharA {
-    background-color: #ffffff;
-    color: #000000;
+    background-color: var(--cell-color-odd);
+    color: var(--cell-text-color-odd);
     width: 50px;
 }
 
 .appTitleCharB {
-    background-color: #000000;
-    color: #ffffff;
+    background-color: var(--cell-color-even);
+    color: var(--cell-text-color-even);
     width: 50px;
 }
 
 .topMenu {
     overflow: hidden;
-    background-color: #ffffff;
+    background-color: var(--background-color);
     position: fixed;
     top: 0;
     width: 100%;
@@ -108,7 +123,7 @@ td {
 }
 
 .lightText {
-    color: #aaaaaa;
+    color: var(--hint-text-color);
 }
 
 .paddedCell {
@@ -126,7 +141,7 @@ td {
 .thinBorder {
     border: 1px;
     border-style: solid;
-    border-color: #eeeeee;
+    border-color: var(--border-color);
 }
 
 .indented {

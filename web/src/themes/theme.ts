@@ -9,13 +9,23 @@
  * it should probably update all of it to match.
  */
 
+export interface ThemePageStyle {
+    backgroundColor : string,
+    textColor : string,
+    borderColor : string,
+    hintTextColor : string
+}
+
 export interface ThemeCellStyle {
     borderColorCenter : string,
     borderColorEven : string,
     borderColorOdd : string,
     colorCenter : string,
     colorEven : string,
-    colorOdd : string
+    colorOdd : string,
+    textColorCenter : string,
+    textColorEven : string,
+    textColorOdd: string
 }
 
 export interface ThemeCellHighlightStyle {
@@ -100,6 +110,7 @@ export interface ThemePlayers {
 }
 
 export default interface Theme {
+    pageStyle? : ThemePageStyle,
     cellStyle? : ThemeCellStyle,
     cellHighlightStyle? : ThemeCellHighlightStyle,
     gameCopy? : ThemeGameCopy,

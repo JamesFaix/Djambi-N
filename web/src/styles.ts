@@ -44,7 +44,7 @@ export class Classes {
 export class Styles {
 
     public playerGlow(color : string) : React.CSSProperties {
-        return { boxShadow: "inset 0 0 5px 5px " + color };
+        return { boxShadow: "inset 0 0 3px 3px " + color };
     }
 
     public readonly noMargin : React.CSSProperties = { margin: "0 auto" };

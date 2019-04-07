@@ -3,6 +3,12 @@ import Theme from './theme';
 export default class ThemeFactory {
     private static getModernTheme() : Theme {
         return {
+            pageStyle: {
+                backgroundColor: "#FFFFFF",
+                textColor: "#000000",
+                borderColor: "#EEEEEE",
+                hintTextColor: "#AAAAAA"
+            },
             cellStyle: {
                 colorCenter: "#828282", //Gray
                 colorEven: "#000000",   //Black
@@ -10,6 +16,9 @@ export default class ThemeFactory {
                 borderColorCenter: null,
                 borderColorEven: null,
                 borderColorOdd: null,
+                textColorCenter: "#000000",
+                textColorEven: "#FFFFFF",
+                textColorOdd: "#000000"
             },
             cellHighlightStyle: {
                 selectedColor: "#6AC921", //Green
@@ -117,15 +126,24 @@ export default class ThemeFactory {
 
     private static getVoidThemeFragment() : Theme {
         return {
-            centerCellName: "The Void",
+            pageStyle: {
+                backgroundColor: "#161616",
+                textColor: "#dcdcdc",
+                borderColor: "#dcdcdc",
+                hintTextColor: "#aaaaaa"
+            },
             cellStyle: {
                 colorCenter : "#EEEEEE", //Very light gray
                 colorEven : "#000000",   //Black
                 colorOdd : "#333333",    //Dark gray
                 borderColorCenter: "#DDDDDD",
                 borderColorEven: "#DDDDDD",
-                borderColorOdd: "#DDDDDD"
+                borderColorOdd: "#DDDDDD",
+                textColorCenter: "#000000",
+                textColorEven: "#dcdcdc", //gainsboro
+                textColorOdd: "#dcdcdc",
             },
+            centerCellName: "The Void",
             pieces: {
                 nameAssassin : "Hunter",
                 nameChief : "Conduit",
@@ -148,15 +166,24 @@ export default class ThemeFactory {
 
     private static getClassicThemeFragment() : Theme {
         return {
-            centerCellName : "The Maze",
+            pageStyle: {
+                backgroundColor: "#FFFFFF",
+                textColor: "#000000",
+                borderColor: "#EEEEEE",
+                hintTextColor: "#AAAAAA"
+            },
             cellStyle: {
                 colorCenter : "#000080", //Navy
                 colorEven : "#a7a7a7",   //Medium gray
                 colorOdd : "#a7a7a7",    //Medium gray
-                borderColorCenter: "#FFFFFF",
-                borderColorEven: "#000000",
-                borderColorOdd: "#000000"
+                borderColorCenter: "#EEEEEE",
+                borderColorEven: "#EEEEEE",
+                borderColorOdd: "#EEEEEE",
+                textColorCenter: "#FFFFFF",
+                textColorEven: "#000000",
+                textColorOdd: "#000000",
             },
+            centerCellName : "The Maze",
             pieces: {
                 nameAssassin : "Assassin",
                 nameChief : "Chief",
