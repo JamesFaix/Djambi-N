@@ -8,6 +8,7 @@ import {
     Rectangle
     } from './model';
 import Logic from '../logic';
+import { Location } from '../api/model';
 
 export default class Geometry {
 
@@ -24,6 +25,10 @@ export default class Geometry {
                 x: p.x + n,
                 y: p.y + n
             };
+        }
+
+        public static create(x : number, y : number) : Point {
+            return { x: x, y: y };
         }
 
         public static distance(a : Point, b : Point) : number {
@@ -102,6 +107,11 @@ export default class Geometry {
     }
 
     public static Line = class {
+
+        public static create(a : Point, b : Point) : Line {
+            return { a: a, b: b };
+        }
+
         //Point a fraction of the way down a line.
         //Generalization of midpoint.
         //midpoint(L) = fractionPoint(L, 0.5)
@@ -148,6 +158,18 @@ export default class Geometry {
         }
     }
 
+    public static Location = class {
+        public static create(region : number, x : number, y : number) : Location {
+            return { x: x, y: y, region: region};
+        }
+
+        public static equals(a : Location, b : Location) : boolean {
+            return a.x === b.x
+                && a.y === b.y
+                && a.region === b.region;
+        }
+    }
+
     public static Polygon = class {
         public static boundingBox(p : Polygon) : Rectangle {
             const xs = p.vertices.map(v => v.x);
@@ -176,6 +198,10 @@ export default class Geometry {
                 x: sumX / count,
                 y: sumY / count
             };
+        }
+
+        public static create(vertices : Point[]) : Polygon {
+            return { vertices: vertices };
         }
 
         public static edges(p : Polygon) : Line[] {

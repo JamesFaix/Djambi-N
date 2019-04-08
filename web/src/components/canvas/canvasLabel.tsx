@@ -24,7 +24,7 @@ export default class CanvasLabel extends React.Component<CanvasLabelProps> {
             text += "\nP " + cell.piece.id;
         }
 
-        const rect = Geometry.Cell.rectangle(cell);
+        const rect = Geometry.Cell.boundingBox(cell);
 
         return (
             <Text

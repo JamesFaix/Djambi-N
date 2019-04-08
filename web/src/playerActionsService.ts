@@ -1,5 +1,6 @@
 import { User, Game, Privilege, TurnStatus, GameStatus, PlayerStatus, Player } from "./api/model";
 import { IconKind } from "./components/icons/icon";
+import { List } from "./collections";
 
 export interface PlayerAction {
     icon : IconKind,
@@ -33,8 +34,7 @@ export default class PlayerActionsService {
     }
 
     private hasPrivilege(p : Privilege) : boolean {
-        const match = this.user.privileges.find(p2 => p2 === p);
-        return match !== undefined;
+        return List.contains(this.user.privileges, p);
     }
 
     private canParticipateInGame() : boolean {

@@ -16,6 +16,7 @@ import {
 import { Kernel as K } from '../../kernel';
 import Button, { ButtonKind } from '../controls/button';
 import { IconKind } from '../icons/icon';
+import { List } from '../../collections';
 
 export interface GameInfoPlayersTableProps {
     user : User,
@@ -65,7 +66,7 @@ export default class GameInfoPlayersTable extends React.Component<GameInfoPlayer
                     action : SeatActionType.None
                 };
 
-                if (self.privileges.find(p => p === Privilege.EditPendingGames)
+                if (List.contains(self.privileges, Privilege.EditPendingGames)
                     || game.createdBy.userId === self.id
                     || seat.player.name === self.name
                     || (seat.player.kind === PlayerKind.Guest

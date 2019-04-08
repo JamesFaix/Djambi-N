@@ -1,13 +1,7 @@
 import BoardService from '../boardService';
-import Geometry from './geometry';
-import { Board, Game, Location } from '../api/model';
-import {
-    BoardView,
-    CellState,
-    CellType,
-    CellView
-    } from './model';
-import { Line, Polygon } from './model';
+import { Board, Game } from '../api/model';
+import { BoardView, CellState } from './model';
+import BoardViewFactory from './boardViewFactory';
 
 export default class BoardViewService {
     private readonly emptyBoardViewCache : any;
@@ -24,170 +18,15 @@ export default class BoardViewService {
         return BoardViewService.updateBoardView(bv, game);
     }
 
-    //--- Caching ---
-
     private getEmptyBoardView(board : Board) : BoardView {
         //The empty state of a board with the same dimensions is always the same, so it can be cached.
         const key = board.regionCount + "-" + board.regionSize;
         let bv = this.emptyBoardViewCache[key];
         if (!bv) {
-            bv = BoardViewService.createEmptyBoardView(board);
+            bv = BoardViewFactory.createEmptyBoardView(board);
         }
         return bv;
     }
-
-    //--- Empty boardview creation ---
-
-    private static createEmptyBoardView(board : Board): BoardView {
-        const Line = Geometry.Line;
-        const Polygon = Geometry.Polygon;
-        const cellCountPerSide = (board.regionSize * 2) - 1;
-
-        let cellViews : Array<CellView> = [];
-
-        const boardPolygon = Geometry.RegularPolygon.create(board.regionCount, 1);
-        const boardEdges = Polygon.edges(boardPolygon);
-        const boardCentroid = Polygon.centroid(boardPolygon);
-
-        //Loop over regions
-        for (var i = 0; i < board.regionCount; i++) {
-
-            const regionVertices = [
-                boardPolygon.vertices[i],
-                Line.midPoint(boardEdges[i]),
-                boardCentroid,
-                Line.midPoint(boardEdges[(i+(board.regionCount - 1))%board.regionCount])
-            ];
-
-            const region : Polygon = { vertices: regionVertices };
-            const regionEdges = Polygon.edges(region);
-
-            function getFraction(index : number, isLower : boolean) {
-                let result = 0;
-
-                if (!isLower){
-                    index += 1;
-                }
-
-                if (index === 0) {
-                    result = index / cellCountPerSide;
-                } else{
-                    result = (2*index -1) / cellCountPerSide;
-                }
-
-                return 1 - result;
-            }
-
-            for (var row = 0; row < board.regionSize; row++) {
-                let lowerFraction = getFraction(row, true);
-                let upperFraction = getFraction(row, false);
-
-                const rowBorders : Line[] = [
-                    {
-                        a: Line.fractionPoint(regionEdges[3], 1-lowerFraction),
-                        b: Line.fractionPoint(regionEdges[1], lowerFraction)
-                    },
-                    {
-                        a: Line.fractionPoint(regionEdges[3], 1-upperFraction),
-                        b: Line.fractionPoint(regionEdges[1], upperFraction)
-                    }
-                ];
-
-                for (var col = 0; col < board.regionSize; col++) {
-                    lowerFraction = getFraction(col, true);
-                    upperFraction = getFraction(col, false);
-
-                    const location : Location = {
-                        x: col,
-                        y: row,
-                        region: i
-                    };
-
-                    const polygon : Polygon = {
-                        vertices: [
-                            Line.fractionPoint(rowBorders[0], lowerFraction),
-                            Line.fractionPoint(rowBorders[0], upperFraction),
-                            Line.fractionPoint(rowBorders[1], upperFraction),
-                            Line.fractionPoint(rowBorders[1], lowerFraction),
-                        ]
-                    };
-
-                    const cell = board.cells
-                        .find(c => c.locations
-                            .find(loc => this.locationEquals(loc, location))
-                            !== undefined);
-
-                    const cv : CellView = {
-                        id: cell.id,
-                        locations: cell.locations,
-                        type: this.getCellType(col, row),
-                        state: CellState.Default,
-                        piece: null,
-                        polygons: [polygon]
-                    }
-
-                    cellViews.push(cv);
-                }
-            }
-        }
-
-        cellViews = this.coalesceColocatedCells(cellViews);
-
-        return {
-            regionCount: board.regionCount,
-            cellCountPerSide: cellCountPerSide,
-            cells: cellViews,
-            polygon: boardPolygon,
-        };
-    }
-
-    private static locationEquals(a : Location, b : Location) : boolean {
-        return a.x === b.x
-            && a.y === b.y
-            && a.region === b.region;
-    }
-
-    private static coalesceColocatedCells(cells : Array<CellView>) : Array<CellView> {
-        const results : Array<CellView> = [];
-
-        const map = new Map<number, CellView[]>();
-        cells.forEach(vc => {
-            const matches = map.get(vc.id);
-            if (matches) {
-                matches.push(vc);
-            } else {
-                map.set(vc.id, [vc]);
-            }
-        });
-
-        map.forEach(group => {
-            const coalesced : CellView = {
-                id: group[0].id,
-                locations: group.map(c => c.locations).reduce((a, b) => a.concat(b)),
-                type: group[0].type,
-                state: group[0].state,
-                piece: null,
-                polygons: group
-                    .map((vc : CellView) => vc.polygons)
-                    .reduce((a : Polygon[], b : Polygon[]) => a.concat(b)),
-            };
-            results.push(coalesced);
-        });
-
-        return results;
-    }
-
-    private static getCellType(col : number, row : number) : CellType {
-        if (col === 0 && row === 0){
-            return CellType.Center;
-        }
-        if ((col + row) % 2 === 1){
-            return CellType.Odd;
-        }
-        return CellType.Even;
-    }
-
-    //--- Update boardview ---
 
     private static updateBoardView(board : BoardView, game : Game) : BoardView {
 
@@ -214,8 +53,8 @@ export default class BoardViewService {
                 type: c.type,
                 state: newState,
                 piece: pieceView,
-                polygons: c.polygons
-            }
+                polygon: c.polygon
+            };
         });
 
         return {

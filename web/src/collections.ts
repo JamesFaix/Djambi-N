@@ -1,10 +1,22 @@
 export class List {
+    public static contains<T>(xs : T[], value : T) : boolean {
+        return xs.find(x => x === value) !== undefined;
+    }
+
+    public static exists<T>(xs : T[], predicate : (value:T) => boolean) : boolean {
+        return xs.find(x => predicate(x)) !== undefined;
+    }
+
     public static flatMap<T1, T2>(xs : T1[], projection : (x:T1) => T2[]) : T2[] {
         return this.flatten(xs.map(projection));
     }
 
     public static flatten<T>(xs : T[][]) : T[] {
         return xs.reduce((a, b) => a.concat(b), []);
+    }
+
+    public static forAll<T>(xs : T[], predicate : (value:T) => boolean) : boolean {
+        return xs.find(x => !predicate(x)) === undefined;
     }
 
     public static groupMatches<T>(
