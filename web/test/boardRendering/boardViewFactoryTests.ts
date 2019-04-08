@@ -3,6 +3,8 @@ import { expect } from 'chai';
 import { CellType } from '../../src/boardRendering/model';
 import Geometry from '../../src/boardRendering/geometry';
 const Location = Geometry.Location;
+const Polygon = Geometry.Polygon;
+const Point = Geometry.Point;
 
 describe('BoardViewFactory.getRegionPolygon', () => {
     //TODO: Add tests
@@ -37,7 +39,32 @@ describe('BoardViewFactory.mergeCellViews', () => {
 });
 
 describe('BoardViewFactory.mergePolygons', () => {
-    //TODO: Add tests
+    it('Should merge adjacent squares', () => {
+        let ps = [
+            Polygon.create([
+                Point.create(0, 0),
+                Point.create(0, 1),
+                Point.create(1, 1),
+                Point.create(1, 0)
+            ]),
+            Polygon.create([
+                Point.create(0, 1),
+                Point.create(1, 1),
+                Point.create(1, 2),
+                Point.create(0, 2)
+            ])
+        ];
+        let expected = Polygon.create([
+            Point.create(0, 2),
+            Point.create(0, 1),
+            Point.create(0, 0),
+            Point.create(1, 0),
+            Point.create(1, 1),
+            Point.create(1, 2)
+        ]);
+        let actual = BoardViewFactory.mergePolygons(ps);
+        expect(actual).to.eql(expected);
+    });
 });
 
 describe('BoardViewFactory.getCellType', () => {

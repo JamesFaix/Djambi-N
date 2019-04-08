@@ -19,6 +19,23 @@ export class List {
         return xs.find(x => !predicate(x)) === undefined;
     }
 
+    public static groupBy<T, TKey>(xs : T[], keySelector : (x:T) => TKey) : [TKey, T[]][] {
+        const groups : [TKey, T[]][] = [];
+
+        xs.forEach(x => {
+            const key = keySelector(x);
+            const group = groups.find(g => g[0] === key);
+
+            if (group === undefined) {
+                groups.push([key, [x]]);
+            } else {
+                group[1].push(x);
+            }
+        });
+
+        return groups;
+    }
+
     public static groupMatches<T>(
         elements : T[],
         areMatch : (a:T, b:T) => boolean) : T[][] {

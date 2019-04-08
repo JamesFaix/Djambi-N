@@ -205,18 +205,10 @@ export default class BoardViewFactory {
             return polygons[0];
         }
 
-        const invocationId = Math.ceil(Math.random() * 1000);
-
-        console.log("Polygons " + invocationId);
-        console.log(polygons);
-
         const threshold = 0.00001;
 
         //Get all edges of each polygon
         const edges = List.flatMap(polygons, Polygon.edges);
-
-        console.log("Edges " + invocationId);
-        console.log(edges);
 
         //Group by which are the same line segment
         const groupedEdges = List.groupMatches(
@@ -228,9 +220,6 @@ export default class BoardViewFactory {
             .filter(g => g.length === 1)
             .map(g => g[0]);
 
-        console.log("Result edges " + invocationId);
-        console.log(resultEdges);
-
         const vertices : Point[] = [];
 
         //Add the vertices of the first edge
@@ -238,35 +227,20 @@ export default class BoardViewFactory {
         vertices.push(e.a);
         vertices.push(e.b);
 
-        const max = 100;
-        let i = 0;
-
         //Loop until there is one edge left
         //The last edge does not contain any new vertices,
         //it just links the first and last ones already in the array
-        while (resultEdges.length > 1 && i++ < max) {
-            console.log("Loop iteration " + i + " " + invocationId);
-            console.log(resultEdges);
-            //Find the edge that is chained to the previous vertex, and remove it from the list
-            let filteredResultEdges : Line[] = [];
-            resultEdges.forEach(e2 => {
-                if (Line.isChainedTo(e, e2, threshold)) {
-                    e = e2;
-                } else {
-                    filteredResultEdges.push(e2);
-                }
-            });
-            resultEdges = filteredResultEdges;
+        while (resultEdges.length > 1) {
+            //Find an edge that is chained to the previous vertex, and remove it from the list
+            e = resultEdges.find(e2 => Line.isChainedTo(e, e2, threshold));
+            resultEdges = resultEdges.filter(e2 => !Line.isCloseTo(e, e2, threshold));
 
             //Add the vertex not already in the list
             let nextVertex = List.exists(vertices, p => Point.isCloseTo(p, e.a, threshold)) ? e.b : e.a;
             vertices.push(nextVertex);
         }
 
-        const result = Polygon.create(vertices);
-        console.log("Result " + invocationId);
-        console.log(result);
-        return result;
+        return Polygon.create(vertices);
     }
 
     public static getCellType(location : Location) : CellType {

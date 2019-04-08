@@ -97,6 +97,33 @@ describe('List.forAll', () => {
     });
 });
 
+describe('List.groupBy', () => {
+    let keySelector = (x:string) => x[0];
+
+    it('Groups elements', () => {
+        let xs = [
+            "apple",
+            "artichoke",
+            "banana",
+            "orange",
+            "avocado",
+            "oatmeal"
+        ];
+        let expected = [
+            ["a", ["apple", "artichoke", "avocado"]],
+            ["b", ["banana"]],
+            ["o", ["orange", "oatmeal"]]
+        ];
+        let actual = List.groupBy(xs, keySelector);
+        expect(actual).to.eql(expected);
+    });
+
+    it('Returns empty if input empty', () => {
+        let actual = List.groupBy([], keySelector);
+        expect(actual).to.eql([]);
+    });
+});
+
 describe('List.groupMatches', () => {
     let areMatch = (a:string, b:string) => a[0] === b[0];
 
