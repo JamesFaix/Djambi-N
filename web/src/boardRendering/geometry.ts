@@ -163,6 +163,7 @@ export default class Geometry {
             return Math.abs(max - min);
         }
 
+        //TODO: Add unit tests
         public static transform(p : Polygon, matrix : MathJs.Matrix) : Polygon {
             return { vertices : p.vertices.map((v : Point) => Geometry.Point.transform(v, matrix)) };
         }

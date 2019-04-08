@@ -8,8 +8,7 @@ describe('Point.add', () => {
         let p2 = { x: 4, y: -7 };
         let expected = { x: 5, y: -5 };
         let actual = P.add(p1, p2);
-        expect(actual.x).to.equal(expected.x);
-        expect(actual.y).to.equal(expected.y);
+        expect(actual).to.eql(expected);
     });
 });
 
@@ -19,8 +18,7 @@ describe('Point.addScalar', () => {
         let s = 4;
         let expected = { x: 5, y: 6 };
         let actual = P.addScalar(p, s);
-        expect(actual.x).to.equal(expected.x);
-        expect(actual.y).to.equal(expected.y);
+        expect(actual).to.eql(expected);
     });
 });
 
@@ -30,8 +28,7 @@ describe('Point.divide', () => {
         let p2 = { x: 2, y: 4 };
         let expected = { x: 0.5, y: 0.75 };
         let actual = P.divide(p1, p2);
-        expect(actual.x).to.equal(expected.x);
-        expect(actual.y).to.equal(expected.y);
+        expect(actual).to.eql(expected);
     });
 
     it('Treats division by 0 as infinity', () => {
@@ -49,8 +46,7 @@ describe('Point.divideSafe', () => {
         let p2 = { x: 2, y: 4 };
         let expected = { x: 0.5, y: 0.75 };
         let actual = P.divide(p1, p2);
-        expect(actual.x).to.equal(expected.x);
-        expect(actual.y).to.equal(expected.y);
+        expect(actual).to.eql(expected);
     });
 
     it('Treats division by 0 as 0', () => {
@@ -58,8 +54,7 @@ describe('Point.divideSafe', () => {
         let p2 = { x: 0, y: 4 };
         let expected = { x: 0, y: 0.75 };
         let actual = P.divideSafe(p1, p2);
-        expect(actual.x).to.equal(expected.x);
-        expect(actual.y).to.equal(expected.y);
+        expect(actual).to.eql(expected);
     });
 });
 
@@ -69,8 +64,7 @@ describe('Point.multiply', () => {
         let p2 = { x: 4, y: -7 };
         let expected = { x: 4, y: -14 };
         let actual = P.multiply(p1, p2);
-        expect(actual.x).to.equal(expected.x);
-        expect(actual.y).to.equal(expected.y);
+        expect(actual).to.eql(expected);
     });
 });
 
@@ -80,8 +74,7 @@ describe('Point.multiplyScalar', () => {
         let s = 4;
         let expected = { x: 4, y: 8 };
         let actual = P.multiplyScalar(p, s);
-        expect(actual.x).to.equal(expected.x);
-        expect(actual.y).to.equal(expected.y);
+        expect(actual).to.eql(expected);
     });
 });
 
@@ -91,8 +84,7 @@ describe('Point.subtract', () => {
         let p2 = { x: 4, y: -7 };
         let expected = { x: -3, y: 9 };
         let actual = P.subtract(p1, p2);
-        expect(actual.x).to.equal(expected.x);
-        expect(actual.y).to.equal(expected.y);
+        expect(actual).to.eql(expected);
     });
 });
 
@@ -102,8 +94,7 @@ describe('Point.subtractScalar', () => {
         let s = 4;
         let expected = { x: -3, y: -2 };
         let actual = P.subtractScalar(p, s);
-        expect(actual.x).to.equal(expected.x);
-        expect(actual.y).to.equal(expected.y);
+        expect(actual).to.eql(expected);
     });
 });
 
@@ -120,8 +111,8 @@ describe ('Point.toString', () => {
 
 describe('Point.zero', () => {
     it('Has 0 for both components', () => {
-        let p = P.zero();
-        expect(p.x).to.equal(0);
-        expect(p.y).to.equal(0);
+        let actual = P.zero();
+        let expected = { x: 0, y: 0 };
+        expect(actual).to.eql(expected);
     });
 });

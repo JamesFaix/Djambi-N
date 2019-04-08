@@ -11,8 +11,7 @@ describe('Line.fractionPoint', () => {
         };
         let expected = { x: 0, y: 4 };
         let actual = L.fractionPoint(l, 0.5);
-        expect(actual.x).to.equal(expected.x);
-        expect(actual.y).to.equal(expected.y);
+        expect(actual).to.eql(expected);
     });
 
     it('Returns the point 1/4-way down the line', () => {
@@ -22,8 +21,7 @@ describe('Line.fractionPoint', () => {
         };
         let expected = { x: 0, y: 2 };
         let actual = L.fractionPoint(l, 0.25);
-        expect(actual.x).to.equal(expected.x);
-        expect(actual.y).to.equal(expected.y);
+        expect(actual).to.eql(expected);
     });
 });
 
@@ -47,7 +45,6 @@ describe('Line.midPoint', () => {
         };
         let expected = { x: 0, y: 4 };
         let actual = L.midPoint(l);
-        expect(actual.x).to.equal(expected.x);
-        expect(actual.y).to.equal(expected.y);
+        expect(actual).to.eql(expected);
     });
 });
