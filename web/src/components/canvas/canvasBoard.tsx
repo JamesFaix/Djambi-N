@@ -27,7 +27,7 @@ export default class CanvasBoard extends React.Component<CanvasBoardProps> {
         const size = this.getPieceSize();
         const cellCenter = Geometry.Cell.centroid(cell);
         const offset = { x: -(size/2), y: -(size/2) };
-        return Geometry.Point.translate(cellCenter, offset);
+        return Geometry.Point.add(cellCenter, offset);
     }
 
     private renderBackground() {
