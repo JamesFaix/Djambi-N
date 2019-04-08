@@ -1,5 +1,6 @@
 import { expect } from 'chai';
 import Geometry from '../../src/boardRendering/geometry';
+import { equal } from 'assert';
 const P = Geometry.Point;
 
 describe('Point.add', () => {
@@ -19,6 +20,24 @@ describe('Point.addScalar', () => {
         let expected = { x: 5, y: 6 };
         let actual = P.addScalar(p, s);
         expect(actual).to.eql(expected);
+    });
+});
+
+describe('Point.distance', () => {
+    it('Returns correct value', () => {
+        let p1 = { x: 1, y: 1 };
+        let p2 = { x: 2, y: 2 };
+        let expected = Math.sqrt(2);
+        let actual = P.distance(p1, p2);
+        expect(actual).to.equal(expected);
+    });
+
+    it('Is always positive, regardless of direction', () => {
+        let p1 = { x: 2, y: 2 };
+        let p2 = { x: 1, y: 1 };
+        let expected = Math.sqrt(2);
+        let actual = P.distance(p1, p2);
+        expect(actual).to.equal(expected);
     });
 });
 
@@ -55,6 +74,32 @@ describe('Point.divideSafe', () => {
         let expected = { x: 0, y: 0.75 };
         let actual = P.divideSafe(p1, p2);
         expect(actual).to.eql(expected);
+    });
+});
+
+describe('Point.isCloseTo', () => {
+    it('Returns true if distance is less than 0.1', () => {
+        let p1 = { x: 0, y: 0 };
+        let p2 = { x: 0, y: 0.05 };
+        let threshold = 0.1;
+        let actual = P.isCloseTo(p1, p2, threshold);
+        expect(actual).to.equal(true);
+    });
+
+    it('Returns false if distance is equal to 0.1', () => {
+        let p1 = { x: 0, y: 0 };
+        let p2 = { x: 0, y: 0.1 };
+        let threshold = 0.1;
+        let actual = P.isCloseTo(p1, p2, threshold);
+        expect(actual).to.equal(false);
+    });
+
+    it('Returns false if distance is greater than 0.1', () => {
+        let p1 = { x: 0, y: 0 };
+        let p2 = { x: 0, y: 0.2 };
+        let threshold = 0.1;
+        let actual = P.isCloseTo(p1, p2, threshold);
+        expect(actual).to.equal(false);
     });
 });
 
