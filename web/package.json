@@ -26,14 +26,20 @@
   },
   "scripts": {
     "build": "webpack",
-    "start": "webpack && http-server"
+    "start": "webpack && http-server",
+    "test": "mocha --require ts-node/register test/**/*.ts"
   },
   "devDependencies": {
+    "@types/chai": "^4.1.7",
+    "@types/mocha": "^5.2.6",
     "awesome-typescript-loader": "^5.2.1",
+    "chai": "^4.2.0",
     "css-loader": "^1.0.1",
+    "mocha": "^6.1.1",
     "source-map-loader": "^0.2.4",
     "style-loader": "^0.23.1",
-    "typescript": "^3.2.4",
+    "ts-node": "^8.0.3",
+    "typescript": "^3.4.2",
     "webpack-cli": "^3.2.1"
   }
 }
