@@ -71,6 +71,7 @@ export default class Geometry {
             return "(" + p.x + ", " + p.y + ")";
         }
 
+        //TODO: Add unit tests
         public static transform(p : Point, matrix : MathJs.Matrix) : Point {
             const pointVector = MathJs.matrix([p.x, p.y, 1]);
             const resultMatrix = MathJs.multiply(matrix, pointVector);
@@ -79,13 +80,6 @@ export default class Geometry {
                 x: resultArray[0] / resultArray[2],
                 y: resultArray[1] / resultArray[2]
             };
-        }
-
-        public static translate(p : Point, offset : Point) : Point {
-            return {
-                x: p.x + offset.x,
-                y: p.y + offset.y
-            }
         }
 
         public static zero() : Point {
