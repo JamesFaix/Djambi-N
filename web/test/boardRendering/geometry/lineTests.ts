@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import Geometry from '../../src/boardRendering/geometry';
+import Geometry from '../../../src/boardRendering/geometry';
 const P = Geometry.Point;
 const L = Geometry.Line;
 

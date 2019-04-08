@@ -1,6 +1,5 @@
 import { expect } from 'chai';
-import Geometry from '../../src/boardRendering/geometry';
-import { equal } from 'assert';
+import Geometry from '../../../src/boardRendering/geometry';
 const P = Geometry.Point;
 
 describe('Point.add', () => {
