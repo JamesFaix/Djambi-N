@@ -1,6 +1,45 @@
 import { expect } from 'chai';
-import Geometry from '../../src/boardRendering/geometry';
+import Geometry from '../../../src/boardRendering/geometry';
 const P = Geometry.Polygon;
+
+describe('Polygon.boundingBox', () => {
+    it ('Should return "self" for square with no rotation', () => {
+        let p = {
+            vertices: [
+                { x: 0, y: 0 },
+                { x: 0, y: 1 },
+                { x: 1, y: 1 },
+                { x: 1, y: 0 }
+            ]
+        };
+        let expected = {
+            left: 0,
+            right: 1,
+            top: 0,
+            bottom: 1,
+        };
+        let actual = P.boundingBox(p);
+        expect(actual).to.eql(expected);
+    });
+
+    it('Should return rectangle w/ min and max values of polygon', () => {
+        let p = {
+            vertices: [
+                { x: 0, y: 0 },
+                { x: 0, y: 1 },
+                { x: 1, y: 0 }
+            ]
+        };
+        let expected = {
+            left: 0,
+            right: 1,
+            top: 0,
+            bottom: 1,
+        };
+        let actual = P.boundingBox(p);
+        expect(actual).to.eql(expected);
+    });
+});
 
 describe('Polygon.centroid', () => {
     it('Returns center of square', () => {

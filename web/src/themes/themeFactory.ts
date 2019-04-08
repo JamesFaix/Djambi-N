@@ -1,108 +1,226 @@
 import Theme from './theme';
 
 export default class ThemeFactory {
-    public static getDefaultTheme() : Theme {
+    private static getModernTheme() : Theme {
         return {
-            cellColorCenter : "#828282", //Gray
-            cellColorEven : "#000000",   //Black
-            cellColorOdd : "#FFFFFF",    //White
+            pageStyle: {
+                backgroundColor: "#FFFFFF",
+                textColor: "#000000",
+                borderColor: "#EEEEEE",
+                hintTextColor: "#AAAAAA"
+            },
+            cellStyle: {
+                colorCenter: "#828282", //Gray
+                colorEven: "#000000",   //Black
+                colorOdd: "#FFFFFF",    //White
+                borderColorCenter: null,
+                borderColorEven: null,
+                borderColorOdd: null,
+                textColorCenter: "#000000",
+                textColorEven: "#FFFFFF",
+                textColorOdd: "#000000"
+            },
+            cellHighlightStyle: {
+                selectedColor: "#6AC921", //Green
+                selectedIntensity: 0.75,
+                selectionOptionColor: "#E5E500", //Yellow
+                selectionOptionIntensity: 0.5,
+            },
+            centerCellName: "The Seat",
+            pieces: {
+                imageAssassin: "../resources/daggerEmoji.png",
+                imageChief: "../resources/crownEmoji.png",
+                imageCorpse: "../resources/skullEmoji.png",
+                imageDiplomat: "../resources/doveEmoji.png",
+                imageGravedigger: "../resources/pickEmoji.png",
+                imageReporter: "../resources/newspaperEmoji.png",
+                imageThug: "../resources/fistEmoji.png",
 
-            cellHighlightSelectedColor : "#6AC921", //Green
-            cellHighlightSelectedIntensity : 0.75,
-            cellHighlightSelectionOptionColor : "#E5E500", //Yellow
-            cellHighlightSelectionOptionIntensity : 0.5,
+                nameAssassin: "Assassin",
+                nameChief: "Chief",
+                nameCorpse: "Corpse",
+                nameDiplomat: "Diplomat",
+                nameGravedigger: "Gravedigger",
+                nameReporter: "Reporter",
+                nameThug: "Thug",
+            },
+            players: {
+                color0: "#CC2B08", //Red
+                color1: "#47CC08", //Green
+                color2: "#08A9CC", //Blue
+                color3: "#8D08CC", //Purple
+                color4: "#CC8708", //Orange
+                color5: "#CC0884", //Pink
+                color6: "#08CC8B", //Teal
+                color7: "#996A0C", //Brown
+            },
+            gameCopy: {
+                effectGameStatusChangedInProgress: "Game started.",
+                effectGameStatusChangedOver: "Game over.",
+                effectPieceAbandoned: "%(piece)s was abandoned.",
+                effectPieceDropped: "%(piece)s was dropped at %(newCell)s.",
+                effectPieceEnlisted: "%(piece)s was enlisted by player %(newPlayer)s.",
+                effectPieceKilled: "%(piece)s was killed.",
+                effectPieceMoved: "%(piece)s moved from %(oldCell)s to %(newCell)s.",
+                effectPieceVacated: "%(piece)s fled %(center)s to %(newCell)s.",
+                effectPlayerAdded: "%(player)s joined the game.",
+                effectNeutralPlayerAdded: "Neutral player %(player)s added to the game.",
+                effectPlayerOutOfMoves: "%(player)s is out of moves.",
+                effectPlayerRemoved: "%(player)s was removed from the game.",
+                effectPlayerStatusChangedAlive: "%(player)s will no longer accept a draw.",
+                effectPlayerStatusChangedAcceptsDraw: "%(player)s will accept a draw.",
+                effectPlayerStatusChangedConceded: "%(player)s conceded.",
+                effectPlayerStatusChangedWillConcede: "%(player)s will concede at the start of their next turn.",
+                effectPlayerStatusChangedEliminated: "%(player)s was eliminated.",
+                effectPlayerStatusChangedVictorious: "%(player)s won.",
+                effectTurnCycleAdvanced: "Turn cycle advanced by 1. [%(newCycle)s]",
+                effectTurnCyclePlayerFellFromPower: "%(player)s fell from power. [%(newCycle)s]",
+                effectTurnCyclePlayerRemoved: "%(player)s removed from the turn cycle. [%(newCycle)s]",
+                effectTurnCyclePlayerRoseToPower: "%(player)s rose to power. [%(newCycle)s]",
 
-            centerCellName : "The Seat",
+                eventGameStarted: "Game started",
+                eventTurnCommitted: "%(player)s took a turn",
+                eventPlayerStatusChanged: "%(player)s changed their status",
 
-            effectMessageGameStatusChangedInProgress : "Game started.",
-            effectMessageGameStatusChangedOver : "Game over.",
-            effectMessagePieceAbandoned : "%(piece)s was abandoned.",
-            effectMessagePieceDropped : "%(piece)s was dropped at %(newCell)s.",
-            effectMessagePieceEnlisted : "%(piece)s was enlisted by player %(newPlayer)s.",
-            effectMessagePieceKilled : "%(piece)s was killed.",
-            effectMessagePieceMoved : "%(piece)s moved from %(oldCell)s to %(newCell)s.",
-            effectMessagePieceVacated : "%(piece)s fled %(center)s to %(newCell)s.",
-            effectMessagePlayerAdded : "%(player)s joined the game.",
-            effectMessageNeutralPlayerAdded : "Neutral player %(player)s added to the game.",
-            effectMessagePlayerOutOfMoves : "%(player)s is out of moves.",
-            effectMessagePlayerRemoved : "%(player)s was removed from the game.",
-            effectMessagePlayerStatusChangedAlive : "%(player)s will no longer accept a draw.",
-            effectMessagePlayerStatusChangedAcceptsDraw : "%(player)s will accept a draw.",
-            effectMessagePlayerStatusChangedConceded : "%(player)s conceded.",
-            effectMessagePlayerStatusChangedWillConcede : "%(player)s will concede at the start of their next turn.",
-            effectMessagePlayerStatusChangedEliminated : "%(player)s was eliminated.",
-            effectMessagePlayerStatusChangedVictorious : "%(player)s won.",
-            effectMessageTurnCycleAdvanced : "Turn cycle advanced by 1. [%(newCycle)s]",
-            effectMessageTurnCyclePlayerFellFromPower : "%(player)s fell from power. [%(newCycle)s]",
-            effectMessageTurnCyclePlayerRemoved : "%(player)s removed from the turn cycle. [%(newCycle)s]",
-            effectMessageTurnCyclePlayerRoseToPower : "%(player)s rose to power. [%(newCycle)s]",
+                selectionDescriptionSubject: "Pick up %s",
+                selectionDescriptionMove: "Move to cell %s",
+                selectionDescriptionMoveAndTarget: "Move to cell %s and target %s",
+                selectionDescriptionTarget: "Target %s at cell %s",
+                selectionDescriptionDrop: "Drop target piece at cell %s",
+                selectionDescriptionVacate: "Vacate %s to cell %s",
 
-            eventMessageGameStarted : "Game started",
-            eventMessageTurnCommitted : "%(player)s took a turn",
-            eventMessagePlayerStatusChanged : "%(player)s changed their status",
+                selectionPromptDrop: "%s, select a cell to drop the target piece in.",
+                selectionPromptMove: "%s, select a cell to move to.",
+                selectionPromptSubject: "%s, select a piece to move.",
+                selectionPromptTarget: "%s, select a piece to target.",
+                selectionPromptVacate: "%s, select a cell to vacate to.",
 
-            pieceImageAssassin : "../resources/daggerEmoji.png",
-            pieceImageChief : "../resources/crownEmoji.png",
-            pieceImageCorpse : "../resources/skullEmoji.png",
-            pieceImageDiplomat : "../resources/doveEmoji.png",
-            pieceImageGravedigger : "../resources/pickEmoji.png",
-            pieceImageReporter : "../resources/newspaperEmoji.png",
-            pieceImageThug : "../resources/fistEmoji.png",
-
-            pieceNameAssassin : "Assassin",
-            pieceNameChief : "Chief",
-            pieceNameCorpse : "Corpse",
-            pieceNameDiplomat : "Diplomat",
-            pieceNameGravedigger : "Gravedigger",
-            pieceNameReporter : "Reporter",
-            pieceNameThug : "Thug",
-
-            playerColor0 : "#CC2B08", //Red
-            playerColor1 : "#47CC08", //Green
-            playerColor2 : "#08A9CC", //Blue
-            playerColor3 : "#8D08CC", //Purple
-            playerColor4 : "#CC8708", //Orange
-            playerColor5 : "#CC0884", //Pink
-            playerColor6 : "#08CC8B", //Teal
-            playerColor7 : "#996A0C", //Brown
-
-            selectionDescriptionSubject : "Pick up %s",
-            selectionDescriptionMove : "Move to cell %s",
-            selectionDescriptionMoveAndTarget : "Move to cell %s and target %s",
-            selectionDescriptionTarget : "Target %s at cell %s",
-            selectionDescriptionDrop : "Drop target piece at cell %s",
-            selectionDescriptionVacate: "Vacate %s to cell %s",
-
-            selectionPromptDrop : "%s, select a cell to drop the target piece in.",
-            selectionPromptMove : "%s, select a cell to move to.",
-            selectionPromptSubject : "%s, select a piece to move.",
-            selectionPromptTarget : "%s, select a piece to target.",
-            selectionPromptVacate : "%s, select a cell to vacate to.",
-
-            turnPromptCommit: "%s, end your turn or reset.",
-            turnPromptDeadEnd: "%s, no further selections are available. You must reset."
+                turnPromptCommit: "%s, end your turn or reset.",
+                turnPromptDeadEnd: "%s, no further selections are available. You must reset."
+            }
         };
     }
 
-    public static getHotDogTownTheme() : Theme {
+    private static getHotdogtownThemeFragment() : Theme {
         return {
-            centerCellName : "The Booth",
+            centerCellName: "The Booth",
+            pieces: {
+                nameAssassin: "Fork",
+                nameChief: "Sauce",
+                nameCorpse: "Hotdog",
+                nameDiplomat: "Hugger",
+                nameGravedigger: "Eater",
+                nameReporter: "Fart",
+                nameThug: "Fries",
 
-            pieceNameAssassin : "Fork",
-            pieceNameChief : "Sauce",
-            pieceNameCorpse : "Hotdog",
-            pieceNameDiplomat : "Hugger",
-            pieceNameGravedigger : "Eater",
-            pieceNameReporter : "Fart",
-            pieceNameThug : "Fries",
-
-            pieceImageAssassin : "../resources/forkEmoji.png",
-            pieceImageChief : "../resources/ketchupEmoji.png",
-            pieceImageCorpse : "../resources/hotdogEmoji.png",
-            pieceImageDiplomat : "../resources/hugEmoji.png",
-            pieceImageGravedigger : "../resources/droolEmoji.png",
-            pieceImageReporter : "../resources/fartEmoji.png",
-            pieceImageThug : "../resources/friesEmoji.png",
+                imageAssassin: "../resources/forkEmoji.png",
+                imageChief: "../resources/ketchupEmoji.png",
+                imageCorpse: "../resources/hotdogEmoji.png",
+                imageDiplomat: "../resources/hugEmoji.png",
+                imageGravedigger: "../resources/droolEmoji.png",
+                imageReporter: "../resources/fartEmoji.png",
+                imageThug: "../resources/friesEmoji.png",
+            }
         };
+    }
+
+    private static getVoidThemeFragment() : Theme {
+        return {
+            pageStyle: {
+                backgroundColor: "#161616",
+                textColor: "#dcdcdc",
+                borderColor: "#dcdcdc",
+                hintTextColor: "#aaaaaa"
+            },
+            cellStyle: {
+                colorCenter : "#EEEEEE", //Very light gray
+                colorEven : "#000000",   //Black
+                colorOdd : "#333333",    //Dark gray
+                borderColorCenter: "#DDDDDD",
+                borderColorEven: "#DDDDDD",
+                borderColorOdd: "#DDDDDD",
+                textColorCenter: "#000000",
+                textColorEven: "#dcdcdc", //gainsboro
+                textColorOdd: "#dcdcdc",
+            },
+            centerCellName: "The Void",
+            pieces: {
+                nameAssassin : "Hunter",
+                nameChief : "Conduit",
+                nameCorpse : "Husk",
+                nameDiplomat : "Transporter",
+                nameGravedigger : "Reaper",
+                nameReporter : "Scientist",
+                nameThug : "Zealot",
+
+                imageAssassin : "../resources/daggerEmoji.png",
+                imageChief : "../resources/eyeEmoji.png",
+                imageCorpse : "../resources/skullEmoji.png",
+                imageDiplomat : "../resources/doveEmoji.png",
+                imageGravedigger : "../resources/sicleIcon.png",
+                imageReporter : "../resources/testTubeEmoji.png",
+                imageThug : "../resources/fistEmoji.png",
+            }
+        };
+    }
+
+    private static getClassicThemeFragment() : Theme {
+        return {
+            pageStyle: {
+                backgroundColor: "#FFFFFF",
+                textColor: "#000000",
+                borderColor: "#EEEEEE",
+                hintTextColor: "#AAAAAA"
+            },
+            cellStyle: {
+                colorCenter : "#000080", //Navy
+                colorEven : "#a7a7a7",   //Medium gray
+                colorOdd : "#a7a7a7",    //Medium gray
+                borderColorCenter: "#FFFFFF",
+                borderColorEven: "#000000",
+                borderColorOdd: "#000000",
+                textColorCenter: "#FFFFFF",
+                textColorEven: "#000000",
+                textColorOdd: "#000000",
+            },
+            centerCellName : "The Maze",
+            pieces: {
+                nameAssassin : "Assassin",
+                nameChief : "Chief",
+                nameCorpse : "Corpse",
+                nameDiplomat : "Provocateur",
+                nameGravedigger : "Necromobile",
+                nameReporter : "Journalist",
+                nameThug : "Militant",
+
+                imageAssassin : "../resources/classicAssassin.png",
+                imageChief : "../resources/classicChief.png",
+                imageCorpse : "../resources/classicCorpse.png",
+                imageDiplomat : "../resources/classicDiplomat.png",
+                imageGravedigger : "../resources/classicNecromobile.png",
+                imageReporter : "../resources/classicReporter.png",
+                imageThug : "../resources/classicMilitant.png",
+            }
+        };
+    }
+
+    private static merge(theme1 : Theme, theme2 : Theme) : Theme {
+        return {...theme1, ...theme2};
+    }
+
+    public static get defaultTheme() : Theme {
+        return this.getModernTheme();
+    }
+
+    public static get hotdogtownTheme() : Theme {
+        return this.merge(this.getModernTheme(), this.getHotdogtownThemeFragment());
+    }
+
+    public static get voidTheme() : Theme {
+        return this.merge(this.getModernTheme(), this.getVoidThemeFragment());
+    }
+
+    public static get classicTheme() : Theme {
+        return this.merge(this.getModernTheme(), this.getClassicThemeFragment());
     }
 }

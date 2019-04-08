@@ -2,7 +2,6 @@ import * as React from 'react';
 import CanvasPolygon from './canvasPolygon';
 import Color from '../../boardRendering/color';
 import { CellView } from '../../boardRendering/model';
-import { Group } from 'react-konva';
 import { Kernel as K } from '../../kernel';
 
 export interface CanvasCellProps {
@@ -26,21 +25,26 @@ export default class CanvasCell extends React.Component<CanvasCellProps> {
         }
     }
 
+    private getBorderColor() : string {
+        return K.theme.getCellBorderColor(this.props.cell.type);
+    }
+
     render() {
         const color = this.getCellColor();
+        let borderColor = this.getBorderColor();
+
+        if (borderColor === null) {
+            borderColor = color;
+        }
+
         return (
-            <Group>
-                {this.props.cell.polygons.map((p, i) =>
-                    <CanvasPolygon
-                        key={"polygon" + i}
-                        polygon={p}
-                        fillColor={color}
-                        strokeColor={color}
-                        strokeWidth={1} //Stroke is necessary to fill gaps between polygons belonging to the same cell
-                        onClick={() => this.props.selectCell(this.props.cell)}
-                    />
-                )}
-            </Group>
+            <CanvasPolygon
+                polygon={this.props.cell.polygon}
+                fillColor={color}
+                strokeColor={borderColor}
+                strokeWidth={1} //Stroke is necessary to fill gaps between polygons belonging to the same cell
+                onClick={() => this.props.selectCell(this.props.cell)}
+            />
         );
     }
 }

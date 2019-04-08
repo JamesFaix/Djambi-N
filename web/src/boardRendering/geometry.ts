@@ -7,6 +7,8 @@ import {
     Polygon,
     Rectangle
     } from './model';
+import Logic from '../logic';
+import { Location } from '../api/model';
 
 export default class Geometry {
 
@@ -25,6 +27,16 @@ export default class Geometry {
             };
         }
 
+        public static create(x : number, y : number) : Point {
+            return { x: x, y: y };
+        }
+
+        public static distance(a : Point, b : Point) : number {
+            const dx = a.x - b.x;
+            const dy = a.y - b.y;
+            return Math.sqrt(dx*dx + dy*dy);
+        }
+
         public static divide(a : Point, b : Point) : Point {
             return {
                 x: a.x / b.x,
@@ -37,6 +49,10 @@ export default class Geometry {
                 x: b.x === 0 ? 0 : a.x / b.x,
                 y: b.y === 0 ? 0 : a.y / b.y
             }
+        }
+
+        public static isCloseTo(a : Point, b : Point, threshold : number) : boolean {
+            return this.distance(a, b) < threshold;
         }
 
         public static multiply(a : Point, b : Point) : Point {
@@ -91,6 +107,11 @@ export default class Geometry {
     }
 
     public static Line = class {
+
+        public static create(a : Point, b : Point) : Line {
+            return { a: a, b: b };
+        }
+
         //Point a fraction of the way down a line.
         //Generalization of midpoint.
         //midpoint(L) = fractionPoint(L, 0.5)
@@ -102,6 +123,25 @@ export default class Geometry {
                 x: (l.a.x * compliment) + (l.b.x * fraction),
                 y: (l.a.y * compliment) + (l.b.y * fraction)
             };
+        }
+
+        //Determines if both lines share exactly one vertex, within the given threshold of error
+        public static isChainedTo(l1 : Line, l2 : Line, threshold : number) : boolean {
+            const P = Geometry.Point;
+            return Logic.Xors([
+                P.isCloseTo(l1.a, l2.a, threshold),
+                P.isCloseTo(l1.a, l2.b, threshold),
+                P.isCloseTo(l1.b, l2.a, threshold),
+                P.isCloseTo(l1.b, l2.b, threshold)
+            ]);
+        }
+
+        //Determines if both lines share both vertices, within the given threshold of error
+        //Ignores orientation of each line
+        public static isCloseTo(l1 : Line, l2 : Line, threshold : number) : boolean {
+            const P = Geometry.Point;
+            return (P.isCloseTo(l1.a, l2.a, threshold) && P.isCloseTo(l1.b, l2.b, threshold))
+                || (P.isCloseTo(l1.a, l2.b, threshold) && P.isCloseTo(l1.b, l2.a, threshold));
         }
 
         public static len(l : Line) : number { //TS compiler won't let you use `length` because of `Function.length`
@@ -118,7 +158,30 @@ export default class Geometry {
         }
     }
 
+    public static Location = class {
+        public static create(region : number, x : number, y : number) : Location {
+            return { x: x, y: y, region: region};
+        }
+
+        public static equals(a : Location, b : Location) : boolean {
+            return a.x === b.x
+                && a.y === b.y
+                && a.region === b.region;
+        }
+    }
+
     public static Polygon = class {
+        public static boundingBox(p : Polygon) : Rectangle {
+            const xs = p.vertices.map(v => v.x);
+            const ys = p.vertices.map(v => v.y);
+            return {
+                left: Math.min(...xs),
+                right: Math.max(...xs),
+                top: Math.min(...ys),
+                bottom: Math.max(...ys)
+            };
+        }
+
         public static centroid(p : Polygon) : Point {
             let sumX = 0;
             let sumY = 0;
@@ -135,6 +198,10 @@ export default class Geometry {
                 x: sumX / count,
                 y: sumY / count
             };
+        }
+
+        public static create(vertices : Point[]) : Polygon {
+            return { vertices: vertices };
         }
 
         public static edges(p : Polygon) : Line[] {
@@ -173,6 +240,7 @@ export default class Geometry {
         }
     }
 
+    //TODO: Needs unit tests
     public static RegularPolygon = class {
         private static readonly sideLength = 1;
 
@@ -337,6 +405,7 @@ export default class Geometry {
         }
     }
 
+    //TODO: Needs unit tests
     public static Rectangle = class {
         public static largestScaleWithinBox(innerSize : Point, outerSize : Point) : number {
             const maxScale = Geometry.Point.divide(outerSize, innerSize);
@@ -344,6 +413,7 @@ export default class Geometry {
         }
     }
 
+    //TODO: Needs unit tests
     public static Transform = class {
         //https://www.mathworks.com/help/images/matrix-representation-of-geometric-transformations.html
 
@@ -417,30 +487,14 @@ export default class Geometry {
         }
     }
 
+    //TODO: Needs unit tests
     public static Cell = class {
-        public static centroid(c : CellView) : Point {
-            let sumX = 0;
-            let sumY = 0;
-            let n = c.polygons.length;
-
-            for (var i = 0; i < n; i++){
-                let p = Geometry.Polygon.centroid(c.polygons[i]);
-                sumX += p.x;
-                sumY += p.y;
-            }
-
-            return { x: sumX/n, y: sumY/n };
+        public static boundingBox(c : CellView) : Rectangle {
+            return Geometry.Polygon.boundingBox(c.polygon);
         }
 
-        public static rectangle(c : CellView) : Rectangle {
-            const xs = c.polygons.map(p => p.vertices.map(v => v.x)).reduce((a, b) => a.concat(b));
-            const ys = c.polygons.map(p => p.vertices.map(v => v.y)).reduce((a, b) => a.concat(b));
-            return {
-                left: Math.min(...xs),
-                right: Math.max(...xs),
-                top: Math.min(...ys),
-                bottom: Math.max(...ys)
-            };
+        public static centroid(c : CellView) : Point {
+            return Geometry.Polygon.centroid(c.polygon);
         }
 
         public static transform(c: CellView, matrix : MathJs.Matrix) : CellView {
@@ -450,11 +504,12 @@ export default class Geometry {
                 type: c.type,
                 state: c.state,
                 piece: c.piece,
-                polygons: c.polygons.map(p => Geometry.Polygon.transform(p, matrix))
+                polygon: Geometry.Polygon.transform(c.polygon, matrix)
             };
         }
     }
 
+    //TODO: Needs unit tests
     public static Board = class {
         public static size(b : BoardView) : Point {
             const h = Geometry.Polygon.height(b.polygon);

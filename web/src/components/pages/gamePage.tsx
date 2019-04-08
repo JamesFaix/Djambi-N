@@ -201,7 +201,7 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
                         boardView={this.props.boardView}
                         selectCell={cell => this.selectCell(cell)}
                         size={boardPanelSize}
-                        boardStrokeWidth={10}
+                        boardStrokeWidth={5}
                         boardMargin={5}
                     />
                 </div>

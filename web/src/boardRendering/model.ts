@@ -43,7 +43,7 @@ export interface CellView {
     type : CellType,
     state : CellState,
     piece : PieceView,
-    polygons : Polygon[]
+    polygon : Polygon
 }
 
 export interface BoardView {

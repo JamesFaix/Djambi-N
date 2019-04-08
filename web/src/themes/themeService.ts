@@ -18,30 +18,46 @@ import {
     } from '../api/model';
 
 export default class ThemeService {
-    theme : Theme;
-    private readonly defaultTheme : Theme;
+    private _theme : Theme;
 
     constructor(){
-        this.defaultTheme = ThemeFactory.getDefaultTheme();
+        this.setTheme(ThemeFactory.classicTheme);
     }
 
-    //Get the custom theme value if it exists, otherwise default value
-    private getValue<T>(getProperty : (t : Theme) => T) : T {
-        if (this.theme){
-            const value = getProperty(this.theme);
-            if (value) {
-                return value;
-            }
-        }
+    public get theme() : Theme {
+        return this._theme;
+    }
 
-        return getProperty(this.defaultTheme);
+    private setTheme(theme : Theme) : void {
+        this._theme = theme;
+
+        const docStyle = document.documentElement.style;
+
+        docStyle.setProperty("--background-color", theme.pageStyle.backgroundColor);
+        docStyle.setProperty("--text-color", theme.pageStyle.textColor);
+        docStyle.setProperty("--border-color", theme.pageStyle.borderColor);
+        docStyle.setProperty("--hint-text-color", theme.pageStyle.hintTextColor);
+
+        docStyle.setProperty("--cell-color-even", theme.cellStyle.colorEven);
+        docStyle.setProperty("--cell-color-odd", theme.cellStyle.colorOdd);
+        docStyle.setProperty("--cell-text-color-even", theme.cellStyle.textColorEven);
+        docStyle.setProperty("--cell-text-color-odd", theme.cellStyle.textColorOdd);
     }
 
     public getCellBaseColor(type : CellType) : string {
         switch(type) {
-            case CellType.Center: return this.getValue(t => t.cellColorCenter);
-            case CellType.Even: return this.getValue(t => t.cellColorEven);
-            case CellType.Odd: return this.getValue(t => t.cellColorOdd);
+            case CellType.Center: return this.theme.cellStyle.colorCenter;
+            case CellType.Even: return this.theme.cellStyle.colorEven;
+            case CellType.Odd: return this.theme.cellStyle.colorOdd;
+            default: throw "Invalid cell type.";
+        }
+    }
+
+    public getCellBorderColor(type : CellType) : string {
+        switch(type) {
+            case CellType.Center: return this.theme.cellStyle.borderColorCenter;
+            case CellType.Even: return this.theme.cellStyle.borderColorEven;
+            case CellType.Odd: return this.theme.cellStyle.borderColorOdd;
             default: throw "Invalid cell type.";
         }
     }
@@ -54,14 +70,14 @@ export default class ThemeService {
 
             case CellState.Selected:
                 return {
-                    color: this.getValue(t => t.cellHighlightSelectedColor),
-                    intensity: this.getValue(t => t.cellHighlightSelectedIntensity)
+                    color: this.theme.cellHighlightStyle.selectedColor,
+                    intensity: this.theme.cellHighlightStyle.selectedIntensity
                 };
 
             case CellState.Selectable:
                 return {
-                    color: this.getValue(t => t.cellHighlightSelectionOptionColor),
-                    intensity: this.getValue(t => t.cellHighlightSelectionOptionIntensity)
+                    color: this.theme.cellHighlightStyle.selectionOptionColor,
+                    intensity: this.theme.cellHighlightStyle.selectionOptionIntensity
                 };
 
             default:
@@ -70,18 +86,18 @@ export default class ThemeService {
     }
 
     public getCenterCellName() : string {
-        return this.getValue(t => t.centerCellName);
+        return this.theme.centerCellName;
     }
 
     private getPieceImagePath(kind : PieceKind) : string {
         switch (kind) {
-            case PieceKind.Assassin: return this.getValue(t => t.pieceImageAssassin);
-            case PieceKind.Chief: return this.getValue(t => t.pieceImageChief);
-            case PieceKind.Corpse: return this.getValue(t => t.pieceImageCorpse);
-            case PieceKind.Diplomat: return this.getValue(t => t.pieceImageDiplomat);
-            case PieceKind.Gravedigger: return this.getValue(t => t.pieceImageGravedigger);
-            case PieceKind.Reporter: return this.getValue(t => t.pieceImageReporter);
-            case PieceKind.Thug: return this.getValue(t => t.pieceImageThug);
+            case PieceKind.Assassin: return this.theme.pieces.imageAssassin;
+            case PieceKind.Chief: return this.theme.pieces.imageChief;
+            case PieceKind.Corpse: return this.theme.pieces.imageCorpse;
+            case PieceKind.Diplomat: return this.theme.pieces.imageDiplomat;
+            case PieceKind.Gravedigger: return this.theme.pieces.imageGravedigger;
+            case PieceKind.Reporter: return this.theme.pieces.imageReporter;
+            case PieceKind.Thug: return this.theme.pieces.imageThug;
             default: throw "Invalid piece kind.";
         }
     }
@@ -94,27 +110,27 @@ export default class ThemeService {
 
     public getPieceName(kind : PieceKind) : string {
         switch (kind) {
-            case PieceKind.Assassin: return this.getValue(t => t.pieceNameAssassin);
-            case PieceKind.Chief: return this.getValue(t => t.pieceNameChief);
-            case PieceKind.Corpse: return this.getValue(t => t.pieceNameCorpse);
-            case PieceKind.Diplomat: return this.getValue(t => t.pieceNameDiplomat);
-            case PieceKind.Gravedigger: return this.getValue(t => t.pieceNameGravedigger);
-            case PieceKind.Reporter: return this.getValue(t => t.pieceNameReporter);
-            case PieceKind.Thug: return this.getValue(t => t.pieceNameThug);
+            case PieceKind.Assassin: return this.theme.pieces.nameAssassin;
+            case PieceKind.Chief: return this.theme.pieces.nameChief;
+            case PieceKind.Corpse: return this.theme.pieces.nameCorpse;
+            case PieceKind.Diplomat: return this.theme.pieces.nameDiplomat;
+            case PieceKind.Gravedigger: return this.theme.pieces.nameGravedigger;
+            case PieceKind.Reporter: return this.theme.pieces.nameReporter;
+            case PieceKind.Thug: return this.theme.pieces.nameThug;
             default: throw "Invalid piece kind.";
         }
     }
 
     public getPlayerColor(colorId : number) : string {
         switch (colorId) {
-            case 0: return this.getValue(t => t.playerColor0);
-            case 1: return this.getValue(t => t.playerColor1);
-            case 2: return this.getValue(t => t.playerColor2);
-            case 3: return this.getValue(t => t.playerColor3);
-            case 4: return this.getValue(t => t.playerColor4);
-            case 5: return this.getValue(t => t.playerColor5);
-            case 6: return this.getValue(t => t.playerColor6);
-            case 7: return this.getValue(t => t.playerColor7);
+            case 0: return this.theme.players.color0;
+            case 1: return this.theme.players.color1;
+            case 2: return this.theme.players.color2;
+            case 3: return this.theme.players.color3;
+            case 4: return this.theme.players.color4;
+            case 5: return this.theme.players.color5;
+            case 6: return this.theme.players.color6;
+            case 7: return this.theme.players.color7;
             case null : return null; //Neutral
             default: throw "Invalid colorId. " + colorId;
         }
@@ -123,23 +139,21 @@ export default class ThemeService {
     public getSelectionDescriptionTemplate(selection : Selection) : string {
         switch (selection.kind) {
             case SelectionKind.Drop:
-                return this.getValue(t => t.selectionDescriptionDrop);
+                return this.theme.gameCopy.selectionDescriptionDrop;
 
             case SelectionKind.Move:
-                if (selection.pieceId === null) {
-                    return this.getValue(t => t.selectionDescriptionMove);
-                } else {
-                    return this.getValue(t => t.selectionDescriptionMoveAndTarget);
-                }
+                return selection.pieceId === null
+                    ? this.theme.gameCopy.selectionDescriptionMove
+                    : this.theme.gameCopy.selectionDescriptionMoveAndTarget;
 
             case SelectionKind.Subject:
-                return this.getValue(t => t.selectionDescriptionSubject);
+                return this.theme.gameCopy.selectionDescriptionSubject;
 
             case SelectionKind.Target:
-                return this.getValue(t => t.selectionDescriptionTarget);
+                return this.theme.gameCopy.selectionDescriptionTarget;
 
             case SelectionKind.Vacate:
-                return this.getValue(t => t.selectionDescriptionVacate);
+                return this.theme.gameCopy.selectionDescriptionVacate;
 
             default: throw "Invalid selection kind.";
         }
@@ -150,9 +164,9 @@ export default class ThemeService {
             case TurnStatus.AwaitingSelection:
                 return this.getSelectionPrompt(turn.requiredSelectionKind);
             case TurnStatus.AwaitingCommit:
-                return this.getValue(t => t.turnPromptCommit);
+                return this.theme.gameCopy.turnPromptCommit;
             case TurnStatus.DeadEnd:
-                return this.getValue(t => t.turnPromptDeadEnd);
+                return this.theme.gameCopy.turnPromptDeadEnd;
             default:
                 throw "Invalid turn status.";
         }
@@ -160,12 +174,11 @@ export default class ThemeService {
 
     private getSelectionPrompt(kind : SelectionKind) : string {
         switch (kind) {
-            case SelectionKind.Drop: return this.getValue(t => t.selectionPromptDrop);
-            case SelectionKind.Move: return this.getValue(t => t.selectionPromptMove);
-            case SelectionKind.Subject: return this.getValue(t => t.selectionPromptSubject);
-            case SelectionKind.Target: return this.getValue(t => t.selectionPromptTarget);
-            case SelectionKind.Vacate: return this.getValue(t => t.selectionPromptVacate);
-            case null: return this.getValue(t => t.selectionPromptNull);
+            case SelectionKind.Drop: return this.theme.gameCopy.selectionPromptDrop;
+            case SelectionKind.Move: return this.theme.gameCopy.selectionPromptMove;
+            case SelectionKind.Subject: return this.theme.gameCopy.selectionPromptSubject;
+            case SelectionKind.Target: return this.theme.gameCopy.selectionPromptTarget;
+            case SelectionKind.Vacate: return this.theme.gameCopy.selectionPromptVacate;
             default: throw "Invalid selection kind.";
         }
     }
@@ -173,11 +186,11 @@ export default class ThemeService {
     public getEventMessageTemplate(event : Event) : string {
         switch (event.kind) {
             case EventKind.GameStarted:
-                return this.getValue(t => t.eventMessageGameStarted);
+                return this.theme.gameCopy.eventGameStarted;
             case EventKind.TurnCommitted:
-                return this.getValue(t => t.eventMessageTurnCommitted);
+                return this.theme.gameCopy.eventTurnCommitted;
             case EventKind.PlayerStatusChanged:
-                return this.getValue(t => t.eventMessagePlayerStatusChanged);
+                return this.theme.gameCopy.eventPlayerStatusChanged;
             default:
                 throw "Unsupported event kind.";
         }
@@ -186,70 +199,70 @@ export default class ThemeService {
     public getEffectMessageTemplate(effect : Effect) : string {
         switch (effect.kind) {
             case EffectKind.GameStatusChanged:
-                return this.getGameStatusChangedMessageTemplate(effect);
+                return this.getGameStatusChangedTemplate(effect);
             case EffectKind.NeutralPlayerAdded:
-                return this.getValue(t => t.effectMessageNeutralPlayerAdded);
+                return this.theme.gameCopy.effectNeutralPlayerAdded;
             case EffectKind.PieceAbandoned:
-                return this.getValue(t => t.effectMessagePieceAbandoned);
+                return this.theme.gameCopy.effectPieceAbandoned;
             case EffectKind.PieceDropped:
-                return this.getValue(t => t.effectMessagePieceDropped);
+                return this.theme.gameCopy.effectPieceDropped;
             case EffectKind.PieceEnlisted:
-                return this.getValue(t => t.effectMessagePieceEnlisted);
+                return this.theme.gameCopy.effectPieceEnlisted;
             case EffectKind.PieceKilled:
-                return this.getValue(t => t.effectMessagePieceKilled);
+                return this.theme.gameCopy.effectPieceKilled;
             case EffectKind.PieceMoved:
-                return this.getValue(t => t.effectMessagePieceMoved);
+                return this.theme.gameCopy.effectPieceMoved;
             case EffectKind.PieceVacated:
-                return this.getValue(t => t.effectMessagePieceVacated);
+                return this.theme.gameCopy.effectPieceVacated;
             case EffectKind.PlayerAdded:
-                return this.getValue(t => t.effectMessagePlayerAdded);
+                return this.theme.gameCopy.effectPlayerAdded;
             case EffectKind.PlayerOutOfMoves:
-                return this.getValue(t => t.effectMessagePlayerOutOfMoves);
+                return this.theme.gameCopy.effectPlayerOutOfMoves;
             case EffectKind.PlayerRemoved:
-                return this.getValue(t => t.effectMessagePlayerRemoved);
+                return this.theme.gameCopy.effectPlayerRemoved;
             case EffectKind.PlayerStatusChanged:
-                return this.getPlayerStatusChangedMessageTemplate(effect);
+                return this.getPlayerStatusChangedTemplate(effect);
             case EffectKind.TurnCycleAdvanced:
-                return this.getValue(t => t.effectMessageTurnCycleAdvanced);
+                return this.theme.gameCopy.effectTurnCycleAdvanced;
             case EffectKind.TurnCyclePlayerFellFromPower:
-                return this.getValue(t => t.effectMessageTurnCyclePlayerFellFromPower);
+                return this.theme.gameCopy.effectTurnCyclePlayerFellFromPower;
             case EffectKind.TurnCyclePlayerRemoved:
-                return this.getValue(t => t.effectMessageTurnCyclePlayerRemoved);
+                return this.theme.gameCopy.effectTurnCyclePlayerRemoved;
             case EffectKind.TurnCyclePlayerRoseToPower:
-                return this.getValue(t => t.effectMessageTurnCyclePlayerRoseToPower);
+                return this.theme.gameCopy.effectTurnCyclePlayerRoseToPower;
             default:
                 throw "Unsupported effect kind.";
         }
     }
 
-    private getGameStatusChangedMessageTemplate(effect : Effect) : string {
+    private getGameStatusChangedTemplate(effect : Effect) : string {
         const f = effect.value as GameStatusChangedEffect;
 
         switch (f.newValue) {
             case GameStatus.InProgress:
-                return this.getValue(t => t.effectMessageGameStatusChangedInProgress);
+                return this.theme.gameCopy.effectGameStatusChangedInProgress;
             case GameStatus.Over:
-                return this.getValue(t => t.effectMessageGameStatusChangedOver);
+                return this.theme.gameCopy.effectGameStatusChangedOver;
             default:
                 throw "Unsupported game status.";
         }
     }
 
-    private getPlayerStatusChangedMessageTemplate(effect : Effect) : string {
+    private getPlayerStatusChangedTemplate(effect : Effect) : string {
         const f = effect.value as PlayerStatusChangedEffect;
         switch (f.newStatus) {
             case PlayerStatus.AcceptsDraw:
-                return this.getValue(t => t.effectMessagePlayerStatusChangedAcceptsDraw);
+                return this.theme.gameCopy.effectPlayerStatusChangedAcceptsDraw;
             case PlayerStatus.Alive:
-                return this.getValue(t => t.effectMessagePlayerStatusChangedAlive);
+                return this.theme.gameCopy.effectPlayerStatusChangedAlive;
             case PlayerStatus.Conceded:
-                return this.getValue(t => t.effectMessagePlayerStatusChangedConceded);
+                return this.theme.gameCopy.effectPlayerStatusChangedConceded;
             case PlayerStatus.WillConcede:
-                return this.getValue(t => t.effectMessagePlayerStatusChangedWillConcede);
+                return this.theme.gameCopy.effectPlayerStatusChangedWillConcede;
             case PlayerStatus.Eliminated:
-                return this.getValue(t => t.effectMessagePlayerStatusChangedEliminated);
+                return this.theme.gameCopy.effectPlayerStatusChangedEliminated;
             case PlayerStatus.Victorious:
-                return this.getValue(t => t.effectMessagePlayerStatusChangedVictorious);
+                return this.theme.gameCopy.effectPlayerStatusChangedVictorious;
             default:
                 throw "Unsupported player status.";
         }
