@@ -1,6 +1,50 @@
 import { expect } from 'chai';
 import { List } from '../../src/collections';
 
+describe('List.contains', () => {
+    it('Returns true if array contains value', () => {
+        let xs = [1,2,3];
+        let actual = List.contains(xs, 1);
+        expect(actual).to.equal(true);
+    });
+
+    it('Returns false if array does not contain value', () => {
+        let xs = [1,2,3];
+        let actual = List.contains(xs, 4);
+        expect(actual).to.equal(false);
+    });
+
+    it('Returns false if array just contains structurally equal object', () => {
+        let xs = [{x: 1}, {x: 2}];
+        let actual = List.contains(xs, {x: 1});
+        expect(actual).to.equal(false);
+    });
+
+    it('Returns false if array is empty', () => {
+        let actual = List.contains([], 1);
+        expect(actual).to.equal(false);
+    });
+});
+
+describe('List.exists', () => {
+    it('Returns true if array contains value satisfying predicate', () => {
+        let xs = [1,2,3];
+        let actual = List.exists(xs, x => x > 2);
+        expect(actual).to.equal(true);
+    });
+
+    it('Returns false if array does not contain value satifying predicate', () => {
+        let xs = [1,2,3];
+        let actual = List.exists(xs, x => x > 3);
+        expect(actual).to.equal(false);
+    });
+
+    it('Returns false if array is empty', () => {
+        let actual = List.exists([], x => true);
+        expect(actual).to.equal(false);
+    });
+});
+
 describe('List.flatMap', () => {
     let projection = (n:number) => [n, n*n];
 
@@ -31,6 +75,25 @@ describe('List.flatten', () => {
     it('Returns empty if input empty', () => {
         let actual = List.flatten([]);
         expect(actual).to.eql([]);
+    });
+});
+
+describe('List.forAll', () => {
+    it('Returns true if all elements satisfy predicate', () => {
+        let xs = [1,2,3];
+        let actual = List.forAll(xs, x => x < 4);
+        expect(actual).to.equal(true);
+    });
+
+    it('Returns false if any element does not satisfy predicate', () => {
+        let xs = [1,2,3];
+        let actual = List.forAll(xs, x => x < 3);
+        expect(actual).to.equal(false);
+    });
+
+    it('Returns true if array is empty', () => {
+        let actual = List.forAll([], x => true);
+        expect(actual).to.equal(true);
     });
 });
 
