@@ -4,3 +4,4 @@ environment.json
 bin/
 obj/
 tools/
+.fake/
