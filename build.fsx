@@ -1,14 +1,14 @@
-open System.Diagnostics
 #r "paket:
 nuget Fake.Core.Target
 nuget Fake.DotNet.Cli
 nuget Fake.DotNet.MSBuild
-nuget Fake.IO.FileSystem"
+nuget Fake.IO.FileSystem
+nuget Fake.JavaScript.Npm"
 #load "./.fake/build.fsx/intellisense.fsx"
 
 open Fake.Core
 open Fake.DotNet
-open Fake.IO
+open Fake.JavaScript
 open System.Diagnostics
 
 //Target names
@@ -31,33 +31,32 @@ Target.create defaultTarget (fun _ ->
 
 Target.create all ignore
 
-let buildFsProject (dir : string) (name : string) =
-    (fun (_ : TargetParameter) ->
-        let path = sprintf "./%s/%s/%s.fsproj" dir name name
-        DotNet.exec id "build" path |> ignore
-    )
+let getDir (subDir : string) = sprintf "%s/%s" __SOURCE_DIRECTORY__ subDir
 
-let runFsProject (dir : string) (name : string) (newWindow : bool)=
-    (fun (_ : TargetParameter) ->
-        let path = sprintf "./%s/%s/%s.fsproj" dir name name
+let buildFsProj (path : string) (_ : TargetParameter) =
+    DotNet.exec id "build" path |> ignore
 
-        if not newWindow
-        then DotNet.exec id "run" ("--project " + path)
-             |> ignore
-        else
-            let psi = ProcessStartInfo()
-            psi.FileName <- "dotnet"
-            psi.Arguments <- sprintf "run %s.fsproj" name
-            psi.WorkingDirectory <- sprintf "%s/%s/%s" __SOURCE_DIRECTORY__ dir name
-            psi.CreateNoWindow <- false
-            psi.UseShellExecute <- false
-            Process.Start psi |> ignore
-    )
+let runFsProj (path : string) (_ : TargetParameter) =
+    DotNet.exec id "run" ("--project " + path) |> ignore
 
-Target.create buildApi (buildFsProject "api" "api.host")
-Target.create dbReset (runFsProject "utils" "db-reset" false)
-Target.create genClient (runFsProject "utils" "client-generator" false)
-Target.create runApi (runFsProject "api" "api.host" true)
+let launchConsole (dir : string) (command : string) (args : string list) (_ : TargetParameter) =
+    let psi = ProcessStartInfo()
+    psi.FileName <- command
+    psi.Arguments <- System.String.Join(" ", args)
+    psi.WorkingDirectory <- getDir dir
+    psi.UseShellExecute <- true
+    Process.Start psi |> ignore
+
+Target.create buildApi (buildFsProj "api/api.host/api.host.fsproj")
+Target.create dbReset (runFsProj "utils/db-reset/db-reset.fsproj")
+Target.create genClient (runFsProj "utils/client-generator/client-generator.fsproj")
+Target.create buildWeb (fun _ ->
+    let setParams (o : Npm.NpmParams) = { o with WorkingDirectory = getDir "web" }
+    Npm.install setParams
+    Npm.run "build" setParams
+)
+Target.create runApi (launchConsole "api/api.host" "dotnet" ["run api.host.fsproj"])
+Target.create runWeb (launchConsole "web" "http-server" [])
 
 //Dependencies
 
@@ -65,13 +64,18 @@ open Fake.Core.TargetOperators
 
 dbReset ?=> buildApi
 buildApi ?=> genClient
-runApi ==> buildApi
+genClient ?=> buildWeb
+buildApi ?=> runApi
+buildWeb ?=> runWeb
 
 all <==
     [
         dbReset
         buildApi
         genClient
+        buildWeb
+        runApi
+        runWeb
     ]
 
 //Start
