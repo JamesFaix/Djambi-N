@@ -1,8 +1,6 @@
 #r "paket:
 nuget Fake.Core.Target
 nuget Fake.DotNet.Cli
-nuget Fake.DotNet.MSBuild
-nuget Fake.IO.FileSystem
 nuget Fake.JavaScript.Npm"
 #load "./.fake/build.fsx/intellisense.fsx"
 
@@ -92,6 +90,7 @@ dbReset ?=> buildApi
 buildApi ?=> genClient
 genClient ?=> buildWeb
 buildApi ?=> runApi
+restoreWeb ?=> buildWeb
 buildWeb ?=> runWeb
 buildApi ?=> testApiUnit
 buildApi ?=> testApiInt
@@ -102,6 +101,7 @@ buildAll <==
         dbReset
         buildApi
         genClient
+        restoreWeb
         buildWeb
     ]
 
