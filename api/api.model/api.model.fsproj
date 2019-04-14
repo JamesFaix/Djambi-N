@@ -15,10 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="TaskBuilder.fs" Version="2.1.0" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\utils\client-generator.annotations\client-generator.annotations.fsproj" />
     <ProjectReference Include="..\api.common\api.common.fsproj" />
   </ItemGroup>

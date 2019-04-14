@@ -34,10 +34,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="TaskBuilder.fs" Version="2.1.0" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\api.common\api.common.fsproj" />
     <ProjectReference Include="..\api.db.interfaces\api.db.interfaces.fsproj" />
     <ProjectReference Include="..\api.logic.interfaces\api.logic.interfaces.fsproj" />
