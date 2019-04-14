@@ -1,4 +1,4 @@
-﻿[<AutoOpen>]
+[<AutoOpen>]
 module Djambi.Api.Model.UserModel
 
 open System
@@ -24,7 +24,7 @@ type User with
     member x.has (p : Privilege) =
         x.privileges |> List.contains p
 
-type UserDetails = 
+type UserDetails =
     {
         id : int
         name : string
@@ -42,17 +42,17 @@ module UserDetails =
             privileges = user.privileges
         }
 
-[<CLIMutable>]  
-[<ClientType(ClientSection.User)>]      
+[<CLIMutable>]
+[<ClientType(ClientSection.User)>]
 type CreateUserRequest =
     {
         name : string
         password : string
     }
 
-[<ClientType(ClientSection.User)>]      
+[<ClientType(ClientSection.User)>]
 type CreationSource =
-    {    
+    {
         userId : int
         userName : string
         time : DateTime

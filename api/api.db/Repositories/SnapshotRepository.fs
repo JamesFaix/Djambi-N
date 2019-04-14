@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.Db.Repositories
+namespace Djambi.Api.Db.Repositories
 
 open Djambi.Api.Common.Collections
 open Djambi.Api.Common.Control.AsyncHttpResult
@@ -26,10 +26,10 @@ type SnapshotRepository(ctxProvider : CommandContextProvider) =
             Commands2.createSnapshot request
             |> Command.execute ctxProvider
 
-        member x.loadSnapshot (gameId, snapshotId) =            
+        member x.loadSnapshot (gameId, snapshotId) =
             (x :> ISnapshotRepository).getSnapshot snapshotId
             |> thenBindAsync (fun snapshot ->
-                let commands = 
+                let commands =
                     Commands2.replaceEventHistory (gameId, snapshot.history) ::
                     Commands2.updateGame snapshot.game ::
                     (snapshot.game.players |> List.map Commands2.updatePlayer)

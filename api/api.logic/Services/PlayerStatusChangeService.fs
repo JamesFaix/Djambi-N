@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.Logic.Services
+namespace Djambi.Api.Logic.Services
 
 open Djambi.Api.Common.Collections
 open Djambi.Api.Common.Control
@@ -9,24 +9,24 @@ type PlayerStatusChangeService(eventServ : EventService,
                                indirectEffectsServ : IndirectEffectsService) =
 
     let getFinalAcceptDrawEffects(game : Game, request : PlayerStatusChangeRequest) : Effect list =
-        let otherLivingPlayersNotAcceptingADraw = 
-            game.players 
-            |> List.filter (fun p -> 
+        let otherLivingPlayersNotAcceptingADraw =
+            game.players
+            |> List.filter (fun p ->
                 p.id <> request.playerId &&
                 p.status = Alive
             )
-            
+
         if otherLivingPlayersNotAcceptingADraw.IsEmpty
         then
             [
                 Effect.GameStatusChanged { oldValue = InProgress; newValue = Over }
             ]
         else [] //If not last player to accept, nothing special happens
-   
-    member x.getUpdatePlayerStatusEvent (game : Game, request : PlayerStatusChangeRequest) (session : Session) : CreateEventRequest HttpResult = 
+
+    member x.getUpdatePlayerStatusEvent (game : Game, request : PlayerStatusChangeRequest) (session : Session) : CreateEventRequest HttpResult =
         if game.status <> InProgress then
             Error <| HttpException(400, "Cannot change player status unless game is InProgress.")
-        else    
+        else
             Security.ensurePlayerOrHas OpenParticipation session game
             |> Result.bind (fun _ ->
                 let player = game.players |> List.find (fun p -> p.id = request.playerId)
@@ -35,12 +35,12 @@ type PlayerStatusChangeService(eventServ : EventService,
 
                 if oldStatus = newStatus
                     then Error <| HttpException(400, "Cannot change player status to current status.")
-                else 
-                    let primaryEffect = Effect.PlayerStatusChanged { 
+                else
+                    let primaryEffect = Effect.PlayerStatusChanged {
                         oldStatus = oldStatus
                         newStatus = newStatus
-                        playerId = player.id 
-                    } 
+                        playerId = player.id
+                    }
 
                     let event = {
                         kind = EventKind.PlayerStatusChanged
@@ -65,24 +65,24 @@ type PlayerStatusChangeService(eventServ : EventService,
                         then
                             let effects = new ArrayList<Effect>()
 
-                            let primary = Effect.PlayerStatusChanged { 
+                            let primary = Effect.PlayerStatusChanged {
                                 oldStatus = oldStatus
                                 newStatus = Conceded
-                                playerId = player.id 
-                            } 
+                                playerId = player.id
+                            }
 
                             effects.Add(primary)
                             let game = eventServ.applyEffect primary game
                             effects.AddRange (indirectEffectsServ.getIndirectEffectsForConcede (game, request))
                             Ok { event with effects = effects |> Seq.toList }
                         else
-                            let primary = Effect.PlayerStatusChanged { 
+                            let primary = Effect.PlayerStatusChanged {
                                 oldStatus = oldStatus
                                 newStatus = WillConcede
-                                playerId = player.id 
-                            } 
+                                playerId = player.id
+                            }
                             Ok { event with effects = [primary] }
 
-                    | _ -> 
+                    | _ ->
                         Error <| HttpException(400, "Player status transition not allowed.")
             )

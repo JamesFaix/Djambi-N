@@ -1,4 +1,4 @@
-﻿module Djambi.Api.ContractTests.PlayerTests
+module Djambi.Api.ContractTests.PlayerTests
 
 open System
 open System.Net

@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.Db.Repositories
+namespace Djambi.Api.Db.Repositories
 
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Db;
@@ -11,7 +11,7 @@ type SessionRepository(ctxProvider : CommandContextProvider,
         member x.getSession query =
             Commands2.getSession query
             |> Command.execute ctxProvider
-            |> thenBindAsync (fun sessionSqlModel -> 
+            |> thenBindAsync (fun sessionSqlModel ->
                 userRepo.getUser sessionSqlModel.userId
                 |> thenMap (fun userDetails ->
                     let user = userDetails |> UserDetails.hideDetails
@@ -22,26 +22,26 @@ type SessionRepository(ctxProvider : CommandContextProvider,
         member x.createSession request =
             Commands2.createSession request
             |> Command.execute ctxProvider
-            |> thenBindAsync(fun sessionId -> 
-                let query = 
+            |> thenBindAsync(fun sessionId ->
+                let query =
                     {
                         sessionId = Some sessionId
                         token = None
                         userId = None
-                    }    
+                    }
                 (x :> ISessionRepository).getSession query
             )
 
         member x.renewSessionExpiration (sessionId, expiresOn) =
             Commands.renewSessionExpiration (sessionId, expiresOn)
             |> Command.execute ctxProvider
-            |> thenBindAsync (fun _ -> 
-                let query = 
+            |> thenBindAsync (fun _ ->
+                let query =
                     {
                         sessionId = Some sessionId
                         token = None
                         userId = None
-                    }    
+                    }
                 (x :> ISessionRepository).getSession query
             )
 

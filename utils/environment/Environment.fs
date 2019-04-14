@@ -1,4 +1,4 @@
-﻿namespace Djambi.Utilities
+namespace Djambi.Utilities
 
 type Environment =
     {
@@ -11,7 +11,7 @@ type Environment =
         adminPassword : string
     }
 
-module Environment = 
+module Environment =
 
     open System
     open System.IO
@@ -19,19 +19,19 @@ module Environment =
     open System.Reflection
     open Microsoft.Extensions.Configuration
 
-    let private rootDirectory (currentAssemblyDepth : int) : string = 
+    let private rootDirectory (currentAssemblyDepth : int) : string =
         let asm = Assembly.GetExecutingAssembly()
-        let asmDir = Uri(asm.CodeBase).LocalPath |> Path.GetDirectoryName 
+        let asmDir = Uri(asm.CodeBase).LocalPath |> Path.GetDirectoryName
         let movesUp = Enumerable.Repeat("..\\", currentAssemblyDepth) |> Seq.toArray
         let relativeConfigPath = String.Join("", movesUp)
         let fullRelativePath = Path.Combine(asmDir, relativeConfigPath)
         Path.GetFullPath(Uri(fullRelativePath).LocalPath)
 
-    let environmentConfigPath (currentAssemblyDepth : int) : string = 
+    let environmentConfigPath (currentAssemblyDepth : int) : string =
         rootDirectory(currentAssemblyDepth) + "environment.json"
 
     let load(currentAssemblyDepth : int) =
-        let configRoot = 
+        let configRoot =
             ConfigurationBuilder()
                 .AddJsonFile(environmentConfigPath(currentAssemblyDepth), false)
                 .Build()

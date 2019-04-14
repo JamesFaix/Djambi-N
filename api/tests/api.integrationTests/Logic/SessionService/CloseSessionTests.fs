@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.IntegrationTests.Logic.services.sessions
+namespace Djambi.Api.IntegrationTests.Logic.services.sessions
 
 open FSharp.Control.Tasks
 open Xunit

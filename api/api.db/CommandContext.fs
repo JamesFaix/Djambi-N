@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.Db
+namespace Djambi.Api.Db
 
 open System.Data
 open System.Data.SqlClient
@@ -25,7 +25,7 @@ type CommandContext(cn, tran) =
         member x.Dispose() =
             match x.transaction with
             | Some t -> t.Dispose()
-            | _ -> ()            
+            | _ -> ()
             x.connection.Dispose()
 
 /// <summary>

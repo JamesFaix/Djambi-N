@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.IntegrationTests.Logic.GameStartService
+namespace Djambi.Api.IntegrationTests.Logic.GameStartService
 
 open FSharp.Control.Tasks
 open Xunit
@@ -9,19 +9,19 @@ open Djambi.Api.Logic
 
 type GetGameStartEventTests() =
     inherit TestsBase()
-    
+
     let createUserSessionAndGameWith3Players() =
         task {
             let! (user, session, game) = createuserSessionAndGame(true) |> thenValue
-            
-            let player2request = 
+
+            let player2request =
                 { TestUtilities.getCreatePlayerRequest with
                     userId = Some user.id
                     kind = PlayerKind.Guest
                     name = Some "p2"
                 }
             let! _ = db.games.addPlayer (game.id, player2request) |> thenValue
-            
+
             let player3request = { player2request with name = Some "p3" }
             let! _ = db.games.addPlayer (game.id, player3request) |> thenValue
 
@@ -33,7 +33,7 @@ type GetGameStartEventTests() =
     [<Fact>]
     let ``Should fail not creator or EditPendingGames privilege``() =
         task {
-            //Arrange            
+            //Arrange
             let! (user, session, game) = createUserSessionAndGameWith3Players() |> thenValue
             let session = session |> TestUtilities.setSessionUserId (session.user.id+1)
 
@@ -43,11 +43,11 @@ type GetGameStartEventTests() =
             //Assert
             result |> shouldBeError 403 Security.noPrivilegeOrCreatorErrorMessage
         }
-        
+
     [<Fact>]
     let ``Should fail if only one player``() =
         task {
-            //Arrange            
+            //Arrange
             let! (_, session, game) = createuserSessionAndGame(true) |> thenValue
 
             //Act
@@ -98,7 +98,7 @@ type GetGameStartEventTests() =
 
             | _ -> failwith "Incorrect effects"
         }
-    
+
     [<Fact>]
     let ``Should add players if not at capacity``() =
         task {
@@ -125,6 +125,6 @@ type GetGameStartEventTests() =
             | (Effect.NeutralPlayerAdded f1, Effect.GameStatusChanged f2) ->
                 f2.oldValue |> shouldBe GameStatus.Pending
                 f2.newValue |> shouldBe GameStatus.InProgress
-                
+
             | _ -> failwith "Incorrect effects"
         }

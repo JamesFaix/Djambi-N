@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.Common.Json
+namespace Djambi.Api.Common.Json
 
 open System
 open FSharp.Reflection
@@ -7,26 +7,26 @@ open Newtonsoft.Json
 //Taken from http://gorodinski.com/blog/2013/01/05/json-dot-net-type-converters-for-f-option-list-tuple/
 type OptionJsonConverter() =
     inherit JsonConverter()
-    
-    override x.CanConvert (t : Type) : bool = 
+
+    override x.CanConvert (t : Type) : bool =
         t.IsGenericType && t.GetGenericTypeDefinition() = typedefof<option<_>>
 
     override x.WriteJson (writer : JsonWriter, value : obj, serializer : JsonSerializer) : Unit =
-        let value = 
+        let value =
             if value = null then null
-            else 
+            else
                 let _,fields = FSharpValue.GetUnionFields(value, value.GetType())
-                fields.[0]  
+                fields.[0]
         serializer.Serialize(writer, value)
 
-    override x.ReadJson(reader : JsonReader, t : Type, existingValue : obj, serializer : JsonSerializer) : obj =        
+    override x.ReadJson(reader : JsonReader, t : Type, existingValue : obj, serializer : JsonSerializer) : obj =
         let innerType = t.GetGenericArguments().[0]
-        let innerType = 
+        let innerType =
             if innerType.IsValueType then (typedefof<Nullable<_>>).MakeGenericType([|innerType|])
-            else innerType        
-            
+            else innerType
+
         let cases = FSharpType.GetUnionCases(t)
-        
+
         let makeNone() = FSharpValue.MakeUnion(cases.[0], [||])
         let makeSome(x) = FSharpValue.MakeUnion(cases.[1], [|x|])
 

@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.Logic.ModelExtensions
+namespace Djambi.Api.Logic.ModelExtensions
 
 open System.Collections.Generic
 open System.Linq

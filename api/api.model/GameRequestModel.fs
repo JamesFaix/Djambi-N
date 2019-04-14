@@ -1,4 +1,4 @@
-﻿[<AutoOpen>]
+[<AutoOpen>]
 module Djambi.Api.Model.GameRequestModel
 
 open System
@@ -6,7 +6,7 @@ open Djambi.ClientGenerator.Annotations
 
 [<CLIMutable>]
 [<ClientType(ClientSection.Player)>]
-type CreatePlayerRequest = 
+type CreatePlayerRequest =
     {
         kind : PlayerKind
         userId : int option
@@ -14,7 +14,7 @@ type CreatePlayerRequest =
     }
 
 module CreatePlayerRequest =
-    
+
     let user (userId : int) : CreatePlayerRequest =
         {
             kind = PlayerKind.User
@@ -34,8 +34,8 @@ module CreatePlayerRequest =
             kind = PlayerKind.Neutral
             userId = None
             name = Some name
-        }   
-    
+        }
+
 type PlayerStatusChangeRequest =
     {
         gameId : int
@@ -77,7 +77,7 @@ type SelectionRequest =
     }
 
 [<ClientType(ClientSection.Misc)>]
-type ResultsDirection = 
+type ResultsDirection =
     | Ascending
     | Descending
 
@@ -110,7 +110,7 @@ type UpdateFailedLoginsRequest =
     }
 
 module UpdateFailedLoginsRequest =
-    let reset (userId : int) = 
+    let reset (userId : int) =
         {
             userId = userId
             failedLoginAttempts = 0
@@ -124,43 +124,43 @@ module UpdateFailedLoginsRequest =
             lastFailedLoginAttemptOn = Some DateTime.UtcNow
         }
 
-type CreateSessionRequest = 
+type CreateSessionRequest =
     {
         userId : int
         token : string
         expiresOn : DateTime
     }
 
-type SessionQuery = 
+type SessionQuery =
     {
         sessionId : int option
         token : string option
         userId : int option
     }
 
-module SessionQuery = 
+module SessionQuery =
     let byId (sessionId : int) =
         {
             sessionId = Some sessionId
             token = None
             userId = None
         }
-    
-    let byToken (token : string) = 
+
+    let byToken (token : string) =
         {
             sessionId = None
             token = Some token
             userId = None
         }
 
-    let byUserId (userId : int) = 
+    let byUserId (userId : int) =
         {
             sessionId = None
             token = None
             userId = Some userId
         }
 
-type UpdateGameStateRequest = 
+type UpdateGameStateRequest =
     {
         gameId : int
         status : GameStatus
@@ -169,7 +169,7 @@ type UpdateGameStateRequest =
         turnCycle : int list
     }
 
-type SetPlayerStartConditionsRequest = 
+type SetPlayerStartConditionsRequest =
     {
         playerId : int
         colorId : int

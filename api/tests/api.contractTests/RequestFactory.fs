@@ -1,10 +1,10 @@
-﻿[<AutoOpen>]
+[<AutoOpen>]
 module Djambi.Api.ContractTests.RequestFactory
 
 open System
 open Djambi.Api.Model
 
-let createUserRequest() : CreateUserRequest = 
+let createUserRequest() : CreateUserRequest =
     {
         name = Guid.NewGuid().ToString()
         password = "test"

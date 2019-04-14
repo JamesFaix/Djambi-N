@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.Logic.Services
+namespace Djambi.Api.Logic.Services
 
 open System.Collections.Generic
 open System.Linq
@@ -23,29 +23,29 @@ type IndirectEffectsService(eventServ : EventService,
             list |> Seq.toList
 
     let getAbandonPiecesEffects (game : Game, oldPlayerId : int) : Effect list =
-        game.pieces 
+        game.pieces
         |> List.filter (fun piece -> piece.playerId = Some oldPlayerId)
         |> List.map (fun p -> Effect.PieceAbandoned { oldPiece = p })
 
     let getEnlistPiecesEffects (game : Game, oldPlayerId : int option, newPlayerId : int) : Effect list =
-        game.pieces 
+        game.pieces
         |> List.filter (fun piece -> piece.playerId = oldPlayerId)
         |> List.map (fun p -> Effect.PieceEnlisted { oldPiece = p; newPlayerId = newPlayerId })
-    
+
     let getEliminatePlayerEffects (game : Game) (playerId : int) (killingPlayerId : int option) : Effect list =
         let p = game.players |> List.find (fun p -> p.id = playerId)
-    
+
         let effects = new ArrayList<Effect>()
-    
+
         effects.Add(Effect.PlayerStatusChanged {
             playerId = p.id
             oldStatus = p.status
             newStatus = Eliminated
         })
 
-        let newCycle = 
-            game.turnCycle 
-            |> List.filter (fun pId -> pId <> p.id) 
+        let newCycle =
+            game.turnCycle
+            |> List.filter (fun pId -> pId <> p.id)
             |> removeSequentialDuplicates
 
         effects.Add(Effect.TurnCyclePlayerRemoved {
@@ -55,7 +55,7 @@ type IndirectEffectsService(eventServ : EventService,
         })
 
         match killingPlayerId with
-        | Some kpId -> 
+        | Some kpId ->
             effects.AddRange (getEnlistPiecesEffects (game, Some p.id, kpId))
         | None ->
             effects.AddRange (getAbandonPiecesEffects (game, p.id))
@@ -85,18 +85,18 @@ type IndirectEffectsService(eventServ : EventService,
 
         //A player in power has multiple turns
         let hasPower (g : Game) (pId : int) =
-            let turns = 
-                g.turnCycle 
-                |> Seq.filter (fun n -> n = pId) 
-                |> Seq.length 
+            let turns =
+                g.turnCycle
+                |> Seq.filter (fun n -> n = pId)
+                |> Seq.length
             turns > 1
 
         //Players can only rise to power if there are more than 2 left
         let powerCanBeHad (g : Game) =
-            let players = 
-                g.turnCycle 
-                |> Seq.distinct 
-                |> Seq.length 
+            let players =
+                g.turnCycle
+                |> Seq.distinct
+                |> Seq.length
             players > 2
 
         let turn = updatedGame.currentTurn.Value
@@ -109,20 +109,20 @@ type IndirectEffectsService(eventServ : EventService,
         let mutable turns = updatedGame.turnCycle
 
         let subjectPlayerId = subject.playerId.Value
-        if subjectStrategy.canStayInCenter 
+        if subjectStrategy.canStayInCenter
         then
-            if origin.isCenter 
+            if origin.isCenter
                 && not destination.isCenter
                 && hasPower updatedGame subjectPlayerId
-            then 
+            then
                 //If chief subject leaves power, remove bonus turns
                 let newTurns = removeBonusTurnsForPlayer subjectPlayerId turns
                 effects.Add(Effect.TurnCyclePlayerFellFromPower { playerId = subjectPlayerId; oldValue = turns; newValue = newTurns })
                 turns <- newTurns
-            elif not origin.isCenter 
+            elif not origin.isCenter
                 && destination.isCenter
                 && powerCanBeHad updatedGame
-            then 
+            then
                 //If chief subject rises to power, add bonus turns
                 let newTurns = addBonusTurnsForPlayer subjectPlayerId turns
                 effects.Add(Effect.TurnCyclePlayerRoseToPower { playerId = subjectPlayerId; oldValue = turns; newValue = newTurns })
@@ -132,14 +132,14 @@ type IndirectEffectsService(eventServ : EventService,
         match (turn.targetPiece game, turn.dropCell game.parameters.regionCount) with
         | (Some target, Some drop) ->
             let targetStrategy = Pieces.getStrategy target
-        
-            if subjectStrategy.canEnterCenterToEvictPiece 
+
+            if subjectStrategy.canEnterCenterToEvictPiece
                 && not subjectStrategy.killsTarget
                 && subjectStrategy.canDropTarget
                 && targetStrategy.canStayInCenter
             then
                 //If chief target is moved out of power and not killed, remove bonus turns
-                if destination.isCenter 
+                if destination.isCenter
                     && not drop.isCenter
                     && hasPower updatedGame subjectPlayerId
                 then
@@ -147,7 +147,7 @@ type IndirectEffectsService(eventServ : EventService,
                     effects.Add(Effect.TurnCyclePlayerFellFromPower { playerId = subjectPlayerId; oldValue = turns; newValue = newTurns })
                     turns <- newTurns
                 //If chief target is dropped in power and not killed, add bonus turns
-                elif not destination.isCenter 
+                elif not destination.isCenter
                     && drop.isCenter
                     && powerCanBeHad updatedGame
                 then
@@ -162,12 +162,12 @@ type IndirectEffectsService(eventServ : EventService,
 
     let getVictoryEffects (game : Game) : Effect list =
         let remainingPlayers = game.players |> List.filter (fun p -> p.status = Alive && p.userId.IsSome)
-        if remainingPlayers.Length = 1        
+        if remainingPlayers.Length = 1
         then
             let p = remainingPlayers.[0]
             let finishConcedeEffects =
-                game.players 
-                |> List.filter (fun p -> p.status = WillConcede) 
+                game.players
+                |> List.filter (fun p -> p.status = WillConcede)
                 |> List.map (fun p -> Effect.PlayerStatusChanged {
                     playerId = p.id
                     oldStatus = WillConcede
@@ -182,7 +182,7 @@ type IndirectEffectsService(eventServ : EventService,
         else []
 
     let getSecondaryEffectsForConcede (game : Game, request : PlayerStatusChangeRequest) : Effect list =
-        let f = Effect.TurnCyclePlayerRemoved { 
+        let f = Effect.TurnCyclePlayerRemoved {
             playerId = request.playerId
             oldValue = game.turnCycle
             newValue = game.turnCycle |> List.filter (fun pId -> pId <> request.playerId)
@@ -211,7 +211,7 @@ type IndirectEffectsService(eventServ : EventService,
                              (getEliminatePlayerEffects game player.id None)
                     effects.AddRange fx
                     game <- eventServ.applyEffects fx game
-                else 
+                else
             //Stop when you find a player who isn't affected
                     stop <- true
 
@@ -226,8 +226,8 @@ type IndirectEffectsService(eventServ : EventService,
 
         if victoryEffects.IsEmpty
         then
-            if advanceTurn 
-            then 
+            if advanceTurn
+            then
                 let f = Effect.TurnCycleAdvanced { oldValue = game.turnCycle; newValue = game.turnCycle |> List.rotate 1 }
                 effects.Add f
                 game <- eventServ.applyEffect f game
@@ -243,7 +243,7 @@ type IndirectEffectsService(eventServ : EventService,
             game <- eventServ.applyEffects victoryEffects game
 
             if victoryEffects.IsEmpty
-            then 
+            then
                 let seletionOptions = selectionOptionsServ.getSelectableCellsFromState game |> Result.value
                 let turn = { Turn.empty with selectionOptions = seletionOptions }
                 effects.Add(Effect.CurrentTurnChanged { oldValue = game.currentTurn; newValue = Some turn })
@@ -269,7 +269,7 @@ type IndirectEffectsService(eventServ : EventService,
                 Remove from turn cycle
                 Abandon pieces
             Victory due to out-of-moves (option)
-            Current turn changed   
+            Current turn changed
         *)
 
         let effects = new ArrayList<Effect>()
@@ -278,14 +278,14 @@ type IndirectEffectsService(eventServ : EventService,
         let subject = (turn.subjectPiece game).Value
         let subjectStrategy = Pieces.getStrategy subject
 
-        let killChiefEffects = 
+        let killChiefEffects =
             match turn.targetPiece game with
             | Some target ->
                 let targetStrategy = Pieces.getStrategy target
 
-                if subjectStrategy.killsTarget 
+                if subjectStrategy.killsTarget
                     && targetStrategy.killsControllingPlayerWhenKilled
-                then 
+                then
                     if target.playerId.IsSome
                     then getEliminatePlayerEffects game target.playerId.Value subject.playerId
                     else getEnlistPiecesEffects (game, Some target.originalPlayerId, subject.playerId.Value)
@@ -316,10 +316,10 @@ type IndirectEffectsService(eventServ : EventService,
                 Remove from turn cycle
                 Abandon pieces
             Victory due to out-of-moves (option)
-            Current turn changed   
+            Current turn changed
         *)
         let effects = new ArrayList<Effect>()
         effects.AddRange (getSecondaryEffectsForConcede (game, request))
-        let game = eventServ.applyEffects effects game    
+        let game = eventServ.applyEffects effects game
         effects.AddRange (getTernaryEffects (game, false))
         effects |> Seq.toList

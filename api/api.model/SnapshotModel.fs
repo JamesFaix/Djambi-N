@@ -1,9 +1,9 @@
-﻿[<AutoOpen>]
+[<AutoOpen>]
 module Djambi.Api.Model.SnapshotModel
 
 open Djambi.ClientGenerator.Annotations
 
-type Snapshot = 
+type Snapshot =
     {
         id : int
         createdBy : CreationSource
@@ -11,22 +11,22 @@ type Snapshot =
         game : Game
         history : Event list
     }
-    
+
 [<ClientType(ClientSection.Snapshots)>]
 type SnapshotInfo =
     {
         id : int
         createdBy : CreationSource
-        description : string    
+        description : string
     }
-    
+
 [<ClientType(ClientSection.Snapshots)>]
 type CreateSnapshotRequest =
     {
         description : string
     }
 
-type InternalCreateSnapshotRequest = 
+type InternalCreateSnapshotRequest =
     {
         game : Game
         history : Event list

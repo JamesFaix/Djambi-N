@@ -1,4 +1,4 @@
-﻿module Djambi.Api.ContractTests.SessionTests
+module Djambi.Api.ContractTests.SessionTests
 
 open System.Net
 open System.Threading.Tasks

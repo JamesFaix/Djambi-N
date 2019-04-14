@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.IntegrationTests.Logic.GameStartService
+namespace Djambi.Api.IntegrationTests.Logic.GameStartService
 
 open FSharp.Control.Tasks
 open Xunit
@@ -40,7 +40,7 @@ type GameStartServiceTests() =
             //Arrange
             let session = getSessionForUser 1
             let parameters = getGameParameters()
-            let! game = managers.games.createGame parameters session 
+            let! game = managers.games.createGame parameters session
                         |> thenBindAsync TestUtilities.fillEmptyPlayerSlots
                         |> thenValue
             let playersWithStartConditions = services.gameStart.assignStartingConditions game.players

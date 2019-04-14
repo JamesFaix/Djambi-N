@@ -16,7 +16,7 @@ type Directions =
 type RadialDirections =
     | Clockwise = 1
     | CounterClockwise = 2
-    
+
 [<ClientType(ClientSection.Board)>]
 type Location =
     {
@@ -24,7 +24,7 @@ type Location =
         x : int
         y : int
     }
-    
+
 [<ClientType(ClientSection.Board)>]
 type Cell =
     {
@@ -37,7 +37,7 @@ type BoardMetadata =
         regionCount : int
         regionSize : int
     }
-    
+
 [<ClientType(ClientSection.Board)>]
 type Board =
     {

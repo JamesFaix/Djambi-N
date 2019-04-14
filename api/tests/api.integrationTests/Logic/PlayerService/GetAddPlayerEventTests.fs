@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.IntegrationTests.Logic.services.players
+namespace Djambi.Api.IntegrationTests.Logic.services.players
 
 open FSharp.Control.Tasks
 open Xunit
@@ -12,7 +12,7 @@ type GetAddPlayerEventTests() =
 
     //USER PLAYER
 
-    let assertSuccess (eventRequest : CreateEventRequest) (request : CreatePlayerRequest) : unit =        
+    let assertSuccess (eventRequest : CreateEventRequest) (request : CreatePlayerRequest) : unit =
         eventRequest.kind |> shouldBe EventKind.PlayerJoined
         eventRequest.effects.Length |> shouldBe 1
         eventRequest.effects.[0] |> shouldBe (PlayerAddedEffect.fromRequest request)
@@ -42,7 +42,7 @@ type GetAddPlayerEventTests() =
             let session = session |> TestUtilities.setSessionPrivileges [EditPendingGames]
             let! user = createUser() |> thenValue
             let request = CreatePlayerRequest.user user.id
-            
+
             //Act
             let eventRequest = services.players.getAddPlayerEvent (game, request) session |> Result.value
 
@@ -136,7 +136,7 @@ type GetAddPlayerEventTests() =
             //Arrange
             let! (user, session, game) = createuserSessionAndGame(true) |> AsyncHttpResult.thenValue
             let request = CreatePlayerRequest.guest (user.id, "test")
-                        
+
             //Act
             let eventRequest = services.players.getAddPlayerEvent (game, request) session |> Result.value
 
@@ -153,7 +153,7 @@ type GetAddPlayerEventTests() =
 
             let! user = createUser() |> thenValue
             let request = CreatePlayerRequest.guest (user.id, "test")
-                        
+
             //Act
             let eventRequest = services.players.getAddPlayerEvent (game, request) session |> Result.value
 

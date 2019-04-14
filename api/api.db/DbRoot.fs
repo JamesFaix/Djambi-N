@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.Db
+namespace Djambi.Api.Db
 
 open Djambi.Api.Db.Repositories
 open Djambi.Api.Db.Interfaces
@@ -17,7 +17,7 @@ type DbRoot(connectionString : string) =
     member x.snapshots = _snapshots
     member x.users = _users
 
-    interface IDbRoot with  
+    interface IDbRoot with
         member x.events = x.events :> IEventRepository
         member x.games = x.games :> IGameRepository
         member x.sessions = x.sessions :> ISessionRepository

@@ -1,4 +1,4 @@
-﻿//Intentionally not AutoOpen
+//Intentionally not AutoOpen
 module Djambi.Api.Common.Control.Result
 
 open System.Threading.Tasks

@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.Logic
+namespace Djambi.Api.Logic
 
 open Djambi.Api.Db.Interfaces
 open Djambi.Api.Logic.Interfaces
@@ -41,12 +41,12 @@ type ServiceRoot(db : IDbRoot) =
 type ManagerRoot(db : IDbRoot, services : ServiceRoot) =
     let _boards = BoardManager(services.boards)
     let _games = GameManager(db.events,
-                             services.events, 
-                             services.gameCrud, 
+                             services.events,
+                             services.gameCrud,
                              db.games,
-                             services.gameStart, 
+                             services.gameStart,
                              services.notifications,
-                             services.players, 
+                             services.players,
                              services.playerStatusChanges,
                              services.selections,
                              services.turns)

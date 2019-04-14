@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.Web.Controllers
+namespace Djambi.Api.Web.Controllers
 
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Model
@@ -26,7 +26,7 @@ type GameController(gameMan : IGameManager,
                 u.getSessionAndModelFromContext<GameParameters> ctx
                 |> thenBindAsync (fun (request, session) -> gameMan.createGame request session)
             u.handle func
-    
+
         member x.updateGameParameters gameId =
             let func ctx =
                 u.getSessionAndModelFromContext<GameParameters> ctx

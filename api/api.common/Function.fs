@@ -1,4 +1,4 @@
-﻿module Djambi.Api.Common.Function
+module Djambi.Api.Common.Function
 
 open System.Collections.Generic
 

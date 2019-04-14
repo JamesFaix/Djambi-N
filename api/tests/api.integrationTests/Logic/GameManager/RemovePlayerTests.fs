@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.IntegrationTests.Logic.GameManager
+namespace Djambi.Api.IntegrationTests.Logic.GameManager
 
 open System
 open FSharp.Control.Tasks
@@ -51,7 +51,7 @@ type RemovePlayerTests() =
 
             //Assert
             error |> shouldBeError 404 "Game not found."
-            
+
             let! game = managers.games.getGame game.id session |> thenValue
             game.players |> shouldExist (fun p -> p.id = player.id)
         }

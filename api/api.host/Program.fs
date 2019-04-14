@@ -56,7 +56,7 @@ let configureNewtonsoft () =
 let configureApp (app : IApplicationBuilder) =
 //    let env = app.ApplicationServices.GetService<IHostingEnvironment>()
 
-    //This will only provide custom serialization of responses to clients. 
+    //This will only provide custom serialization of responses to clients.
     //Custom deserialization of request bodies does not work that same way in this framework.
     //See HttpUtility for deserialization.
     configureNewtonsoft()

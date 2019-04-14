@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.Logic.Services
+namespace Djambi.Api.Logic.Services
 
 open Djambi.Api.Common.Collections
 open Djambi.Api.Common.Control
@@ -15,7 +15,7 @@ type SelectionService(selectionOptionsServ : SelectionOptionsService) =
         let pieces = game.piecesIndexedByCell
         match pieces.TryFind(cellId) with
         | None -> Errors.noPieceInCell()
-        | Some p -> 
+        | Some p ->
             let selection = Selection.subject(cellId, p.id)
             Ok (selection, AwaitingSelection, Some Move)
 
@@ -25,13 +25,13 @@ type SelectionService(selectionOptionsServ : SelectionOptionsService) =
         let subject = game.currentTurn.Value.subjectPiece(game).Value
         let subjectStrategy = Pieces.getStrategy subject
         match pieces.TryFind(cellId) with
-        | None -> 
+        | None ->
             let selection = Selection.move(cellId)
             if subjectStrategy.canTargetAfterMove
                 && board.neighborsFromCellId cellId
                     |> Seq.map (fun c -> pieces.TryFind c.id)
                     |> Seq.values
-                    |> Seq.exists (fun p -> 
+                    |> Seq.exists (fun p ->
                         let str = Pieces.getStrategy p
                         str.isAlive && p.playerId <> subject.playerId
                     )
@@ -62,8 +62,8 @@ type SelectionService(selectionOptionsServ : SelectionOptionsService) =
         let destination = turn.destinationCell(game.parameters.regionCount).Value
         let subjectStrategy = Pieces.getStrategy subject
         let selection = Selection.drop(cellId)
-        if subjectStrategy.canEnterCenterToEvictPiece 
-            && (not subjectStrategy.canStayInCenter) 
+        if subjectStrategy.canEnterCenterToEvictPiece
+            && (not subjectStrategy.canStayInCenter)
             && destination.isCenter
         then Ok (selection, AwaitingSelection, Some Vacate)
         else Ok (selection, AwaitingCommit, None)
@@ -94,7 +94,7 @@ type SelectionService(selectionOptionsServ : SelectionOptionsService) =
                 | Some Target -> getTargetSelectionEventDetails (game, cellId)
                 | Some Drop -> getDropSelectionEventDetails (game, cellId)
                 | Some Vacate -> getVacateSelectionEventDetails (game, cellId)
-                
+
                 |> Result.bind (fun (selection, turnStatus, requiredSelectionKind) ->
                     let turn =
                         {
@@ -105,18 +105,18 @@ type SelectionService(selectionOptionsServ : SelectionOptionsService) =
                         }
                     let updatedGame = { game with currentTurn = Some turn }
                     selectionOptionsServ.getSelectableCellsFromState updatedGame
-                    |> Result.map (fun selectionOptions -> 
+                    |> Result.map (fun selectionOptions ->
                         let turn =
                             if selectionOptions.IsEmpty && turn.status = AwaitingSelection
                             then Turn.deadEnd turn.selections
                             else { turn with selectionOptions = selectionOptions }
-                                      
+
                         {
                             kind = EventKind.CellSelected
                             effects = [Effect.CurrentTurnChanged { oldValue = game.currentTurn; newValue = Some turn }]
-                            createdByUserId = session.user.id     
+                            createdByUserId = session.user.id
                             actingPlayerId = Context.getActingPlayerId session game
                         }
-                    )                
+                    )
                 )
         )

@@ -1,4 +1,4 @@
-﻿module Djambi.ClientGenerator.Program
+module Djambi.ClientGenerator.Program
 
 open System.IO
 open System.Reflection
@@ -10,7 +10,7 @@ let renderModel (renderers : IRenderer list, config : IConfigurationRoot, rootPa
     printfn "Loading model assembly..."
     let assembly = typeof<Djambi.Api.Model.BoardModel.Board>.Assembly
 
-    let types = 
+    let types =
         assembly.GetTypes()
         |> Seq.map (fun t -> (t, t.GetCustomAttribute<ClientTypeAttribute>()))
         |> Seq.filter (fun (_, attr) -> attr <> null)
@@ -27,7 +27,7 @@ let renderModel (renderers : IRenderer list, config : IConfigurationRoot, rootPa
 let renderFunctions (renderers : IRenderer list, config : IConfigurationRoot, rootPath : string) : Unit =
     printfn "Loading functions assembly..."
     let assembly = typeof<Djambi.Api.Logic.Interfaces.IManagerRoot>.Assembly
-    
+
     let methods =
         assembly.GetTypes()
         |> Seq.collect (fun t -> t.GetMethods())
@@ -44,19 +44,19 @@ let renderFunctions (renderers : IRenderer list, config : IConfigurationRoot, ro
         File.WriteAllText(outputPath, fullText)
 
 [<EntryPoint>]
-let main argv =    
-   
+let main argv =
+
     printfn "Djambi API Client Generator"
     printfn "---------------------------"
 
     let depthFromRoot = 5
-    
+
     let env = Environment.load(depthFromRoot);
     let config = ConfigurationBuilder()
                     .AddJsonFile("appsettings.json", false, true)
                     .Build()
-    
-    let renderers = 
+
+    let renderers =
         [
             TypeScriptRenderer() :> IRenderer
         ]
@@ -65,5 +65,5 @@ let main argv =
     renderFunctions (renderers, config, env.root)
 
     printfn "Done"
-    
+
     0 // return an integer exit code

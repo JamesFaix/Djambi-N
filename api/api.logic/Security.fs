@@ -1,4 +1,4 @@
-﻿module Djambi.Api.Logic.Security
+module Djambi.Api.Logic.Security
 
 open Djambi.Api.Common.Control
 open Djambi.Api.Model
@@ -8,7 +8,7 @@ let noPrivilegeErrorMessage = "You do not have the required privilege to complet
 let noPrivilegeOrCreatorErrorMessage = "You must be the game's creator or have the required privilege to complete the requested action."
 
 let noPrivilegeOrPlayerErrorMessage = "You must be a player in the game or have the required privilege to complete the requested action."
-    
+
 let noPrivilegeOrCurrentPlayerErrorMessage = "You must be the current player in the game or have the required privilege to complete the requested action."
 
 let noPrivilegeOrSelfErrorMessage = "You must be the target user or have the required privilege to complete the requested action."
@@ -34,11 +34,11 @@ let ensurePlayerOrHas (privilege : Privilege) (session : Session) (game : Game) 
 
 let ensureCurrentPlayerOrOpenParticipation (session : Session) (game : Game) : Unit HttpResult =
     let self = session.user
-    let pass = 
+    let pass =
         if self.has OpenParticipation
         then true
         elif not game.turnCycle.IsEmpty
-        then         
+        then
             let currentPlayer = game.players |> List.find (fun p -> p.id = game.turnCycle.Head)
             currentPlayer.userId = Some self.id
         else false

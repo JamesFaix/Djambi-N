@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.Logic.Services
+namespace Djambi.Api.Logic.Services
 
 open Djambi.Api.Logic.ModelExtensions
 open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
@@ -32,12 +32,12 @@ type SelectionOptionsService() =
         let strategy = Pieces.getStrategy piece
 
         paths
-        |> Seq.map (fun path -> path |> List.take (min strategy.moveMaxDistance path.Length))        
-        |> Seq.collect (takeCellsUntilAndIncluding (fun p -> strategy.canTargetWithMove 
+        |> Seq.map (fun path -> path |> List.take (min strategy.moveMaxDistance path.Length))
+        |> Seq.collect (takeCellsUntilAndIncluding (fun p -> strategy.canTargetWithMove
                                                             && strategy.canTargetPiece piece p))
-        |> Seq.filter (fun cell -> 
+        |> Seq.filter (fun cell ->
             if not cell.isCenter then true
-            else 
+            else
                 match pieceIndex.TryFind cell.id with
                 | None -> strategy.canStayInCenter
                 | Some p -> strategy.canTargetPiece piece p
@@ -61,14 +61,14 @@ type SelectionOptionsService() =
             | None -> []
             | Some subject ->
                 let strategy = Pieces.getStrategy(subject)
-                if not strategy.canTargetAfterMove 
+                if not strategy.canTargetAfterMove
                 then []
                 else
                     let board = BoardModelUtility.getBoardMetadata game.parameters.regionCount
                     let neighbors = board.neighborsFromCellId destinationCellId
                     let pieceIndex = game.piecesIndexedByCell
-                    neighbors 
-                    |> Seq.filter (fun cell -> 
+                    neighbors
+                    |> Seq.filter (fun cell ->
                         match pieceIndex.TryFind cell.id with
                         | None -> false
                         | Some piece -> strategy.canTargetPiece subject piece)
@@ -85,7 +85,7 @@ type SelectionOptionsService() =
                 let pieceIndex = game.piecesIndexedByCell
                 let board = BoardModelUtility.getBoardMetadata game.parameters.regionCount
                 board.cells()
-                |> Seq.filter (fun c -> 
+                |> Seq.filter (fun c ->
                     match pieceIndex.TryFind c.id with
                     | None -> true
                     | Some occupant -> occupant.id = subject.id)
@@ -102,7 +102,7 @@ type SelectionOptionsService() =
                 let strategy = Pieces.getStrategy subject
                 if not destination.isCenter || strategy.canStayInCenter
                 then []
-                else 
+                else
                     let board = BoardModelUtility.getBoardMetadata game.parameters.regionCount
                     let pieceIndex = game.piecesIndexedByCell
                     board.pathsFromCell destination
@@ -110,11 +110,11 @@ type SelectionOptionsService() =
                     |> Seq.filter (fun cell -> not cell.isCenter)
                     |> Seq.map (fun cell -> cell.id)
                     |> Seq.toList
-                
+
     member x.getSelectableCellsFromState(game : Game) : int list HttpResult =
         let turn = game.currentTurn.Value
         match turn.requiredSelectionKind with
-        | None -> 
+        | None ->
             Ok []
         | Some Subject ->
             Ok <| getSubjectSelectionOptions (game, turn)

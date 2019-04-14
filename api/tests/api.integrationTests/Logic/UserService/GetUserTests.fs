@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.IntegrationTests.Logic.services.users
+namespace Djambi.Api.IntegrationTests.Logic.services.users
 
 open System
 open FSharp.Control.Tasks

@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.Web.Controllers
+namespace Djambi.Api.Web.Controllers
 
 open Microsoft.AspNetCore.Http
 open Djambi.Api.Common.Control.AsyncHttpResult

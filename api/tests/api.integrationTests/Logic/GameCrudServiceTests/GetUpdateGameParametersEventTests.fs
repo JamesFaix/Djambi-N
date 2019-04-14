@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.IntegrationTests.Logic.GameCrudService
+namespace Djambi.Api.IntegrationTests.Logic.GameCrudService
 
 open FSharp.Control.Tasks
 open Xunit
@@ -18,7 +18,7 @@ type GetUpdateGameParametersEventTests() =
             //Arrange
             let! (_, session, game) = TestUtilities.createuserSessionAndGame(true) |> thenValue
 
-            let newParameters = 
+            let newParameters =
                 {
                     allowGuests = false
                     isPublic = true
@@ -41,25 +41,25 @@ type GetUpdateGameParametersEventTests() =
             | _ -> failwith "Incorrect effects"
         }
 
-    
+
     [<Fact>]
     let ``Should have effect for truncating extra players if region count being lowered``() =
         task {
             //Arrange
             let! (user, session, game) = TestUtilities.createuserSessionAndGame(true) |> thenValue
 
-            let newGame = 
-                { game with parameters = 
-                            { game.parameters with regionCount = 4 } 
+            let newGame =
+                { game with parameters =
+                            { game.parameters with regionCount = 4 }
                 }
 
             let! _ = (db.games :?> GameRepository).updateGame newGame |> thenValue
 
             for n in [2..4] do
-                let playerRequest = 
-                    { TestUtilities.getCreatePlayerRequest with 
+                let playerRequest =
+                    { TestUtilities.getCreatePlayerRequest with
                         userId = Some user.id;
-                        kind = PlayerKind.Guest; 
+                        kind = PlayerKind.Guest;
                         name = Some (sprintf "p%i" n)
                     }
                 let! _ = db.games.addPlayer (game.id, playerRequest)
@@ -92,10 +92,10 @@ type GetUpdateGameParametersEventTests() =
             let! (user, session, game) = TestUtilities.createuserSessionAndGame(true) |> thenValue
 
             for n in [2..3] do
-                let playerRequest = 
-                    { TestUtilities.getCreatePlayerRequest with 
+                let playerRequest =
+                    { TestUtilities.getCreatePlayerRequest with
                         userId = Some user.id;
-                        kind = PlayerKind.Guest; 
+                        kind = PlayerKind.Guest;
                         name = Some (sprintf "p%i" n)
                     }
                 let! _ = db.games.addPlayer (game.id, playerRequest)

@@ -1,4 +1,4 @@
-﻿[<AutoOpen>]
+[<AutoOpen>]
 module Djambi.Api.Model.GameModel
 
 open Djambi.ClientGenerator.Annotations
@@ -8,7 +8,7 @@ type PlayerKind =
     | User
     | Guest
     | Neutral
-    
+
 [<ClientType(ClientSection.Player)>]
 type PlayerStatus =
     | Pending
@@ -18,7 +18,7 @@ type PlayerStatus =
     | WillConcede
     | AcceptsDraw
     | Victorious
-    
+
 [<ClientType(ClientSection.Player)>]
 type Player =
     {
@@ -32,7 +32,7 @@ type Player =
         startingRegion : int option
         startingTurnNumber : int option
     }
-    
+
 [<ClientType(ClientSection.Game)>]
 type PieceKind =
     | Chief
@@ -52,7 +52,7 @@ type Piece =
         originalPlayerId : int
         cellId : int
     }
-    
+
 [<ClientType(ClientSection.Turn)>]
 type SelectionKind =
     | Subject
@@ -60,7 +60,7 @@ type SelectionKind =
     | Target
     | Drop
     | Vacate
-    
+
 [<ClientType(ClientSection.Turn)>]
 type Selection =
     {
@@ -150,7 +150,7 @@ type GameStatus =
     | InProgress
     | Canceled
     | Over
-    
+
 [<CLIMutable>]
 [<ClientType(ClientSection.Game)>]
 type GameParameters =
@@ -160,7 +160,7 @@ type GameParameters =
         isPublic : bool
         allowGuests : bool
     }
-    
+
 [<ClientType(ClientSection.Game)>]
 type Game =
     {

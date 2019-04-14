@@ -1,4 +1,4 @@
-﻿module Djambi.Api.WebClient.WebUtility
+module Djambi.Api.WebClient.WebUtility
 
 open System.IO
 open System.Linq
@@ -28,11 +28,11 @@ let PATCH = "PATCH";
 let POST = "POST";
 
 let sendRequest<'a, 'b> (httpVerb : string,
-                         route : string,                           
+                         route : string,
                          body : 'a option,
-                         token : string option) 
+                         token : string option)
                          : 'b Response Task =
-    
+
     let request = WebRequest.Create(apiAddress + "/api" + route) :?> HttpWebRequest
     request.ContentType <- "application/json"
     request.Method <- httpVerb
@@ -51,11 +51,11 @@ let sendRequest<'a, 'b> (httpVerb : string,
 
     let getWebResponse (req : HttpWebRequest) : HttpWebResponse Task =
         task {
-            try 
-                let! response = req.GetResponseAsync() 
+            try
+                let! response = req.GetResponseAsync()
                 return response :?> HttpWebResponse
-            with        
-            | :? WebException as ex -> 
+            with
+            | :? WebException as ex ->
                 return ex.Response :?> HttpWebResponse
         }
 
@@ -65,20 +65,20 @@ let sendRequest<'a, 'b> (httpVerb : string,
         use reader = new StreamReader(responseStream)
         let responseText = reader.ReadToEnd()
 
-        let result = 
+        let result =
             match webResponse.StatusCode with
-            | x when x >= HttpStatusCode.BadRequest -> 
+            | x when x >= HttpStatusCode.BadRequest ->
                 Error <| responseText.Substring(1, responseText.Length-2) //It will return in quotes, fix this later
-            | _ -> 
+            | _ ->
                 Ok <| JsonConvert.DeserializeObject<'b>(responseText, converters)
-           
-        let headers = 
+
+        let headers =
             webResponse.Headers.Keys
             |> Enumerable.OfType<string>
             |> Seq.map (fun key -> (key, webResponse.Headers.[key]))
             |> Map.ofSeq
 
-        return 
+        return
             {
                 body = result
                 statusCode = webResponse.StatusCode

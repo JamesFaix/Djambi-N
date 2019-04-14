@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.Logic.Managers
+namespace Djambi.Api.Logic.Managers
 
 open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
@@ -24,7 +24,7 @@ type GameManager(eventRepo : IEventRepository,
         game.parameters.isPublic
         || game.createdBy.userId = self.id
         || game.players |> List.exists(fun p -> p.userId = Some self.id)
-        
+
     let isPublishable (event : Event) : bool =
         match event.kind with
         | EventKind.GameCanceled
@@ -36,36 +36,36 @@ type GameManager(eventRepo : IEventRepository,
         | EventKind.TurnCommitted
             -> true
         | _ -> false
-        
+
     let sendIfPublishable (response : StateAndEventResponse) : StateAndEventResponse AsyncHttpResult =
         if isPublishable response.event
         then notificationServ.send response
              |> thenMap (fun _ -> response)
-        else okTask response 
+        else okTask response
 
-    let processEvent (gameId : int) (getCreateEventRequest : Game -> CreateEventRequest HttpResult) : StateAndEventResponse AsyncHttpResult = 
+    let processEvent (gameId : int) (getCreateEventRequest : Game -> CreateEventRequest HttpResult) : StateAndEventResponse AsyncHttpResult =
         gameRepo.getGame gameId
-        |> thenBindAsync (fun game -> 
+        |> thenBindAsync (fun game ->
             getCreateEventRequest game
-            |> Result.bindAsync (fun eventRequest -> 
-                let newGame = eventServ.applyEvent game eventRequest
-                eventRepo.persistEvent (eventRequest, game, newGame)
-            )
-        )
-        |> thenBindAsync sendIfPublishable
-    
-    let processEventAsync (gameId : int) (getCreateEventRequest : Game -> CreateEventRequest AsyncHttpResult): StateAndEventResponse AsyncHttpResult = 
-        gameRepo.getGame gameId
-        |> thenBindAsync (fun game -> 
-            getCreateEventRequest game
-            |> thenBindAsync (fun eventRequest -> 
+            |> Result.bindAsync (fun eventRequest ->
                 let newGame = eventServ.applyEvent game eventRequest
                 eventRepo.persistEvent (eventRequest, game, newGame)
             )
         )
         |> thenBindAsync sendIfPublishable
 
-    interface IEventManager with    
+    let processEventAsync (gameId : int) (getCreateEventRequest : Game -> CreateEventRequest AsyncHttpResult): StateAndEventResponse AsyncHttpResult =
+        gameRepo.getGame gameId
+        |> thenBindAsync (fun game ->
+            getCreateEventRequest game
+            |> thenBindAsync (fun eventRequest ->
+                let newGame = eventServ.applyEvent game eventRequest
+                eventRepo.persistEvent (eventRequest, game, newGame)
+            )
+        )
+        |> thenBindAsync sendIfPublishable
+
+    interface IEventManager with
         member x.getEvents (gameId, query) session =
             gameRepo.getGame gameId
             |> thenBind (Security.ensurePlayerOrHas ViewGames session)
@@ -86,33 +86,33 @@ type GameManager(eventRepo : IEventRepository,
             |> thenBind (fun game ->
                 if isGameViewableByActiveUser session game
                 then Ok <| game
-                else Error <| HttpException(404, "Game not found.")        
+                else Error <| HttpException(404, "Game not found.")
             )
-    
+
         member x.createGame parameters session =
             gameCrudServ.createGame parameters session
-            
+
         //TODO: Requires integration tests
         member x.updateGameParameters gameId parameters session =
             processEvent gameId (fun game -> gameCrudServ.getUpdateGameParametersEvent (game, parameters) session)
 
         member x.startGame gameId session =
             processEventAsync gameId (fun game -> gameStartServ.getGameStartEvent game session)
-   
+
     interface IPlayerManager with
         member x.addPlayer gameId request session =
             processEvent gameId (fun game -> playerServ.getAddPlayerEvent (game, request) session)
 
         member x.removePlayer (gameId, playerId) session =
             processEvent gameId (fun game -> playerServ.getRemovePlayerEvent (game, playerId) session)
-    
+
         member x.updatePlayerStatus (gameId, playerId, status) session =
-            let request =   
+            let request =
                 {
                     gameId = gameId
                     playerId = playerId
                     status = status
-                }    
+                }
             processEvent request.gameId (fun game -> playerStatusChangeServ.getUpdatePlayerStatusEvent (game, request) session)
 
     interface ITurnManager with

@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.Logic.Services
+namespace Djambi.Api.Logic.Services
 
 open Djambi.Api.Model
 open Djambi.Api.Common.Collections
@@ -17,7 +17,7 @@ type EventService(gameStartServ : GameStartService) =
             { game with status = effect.newValue }
 
     let applyNeutralPlayerAddedEffect (effect : NeutralPlayerAddedEffect) (game : Game) : Game =
-        let player : Player = 
+        let player : Player =
             {
                 id = 0
                 gameId = game.id
@@ -35,50 +35,50 @@ type EventService(gameStartServ : GameStartService) =
     let applyParameterChangedEffect (effect : ParametersChangedEffect) (game : Game) : Game =
         { game with parameters = effect.newValue }
 
-    let applyPieceAbandonedEffect (effect : PieceAbandonedEffect) (game : Game) : Game = 
-        { game with 
+    let applyPieceAbandonedEffect (effect : PieceAbandonedEffect) (game : Game) : Game =
+        { game with
             pieces = game.pieces |> List.replaceIf
                 (fun p -> p.id = effect.oldPiece.id)
                 (fun p -> { p with playerId = None })
         }
-    
+
     let applyPieceDroppedEffect (effect : PieceDroppedEffect) (game : Game) : Game =
-        { game with 
+        { game with
             pieces = game.pieces |> List.replaceIf
                 (fun p -> effect.oldPiece.id = p.id)
-                (fun p -> { p with cellId = effect.newCellId }) 
+                (fun p -> { p with cellId = effect.newCellId })
         }
 
-    let applyPieceEnlistedEffect (effect : PieceEnlistedEffect) (game : Game) : Game = 
-        { game with 
+    let applyPieceEnlistedEffect (effect : PieceEnlistedEffect) (game : Game) : Game =
+        { game with
             pieces = game.pieces |> List.replaceIf
                 (fun p -> p.id = effect.oldPiece.id)
                 (fun p -> { p with playerId = Some effect.newPlayerId })
         }
 
     let applyPieceKilledEffect (effect : PieceKilledEffect) (game : Game) : Game =
-        { game with 
+        { game with
             pieces = game.pieces |> List.replaceIf
-                (fun p -> p.id = effect.oldPiece.id) 
-                (fun p -> { p with kind = PieceKind.Corpse; playerId = None }) 
+                (fun p -> p.id = effect.oldPiece.id)
+                (fun p -> { p with kind = PieceKind.Corpse; playerId = None })
         }
 
     let applyPieceMovedEffect (effect : PieceMovedEffect) (game : Game) : Game =
-        { game with 
+        { game with
             pieces = game.pieces |> List.replaceIf
                 (fun p -> effect.oldPiece.id = p.id)
-                (fun p -> { p with cellId = effect.newCellId }) 
+                (fun p -> { p with cellId = effect.newCellId })
         }
-    
+
     let applyPieceVacatedEffect (effect : PieceVacatedEffect) (game : Game) : Game =
-        { game with 
+        { game with
             pieces = game.pieces |> List.replaceIf
                 (fun p -> effect.oldPiece.id = p.id)
-                (fun p -> { p with cellId = effect.newCellId }) 
+                (fun p -> { p with cellId = effect.newCellId })
         }
 
     let applyPlayerAddedEffect (effect : PlayerAddedEffect) (game : Game) : Game =
-        let player : Player = 
+        let player : Player =
             {
                 id = 0
                 gameId = game.id
@@ -99,14 +99,14 @@ type EventService(gameStartServ : GameStartService) =
         game
 
     let applyPlayerRemovedEffect (effect : PlayerRemovedEffect) (game : Game) : Game =
-        { game with 
+        { game with
             players = game.players |> List.filter (fun p -> p.id <> effect.playerId)
         }
 
     let applyPlayerStatusChangedEffect (effect : PlayerStatusChangedEffect) (game : Game) : Game =
-        { game with 
-            players = game.players |> List.replaceIf 
-                (fun p -> p.id = effect.playerId) 
+        { game with
+            players = game.players |> List.replaceIf
+                (fun p -> p.id = effect.playerId)
                 (fun p -> { p with status = effect.newStatus })
         }
 
@@ -123,7 +123,7 @@ type EventService(gameStartServ : GameStartService) =
         { game with turnCycle = effect.newValue }
 
     member x.applyEffect (effect : Effect) (game : Game) : Game =
-        match effect with 
+        match effect with
         | Effect.CurrentTurnChanged e -> applyCurrentTurnChangedEffect e game
         | Effect.GameStatusChanged e -> applyGameStatusChangedEffect e game
         | Effect.NeutralPlayerAdded e -> applyNeutralPlayerAddedEffect e game
@@ -131,7 +131,7 @@ type EventService(gameStartServ : GameStartService) =
         | Effect.PieceAbandoned e -> applyPieceAbandonedEffect e game
         | Effect.PieceDropped e -> applyPieceDroppedEffect e game
         | Effect.PieceEnlisted e -> applyPieceEnlistedEffect e game
-        | Effect.PieceKilled e -> applyPieceKilledEffect e game       
+        | Effect.PieceKilled e -> applyPieceKilledEffect e game
         | Effect.PieceMoved e -> applyPieceMovedEffect e game
         | Effect.PieceVacated e -> applyPieceVacatedEffect e game
         | Effect.PlayerAdded e -> applyPlayerAddedEffect e game

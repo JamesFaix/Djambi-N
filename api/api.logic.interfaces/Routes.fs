@@ -1,17 +1,17 @@
-﻿module Djambi.Api.Logic.Interfaces.Routes
+module Djambi.Api.Logic.Interfaces.Routes
 
 (*
     This module makes more sense at a higher tier of the application.
     It has been placed in this library so that uses of ClientFunctionAttribute can reference it.
  *)
 
- let private create1<'a> (value : string) : PrintfFormat<'a->obj, obj, obj, obj, 'a> = 
+ let private create1<'a> (value : string) : PrintfFormat<'a->obj, obj, obj, obj, 'a> =
     PrintfFormat<'a->obj, obj, obj, obj, 'a>(value)
-    
- let private create2<'a, 'b> (value : string) : PrintfFormat<'a->'b->obj, obj, obj, obj, 'a * 'b> = 
+
+ let private create2<'a, 'b> (value : string) : PrintfFormat<'a->'b->obj, obj, obj, obj, 'a * 'b> =
     PrintfFormat<'a->'b->obj, obj, obj, obj, 'a * 'b>(value)
 
- let private create3<'a, 'b, 'c> (value : string) : PrintfFormat<'a->'b->'c->obj, obj, obj, obj, 'a * 'b * 'c> = 
+ let private create3<'a, 'b, 'c> (value : string) : PrintfFormat<'a->'b->'c->obj, obj, obj, obj, 'a * 'b * 'c> =
     PrintfFormat<'a->'b->'c->obj, obj, obj, obj, 'a * 'b *'c>(value)
 
  [<Literal>]
@@ -19,7 +19,7 @@
 
  [<Literal>]
  let users = "/users"
-  
+
  [<Literal>]
  let currentUser = "/users/current"
 
