@@ -97,17 +97,17 @@ Target.create fsLint (fun _ ->
         |> ignore
 )
 
-Target.create buildAll ignore
-
 Target.create testApiUnit (dotNetTest "api/tests/api.unitTests/api.unitTests.fsproj")
 Target.create testApiInt (dotNetTest "api/tests/api.integrationTests/api.integrationTests.fsproj")
 Target.create testWebUnit (fun _ -> Npm.run "test" setNpmParams)
-Target.create testAll ignore
 
 Target.create runApi (launchConsole "api/api.host" "dotnet" ["run api.host.fsproj"])
 Target.create runWeb (launchConsole "web" "http-server" [])
-Target.create runAll ignore
 
+Target.create buildAll ignore
+Target.create lintAll ignore
+Target.create testAll ignore
+Target.create runAll ignore
 Target.create all ignore
 
 //Dependencies
