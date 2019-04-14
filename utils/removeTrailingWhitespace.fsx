@@ -1,11 +1,23 @@
 open System.IO
 open System.Text.RegularExpressions
 
-let rootPath = sprintf "%s\\.." __SOURCE_DIRECTORY__
-let filePattern = "*.fs" //CAREFUL WHAT YOU WISH FOR
-let filePaths = Directory.EnumerateFiles(rootPath, filePattern, SearchOption.AllDirectories)
+let getFiles relativeDir filenameRegex =
+    let dir = sprintf "%s\\..\\%s" __SOURCE_DIRECTORY__ relativeDir
+    Directory.EnumerateFiles(dir, "*", SearchOption.AllDirectories)
+    |> Seq.filter(fun f -> Regex.IsMatch(f, filenameRegex))
 
-for f in filePaths do
-    let mutable text = File.ReadAllText f
-    text <- Regex.Replace(text, " +\r", fun m -> "\r")
-    File.WriteAllText(f, text)
+let fixFile path =
+    let mutable text = File.ReadAllText path
+    text <- Regex.Replace(text, " +\r", fun _ -> "\r")
+    File.WriteAllText(path, text)
+
+let fixBatch relativeDir filenameRegex =
+    let files = getFiles relativeDir filenameRegex
+    for f in files do
+        fixFile f
+
+fixBatch "api"      """.+\.fsx?$"""
+fixBatch "utils"    """.+\.fsx?$"""
+fixBatch "db"       """.+\.sql$"""
+fixBatch "web/src"  """.+\.tsx?$"""
+fixBatch "web/test" """.+\.tsx?$"""

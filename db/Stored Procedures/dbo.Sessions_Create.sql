@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[Sessions_Create]
+CREATE PROCEDURE [dbo].[Sessions_Create]
 	@UserId INT,
 	@Token NVARCHAR(50),
 	@ExpiresOn DATETIME2
@@ -7,9 +7,9 @@ BEGIN
 	SET NOCOUNT ON;
 
 	INSERT INTO [Sessions] (
-		Token, 
+		Token,
 		UserId,
-		CreatedOn, 
+		CreatedOn,
 		ExpiresOn)
 	VALUES (
 		@Token,
