@@ -1,11 +1,11 @@
-﻿module Djambi.Api.WebClient.SessionClient
+module Djambi.Api.WebClient.SessionClient
 
 open Djambi.Api.Model
 open Djambi.Api.WebClient.Model
 open Djambi.Api.WebClient.WebUtility
 
 let createSession (request : LoginRequest) : Unit AsyncResponse =
-    sendRequest(POST, "/sessions", 
+    sendRequest(POST, "/sessions",
         Some request,
         None)
 

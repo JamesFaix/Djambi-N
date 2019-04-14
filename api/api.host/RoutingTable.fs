@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.Host
+namespace Djambi.Api.Host
 
 open Giraffe
 open Microsoft.AspNetCore.Http
@@ -20,7 +20,7 @@ type RoutingTable (web : IWebRoot) =
                     GET >=> routef Routes.userFormat web.users.getUser
                     GET >=> route Routes.currentUser >=> web.users.getCurrentUser
                     DELETE >=> routef Routes.userFormat web.users.deleteUser
-                    
+
                 //Board
                     GET >=> routef Routes.boardFormat web.boards.getBoard
                     GET >=> routef Routes.pathsFormat web.boards.getCellPaths

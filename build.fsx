@@ -8,11 +8,15 @@ open Fake.Core
 open Fake.DotNet
 open Fake.JavaScript
 open System.Diagnostics
+open System.IO
 
 //Target names
 let defaultTarget = "default"
 let all = "all"
 
+let checkForEnv = "check-env"
+
+let paketRestore = "paket-restore"
 let buildApi = "build-api"
 let buildWeb = "build-web"
 let dbReset = "db-reset"
@@ -43,6 +47,7 @@ let dotNetRun (path : string) (_ : TargetParameter) =
     DotNet.exec id "run" ("--project " + path) |> ignore
 
 let dotNetTest (path : string) (_ : TargetParameter) =
+    DotNet.exec id "build" path |> ignore
     DotNet.test
         (fun o ->
             let common = { o.Common with Verbosity = Some DotNet.Verbosity.Normal }
@@ -64,6 +69,16 @@ let launchConsole (dir : string) (command : string) (args : string list) (_ : Ta
     psi.UseShellExecute <- true
     Process.Start psi |> ignore
 
+Target.create checkForEnv (fun _ ->
+    let path = sprintf "%s/environment.json" __SOURCE_DIRECTORY__
+    if not (File.Exists path)
+    then failwith "environment.json file not found. A template can be found in the wiki."
+)
+
+Target.create paketRestore (fun _ ->
+    Process.Start(".paket/paket.exe", "restore")
+    |> ignore
+)
 Target.create buildApi (dotnetBuild "api/api.host/api.host.fsproj")
 Target.create dbReset (dotNetRun "utils/db-reset/db-reset.fsproj")
 Target.create genClient (dotNetRun "utils/client-generator/client-generator.fsproj")
@@ -86,14 +101,25 @@ Target.create all ignore
 
 open Fake.Core.TargetOperators
 
+checkForEnv ==> dbReset
+checkForEnv ==> buildApi
+checkForEnv ==> genClient
+
+paketRestore ?=> dbReset
+paketRestore ?=> buildApi
+paketRestore ?=> genClient
+
 dbReset ?=> buildApi
 buildApi ?=> genClient
 genClient ?=> buildWeb
 buildApi ?=> runApi
 restoreWeb ?=> buildWeb
 buildWeb ?=> runWeb
+
 buildApi ?=> testApiUnit
 buildApi ?=> testApiInt
+genClient ?=> testApiUnit
+genClient ?=> testApiInt
 buildWeb ?=> testWebUnit
 
 testApiUnit ?=> runApi
@@ -102,6 +128,7 @@ testWebUnit ?=> runWeb
 
 buildAll <==
     [
+        paketRestore
         dbReset
         buildApi
         genClient

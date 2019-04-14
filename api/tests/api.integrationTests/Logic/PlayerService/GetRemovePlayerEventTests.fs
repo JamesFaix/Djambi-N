@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.IntegrationTests.Logic.services.players
+namespace Djambi.Api.IntegrationTests.Logic.services.players
 
 open System
 open FSharp.Control.Tasks
@@ -10,7 +10,7 @@ open Djambi.Api.Model
 
 type GetRemovePlayerEventTests() =
     inherit TestsBase()
-          
+
     [<Fact>]
     let ``Should fail if removing player not in game``() =
         task {
@@ -41,7 +41,7 @@ type GetRemovePlayerEventTests() =
             //Arrange
             let! (_, session, game) = createuserSessionAndGame(false) |> thenValue
 
-            let request = 
+            let request =
                 {
                     kind = PlayerKind.Neutral
                     name = Some "test"
@@ -66,7 +66,7 @@ type GetRemovePlayerEventTests() =
 
             let! user = createUser() |> thenValue
             let request = CreatePlayerRequest.user user.id
-                        
+
             let session = session |> TestUtilities.setSessionPrivileges []
                                   |> TestUtilities.setSessionUserId Int32.MinValue
 
@@ -93,7 +93,7 @@ type GetRemovePlayerEventTests() =
             let! player = managers.players.addPlayer game.id request session
                           |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                           |> thenValue
-                          
+
             let! game = db.games.getGame game.id |> thenValue
 
             //Act
@@ -102,7 +102,7 @@ type GetRemovePlayerEventTests() =
             //Assert
             event.kind |> shouldBe EventKind.PlayerRemoved
             event.effects.Length |> shouldBe 1
-            match event.effects.[0] with 
+            match event.effects.[0] with
             | Effect.PlayerRemoved f ->
                 f.playerId |> shouldBe player.id
 
@@ -131,7 +131,7 @@ type GetRemovePlayerEventTests() =
             //Assert
             event.kind |> shouldBe EventKind.PlayerRemoved
             event.effects.Length |> shouldBe 1
-            match event.effects.[0] with 
+            match event.effects.[0] with
             | Effect.PlayerRemoved f ->
                 f.playerId |> shouldBe player.id
 
@@ -146,7 +146,7 @@ type GetRemovePlayerEventTests() =
 
             let! user = createUser() |> thenValue
             let request = CreatePlayerRequest.user user.id
-            
+
             let adminSession = session |> TestUtilities.setSessionPrivileges [EditPendingGames]
             let! player = managers.players.addPlayer game.id request adminSession
                           |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
@@ -160,7 +160,7 @@ type GetRemovePlayerEventTests() =
             //Assert
             event.kind |> shouldBe EventKind.PlayerRemoved
             event.effects.Length |> shouldBe 1
-            match event.effects.[0] with 
+            match event.effects.[0] with
             | Effect.PlayerRemoved f ->
                 f.playerId |> shouldBe player.id
 
@@ -196,7 +196,7 @@ type GetRemovePlayerEventTests() =
             //Assert
             event.kind |> shouldBe EventKind.PlayerRemoved
             event.effects.Length |> shouldBe 2
-            match (event.effects.[0], event.effects.[1]) with 
+            match (event.effects.[0], event.effects.[1]) with
             | (Effect.PlayerRemoved f1, Effect.PlayerRemoved f2) ->
                 f1.playerId |> shouldBe userPlayer.id
                 f2.playerId |> shouldBe guestPlayer.id
@@ -213,7 +213,7 @@ type GetRemovePlayerEventTests() =
             let! user = createUser() |> thenValue
             let userPlayerRequest = CreatePlayerRequest.user user.id
             let guestPlayerRequest = CreatePlayerRequest.guest (user.id, "test")
-            
+
             let adminSession = session |> TestUtilities.setSessionPrivileges [EditPendingGames]
 
             let! userPlayer =
@@ -234,13 +234,13 @@ type GetRemovePlayerEventTests() =
             //Assert
             event.kind |> shouldBe EventKind.PlayerRemoved
             event.effects.Length |> shouldBe 1
-            match event.effects.[0] with 
+            match event.effects.[0] with
             | Effect.PlayerRemoved f ->
                 f.playerId |> shouldBe guestPlayer.id
 
             | _ -> failwith "Incorrect effects"
         }
-    
+
     [<Fact>]
     let ``Should cancel game if creating user and game is pending``() =
         task {
@@ -254,7 +254,7 @@ type GetRemovePlayerEventTests() =
             //Assert
             event.kind |> shouldBe EventKind.PlayerRemoved
             event.effects.Length |> shouldBe 2
-            match (event.effects.[0], event.effects.[1]) with 
+            match (event.effects.[0], event.effects.[1]) with
             | (Effect.PlayerRemoved f1, Effect.GameStatusChanged f2) ->
                 f1.playerId |> shouldBe creator.id
 
@@ -263,14 +263,14 @@ type GetRemovePlayerEventTests() =
 
             | _ -> failwith "Incorrect effects"
         }
-           
+
     [<Fact>]
     let ``Should fali if game InProgress``() =
         task {
             //Arrange
             let! (user, session, game) = createuserSessionAndGame(true) |> thenValue
 
-            let p2Request = 
+            let p2Request =
                 {
                     userId = Some user.id
                     kind = PlayerKind.Guest

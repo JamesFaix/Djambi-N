@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.Logic.Services
+namespace Djambi.Api.Logic.Services
 
 open System
 open System.Linq
@@ -8,13 +8,13 @@ open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Db.Interfaces
 open Djambi.Api.Model
 open Djambi.Api.Logic
-    
+
 type PlayerService(gameRepo : IGameRepository) =
     member x.getAddPlayerEvent (game : Game, request : CreatePlayerRequest) (session : Session) : CreateEventRequest HttpResult =
         let self = session.user
         if game.status <> GameStatus.Pending
         then Error <| HttpException(400, "Can only add players to pending games.")
-        elif request.name.IsSome 
+        elif request.name.IsSome
             && game.players |> List.exists (fun p -> String.Equals(p.name, request.name.Value, StringComparison.OrdinalIgnoreCase))
         then Error <| HttpException(409, "A player with that name already exists.")
         elif game.players.Length >= game.parameters.regionCount
@@ -45,7 +45,7 @@ type PlayerService(gameRepo : IGameRepository) =
 
             | PlayerKind.Neutral ->
                 Error <| HttpException(400, "Cannot directly add neutral players to a game.")
-        |> Result.map (fun _ -> 
+        |> Result.map (fun _ ->
             {
                 kind = EventKind.PlayerJoined
                 effects = [ PlayerAddedEffect.fromRequest request ]
@@ -68,15 +68,15 @@ type PlayerService(gameRepo : IGameRepository) =
                     if not <| (self.has EditPendingGames
                         || game.createdBy.userId = self.id
                         || x = self.id)
-                    then Error <| HttpException(403, "Cannot remove other users from game.")        
-                    else 
+                    then Error <| HttpException(403, "Cannot remove other users from game.")
+                    else
                         let effects = new ArrayList<Effect>()
 
                         let playerIdsToRemove =
-                            match player.kind with 
-                            | User -> 
-                                game.players 
-                                |> List.filter (fun p -> p.userId = player.userId) 
+                            match player.kind with
+                            | User ->
+                                game.players
+                                |> List.filter (fun p -> p.userId = player.userId)
                                 |> List.map (fun p -> p.id)
                             | Guest -> [playerId]
                             | _ -> [] //Already eliminated this case in validation above
@@ -87,7 +87,7 @@ type PlayerService(gameRepo : IGameRepository) =
                         //Cancel game if creator quit
                         if game.createdBy.userId = player.userId.Value
                             && player.kind = PlayerKind.User
-                        then 
+                        then
                             effects.Add(Effect.GameStatusChanged { oldValue = GameStatus.Pending; newValue = GameStatus.Canceled })
                         else ()
 
@@ -116,5 +116,5 @@ type PlayerService(gameRepo : IGameRepository) =
         else
             gameRepo.getNeutralPlayerNames()
             |> thenMap getNeutralPlayerNamesToUse
-            |> thenMap (Seq.map (fun name -> PlayerAddedEffect.fromRequest <| CreatePlayerRequest.neutral name ))    
+            |> thenMap (Seq.map (fun name -> PlayerAddedEffect.fromRequest <| CreatePlayerRequest.neutral name ))
             |> thenMap Seq.toList

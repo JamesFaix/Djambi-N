@@ -1,4 +1,4 @@
-﻿module Djambi.Api.UnitTests.JsonConverterTests
+module Djambi.Api.UnitTests.JsonConverterTests
 
 open Newtonsoft.Json
 open Xunit
@@ -29,9 +29,9 @@ let ``Default Some serialization is awkward``() =
 
 [<Fact>]
 let ``OptionJsonConverter None should serialize as null``() =
-    let converter = OptionJsonConverter() :> JsonConverter 
+    let converter = OptionJsonConverter() :> JsonConverter
     let record : RecordWithOption = { age = None }
-    let expected = """{"age":null}""" 
+    let expected = """{"age":null}"""
 
     let actual = JsonConvert.SerializeObject(record, [|converter|])
 
@@ -39,9 +39,9 @@ let ``OptionJsonConverter None should serialize as null``() =
 
 [<Fact>]
 let ``OptionJsonConverter Some should serialize as value``() =
-    let converter = OptionJsonConverter() :> JsonConverter 
+    let converter = OptionJsonConverter() :> JsonConverter
     let record : RecordWithOption = { age = Some 3 }
-    let expected = """{"age":3}""" 
+    let expected = """{"age":3}"""
 
     let actual = JsonConvert.SerializeObject(record, [|converter|])
 
@@ -49,8 +49,8 @@ let ``OptionJsonConverter Some should serialize as value``() =
 
 [<Fact>]
 let ``OptionJsonConverter null should deserialize as None``() =
-    let converter = OptionJsonConverter() :> JsonConverter 
-    let json = """{"age":null}""" 
+    let converter = OptionJsonConverter() :> JsonConverter
+    let json = """{"age":null}"""
     let expected : RecordWithOption = { age = None }
 
     let actual = JsonConvert.DeserializeObject<RecordWithOption>(json, [|converter|])
@@ -59,8 +59,8 @@ let ``OptionJsonConverter null should deserialize as None``() =
 
 [<Fact>]
 let ``OptionJsonConverter non-null should deserialize as Some``() =
-    let converter = OptionJsonConverter() :> JsonConverter 
-    let json = """{"age":3}""" 
+    let converter = OptionJsonConverter() :> JsonConverter
+    let json = """{"age":3}"""
     let expected : RecordWithOption = { age = Some 3 }
 
     let actual = JsonConvert.DeserializeObject<RecordWithOption>(json, [|converter|])
@@ -93,11 +93,11 @@ let ``TupleArrayJsonConverter array should deserialize as tuple``() =
     let converter = TupleArrayJsonConverter() :> JsonConverter
     let json = """[1,true,"hello"]"""
     let expected = (1, true, "hello")
- 
+
     let actual = JsonConvert.DeserializeObject<int * bool * string>(json, [|converter|])
 
     Assert.Equal(expected, actual)
-    
+
 //---Enum union---
 
 type UnionEnum = Yes | No | Maybe
@@ -181,9 +181,9 @@ let ``SingleFieldUnionJsonConverter should deserialize union where all cases hav
 
 [<Fact>]
 let ``Should serialize None of union enum``() =
-    let converters = 
+    let converters =
         [|
-            UnionEnumJsonConverter() :> JsonConverter    
+            UnionEnumJsonConverter() :> JsonConverter
             OptionJsonConverter() :> JsonConverter
         |]
 
@@ -197,9 +197,9 @@ let ``Should serialize None of union enum``() =
 
 [<Fact>]
 let ``Should deserialize None of union enum``() =
-    let converters = 
+    let converters =
         [|
-            UnionEnumJsonConverter() :> JsonConverter    
+            UnionEnumJsonConverter() :> JsonConverter
             OptionJsonConverter() :> JsonConverter
         |]
 
@@ -212,16 +212,16 @@ let ``Should deserialize None of union enum``() =
 
 [<Fact>]
 let ``Should deserialize Union with Record case with Record property``() =
-    let converters = 
+    let converters =
         [|
-            UnionEnumJsonConverter() :> JsonConverter    
+            UnionEnumJsonConverter() :> JsonConverter
             OptionJsonConverter() :> JsonConverter
             SingleFieldUnionJsonConverter() :> JsonConverter
         |]
 
     let json = """{"kind":"PlayerAdded","value":{"kind":"Guest","userId":7,"name":"test"}}"""
-    let request : CreatePlayerRequest = 
-        { 
+    let request : CreatePlayerRequest =
+        {
             kind = PlayerKind.Guest
             userId = Some 7
             name = Some "test"

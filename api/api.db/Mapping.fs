@@ -1,4 +1,4 @@
-﻿module Djambi.Api.Db.Mapping
+module Djambi.Api.Db.Mapping
 
 open Djambi.Api.Common
 open Djambi.Api.Common.Json
@@ -17,7 +17,7 @@ let private findLeft<'a, 'b when 'b : equality> (map : ('a * 'b) list) (key : 'b
     match result with
     | Some (a, _) -> a
     | _ -> failwith "Invalid enum value"
-    
+
 let private playerKindsMap =
     [
         1uy, User
@@ -30,7 +30,7 @@ let mapPlayerKindId (playerKindId : byte) : PlayerKind =
 
 let mapPlayerKindToId (kind : PlayerKind) : byte =
     findLeft playerKindsMap kind
-    
+
 let private playerStatusMap =
     [
         1uy, PlayerStatus.Pending
@@ -41,7 +41,7 @@ let private playerStatusMap =
         6uy, AcceptsDraw
         7uy, Victorious
     ]
-    
+
 let mapPlayerStatusId (playerStatusId : byte) : PlayerStatus =
     findRight playerStatusMap playerStatusId
 
@@ -85,7 +85,7 @@ let privilegeMap =
     [
         1uy, Privilege.EditUsers
         2uy, Privilege.EditPendingGames
-        3uy, Privilege.OpenParticipation  
+        3uy, Privilege.OpenParticipation
         4uy, Privilege.ViewGames
         5uy, Privilege.Snapshots
     ]
@@ -127,7 +127,7 @@ let mapPlayerResponse (sqlModel : PlayerSqlModel) : Player =
         startingRegion = sqlModel.startingRegion |> Option.ofNullable |> Option.map int
         startingTurnNumber = sqlModel.startingTurnNumber |> Option.ofNullable |> Option.map int
     }
-    
+
 let mapGameResponse(sqlModel : GameSqlModel) : Game =
     {
         id = sqlModel.gameId
@@ -137,7 +137,7 @@ let mapGameResponse(sqlModel : GameSqlModel) : Game =
             userName = sqlModel.createdByUserName
             time = sqlModel.createdOn
         }
-        parameters = 
+        parameters =
             {
                 regionCount = sqlModel.regionCount
                 description = sqlModel.description |> Option.ofReference

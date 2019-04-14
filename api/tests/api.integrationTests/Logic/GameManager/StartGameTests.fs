@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.IntegrationTests.Logic.GameManager
+namespace Djambi.Api.IntegrationTests.Logic.GameManager
 
 open FSharp.Control.Tasks
 open Xunit
@@ -9,7 +9,7 @@ open Djambi.Api.Model
 
 type StartGameTests() =
     inherit TestsBase()
-   
+
     [<Fact>]
     let ``Start game should work``() =
         task {
@@ -21,7 +21,7 @@ type StartGameTests() =
             let! _ = managers.players.addPlayer game.id playerRequest session |> thenValue
 
             //Act
-            let! resp = managers.games.startGame game.id session 
+            let! resp = managers.games.startGame game.id session
                         |> thenValue
 
             //Assert

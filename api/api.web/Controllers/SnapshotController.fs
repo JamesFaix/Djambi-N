@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.Web.Controllers
+namespace Djambi.Api.Web.Controllers
 
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Model
@@ -31,6 +31,6 @@ type SnapshotController(u : HttpUtility,
 
         member x.loadSnapshot (gameId, snapshotId) =
             let func ctx =
-                u.getSessionFromContext ctx 
+                u.getSessionFromContext ctx
                 |> thenBindAsync (snapshotMan.loadSnapshot gameId snapshotId)
             u.handle func

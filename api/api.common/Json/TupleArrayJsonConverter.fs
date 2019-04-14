@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.Common.Json
+namespace Djambi.Api.Common.Json
 
 open System
 open Microsoft.FSharp.Reflection
@@ -7,7 +7,7 @@ open Newtonsoft.Json
 //Taken from http://gorodinski.com/blog/2013/01/05/json-dot-net-type-converters-for-f-option-list-tuple/
 type TupleArrayJsonConverter() =
     inherit JsonConverter()
-    
+
     override x.CanConvert (t : Type) : bool =
         FSharpType.IsTuple(t)
 
@@ -15,7 +15,7 @@ type TupleArrayJsonConverter() =
         let values = FSharpValue.GetTupleFields(value)
         serializer.Serialize(writer, values)
 
-    override x.ReadJson(reader : JsonReader, t : Type, existingValue : obj, serializer : JsonSerializer) : obj =        
+    override x.ReadJson(reader : JsonReader, t : Type, existingValue : obj, serializer : JsonSerializer) : obj =
         let advance = reader.Read >> ignore
         let deserialize t = serializer.Deserialize(reader, t)
         let itemTypes = FSharpType.GetTupleElements(t)

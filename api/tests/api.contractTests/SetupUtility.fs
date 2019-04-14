@@ -1,4 +1,4 @@
-﻿module Djambi.Api.ContractTests.SetupUtility
+module Djambi.Api.ContractTests.SetupUtility
 
 open System.Threading.Tasks
 open FSharp.Control.Tasks
@@ -20,11 +20,11 @@ let createUserAndSignIn () : (User * string) Task =
 
 let loginAsAdmin () : string Task =
     task {
-        let request : LoginRequest = 
+        let request : LoginRequest =
             {
                 username = env.adminUsername
                 password = env.adminPassword
             }
         let! sessionResponse = SessionClient.createSession request
-        return sessionResponse.getToken().Value        
+        return sessionResponse.getToken().Value
     }

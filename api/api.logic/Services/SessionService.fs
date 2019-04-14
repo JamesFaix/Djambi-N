@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.Logic.Services
+namespace Djambi.Api.Logic.Services
 
 open System
 open Djambi.Api.Common.Control
@@ -35,7 +35,7 @@ type SessionService(sessionRepo : ISessionRepository,
             if request.password = user.password
             then okTask user
             else
-                let attempts = 
+                let attempts =
                     if isWithinLockTimeoutPeriod user
                     then user.failedLoginAttempts + 1
                     else 1
@@ -63,8 +63,8 @@ type SessionService(sessionRepo : ISessionRepository,
                     }
                 sessionRepo.createSession request
             )
-            |> thenDoAsync (fun _ -> 
-                userRepo.updateFailedLoginAttempts (UpdateFailedLoginsRequest.reset user.id)                
+            |> thenDoAsync (fun _ ->
+                userRepo.updateFailedLoginAttempts (UpdateFailedLoginsRequest.reset user.id)
             )
         )
 

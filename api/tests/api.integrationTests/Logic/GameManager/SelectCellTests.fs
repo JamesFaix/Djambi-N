@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.IntegrationTests.Logic.GameManager
+namespace Djambi.Api.IntegrationTests.Logic.GameManager
 
 open System
 open FSharp.Control.Tasks
@@ -48,10 +48,10 @@ type SelectCellTests() =
             let! user2 = createUser() |> thenValue
             let session2 = getSessionForUser user2.id
             let playerRequest = CreatePlayerRequest.user user2.id
-            let! player2 = managers.players.addPlayer game.id playerRequest session2 
+            let! player2 = managers.players.addPlayer game.id playerRequest session2
                             |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                             |> thenValue
-                                        
+
             let! resp = managers.games.startGame game.id session1 |> thenValue
             let updatedGame = resp.game
 
@@ -78,10 +78,10 @@ type SelectCellTests() =
             let! user2 = createUser() |> thenValue
             let session2 = getSessionForUser user2.id
             let playerRequest = CreatePlayerRequest.user user2.id
-            let! player2 = managers.players.addPlayer game.id playerRequest session2 
+            let! player2 = managers.players.addPlayer game.id playerRequest session2
                             |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                             |> thenValue
-                            
+
             let! resp = managers.games.startGame game.id session1 |> thenValue
             let updatedGame = resp.game
 
@@ -113,7 +113,7 @@ type SelectCellTests() =
 
             let guestRequest = CreatePlayerRequest.guest (user.id, "test")
             let! _ = managers.players.addPlayer game.id guestRequest session |> thenValue
-            
+
             let! resp = managers.games.startGame game.id session |> thenValue
             let updatedGame = resp.game
 
@@ -134,7 +134,7 @@ type SelectCellTests() =
 
             let guestRequest = CreatePlayerRequest.guest (user.id, "test")
             let! _ = managers.players.addPlayer game.id guestRequest session |> thenValue
-            
+
             let! resp = managers.games.startGame game.id session |> thenValue
             let updatedGame = resp.game
 
@@ -153,7 +153,7 @@ type SelectCellTests() =
 
             let guestRequest = CreatePlayerRequest.guest (user.id, "test")
             let! _ = managers.players.addPlayer game.id guestRequest session |> thenValue
-            
+
             let! resp = managers.games.startGame game.id session |> thenValue
             let updatedGame = resp.game
 

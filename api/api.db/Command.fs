@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.Db
+namespace Djambi.Api.Db
 
 open System
 open System.Data
@@ -7,8 +7,8 @@ open Dapper
 open Djambi.Api.Common
 open Djambi.Api.Common.Control
 
-/// <summary> 
-/// Represents a SQL command with no return type. 
+/// <summary>
+/// Represents a SQL command with no return type.
 /// </summary>
 type OpenCommand =
     {
@@ -18,12 +18,12 @@ type OpenCommand =
         entityType : string option
     }
 
-/// <summary> 
-/// Represents a SQL command with a return type. 
+/// <summary>
+/// Represents a SQL command with a return type.
 /// </summary>
 type ClosedCommand<'a> =
     {
-        text : string        
+        text : string
         parameters : (string * obj) list
         commandType : CommandType
         entityType : string option
@@ -31,8 +31,8 @@ type ClosedCommand<'a> =
     }
 
 type OpenCommand with
-    /// <summary> 
-    /// Adds a parameter to the command. 
+    /// <summary>
+    /// Adds a parameter to the command.
     /// </summary>
     member x.param (name : string, value : obj) : OpenCommand =
         let value =
@@ -40,9 +40,9 @@ type OpenCommand with
             else
                 let t = value.GetType()
 
-                let isOption = 
-                    t.IsGenericType && 
-                    t.GetGenericTypeDefinition() = typedefof<Option<_>>        
+                let isOption =
+                    t.IsGenericType &&
+                    t.GetGenericTypeDefinition() = typedefof<Option<_>>
 
                 if isOption then
                     let (case, fields) = FSharpValue.GetUnionFields(value, t)
@@ -50,9 +50,9 @@ type OpenCommand with
                 else value
 
         { x with parameters = (name, value) :: x.parameters }
-        
-    /// <summary> 
-    /// Adds an entity name to be used in error messages when executing the command. 
+
+    /// <summary>
+    /// Adds an entity name to be used in error messages when executing the command.
     /// For example, if <c>entityName</c> was 'User', a message might be 'User not found'.
     /// </summary>
     member x.forEntity (entityName : string) : OpenCommand =
@@ -72,7 +72,7 @@ type OpenCommand with
                           Nullable<int>(),
                           x.commandType |> Nullable.ofValue)
 
-    /// <summary> 
+    /// <summary>
     /// Converts the command to a <c>ClosedCommand</c>.
     /// </summary>
     member x.close<'a> (getResults : CommandContextProvider -> 'a AsyncHttpResult) : ClosedCommand<'a> =
@@ -95,7 +95,7 @@ type ClosedCommand<'a> with
             commandType = x.commandType
             entityType = x.entityType
         }
-        
+
     /// <summary>
     /// Converts the command to a Dapper <c>CommandDefinition</c>.
     /// </summary>
@@ -103,7 +103,7 @@ type ClosedCommand<'a> with
         x.reopen().toCommandDefinition(transaction)
 
 /// <summary>
-/// Encapsulates database access through Dapper.SqlMapper, 
+/// Encapsulates database access through Dapper.SqlMapper,
 /// as well as transactional operations.
 /// </summary>
 module CommandProcessor =
@@ -125,8 +125,8 @@ module CommandProcessor =
         | _ ->
             HttpException(500, ex.Message)
 
-    let private executeCommandsInTransaction 
-        (cmds : unit ClosedCommand seq) 
+    let private executeCommandsInTransaction
+        (cmds : unit ClosedCommand seq)
         (ctx : CommandContext)
         : Unit Task =
         task {
@@ -168,7 +168,7 @@ module CommandProcessor =
             | _ -> Error <| HttpException(500, sprintf "An unknown error occurred when manipulating %s." (getEntityName(command.entityType)))
 
         queryMany<'a> command contextProvider
-        |> thenBind singleOrError         
+        |> thenBind singleOrError
 
     /// <summary>
     /// Executes the given command using the given context provider.
@@ -194,12 +194,12 @@ module CommandProcessor =
             use ctx = contextProvider.getContextWithTransaction()
             try
                 let! _ = executeCommandsInTransaction mostCommands ctx
-                let lastCommand = lastCommand.toCommandDefinition ctx.transaction 
+                let lastCommand = lastCommand.toCommandDefinition ctx.transaction
                 let! lastResult = ctx.connection.QuerySingleAsync<'a> lastCommand
                 ctx.commit()
-                return Ok lastResult        
-            with 
-            | _ as ex -> 
+                return Ok lastResult
+            with
+            | _ as ex ->
                 return Error <| (catchSqlException ex lastCommand.entityType)
         }
     /// <summary>
@@ -210,37 +210,37 @@ module CommandProcessor =
         (resultEntityName : string option)
         (contextProvider : CommandContextProvider)
         : Unit AsyncHttpResult =
-        task {            
+        task {
             use ctx = contextProvider.getContextWithTransaction()
-            try            
+            try
                 let! _ = executeCommandsInTransaction commands ctx
                 ctx.commit()
-                return Ok ()        
-            with 
+                return Ok ()
+            with
             | _ as ex -> return Error <| (catchSqlException ex resultEntityName)
         }
-    
+
     /// <summary>
-    /// Using the given context provider, executes <c>commands1</c>, 
+    /// Using the given context provider, executes <c>commands1</c>,
     /// then generates another command using <c>getCommand2</c> and the result of <c>command1</c>,
-    /// and executes that second command. 
+    /// and executes that second command.
     /// Returns the result of <c>command1</c>.
     /// </summary>
     let executeTransactionallyButReturnFirstResult<'a, 'b>
         (command1 : 'a ClosedCommand, getCommand2 : 'a -> 'b ClosedCommand)
         (contextProvider : CommandContextProvider)
         : 'a AsyncHttpResult =
-        task {            
+        task {
             use ctx = contextProvider.getContextWithTransaction()
-            try 
-                let cmd = command1.toCommandDefinition ctx.transaction 
+            try
+                let cmd = command1.toCommandDefinition ctx.transaction
                 let! result = ctx.connection.QuerySingleAsync<'a> cmd
-                let cmd = (getCommand2 result).toCommandDefinition ctx.transaction 
+                let cmd = (getCommand2 result).toCommandDefinition ctx.transaction
                 let! _ = ctx.connection.ExecuteAsync cmd
                 ctx.commit()
                 return Ok result
-            with 
-            | _ as ex ->            
+            with
+            | _ as ex ->
                 return Error <| (catchSqlException ex command1.entityType)
         }
 
@@ -263,7 +263,7 @@ type OpenCommand with
     /// </summary>
     member x.returnsMany<'a> () : 'a list ClosedCommand =
         x.close (CommandProcessor.queryMany x)
-        
+
 module Command =
     /// <summary>
     /// Creates a command for the stored procedure with the given name, with no parameters or entityType.

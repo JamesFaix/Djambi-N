@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.Db.Repositories
+namespace Djambi.Api.Db.Repositories
 
 open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
@@ -17,17 +17,17 @@ type UserRepository(ctxProvider : CommandContextProvider) =
         member x.getUser userId =
             Commands.getUser (Some userId, None)
             |> Command.execute ctxProvider
-            |> thenBindAsync (fun userSqlModel -> 
+            |> thenBindAsync (fun userSqlModel ->
                 getUserPrivileges userId
-                |> thenMap (Mapping.mapUserResponse userSqlModel)        
+                |> thenMap (Mapping.mapUserResponse userSqlModel)
             )
-    
+
         member x.getUserByName name =
             Commands.getUser (None, Some name)
             |> Command.execute ctxProvider
-            |> thenBindAsync (fun userSqlModel -> 
+            |> thenBindAsync (fun userSqlModel ->
                 getUserPrivileges userSqlModel.userId
-                |> thenMap (Mapping.mapUserResponse userSqlModel)        
+                |> thenMap (Mapping.mapUserResponse userSqlModel)
             )
 
         member x.createUser request =

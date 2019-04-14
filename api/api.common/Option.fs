@@ -1,7 +1,7 @@
-﻿module Djambi.Api.Common.Option
+module Djambi.Api.Common.Option
 
 open System
-                               
+
 let ofNullable<'a when 'a : struct
                 and 'a :> ValueType
                 and 'a : (new: Unit -> 'a)>

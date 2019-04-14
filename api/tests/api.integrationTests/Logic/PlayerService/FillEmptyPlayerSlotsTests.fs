@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.IntegrationTests.Logic.PlayerService
+namespace Djambi.Api.IntegrationTests.Logic.PlayerService
 
 open FSharp.Control.Tasks
 open Xunit

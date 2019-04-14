@@ -1,6 +1,6 @@
-﻿namespace Djambi.Api.Logic.Managers
+namespace Djambi.Api.Logic.Managers
 
-open Djambi.Api.Common.Control  
+open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Logic
 open Djambi.Api.Model
@@ -16,10 +16,10 @@ type SnapshotManager(eventRepo : IEventRepository,
             Security.ensureHas Privilege.Snapshots session
             |> Result.bindAsync (fun _ ->
                 gameRepo.getGame gameId
-                |> thenBindAsync (fun game -> 
+                |> thenBindAsync (fun game ->
                     eventRepo.getEvents (gameId, EventsQuery.empty)
-                    |> thenBindAsync (fun history -> 
-                        let request = 
+                    |> thenBindAsync (fun history ->
+                        let request =
                             {
                                 game = game
                                 history = history
@@ -34,13 +34,13 @@ type SnapshotManager(eventRepo : IEventRepository,
                     |> thenMap Snapshot.hideDetails
                 )
             )
-    
+
         member x.getSnapshotsForGame gameId session =
             Security.ensureHas Privilege.Snapshots session
             |> Result.bindAsync (fun _ ->
                 snapshotRepo.getSnapshotsForGame gameId
             )
-    
+
         member x.deleteSnapshot gameId snapshotId session =
             Security.ensureHas Privilege.Snapshots session
             |> Result.bindAsync (fun _ ->

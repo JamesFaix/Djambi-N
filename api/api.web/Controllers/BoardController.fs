@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.Web.Controllers
+namespace Djambi.Api.Web.Controllers
 
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Web.Interfaces
@@ -14,9 +14,9 @@ type BoardController(boardMan : IBoardManager,
                 u.getSessionFromContext ctx
                 |> thenBindAsync (boardMan.getBoard regionCount)
             u.handle func
-            
+
         member x.getCellPaths (regionCount, cellId) =
-            let func ctx = 
+            let func ctx =
                 u.getSessionFromContext ctx
                 |> thenBindAsync (boardMan.getCellPaths (regionCount, cellId))
             u.handle func

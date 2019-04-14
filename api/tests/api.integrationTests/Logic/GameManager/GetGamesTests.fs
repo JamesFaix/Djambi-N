@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.IntegrationTests.Logic.GameManager
+namespace Djambi.Api.IntegrationTests.Logic.GameManager
 
 open FSharp.Control.Tasks
 open Xunit
@@ -52,7 +52,7 @@ type GetGamesTests() =
     let ``Get games should filter on isPublic``() =
         task {
             //Arrange
-            
+
             let! (_, _, game1) = TestUtilities.createuserSessionAndGame(false) |> thenValue
             let! (_, _, game2) = TestUtilities.createuserSessionAndGame(true) |> thenValue
             let! _ = (db.games :?> GameRepository).updateGame({ game2 with parameters = { game2.parameters with isPublic = true }}) |> thenValue
@@ -117,7 +117,7 @@ type GetGamesTests() =
         task {
             //Arrange
             let! (_, session1, game1) = TestUtilities.createuserSessionAndGame(true) |> thenValue
-            let! (_, session2, game2) = TestUtilities.createuserSessionAndGame(true) |> thenValue           
+            let! (_, session2, game2) = TestUtilities.createuserSessionAndGame(true) |> thenValue
             let! game3 = managers.games.createGame { getGameParameters() with isPublic = true } session2
                           |> AsyncHttpResult.thenValue
 

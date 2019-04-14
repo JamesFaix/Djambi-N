@@ -1,10 +1,10 @@
-﻿module Djambi.Api.Db.Model
+module Djambi.Api.Db.Model
 
 open System
 open Djambi.Api.Model
 
 [<CLIMutable>]
-type UserSqlModel = 
+type UserSqlModel =
     {
         userId : int
         name : string
@@ -23,7 +23,7 @@ type SessionSqlModel =
         createdOn : DateTime
         expiresOn : DateTime
     }
-    
+
 [<CLIMutable>]
 type PlayerSqlModel =
     {
@@ -37,7 +37,7 @@ type PlayerSqlModel =
         startingRegion : byte Nullable
         startingTurnNumber : byte Nullable
     }
-    
+
 [<CLIMutable>]
 type GameSqlModel =
     {
@@ -79,11 +79,11 @@ type SnapshotSqlModel =
         createdByUserName : string
         createdOn : DateTime
         description : string
-        snapshotJson : string    
+        snapshotJson : string
     }
-    
+
 [<CLIMutable>]
-type SnapshotJson = 
+type SnapshotJson =
     {
         game : Game
         history : Event list

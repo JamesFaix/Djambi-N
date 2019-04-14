@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.Logic.ModelExtensions
+namespace Djambi.Api.Logic.ModelExtensions
 
 open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
 open Djambi.Api.Model

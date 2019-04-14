@@ -1,9 +1,9 @@
-﻿[<AutoOpen>]
+[<AutoOpen>]
 module Djambi.Api.Common.Json.JsonUtility
 
 open Newtonsoft.Json
 
-let private converters = 
+let private converters =
     [|
         OptionJsonConverter() :> JsonConverter
         UnionEnumJsonConverter() :> JsonConverter

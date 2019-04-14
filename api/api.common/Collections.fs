@@ -1,4 +1,4 @@
-﻿module Djambi.Api.Common.Collections
+module Djambi.Api.Common.Collections
 
 type ArrayList<'a> = System.Collections.Generic.List<'a>
 
@@ -21,12 +21,12 @@ module List =
 
     let replaceIf<'a> (predicate : 'a -> bool) (replace : 'a -> 'a) (list : 'a list) : 'a list =
         list
-        |> List.map (fun x -> 
+        |> List.map (fun x ->
             if predicate x
             then replace x
             else x
         )
-    
+
     let rotate<'a> (places : int) (xs : 'a list) : 'a list =
         let mutable xs = xs
         for _ in [1..places] do
@@ -36,7 +36,7 @@ module List =
 module Seq =
     let replaceIf<'a> (predicate : 'a -> bool) (replace : 'a -> 'a) (list : 'a seq) : 'a seq =
         list
-        |> Seq.map (fun x -> 
+        |> Seq.map (fun x ->
             if predicate x
             then replace x
             else x
@@ -44,8 +44,8 @@ module Seq =
 
     let exceptWithKey<'a, 'key when 'key : equality> (keySelector : 'a -> 'key) (keys : 'key seq) (xs : 'a seq) : 'a seq =
         let keyList = keys |> Seq.toList
-        xs 
-        |> Seq.filter (fun x -> 
+        xs
+        |> Seq.filter (fun x ->
             let key = keySelector x
             keyList |> List.contains key |> not
         )
@@ -61,6 +61,6 @@ module Seq =
         }
 
     let values<'a> (xs : 'a option seq) : 'a seq =
-        xs 
-        |> Seq.filter Option.isSome 
+        xs
+        |> Seq.filter Option.isSome
         |> Seq.map (fun o -> o.Value)

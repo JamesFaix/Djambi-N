@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.Db
+namespace Djambi.Api.Db
 
 open System
 open System.Data
@@ -9,12 +9,12 @@ open Djambi.Api.Common.Json
 
 //See https://medium.com/dapper-net/sql-server-specific-features-2773d894a6ae
 
-module Option =    
+module Option =
     let toValueOrDbNull<'a> (x : 'a option) : obj =
         match x with
         | Some value -> value :> obj
         | None -> DBNull.Value :> obj
-   
+
 [<AbstractClass>]
 type TvpBase<'a>(xs : 'a seq) =
     let addTableParameter (cmd : IDbCommand) (name : string) (table : DataTable) =
@@ -63,6 +63,6 @@ type EventListTvp(xs : Event seq) =
                 x.actingPlayerId |> Option.toValueOrDbNull,
                 x.createdBy.time,
                 Mapping.mapEventKindToId x.kind,
-                JsonUtility.serialize x.effects) 
+                JsonUtility.serialize x.effects)
             |> ignore
         dt

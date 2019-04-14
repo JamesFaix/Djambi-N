@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.Common.Json
+namespace Djambi.Api.Common.Json
 
 open System
 open System.IO
@@ -10,13 +10,13 @@ open Djambi.Api.Common.Collections
 type SingleFieldUnionJsonConverter() =
     inherit JsonConverter()
 
-    override x.CanConvert (t : Type) : bool = 
+    override x.CanConvert (t : Type) : bool =
         FSharpType.IsUnion t &&
-        FSharpType.GetUnionCases t 
+        FSharpType.GetUnionCases t
             |> Seq.forall (fun c -> c.GetFields().Length = 1)
 
-    override x.WriteJson (writer : JsonWriter, 
-                          value : obj, 
+    override x.WriteJson (writer : JsonWriter,
+                          value : obj,
                           serializer : JsonSerializer) : Unit =
 
         let caseType = value.GetType()
@@ -31,13 +31,13 @@ type SingleFieldUnionJsonConverter() =
         serializer.Serialize(writer, recordValue)
         writer.WriteEndObject()
 
-    override x.ReadJson(reader : JsonReader, 
-                        t : Type, 
+    override x.ReadJson(reader : JsonReader,
+                        t : Type,
                         existingValue : obj,
-                        serializer : JsonSerializer) : obj =   
+                        serializer : JsonSerializer) : obj =
         let jobj = JObject.Load(reader)
         let kind = jobj.["kind"].ToString()
-       
+
         let cases = FSharpType.GetUnionCases t
         let case = cases |> Seq.find (fun c -> c.Name = kind)
         let recordType = case.GetFields().[0].PropertyType

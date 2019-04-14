@@ -1,4 +1,4 @@
-﻿open System
+open System
 open System.Data.SqlClient
 open System.IO
 open System.Reflection
@@ -11,7 +11,7 @@ open Microsoft.Extensions.Configuration
 open Djambi.Utilities
 
 let private env = Environment.load(5);
-let private config = 
+let private config =
     ConfigurationBuilder()
         .AddJsonFile("appsettings.json", false)
         .Build()
@@ -25,15 +25,15 @@ let private getSqlDirectory =
 
 let private getConnectionString name =
     config.GetConnectionString(name).Replace("{sqlAddress}", env.sqlAddress)
-   
-let private masterConnectionString = getConnectionString "master"        
+
+let private masterConnectionString = getConnectionString "master"
 let private djambiConnectionString = getConnectionString "djambi"
 
 let private executeCommand (cnStr : string)(command : string) : unit =
     use cn = new SqlConnection(cnStr)
-    
+
     cn.Execute(command) |> ignore
-    
+
 let private dropAndCreateDb() : unit =
     printfn "Dropping and creating database"
     let sql = "IF EXISTS(SELECT * FROM sys.databases WHERE name='Djambi')
@@ -48,7 +48,7 @@ let private loadFile (relativePath : string) : unit =
     let text = File.ReadAllText(absolutePath)
     let commands = Regex.Split(text, "\s+GO")
                    |> Seq.filter (String.IsNullOrEmpty >> not)
-    for c in commands do    
+    for c in commands do
         executeCommand djambiConnectionString c
 
 let getFilesInOrder : string seq =
@@ -88,7 +88,7 @@ let getFilesInOrder : string seq =
             "Stored Procedures"
             "Data"
         ]
- 
+
         yield! folders |> Seq.collect getFiles
     }
 
@@ -107,6 +107,6 @@ let main argv =
         loadFile f
 
     createAdminUser()
- 
+
     printfn "Done"
     0

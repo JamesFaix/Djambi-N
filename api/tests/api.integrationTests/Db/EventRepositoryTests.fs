@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.IntegrationTests.Db
+namespace Djambi.Api.IntegrationTests.Db
 
 open FSharp.Control.Tasks
 open Xunit
@@ -15,7 +15,7 @@ type EventRepositoryTests() =
             //Arrange
             let! (user, _, game) = TestUtilities.createuserSessionAndGame(true) |> thenValue
 
-            let player : Player = 
+            let player : Player =
                 {
                     id = 0
                     gameId = game.id
@@ -51,7 +51,7 @@ type EventRepositoryTests() =
             //Arrange
             let! (user, _, game) = TestUtilities.createuserSessionAndGame(true) |> thenValue
 
-            let playerRequest = 
+            let playerRequest =
                 {
                     userId = Some user.id
                     kind = PlayerKind.Guest
@@ -80,7 +80,7 @@ type EventRepositoryTests() =
             //Arrange
             let! (user, _, game) = TestUtilities.createuserSessionAndGame(true) |> thenValue
 
-            let p2Request = 
+            let p2Request =
                 {
                     userId = Some user.id
                     kind = PlayerKind.Guest
@@ -96,7 +96,7 @@ type EventRepositoryTests() =
             oldP2.startingTurnNumber |> shouldBe None
             oldP2.colorId |> shouldBe None
 
-            let newP2 = 
+            let newP2 =
                 { oldP2 with
                     status = PlayerStatus.Alive
                     startingRegion = Some 1
@@ -104,8 +104,8 @@ type EventRepositoryTests() =
                     colorId = Some 1
                 }
 
-            let newGame = 
-                { game with 
+            let newGame =
+                { game with
                     players = [
                         game.players.[0]
                         newP2
@@ -132,7 +132,7 @@ type EventRepositoryTests() =
             let! (_, _, game) = TestUtilities.createuserSessionAndGame(false) |> thenValue
 
             game.status |> shouldBe GameStatus.Pending
-            game.parameters |> shouldBe 
+            game.parameters |> shouldBe
                 {
                     allowGuests = false
                     isPublic = false
@@ -142,11 +142,11 @@ type EventRepositoryTests() =
             game.currentTurn |> shouldBe None
             game.turnCycle |> shouldBe []
             game.pieces |> shouldBe []
-            
-            let newGame = 
+
+            let newGame =
                 { game with
                     status = GameStatus.Canceled
-                    parameters =    
+                    parameters =
                         {
                             allowGuests = true
                             isPublic = true
@@ -155,7 +155,7 @@ type EventRepositoryTests() =
                         }
                     currentTurn = Some Turn.empty
                     turnCycle = [ 1 ]
-                    pieces = [ 
+                    pieces = [
                         {
                             id = 0
                             kind = PieceKind.Assassin
@@ -183,14 +183,14 @@ type EventRepositoryTests() =
             //Attempt to add 2 players with the same name
             //This will violate a unique index in SQL and fail the second player
 
-            let playerRequest = 
+            let playerRequest =
                 {
                     userId = None
                     name = Some "test"
                     kind = PlayerKind.Neutral
                 }
 
-            let effects = 
+            let effects =
                 [
                     PlayerAddedEffect.fromRequest playerRequest
                     PlayerAddedEffect.fromRequest playerRequest
@@ -198,7 +198,7 @@ type EventRepositoryTests() =
             let event = TestUtilities.createEventRequest(effects) //EventKind doesn't matter
 
             let newGame = services.events.applyEvent game event
-            
+
             //Act
             let! result = db.events.persistEvent (TestUtilities.emptyEventRequest, game, newGame)
 
@@ -216,7 +216,7 @@ type EventRepositoryTests() =
             //Arrange
             let! (user, session, game) = TestUtilities.createuserSessionAndGame(true) |> thenValue
 
-            let p2Request = 
+            let p2Request =
                 {
                     userId = Some user.id
                     name = Some "p2"
@@ -227,8 +227,8 @@ type EventRepositoryTests() =
 
             let! _ = managers.players.addPlayer game.id p2Request session |> thenValue
             let! _ = managers.players.addPlayer game.id p3Request session |> thenValue
-            
-            let query : EventsQuery = 
+
+            let query : EventsQuery =
                 {
                     maxResults = None
                     direction = Ascending
@@ -247,9 +247,9 @@ type EventRepositoryTests() =
             e1.createdBy.userId |> shouldBe user.id
             e1.createdBy.userName |> shouldBe user.name
             e1.effects.Length |> shouldBe 1
-            
+
             e1.effects.[0] |> shouldBe (PlayerAddedEffect.fromRequest p2Request)
-            
+
             let e2 = events.[1]
             e2.kind |> shouldBe EventKind.PlayerJoined
             e2.createdBy.userId |> shouldBe user.id

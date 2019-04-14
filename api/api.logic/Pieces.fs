@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.Logic
+namespace Djambi.Api.Logic
 
 open System
 open System.Collections.Generic
@@ -16,7 +16,7 @@ type PieceStrategy() =
     abstract member killsTarget : bool
     abstract member killsControllingPlayerWhenKilled : bool
     abstract member isAlive : bool
-    
+
     default x.moveMaxDistance = Int32.MaxValue
     default x.canTargetWithMove = false
     default x.canTargetAfterMove = false
@@ -47,7 +47,7 @@ type ChiefStrategy() =
             target.playerId <> subject.playerId
         override x.canStayInCenter = true
         override x.canEnterCenterToEvictPiece = true
-        override x.canDropTarget = true     
+        override x.canDropTarget = true
         override x.killsTarget = true
         override x.killsControllingPlayerWhenKilled = true
 
@@ -63,7 +63,7 @@ type DiplomatStrategy() =
             target.playerId <> subject.playerId
         override x.canEnterCenterToEvictPiece = true
         override x.canDropTarget = true
-            
+
 type GravediggerStrategy() =
     inherit PieceStrategy() with
         override x.canTargetWithMove = true
@@ -74,7 +74,7 @@ type GravediggerStrategy() =
 
 type ReporterStrategy() =
     inherit PieceStrategy() with
-        override x.canTargetAfterMove = true        
+        override x.canTargetAfterMove = true
         override x.canTargetPiece (subject : Piece) (target : Piece) =
             target.kind <> Corpse &&
             target.playerId <> subject.playerId
@@ -82,7 +82,7 @@ type ReporterStrategy() =
 
 type ThugStrategy() =
     inherit PieceStrategy() with
-        override x.moveMaxDistance = 2       
+        override x.moveMaxDistance = 2
         override x.canTargetWithMove = true
         override x.canTargetPiece (subject : Piece) (target : Piece) =
             target.kind <> Corpse &&

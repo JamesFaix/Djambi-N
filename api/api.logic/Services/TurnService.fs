@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.Logic.Services
+namespace Djambi.Api.Logic.Services
 
 open System.Linq
 open Djambi.Api.Common.Collections
@@ -28,10 +28,10 @@ type TurnService(eventServ : EventService,
 
             //Move subject to destination or vacate cell
             match currentTurn.vacateCellId with
-            | None ->        
+            | None ->
                 pieces.[subject.id] <- subject.moveTo destination.id
                 effects.Add(Effect.PieceMoved { oldPiece = subject; newCellId = destination.id })
-            | Some vacateCellId -> 
+            | Some vacateCellId ->
                 pieces.[subject.id] <- subject.moveTo vacateCellId
                 effects.Add(Effect.PieceVacated { oldPiece = { subject with cellId = destination.id}; newCellId = vacateCellId })
 
@@ -42,20 +42,20 @@ type TurnService(eventServ : EventService,
 
                 //Kill target
                 if subjectStrategy.killsTarget
-                then 
+                then
                     pieces.[target.id] <- target.kill
                     effects.Add(Effect.PieceKilled { oldPiece = target })
-                
+
                 //Drop target if drop cell exists
                 match currentTurn.dropCellId with
-                | Some dropCellId ->  
+                | Some dropCellId ->
                     pieces.[target.id] <- pieces.[target.id].moveTo dropCellId
                     effects.Add(Effect.PieceDropped { oldPiece = target; newCellId = dropCellId })
                 | None -> ()
 
                 //Move target back to origin if subject is assassin
                 if subjectStrategy.movesTargetToOrigin
-                then 
+                then
                     pieces.[target.id] <- pieces.[target.id].moveTo originCellId
                     effects.Add(Effect.PieceDropped { oldPiece = target; newCellId = originCellId })
 
@@ -70,22 +70,22 @@ type TurnService(eventServ : EventService,
             Move target to drop (option)
             Move subject to vacate (option)
         *)
-    
+
         let effects = new ArrayList<Effect>()
 
         let primaryEffects = getPrimaryEffects game
-        effects.AddRange primaryEffects 
+        effects.AddRange primaryEffects
         let updatedGame = eventServ.applyEffects primaryEffects game
 
         effects.AddRange (indirectEffectsServ.getIndirectEffectsForTurnCommit (game, updatedGame))
-    
+
         Ok {
             kind = EventKind.TurnCommitted
             effects = effects |> Seq.toList
             createdByUserId = session.user.id
             actingPlayerId = Context.getActingPlayerId session game //Important to use un-updated game, because there is no turn cycle in the updated game
         }
-    
+
     //--- Reset
 
     member x.getResetTurnEvent(game : Game) (session : Session) : CreateEventRequest HttpResult =
@@ -93,10 +93,10 @@ type TurnService(eventServ : EventService,
         |> Result.bind (fun _ ->
             let updatedGame = { game with currentTurn = Some Turn.empty }
             selectionOptionsServ.getSelectableCellsFromState updatedGame
-            |> Result.map (fun selectionOptions -> 
+            |> Result.map (fun selectionOptions ->
                 let turn = { Turn.empty with selectionOptions = selectionOptions }
-                let effects = [ 
-                    Effect.CurrentTurnChanged { oldValue = game.currentTurn; newValue = Some turn } 
+                let effects = [
+                    Effect.CurrentTurnChanged { oldValue = game.currentTurn; newValue = Some turn }
                 ]
                 {
                     kind = EventKind.TurnReset

@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.Common.Json
+namespace Djambi.Api.Common.Json
 
 open System
 open FSharp.Reflection
@@ -9,12 +9,12 @@ type UnionEnumJsonConverter() =
 
     override x.CanConvert (t : Type) : bool =
         FSharpType.IsUnion t &&
-        FSharpType.GetUnionCases t 
+        FSharpType.GetUnionCases t
             |> Seq.map (fun c -> c.GetFields().Length)
             |> Seq.forall (fun n -> n = 0)
 
-    override x.WriteJson (writer : JsonWriter, 
-                          value : obj, 
+    override x.WriteJson (writer : JsonWriter,
+                          value : obj,
                           serializer : JsonSerializer) : Unit =
 
         let caseType = value.GetType()
@@ -22,10 +22,10 @@ type UnionEnumJsonConverter() =
         let json = sprintf "\"%s\"" case.Name
         writer.WriteRawValue(json)
 
-    override x.ReadJson(reader : JsonReader, 
-                        t : Type, 
-                        existingValue : obj, 
-                        serializer : JsonSerializer) : obj =  
+    override x.ReadJson(reader : JsonReader,
+                        t : Type,
+                        existingValue : obj,
+                        serializer : JsonSerializer) : obj =
         let text = reader.Value.ToString()
         let cases = FSharpType.GetUnionCases t
         let case = cases |> Seq.find (fun c -> c.Name = text)

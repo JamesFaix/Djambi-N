@@ -1,4 +1,4 @@
-﻿namespace Djambi.ClientGenerator
+namespace Djambi.ClientGenerator
 
 open System
 open System.Reflection
@@ -10,8 +10,8 @@ open Djambi.Api.Model
 open Djambi.ClientGenerator.Annotations
 
 type TypeScriptRenderer() =
-    
-    let typeNameMapping = 
+
+    let typeNameMapping =
         [
             typeof<string>, "string"
             typeof<bool>, "boolean"
@@ -30,8 +30,8 @@ type TypeScriptRenderer() =
             typeof<Unit>, "{}"
         ]
 
-    let rec renderTypeName (t : Type, forDeclaration : bool) : string = 
-        if t.IsGenericType then    
+    let rec renderTypeName (t : Type, forDeclaration : bool) : string =
+        if t.IsGenericType then
             let name = t.GetGenericTypeDefinition().Name
             let args = t.GetGenericArguments()
 
@@ -40,7 +40,7 @@ type TypeScriptRenderer() =
                 sprintf "%s[]" (renderTypeName (args.[0], forDeclaration))
             | ("FSharpOption`1", 1) ->
                 renderTypeName(args.[0], forDeclaration)
-            | _ ->             
+            | _ ->
                 let nameLength = t.Name.IndexOf('`')
                 let genericName = t.Name.Substring(0, nameLength)
                 let argNames = args |> Seq.map (fun a -> renderTypeName(a, forDeclaration))
@@ -49,13 +49,13 @@ type TypeScriptRenderer() =
         else
             match typeNameMapping |> List.tryFind (fun (t1, _) -> t = t1) with
             | Some (_, n) -> n
-            | _ -> 
+            | _ ->
                 if forDeclaration
                 then t.Name
                 else "Model." + t.Name
 
     let renderTypeScriptInterface (name : string, properties : (string * string) seq) : string =
-        let sb = StringBuilder()        
+        let sb = StringBuilder()
         sb.AppendLine(sprintf "export interface %s {" name) |> ignore
 
         for (name, typeName) in properties do
@@ -85,9 +85,9 @@ type TypeScriptRenderer() =
     let renderRecordDeclaration (t : Type) : string =
         let typeName = renderTypeName(t, true)
 
-        let props = 
+        let props =
             t.GetProperties()
-            |> Seq.map (fun p -> 
+            |> Seq.map (fun p ->
                  let typeName = renderTypeName(p.PropertyType, true)
                  (p.Name, typeName)
             )
@@ -99,7 +99,7 @@ type TypeScriptRenderer() =
 
         let cases = FSharpType.GetUnionCases t
 
-        let caseTypeNames = 
+        let caseTypeNames =
             cases
             |> Seq.map (fun c ->
                 let field = c.GetFields().[0]
@@ -111,7 +111,7 @@ type TypeScriptRenderer() =
         let kindTypeName = typeName + "Kind"
         let caseTypeName = typeName + "Case"
 
-        let props = 
+        let props =
             [
                 ("kind", kindTypeName)
                 ("value", caseTypeName)
@@ -126,12 +126,12 @@ type TypeScriptRenderer() =
             .AppendLine(caseUnion)
             .AppendLine(kindEnum)
             .ToString()
-         
+
     let renderEnumDeclaration (t : Type) : string =
         let tagsType = t.GetNestedTypes() |> Seq.head
         let values = tagsType.GetFields() |> Seq.map (fun f -> f.Name)
         renderTypeScriptStringEnum(t.Name, values)
-        
+
     let renderTypeDeclaration (t : Type) : string =
         match TypeKind.fromType t with
         | TypeKind.Record -> renderRecordDeclaration t
@@ -139,9 +139,9 @@ type TypeScriptRenderer() =
         | TypeKind.UnionEnum -> renderEnumDeclaration t
         | _ -> failwith "Unsupported type"
 
-    let renderMethod (m : MethodInfo) : string = 
+    let renderMethod (m : MethodInfo) : string =
         let attribute = m.GetCustomAttribute<ClientFunctionAttribute>()
-        
+
         let rec unboxType (t : Type) : Type =
             match t.Name with
             | "Task`1"
@@ -149,8 +149,8 @@ type TypeScriptRenderer() =
             | _ -> t
 
         let returnType = unboxType m.ReturnType
-        
-        let parameters = 
+
+        let parameters =
             m.GetParameters()
             |> Seq.map (fun p -> (p.Name, p.ParameterType))
             //Filter out session parameters because they are generated based on authentication
@@ -161,19 +161,19 @@ type TypeScriptRenderer() =
         let routeSections = Regex.Split(attribute.route, "%\w")
         let routeParams = parameters |> List.take (routeSections.Length-1)
         let bodyParam =
-            if routeParams.Length = parameters.Length 
+            if routeParams.Length = parameters.Length
             then None
             else Some parameters.[parameters.Length-1]
 
-        let bodyParamType = 
+        let bodyParamType =
             match bodyParam with
             | Some (n, t) -> t
             | _ -> typeof<Unit>
 
-        let paramList = 
-            let xs = 
-                parameters 
-                |> List.map (fun (n, t) -> 
+        let paramList =
+            let xs =
+                parameters
+                |> List.map (fun (n, t) ->
                     let typeName = renderTypeName(t, false)
                     sprintf "%s : %s" n typeName
                 )
@@ -185,7 +185,7 @@ type TypeScriptRenderer() =
         let sb = StringBuilder()
         //Function declaration
         sb.AppendLine(sprintf "\tasync %s(%s) : Promise<%s> {" m.Name paramList returnTypeName) |> ignore
-        
+
         //Add route concatentation
         sb.Append(sprintf "\t\tconst route = \"%s\"" routeSections.[0]) |> ignore
 
@@ -208,8 +208,8 @@ type TypeScriptRenderer() =
         sb.ToString()
 
     let addWarningHeader (sb : StringBuilder) : Unit =
-        sb.AppendLine("/*") 
-          .AppendLine(" * This file was generated with the Client Generator utility.") 
+        sb.AppendLine("/*")
+          .AppendLine(" * This file was generated with the Client Generator utility.")
           .AppendLine(" * Do not manually edit.")
           .AppendLine(" */") |> ignore
 
@@ -219,14 +219,14 @@ type TypeScriptRenderer() =
           |> ignore
 
     interface IRenderer with
-    
+
         member this.name
             with get() = "TypeScript"
 
-        member this.modelOutputPathSetting 
+        member this.modelOutputPathSetting
             with get() = "TypeScriptModelOutputPath"
 
-        member this.endpointsOutputPathSetting 
+        member this.endpointsOutputPathSetting
             with get() = "TypeScriptEndpointsOutputPath"
 
         member this.renderModel (types : Type list) : string =
@@ -245,14 +245,14 @@ type TypeScriptRenderer() =
                 |> Seq.filter (fun (_, _, kind) -> kind <> TypeKind.UnionCase) //Exclude the derieved types of union cases
                 |> Seq.groupBy (fun (_, attr, _) -> attr.section)
                 |> Seq.sortBy (fun (sec, _) -> sec)
-                |> Seq.map (fun (sec, tups) -> 
-                    let types =  
-                        tups 
-                        |> Seq.map (fun (t, _, _) -> t) 
-                        |> Seq.sortBy (fun t -> t.Name)                        
+                |> Seq.map (fun (sec, tups) ->
+                    let types =
+                        tups
+                        |> Seq.map (fun (t, _, _) -> t)
+                        |> Seq.sortBy (fun t -> t.Name)
                     (sec, types)
                 )
-                
+
             for (section, types) in typesGroupedBySection do
                 addSectionHeader sb section
                 for t in types do
@@ -269,19 +269,19 @@ type TypeScriptRenderer() =
               .AppendLine("import * as Model from './model';")
               .AppendLine("import {ApiClientCore, HttpMethod} from './clientCore';")
               .AppendLine()
-              .AppendLine("export default class ApiClient {") 
+              .AppendLine("export default class ApiClient {")
               .AppendLine()
               |> ignore
 
             let methodsGroupedBySection =
                 methods
-                |> Seq.map (fun m -> 
+                |> Seq.map (fun m ->
                     let attr = m.GetCustomAttribute<ClientFunctionAttribute>()
                     (m, attr)
                 )
                 |> Seq.groupBy (fun (m, attr) -> attr.section)
-                |> Seq.map (fun (sec, tups) -> 
-                    let methods = 
+                |> Seq.map (fun (sec, tups) ->
+                    let methods =
                         tups
                         |> Seq.map (fun (m, _) -> m)
                         |> Seq.sortBy (fun m -> m.Name)

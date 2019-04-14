@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.Logic.Services
+namespace Djambi.Api.Logic.Services
 
 open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult

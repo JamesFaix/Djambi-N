@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.Web.Controllers
+namespace Djambi.Api.Web.Controllers
 
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Model
@@ -12,7 +12,7 @@ type EventController(eventMan : IEventManager,
         member x.getEvents gameId =
             let func ctx =
                 u.getSessionAndModelFromContext<EventsQuery> ctx
-                |> thenBindAsync (fun (query, session) -> 
+                |> thenBindAsync (fun (query, session) ->
                     eventMan.getEvents (gameId, query) session
                 )
             u.handle func

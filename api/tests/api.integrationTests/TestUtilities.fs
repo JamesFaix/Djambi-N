@@ -1,4 +1,4 @@
-﻿[<AutoOpen>]
+[<AutoOpen>]
 module Djambi.Api.IntegrationTests.TestUtilities
 
 open System
@@ -23,7 +23,7 @@ let private config =
 let connectionString =
     config.GetConnectionString("Main")
             .Replace("{sqlAddress}", env.sqlAddress)
-            
+
 let db = DbRoot(connectionString) :> IDbRoot
 let services = ServiceRoot(db)
 let managers = ManagerRoot(db, services) :> IManagerRoot
@@ -65,7 +65,7 @@ let adminUserId = 1
 
 let getSessionForUser (userId : int) : Session =
     {
-        user = 
+        user =
             {
                 id = userId
                 name = ""
@@ -96,13 +96,13 @@ let createuserSessionAndGame(allowGuests : bool) : (UserDetails * Session * Game
 
 let fillEmptyPlayerSlots (game : Game) : Game AsyncHttpResult =
     task {
-        let missingPlayerCount = game.parameters.regionCount - game.players.Length        
+        let missingPlayerCount = game.parameters.regionCount - game.players.Length
         for i in Enumerable.Range(0, missingPlayerCount) do
             let name = sprintf "neutral%i" (i+1)
             let request = CreatePlayerRequest.neutral name
             let! _ = db.games.addPlayer (game.id, request) |> thenValue
             ()
-        
+
         return! db.games.getGame game.id
     }
 
@@ -117,7 +117,7 @@ let emptyEventRequest : CreateEventRequest =
 let createEventRequest (effects : Effect list) : CreateEventRequest =
     { emptyEventRequest with effects = effects }
 
-let defaultGame : Game = 
+let defaultGame : Game =
     {
         id = 0
         status = GameStatus.Pending
@@ -126,7 +126,7 @@ let defaultGame : Game =
             userName = ""
             time = DateTime.MinValue
         }
-        parameters = 
+        parameters =
             {
                 allowGuests = false
                 description = None
@@ -145,7 +145,7 @@ let setSessionUserId (userId : int) (session : Session) : Session=
                     id = userId
                }
     }
-    
+
 let setSessionPrivileges (privileges : Privilege list) (session : Session) : Session =
     { session with
         user = { session.user with

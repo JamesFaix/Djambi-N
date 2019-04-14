@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.Web
+namespace Djambi.Api.Web
 
 open System
 open System.IO
@@ -18,7 +18,7 @@ type HttpHandler = HttpFunc -> HttpContext -> HttpContext option Task
 type HttpUtility(cookieDomain : string,
                  sessionServ : ISessionService) =
 
-    let converters = 
+    let converters =
         [|
             OptionJsonConverter() :> JsonConverter
             TupleArrayJsonConverter() :> JsonConverter
@@ -27,7 +27,7 @@ type HttpUtility(cookieDomain : string,
         |]
 
     let readJsonBody (ctx : HttpContext) : 'a AsyncHttpResult =
-        try 
+        try
             use reader = new StreamReader(ctx.Request.Body)
             let json = reader.ReadToEnd()
             let value = JsonConvert.DeserializeObject<'a>(json, converters)
@@ -67,7 +67,7 @@ type HttpUtility(cookieDomain : string,
                     | Ok value ->
                         match ctx.Response.ContentType with
                         | "text/event-stream" ->
-                            return! next ctx                         
+                            return! next ctx
                         | _ ->
                             return! json value next ctx
                     | Error ex ->
@@ -93,7 +93,7 @@ type HttpUtility(cookieDomain : string,
                 return match result with
                         | Ok session -> Ok <| Some(session)
                         | Error ex when ex.statusCode = 404 -> Ok(None)
-                        | Error ex -> 
+                        | Error ex ->
                             x.appendEmptyCookie ctx
                             Error ex
             }
@@ -102,7 +102,7 @@ type HttpUtility(cookieDomain : string,
         x.getSessionOptionFromContext ctx
         |> thenBind (fun opt ->
             match opt with
-            | None -> 
+            | None ->
                 x.appendEmptyCookie ctx
                 Error <| HttpException(401, "Not signed in.")
             | Some session -> Ok session

@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.Logic.Services
+namespace Djambi.Api.Logic.Services
 
 open System.Linq
 open Djambi.Api.Common
@@ -10,24 +10,24 @@ open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
 open Djambi.Api.Logic.Services
 open Djambi.Api.Model
 open Djambi.Api.Logic
- 
+
 type GameStartService(playerServ : PlayerService,
                       selectionOptionsServ : SelectionOptionsService) =
 
-    member x.getGameStartEvent (game : Game) (session : Session) : CreateEventRequest AsyncHttpResult =    
+    member x.getGameStartEvent (game : Game) (session : Session) : CreateEventRequest AsyncHttpResult =
         Security.ensureCreatorOrEditPendingGames session game
-        |> Result.bindAsync (fun _ ->    
+        |> Result.bindAsync (fun _ ->
             if game.players
                 |> List.filter (fun p -> p.kind <> Neutral)
                 |> List.length = 1
             then errorTask <| HttpException(400, "Cannot start game with only one player.")
-            else 
+            else
                 playerServ.fillEmptyPlayerSlots game
                 |> thenMap (fun addNeutralPlayerEffects ->
                     let effects =
-                        //The order is very important for effect processing. Neutral players must be created before the game start.                    
-                        List.append 
-                            addNeutralPlayerEffects 
+                        //The order is very important for effect processing. Neutral players must be created before the game start.
+                        List.append
+                            addNeutralPlayerEffects
                             [Effect.GameStatusChanged { oldValue = GameStatus.Pending; newValue = InProgress }]
 
                     {
@@ -46,16 +46,16 @@ type GameStartService(playerServ : PlayerService,
         let playersWithAssignments =
             players
             |> Seq.zip3 colorIds regions
-            |> Seq.map (fun (c, r, p) -> 
-                { 
-                    p with 
+            |> Seq.map (fun (c, r, p) ->
+                {
+                    p with
                         startingRegion = Some r
                         startingTurnNumber = None
-                        colorId = Some c 
+                        colorId = Some c
                 }
             )
 
-        (* 
+        (*
             At this point, neutral players may still have ID = 0, because
             they have not yet been persisted as part of the StartGame transaction.
             Index on name instead of id.
@@ -71,8 +71,8 @@ type GameStartService(playerServ : PlayerService,
         for (i, p) in nonNeutralPlayers do
             dict.[p.name] <- { dict.[p.name] with startingTurnNumber = Some i }
 
-        dict.Values 
-        |> Seq.map (fun p -> 
+        dict.Values
+        |> Seq.map (fun p ->
             let status =  if p.kind = Neutral then AcceptsDraw else Alive
             { p with status = status }
         )
@@ -104,14 +104,14 @@ type GameStartService(playerServ : PlayerService,
         players
         |> List.mapi (fun i cond -> createPlayerPieces(board, cond, i*Constants.piecesPerPlayer))
         |> List.collect id
-    
+
     member x.applyStartGame (game : Game) : Game =
         let board = BoardModelUtility.getBoardMetadata game.parameters.regionCount
         let players = x.assignStartingConditions game.players
 
-        let game = 
-            { 
-                game with 
+        let game =
+            {
+                game with
                     status = InProgress
                     pieces = x.createPieces(board, players) //Starting conditions must first be assigned
                     players = players
@@ -123,5 +123,5 @@ type GameStartService(playerServ : PlayerService,
             }
 
         let options = (selectionOptionsServ.getSelectableCellsFromState game) |> Result.value
-        let turn = { game.currentTurn.Value with selectionOptions = options }  
+        let turn = { game.currentTurn.Value with selectionOptions = options }
         { game with  currentTurn =  Some turn }

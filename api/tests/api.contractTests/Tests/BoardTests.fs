@@ -1,4 +1,4 @@
-﻿module Djambi.Api.ContractTests.BoardTests
+module Djambi.Api.ContractTests.BoardTests
 
 //TODO: Get board should work
 

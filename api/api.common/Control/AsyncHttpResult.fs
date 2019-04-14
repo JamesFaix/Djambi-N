@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.Common.Control
+namespace Djambi.Api.Common.Control
 
 open System
 open System.Threading.Tasks
@@ -28,13 +28,13 @@ module AsyncHttpResult =
 
     let thenDo
         (action : 'a -> Unit)
-        (t : 'a AsyncHttpResult) 
+        (t : 'a AsyncHttpResult)
         : 'a AsyncHttpResult =
 
         task {
             let! result = t
             match result with
-            | Ok x -> 
+            | Ok x ->
                 action x
                 return result
             | _ -> return result
@@ -98,7 +98,7 @@ module AsyncHttpResult =
         task {
             let mutable result = Ok seed
             let mutable stop = false
-            
+
             use e = projections.GetEnumerator()
             while not stop && e.MoveNext() do
                 let projection = e.Current
@@ -106,11 +106,11 @@ module AsyncHttpResult =
                 let! res = projection input
                 result <- res
 
-                if Result.isError res 
+                if Result.isError res
                 then stop <- true
                 else ()
 
-            return result        
+            return result
         }
 
     let thenReplaceError
@@ -169,14 +169,14 @@ module AsyncHttpResult =
     let whenAll (tasks : unit AsyncHttpResult seq) : unit AsyncHttpResult =
         task {
             let errors = new ArrayList<string>()
-                
+
             for t in tasks do
                 match! t with
                 | Ok () -> ()
                 | Error x -> errors.Add x.Message
                 ()
-                
-            return 
+
+            return
                 match errors.Count with
                 | 0 -> Ok ()
                 | _ -> Error <| HttpException (500, String.Join("\n", errors))

@@ -1,4 +1,4 @@
-﻿namespace Djambi.ClientGenerator.Annotations
+namespace Djambi.ClientGenerator.Annotations
 
 open System
 
@@ -21,7 +21,7 @@ type ClientSection =
 
 [<AllowNullLiteral>] //Needed because some Reflection methods return null values for attributes that aren't found
 [<AttributeUsage(
-    AttributeTargets.Class ||| AttributeTargets.Enum ||| AttributeTargets.Struct, 
+    AttributeTargets.Class ||| AttributeTargets.Enum ||| AttributeTargets.Struct,
     AllowMultiple = false)>]
 type ClientTypeAttribute(section : ClientSection) =
     inherit Attribute()
@@ -29,7 +29,7 @@ type ClientTypeAttribute(section : ClientSection) =
 
 [<AllowNullLiteral>] //Needed because some Reflection methods return null values for attributes that aren't found
 [<AttributeUsage(
-    AttributeTargets.Method, 
+    AttributeTargets.Method,
     AllowMultiple = false)>]
 type ClientFunctionAttribute(method : HttpMethod, route : string, section : ClientSection) =
     inherit Attribute()

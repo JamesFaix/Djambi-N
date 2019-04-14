@@ -13,9 +13,9 @@ open Djambi.Api.Model.BoardModel
 [<InlineData(Directions.Down, 2, RadialDirections.Clockwise, Directions.Left)>]
 [<InlineData(Directions.Down, 2, RadialDirections.CounterClockwise, Directions.Right)>]
 [<InlineData(Directions.DownLeft, 2, RadialDirections.Clockwise, Directions.UpLeft)>]
-let ``Directions rotate returns expected output`` 
-    (oldDir : Directions, amount : int, 
-     radialDir : RadialDirections, expDir : Directions) =    
+let ``Directions rotate returns expected output``
+    (oldDir : Directions, amount : int,
+     radialDir : RadialDirections, expDir : Directions) =
     Assert.Equal(expDir, oldDir.rotate(amount, radialDir));
 
 [<Theory>]
@@ -45,7 +45,7 @@ let ``Board adjustDirectionsForRegionBoundary returns expected output``
 [<InlineData(1,0,2, 1,1,0, Directions.UpRight)>]
 [<InlineData(0,1,2, 1,1,1, Directions.UpRight)>]
 let ``Board adjustDirectionAndNextLocationForPassingThroughCenter returns expected output``
-    (oldX : int, oldY : int, oldRegion: int, 
+    (oldX : int, oldY : int, oldRegion: int,
      expX : int, expY : int, expRegion: int,
      expDir : Directions) =
      let oldLoc = { x = oldX; y = oldY; region = oldRegion }
@@ -58,12 +58,12 @@ let ``Board adjustDirectionAndNextLocationForPassingThroughCenter returns expect
 [<Fact>]
 let ``Utilities GetValues Directions returns expected output``() =
     let expected = [
-            Directions.Up; 
-            Directions.UpRight 
+            Directions.Up;
+            Directions.UpRight
             Directions.Right
-            Directions.DownRight 
+            Directions.DownRight
             Directions.Down
-            Directions.DownLeft 
+            Directions.DownLeft
             Directions.Left
             Directions.UpLeft
         ]

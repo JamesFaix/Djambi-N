@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.Web.Controllers
+namespace Djambi.Api.Web.Controllers
 
 open Microsoft.AspNetCore.Http
 open Microsoft.Extensions.Primitives
@@ -14,7 +14,7 @@ open System.Threading.Tasks
 open System
 
 type NotificationController(u : HttpUtility,
-                            notificationService : INotificationService) =    
+                            notificationService : INotificationService) =
 
     let contentType = "text/event-stream"
     let checkForCloseDelay = TimeSpan.FromSeconds(3.0)
@@ -34,7 +34,7 @@ type NotificationController(u : HttpUtility,
                     ctx.Response.Body.Flush()
 
                     let userId = session.user.id
-                    let subscriber = new SseSubscriber(userId, ctx.Response)                
+                    let subscriber = new SseSubscriber(userId, ctx.Response)
 
                     notificationService.add subscriber
 
@@ -42,7 +42,7 @@ type NotificationController(u : HttpUtility,
                 )
                 |> thenBindAsync (fun userId ->
                     task {
-                        while not ctx.RequestAborted.IsCancellationRequested do                        
+                        while not ctx.RequestAborted.IsCancellationRequested do
                             let! _ = Task.Delay checkForCloseDelay
                             ()
                         notificationService.remove userId

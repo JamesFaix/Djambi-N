@@ -1,4 +1,4 @@
-﻿module Djambi.Api.ContractTests.GameTests
+module Djambi.Api.ContractTests.GameTests
 
 //TODO: Get game state should work
 

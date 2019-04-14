@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.Web.Controllers
+namespace Djambi.Api.Web.Controllers
 
 open Djambi.Api.Common
 open Djambi.Api.Common.Control
@@ -26,7 +26,7 @@ type PlayerController(u : HttpUtility,
         member x.updatePlayerStatus (gameId, playerId, statusName) =
             let func ctx =
                 Enum.parseUnion<PlayerStatus> statusName
-                |> Result.bindAsync (fun status -> 
+                |> Result.bindAsync (fun status ->
                     u.getSessionFromContext ctx
                     |> thenBindAsync (playerMan.updatePlayerStatus (gameId, playerId, status))
                 )

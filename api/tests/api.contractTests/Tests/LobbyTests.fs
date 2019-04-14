@@ -1,4 +1,4 @@
-﻿module Djambi.Api.ContractTests.LobbyTests
+module Djambi.Api.ContractTests.LobbyTests
 
 open System.Net
 open System.Threading.Tasks

@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.Web.Sse
+namespace Djambi.Api.Web.Sse
 
 open System
 open FSharp.Control.Tasks
@@ -14,7 +14,7 @@ type SseEvent =
         data : string list
     }
 
-type SseSubscriber(userId : int, 
+type SseSubscriber(userId : int,
                    httpResponse : HttpResponse) =
 
     let writeField (name : string, value : string) =
@@ -23,7 +23,7 @@ type SseSubscriber(userId : int,
             then
                 let! _ = httpResponse.WriteAsync (sprintf "%s: %s\n" name value)
                 return ()
-            else    
+            else
                 return ()
         }
 

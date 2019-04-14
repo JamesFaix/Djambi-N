@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.Logic.Services
+namespace Djambi.Api.Logic.Services
 
 open Djambi.Api.Common.Collections
 open Djambi.Api.Common.Control
@@ -6,11 +6,11 @@ open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Db.Interfaces
 open Djambi.Api.Model
 open Djambi.Api.Logic
-    
+
 type GameCrudService(gameRepo : IGameRepository) =
     member x.createGame (parameters : GameParameters) (session : Session) : Game AsyncHttpResult =
         let self = session.user
-        let gameRequest : CreateGameRequest =   
+        let gameRequest : CreateGameRequest =
             {
                 parameters = parameters
                 createdByUserId = self.id
@@ -37,9 +37,9 @@ type GameCrudService(gameRepo : IGameRepository) =
             effects.Add(Effect.ParametersChanged { oldValue = game.parameters; newValue = parameters })
 
             //If lowering region count, extra players are ejected
-            let truncatedPlayers = 
-                game.players 
-                |> Seq.skipSafe parameters.regionCount 
+            let truncatedPlayers =
+                game.players
+                |> Seq.skipSafe parameters.regionCount
 
             //If disabling AllowGuests, guests are ejected
             let ejectedGuests =
@@ -48,9 +48,9 @@ type GameCrudService(gameRepo : IGameRepository) =
                     |> Seq.filter (fun p -> p.kind = PlayerKind.Guest)
                 else Seq.empty
 
-            let removedPlayerIds = 
-                truncatedPlayers 
-                |> Seq.append ejectedGuests 
+            let removedPlayerIds =
+                truncatedPlayers
+                |> Seq.append ejectedGuests
                 |> Seq.map (fun p -> p.id)
                 |> Seq.distinct
                 |> Seq.toList

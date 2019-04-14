@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.Web
+namespace Djambi.Api.Web
 
 open Djambi.Api.Logic.Interfaces
 open Djambi.Api.Web

@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.Db
+namespace Djambi.Api.Db
 
 open System
 open Djambi.Api.Db.Command
@@ -23,7 +23,7 @@ module Commands =
         proc("Users_Get")
             .forEntity("User")
             .param("UserId", userId)
-            .param("Name", name)   
+            .param("Name", name)
             .returnsSingle<UserSqlModel>()
 
     let createUser (name : string, password : string) =
@@ -32,15 +32,15 @@ module Commands =
             .param("Name", name)
             .param("Password", password)
             .returnsSingle<int>()
-    
+
     let deleteUser (userId : int) =
         proc("Users_Delete")
             .forEntity("User")
             .param("UserId", userId)
             .returnsNothing()
 
-    let updateFailedLoginAttempts (userId : int, 
-                                   failedLoginAttempts : int, 
+    let updateFailedLoginAttempts (userId : int,
+                                   failedLoginAttempts : int,
                                    lastFailedLoginAttemptOn : DateTime option) =
         proc("Users_UpdateFailedLoginAttempts")
             .forEntity("User")
@@ -48,7 +48,7 @@ module Commands =
             .param("FailedLoginAttempts", failedLoginAttempts)
             .param("LastFailedLoginAttemptOn", lastFailedLoginAttemptOn)
             .returnsNothing()
-       
+
     //--- Sessions ---
 
     let getSession (sessionId : int option,
@@ -124,9 +124,9 @@ module Commands =
             .param("Description", description)
             .returnsSingle<int>()
 
-    let addPlayer (gameId : int, 
-                   playerKindId : byte, 
-                   userId : int option, 
+    let addPlayer (gameId : int,
+                   playerKindId : byte,
+                   userId : int option,
                    name : string option,
                    playerStatusId : byte,
                    colorId : int option,
@@ -144,20 +144,20 @@ module Commands =
             .param("StartingTurnNumber", startingTurnNumber)
             .returnsSingle<int>()
 
-    let removePlayer (gameId : int, playerId : int) = 
+    let removePlayer (gameId : int, playerId : int) =
         proc("Players_Remove")
             .forEntity("Player")
             .param("GameId", gameId)
             .param("PlayerId", playerId)
             .returnsNothing()
-    
+
     let updateGame (gameId : int,
                     description : string option,
                     allowGuests : bool,
                     isPublic : bool,
                     regionCount : int,
                     gameStatusId : byte,
-                    piecesJson : string, 
+                    piecesJson : string,
                     currentTurnJson : string,
                     turnCycleJson : string) =
         proc("Games_Update")
@@ -200,7 +200,7 @@ module Commands =
                      eventKindId : byte,
                      createdByUserId : int,
                      actingPlayerId : int option,
-                     effectsJson : string) = 
+                     effectsJson : string) =
         proc("Events_Create")
             .forEntity("Event")
             .param("GameId", gameId)
@@ -243,7 +243,7 @@ module Commands =
     let createSnapshot (gameId : int,
                         createdByUserId : int,
                         description : string,
-                        snapshotJson : string) = 
+                        snapshotJson : string) =
         proc("Snapshots_Create")
             .forEntity("Snapshot")
             .param("GameId", gameId)
@@ -274,13 +274,13 @@ module Commands2 =
         Commands.createUser (request.name, request.password)
 
     let updateFailedLoginAttempts (request : UpdateFailedLoginsRequest) =
-        Commands.updateFailedLoginAttempts (request.userId, 
+        Commands.updateFailedLoginAttempts (request.userId,
                                             request.failedLoginAttempts,
                                             request.lastFailedLoginAttemptOn)
 
     let getSession (query : SessionQuery) =
         Commands.getSession (query.sessionId, query.token, query.userId)
-            
+
     let createSession (request : CreateSessionRequest) =
         Commands.createSession (request.userId, request.token, request.expiresOn)
 
@@ -314,7 +314,7 @@ module Commands2 =
                              request.parameters.description)
 
     let addPendingPlayer (gameId : int, request : CreatePlayerRequest) =
-        Commands.addPlayer (gameId, 
+        Commands.addPlayer (gameId,
                             mapPlayerKindToId request.kind,
                             request.userId,
                             request.name,
@@ -330,7 +330,7 @@ module Commands2 =
                             (if player.kind = PlayerKind.User then None else Some player.name),
                             mapPlayerStatusToId player.status,
                             player.colorId,
-                            player.startingRegion, 
+                            player.startingRegion,
                             player.startingTurnNumber)
 
     let updateGame (game : Game) =
@@ -365,9 +365,9 @@ module Commands2 =
                             mapResultsDirectionToAscendingBool query.direction,
                             query.maxResults,
                             query.thresholdTime,
-                            query.thresholdEventId))                          
+                            query.thresholdEventId))
             .returnsMany<EventSqlModel>()
-                            
+
     let getEvent (gameId : int, eventId : int) =
         (Commands.getEvents (Some eventId,
                             gameId,
@@ -386,12 +386,12 @@ module Commands2 =
             .returnsSingle<SnapshotSqlModel>()
 
     let createSnapshot (request : InternalCreateSnapshotRequest) =
-        let jsonModel = 
+        let jsonModel =
             {
                 game = request.game
                 history = request.history
             }
-        Commands.createSnapshot (request.game.id, 
+        Commands.createSnapshot (request.game.id,
                                  request.createdByUserId,
                                  request.description,
                                  serialize jsonModel)

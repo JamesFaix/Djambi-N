@@ -1,11 +1,11 @@
-﻿module Djambi.Api.Logic.Errors
+module Djambi.Api.Logic.Errors
 
 open Djambi.Api.Common.Control
 
 let noPieceInCell<'a>() : HttpResult<'a> =
     Error <| HttpException(400, "No piece in the selected cell.")
 
-let cellNotFound<'a>() : HttpResult<'a> = 
+let cellNotFound<'a>() : HttpResult<'a> =
     Error <| HttpException(404, "Cell not found.")
 
 let turnStatusDoesNotAllowSelection<'a>() : HttpResult<'a> =

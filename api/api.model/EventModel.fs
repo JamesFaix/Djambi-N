@@ -1,22 +1,22 @@
-﻿[<AutoOpen>]
+[<AutoOpen>]
 module Djambi.Api.Model.EventModel
 
 open Djambi.ClientGenerator.Annotations
 
 [<ClientType(ClientSection.Events)>]
-type CurrentTurnChangedEffect = 
+type CurrentTurnChangedEffect =
     {
         oldValue : Turn option
         newValue : Turn option
     }
 
 [<ClientType(ClientSection.Events)>]
-type GameStatusChangedEffect = 
+type GameStatusChangedEffect =
     {
         oldValue : GameStatus
         newValue : GameStatus
     }
-    
+
 [<ClientType(ClientSection.Events)>]
 type NeutralPlayerAddedEffect =
     {
@@ -24,7 +24,7 @@ type NeutralPlayerAddedEffect =
     }
 
 [<ClientType(ClientSection.Events)>]
-type ParametersChangedEffect = 
+type ParametersChangedEffect =
     {
         oldValue : GameParameters
         newValue : GameParameters
@@ -36,7 +36,7 @@ type PieceEnlistedEffect =
         oldPiece : Piece
         newPlayerId : int
     }
-    
+
 [<ClientType(ClientSection.Events)>]
 type PieceAbandonedEffect =
     {
@@ -99,14 +99,14 @@ type PlayerStatusChangedEffect =
     }
 
 [<ClientType(ClientSection.Events)>]
-type TurnCycleAdvancedEffect = 
+type TurnCycleAdvancedEffect =
     {
         oldValue : int list
         newValue : int list
     }
-    
+
 [<ClientType(ClientSection.Events)>]
-type TurnCyclePlayerFellFromPowerEffect = 
+type TurnCyclePlayerFellFromPowerEffect =
     {
         oldValue : int list
         newValue : int list
@@ -114,7 +114,7 @@ type TurnCyclePlayerFellFromPowerEffect =
     }
 
 [<ClientType(ClientSection.Events)>]
-type TurnCyclePlayerRemovedEffect = 
+type TurnCyclePlayerRemovedEffect =
     {
         oldValue : int list
         newValue : int list
@@ -122,7 +122,7 @@ type TurnCyclePlayerRemovedEffect =
     }
 
 [<ClientType(ClientSection.Events)>]
-type TurnCyclePlayerRoseToPowerEffect = 
+type TurnCyclePlayerRoseToPowerEffect =
     {
         oldValue : int list
         newValue : int list
@@ -187,7 +187,7 @@ type CreateEventRequest =
         createdByUserId : int
         actingPlayerId : int option
     }
-    
+
 module PlayerAddedEffect =
     let fromRequest (request : CreatePlayerRequest) : Effect =
         if request.kind = PlayerKind.Neutral then
@@ -200,5 +200,5 @@ module PlayerAddedEffect =
                 name = request.name
                 userId = request.userId.Value
                 kind = request.kind
-            } 
+            }
             Effect.PlayerAdded f
