@@ -1,0 +1,4 @@
+Microsoft.Extensions.Configuration.Json
+Newtonsoft.Json
+TaskBuilder.fs
+FSharp.Core
