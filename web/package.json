@@ -32,9 +32,13 @@
   "devDependencies": {
     "@types/chai": "^4.1.7",
     "@types/mocha": "^5.2.6",
+    "@typescript-eslint/eslint-plugin": "^1.6.0",
+    "@typescript-eslint/parser": "^1.6.0",
     "awesome-typescript-loader": "^5.2.1",
     "chai": "^4.2.0",
     "css-loader": "^1.0.1",
+    "eslint": "^5.16.0",
+    "eslint-plugin-react": "^7.12.4",
     "mocha": "^6.1.1",
     "source-map-loader": "^0.2.4",
     "style-loader": "^0.23.1",
