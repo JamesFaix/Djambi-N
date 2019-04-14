@@ -17,11 +17,11 @@ let serialize<'a> (value : 'a) : string =
     JsonConvert.SerializeObject(value, converters)
 
 let deserializeList<'a> (json : string) : 'a list =
-    if json = null || json = ""
+    if isNull json || json = ""
     then []
     else deserialize json
 
 let deserializeOption<'a> (json : string) : 'a option =
-    if json = null || json = ""
+    if isNull json || json = ""
     then None
     else deserialize json

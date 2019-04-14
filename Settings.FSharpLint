@@ -11,14 +11,13 @@
           <Underscores>None</Underscores>
         </LiteralNames>
 
+        <!-- The convention on member names is camelCase, unless implmenting an interface that requires PascalCase -->
         <MemberNames>
-          <Enabled>true</Enabled>
-          <Naming>CamelCase</Naming>
-          <Underscores>AllowPrefix</Underscores>
+          <Enabled>false</Enabled>
         </MemberNames>
 
         <RecordFieldNames>
-          <Enabled>false</Enabled>
+          <Enabled>true</Enabled>
           <Naming>CamelCase</Naming>
           <Underscores>None</Underscores>
         </RecordFieldNames>
