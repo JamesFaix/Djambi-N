@@ -116,5 +116,5 @@ type PlayerService(gameRepo : IGameRepository) =
         else
             gameRepo.getNeutralPlayerNames()
             |> thenMap getNeutralPlayerNamesToUse
-            |> thenMap (Seq.map (fun name -> PlayerAddedEffect.fromRequest <| CreatePlayerRequest.neutral name ))
+            |> thenMap (Seq.map (PlayerAddedEffect.fromRequest << CreatePlayerRequest.neutral))
             |> thenMap Seq.toList

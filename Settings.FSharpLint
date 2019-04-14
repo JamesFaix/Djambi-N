@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- See https://github.com/fsprojects/FSharpLint/blob/master/src/FSharpLint.Core/DefaultConfiguration.FSharpLint for schema -->
+<FSharpLintSettings>
+  <Analysers>
+     <NameConventions>
+      <Rules>
+
+        <LiteralNames>
+          <Enabled>true</Enabled>
+          <Naming>CamelCase</Naming>
+          <Underscores>None</Underscores>
+        </LiteralNames>
+
+        <MemberNames>
+          <Enabled>true</Enabled>
+          <Naming>CamelCase</Naming>
+          <Underscores>AllowPrefix</Underscores>
+        </MemberNames>
+
+        <RecordFieldNames>
+          <Enabled>false</Enabled>
+          <Naming>CamelCase</Naming>
+          <Underscores>None</Underscores>
+        </RecordFieldNames>
+
+      </Rules>
+    </NameConventions>
+  </Analysers>
+</FSharpLintSettings>

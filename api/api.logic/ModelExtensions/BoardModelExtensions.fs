@@ -281,4 +281,4 @@ module BoardModelExtensions =
                     }
                     |> Seq.toList
                  )
-            |> List.filter (fun path -> (List.length path) > 0)
+            |> List.filter (not << List.isEmpty)

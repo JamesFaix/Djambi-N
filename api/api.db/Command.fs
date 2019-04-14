@@ -36,7 +36,7 @@ type OpenCommand with
     /// </summary>
     member x.param (name : string, value : obj) : OpenCommand =
         let value =
-            if value = null then null
+            if isNull value then null
             else
                 let t = value.GetType()
 
@@ -62,7 +62,7 @@ type OpenCommand with
     /// Converts the command to a Dapper <c>CommandDefinition</c>.
     /// </summary>
     member x.toCommandDefinition (transaction : IDbTransaction option) : CommandDefinition =
-        let dp = new DynamicParameters()
+        let dp = DynamicParameters()
         for (name, value) in x.parameters do
             dp.Add(name, value)
 
@@ -150,7 +150,7 @@ module CommandProcessor =
                 return! SqlMapper.QueryAsync<'a>(context.connection, command.toCommandDefinition None)
                         |> Task.map (Seq.toList >> Ok)
             with
-            | _ as ex -> return Error <| (catchSqlException ex command.entityType)
+            | ex -> return Error <| (catchSqlException ex command.entityType)
         }
 
     /// <summary>
@@ -199,7 +199,7 @@ module CommandProcessor =
                 ctx.commit()
                 return Ok lastResult
             with
-            | _ as ex ->
+            | ex ->
                 return Error <| (catchSqlException ex lastCommand.entityType)
         }
     /// <summary>
@@ -217,7 +217,7 @@ module CommandProcessor =
                 ctx.commit()
                 return Ok ()
             with
-            | _ as ex -> return Error <| (catchSqlException ex resultEntityName)
+            | ex -> return Error <| (catchSqlException ex resultEntityName)
         }
 
     /// <summary>
@@ -240,7 +240,7 @@ module CommandProcessor =
                 ctx.commit()
                 return Ok result
             with
-            | _ as ex ->
+            | ex ->
                 return Error <| (catchSqlException ex command1.entityType)
         }
 

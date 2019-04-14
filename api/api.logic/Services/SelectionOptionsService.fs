@@ -17,7 +17,7 @@ type SelectionOptionsService() =
             seq {
                 let mutable stop = false
                 let mutable i = 0
-                while (stop = false && i < path.Length) do
+                while (not stop && i < path.Length) do
                     let c = path.[i]
                     i <- i + 1
 

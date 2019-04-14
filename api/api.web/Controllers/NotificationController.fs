@@ -20,7 +20,7 @@ type NotificationController(u : HttpUtility,
     let checkForCloseDelay = TimeSpan.FromSeconds(3.0)
 
     let checkAcceptHeader (ctx : HttpContext) =
-         if not (ctx.Request.Headers.["Accept"] = StringValues(contentType))
+         if (ctx.Request.Headers.["Accept"] <> StringValues(contentType))
          then Error <| HttpException(400, sprintf "Accept header must be '%s'." contentType)
          else Ok ()
 
@@ -34,7 +34,7 @@ type NotificationController(u : HttpUtility,
                     ctx.Response.Body.Flush()
 
                     let userId = session.user.id
-                    let subscriber = new SseSubscriber(userId, ctx.Response)
+                    let subscriber = SseSubscriber(userId, ctx.Response)
 
                     notificationService.add subscriber
 
