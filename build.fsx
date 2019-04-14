@@ -47,6 +47,7 @@ let dotNetRun (path : string) (_ : TargetParameter) =
     DotNet.exec id "run" ("--project " + path) |> ignore
 
 let dotNetTest (path : string) (_ : TargetParameter) =
+    DotNet.exec id "build" path |> ignore
     DotNet.test
         (fun o ->
             let common = { o.Common with Verbosity = Some DotNet.Verbosity.Normal }
