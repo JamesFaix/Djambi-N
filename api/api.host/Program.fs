@@ -91,7 +91,6 @@ let main _ =
         .UseConfiguration(config)
         .UseUrls(env.apiAddress)
         .UseKestrel()
-        .UseIISIntegration()
         .ConfigureServices(configureServices)
         .Configure(Action<IApplicationBuilder> configureApp)
         .ConfigureLogging(configureLogging)
