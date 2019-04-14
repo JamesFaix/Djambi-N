@@ -96,6 +96,10 @@ buildApi ?=> testApiUnit
 buildApi ?=> testApiInt
 buildWeb ?=> testWebUnit
 
+testApiUnit ?=> runApi
+testApiInt ?=> runApi
+testWebUnit ?=> runWeb
+
 buildAll <==
     [
         dbReset
