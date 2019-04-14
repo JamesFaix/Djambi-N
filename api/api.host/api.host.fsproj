@@ -35,10 +35,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="web.config" CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\api.common\api.common.fsproj" />
     <ProjectReference Include="..\api.db.interfaces\api.db.interfaces.fsproj" />
     <ProjectReference Include="..\api.db\api.db.fsproj" />
