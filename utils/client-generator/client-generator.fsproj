@@ -1,11 +1,10 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <RootNamespace>client_generator</RootNamespace>
   </PropertyGroup>
-
   <ItemGroup>
     <Content Include="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -14,11 +13,6 @@
     <Compile Include="TypeScriptRenderer.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
-  </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\..\api\api.common\api.common.fsproj" />
     <ProjectReference Include="..\..\api\api.logic.interfaces\api.logic.interfaces.fsproj" />
@@ -26,5 +20,5 @@
     <ProjectReference Include="..\client-generator.annotations\client-generator.annotations.fsproj" />
     <ProjectReference Include="..\environment\environment.fsproj" />
   </ItemGroup>
-
+  <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

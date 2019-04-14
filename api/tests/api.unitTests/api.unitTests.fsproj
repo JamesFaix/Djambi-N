@@ -1,26 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
-
     <IsPackable>false</IsPackable>
   </PropertyGroup>
-
   <ItemGroup>
     <Compile Include="JsonConverterTests.fs" />
     <Compile Include="BoardModelExtensionTests.fs" />
   </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.8.0" />
-    <PackageReference Include="xunit" Version="2.3.1" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
-  </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\..\api.common\api.common.fsproj" />
     <ProjectReference Include="..\..\api.logic\api.logic.fsproj" />
     <ProjectReference Include="..\..\api.model\api.model.fsproj" />
   </ItemGroup>
-
+  <Import Project="..\..\..\.paket\Paket.Restore.targets" />
 </Project>

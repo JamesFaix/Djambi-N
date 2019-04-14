@@ -1,9 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
-
   <ItemGroup>
     <Compile Include="HttpUtility.fs" />
     <Compile Include="ServerSideEvents.fs" />
@@ -18,16 +17,11 @@
     <Compile Include="Controllers\UserController.fs" />
     <Compile Include="WebRoot.fs" />
   </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Giraffe" Version="1.1.0" />
-  </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\api.common\api.common.fsproj" />
     <ProjectReference Include="..\api.logic.interfaces\api.logic.interfaces.fsproj" />
     <ProjectReference Include="..\api.model\api.model.fsproj" />
     <ProjectReference Include="..\api.web.interfaces\api.web.interfaces.fsproj" />
   </ItemGroup>
-
+  <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

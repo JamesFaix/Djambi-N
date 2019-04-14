@@ -3,3 +3,7 @@ environment.json
 bin/
 obj/
 .fake/
+packages/
+.paket/paket.targets
+.paket/Paket.Restore.targets
+.paket/paket.bootstrapper.exe

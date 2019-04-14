@@ -1,18 +1,16 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
-
   <ItemGroup>
     <Compile Include="Routes.fs" />
     <Compile Include="Interfaces.fs" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\..\utils\client-generator.annotations\client-generator.annotations.fsproj" />
     <ProjectReference Include="..\api.common\api.common.fsproj" />
     <ProjectReference Include="..\api.model\api.model.fsproj" />
   </ItemGroup>
-
+  <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

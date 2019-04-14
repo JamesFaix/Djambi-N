@@ -1,9 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
-
   <ItemGroup>
     <Compile Include="Errors.fs" />
     <Compile Include="Context.fs" />
@@ -32,12 +31,11 @@
     <Compile Include="Managers\UserManager.fs" />
     <Compile Include="LogicRoot.fs" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\api.common\api.common.fsproj" />
     <ProjectReference Include="..\api.db.interfaces\api.db.interfaces.fsproj" />
     <ProjectReference Include="..\api.logic.interfaces\api.logic.interfaces.fsproj" />
     <ProjectReference Include="..\api.model\api.model.fsproj" />
   </ItemGroup>
-
+  <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>
