@@ -38,7 +38,7 @@ export default class EnumDropdown<TEnum> extends React.Component<EnumDropdownPro
         });
     }
 
-    render() {
+    public render() : JSX.Element {
         return (
             <Dropdown
                 name={this.props.name}

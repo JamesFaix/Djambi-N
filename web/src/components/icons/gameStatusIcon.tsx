@@ -40,7 +40,7 @@ export default class GameStatusIcon extends React.Component<GameStatusIconProps>
         }
     }
 
-    render() {
+    public render() : JSX.Element {
         const details = this.getDetails(this.props.status);
 
         return (

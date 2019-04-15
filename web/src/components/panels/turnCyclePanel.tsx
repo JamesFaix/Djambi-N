@@ -17,7 +17,7 @@ export interface TurnCyclePanelProps {
 }
 
 export default class TurnCyclePanel extends React.Component<TurnCyclePanelProps> {
-    render() {
+    public render() : JSX.Element {
         const rowClass = K.classes.combine([K.classes.thinBorder, K.classes.centerAligned]);
         let style = K.styles.combine([
             K.styles.flex(0),

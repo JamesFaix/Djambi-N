@@ -12,7 +12,7 @@ export interface HomePageProps {
 
 export default class HomePage extends React.Component<HomePageProps> {
 
-    render() {
+    public render() : JSX.Element {
         //Go straight to dashboard if already logged in
         if (this.props.user !== null) {
             return <Redirect to={K.routes.dashboard()}/>

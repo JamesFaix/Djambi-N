@@ -29,7 +29,7 @@ export default class CanvasCell extends React.Component<CanvasCellProps> {
         return K.theme.getCellBorderColor(this.props.cell.type);
     }
 
-    render() {
+    public render() : JSX.Element {
         const color = this.getCellColor();
         let borderColor = this.getBorderColor();
 

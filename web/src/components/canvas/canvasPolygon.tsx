@@ -12,7 +12,7 @@ export interface CanvasPolygonProps {
 }
 
 export default class CanvasPolygon extends React.Component<CanvasPolygonProps> {
-    render() {
+    public render() : JSX.Element {
         return (
             <Shape
                 sceneFunc={(ctx : Context, shape : any) => {

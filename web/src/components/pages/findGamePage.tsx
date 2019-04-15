@@ -47,7 +47,7 @@ export default class FindGamePage extends React.Component<FindGamePageProps, Fin
         };
     }
 
-    componentDidMount() {
+    public componentDidMount() : void {
         this.refreshResults();
     }
 
@@ -170,7 +170,7 @@ export default class FindGamePage extends React.Component<FindGamePageProps, Fin
         );
     }
 
-    render() {
+    public render() : JSX.Element {
         //Go to home if not logged in
         if (this.props.user === null) {
             return <Redirect to={K.routes.home()}/>

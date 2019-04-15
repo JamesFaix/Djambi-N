@@ -85,7 +85,7 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
 
     //--- RENDERING ---
 
-    render() {
+    public render() : JSX.Element {
         const containerStyle = K.styles.combine([
             K.styles.width("100%"),
             K.styles.height("100%")

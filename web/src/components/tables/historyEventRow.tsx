@@ -19,7 +19,7 @@ export interface HistoryEventRowProps {
 
 export default class HistoryEventRow extends React.Component<HistoryEventRowProps> {
 
-    render() {
+    public render() : JSX.Element {
         const e = this.props.event;
         const player = this.getActingPlayer();
         let style;

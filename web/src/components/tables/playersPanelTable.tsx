@@ -11,7 +11,7 @@ export interface PlayersPanelTableProps {
 
 export default class PlayersPanelTable extends React.Component<PlayersPanelTableProps> {
 
-    render() {
+    public render() : JSX.Element {
         return (
             <div className={K.classes.flex}>
                 <table className={K.classes.combine([K.classes.table, K.classes.fullWidth])}>

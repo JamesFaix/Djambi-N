@@ -19,7 +19,7 @@ export interface HistoryTableProps {
 
 export default class HistoryTable extends React.Component<HistoryTableProps> {
 
-    render() {
+    public render() : JSX.Element {
         return (
             <div className={K.classes.flex}>
                 <table

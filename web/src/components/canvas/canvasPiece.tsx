@@ -16,7 +16,7 @@ export default class CanvasPiece extends React.Component<CanvasPieceProps> {
         super(props);
     }
 
-    render() {
+    public render() : JSX.Element {
         const playerColor = K.theme.getPlayerColor(this.props.piece.colorId);
         return (
             <Image

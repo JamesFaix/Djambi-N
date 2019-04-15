@@ -8,7 +8,7 @@ export interface HintCellProps {
 
 export default class HintCell extends React.Component<HintCellProps> {
 
-    render() {
+    public render() : JSX.Element {
         const classes = [K.classes.lightText, K.classes.paddedCell];
         if (this.props.noBorder) {
             classes.push(K.classes.borderless);

@@ -61,7 +61,7 @@ export default class Button extends React.Component<ButtonProps> {
         return undefined;
     }
 
-    render() {
+    public render() : JSX.Element {
         switch (this.props.kind) {
             case ButtonKind.Action:
                 return this.renderActionButton();

@@ -10,7 +10,7 @@ export interface LabeledTristateDropdownProps {
 }
 
 export default class LabeledTristateDropdown extends React.Component<LabeledTristateDropdownProps> {
-    render() {
+    public render() : JSX.Element {
         return (
             <LabeledControl
                 label={this.props.label}

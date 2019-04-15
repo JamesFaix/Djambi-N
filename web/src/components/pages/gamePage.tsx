@@ -117,7 +117,7 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
         this.setState({redirectUrl: K.routes.snapshots(this.props.gameId)});
     }
 
-    componentDidMount() {
+    public componentDidMount() : void {
         this.load();
     }
 
@@ -145,7 +145,7 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
         this.setState({showGameOverModal: false});
     }
 
-    render() {
+    public render() : JSX.Element {
         if (this.state.redirectUrl !== null) {
             return <Redirect to={this.state.redirectUrl}/>;
         }

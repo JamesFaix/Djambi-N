@@ -63,7 +63,7 @@ export default class PlayerStatusIcon extends React.Component<PlayerStatusIconPr
         }
     }
 
-    render() {
+    public render() : JSX.Element {
         const details = this.getDetails(this.props.player);
         const style = details.isActive
             ? undefined

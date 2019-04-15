@@ -28,7 +28,7 @@ export default class Dropdown<T> extends React.Component<DropdownProps<T>> {
         this.props.onChange(this.props.name, value);
     }
 
-    render() {
+    public render() : JSX.Element {
         return (
             <select
                 name={this.props.name}

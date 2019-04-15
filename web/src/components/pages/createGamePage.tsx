@@ -80,7 +80,7 @@ export default class CreateGamePage extends React.Component<CreateGamePageProps,
             });
     }
 
-    render() {
+    public render() : JSX.Element {
         //Go to home if not logged in
         if (this.props.user === null) {
             return <Redirect to={K.routes.home()}/>;

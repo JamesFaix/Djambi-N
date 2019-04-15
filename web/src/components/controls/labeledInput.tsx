@@ -15,7 +15,7 @@ export interface LabeledInputProps {
 }
 
 export default class LabeledInput extends React.Component<LabeledInputProps> {
-    render() {
+    public render() : JSX.Element {
         return (
             <LabeledControl
                 label={this.props.label}

@@ -62,7 +62,7 @@ export default class LoginPage extends React.Component<LoginPageProps, LoginPage
             });
     }
 
-    render() {
+    public render() : JSX.Element {
         //Go straight to dashboard if already logged in
         if (this.props.user !== null) {
             return <Redirect to={K.routes.dashboard()}/>

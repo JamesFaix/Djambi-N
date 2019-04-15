@@ -31,11 +31,11 @@ export default class SnapshotsPage extends React.Component<SnapshotsPageProps, S
         };
     }
 
-    componentDidMount() {
+    public componentDidMount() : void {
         this.getSnapshots();
     }
 
-    render() {
+    public render() : JSX.Element {
         if (this.state.redirectUrl !== null) {
             return <Redirect to={this.state.redirectUrl}/>;
         }

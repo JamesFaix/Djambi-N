@@ -118,7 +118,7 @@ export default class App extends React.Component<AppProps, AppState> {
         });
     }
 
-    render() {
+    public render() : JSX.Element {
         return (
             <main>
                 <TopMenu/>

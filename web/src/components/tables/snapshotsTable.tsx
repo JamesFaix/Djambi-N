@@ -12,7 +12,7 @@ export interface SnapshotsTableProps {
 
 export default class SnapshotsTable extends React.Component<SnapshotsTableProps> {
 
-    render() {
+    public render() : JSX.Element {
         if (this.props.snapshots.length === 0) {
             return (
                 <div className={K.classes.combine([K.classes.table, K.classes.lightText])}>

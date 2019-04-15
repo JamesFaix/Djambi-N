@@ -10,7 +10,7 @@ export interface GamesQueryResultsTableProps {
 
 export default class GamesQueryResultsTable extends React.Component<GamesQueryResultsTableProps> {
 
-    render() {
+    public render() : JSX.Element {
         return (
             <div>
                 <table className={K.classes.table}>

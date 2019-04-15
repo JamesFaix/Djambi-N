@@ -22,7 +22,7 @@ export default class MyGamesPage extends React.Component<MyGamesPageProps, MyGam
         };
     }
 
-    componentDidMount() {
+    public componentDidMount() : void {
         this.refreshResults();
     }
 
@@ -47,7 +47,7 @@ export default class MyGamesPage extends React.Component<MyGamesPageProps, MyGam
             });
     }
 
-    render() {
+    public render() : JSX.Element {
         //Go to home if not logged in
         if (this.props.user === null) {
             return <Redirect to={K.routes.home()}/>

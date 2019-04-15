@@ -36,7 +36,7 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
         };
     }
 
-    componentDidMount() {
+    public componentDidMount() : void {
         K.api
             .getGame(this.props.gameId)
             .then(game => this.props.load(game))
@@ -166,7 +166,7 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
         return undefined;
     }
 
-    render() {
+    public render() : JSX.Element {
         //Go to home if not logged in
         if (this.props.user === null) {
             return <Redirect to={K.routes.home()}/>;

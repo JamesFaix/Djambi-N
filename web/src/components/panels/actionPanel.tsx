@@ -27,7 +27,7 @@ export default class ActionPanel extends React.Component<ActionPanelProps, Actio
 
 //--- Rendering ---
 
-    render() {
+    public render() : JSX.Element {
         let style = K.styles.combine([
             K.styles.flex(0),
             K.styles.width(this.props.width)

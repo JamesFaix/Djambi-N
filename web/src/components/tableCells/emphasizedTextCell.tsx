@@ -8,7 +8,7 @@ export interface EmphasizedTextCellProps {
 
 export default class EmphasizedTextCell extends React.Component<EmphasizedTextCellProps> {
 
-    render() {
+    public render() : JSX.Element {
         const classes = [K.classes.paddedCell];
         if (this.props.noBorder) {
             classes.push(K.classes.borderless);

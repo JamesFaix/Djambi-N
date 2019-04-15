@@ -8,7 +8,7 @@ export interface TextFieldCellProps {
 
 export default class TextFieldCell extends React.Component<TextFieldCellProps> {
 
-    render() {
+    public render() : JSX.Element {
         return (
             <td>
                 <input

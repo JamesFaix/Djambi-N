@@ -7,7 +7,7 @@ export interface LabeledControlProps {
 }
 
 export default class LabeledControl extends React.Component<LabeledControlProps> {
-    render() {
+    public render() : JSX.Element {
         return (
             <div
                 className={K.classes.labeledTextBox}

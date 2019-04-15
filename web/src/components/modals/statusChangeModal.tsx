@@ -45,7 +45,7 @@ export default class StatusChangeModal extends React.Component<StatusChangeModal
 
     //--- Rendering ---
 
-    render() {
+    public render() : JSX.Element {
 
         const style = {
             content : {

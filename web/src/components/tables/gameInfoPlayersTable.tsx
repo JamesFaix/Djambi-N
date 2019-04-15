@@ -234,9 +234,9 @@ export default class GameInfoPlayersTable extends React.Component<GameInfoPlayer
         }
     }
 
-    render() {
+    public render() : JSX.Element {
         if (this.props.game === null) {
-            return "";
+            return null;
         }
 
         const seats = this.getSeats(this.props.game);
