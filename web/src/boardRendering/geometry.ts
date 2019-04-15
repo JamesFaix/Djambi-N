@@ -6,7 +6,7 @@ import {
     Point,
     Polygon,
     Rectangle
-    } from './model';
+} from './model';
 import Logic from '../logic';
 import { Location } from '../api/model';
 
@@ -292,7 +292,7 @@ export default class Geometry {
                     radius * sin(internalAngle/2) = edge/2
                     radius = (edge/2)/sin(internalAngle/2)
             */
-           return (this.sideLength/2) / Math.sin(this.internalAngle(numberOfSides)/2);
+            return (this.sideLength/2) / Math.sin(this.internalAngle(numberOfSides)/2);
         }
 
         public static sideToApothemRatio(numberOfSides : number) : number {
@@ -497,7 +497,7 @@ export default class Geometry {
             return Geometry.Polygon.centroid(c.polygon);
         }
 
-        public static transform(c: CellView, matrix : MathJs.Matrix) : CellView {
+        public static transform(c : CellView, matrix : MathJs.Matrix) : CellView {
             return {
                 id: c.id,
                 locations: c.locations,

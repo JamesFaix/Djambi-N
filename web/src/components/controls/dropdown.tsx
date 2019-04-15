@@ -35,16 +35,16 @@ export default class Dropdown<T> extends React.Component<DropdownProps<T>> {
                 onChange={e => this.onChange(e)}
                 value={this.getLabelOfValue(this.props.currentValue)}
             >
-            {
-                this.props.items.map((item, i) =>
-                    <option
-                        key={"option" + i}
-                        value={item.label}
-                    >
-                    {item.label}
-                    </option>
-                )
-            }
+                {
+                    this.props.items.map((item, i) =>
+                        <option
+                            key={"option" + i}
+                            value={item.label}
+                        >
+                            {item.label}
+                        </option>
+                    )
+                }
             </select>
         );
     }

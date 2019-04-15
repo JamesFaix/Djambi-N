@@ -9,7 +9,7 @@ import { IconKind } from '../icons/icon';
 
 export interface DashboardPageProps {
     user : User,
-    setUser(user: User) : void
+    setUser(user : User) : void
 }
 
 export default class DashboardPage extends React.Component<DashboardPageProps> {

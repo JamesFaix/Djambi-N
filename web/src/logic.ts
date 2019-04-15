@@ -1,5 +1,5 @@
 export default class Logic {
-    public static Xor(a : boolean, b: boolean) : boolean {
+    public static Xor(a : boolean, b : boolean) : boolean {
         return a ? !b : b;
     }
 

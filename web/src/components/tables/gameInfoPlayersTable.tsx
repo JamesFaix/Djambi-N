@@ -12,7 +12,7 @@ import {
     PlayerKind,
     User,
     Privilege
-    } from '../../api/model';
+} from '../../api/model';
 import { Kernel as K } from '../../kernel';
 import Button, { ButtonKind } from '../controls/button';
 import { IconKind } from '../icons/icon';

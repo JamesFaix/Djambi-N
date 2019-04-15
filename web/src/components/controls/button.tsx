@@ -11,16 +11,16 @@ export interface ButtonProps {
     kind : ButtonKind,
 
     //Content
-    label? : string,
-    icon? : IconKind,
-    hint?: string,
+    label ? : string,
+    icon ? : IconKind,
+    hint ?: string,
 
     //Action button properties
     onClick? () : void,
 
     //Link button properties
-    to?: string,
-    newWindow? : boolean
+    to ?: string,
+    newWindow ? : boolean
 }
 
 export default class Button extends React.Component<ButtonProps> {

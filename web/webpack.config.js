@@ -40,10 +40,10 @@ module.exports = {
         "react-dom": "ReactDOM"
     },
     plugins: [
-      new webpack.DefinePlugin({
-        'process.env':{
-          'API_URL': JSON.stringify(environmentConfig.apiAddress)
-        }
-      })
+        new webpack.DefinePlugin({
+            'process.env':{
+                'API_URL': JSON.stringify(environmentConfig.apiAddress)
+            }
+        })
     ]
 };

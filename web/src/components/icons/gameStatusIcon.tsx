@@ -27,7 +27,7 @@ export default class GameStatusIcon extends React.Component<GameStatusIconProps>
                 };
             case GameStatus.Canceled:
                 return {
-                     hint: "Canceled",
+                    hint: "Canceled",
                     kind: IconKind.Canceled,
                 };
             case GameStatus.Over:

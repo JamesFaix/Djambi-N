@@ -11,7 +11,7 @@ export interface MyGamesPageProps {
 }
 
 export interface MyGamesPageState {
-    games : Game[],
+    games : Game[]
 }
 
 export default class MyGamesPage extends React.Component<MyGamesPageProps, MyGamesPageState> {

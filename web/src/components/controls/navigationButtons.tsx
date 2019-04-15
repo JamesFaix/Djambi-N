@@ -5,12 +5,12 @@ import { Kernel as K } from '../../kernel';
 
 export interface LinkButtonProps {
     to : string,
-    hint? : string
+    hint ? : string
 }
 
 export interface ActionButtonProps {
     onClick : () => void,
-    hint? : string
+    hint ? : string
 }
 
 export class CreateGamePageButton extends React.Component<{}> {

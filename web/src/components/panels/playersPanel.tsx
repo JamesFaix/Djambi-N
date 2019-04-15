@@ -6,7 +6,7 @@ import Icon, { IconKind } from '../icons/icon';
 
 export interface PlayersPanelProps {
     game : Game,
-    height? : string,
+    height ? : string,
     width : string
 }
 

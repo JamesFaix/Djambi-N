@@ -6,13 +6,13 @@ import Icon, { IconKind } from '../icons/icon';
 interface PlayerView {
     id : number,
     name : string,
-    color : string,
+    color : string
 }
 
 export interface TurnCyclePanelProps {
     game : Game,
     iconSize : string,
-    height? : string,
+    height ? : string,
     width : string
 }
 

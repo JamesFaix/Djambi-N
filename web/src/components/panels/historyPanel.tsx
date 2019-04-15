@@ -9,7 +9,7 @@ import Icon, { IconKind } from '../icons/icon';
 export interface HistoryPanelProps {
     game : Game,
     events : Event[],
-    height? : string,
+    height ? : string,
     width : string,
     textStyle : React.CSSProperties,
     getBoard : (regionCount : number) => Board,

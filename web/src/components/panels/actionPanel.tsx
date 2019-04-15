@@ -9,7 +9,7 @@ export interface ActionPanelProps {
     user : User,
     game : Game,
     width : string,
-    height? : string,
+    height ? : string,
     playerActionsService : PlayerActionsService
 }
 
@@ -25,7 +25,7 @@ export default class ActionPanel extends React.Component<ActionPanelProps, Actio
         };
     }
 
-//--- Rendering ---
+    //--- Rendering ---
 
     public render() : JSX.Element {
         let style = K.styles.combine([

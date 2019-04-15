@@ -51,7 +51,7 @@ export default class SnapshotsTable extends React.Component<SnapshotsTableProps>
                 </td>
                 <td>
                     {snapshot.description}
-                    </td>
+                </td>
                 <td>
                     {K.dates.format(snapshot.createdBy.time)}
                 </td>

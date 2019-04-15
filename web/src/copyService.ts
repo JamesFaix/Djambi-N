@@ -31,7 +31,7 @@ import {
     TurnCyclePlayerFellFromPowerEffect,
     TurnCyclePlayerRemovedEffect,
     TurnCyclePlayerRoseToPowerEffect
-    } from './api/model';
+} from './api/model';
 
 export default class CopyService {
     constructor(

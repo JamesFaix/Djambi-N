@@ -48,7 +48,7 @@ export enum IconKind {
 
 export interface IconnProps {
     kind : IconKind,
-    hint? : string
+    hint ? : string
 }
 
 export default class Icon extends React.Component<IconnProps> {

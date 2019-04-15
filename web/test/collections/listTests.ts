@@ -46,7 +46,7 @@ describe('List.exists', () => {
 });
 
 describe('List.flatMap', () => {
-    let projection = (n:number) => [n, n*n];
+    let projection = (n : number) => [n, n*n];
 
     it('Returns flattened list', () => {
         let xs = [1,2,3];
@@ -98,7 +98,7 @@ describe('List.forAll', () => {
 });
 
 describe('List.groupBy', () => {
-    let keySelector = (x:string) => x[0];
+    let keySelector = (x : string) => x[0];
 
     it('Groups elements', () => {
         let xs = [
@@ -125,7 +125,7 @@ describe('List.groupBy', () => {
 });
 
 describe('List.groupMatches', () => {
-    let areMatch = (a:string, b:string) => a[0] === b[0];
+    let areMatch = (a : string, b : string) => a[0] === b[0];
 
     it('Groups elements by "areMatch"', () => {
         let xs = [
@@ -152,8 +152,8 @@ describe('List.groupMatches', () => {
 });
 
 describe('List.mergeMatches', () => {
-    let areMatch = (a:string, b:string) => a[0] === b[0];
-    let merge = (a:string, b:string) => a + ", " + b;
+    let areMatch = (a : string, b : string) => a[0] === b[0];
+    let merge = (a : string, b : string) => a + ", " + b;
 
     it('Merges matching elements', () => {
         let xs = [

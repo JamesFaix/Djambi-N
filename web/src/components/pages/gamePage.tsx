@@ -9,7 +9,7 @@ import {
     CellState,
     CellView,
     Point
-    } from '../../boardRendering/model';
+} from '../../boardRendering/model';
 import {
     Event,
     EventsQuery,
@@ -20,7 +20,7 @@ import {
     Player,
     GameStatus,
     StateAndEventResponse
-    } from '../../api/model';
+} from '../../api/model';
 import { Kernel as K } from '../../kernel';
 import ActionPanel from '../panels/actionPanel';
 import PlayerActionsService from '../../playerActionsService';
@@ -35,8 +35,8 @@ export interface GamePageProps {
     game : Game,
     boardView : BoardView,
     history : Event[],
-    update : (response:StateAndEventResponse) => Promise<void>,
-    load : (game:Game, history:Event[]) => Promise<void>
+    update : (response : StateAndEventResponse) => Promise<void>,
+    load : (game : Game, history : Event[]) => Promise<void>
 }
 
 export interface GamePageState {
