@@ -43,7 +43,7 @@ type GameCrudService(gameRepo : IGameRepository) =
 
             //If disabling AllowGuests, guests are ejected
             let ejectedGuests =
-                if parameters.allowGuests = false
+                if not parameters.allowGuests
                 then game.players
                     |> Seq.filter (fun p -> p.kind = PlayerKind.Guest)
                 else Seq.empty

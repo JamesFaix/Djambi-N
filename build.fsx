@@ -6,6 +6,7 @@ nuget Fake.JavaScript.Npm"
 
 open Fake.Core
 open Fake.DotNet
+open Fake.IO.Globbing.Operators
 open Fake.JavaScript
 open System.Diagnostics
 open System.IO
@@ -27,6 +28,9 @@ let buildAll = "build-all"
 let runApi = "run-api"
 let runWeb = "run-web"
 let runAll = "run-all"
+
+let fsLint = "fs-lint"
+let lintAll = "lint-all"
 
 let testApiInt = "test-api-int"
 let testApiUnit = "test-api-unit"
@@ -84,17 +88,26 @@ Target.create dbReset (dotNetRun "utils/db-reset/db-reset.fsproj")
 Target.create genClient (dotNetRun "utils/client-generator/client-generator.fsproj")
 Target.create restoreWeb (fun _ -> Npm.install setNpmParams)
 Target.create buildWeb (fun _ -> Npm.run "build" setNpmParams)
-Target.create buildAll ignore
+
+Target.create fsLint (fun _ ->
+    let projects = !! "**/*.fsproj"
+    for p in projects do
+        let args = sprintf """-f "%s" """ p
+        DotNet.exec id "fsharplint" args
+        |> ignore
+)
 
 Target.create testApiUnit (dotNetTest "api/tests/api.unitTests/api.unitTests.fsproj")
 Target.create testApiInt (dotNetTest "api/tests/api.integrationTests/api.integrationTests.fsproj")
 Target.create testWebUnit (fun _ -> Npm.run "test" setNpmParams)
-Target.create testAll ignore
 
 Target.create runApi (launchConsole "api/api.host" "dotnet" ["run api.host.fsproj"])
 Target.create runWeb (launchConsole "web" "http-server" [])
-Target.create runAll ignore
 
+Target.create buildAll ignore
+Target.create lintAll ignore
+Target.create testAll ignore
+Target.create runAll ignore
 Target.create all ignore
 
 //Dependencies
@@ -149,11 +162,17 @@ testAll <==
         testWebUnit
     ]
 
+lintAll <==
+    [
+        fsLint
+    ]
+
 all <==
     [
         buildAll
         runAll
         testAll
+        lintAll
     ]
 
 //Start

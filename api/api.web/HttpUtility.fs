@@ -45,7 +45,7 @@ type HttpUtility(cookieDomain : string,
     member x.cookieName = "DjambiSession"
 
     member x.appendCookie (ctx : HttpContext) (token : string, expiration : DateTime) =
-        let cookieOptions = new CookieOptions()
+        let cookieOptions = CookieOptions()
         cookieOptions.Domain <- cookieDomain
         cookieOptions.Path <- "/"
         cookieOptions.Secure <- false
@@ -77,7 +77,7 @@ type HttpUtility(cookieDomain : string,
                 | :? HttpException as ex ->
                     ctx.SetStatusCode ex.statusCode
                     return! json ex.Message next ctx
-                | _ as ex ->
+                | ex ->
                     ctx.SetStatusCode 500
                     return! json ex.Message next ctx
             }

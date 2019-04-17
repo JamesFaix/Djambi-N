@@ -6,7 +6,7 @@ module List =
 
     open System
 
-    let private random = new Random()
+    let private random = Random()
 
     let shuffle<'a> (xs : 'a list) : 'a list =
         let list = new ArrayList<'a>(xs)

@@ -1,4 +1,4 @@
-namespace Djambi.Api.IntegrationTests.Logic.services.players
+namespace Djambi.Api.IntegrationTests.Logic.Services.Players
 
 open System
 open FSharp.Control.Tasks

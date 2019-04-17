@@ -1,4 +1,4 @@
-namespace Djambi.Api.IntegrationTests.Logic.services.eventsTests
+namespace Djambi.Api.IntegrationTests.Logic.Services.EventsTests
 
 open Xunit
 open Djambi.Api.IntegrationTests

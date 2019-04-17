@@ -13,7 +13,7 @@ type OptionJsonConverter() =
 
     override x.WriteJson (writer : JsonWriter, value : obj, serializer : JsonSerializer) : Unit =
         let value =
-            if value = null then null
+            if isNull value then null
             else
                 let _,fields = FSharpValue.GetUnionFields(value, value.GetType())
                 fields.[0]
@@ -32,7 +32,7 @@ type OptionJsonConverter() =
 
         try
             let value = serializer.Deserialize(reader, innerType)
-            if value = null then makeNone()
+            if isNull value then makeNone()
             else makeSome value
         with
         | :? NullReferenceException -> makeNone()

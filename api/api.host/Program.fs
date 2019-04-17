@@ -49,7 +49,7 @@ let configureNewtonsoft () =
             SingleFieldUnionJsonConverter()
         ]
 
-    let settings = new JsonSerializerSettings()
+    let settings = JsonSerializerSettings()
     settings.Converters <- converters.ToList()
     JsonConvert.DefaultSettings <- (fun () -> settings)
 

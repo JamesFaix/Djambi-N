@@ -68,7 +68,7 @@ type TypeScriptRenderer() =
         let sb = StringBuilder()
         sb.AppendLine(sprintf "export enum %s {" name) |> ignore
 
-        for v in values |> Seq.sortBy (fun x -> x) do
+        for v in values |> Seq.sortBy id do
             sb.AppendLine(sprintf "\t%s = \"%s\"," v v) |> ignore
             ()
 

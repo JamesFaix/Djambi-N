@@ -13,13 +13,13 @@ let ofNullable<'a when 'a : struct
 let ofReference<'a when 'a : null> (x : 'a) : 'a option =
     match x with
     | null -> None
-    | _ as value -> Some value
+    | value -> Some value
 
 let ofString (str : string) : string option =
     match str with
     | null
     | "" -> None
-    | _ as value -> Some value;
+    | value -> Some value;
 
 let toNullable<'a when 'a : struct
                 and 'a :> ValueType
