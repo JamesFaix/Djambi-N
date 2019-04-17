@@ -36,7 +36,7 @@ export class Classes {
 
     public readonly flex = "flex";
 
-    public combine(classes: string[]) : string {
+    public combine(classes : string[]) : string {
         return classes.join(" ");
     }
 }
@@ -104,7 +104,7 @@ export class Styles {
                 let result = {};
                 styles.forEach(s => {
                     result = { ...result, ...s };
-                })
+                });
                 return result;
         }
     }

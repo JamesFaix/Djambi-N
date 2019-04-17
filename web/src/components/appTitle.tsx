@@ -3,7 +3,7 @@ import { Kernel as K } from '../kernel';
 
 export default class AppTitle extends React.Component {
 
-    render() {
+    public render() : JSX.Element {
         return (
             <div className={K.classes.appTitle}>
                 <div className={K.classes.appTitleCharA}>D</div>

@@ -9,7 +9,7 @@ import {
     GamesQuery,
     GameStatus,
     User
-    } from '../../api/model';
+} from '../../api/model';
 import { InputTypes } from '../../constants';
 import { Kernel as K } from '../../kernel';
 import { Redirect } from 'react-router';
@@ -47,7 +47,7 @@ export default class FindGamePage extends React.Component<FindGamePageProps, Fin
         };
     }
 
-    componentDidMount() {
+    public componentDidMount() : void {
         this.refreshResults();
     }
 
@@ -60,7 +60,7 @@ export default class FindGamePage extends React.Component<FindGamePageProps, Fin
             allowGuests: this.state.allowGuestsFilter,
             descriptionContains: this.state.descriptionContainsFilter,
             status: this.state.statusFilter
-        }
+        };
 
         K.api
             .getGames(query)
@@ -72,20 +72,20 @@ export default class FindGamePage extends React.Component<FindGamePageProps, Fin
             });
     }
 
-//---Event handlers---
+    //---Event handlers---
 
     private resetOnClick() {
         this.setState({
-                createdByUserNameFilter: null,
-                playerUserNameFilter: null,
-                isPublicFilter: null,
-                allowGuestsFilter: null,
-                descriptionContainsFilter: null
-            },
-            () => this.refreshResults());
+            createdByUserNameFilter: null,
+            playerUserNameFilter: null,
+            isPublicFilter: null,
+            allowGuestsFilter: null,
+            descriptionContainsFilter: null
+        },
+        () => this.refreshResults());
     }
 
-//---Rendering---
+    //---Rendering---
 
     renderQueryFilters() {
         return (
@@ -110,7 +110,7 @@ export default class FindGamePage extends React.Component<FindGamePageProps, Fin
                             </td>
                         </tr>
                         <tr>
-                        <td className={K.classes.borderless}>
+                            <td className={K.classes.borderless}>
                                 <LabeledInput
                                     label="Has user"
                                     type={InputTypes.Text}
@@ -170,10 +170,10 @@ export default class FindGamePage extends React.Component<FindGamePageProps, Fin
         );
     }
 
-    render() {
+    public render() : JSX.Element {
         //Go to home if not logged in
         if (this.props.user === null) {
-            return <Redirect to={K.routes.home()}/>
+            return <Redirect to={K.routes.home()}/>;
         }
 
         return (

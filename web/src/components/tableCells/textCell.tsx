@@ -6,7 +6,7 @@ export interface TextCellProps {
 
 export default class TextCell extends React.Component<TextCellProps> {
 
-    render() {
+    public render() : JSX.Element {
         return  (
             <td>
                 {this.props.text}

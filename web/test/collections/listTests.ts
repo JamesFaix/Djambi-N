@@ -40,13 +40,13 @@ describe('List.exists', () => {
     });
 
     it('Returns false if array is empty', () => {
-        let actual = List.exists([], x => true);
+        let actual = List.exists([], _ => true);
         expect(actual).to.equal(false);
     });
 });
 
 describe('List.flatMap', () => {
-    let projection = (n:number) => [n, n*n];
+    let projection = (n : number) => [n, n*n];
 
     it('Returns flattened list', () => {
         let xs = [1,2,3];
@@ -92,13 +92,13 @@ describe('List.forAll', () => {
     });
 
     it('Returns true if array is empty', () => {
-        let actual = List.forAll([], x => true);
+        let actual = List.forAll([], _ => true);
         expect(actual).to.equal(true);
     });
 });
 
 describe('List.groupBy', () => {
-    let keySelector = (x:string) => x[0];
+    let keySelector = (x : string) => x[0];
 
     it('Groups elements', () => {
         let xs = [
@@ -125,7 +125,7 @@ describe('List.groupBy', () => {
 });
 
 describe('List.groupMatches', () => {
-    let areMatch = (a:string, b:string) => a[0] === b[0];
+    let areMatch = (a : string, b : string) => a[0] === b[0];
 
     it('Groups elements by "areMatch"', () => {
         let xs = [
@@ -148,12 +148,12 @@ describe('List.groupMatches', () => {
     it('Returns empty if input empty', () => {
         let actual = List.groupMatches([], areMatch);
         expect(actual).to.eql([]);
-    })
+    });
 });
 
 describe('List.mergeMatches', () => {
-    let areMatch = (a:string, b:string) => a[0] === b[0];
-    let merge = (a:string, b:string) => a + ", " + b;
+    let areMatch = (a : string, b : string) => a[0] === b[0];
+    let merge = (a : string, b : string) => a + ", " + b;
 
     it('Merges matching elements', () => {
         let xs = [
@@ -176,5 +176,5 @@ describe('List.mergeMatches', () => {
     it('Returns empty if input empty', () => {
         let actual = List.mergeMatches([], areMatch, merge);
         expect(actual).to.eql([]);
-    })
+    });
 });

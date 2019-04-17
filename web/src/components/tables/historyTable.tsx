@@ -7,7 +7,7 @@ import {
     Event,
     EventKind,
     Game
-    } from '../../api/model';
+} from '../../api/model';
 import { Kernel as K } from '../../kernel';
 
 export interface HistoryTableProps {
@@ -19,7 +19,7 @@ export interface HistoryTableProps {
 
 export default class HistoryTable extends React.Component<HistoryTableProps> {
 
-    render() {
+    public render() : JSX.Element {
         return (
             <div className={K.classes.flex}>
                 <table

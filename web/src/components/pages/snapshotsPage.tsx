@@ -31,11 +31,11 @@ export default class SnapshotsPage extends React.Component<SnapshotsPageProps, S
         };
     }
 
-    componentDidMount() {
+    public componentDidMount() : void {
         this.getSnapshots();
     }
 
-    render() {
+    public render() : JSX.Element {
         if (this.state.redirectUrl !== null) {
             return <Redirect to={this.state.redirectUrl}/>;
         }
@@ -86,14 +86,14 @@ export default class SnapshotsPage extends React.Component<SnapshotsPageProps, S
 
     private descriptionChanged(e : React.ChangeEvent<HTMLInputElement>) {
         const description = e.target.value;
-        this.setState({newSnapshotDescription: description})
+        this.setState({newSnapshotDescription: description});
     }
 
     private getSnapshots() {
         K.api.getSnapshotsForGame(this.props.gameId)
-        .then(snapshots => {
-            this.setState({snapshots: snapshots});
-        })
+            .then(snapshots => {
+                this.setState({snapshots: snapshots});
+            });
     }
 
     private createSnapshot() : void {
@@ -103,29 +103,29 @@ export default class SnapshotsPage extends React.Component<SnapshotsPageProps, S
             };
 
         K.api.createSnapshot(this.props.gameId, request)
-        .then(snapshot => {
-            const newSnapshots = this.state.snapshots.slice();
-            newSnapshots.push(snapshot);
-            this.setState({
-                snapshots: newSnapshots,
-                newSnapshotDescription: ""
+            .then(snapshot => {
+                const newSnapshots = this.state.snapshots.slice();
+                newSnapshots.push(snapshot);
+                this.setState({
+                    snapshots: newSnapshots,
+                    newSnapshotDescription: ""
+                });
             });
-        })
     }
 
     private loadSnapshot(snapshotId : number) : void {
         K.api.loadSnapshot(this.props.gameId, snapshotId)
-        .then(_ => {
-            const url = K.routes.game(this.props.gameId);
-            this.setState({redirectUrl: url});
-        });
+            .then(_ => {
+                const url = K.routes.game(this.props.gameId);
+                this.setState({redirectUrl: url});
+            });
     }
 
     private deleteSnapshot(snapshotId : number) : void {
         K.api.deleteSnapshot(this.props.gameId, snapshotId)
-        .then(_ => {
-            const newSnapshots = this.state.snapshots.filter(s => s.id !== snapshotId);
-            this.setState({snapshots: newSnapshots});
-        });
+            .then(_ => {
+                const newSnapshots = this.state.snapshots.filter(s => s.id !== snapshotId);
+                this.setState({snapshots: newSnapshots});
+            });
     }
 }

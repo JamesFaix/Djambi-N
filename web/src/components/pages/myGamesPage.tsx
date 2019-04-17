@@ -11,7 +11,7 @@ export interface MyGamesPageProps {
 }
 
 export interface MyGamesPageState {
-    games : Game[],
+    games : Game[]
 }
 
 export default class MyGamesPage extends React.Component<MyGamesPageProps, MyGamesPageState> {
@@ -22,7 +22,7 @@ export default class MyGamesPage extends React.Component<MyGamesPageProps, MyGam
         };
     }
 
-    componentDidMount() {
+    public componentDidMount() : void {
         this.refreshResults();
     }
 
@@ -35,7 +35,7 @@ export default class MyGamesPage extends React.Component<MyGamesPageProps, MyGam
             allowGuests: null,
             descriptionContains: null,
             status: null
-        }
+        };
 
         K.api
             .getGames(query)
@@ -47,10 +47,10 @@ export default class MyGamesPage extends React.Component<MyGamesPageProps, MyGam
             });
     }
 
-    render() {
+    public render() : JSX.Element {
         //Go to home if not logged in
         if (this.props.user === null) {
-            return <Redirect to={K.routes.home()}/>
+            return <Redirect to={K.routes.home()}/>;
         }
 
         return (

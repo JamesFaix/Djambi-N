@@ -30,10 +30,10 @@ export default class PlayerStatusIcon extends React.Component<PlayerStatusIconPr
                 };
             case PlayerStatus.AcceptsDraw:
                 return {
-                     hint: "Will accept draw",
+                    hint: "Will accept draw",
                     kind: IconKind.AcceptDraw,
                     isActive: player.kind !== PlayerKind.Neutral
-                    };
+                };
             case PlayerStatus.Conceded:
                 return {
                     hint: "Conceded",
@@ -51,19 +51,19 @@ export default class PlayerStatusIcon extends React.Component<PlayerStatusIconPr
                     hint: "Eliminated",
                     kind: IconKind.Eliminated,
                     isActive: false
-                 };
+                };
             case PlayerStatus.Victorious:
                 return {
-                     hint: "Victorious",
-                     kind: IconKind.Victorious,
-                     isActive: true
-                     };
+                    hint: "Victorious",
+                    kind: IconKind.Victorious,
+                    isActive: true
+                };
             default:
                 throw "Invalid player status.";
         }
     }
 
-    render() {
+    public render() : JSX.Element {
         const details = this.getDetails(this.props.player);
         const style = details.isActive
             ? undefined

@@ -39,7 +39,7 @@ export default class CanvasBoard extends React.Component<CanvasBoardProps> {
                     strokeWidth={this.props.boardStrokeWidth}
                 />
             </Layer>
-        )
+        );
     }
 
     private renderCells() {
@@ -100,7 +100,7 @@ export default class CanvasBoard extends React.Component<CanvasBoardProps> {
         );
     }
 
-    render() {
+    public render() : JSX.Element {
         return (
             <Stage width={this.props.size.x} height={this.props.size.y}>
                 {this.renderBackground()}

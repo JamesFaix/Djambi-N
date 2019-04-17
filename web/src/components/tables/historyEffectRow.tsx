@@ -10,7 +10,7 @@ export interface HistoryEffectRowProps {
 
 export default class HistoryEffectRow extends React.Component<HistoryEffectRowProps> {
 
-    render() {
+    public render() : JSX.Element {
         return (
             <p>
                 {K.copy.getEffectMessage(this.props.game, this.props.effect)}

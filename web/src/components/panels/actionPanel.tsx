@@ -9,7 +9,7 @@ export interface ActionPanelProps {
     user : User,
     game : Game,
     width : string,
-    height? : string,
+    height ? : string,
     playerActionsService : PlayerActionsService
 }
 
@@ -25,9 +25,9 @@ export default class ActionPanel extends React.Component<ActionPanelProps, Actio
         };
     }
 
-//--- Rendering ---
+    //--- Rendering ---
 
-    render() {
+    public render() : JSX.Element {
         let style = K.styles.combine([
             K.styles.flex(0),
             K.styles.width(this.props.width)
@@ -84,6 +84,8 @@ export default class ActionPanel extends React.Component<ActionPanelProps, Actio
                         hint="Show less"
                     />
                 );
+            default:
+                throw "Invalid HiddenActionState.";
         }
     }
 }

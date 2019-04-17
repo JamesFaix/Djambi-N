@@ -10,14 +10,14 @@ export enum HttpMethod {
 
 export class ApiClientCore {
 
-    public static async sendRequest<TBody, TResponse>(
+    public static sendRequest<TBody, TResponse>(
         method : HttpMethod,
         route : string,
         body : TBody = null)
         : Promise<TResponse> {
 
         const url = Environment.apiAddress() + route;
-        const endpointDescription = method.toString() + " " + route
+        const endpointDescription = method.toString() + " " + route;
 
         const fetchParams : RequestInit = {
             method: method.toString(),
@@ -32,8 +32,8 @@ export class ApiClientCore {
             fetchParams.body = JSON.stringify(body);
         }
 
-        return await fetch(url, fetchParams)
-            .then(async response => {
+        return fetch(url, fetchParams)
+            .then(response => {
                 if (!response.ok){
                     return response.json()
                         .then(errorMessage => {
@@ -47,7 +47,7 @@ export class ApiClientCore {
                     if (Debug.logApiSuccesses) {
                         console.log(endpointDescription + " succeeded");
                     }
-                    return await response.json();
+                    return response.json();
                 }
             })
             .catch(reason => {

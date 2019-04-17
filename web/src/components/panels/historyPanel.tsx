@@ -9,7 +9,7 @@ import Icon, { IconKind } from '../icons/icon';
 export interface HistoryPanelProps {
     game : Game,
     events : Event[],
-    height? : string,
+    height ? : string,
     width : string,
     textStyle : React.CSSProperties,
     getBoard : (regionCount : number) => Board,
@@ -17,7 +17,7 @@ export interface HistoryPanelProps {
 }
 
 export default class HistoryPanel extends React.Component<HistoryPanelProps> {
-    render() {
+    public render() : JSX.Element {
         let panelStyle = K.styles.combine([
             K.styles.flex(1),
             K.styles.width(this.props.width)

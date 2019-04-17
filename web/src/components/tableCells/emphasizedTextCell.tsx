@@ -3,12 +3,12 @@ import { Kernel as K } from '../../kernel';
 
 export interface EmphasizedTextCellProps {
     text : string,
-    noBorder? : boolean
+    noBorder ? : boolean
 }
 
 export default class EmphasizedTextCell extends React.Component<EmphasizedTextCellProps> {
 
-    render() {
+    public render() : JSX.Element {
         const classes = [K.classes.paddedCell];
         if (this.props.noBorder) {
             classes.push(K.classes.borderless);

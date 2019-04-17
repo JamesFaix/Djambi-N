@@ -6,12 +6,12 @@ import Icon, { IconKind } from '../icons/icon';
 
 export interface PlayersPanelProps {
     game : Game,
-    height? : string,
+    height ? : string,
     width : string
 }
 
 export default class PlayersPanel extends React.Component<PlayersPanelProps> {
-    render() {
+    public render() : JSX.Element {
         let style = K.styles.combine([
             K.styles.flex(0),
             K.styles.width(this.props.width)
