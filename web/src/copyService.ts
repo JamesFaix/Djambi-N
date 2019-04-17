@@ -42,7 +42,7 @@ export default class CopyService {
     }
 
     public locationToString(location : Location) : string {
-        return Sprintf.sprintf("(%i, %i, %i)", location.region, location.x, location.y);
+        return `(${location.region}, ${location.x}, ${location.y})`;
     }
 
     public getCellLabel(cellId : number, regionCount : number) : string {
@@ -74,11 +74,11 @@ export default class CopyService {
 
         const player = game.players.find(p => p.id === piece.playerId);
         const base = player
-            ? Sprintf.sprintf("%s's %s", player.name, kindName)
-            : Sprintf.sprintf("Neutral %s", kindName);
+            ? `${player.name}'s ${kindName}`
+            : `Neutral ${kindName}`;
 
         if (Debug.showPieceAndCellIds){
-            return Sprintf.sprintf("%s (#%i)", base, piece.id);
+            return `${base} (#${piece.id})`;
         } else {
             return base;
         }

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Game, Player, User, Turn, TurnStatus } from '../../api/model';
 import { Kernel as K } from '../../kernel';
-import * as Sprintf from "sprintf-js";
+import * as Sprintf from 'sprintf-js';
 
 export interface CurrentTurnPanelProps {
     game : Game,
@@ -48,7 +48,7 @@ export default class CurrentTurnPanel extends React.Component<CurrentTurnPanelPr
     private renderForOtherPlayer(player : Player) {
         return (
             <div>
-                {Sprintf.sprintf("Waiting on %s...", player.name)}
+                {`Waiting on ${player.name}...`}
             </div>
         );
     }

@@ -1,5 +1,3 @@
-import * as Sprintf from 'sprintf-js';
-
 export default class Routes {
 
     public createGame() { return "/games/create"; }
@@ -8,11 +6,11 @@ export default class Routes {
 
     public findGame() { return "/games/find"; }
 
-    public game(gameId : number) { return Sprintf.sprintf("/games/%i", gameId); }
+    public game(gameId : number) { return `/games/${gameId}`; }
 
     public gameTemplate() { return "/games/:gameId"; }
 
-    public gameInfo(gameId : number) { return Sprintf.sprintf("/games/%i/info", gameId); }
+    public gameInfo(gameId : number) { return `/games/${gameId}/info`; }
 
     public gameInfoTemplate() { return "/games/:gameId/info"; }
 
@@ -26,7 +24,7 @@ export default class Routes {
 
     public signup() { return "/signup"; }
 
-    public snapshots(gameId : number) { return Sprintf.sprintf("/games/%i/snapshots", gameId); }
+    public snapshots(gameId : number) { return `/games/${gameId}/snapshots`; }
 
     public snapshotsTemplate() { return "/games/:gameId/snapshots"; }
 }
