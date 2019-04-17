@@ -88,7 +88,7 @@ module.exports = {
             }
         ],
         "@typescript-eslint/no-explicit-any": "off",
-        "@typescript-eslint/no-extraneous-class": "warn",
+        // "@typescript-eslint/no-extraneous-class": "warn",
         "@typescript-eslint/no-for-in-array": "error",
         "@typescript-eslint/no-parameter-properties": "off",
         "@typescript-eslint/no-this-alias": "error",
