@@ -48,7 +48,7 @@ export default class Geometry {
             return {
                 x: b.x === 0 ? 0 : a.x / b.x,
                 y: b.y === 0 ? 0 : a.y / b.y
-            }
+            };
         }
 
         public static isCloseTo(a : Point, b : Point, threshold : number) : boolean {
@@ -128,7 +128,7 @@ export default class Geometry {
         //Determines if both lines share exactly one vertex, within the given threshold of error
         public static isChainedTo(l1 : Line, l2 : Line, threshold : number) : boolean {
             const P = Geometry.Point;
-            return Logic.Xors([
+            return Logic.xors([
                 P.isCloseTo(l1.a, l2.a, threshold),
                 P.isCloseTo(l1.a, l2.b, threshold),
                 P.isCloseTo(l1.b, l2.a, threshold),
@@ -154,7 +154,7 @@ export default class Geometry {
             return {
                 x: (l.a.x + l.b.x) / 2,
                 y: (l.a.y + l.b.y) / 2
-            }
+            };
         }
     }
 
@@ -371,7 +371,7 @@ export default class Geometry {
             return {
                 x: this.sideToWidthRatio(numberOfSides),
                 y: this.sideToHeightRatio(numberOfSides)
-            }
+            };
         }
 
         public static sideToCentroidOffsetFromTopLeftRatios(numberOfSides : number) : Point {
@@ -439,7 +439,7 @@ export default class Geometry {
                 [-1, 0, 0],
                 [ 0, 1, 0],
                 [ 0, 0, 1]
-            ])
+            ]);
         }
 
         public static flipVertical() : MathJs.Matrix {
@@ -447,7 +447,7 @@ export default class Geometry {
                 [1,  0, 0],
                 [0, -1, 0],
                 [0,  0, 1]
-            ])
+            ]);
         }
 
         public static identity() : MathJs.Matrix {

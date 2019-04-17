@@ -65,7 +65,7 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
                         redirectUrl: K.routes.home()
                     });
                 }
-            })
+            });
     }
 
     private startOnClick() {
@@ -173,7 +173,7 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
         }
 
         if (this.state.redirectUrl !== null) {
-            return <Redirect to={this.state.redirectUrl}/>
+            return <Redirect to={this.state.redirectUrl}/>;
         }
 
         const title = "Game " + this.props.gameId;

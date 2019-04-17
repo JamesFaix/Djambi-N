@@ -60,7 +60,7 @@ export default class FindGamePage extends React.Component<FindGamePageProps, Fin
             allowGuests: this.state.allowGuestsFilter,
             descriptionContains: this.state.descriptionContainsFilter,
             status: this.state.statusFilter
-        }
+        };
 
         K.api
             .getGames(query)
@@ -173,7 +173,7 @@ export default class FindGamePage extends React.Component<FindGamePageProps, Fin
     public render() : JSX.Element {
         //Go to home if not logged in
         if (this.props.user === null) {
-            return <Redirect to={K.routes.home()}/>
+            return <Redirect to={K.routes.home()}/>;
         }
 
         return (

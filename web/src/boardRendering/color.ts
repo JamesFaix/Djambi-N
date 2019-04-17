@@ -46,7 +46,7 @@ export default class Color {
             multiplyComponent(this.r, other.r),
             multiplyComponent(this.g, other.g),
             multiplyComponent(this.b, other.b)
-        )
+        );
     }
 
     lighten(multiplier : number) : Color {

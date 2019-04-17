@@ -86,14 +86,14 @@ export default class SnapshotsPage extends React.Component<SnapshotsPageProps, S
 
     private descriptionChanged(e : React.ChangeEvent<HTMLInputElement>) {
         const description = e.target.value;
-        this.setState({newSnapshotDescription: description})
+        this.setState({newSnapshotDescription: description});
     }
 
     private getSnapshots() {
         K.api.getSnapshotsForGame(this.props.gameId)
             .then(snapshots => {
                 this.setState({snapshots: snapshots});
-            })
+            });
     }
 
     private createSnapshot() : void {
@@ -110,7 +110,7 @@ export default class SnapshotsPage extends React.Component<SnapshotsPageProps, S
                     snapshots: newSnapshots,
                     newSnapshotDescription: ""
                 });
-            })
+            });
     }
 
     private loadSnapshot(snapshotId : number) : void {

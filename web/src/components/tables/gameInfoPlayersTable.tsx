@@ -84,7 +84,7 @@ export default class GameInfoPlayersTable extends React.Component<GameInfoPlayer
                 player : null,
                 note : "",
                 action : SeatActionType.Join
-            })
+            });
         //If self is a player and guests allowed, add "Add Guest" seat
         } else if (game.parameters.allowGuests) {
             seats.push({

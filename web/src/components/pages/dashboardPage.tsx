@@ -28,7 +28,7 @@ export default class DashboardPage extends React.Component<DashboardPageProps> {
     public render() : JSX.Element {
         //Go to home if not logged in
         if (this.props.user === null) {
-            return <Redirect to={K.routes.home()}/>
+            return <Redirect to={K.routes.home()}/>;
         }
 
         return (

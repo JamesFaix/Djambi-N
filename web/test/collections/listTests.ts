@@ -40,7 +40,7 @@ describe('List.exists', () => {
     });
 
     it('Returns false if array is empty', () => {
-        let actual = List.exists([], x => true);
+        let actual = List.exists([], _ => true);
         expect(actual).to.equal(false);
     });
 });
@@ -92,7 +92,7 @@ describe('List.forAll', () => {
     });
 
     it('Returns true if array is empty', () => {
-        let actual = List.forAll([], x => true);
+        let actual = List.forAll([], _ => true);
         expect(actual).to.equal(true);
     });
 });
@@ -148,7 +148,7 @@ describe('List.groupMatches', () => {
     it('Returns empty if input empty', () => {
         let actual = List.groupMatches([], areMatch);
         expect(actual).to.eql([]);
-    })
+    });
 });
 
 describe('List.mergeMatches', () => {
@@ -176,5 +176,5 @@ describe('List.mergeMatches', () => {
     it('Returns empty if input empty', () => {
         let actual = List.mergeMatches([], areMatch, merge);
         expect(actual).to.eql([]);
-    })
+    });
 });

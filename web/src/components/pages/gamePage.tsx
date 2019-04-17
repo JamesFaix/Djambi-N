@@ -81,7 +81,7 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
             direction: ResultsDirection.Descending,
             thresholdEventId: null,
             thresholdTime: null
-        }
+        };
         const game = await K.api.getGame(this.props.gameId);
         const history = await K.api.getEvents(this.props.gameId, eventQuery);
         await this.props.load(game, history);

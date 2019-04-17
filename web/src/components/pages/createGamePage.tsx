@@ -28,7 +28,7 @@ export default class CreateGamePage extends React.Component<CreateGamePageProps,
             allowGuests : true,
             isPublic : true,
             gameId : null
-        }
+        };
     }
 
     private formOnChange(event : React.ChangeEvent<HTMLInputElement>) {

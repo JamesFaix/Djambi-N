@@ -138,7 +138,7 @@ export default class BoardViewFactory {
             state: CellState.Default,
             piece: null,
             polygon: polygon
-        }
+        };
     }
 
     //TODO: Add unit tests

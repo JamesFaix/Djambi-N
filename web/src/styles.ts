@@ -104,7 +104,7 @@ export class Styles {
                 let result = {};
                 styles.forEach(s => {
                     result = { ...result, ...s };
-                })
+                });
                 return result;
         }
     }

@@ -35,7 +35,7 @@ export default class MyGamesPage extends React.Component<MyGamesPageProps, MyGam
             allowGuests: null,
             descriptionContains: null,
             status: null
-        }
+        };
 
         K.api
             .getGames(query)
@@ -50,7 +50,7 @@ export default class MyGamesPage extends React.Component<MyGamesPageProps, MyGam
     public render() : JSX.Element {
         //Go to home if not logged in
         if (this.props.user === null) {
-            return <Redirect to={K.routes.home()}/>
+            return <Redirect to={K.routes.home()}/>;
         }
 
         return (

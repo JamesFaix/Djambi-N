@@ -69,7 +69,7 @@ export default class TurnCyclePanel extends React.Component<TurnCyclePanelProps>
                     id: p.id,
                     name: p.name,
                     color: K.theme.getPlayerColor(p.colorId)
-                }
+                };
             });
     }
 }

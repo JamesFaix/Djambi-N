@@ -19,10 +19,6 @@ import Environment from '../environment';
 import BoardViewService from '../boardRendering/boardViewService';
 import { BoardView } from '../boardRendering/model';
 
-export interface AppProps {
-
-}
-
 export interface AppState {
     user : User,
     eventSource : EventSource,
@@ -31,10 +27,10 @@ export interface AppState {
     boardView : BoardView
 }
 
-export default class App extends React.Component<AppProps, AppState> {
+export default class App extends React.Component<{}, AppState> {
     private readonly boardViewService : BoardViewService;
 
-    constructor(props : AppProps) {
+    constructor(props : {}) {
         super(props);
 
         K.initialize();

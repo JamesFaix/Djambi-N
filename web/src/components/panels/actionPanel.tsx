@@ -84,6 +84,8 @@ export default class ActionPanel extends React.Component<ActionPanelProps, Actio
                         hint="Show less"
                     />
                 );
+            default:
+                throw "Invalid HiddenActionState.";
         }
     }
 }
