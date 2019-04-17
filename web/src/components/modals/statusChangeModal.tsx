@@ -2,7 +2,6 @@ import * as React from 'react';
 import * as Modal from 'react-modal';
 import { Player, PlayerStatus } from '../../api/model';
 import Dropdown, { DropdownItem } from '../controls/dropdown';
-import * as Sprintf from 'sprintf-js';
 import { Kernel as K } from '../../kernel';
 import Button, { ButtonKind } from '../controls/button';
 
@@ -103,13 +102,13 @@ export default class StatusChangeModal extends React.Component<StatusChangeModal
         } else {
             switch (this.props.targetStatus) {
                 case PlayerStatus.AcceptsDraw:
-                    text = Sprintf.sprintf("%s, are you sure you want to accept a draw?", p.name);
+                    text = `${p.name}, are you sure you want to accept a draw?`;
                     break;
                 case PlayerStatus.Alive:
-                    text = Sprintf.sprintf("%s, are you sure you want to decline a draw?", p.name);
+                    text = `${p.name}, are you sure you want to decline a draw?`;
                     break;
                 case PlayerStatus.Conceded:
-                    text = Sprintf.sprintf("%s, are you sure you want to concede?", p.name);
+                    text = `${p.name}, are you sure you want to concede?`;
                     break;
                 default:
                     throw "Unsupported player status";

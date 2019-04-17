@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Game, Player, PlayerKind } from '../../api/model';
 import { Kernel as K } from '../../kernel';
 import PlayerStatusIcon from '../icons/playerStatusIcon';
-import * as Sprintf from 'sprintf-js';
 import Icon, { IconKind } from '../icons/icon';
 
 export interface PlayersPanelTableProps {
@@ -95,7 +94,7 @@ export default class PlayersPanelTable extends React.Component<PlayersPanelTable
     private getPlayerHint(player : Player) : string {
         const note = K.copy.getPlayerNote(player, this.props.game);
         return note
-            ? Sprintf.sprintf("%s (%s)", player.name, note)
+            ? `${player.name} (${note})`
             : player.name;
     }
 
