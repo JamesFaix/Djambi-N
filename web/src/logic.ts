@@ -4,7 +4,7 @@ const Logic = {
     },
 
     xors(xs : boolean[]) : boolean {
-        return xs.reduce(this.Xor, false);
+        return xs.reduce(this.xor, false);
     }
 };
 

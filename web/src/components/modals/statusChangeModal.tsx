@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as Modal from 'react-modal';
+import Modal from 'react-modal';
 import { Player, PlayerStatus } from '../../api/model';
 import Dropdown, { DropdownItem } from '../controls/dropdown';
 import { Kernel as K } from '../../kernel';
