@@ -17,7 +17,7 @@ export class ApiClientCore {
         : Promise<TResponse> {
 
         const url = Environment.apiAddress() + route;
-        const endpointDescription = method.toString() + " " + route
+        const endpointDescription = method.toString() + " " + route;
 
         const fetchParams : RequestInit = {
             method: method.toString(),

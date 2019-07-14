@@ -25,14 +25,14 @@ export interface ThemeCellStyle {
     colorOdd : string,
     textColorCenter : string,
     textColorEven : string,
-    textColorOdd: string
+    textColorOdd : string
 }
 
 export interface ThemeCellHighlightStyle {
     selectedColor : string,
     selectedIntensity : number,
     selectionOptionColor : string,
-    selectionOptionIntensity : number,
+    selectionOptionIntensity : number
 }
 
 export interface ThemeGameCopy {
@@ -95,7 +95,7 @@ export interface ThemePieces {
     nameDiplomat : string,
     nameGravedigger : string,
     nameReporter : string,
-    nameThug : string,
+    nameThug : string
 }
 
 export interface ThemePlayers {
@@ -106,15 +106,15 @@ export interface ThemePlayers {
     color4 : string,
     color5 : string,
     color6 : string,
-    color7 : string,
+    color7 : string
 }
 
 export default interface Theme {
-    pageStyle? : ThemePageStyle,
-    cellStyle? : ThemeCellStyle,
-    cellHighlightStyle? : ThemeCellHighlightStyle,
-    gameCopy? : ThemeGameCopy,
-    pieces? : ThemePieces,
-    players? : ThemePlayers,
-    centerCellName? : string,
-}
+    pageStyle ? : ThemePageStyle,
+    cellStyle ? : ThemeCellStyle,
+    cellHighlightStyle ? : ThemeCellHighlightStyle,
+    gameCopy ? : ThemeGameCopy,
+    pieces ? : ThemePieces,
+    players ? : ThemePlayers,
+    centerCellName ? : string
+};;;;;;;;;;

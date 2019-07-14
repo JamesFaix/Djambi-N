@@ -15,7 +15,7 @@ import {
     GameStatus,
     Turn,
     TurnStatus
-    } from '../api/model';
+} from '../api/model';
 
 export default class ThemeService {
     private _theme : Theme;
