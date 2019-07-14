@@ -13,7 +13,7 @@ export interface CanvasLabelProps {
 
 export default class CanvasLabel extends React.Component<CanvasLabelProps> {
 
-    public render() : JSX.Element {
+    render() {
         if (!Debug.showCellLabels) {
             return undefined;
         }

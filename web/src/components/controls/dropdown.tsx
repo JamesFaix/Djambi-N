@@ -28,23 +28,23 @@ export default class Dropdown<T> extends React.Component<DropdownProps<T>> {
         this.props.onChange(this.props.name, value);
     }
 
-    public render() : JSX.Element {
+    render() {
         return (
             <select
                 name={this.props.name}
                 onChange={e => this.onChange(e)}
                 value={this.getLabelOfValue(this.props.currentValue)}
             >
-                {
-                    this.props.items.map((item, i) =>
-                        <option
-                            key={"option" + i}
-                            value={item.label}
-                        >
-                            {item.label}
-                        </option>
-                    )
-                }
+            {
+                this.props.items.map((item, i) =>
+                    <option
+                        key={"option" + i}
+                        value={item.label}
+                    >
+                    {item.label}
+                    </option>
+                )
+            }
             </select>
         );
     }

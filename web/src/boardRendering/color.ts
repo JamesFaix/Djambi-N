@@ -35,7 +35,7 @@ export default class Color {
         );
     }
 
-    //#region Color effects
+//#region Color effects
 
     multiply(other : Color) : Color {
         function multiplyComponent(a : number, b : number) {
@@ -46,7 +46,7 @@ export default class Color {
             multiplyComponent(this.r, other.r),
             multiplyComponent(this.g, other.g),
             multiplyComponent(this.b, other.b)
-        );
+        )
     }
 
     lighten(multiplier : number) : Color {
@@ -68,6 +68,6 @@ export default class Color {
         return this.lighten(-multiplier);
     }
 
-    //#endregion
+//#endregion
 
 }

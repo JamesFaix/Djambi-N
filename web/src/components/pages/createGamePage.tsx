@@ -28,7 +28,7 @@ export default class CreateGamePage extends React.Component<CreateGamePageProps,
             allowGuests : true,
             isPublic : true,
             gameId : null
-        };
+        }
     }
 
     private formOnChange(event : React.ChangeEvent<HTMLInputElement>) {
@@ -80,7 +80,7 @@ export default class CreateGamePage extends React.Component<CreateGamePageProps,
             });
     }
 
-    public render() : JSX.Element {
+    render() {
         //Go to home if not logged in
         if (this.props.user === null) {
             return <Redirect to={K.routes.home()}/>;

@@ -10,7 +10,7 @@ export interface StatusChangeModalProps {
     onCancel : () => void,
     targetStatus : PlayerStatus,
     playerOptions : Player[],
-    setPlayer : (player : Player) => void
+    setPlayer: (player : Player) => void
 }
 
 export interface StatusChangeModalState {
@@ -44,14 +44,14 @@ export default class StatusChangeModal extends React.Component<StatusChangeModal
 
     //--- Rendering ---
 
-    public render() : JSX.Element {
+    render() {
 
         const style = {
             content : {
-                top: "30%",
-                bottom: "30%",
-                left: "30%",
-                right: "30%"
+            top: "30%",
+            bottom: "30%",
+            left: "30%",
+            right: "30%"
             }
         };
 
@@ -190,13 +190,13 @@ export default class StatusChangeModal extends React.Component<StatusChangeModal
 
         items = items.concat(
             this.props.playerOptions
-                .map(p => {
-                    const result = {
-                        label: p.name,
-                        value: p
-                    };
-                    return result;
-                }));
+            .map(p => {
+                const result = {
+                    label: p.name,
+                    value: p
+                };
+                return result;
+            }));
 
         let currentPlayer = null;
 

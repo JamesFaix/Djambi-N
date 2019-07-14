@@ -6,12 +6,12 @@ import {
     Line,
     Point,
     Polygon,
-} from "./model";
+    } from "./model";
 import Geometry from "./geometry";
 import {
     Board,
     Location
-} from "../api/model";
+    } from "../api/model";
 import { List } from "../collections";
 const Point = Geometry.Point;
 const Line = Geometry.Line;
@@ -28,13 +28,13 @@ export default class BoardViewFactory {
         const regionCount = boardEdges.length;
 
         return Polygon.create([
-            boardPolygon.vertices[regionNumber],
-            Line.midPoint(boardEdges[regionNumber]),
-            boardCentroid,
-            Line.midPoint(boardEdges[
-                (regionNumber + (regionCount-1)) % regionCount
-            ])
-        ]);
+                boardPolygon.vertices[regionNumber],
+                Line.midPoint(boardEdges[regionNumber]),
+                boardCentroid,
+                Line.midPoint(boardEdges[
+                    (regionNumber + (regionCount-1)) % regionCount
+                ])
+            ]);
     }
 
     //TODO: Add unit tests
@@ -112,11 +112,11 @@ export default class BoardViewFactory {
         const upperFraction = this.getRowOrColumnBorderDistanceFromRegionEdge(locationX, false, cellCountPerSide);
 
         return Polygon.create([
-            Line.fractionPoint(rowBorders[0], lowerFraction),
-            Line.fractionPoint(rowBorders[0], upperFraction),
-            Line.fractionPoint(rowBorders[1], upperFraction),
-            Line.fractionPoint(rowBorders[1], lowerFraction),
-        ]);
+                Line.fractionPoint(rowBorders[0], lowerFraction),
+                Line.fractionPoint(rowBorders[0], upperFraction),
+                Line.fractionPoint(rowBorders[1], upperFraction),
+                Line.fractionPoint(rowBorders[1], lowerFraction),
+            ]);
     }
 
     //TODO: Add unit tests
@@ -138,14 +138,14 @@ export default class BoardViewFactory {
             state: CellState.Default,
             piece: null,
             polygon: polygon
-        };
+        }
     }
 
     //TODO: Add unit tests
-    public static createEmptyBoardView(board : Board) : BoardView {
+    public static createEmptyBoardView(board : Board): BoardView {
         const cellCountPerSide = (board.regionSize * 2) - 1;
         const boardPolygon = Geometry.RegularPolygon.create(board.regionCount, 1);
-        let cellViews : CellView[] = [];
+        let cellViews : Array<CellView> = [];
 
         for (var region = 0; region < board.regionCount; region++) {
             const regionPolygon = this.getRegionPolygon(boardPolygon, region);
@@ -180,7 +180,7 @@ export default class BoardViewFactory {
     }
 
     //TODO: Add tests
-    public static mergeCellViews(a : CellView, b : CellView) : CellView {
+    public static mergeCellViews(a : CellView, b: CellView) : CellView {
         if (a.piece !== b.piece) {
             throw "Cannot merge CellViews with difference pieces";
         }

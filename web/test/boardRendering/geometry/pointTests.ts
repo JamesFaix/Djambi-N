@@ -148,7 +148,7 @@ describe ('Point.toString', () => {
         let expected = "(1, -2)";
         let actual = P.toString(p);
         expect(actual).to.equal(expected);
-    });
+    })
 });
 
 //TODO: Add tests for Point.transform

@@ -4,7 +4,7 @@ import { Kernel as K } from '../kernel';
 
 export default class TopMenu extends React.Component {
 
-    public render() : JSX.Element {
+    render() {
         return (
             <div className={K.classes.topMenu}>
                 <AppTitle/>

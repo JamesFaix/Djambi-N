@@ -5,16 +5,16 @@ import { Kernel as K } from '../../kernel';
 
 export interface LinkButtonProps {
     to : string,
-    hint ? : string
+    hint? : string
 }
 
 export interface ActionButtonProps {
     onClick : () => void,
-    hint ? : string
+    hint? : string
 }
 
 export class CreateGamePageButton extends React.Component<{}> {
-    public render() : JSX.Element {
+    render() {
         return (
             <Button
                 kind={ButtonKind.Link}
@@ -27,7 +27,7 @@ export class CreateGamePageButton extends React.Component<{}> {
 }
 
 export class DashboardPageButton extends React.Component<{}> {
-    public render() : JSX.Element {
+    render() {
         return (
             <Button
                 kind={ButtonKind.Link}
@@ -40,7 +40,7 @@ export class DashboardPageButton extends React.Component<{}> {
 }
 
 export class EnterButton extends React.Component<LinkButtonProps> {
-    public render() : JSX.Element {
+    render() {
         return (
             <Button
                 kind={ButtonKind.Link}
@@ -53,7 +53,7 @@ export class EnterButton extends React.Component<LinkButtonProps> {
 }
 
 export class FindGamesPageButton extends React.Component<{}> {
-    public render() : JSX.Element {
+    render() {
         return (
             <Button
                 kind={ButtonKind.Link}
@@ -66,7 +66,7 @@ export class FindGamesPageButton extends React.Component<{}> {
 }
 
 export class HomePageButton extends React.Component<{}> {
-    public render() : JSX.Element {
+    render() {
         return (
             <Button
                 kind={ButtonKind.Link}
@@ -79,7 +79,7 @@ export class HomePageButton extends React.Component<{}> {
 }
 
 export class LoginPageButton extends React.Component<{}> {
-    public render() : JSX.Element {
+    render() {
         return (
             <Button
                 kind={ButtonKind.Link}
@@ -92,7 +92,7 @@ export class LoginPageButton extends React.Component<{}> {
 }
 
 export class MyGamesPageButton extends React.Component<{}> {
-    public render() : JSX.Element {
+    render() {
         return (
             <Button
                 kind={ButtonKind.Link}
@@ -105,7 +105,7 @@ export class MyGamesPageButton extends React.Component<{}> {
 }
 
 export class ResetButton extends React.Component<ActionButtonProps> {
-    public render() : JSX.Element {
+    render() {
         return (
             <Button
                 kind={ButtonKind.Action}
@@ -118,7 +118,7 @@ export class ResetButton extends React.Component<ActionButtonProps> {
 }
 
 export class RulesPageButton extends React.Component<{}> {
-    public render() : JSX.Element {
+    render() {
         return (
             <Button
                 kind={ButtonKind.Link}
@@ -132,7 +132,7 @@ export class RulesPageButton extends React.Component<{}> {
 }
 
 export class SignupPageButton extends React.Component<{}> {
-    public render() : JSX.Element {
+    render() {
         return (
             <Button
                 kind={ButtonKind.Link}
@@ -145,7 +145,7 @@ export class SignupPageButton extends React.Component<{}> {
 }
 
 export class SubmitButton extends React.Component<ActionButtonProps> {
-    public render() : JSX.Element {
+    render() {
         return (
             <Button
                 kind={ButtonKind.Action}

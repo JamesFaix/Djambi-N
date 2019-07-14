@@ -3,12 +3,12 @@ import { Kernel as K } from '../../kernel';
 
 export interface HintCellProps {
     text : string,
-    noBorder ? : boolean
+    noBorder? : boolean
 }
 
 export default class HintCell extends React.Component<HintCellProps> {
 
-    public render() : JSX.Element {
+    render() {
         const classes = [K.classes.lightText, K.classes.paddedCell];
         if (this.props.noBorder) {
             classes.push(K.classes.borderless);

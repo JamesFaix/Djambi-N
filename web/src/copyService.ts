@@ -31,7 +31,7 @@ import {
     TurnCyclePlayerFellFromPowerEffect,
     TurnCyclePlayerRemovedEffect,
     TurnCyclePlayerRoseToPowerEffect
-} from './api/model';
+    } from './api/model';
 
 export default class CopyService {
     constructor(
@@ -103,7 +103,7 @@ export default class CopyService {
                 if (piece === null) {
                     return Sprintf.sprintf(format, cell);
                 } else {
-                    return Sprintf.sprintf(format, cell, piece);
+                    return Sprintf.sprintf(format, cell, piece)
                 }
 
             case SelectionKind.Subject:
@@ -227,7 +227,7 @@ export default class CopyService {
         const f = effect.value as NeutralPlayerAddedEffect;
         return Sprintf.sprintf(template, {
             player: f.name
-        });
+        })
     }
 
     private getPieceAbandonedMessage(game : Game, effect : Effect) : string {

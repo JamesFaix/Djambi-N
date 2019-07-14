@@ -13,7 +13,7 @@ export interface CurrentTurnPanelProps {
 
 export default class CurrentTurnPanel extends React.Component<CurrentTurnPanelProps> {
 
-    public render() : JSX.Element {
+    render() {
         const turn = this.props.game.currentTurn;
         if(turn === null) {
             return undefined;
