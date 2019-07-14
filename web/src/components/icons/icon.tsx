@@ -48,7 +48,7 @@ export enum IconKind {
 
 export interface IconnProps {
     kind : IconKind,
-    hint ? : string
+    hint? : string
 }
 
 export default class Icon extends React.Component<IconnProps> {
@@ -102,7 +102,7 @@ export default class Icon extends React.Component<IconnProps> {
         }
     }
 
-    public render() : JSX.Element {
+    render() {
         const className = "fas fa-" + this.getIconName(this.props.kind);
         const style = K.styles.fontSize(20);
         return (

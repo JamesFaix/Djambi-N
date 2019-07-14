@@ -15,7 +15,7 @@ export interface BoardPanelProps {
     selectCell : (cell : CellView) => void,
     size : Point,
     boardMargin : number,
-    boardStrokeWidth : number
+    boardStrokeWidth :number
 }
 
 export interface BoardPanelState {
@@ -85,7 +85,7 @@ export default class BoardPanel extends React.Component<BoardPanelProps, BoardPa
 
     //--- RENDERING ---
 
-    public render() : JSX.Element {
+    render() {
         const containerStyle = K.styles.combine([
             K.styles.width("100%"),
             K.styles.height("100%")

@@ -3,11 +3,11 @@ export class List {
         return xs.find(x => x === value) !== undefined;
     }
 
-    public static exists<T>(xs : T[], predicate : (value : T) => boolean) : boolean {
+    public static exists<T>(xs : T[], predicate : (value:T) => boolean) : boolean {
         return xs.find(x => predicate(x)) !== undefined;
     }
 
-    public static flatMap<T1, T2>(xs : T1[], projection : (x : T1) => T2[]) : T2[] {
+    public static flatMap<T1, T2>(xs : T1[], projection : (x:T1) => T2[]) : T2[] {
         return this.flatten(xs.map(projection));
     }
 
@@ -15,11 +15,11 @@ export class List {
         return xs.reduce((a, b) => a.concat(b), []);
     }
 
-    public static forAll<T>(xs : T[], predicate : (value : T) => boolean) : boolean {
+    public static forAll<T>(xs : T[], predicate : (value:T) => boolean) : boolean {
         return xs.find(x => !predicate(x)) === undefined;
     }
 
-    public static groupBy<T, TKey>(xs : T[], keySelector : (x : T) => TKey) : [TKey, T[]][] {
+    public static groupBy<T, TKey>(xs : T[], keySelector : (x:T) => TKey) : [TKey, T[]][] {
         const groups : [TKey, T[]][] = [];
 
         xs.forEach(x => {
@@ -38,7 +38,7 @@ export class List {
 
     public static groupMatches<T>(
         elements : T[],
-        areMatch : (a : T, b : T) => boolean) : T[][] {
+        areMatch : (a:T, b:T) => boolean) : T[][] {
 
         const results : T[][] = [];
 
@@ -60,8 +60,8 @@ export class List {
 
     public static mergeMatches<T>(
         elements : T[],
-        areMatch : (a : T, b : T) => boolean,
-        merge : (a : T, b : T) => T) : T[] {
+        areMatch : (a:T, b:T) => boolean,
+        merge : (a:T, b:T) => T) : T[] {
 
         const results : T[] = [];
 

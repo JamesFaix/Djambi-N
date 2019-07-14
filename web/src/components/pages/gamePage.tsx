@@ -9,7 +9,7 @@ import {
     CellState,
     CellView,
     Point
-} from '../../boardRendering/model';
+    } from '../../boardRendering/model';
 import {
     Event,
     EventsQuery,
@@ -20,7 +20,7 @@ import {
     Player,
     GameStatus,
     StateAndEventResponse
-} from '../../api/model';
+    } from '../../api/model';
 import { Kernel as K } from '../../kernel';
 import ActionPanel from '../panels/actionPanel';
 import PlayerActionsService from '../../playerActionsService';
@@ -35,8 +35,8 @@ export interface GamePageProps {
     game : Game,
     boardView : BoardView,
     history : Event[],
-    update : (response : StateAndEventResponse) => Promise<void>,
-    load : (game : Game, history : Event[]) => Promise<void>
+    update : (response:StateAndEventResponse) => Promise<void>,
+    load : (game:Game, history:Event[]) => Promise<void>
 }
 
 export interface GamePageState {
@@ -81,7 +81,7 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
             direction: ResultsDirection.Descending,
             thresholdEventId: null,
             thresholdTime: null
-        };
+        }
         const game = await K.api.getGame(this.props.gameId);
         const history = await K.api.getEvents(this.props.gameId, eventQuery);
         await this.props.load(game, history);
@@ -117,7 +117,7 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
         this.setState({redirectUrl: K.routes.snapshots(this.props.gameId)});
     }
 
-    public componentDidMount() : void {
+    componentDidMount() {
         this.load();
     }
 
@@ -145,7 +145,7 @@ export default class GamePage extends React.Component<GamePageProps, GamePageSta
         this.setState({showGameOverModal: false});
     }
 
-    public render() : JSX.Element {
+    render() {
         if (this.state.redirectUrl !== null) {
             return <Redirect to={this.state.redirectUrl}/>;
         }

@@ -3,11 +3,11 @@ import { Kernel as K } from '../../kernel';
 
 export interface LabeledControlProps {
     label : string,
-    tip ? : string
+    tip? : string
 }
 
 export default class LabeledControl extends React.Component<LabeledControlProps> {
-    public render() : JSX.Element {
+    render() {
         return (
             <div
                 className={K.classes.labeledTextBox}

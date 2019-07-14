@@ -12,7 +12,7 @@ import {
     PlayerKind,
     User,
     Privilege
-} from '../../api/model';
+    } from '../../api/model';
 import { Kernel as K } from '../../kernel';
 import Button, { ButtonKind } from '../controls/button';
 import { IconKind } from '../icons/icon';
@@ -84,7 +84,7 @@ export default class GameInfoPlayersTable extends React.Component<GameInfoPlayer
                 player : null,
                 note : "",
                 action : SeatActionType.Join
-            });
+            })
         //If self is a player and guests allowed, add "Add Guest" seat
         } else if (game.parameters.allowGuests) {
             seats.push({
@@ -234,9 +234,9 @@ export default class GameInfoPlayersTable extends React.Component<GameInfoPlayer
         }
     }
 
-    public render() : JSX.Element {
+    render() {
         if (this.props.game === null) {
-            return null;
+            return "";
         }
 
         const seats = this.getSeats(this.props.game);

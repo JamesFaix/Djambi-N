@@ -7,7 +7,7 @@ export interface PageTitleProps {
 
 export default class PageTitle extends React.Component<PageTitleProps> {
 
-    public render() : JSX.Element {
+    render() {
         return (
             <div className={K.classes.pageTitle}>
                 {this.props.label}

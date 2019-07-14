@@ -6,18 +6,18 @@ import Icon, { IconKind } from '../icons/icon';
 interface PlayerView {
     id : number,
     name : string,
-    color : string
+    color : string,
 }
 
 export interface TurnCyclePanelProps {
     game : Game,
     iconSize : string,
-    height ? : string,
+    height? : string,
     width : string
 }
 
 export default class TurnCyclePanel extends React.Component<TurnCyclePanelProps> {
-    public render() : JSX.Element {
+    render() {
         const rowClass = K.classes.combine([K.classes.thinBorder, K.classes.centerAligned]);
         let style = K.styles.combine([
             K.styles.flex(0),
@@ -69,7 +69,7 @@ export default class TurnCyclePanel extends React.Component<TurnCyclePanelProps>
                     id: p.id,
                     name: p.name,
                     color: K.theme.getPlayerColor(p.colorId)
-                };
+                }
             });
     }
 }

@@ -12,7 +12,7 @@ export interface SnapshotsTableProps {
 
 export default class SnapshotsTable extends React.Component<SnapshotsTableProps> {
 
-    public render() : JSX.Element {
+    render() {
         if (this.props.snapshots.length === 0) {
             return (
                 <div className={K.classes.combine([K.classes.table, K.classes.lightText])}>
@@ -51,7 +51,7 @@ export default class SnapshotsTable extends React.Component<SnapshotsTableProps>
                 </td>
                 <td>
                     {snapshot.description}
-                </td>
+                    </td>
                 <td>
                     {K.dates.format(snapshot.createdBy.time)}
                 </td>

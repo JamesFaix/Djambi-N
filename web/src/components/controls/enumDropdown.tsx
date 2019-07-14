@@ -4,10 +4,10 @@ import Dropdown, { DropdownItem } from './dropdown';
 export interface EnumDropdownProps<TEnum> {
     name : string,
     onChange(name : string, value : TEnum) : void,
-    value : TEnum,
+    value : TEnum
     enum : object,
-    getLabel ? : (value : TEnum) => string,
-    includeNull ? : boolean
+    getLabel? : (value:TEnum) => string,
+    includeNull? : boolean
 }
 
 export default class EnumDropdown<TEnum> extends React.Component<EnumDropdownProps<TEnum>> {
@@ -38,7 +38,7 @@ export default class EnumDropdown<TEnum> extends React.Component<EnumDropdownPro
         });
     }
 
-    public render() : JSX.Element {
+    render() {
         return (
             <Dropdown
                 name={this.props.name}

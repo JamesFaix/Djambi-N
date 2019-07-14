@@ -4,15 +4,15 @@ import { Polygon } from '../../boardRendering/model';
 import { Shape } from 'react-konva';
 
 export interface CanvasPolygonProps {
-    fillColor ? : string,
-    polygon : Polygon,
-    onClick ? : () => void,
-    strokeColor ? : string,
-    strokeWidth ? : number
+    fillColor? : string,
+    polygon: Polygon,
+    onClick? : () => void
+    strokeColor? : string,
+    strokeWidth? : number
 }
 
 export default class CanvasPolygon extends React.Component<CanvasPolygonProps> {
-    public render() : JSX.Element {
+    render() {
         return (
             <Shape
                 sceneFunc={(ctx : Context, shape : any) => {

@@ -5,17 +5,17 @@ import LabeledControl from './labeledControl';
 export interface LabeledInputProps {
     type : InputTypes,
     label : string,
-    value ? : string,
-    onChange(e : React.ChangeEvent<HTMLInputElement>) : void,
-    min ? : number,
-    max ? : number,
-    tip ? : string,
-    placeholder ? : string,
-    checked ? : boolean
+    value? : string,
+    onChange(e : React.ChangeEvent<HTMLInputElement>) : void
+    min? : number,
+    max? : number,
+    tip? : string,
+    placeholder? : string
+    checked? : boolean
 }
 
 export default class LabeledInput extends React.Component<LabeledInputProps> {
-    public render() : JSX.Element {
+    render() {
         return (
             <LabeledControl
                 label={this.props.label}
