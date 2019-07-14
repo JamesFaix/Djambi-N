@@ -3,7 +3,7 @@ import { Kernel as K } from '../../kernel';
 
 export interface EmphasizedTextCellProps {
     text : string,
-    noBorder? : boolean
+    noBorder ?: boolean
 }
 
 export default class EmphasizedTextCell extends React.Component<EmphasizedTextCellProps> {

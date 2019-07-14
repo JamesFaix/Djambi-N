@@ -17,10 +17,10 @@ export default class GameOverModal extends React.Component<GameOverModalProps> {
     render() {
         const style = {
             content : {
-            top: "30%",
-            bottom: "30%",
-            left: "30%",
-            right: "30%"
+                top: "30%",
+                bottom: "30%",
+                left: "30%",
+                right: "30%"
             }
         };
 

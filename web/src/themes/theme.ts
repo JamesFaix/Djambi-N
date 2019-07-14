@@ -110,11 +110,11 @@ export interface ThemePlayers {
 }
 
 export default interface Theme {
-    pageStyle ? : ThemePageStyle,
-    cellStyle ? : ThemeCellStyle,
-    cellHighlightStyle ? : ThemeCellHighlightStyle,
-    gameCopy ? : ThemeGameCopy,
-    pieces ? : ThemePieces,
-    players ? : ThemePlayers,
-    centerCellName ? : string
-};;;;;;;;;;
+    pageStyle ?: ThemePageStyle,
+    cellStyle ?: ThemeCellStyle,
+    cellHighlightStyle ?: ThemeCellHighlightStyle,
+    gameCopy ?: ThemeGameCopy,
+    pieces ?: ThemePieces,
+    players ?: ThemePlayers,
+    centerCellName ?: string
+}

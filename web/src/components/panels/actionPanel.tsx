@@ -9,7 +9,7 @@ export interface ActionPanelProps {
     user : User,
     game : Game,
     width : string,
-    height? : string,
+    height ?: string,
     playerActionsService : PlayerActionsService
 }
 
@@ -25,7 +25,7 @@ export default class ActionPanel extends React.Component<ActionPanelProps, Actio
         };
     }
 
-//--- Rendering ---
+    //--- Rendering ---
 
     render() {
         let style = K.styles.combine([
@@ -64,8 +64,6 @@ export default class ActionPanel extends React.Component<ActionPanelProps, Actio
     private renderExpandCollapseButton() {
         const status = this.props.playerActionsService.getHiddenActionsState(this.state.showAllActions);
         switch(status) {
-            case HiddenActionsState.NoneHideable:
-                return undefined; //Don't show this component
             case HiddenActionsState.SomeHidden:
                 return (
                     <Button
@@ -84,6 +82,8 @@ export default class ActionPanel extends React.Component<ActionPanelProps, Actio
                         hint="Show less"
                     />
                 );
+            default:
+                return null; //Don't show this component
         }
     }
 }

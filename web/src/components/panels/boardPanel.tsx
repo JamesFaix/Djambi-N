@@ -15,7 +15,7 @@ export interface BoardPanelProps {
     selectCell : (cell : CellView) => void,
     size : Point,
     boardMargin : number,
-    boardStrokeWidth :number
+    boardStrokeWidth : number
 }
 
 export interface BoardPanelState {

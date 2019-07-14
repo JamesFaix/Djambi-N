@@ -117,6 +117,6 @@ export default class PlayersPanelTable extends React.Component<PlayersPanelTable
             .find(p => p.userId === guestPlayer.userId
                     && p.kind === PlayerKind.User);
 
-        return K.theme.getPlayerColor(hostPlayer.colorId)
+        return K.theme.getPlayerColor(hostPlayer.colorId);
     }
 }

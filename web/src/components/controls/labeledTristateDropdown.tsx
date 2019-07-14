@@ -4,9 +4,9 @@ import LabeledControl from './labeledControl';
 
 export interface LabeledTristateDropdownProps {
     label : string,
-    onChange(name: string, value : boolean) : void
-    tip? : string,
-    value: boolean
+    onChange(name : string, value : boolean) : void,
+    tip ?: string,
+    value : boolean
 }
 
 export default class LabeledTristateDropdown extends React.Component<LabeledTristateDropdownProps> {

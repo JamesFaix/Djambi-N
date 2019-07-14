@@ -6,7 +6,7 @@ import {
     Game,
     GameStatus,
     User
-    } from '../../api/model';
+} from '../../api/model';
 import { Kernel as K } from '../../kernel';
 import { Redirect } from 'react-router';
 import Button, { ButtonKind } from '../controls/button';
@@ -18,7 +18,7 @@ export interface GameInfoPageProps {
     user : User,
     gameId : number,
     game : Game,
-    load : (game:Game) => Promise<void>
+    load : (game : Game) => Promise<void>
 }
 
 export interface GameInfoPageState {
@@ -45,7 +45,7 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
             });
     }
 
-//---Event handlers---
+    //---Event handlers---
 
     private addPlayer(gameId : number, request : CreatePlayerRequest) : void {
         K.api.addPlayer(gameId, request)
@@ -59,13 +59,13 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
 
     private updateGame(newGame : Game) {
         this.props.load(newGame)
-        .then(_ => {
-            if (newGame.status === GameStatus.Canceled) {
-                this.setState({
-                    redirectUrl: K.routes.home()
-                });
-            }
-        })
+            .then(_ => {
+                if (newGame.status === GameStatus.Canceled) {
+                    this.setState({
+                        redirectUrl: K.routes.home()
+                    });
+                }
+            });
     }
 
     private startOnClick() {
@@ -79,7 +79,7 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
             });
     }
 
-//---Rendering---
+    //---Rendering---
 
     private renderLobbyDetails(game : Game) {
         if (game === null){
@@ -119,7 +119,7 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
         }
     }
 
-    private renderGameStatus(game: Game){
+    private renderGameStatus(game : Game){
         if (game === null) {
             return "";
         }
@@ -173,7 +173,7 @@ export default class GameInfoPage extends React.Component<GameInfoPageProps, Gam
         }
 
         if (this.state.redirectUrl !== null) {
-            return <Redirect to={this.state.redirectUrl}/>
+            return <Redirect to={this.state.redirectUrl}/>;
         }
 
         const title = "Game " + this.props.gameId;
