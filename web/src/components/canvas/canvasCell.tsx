@@ -5,7 +5,7 @@ import { CellView } from '../../boardRendering/model';
 import { Kernel as K } from '../../kernel';
 
 export interface CanvasCellProps {
-    cell: CellView,
+    cell : CellView,
     selectCell : (cell : CellView) => void
 }
 

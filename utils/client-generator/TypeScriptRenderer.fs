@@ -61,8 +61,9 @@ type TypeScriptRenderer() =
         for (name, typeName) in properties do
             sb.AppendLine(sprintf "\t%s : %s," name typeName) |> ignore
 
-        sb.AppendLine("}")
-          .ToString()
+        sb.Remove(sb.Length-3, 1) //Remove trailing comma from last property (skip back past newline)
+            .AppendLine("}")
+            .ToString()
 
     let renderTypeScriptStringEnum (name : string, values : string seq) : string =
         let sb = StringBuilder()
@@ -184,19 +185,19 @@ type TypeScriptRenderer() =
 
         let sb = StringBuilder()
         //Function declaration
-        sb.AppendLine(sprintf "\tasync %s(%s) : Promise<%s> {" m.Name paramList returnTypeName) |> ignore
+        sb.AppendLine(sprintf "\t%s(%s) : Promise<%s> {" m.Name paramList returnTypeName) |> ignore
 
         //Add route concatentation
-        sb.Append(sprintf "\t\tconst route = \"%s\"" routeSections.[0]) |> ignore
+        sb.Append(sprintf "\t\tconst route = `%s" routeSections.[0]) |> ignore
 
         for n in [0..routeParams.Length-1] do
             let (paramName, _) = routeParams.[n]
-            sb.Append(sprintf " + %s + \"%s\"" paramName routeSections.[n+1]) |> ignore
+            sb.Append(sprintf "${%s}%s" paramName routeSections.[n+1]) |> ignore
 
-        sb.AppendLine(";") |> ignore
+        sb.AppendLine("`;") |> ignore
 
         //Add ApiClientCore call
-        sb.AppendLine(sprintf "\t\treturn await ApiClientCore.sendRequest<%s, %s>(" bodyTypeName returnTypeName)
+        sb.AppendLine(sprintf "\t\treturn ApiClientCore.sendRequest<%s, %s>(" bodyTypeName returnTypeName)
           .Append(sprintf "\t\t\tHttpMethod.%s, route" (attribute.method.ToString())) |> ignore
         match bodyParam with
         | Some (n, _) -> sb.Append(sprintf ", %s" n) |> ignore
@@ -213,7 +214,8 @@ type TypeScriptRenderer() =
           .AppendLine(" * Do not manually edit.")
           .AppendLine(" */") |> ignore
 
-    let addSectionHeader (sb : StringBuilder) (section : ClientSection) : Unit =
+    let addSectionHeader (sb : StringBuilder) (section : ClientSection) (indent : bool) : Unit =
+        if indent then sb.Append("\t") |> ignore else ()
         sb.AppendLine(sprintf "//-------- %s --------" (section.ToString().ToUpper()))
           .AppendLine("")
           |> ignore
@@ -254,12 +256,13 @@ type TypeScriptRenderer() =
                 )
 
             for (section, types) in typesGroupedBySection do
-                addSectionHeader sb section
+                addSectionHeader sb section false
                 for t in types do
                     let text = renderTypeDeclaration t
                     sb.AppendLine(text) |> ignore
 
             sb.ToString()
+                .Replace("\t", "    ") // Tabs are easier to read here, but the whitespaces are preferred by linting rules
 
         member this.renderFunctions (methods : MethodInfo list) : string =
             let sb = StringBuilder()
@@ -289,10 +292,11 @@ type TypeScriptRenderer() =
                 )
 
             for (section, methods) in methodsGroupedBySection do
-                addSectionHeader sb section
+                addSectionHeader sb section true
                 for m in methods do
                     let text = renderMethod m
                     sb.AppendLine(text) |> ignore
 
             sb.AppendLine("}")
               .ToString()
+              .Replace("\t", "    ") // Tabs are easier to read here, but the whitespaces are preferred by linting rules

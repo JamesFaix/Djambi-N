@@ -62,7 +62,7 @@ export default class CanvasTransformService{
     private getBoardSize() : Point {
         let size = this.getBoardPolygonBaseSize();
         size = Geometry.Point.multiplyScalar(size, this.getScale());
-        size = Geometry.Point.add(size, this.getTotalMarginSize())
+        size = Geometry.Point.add(size, this.getTotalMarginSize());
         return size;
     }
 
@@ -90,7 +90,7 @@ export default class CanvasTransformService{
             case -2: return 0.8;
             case -1: return 0.9;
             case  0: return 1.0;
-            case  1: return 1.1
+            case  1: return 1.1;
             case  2: return 1.2;
             case  3: return 1.3;
             case  4: return 1.4;

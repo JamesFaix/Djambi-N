@@ -75,7 +75,7 @@ export default class SignupPage extends React.Component<SignupPageProps, SignupP
     render() {
         //Go straight to dashboard if already logged in
         if (this.props.user !== null) {
-            return <Redirect to={K.routes.dashboard()}/>
+            return <Redirect to={K.routes.dashboard()}/>;
         }
 
         return (

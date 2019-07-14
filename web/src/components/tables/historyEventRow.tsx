@@ -6,14 +6,14 @@ import {
     Event,
     Game,
     Player
-    } from '../../api/model';
+} from '../../api/model';
 import { Kernel as K } from '../../kernel';
 
 export interface HistoryEventRowProps {
     game : Game,
     event : Event,
     isEffectVisible : (f : Effect) => boolean,
-    textStyle : React.CSSProperties
+    textStyle : React.CSSProperties,
     getBoard : (regionCount : number) => Board
 }
 

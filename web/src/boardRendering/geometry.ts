@@ -6,7 +6,7 @@ import {
     Point,
     Polygon,
     Rectangle
-    } from './model';
+} from './model';
 import Logic from '../logic';
 import { Location } from '../api/model';
 
@@ -48,7 +48,7 @@ export default class Geometry {
             return {
                 x: b.x === 0 ? 0 : a.x / b.x,
                 y: b.y === 0 ? 0 : a.y / b.y
-            }
+            };
         }
 
         public static isCloseTo(a : Point, b : Point, threshold : number) : boolean {
@@ -154,7 +154,7 @@ export default class Geometry {
             return {
                 x: (l.a.x + l.b.x) / 2,
                 y: (l.a.y + l.b.y) / 2
-            }
+            };
         }
     }
 
@@ -292,7 +292,7 @@ export default class Geometry {
                     radius * sin(internalAngle/2) = edge/2
                     radius = (edge/2)/sin(internalAngle/2)
             */
-           return (this.sideLength/2) / Math.sin(this.internalAngle(numberOfSides)/2);
+            return (this.sideLength/2) / Math.sin(this.internalAngle(numberOfSides)/2);
         }
 
         public static sideToApothemRatio(numberOfSides : number) : number {
@@ -371,7 +371,7 @@ export default class Geometry {
             return {
                 x: this.sideToWidthRatio(numberOfSides),
                 y: this.sideToHeightRatio(numberOfSides)
-            }
+            };
         }
 
         public static sideToCentroidOffsetFromTopLeftRatios(numberOfSides : number) : Point {
@@ -439,7 +439,7 @@ export default class Geometry {
                 [-1, 0, 0],
                 [ 0, 1, 0],
                 [ 0, 0, 1]
-            ])
+            ]);
         }
 
         public static flipVertical() : MathJs.Matrix {
@@ -447,7 +447,7 @@ export default class Geometry {
                 [1,  0, 0],
                 [0, -1, 0],
                 [0,  0, 1]
-            ])
+            ]);
         }
 
         public static identity() : MathJs.Matrix {
@@ -497,7 +497,7 @@ export default class Geometry {
             return Geometry.Polygon.centroid(c.polygon);
         }
 
-        public static transform(c: CellView, matrix : MathJs.Matrix) : CellView {
+        public static transform(c : CellView, matrix : MathJs.Matrix) : CellView {
             return {
                 id: c.id,
                 locations: c.locations,
