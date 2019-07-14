@@ -1,3 +1,4 @@
+open Fake.IO
 #r "paket:
 nuget Fake.Core.Target
 nuget Fake.DotNet.Cli
@@ -30,6 +31,7 @@ let runWeb = "run-web"
 let runAll = "run-all"
 
 let fsLint = "fs-lint"
+let esLint = "es-lint"
 let lintAll = "lint-all"
 
 let testApiInt = "test-api-int"
@@ -95,6 +97,16 @@ Target.create fsLint (fun _ ->
         let args = sprintf """-f "%s" """ p
         DotNet.exec id "fsharplint" args
         |> ignore
+)
+
+Target.create esLint (fun _ ->
+    let dir = Path.Combine(__SOURCE_DIRECTORY__, "web")
+    let psi = ProcessStartInfo()
+    psi.FileName <- Path.Combine(dir, "node_modules/.bin/eslint.cmd")
+    psi.Arguments <- "**/*.ts*"
+    psi.WorkingDirectory <- dir
+    Process.Start psi
+    |> ignore
 )
 
 Target.create testApiUnit (dotNetTest "api/tests/api.unitTests/api.unitTests.fsproj")
@@ -165,6 +177,7 @@ testAll <==
 lintAll <==
     [
         fsLint
+        esLint
     ]
 
 all <==

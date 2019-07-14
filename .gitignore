@@ -8,3 +8,4 @@ paket-files
 .paket/paket.targets
 .paket/Paket.Restore.targets
 .paket/paket.bootstrapper.exe
+.ionide/symbolCache.db
