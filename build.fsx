@@ -21,6 +21,7 @@ let checkForEnv = "check-env"
 let paketRestore = "paket-restore"
 let buildApi = "build-api"
 let buildWeb = "build-web"
+let buildWeb2 = "build-web2"
 let dbReset = "db-reset"
 let genClient = "gen-client"
 let restoreWeb = "restore-web"
@@ -28,6 +29,7 @@ let buildAll = "build-all"
 
 let runApi = "run-api"
 let runWeb = "run-web"
+let runWeb2 = "run-web2"
 let runAll = "run-all"
 
 let fsLint = "fs-lint"
@@ -65,7 +67,7 @@ let dotNetTest (path : string) (_ : TargetParameter) =
         path
     |> ignore
 
-let setNpmParams (o : Npm.NpmParams) = { o with WorkingDirectory = getDir "web" }
+let setNpmParams (dir : string) (o : Npm.NpmParams) = { o with WorkingDirectory = getDir dir }
 
 let launchConsole (dir : string) (command : string) (args : string list) (_ : TargetParameter) =
     let psi = ProcessStartInfo()
@@ -88,8 +90,9 @@ Target.create paketRestore (fun _ ->
 Target.create buildApi (dotnetBuild "api/api.host/api.host.fsproj")
 Target.create dbReset (dotNetRun "utils/db-reset/db-reset.fsproj")
 Target.create genClient (dotNetRun "utils/client-generator/client-generator.fsproj")
-Target.create restoreWeb (fun _ -> Npm.install setNpmParams)
-Target.create buildWeb (fun _ -> Npm.run "build" setNpmParams)
+Target.create restoreWeb (fun _ -> Npm.install (setNpmParams "web"))
+Target.create buildWeb (fun _ -> Npm.run "build" (setNpmParams "web"))
+Target.create buildWeb2 (fun _ -> Npm.run "build" (setNpmParams "web2"))
 
 Target.create fsLint (fun _ ->
     let projects = !! "**/*.fsproj"
@@ -111,10 +114,11 @@ Target.create esLint (fun _ ->
 
 Target.create testApiUnit (dotNetTest "api/tests/api.unitTests/api.unitTests.fsproj")
 Target.create testApiInt (dotNetTest "api/tests/api.integrationTests/api.integrationTests.fsproj")
-Target.create testWebUnit (fun _ -> Npm.run "test" setNpmParams)
+Target.create testWebUnit (fun _ -> Npm.run "test" (setNpmParams "web"))
 
 Target.create runApi (launchConsole "api/api.host" "dotnet" ["run api.host.fsproj"])
 Target.create runWeb (launchConsole "web" "http-server" [])
+Target.create runWeb2 (launchConsole "web2" "http-server" [])
 
 Target.create buildAll ignore
 Target.create lintAll ignore
