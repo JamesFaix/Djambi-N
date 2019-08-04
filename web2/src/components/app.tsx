@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { AppState } from "../store";
+import { AppState } from "../store/state";
 
 interface AppProps {
     appState : AppState
