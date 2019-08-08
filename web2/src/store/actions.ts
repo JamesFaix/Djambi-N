@@ -1,5 +1,4 @@
-import { Session, Game, LoginRequest, Event, User, CreateUserRequest } from "../api/model";
-import { AnyAction } from "redux";
+import { Session, LoginRequest, User, CreateUserRequest } from "../api/model";
 
 export enum ActionStatus {
   Pending = "PENDING",
@@ -10,10 +9,7 @@ export enum ActionStatus {
 export enum ActionTypes {
   Login = "LOGIN",
   Logout = "LOGOUT",
-  Signup = "SIGNUP",
-  LoadGame = "LOAD_GAME",
-  UpdateGame = "UPDATE_GAME",
-  LoadHistory = "LOAD_HISTORY"
+  Signup = "SIGNUP"
 }
 
 export interface CustomAction {
@@ -25,129 +21,69 @@ export interface DataAction<T> extends CustomAction {
   data : T
 }
 
-export class ActionFactory {
-  constructor() {
+export function loginRequest(request: LoginRequest) : DataAction<LoginRequest> {
+  return {
+    type: ActionTypes.Login,
+    status: ActionStatus.Pending,
+    data: request
+  };
+}
 
-  }
+export function loginSuccess(session : Session) : DataAction<Session> {
+  return {
+    type: ActionTypes.Login,
+    status: ActionStatus.Success,
+    data: session
+  };
+}
 
-  loginRequest(request: LoginRequest) : DataAction<LoginRequest> {
-    return {
-      type: ActionTypes.Login,
-      status: ActionStatus.Pending,
-      data: request
-    };
-  }
+export function loginError() : CustomAction {
+  return {
+    type: ActionTypes.Login,
+    status: ActionStatus.Error
+  };
+}
 
-  loginSuccess(session : Session) : DataAction<Session> {
-    return {
-      type: ActionTypes.Login,
-      status: ActionStatus.Success,
-      data: session
-    };
-  }
+export function logoutRequest() : CustomAction {
+  return {
+    type: ActionTypes.Logout,
+    status: ActionStatus.Pending
+  };
+}
 
-  loginError() : CustomAction {
-    return {
-      type: ActionTypes.Login,
-      status: ActionStatus.Error
-    };
-  }
+export function logoutSuccess() : CustomAction {
+  return {
+    type: ActionTypes.Logout,
+    status: ActionStatus.Success
+  };
+}
 
-  logoutRequest() : CustomAction {
-    return {
-      type: ActionTypes.Logout,
-      status: ActionStatus.Pending
-    };
-  }
+export function logoutError() : CustomAction {
+  return {
+    type: ActionTypes.Logout,
+    status: ActionStatus.Error
+  };
+}
 
-  logoutSuccess() : CustomAction {
-    return {
-      type: ActionTypes.Logout,
-      status: ActionStatus.Success
-    };
-  }
-  
-  logoutError() : CustomAction {
-    return {
-      type: ActionTypes.Logout,
-      status: ActionStatus.Error
-    };
-  }
+export function signupRequest(request : CreateUserRequest) : DataAction<CreateUserRequest> {
+  return {
+    type: ActionTypes.Signup,
+    status: ActionStatus.Pending,
+    data: request
+  };
+}
 
-  signupRequest(request : CreateUserRequest) : DataAction<CreateUserRequest> {
-    return {
-      type: ActionTypes.Signup,
-      status: ActionStatus.Pending,
-      data: request
-    };
-  }
+export function signupSuccess(user : User) : DataAction<User> {
+  return {
+    type: ActionTypes.Signup,
+    status: ActionStatus.Success,
+    data: user
+  };
+}
 
-  signupSuccess(user : User) : DataAction<User> {
-    return {
-      type: ActionTypes.Signup,
-      status: ActionStatus.Success,
-      data: user
-    };
-  }
-
-  signupError() : CustomAction {
-    return {
-      type: ActionTypes.Signup,
-      status: ActionStatus.Error
-    };
-  }
-
-  loadGameRequest(gameId : number) : DataAction<number> {
-    return {
-      type: ActionTypes.LoadGame,
-      status: ActionStatus.Pending,
-      data: gameId
-    };
-  }
-
-  loadGameSuccess(game : Game) : DataAction<Game> {
-    return {
-      type: ActionTypes.LoadGame,
-      status: ActionStatus.Success,
-      data: game
-    };
-  }
-
-  loadGameError() : CustomAction {
-    return {
-      type: ActionTypes.LoadGame,
-      status: ActionStatus.Error
-    };
-  }
-
-  loadGameHistoryRequest(gameId : number) : DataAction<number> {
-    return {
-      type: ActionTypes.LoadHistory,
-      status: ActionStatus.Pending,
-      data: gameId
-    };
-  }
-
-  loadGameHistorySuccess(history : Event[]) : DataAction<Event[]> {
-    return {
-      type: ActionTypes.LoadHistory,
-      status: ActionStatus.Success,
-      data: history
-    };
-  }
-
-  loadGameHistoryError() : CustomAction {
-    return {
-      type: ActionTypes.LoadHistory,
-      status: ActionStatus.Error
-    };
-  }
-
-  updateGame(game : Game, event : Event) : DataAction<[Game, Event]> {
-    return {
-      type: ActionTypes.UpdateGame,
-      status: ActionStatus.Success,
-      data: [game, event]
-    };
-  }
+export function signupError() : CustomAction {
+  return {
+    type: ActionTypes.Signup,
+    status: ActionStatus.Error
+  };
 }

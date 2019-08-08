@@ -40,8 +40,7 @@ export class ApiClientCore {
                             if (Debug.logApiErrors) {
                                 console.log(endpointDescription + " failed (" + errorMessage + ")");
                             }
-                            return null;
-
+                            throw [response.status, errorMessage];
                         });
                 } else {
                     if (Debug.logApiSuccesses) {
@@ -49,9 +48,6 @@ export class ApiClientCore {
                     }
                     return response.json();
                 }
-            })
-            .catch(reason => {
-                console.log(reason);
             });
     }
 }

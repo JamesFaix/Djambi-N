@@ -1,14 +1,11 @@
 import * as React from 'react';
-import { AppState } from '../../store/state';
-import { Repository } from '../../repository';
 import { LoginRequest } from '../../api/model';
-import { Redirect } from 'react-router';
 import Routes from '../../routes';
 import { Link } from 'react-router-dom';
+import * as Redirects from '../redirects';
 
 interface LoginPageProps {
-    appState : AppState,
-    repo: Repository
+    onLoginClicked: (request: LoginRequest) => void
 }
 
 interface LoginPageState {
@@ -25,50 +22,46 @@ export default class LoginPage extends React.Component<LoginPageProps, LoginPage
         };
     }
 
-    private submitOnClick() {
-        const request : LoginRequest = {
+    private getRequestFromForm() : LoginRequest {
+        return {
             username: this.state.username,
             password: this.state.password
         };
-
-        this.props.repo.login(request);
     }
 
     render() {
-        //Go straight to dashboard if already logged in
-        if (this.props.appState.session) {
-            return <Redirect to={Routes.dashboard}/>;
-        }
-
         return (
             <div>
+                <Redirects.ToHomeIfSession/>
                 <table>
-                    <tr>
-                        <td>Username:</td>
-                        <td>
-                            <input
-                                type="text"
-                                value={this.state.username}
-                                onChange={e => this.setState({ username: e.target.value })}
-                            >
-                            </input>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Password:</td>
-                        <td>
-                            <input
-                                type="password"
-                                value={this.state.password}
-                                onChange={e => this.setState({ password: e.target.value })}
-                            >
-                            </input>
-                        </td>
-                    </tr>
+                    <tbody>
+                        <tr>
+                            <td>Username:</td>
+                            <td>
+                                <input
+                                    type="text"
+                                    value={this.state.username}
+                                    onChange={e => this.setState({ username: e.target.value })}
+                                >
+                                </input>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Password:</td>
+                            <td>
+                                <input
+                                    type="password"
+                                    value={this.state.password}
+                                    onChange={e => this.setState({ password: e.target.value })}
+                                >
+                                </input>
+                            </td>
+                        </tr>
+                    </tbody>
                 </table>
                 <div>
                     <button
-                        onClick={() => this.submitOnClick()}
+                        onClick={() => this.props.onLoginClicked(this.getRequestFromForm())}
                     >
                         Log in
                     </button>

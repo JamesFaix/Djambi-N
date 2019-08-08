@@ -1,15 +1,23 @@
 import * as React from 'react';
-import { AppState } from '../../store/state';
-import { Repository } from '../../repository';
+import * as Redirects from '../redirects';
 
 interface DashboardPageProps {
-    appState : AppState,
-    repo: Repository
+    onLogoutClicked : () => void,
 }
 
 export default class DashboardPage extends React.Component<DashboardPageProps>{
 
     render() {
-        return <div>Dashboard page content</div>;
+        return (
+            <div>
+                <Redirects.ToHomeIfNoSession/>
+                Dashboard page content
+                <button
+                    onClick={() => this.props.onLogoutClicked()}
+                >
+                    Log out
+                </button>
+            </div>
+        );
     }
 }

@@ -5,22 +5,20 @@ import App from './components/app';
 import { createStore } from 'redux';
 import { reducer } from './store/reducers';
 import ApiClient from './api/client';
-import { ActionFactory } from './store/actions';
 import { Repository } from './repository';
 import { defaultState } from './store/state';
 import { HashRouter } from 'react-router-dom';
 
 const store = createStore(reducer, defaultState());
 const api = new ApiClient();
-const actionFactory = new ActionFactory();
-const repo = new Repository(api, store, actionFactory);
+const repo = new Repository(api, store);
 
 render(
     <Provider store={store}>
         <HashRouter>
             <App
-                appState={store.getState()}
                 repo={repo}
+                store={store}
             />
         </HashRouter>
     </Provider>,
