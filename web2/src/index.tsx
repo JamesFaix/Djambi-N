@@ -7,11 +7,12 @@ import { reducer } from './store/reducers';
 import { defaultState } from './store/state';
 import { HashRouter } from 'react-router-dom';
 import thunk from 'redux-thunk';
+import logger from 'redux-logger';
 
 const store = createStore(
     reducer,
     defaultState(),
-    applyMiddleware(thunk),
+    applyMiddleware(thunk, logger)
 );
 
 render(
