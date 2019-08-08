@@ -6,6 +6,7 @@ import TristateDropdown from '../controls/tristateDropdown';
 import EnumDropdown from '../controls/enumDropdown';
 import * as Actions from '../../store/actions';
 import { Dispatch } from 'redux';
+import * as ModelFactory from "../../api/modelFactory";
 
 interface GamesQueryFiltersProps {
     query : GamesQuery,
@@ -17,15 +18,7 @@ class gamesQueryFilters extends React.Component<GamesQueryFiltersProps> {
     private getQueryOrDefault(props: GamesQueryFiltersProps) {
         let query = props.query;
         if (!query) {
-            query = {
-                gameId : null,
-                descriptionContains : null,
-                createdByUserName : null,
-                playerUserName : null,
-                isPublic : null,
-                allowGuests : null,
-                status : null
-            };
+            query = ModelFactory.emptyGamesQuery();
         }
         return query;
     }

@@ -2,12 +2,20 @@ import { Dispatch } from "redux";
 import { LoginRequest, CreateUserRequest, GamesQuery } from "./api/model";
 import * as Actions from "./store/actions";
 import * as Api from "./api/client";
+import * as ModelFactory from "./api/modelFactory";
 
 export function login(request : LoginRequest) {
     return function (dispatch : Dispatch) {
         dispatch(Actions.loginRequest(request));
         Api.login(request)
-            .then(session => dispatch(Actions.loginSuccess(session)))
+            .then(session => {
+                dispatch(Actions.loginSuccess(session))
+
+                const query = ModelFactory.emptyGamesQuery();
+                query.playerUserName = session.user.name;
+                dispatch(Actions.updateGamesQuery(query));
+                queryGames(query)(dispatch)
+            })
             .catch(_ => dispatch(Actions.loginError()));
     };
 }
@@ -27,10 +35,7 @@ export function signup(request : CreateUserRequest) {
         Api.createUser(request)
             .then(user => {
                 dispatch(Actions.signupSuccess(user));
-                const loginRequest : LoginRequest = {
-                    username: request.name,
-                    password: request.password
-                };
+                const loginRequest = ModelFactory.loginRequestFromCreateUserRequest(request);
                 return login(loginRequest);
             })
             .catch(_ => dispatch(Actions.signupError()));
