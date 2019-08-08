@@ -43,11 +43,18 @@ export class Repository {
     signup(request: CreateUserRequest) : void {
         this.store.dispatch(Actions.signupRequest(request));
         this.api.createUser(request)
-            .then(user => {
+            .then(async user => {
                 this.store.dispatch(Actions.signupSuccess(user));
             })
             .catch(_ => {
                 this.store.dispatch(Actions.signupError());
+            })
+            .then(_ => {
+                const loginRequest : LoginRequest = {
+                    username: request.name,
+                    password: request.password
+                };
+                return this.login(loginRequest);
             });
     }
 }
