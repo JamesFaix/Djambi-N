@@ -3,6 +3,9 @@ import { LoginRequest } from '../../api/model';
 import Routes from '../../routes';
 import { Link } from 'react-router-dom';
 import * as Redirects from '../redirects';
+import * as ThunkActions from '../../thunkActions';
+import { Dispatch } from 'redux';
+import { connect } from 'react-redux';
 
 interface LoginPageProps {
     onLoginClicked: (request: LoginRequest) => void
@@ -13,7 +16,7 @@ interface LoginPageState {
     password : string
 }
 
-export default class LoginPage extends React.Component<LoginPageProps, LoginPageState>{
+class loginPage extends React.Component<LoginPageProps, LoginPageState>{
     constructor(props : LoginPageProps) {
         super(props);
         this.state = {
@@ -76,3 +79,13 @@ export default class LoginPage extends React.Component<LoginPageProps, LoginPage
         );
     }
 }
+
+const mapDispatchToProps = (dispatch : Dispatch) => {
+    return {
+        onLoginClicked: (request: LoginRequest) => ThunkActions.login(request)(dispatch)
+    };
+}
+
+const LoginPage = connect(null, mapDispatchToProps)(loginPage);
+
+export default LoginPage;

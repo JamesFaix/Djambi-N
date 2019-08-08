@@ -3,6 +3,9 @@ import { CreateUserRequest } from '../../api/model';
 import Routes from '../../routes';
 import { Link } from 'react-router-dom';
 import * as Redirects from '../redirects';
+import { Dispatch } from 'redux';
+import * as ThunkActions from '../../thunkActions';
+import { connect } from 'react-redux';
 
 interface SignupPageProps {
     onSignupClicked: (request: CreateUserRequest) => void
@@ -13,7 +16,7 @@ interface SignupPageState {
     password : string
 }
 
-export default class SignupPage extends React.Component<SignupPageProps, SignupPageState>{
+class signupPage extends React.Component<SignupPageProps, SignupPageState>{
     constructor(props : SignupPageProps) {
         super(props);
         this.state = {
@@ -76,3 +79,13 @@ export default class SignupPage extends React.Component<SignupPageProps, SignupP
         );
     }
 }
+
+const mapDispatchToProps = (dispatch : Dispatch) => {
+    return {
+        onSignupClicked: (request: CreateUserRequest) => ThunkActions.signup(request)(dispatch)
+    };
+}
+
+const SignupPage = connect(null, mapDispatchToProps)(signupPage);
+
+export default SignupPage;

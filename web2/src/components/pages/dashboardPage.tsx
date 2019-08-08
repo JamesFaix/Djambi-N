@@ -1,11 +1,14 @@
 import * as React from 'react';
 import * as Redirects from '../redirects';
+import { Dispatch } from 'redux';
+import * as ThunkActions from '../../thunkActions';
+import { connect } from 'react-redux';
 
 interface DashboardPageProps {
     onLogoutClicked : () => void,
 }
 
-export default class DashboardPage extends React.Component<DashboardPageProps>{
+class dashboardPage extends React.Component<DashboardPageProps>{
 
     render() {
         return (
@@ -21,3 +24,13 @@ export default class DashboardPage extends React.Component<DashboardPageProps>{
         );
     }
 }
+
+const mapDispatchToProps = (dispatch : Dispatch) => {
+    return {
+        onLogoutClicked: () => ThunkActions.logout()(dispatch)
+    };
+}
+
+const DashboardPage = connect(null, mapDispatchToProps)(dashboardPage);
+
+export default DashboardPage;
