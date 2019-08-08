@@ -1,5 +1,5 @@
 import { Dispatch } from "redux";
-import { LoginRequest, CreateUserRequest } from "./api/model";
+import { LoginRequest, CreateUserRequest, GamesQuery } from "./api/model";
 import * as Actions from "./store/actions";
 import * as Api from "./api/client";
 
@@ -9,7 +9,7 @@ export function login(request : LoginRequest) {
         Api.login(request)
             .then(session => dispatch(Actions.loginSuccess(session)))
             .catch(_ => dispatch(Actions.loginError()));
-    }
+    };
 }
 
 export function logout() {
@@ -18,7 +18,7 @@ export function logout() {
         Api.logout()
             .then(_ => dispatch(Actions.logoutSuccess()))
             .catch(_ => dispatch(Actions.logoutError()));
-    }
+    };
 }
 
 export function signup(request : CreateUserRequest) {
@@ -34,5 +34,23 @@ export function signup(request : CreateUserRequest) {
                 return login(loginRequest);
             })
             .catch(_ => dispatch(Actions.signupError()));
-    }
+    };
+}
+
+export function loadGame(gameId: number) {
+    return function (dispatch : Dispatch) {
+        dispatch(Actions.loadGameRequest(gameId));
+        return Api.getGame(gameId)
+            .then(game => dispatch(Actions.loadGameSuccess(game)))
+            .catch(_ => dispatch(Actions.loadGameError()));
+    };
+}
+
+export function queryGames(query: GamesQuery) {
+    return function (dispatch : Dispatch) {
+        dispatch(Actions.queryGamesRequest(query));
+        return Api.getGames(query)
+            .then(games => dispatch(Actions.queryGamesSuccess(games)))
+            .catch(_ => dispatch(Actions.queryGamesError()));
+    };
 }

@@ -1,4 +1,4 @@
-import { Session, LoginRequest, User, CreateUserRequest } from "../api/model";
+import { Session, LoginRequest, User, CreateUserRequest, Game, GamesQuery } from "../api/model";
 
 export enum ActionStatus {
   Pending = "PENDING",
@@ -9,7 +9,10 @@ export enum ActionStatus {
 export enum ActionTypes {
   Login = "LOGIN",
   Logout = "LOGOUT",
-  Signup = "SIGNUP"
+  Signup = "SIGNUP",
+  LoadGame = "LOAD_GAME",
+  QueryGames = "QUERY_GAMES",
+  UpdateGamesQuery = "UPDATE_GAMES_QUERY"
 }
 
 export interface CustomAction {
@@ -85,5 +88,59 @@ export function signupError() : CustomAction {
   return {
     type: ActionTypes.Signup,
     status: ActionStatus.Error
+  };
+}
+
+export function loadGameRequest(gameId : number) : DataAction<number> {
+  return {
+    type: ActionTypes.LoadGame,
+    status: ActionStatus.Pending,
+    data: gameId
+  };
+}
+
+export function loadGameSuccess(game : Game) : DataAction<Game> {
+  return {
+    type: ActionTypes.LoadGame,
+    status: ActionStatus.Success,
+    data: game
+  };
+}
+
+export function loadGameError() : CustomAction {
+  return {
+    type: ActionTypes.LoadGame,
+    status: ActionStatus.Error
+  };
+}
+
+export function queryGamesRequest(query : GamesQuery) : DataAction<GamesQuery> {
+  return {
+    type: ActionTypes.QueryGames,
+    status: ActionStatus.Pending,
+    data: query
+  };
+}
+
+export function queryGamesSuccess(games : Game[]) : DataAction<Game[]> {
+  return {
+    type: ActionTypes.QueryGames,
+    status: ActionStatus.Success,
+    data: games
+  };
+}
+
+export function queryGamesError() : CustomAction {
+  return {
+    type: ActionTypes.QueryGames,
+    status: ActionStatus.Error
+  };
+}
+
+export function updateGamesQuery(query: GamesQuery) : DataAction<GamesQuery> {
+  return {
+    type: ActionTypes.UpdateGamesQuery,
+    status: ActionStatus.Success,
+    data: query
   };
 }
