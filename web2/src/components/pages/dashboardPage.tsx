@@ -11,7 +11,6 @@ import { AppState } from '../../store/state';
 interface DashboardPageProps {
     gamesQuery : GamesQuery,
     gamesResults : Game[],
-    onLogoutClicked : () => void,
     onSearchClicked : (query: GamesQuery) => void
 }
 
@@ -28,11 +27,6 @@ class dashboardPage extends React.Component<DashboardPageProps>{
                     Search
                 </button>
                 <GamesQueryResultsTable/>
-                <button
-                    onClick={() => this.props.onLogoutClicked()}
-                >
-                    Log out
-                </button>
             </div>
         );
     }
@@ -54,7 +48,6 @@ const mapStateToProps = (state: AppState) => {
 
 const mapDispatchToProps = (dispatch : Dispatch) => {
     return {
-        onLogoutClicked: () => ThunkActions.logout()(dispatch),
         onSearchClicked: (query: GamesQuery) => ThunkActions.queryGames(query)(dispatch)
     };
 };
