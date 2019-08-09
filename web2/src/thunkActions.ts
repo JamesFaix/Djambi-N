@@ -10,7 +10,7 @@ export function login(request : LoginRequest) {
         dispatch(Actions.loginRequest(request));
         Api.login(request)
             .then(session => {
-                dispatch(Actions.loginSuccess(session))
+                dispatch(Actions.loginSuccess(session.user))
 
                 const query = ModelFactory.emptyGamesQuery();
                 query.playerUserName = session.user.name;

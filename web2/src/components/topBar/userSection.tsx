@@ -1,17 +1,17 @@
 import * as React from 'react';
-import { Session } from '../../api/model';
+import { User } from '../../api/model';
 import { AppState } from '../../store/state';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import * as ThunkActions from '../../thunkActions';
 
 interface UserSectionProps {
-    session : Session,
+    user : User,
     onLogoutClicked : () => void
 }
 
 const userSection : React.SFC<UserSectionProps> = props => {
-    return props.session
+    return props.user
         ? loggedInUserSection(props)
         : notLoggedInUserSection(props);
 }
@@ -27,7 +27,7 @@ const notLoggedInUserSection : React.SFC<UserSectionProps> = props => {
 const loggedInUserSection : React.SFC<UserSectionProps> = props => {
     return (
         <div style={{textAlign: "right"}}>
-            {props.session.user.name}
+            {props.user.name}
             <button
                 onClick={_ => props.onLogoutClicked()}
             >
@@ -39,7 +39,7 @@ const loggedInUserSection : React.SFC<UserSectionProps> = props => {
 
 const mapStateToProps = (state : AppState) => {
     return {
-        session: state.session
+        user: state.user
     };
 };
 

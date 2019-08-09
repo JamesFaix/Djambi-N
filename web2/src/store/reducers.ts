@@ -1,5 +1,5 @@
 import { CustomAction, DataAction, ActionStatus, ActionTypes } from './actions';
-import { Session, Game, GamesQuery } from '../api/model';
+import { Session, Game, GamesQuery, User } from '../api/model';
 import { AppState, defaultState } from './state';
 
 export function reducer(state: AppState, action : CustomAction) : AppState {
@@ -33,11 +33,11 @@ function loginReducer(state: AppState, action : CustomAction) : AppState {
         }
 
         case ActionStatus.Success: {
-            let da = <DataAction<Session>>action;
+            let da = <DataAction<User>>action;
             const newState = {...state};
             newState.requests = {...state.requests};
             newState.requests.loginPending = false;
-            newState.session = da.data;
+            newState.user = da.data;
             return newState;
         }
 

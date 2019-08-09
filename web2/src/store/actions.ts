@@ -37,7 +37,7 @@ const success = <T>(type : ActionTypes, data : T = undefined) => create(type, Ac
 const error = <T>(type : ActionTypes, data : T = undefined) => create(type, ActionStatus.Error, data);
 
 export const loginRequest = (request : LoginRequest) => pending(ActionTypes.Login, request);
-export const loginSuccess = (session : Session) => success(ActionTypes.Login, session);
+export const loginSuccess = (user : User) => success(ActionTypes.Login, user);
 export const loginError = () => error(ActionTypes.Login);
 
 export const logoutRequest = () => pending(ActionTypes.Logout);

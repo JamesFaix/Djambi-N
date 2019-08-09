@@ -1,4 +1,4 @@
-import { Session, Event, Game, GamesQuery } from '../api/model';
+import { Event, Game, GamesQuery, User } from '../api/model';
 
 export interface GameState {
     game : Game,
@@ -11,7 +11,7 @@ export interface GamesQueryState {
 }
 
 export interface AppState {
-    session : Session,
+    user : User,
     requests : RequestState,
     currentGame : GameState,
     gamesQuery : GamesQueryState,
@@ -28,7 +28,7 @@ export interface RequestState {
 
 export function defaultState() : AppState {
     return {
-        session: null,
+        user: null,
         requests:{
             loginPending:false,
             logoutPending:false,

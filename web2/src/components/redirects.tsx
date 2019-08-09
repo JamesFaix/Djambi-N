@@ -2,35 +2,35 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import { AppState, GameState } from '../store/state';
-import { Session } from '../api/model';
+import { User } from '../api/model';
 import Routes from '../routes';
 import { Dispatch } from 'redux';
 import * as Actions from '../store/actions';
 
-//#region Session-based redirects
+//#region User-based redirects
 
-interface SessionProps {
-    session : Session
+interface UserProps {
+    user : User
 }
 
-const redirectToHome : React.SFC<SessionProps> = props =>
-    props.session
+const redirectToHome : React.SFC<UserProps> = props =>
+    props.user
         ? <Redirect to={Routes.dashboard}/>
         : <Redirect to={Routes.login}/>;
 
-const redirectToHomeIfSession : React.SFC<SessionProps> = props =>
-    props.session
+const redirectToHomeIfSession : React.SFC<UserProps> = props =>
+    props.user
         ? <Redirect to={Routes.dashboard}/>
         : null;
 
-const redirectToHomeIfNoSession : React.SFC<SessionProps> = props =>
-    props.session
+const redirectToHomeIfNoSession : React.SFC<UserProps> = props =>
+    props.user
         ? null
         : <Redirect to={Routes.login}/>;
 
-const mapAppStateToSessionProps = (state : AppState) : SessionProps => {
+const mapAppStateToSessionProps = (state : AppState) : UserProps => {
     return {
-        session: state.session
+        user: state.user
     };
 };
 
