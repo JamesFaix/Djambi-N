@@ -1,5 +1,5 @@
 import { Dispatch } from "redux";
-import { LoginRequest, CreateUserRequest, GamesQuery } from "./api/model";
+import { LoginRequest, CreateUserRequest, GamesQuery, GameParameters } from "./api/model";
 import * as Actions from "./store/actions";
 import * as Api from "./api/client";
 import * as ModelFactory from "./api/modelFactory";
@@ -86,4 +86,18 @@ export function restoreSession() {
                 }
             });
     };
+}
+
+export function createGame(formData : GameParameters) {
+    return function (dispatch : Dispatch) {
+        dispatch(Actions.createGameRequest(formData));
+        return Api.createGame(formData)
+            .then(game => {
+                dispatch(Actions.createGameSuccess(game));
+                navigateTo(Routes.lobby(game.id));
+            })
+            .catch(_ => {
+                dispatch(Actions.createGameError())
+            });
+    }
 }

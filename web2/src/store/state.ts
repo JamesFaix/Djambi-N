@@ -1,4 +1,5 @@
-import { Event, Game, GamesQuery, User } from '../api/model';
+import { Event, Game, GamesQuery, User, GameParameters } from '../api/model';
+import * as ModelFactory from '../api/modelFactory';
 
 export interface GameState {
     game : Game,
@@ -10,11 +11,16 @@ export interface GamesQueryState {
     results : Game[]
 }
 
+export interface CreateGameFormState {
+    parameters : GameParameters
+}
+
 export interface AppState {
     user : User,
     requests : RequestState,
     currentGame : GameState,
-    gamesQuery : GamesQueryState
+    gamesQuery : GamesQueryState,
+    createGameForm : CreateGameFormState
 }
 
 export interface RequestState {
@@ -23,7 +29,8 @@ export interface RequestState {
     signupPending : boolean,
     loadGamePending : boolean,
     gamesQueryPending : boolean,
-    restoreSessionPending : boolean
+    restoreSessionPending : boolean,
+    createGamePending : boolean
 }
 
 export function defaultState() : AppState {
@@ -35,9 +42,13 @@ export function defaultState() : AppState {
             signupPending:false,
             loadGamePending:false,
             gamesQueryPending:false,
-            restoreSessionPending:false
+            restoreSessionPending:false,
+            createGamePending:false
         },
         currentGame: null,
-        gamesQuery: null
+        gamesQuery: null,
+        createGameForm: {
+            parameters: ModelFactory.defaultGameParameters()
+        }
     };
 }

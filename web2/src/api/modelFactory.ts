@@ -1,4 +1,4 @@
-import { GamesQuery, CreatePlayerRequest, LoginRequest, CreateUserRequest } from "./model";
+import { GamesQuery, CreatePlayerRequest, LoginRequest, CreateUserRequest, GameParameters } from "./model";
 
 export function emptyGamesQuery() : GamesQuery {
     return {
@@ -16,5 +16,14 @@ export function loginRequestFromCreateUserRequest(request: CreateUserRequest) : 
     return {
         username: request.name,
         password: request.password
+    };
+}
+
+export function defaultGameParameters() : GameParameters {
+    return {
+        regionCount: 3,
+        description: "",
+        allowGuests: true,
+        isPublic: true
     };
 }

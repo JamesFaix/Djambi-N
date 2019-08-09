@@ -9,6 +9,7 @@ import { Switch } from 'react-router-dom';
 import * as Redirects from './redirects';
 import LobbyPage from './pages/lobbyPage';
 import SessionRestorer from './sessionRestorer';
+import CreateGamePage from './pages/createGamePage';
 
 const App : React.SFC<{}> = _ => {
     return (
@@ -18,23 +19,27 @@ const App : React.SFC<{}> = _ => {
             <Switch>
                 <Route
                     path={Routes.signup}
-                    render={_ => <SignupPage/>}
+                    component={SignupPage}
                 />
                 <Route
                     path={Routes.login}
-                    render={_ => <LoginPage/>}
+                    component={LoginPage}
                 />
                 <Route
                     path={Routes.dashboard}
-                    render={_ => <DashboardPage/>}
+                    component={DashboardPage}
                 />
                 <Route
                     path={Routes.lobbyPattern}
-                    render={_ => <LobbyPage/>}
+                    component={LobbyPage}
+                />
+                <Route
+                    path={Routes.createGame}
+                    component={CreateGamePage}
                 />
                 <Route
                     path={Routes.base}
-                    render={_ => <Redirects.ToHome/>}
+                    component={Redirects.ToHome}
                 />
             </Switch>
         </div>
