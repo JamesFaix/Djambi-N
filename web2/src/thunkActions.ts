@@ -71,7 +71,14 @@ export function restoreSession() {
     return function (dispatch : Dispatch) {
         dispatch(Actions.restoreSessionRequest());
         return Api.getCurrentUser()
-            .then(user => dispatch(Actions.restoreSessionSuccess(user)))
+            .then(user => {
+                dispatch(Actions.restoreSessionSuccess(user))
+
+                const query = ModelFactory.emptyGamesQuery();
+                query.playerUserName = user.name;
+                dispatch(Actions.updateGamesQuery(query));
+                queryGames(query)(dispatch)
+            })
             .catch(error => {
                 let [status, message] = error;
                 if (status !== 401) {

@@ -4,6 +4,8 @@ import * as Redirects from '../redirects';
 import { AppState } from '../../store/state';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
+import { navigateTo } from '../../history';
+import Routes from '../../routes';
 
 interface LobbyPageProps {
     game : Game
@@ -28,6 +30,11 @@ class lobbyPage extends React.Component<LobbyPageProps, LobbyPageState> {
             <div>
                 <Redirects.ToHomeIfNoSession/>
                 <Redirects.ToHomeIfNoGame/>
+                <button
+                    onClick={() => navigateTo(Routes.dashboard)}
+                >
+                    Home
+                </button>
                 {this.getGameJson()}
             </div>
         );
