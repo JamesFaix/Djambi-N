@@ -13,7 +13,6 @@ export enum ActionTypes {
   LoadGame = "LOAD_GAME",
   QueryGames = "QUERY_GAMES",
   UpdateGamesQuery = "UPDATE_GAMES_QUERY",
-  Redirect = "REDIRECT",
   RestoreSession = "RESTORE_SESSION"
 }
 
@@ -58,9 +57,6 @@ export const queryGamesSuccess = (games : Game[]) => success(ActionTypes.QueryGa
 export const queryGamesError = () => error(ActionTypes.QueryGames);
 
 export const updateGamesQuery = (query: GamesQuery) => success(ActionTypes.UpdateGamesQuery, query);
-
-export const redirectPending = (route : string) => pending(ActionTypes.Redirect, route);
-export const redirectSuccess = () => success(ActionTypes.Redirect);
 
 export const restoreSessionRequest = () => pending(ActionTypes.RestoreSession);
 export const restoreSessionSuccess = (user: User) => success(ActionTypes.RestoreSession, user);

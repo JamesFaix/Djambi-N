@@ -26,7 +26,6 @@ class lobbyPage extends React.Component<LobbyPageProps, LobbyPageState> {
     render() {
         return (
             <div>
-                <Redirects.CompleteRedirectAction/>
                 <Redirects.ToHomeIfNoSession/>
                 <Redirects.ToHomeIfNoGame/>
                 {this.getGameJson()}

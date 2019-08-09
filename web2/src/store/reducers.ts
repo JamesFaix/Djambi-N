@@ -16,8 +16,6 @@ export function reducer(state: AppState, action : CustomAction) : AppState {
             return queryGamesReducer(state, action);
         case ActionTypes.UpdateGamesQuery:
             return updateGamesQueryReducer(state, action);
-        case ActionTypes.Redirect:
-            return redirectReducer(state, action);
         case ActionTypes.RestoreSession:
             return restoreSessionReducer(state, action);
         default:
@@ -161,26 +159,6 @@ function updateGamesQueryReducer(state: AppState, action: CustomAction) : AppSta
             newState.gamesQuery.query = da.data;
             return newState;
         }
-        default:
-            throw "Unsupported case: " + action.status;
-    }
-}
-
-function redirectReducer(state: AppState, action : CustomAction) : AppState {
-    switch (action.status) {
-        case ActionStatus.Pending: {
-            let da = <DataAction<string>>action;
-            let newState = {...state};
-            newState.redirectRoute = da.data;
-            return newState;
-        }
-
-        case ActionStatus.Success: {
-            let newState = {...state};
-            newState.redirectRoute = null;
-            return newState;
-        }
-
         default:
             throw "Unsupported case: " + action.status;
     }

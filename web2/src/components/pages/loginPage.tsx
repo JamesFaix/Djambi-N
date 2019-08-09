@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { LoginRequest } from '../../api/model';
 import Routes from '../../routes';
-import { Link } from 'react-router-dom';
 import * as Redirects from '../redirects';
 import * as ThunkActions from '../../thunkActions';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
+import { navigateTo } from '../../history';
 
 interface LoginPageProps {
     onLoginClicked: (request: LoginRequest) => void
@@ -35,7 +35,6 @@ class loginPage extends React.Component<LoginPageProps, LoginPageState>{
     render() {
         return (
             <div>
-                <Redirects.CompleteRedirectAction/>
                 <Redirects.ToHomeIfSession/>
                 <table>
                     <tbody>
@@ -72,9 +71,11 @@ class loginPage extends React.Component<LoginPageProps, LoginPageState>{
                 </div>
                 <div>
                     Don't have an account yet?
-                    <Link to={Routes.signup}>
-                        <button>Sign up</button>
-                    </Link>
+                    <button
+                        onClick={() => navigateTo(Routes.signup)}
+                    >
+                        Sign up
+                    </button>
                 </div>
             </div>
         );

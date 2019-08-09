@@ -5,9 +5,10 @@ import App from './components/app';
 import { createStore, applyMiddleware } from 'redux';
 import { reducer } from './store/reducers';
 import { defaultState } from './store/state';
-import { HashRouter } from 'react-router-dom';
+import { Router } from 'react-router-dom';
 import thunk from 'redux-thunk';
-import logger from 'redux-logger';
+import {history} from './history';
+import { logger } from 'redux-logger';
 
 const store = createStore(
     reducer,
@@ -17,9 +18,9 @@ const store = createStore(
 
 render(
     <Provider store={store}>
-        <HashRouter>
+        <Router history={history}>
             <App/>
-        </HashRouter>
+        </Router>
     </Provider>,
     document.getElementById('root')
 );

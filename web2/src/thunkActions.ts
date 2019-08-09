@@ -4,11 +4,12 @@ import * as Actions from "./store/actions";
 import * as Api from "./api/client";
 import * as ModelFactory from "./api/modelFactory";
 import Routes from "./routes";
+import { navigateTo } from './history';
 
 export function login(request : LoginRequest) {
     return function (dispatch : Dispatch) {
         dispatch(Actions.loginRequest(request));
-        Api.login(request)
+        return Api.login(request)
             .then(session => {
                 dispatch(Actions.loginSuccess(session.user))
 
@@ -24,7 +25,7 @@ export function login(request : LoginRequest) {
 export function logout() {
     return function (dispatch : Dispatch) {
         dispatch(Actions.logoutRequest());
-        Api.logout()
+        return Api.logout()
             .then(_ => dispatch(Actions.logoutSuccess()))
             .catch(_ => dispatch(Actions.logoutError()));
     };
@@ -33,7 +34,7 @@ export function logout() {
 export function signup(request : CreateUserRequest) {
     return function (dispatch : Dispatch) {
         dispatch(Actions.signupRequest(request));
-        Api.createUser(request)
+        return Api.createUser(request)
             .then(user => {
                 dispatch(Actions.signupSuccess(user));
                 const loginRequest = ModelFactory.loginRequestFromCreateUserRequest(request);
@@ -44,14 +45,16 @@ export function signup(request : CreateUserRequest) {
 }
 
 export function loadGame(gameId: number) {
-    return function (dispatch : Dispatch) {
+    return async function (dispatch : Dispatch) {
         dispatch(Actions.loadGameRequest(gameId));
-        return Api.getGame(gameId)
-            .then(game => {
-                dispatch(Actions.loadGameSuccess(game));
-                dispatch(Actions.redirectPending(Routes.lobby(gameId)));
-            })
-            .catch(_ => dispatch(Actions.loadGameError()));
+        try {
+            const game = await Api.getGame(gameId);
+            dispatch(Actions.loadGameSuccess(game));
+            navigateTo(Routes.lobby(gameId));
+        }
+        catch {
+            dispatch(Actions.loadGameError());
+        }
     };
 }
 
@@ -67,7 +70,7 @@ export function queryGames(query: GamesQuery) {
 export function restoreSession() {
     return function (dispatch : Dispatch) {
         dispatch(Actions.restoreSessionRequest());
-        Api.getCurrentUser()
+        return Api.getCurrentUser()
             .then(user => dispatch(Actions.restoreSessionSuccess(user)))
             .catch(error => {
                 let [status, message] = error;

@@ -14,8 +14,7 @@ export interface AppState {
     user : User,
     requests : RequestState,
     currentGame : GameState,
-    gamesQuery : GamesQueryState,
-    redirectRoute : string
+    gamesQuery : GamesQueryState
 }
 
 export interface RequestState {
@@ -39,7 +38,6 @@ export function defaultState() : AppState {
             restoreSessionPending:false
         },
         currentGame: null,
-        gamesQuery: null,
-        redirectRoute: null
+        gamesQuery: null
     };
 }
