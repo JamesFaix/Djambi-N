@@ -8,10 +8,12 @@ import DashboardPage from './pages/dashboardPage';
 import { Switch } from 'react-router-dom';
 import * as Redirects from './redirects';
 import LobbyPage from './pages/lobbyPage';
+import SessionRestorer from './sessionRestorer';
 
 const App : React.SFC<{}> = _ => {
     return (
         <div>
+            <SessionRestorer/>
             <TopBar/>
             <Switch>
                 <Route
