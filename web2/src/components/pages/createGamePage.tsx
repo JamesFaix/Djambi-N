@@ -7,6 +7,8 @@ import * as Actions from '../../store/actions';
 import { connect } from 'react-redux';
 import * as ThunkActions from '../../thunkActions';
 import * as Redirects from '../redirects';
+import Routes from '../../routes';
+import { Link } from 'react-router-dom';
 
 interface CreateGamePageProps {
     formData : GameParameters,
@@ -48,6 +50,11 @@ class createGamePage extends React.Component<CreateGamePageProps> {
         return (
             <div>
                 <Redirects.ToHomeIfNoSession/>
+                <Link to={Routes.dashboard}>
+                    <button>
+                        Home
+                    </button>
+                </Link>
                 <table>
                     <tbody>
                         <tr>
