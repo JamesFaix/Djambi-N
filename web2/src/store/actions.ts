@@ -25,138 +25,38 @@ export interface DataAction<T> extends CustomAction {
   data : T
 }
 
-export function loginRequest(request: LoginRequest) : DataAction<LoginRequest> {
+function create<T>(type : ActionTypes, status : ActionStatus, data : T = undefined) {
   return {
-    type: ActionTypes.Login,
-    status: ActionStatus.Pending,
-    data: request
+    type: type,
+    status: status,
+    data: data
   };
 }
+const pending = <T>(type : ActionTypes, data : T = undefined) => create(type, ActionStatus.Pending, data);
+const success = <T>(type : ActionTypes, data : T = undefined) => create(type, ActionStatus.Success, data);
+const error = <T>(type : ActionTypes, data : T = undefined) => create(type, ActionStatus.Error, data);
 
-export function loginSuccess(session : Session) : DataAction<Session> {
-  return {
-    type: ActionTypes.Login,
-    status: ActionStatus.Success,
-    data: session
-  };
-}
+export const loginRequest = (request : LoginRequest) => pending(ActionTypes.Login, request);
+export const loginSuccess = (session : Session) => success(ActionTypes.Login, session);
+export const loginError = () => error(ActionTypes.Login);
 
-export function loginError() : CustomAction {
-  return {
-    type: ActionTypes.Login,
-    status: ActionStatus.Error
-  };
-}
+export const logoutRequest = () => pending(ActionTypes.Logout);
+export const logoutSuccess = () => success(ActionTypes.Logout);
+export const logoutError = () => error(ActionTypes.Logout);
 
-export function logoutRequest() : CustomAction {
-  return {
-    type: ActionTypes.Logout,
-    status: ActionStatus.Pending
-  };
-}
+export const signupRequest = (request : CreateUserRequest) => pending(ActionTypes.Signup, request);
+export const signupSuccess = (user : User) => success(ActionTypes.Signup, user);
+export const signupError = () => error(ActionTypes.Signup);
 
-export function logoutSuccess() : CustomAction {
-  return {
-    type: ActionTypes.Logout,
-    status: ActionStatus.Success
-  };
-}
+export const loadGameRequest = (gameId : number) => pending(ActionTypes.LoadGame, gameId);
+export const loadGameSuccess = (game : Game) => success(ActionTypes.LoadGame, game);
+export const loadGameError = () => error(ActionTypes.LoadGame);
 
-export function logoutError() : CustomAction {
-  return {
-    type: ActionTypes.Logout,
-    status: ActionStatus.Error
-  };
-}
+export const queryGamesRequest = (query : GamesQuery) => pending(ActionTypes.QueryGames, query);
+export const queryGamesSuccess = (games : Game[]) => success(ActionTypes.QueryGames, games);
+export const queryGamesError = () => error(ActionTypes.QueryGames);
 
-export function signupRequest(request : CreateUserRequest) : DataAction<CreateUserRequest> {
-  return {
-    type: ActionTypes.Signup,
-    status: ActionStatus.Pending,
-    data: request
-  };
-}
+export const updateGamesQuery = (query: GamesQuery) => success(ActionTypes.UpdateGamesQuery, query);
 
-export function signupSuccess(user : User) : DataAction<User> {
-  return {
-    type: ActionTypes.Signup,
-    status: ActionStatus.Success,
-    data: user
-  };
-}
-
-export function signupError() : CustomAction {
-  return {
-    type: ActionTypes.Signup,
-    status: ActionStatus.Error
-  };
-}
-
-export function loadGameRequest(gameId : number) : DataAction<number> {
-  return {
-    type: ActionTypes.LoadGame,
-    status: ActionStatus.Pending,
-    data: gameId
-  };
-}
-
-export function loadGameSuccess(game : Game) : DataAction<Game> {
-  return {
-    type: ActionTypes.LoadGame,
-    status: ActionStatus.Success,
-    data: game
-  };
-}
-
-export function loadGameError() : CustomAction {
-  return {
-    type: ActionTypes.LoadGame,
-    status: ActionStatus.Error
-  };
-}
-
-export function queryGamesRequest(query : GamesQuery) : DataAction<GamesQuery> {
-  return {
-    type: ActionTypes.QueryGames,
-    status: ActionStatus.Pending,
-    data: query
-  };
-}
-
-export function queryGamesSuccess(games : Game[]) : DataAction<Game[]> {
-  return {
-    type: ActionTypes.QueryGames,
-    status: ActionStatus.Success,
-    data: games
-  };
-}
-
-export function queryGamesError() : CustomAction {
-  return {
-    type: ActionTypes.QueryGames,
-    status: ActionStatus.Error
-  };
-}
-
-export function updateGamesQuery(query: GamesQuery) : DataAction<GamesQuery> {
-  return {
-    type: ActionTypes.UpdateGamesQuery,
-    status: ActionStatus.Success,
-    data: query
-  };
-}
-
-export function redirectPending(route : string) : DataAction<string> {
-  return {
-    type: ActionTypes.Redirect,
-    status: ActionStatus.Pending,
-    data: route
-  };
-}
-
-export function redirectSuccess() : CustomAction {
-  return {
-    type: ActionTypes.Redirect,
-    status: ActionStatus.Success
-  };
-}
+export const redirectPending = (route : string) => pending(ActionTypes.Redirect, route);
+export const redirectSuccess = () => success(ActionTypes.Redirect);
