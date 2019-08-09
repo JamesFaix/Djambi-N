@@ -4,6 +4,7 @@ import { AppState } from '../../store/state';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import * as Actions from '../../store/actions';
+import * as ThunkActions from '../../thunkActions';
 
 interface GamesQueryResultsTableProps {
     games : Game[],
@@ -73,7 +74,7 @@ const mapStateToProps = (state : AppState) => {
 
 const mapDispatchToProps = (dispatch : Dispatch) => {
     return {
-        onLoadGameClicked: (gameId: number) => dispatch(Actions.loadGameRequest(gameId))
+        onLoadGameClicked: (gameId: number) => ThunkActions.loadGame(gameId)(dispatch)
     };
 };
 

@@ -35,6 +35,7 @@ class signupPage extends React.Component<SignupPageProps, SignupPageState>{
     render() {
         return (
             <div>
+                <Redirects.CompleteRedirectAction/>
                 <Redirects.ToHomeIfSession/>
                 <table>
                     <tbody>

@@ -35,6 +35,7 @@ class loginPage extends React.Component<LoginPageProps, LoginPageState>{
     render() {
         return (
             <div>
+                <Redirects.CompleteRedirectAction/>
                 <Redirects.ToHomeIfSession/>
                 <table>
                     <tbody>

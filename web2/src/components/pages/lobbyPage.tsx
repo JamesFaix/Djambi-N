@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { LoginRequest, Game } from '../../api/model';
-import Routes from '../../routes';
-import { Link } from 'react-router-dom';
+import { Game } from '../../api/model';
 import * as Redirects from '../redirects';
+import { AppState } from '../../store/state';
+import { Dispatch } from 'redux';
+import { connect } from 'react-redux';
 
 interface LobbyPageProps {
     game : Game
@@ -12,7 +13,7 @@ interface LobbyPageState {
 
 }
 
-export default class LobbyPage extends React.Component<LobbyPageProps, LobbyPageState> {
+class lobbyPage extends React.Component<LobbyPageProps, LobbyPageState> {
 
     private getGameJson() {
         if (this.props.game) {
@@ -25,6 +26,7 @@ export default class LobbyPage extends React.Component<LobbyPageProps, LobbyPage
     render() {
         return (
             <div>
+                <Redirects.CompleteRedirectAction/>
                 <Redirects.ToHomeIfNoSession/>
                 <Redirects.ToHomeIfNoGame/>
                 {this.getGameJson()}
@@ -32,3 +34,26 @@ export default class LobbyPage extends React.Component<LobbyPageProps, LobbyPage
         );
     }
 }
+
+
+const mapStateToProps = (state: AppState) => {
+    if (state.currentGame) {
+        return {
+            game: state.currentGame.game
+        };
+    } else {
+        return {
+            game: null
+        };
+    }
+};
+
+const mapDispatchToProps = (dispatch : Dispatch) => {
+    return {
+        //Switch from lobby to play
+    };
+};
+
+const LobbyPage = connect(mapStateToProps, mapDispatchToProps)(lobbyPage);
+
+export default LobbyPage;

@@ -12,7 +12,8 @@ export enum ActionTypes {
   Signup = "SIGNUP",
   LoadGame = "LOAD_GAME",
   QueryGames = "QUERY_GAMES",
-  UpdateGamesQuery = "UPDATE_GAMES_QUERY"
+  UpdateGamesQuery = "UPDATE_GAMES_QUERY",
+  Redirect = "REDIRECT"
 }
 
 export interface CustomAction {
@@ -142,5 +143,20 @@ export function updateGamesQuery(query: GamesQuery) : DataAction<GamesQuery> {
     type: ActionTypes.UpdateGamesQuery,
     status: ActionStatus.Success,
     data: query
+  };
+}
+
+export function redirectPending(route : string) : DataAction<string> {
+  return {
+    type: ActionTypes.Redirect,
+    status: ActionStatus.Pending,
+    data: route
+  };
+}
+
+export function redirectSuccess() : CustomAction {
+  return {
+    type: ActionTypes.Redirect,
+    status: ActionStatus.Success
   };
 }

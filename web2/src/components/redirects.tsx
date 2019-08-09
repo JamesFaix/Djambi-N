@@ -2,15 +2,15 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import { AppState, GameState } from '../store/state';
-import { Session, Game } from '../api/model';
+import { Session } from '../api/model';
 import Routes from '../routes';
+import { Dispatch } from 'redux';
+import * as Actions from '../store/actions';
+
+//#region Session-based redirects
 
 interface SessionProps {
     session : Session
-}
-
-interface GameStateProps {
-    gameState : GameState
 }
 
 const redirectToHome : React.SFC<SessionProps> = props =>
@@ -28,16 +28,28 @@ const redirectToHomeIfNoSession : React.SFC<SessionProps> = props =>
         ? null
         : <Redirect to={Routes.login}/>;
 
-const redirectToHomeIfNoGame : React.SFC<GameStateProps> = props =>
-    props.gameState && props.gameState.game
-        ? null
-        : <Redirect to={Routes.dashboard}/>;
-
 const mapAppStateToSessionProps = (state : AppState) : SessionProps => {
     return {
         session: state.session
     };
 };
+
+export const ToHome = connect(mapAppStateToSessionProps)(redirectToHome);
+export const ToHomeIfSession = connect(mapAppStateToSessionProps)(redirectToHomeIfSession);
+export const ToHomeIfNoSession = connect(mapAppStateToSessionProps)(redirectToHomeIfNoSession);
+
+//#endregion
+
+//#region Game-based redirects
+
+interface GameStateProps {
+    gameState : GameState
+}
+
+const redirectToHomeIfNoGame : React.SFC<GameStateProps> = props =>
+    props.gameState && props.gameState.game
+        ? null
+        : <Redirect to={Routes.dashboard}/>;
 
 const mapAppStateToGameStateProps = (state : AppState) : GameStateProps => {
     return {
@@ -45,7 +57,49 @@ const mapAppStateToGameStateProps = (state : AppState) : GameStateProps => {
     };
 }
 
-export const ToHome = connect(mapAppStateToSessionProps)(redirectToHome);
-export const ToHomeIfSession = connect(mapAppStateToSessionProps)(redirectToHomeIfSession);
-export const ToHomeIfNoSession = connect(mapAppStateToSessionProps)(redirectToHomeIfNoSession);
 export const ToHomeIfNoGame = connect(mapAppStateToGameStateProps)(redirectToHomeIfNoGame);
+
+//#endregion
+
+//#region Action-triggered redirects
+
+interface RouteProps {
+    route : string,
+    onRedirectSuccesful: () => void
+}
+
+const redirectIfPendingRedirectAction : React.SFC<RouteProps> = props =>
+{
+    console.log("Redirects.CompleteRedirectAction");
+    if (!props.route) {
+        return null;
+    }
+
+    const currentUrl = window.location.href;
+    const routeStartIndex = currentUrl.indexOf('#') + 1;
+    const currentRoute = currentUrl.slice(routeStartIndex);
+
+    if (props.route === currentRoute) {
+        console.log("successful");
+        props.onRedirectSuccesful();
+        return null;
+    } else {
+        return <Redirect to={props.route}/>;
+    }
+};
+
+const mapAppStateToRouteProps = (state : AppState) => {
+    return {
+        route: state.redirectRoute
+    };
+}
+
+const mapDispatchToRouteProps = (dispatch : Dispatch) => {
+    return {
+        onRedirectSuccesful: () => dispatch(Actions.redirectSuccess())
+    };
+}
+
+export const CompleteRedirectAction = connect(mapAppStateToRouteProps, mapDispatchToRouteProps)(redirectIfPendingRedirectAction);
+
+//#endregion

@@ -7,6 +7,7 @@ import LoginPage from './pages/loginPage';
 import DashboardPage from './pages/dashboardPage';
 import { Switch } from 'react-router-dom';
 import * as Redirects from './redirects';
+import LobbyPage from './pages/lobbyPage';
 
 const App : React.SFC<{}> = _ => {
     return (
@@ -24,6 +25,10 @@ const App : React.SFC<{}> = _ => {
                 <Route
                     path={Routes.dashboard}
                     render={_ => <DashboardPage/>}
+                />
+                <Route
+                    path={Routes.lobbyPattern}
+                    render={_ => <LobbyPage/>}
                 />
                 <Route
                     path={Routes.base}

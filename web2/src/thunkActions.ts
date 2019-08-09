@@ -3,6 +3,7 @@ import { LoginRequest, CreateUserRequest, GamesQuery } from "./api/model";
 import * as Actions from "./store/actions";
 import * as Api from "./api/client";
 import * as ModelFactory from "./api/modelFactory";
+import Routes from "./routes";
 
 export function login(request : LoginRequest) {
     return function (dispatch : Dispatch) {
@@ -46,7 +47,10 @@ export function loadGame(gameId: number) {
     return function (dispatch : Dispatch) {
         dispatch(Actions.loadGameRequest(gameId));
         return Api.getGame(gameId)
-            .then(game => dispatch(Actions.loadGameSuccess(game)))
+            .then(game => {
+                dispatch(Actions.loadGameSuccess(game));
+                dispatch(Actions.redirectPending(Routes.lobby(gameId)));
+            })
             .catch(_ => dispatch(Actions.loadGameError()));
     };
 }

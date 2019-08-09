@@ -19,6 +19,7 @@ class dashboardPage extends React.Component<DashboardPageProps>{
     render() {
         return (
             <div>
+                <Redirects.CompleteRedirectAction/>
                 <Redirects.ToHomeIfNoSession/>
                 <GamesQueryFilters/>
                 <button
