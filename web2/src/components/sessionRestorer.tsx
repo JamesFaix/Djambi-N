@@ -24,7 +24,7 @@ class sessionRestorer extends React.Component<SessionRestorerProps> {
 
 const mapStateToProps = (state : AppState) => {
     return {
-        user: state.user
+        user: state.session.user
     };
 };
 

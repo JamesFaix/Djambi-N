@@ -43,9 +43,9 @@ class lobbyPage extends React.Component<LobbyPageProps, LobbyPageState> {
 
 
 const mapStateToProps = (state: AppState) => {
-    if (state.currentGame) {
+    if (state.activeGame) {
         return {
-            game: state.currentGame.game
+            game: state.activeGame.game
         };
     } else {
         return {

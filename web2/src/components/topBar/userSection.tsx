@@ -39,7 +39,7 @@ const loggedInUserSection : React.SFC<UserSectionProps> = props => {
 
 const mapStateToProps = (state : AppState) => {
     return {
-        user: state.user
+        user: state.session.user
     };
 };
 

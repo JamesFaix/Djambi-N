@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
-import { AppState, GameState } from '../store/state';
+import { AppState, ActiveGameState } from '../store/state';
 import { User } from '../api/model';
 import Routes from '../routes';
 import { Dispatch } from 'redux';
@@ -30,7 +30,7 @@ const redirectToHomeIfNoSession : React.SFC<UserProps> = props =>
 
 const mapAppStateToSessionProps = (state : AppState) : UserProps => {
     return {
-        user: state.user
+        user: state.session.user
     };
 };
 
@@ -43,7 +43,7 @@ export const ToHomeIfNoSession = connect(mapAppStateToSessionProps)(redirectToHo
 //#region Game-based redirects
 
 interface GameStateProps {
-    gameState : GameState
+    gameState : ActiveGameState
 }
 
 const redirectToHomeIfNoGame : React.SFC<GameStateProps> = props =>
@@ -53,7 +53,7 @@ const redirectToHomeIfNoGame : React.SFC<GameStateProps> = props =>
 
 const mapAppStateToGameStateProps = (state : AppState) : GameStateProps => {
     return {
-        gameState: state.currentGame
+        gameState: state.activeGame
     };
 }
 

@@ -1,47 +1,57 @@
 import { CustomAction, DataAction, ActionStatus, ActionTypes } from './actions';
 import { Game, GamesQuery, User, GameParameters } from '../api/model';
-import { AppState, defaultState } from './state';
+import { AppState, StateFactory } from './state';
 
 export function reducer(state: AppState, action : CustomAction) : AppState {
     switch (action.type) {
+        //Session actions
         case ActionTypes.Login:
             return loginReducer(state, action);
         case ActionTypes.Logout:
             return logoutReducer(state, action);
         case ActionTypes.Signup:
             return signupReducer(state, action);
-        case ActionTypes.LoadGame:
-            return loadGameReducer(state, action);
+        case ActionTypes.RestoreSession:
+                return restoreSessionReducer(state, action);
+
+        //Game search actions
         case ActionTypes.QueryGames:
             return queryGamesReducer(state, action);
         case ActionTypes.UpdateGamesQuery:
             return updateGamesQueryReducer(state, action);
-        case ActionTypes.RestoreSession:
-            return restoreSessionReducer(state, action);
+
+        //Game creation actions
         case ActionTypes.CreateGame:
             return createGameReducer(state, action);
         case ActionTypes.UpdateCreateGameForm:
             return updateCreateGameFormReducer(state, action);
+
+        //Game actions
+        case ActionTypes.LoadGame:
+            return loadGameReducer(state, action);
+
         default:
             return state;
     }
 }
 
+//#region Session actions
+
 function loginReducer(state: AppState, action : CustomAction) : AppState {
     switch (action.status) {
         case ActionStatus.Pending: {
             const newState = {...state};
-            newState.requests = {...state.requests};
-            newState.requests.loginPending = true;
+            newState.session = {...state.session};
+            newState.session.loginPending = true;
             return newState;
         }
 
         case ActionStatus.Success: {
-            let da = <DataAction<User>>action;
+            const da = <DataAction<User>>action;
             const newState = {...state};
-            newState.requests = {...state.requests};
-            newState.requests.loginPending = false;
-            newState.user = da.data;
+            newState.session = {...state.session};
+            newState.session.loginPending = false;
+            newState.session.user = da.data;
             return newState;
         }
 
@@ -51,118 +61,38 @@ function loginReducer(state: AppState, action : CustomAction) : AppState {
 }
 
 function logoutReducer(state: AppState, action : CustomAction) : AppState {
-    let newState = state;
-
     switch (action.status) {
         case ActionStatus.Pending:
-            newState = {...state};
-            newState.requests = {...state.requests};
-            newState.requests.logoutPending = true;
-            break;
+            const newState = {...state};
+            newState.session = {...state.session};
+            newState.session.logoutPending = true;
+            return newState;
 
         case ActionStatus.Success:
-            newState = defaultState();
-            break;
+            //This is the one case where the normal combineReducers pattern doesn't make sense
+            return StateFactory.defaultAppState();
 
         default:
             throw "Unsupported case: " + action.status;
     }
-
-    return newState;
 }
 
 function signupReducer(state: AppState, action : CustomAction) : AppState {
-    let newState = state;
-
-    switch (action.status) {
-        case ActionStatus.Pending:
-            newState = {...state};
-            newState.requests = {...state.requests};
-            newState.requests.signupPending = true;
-            break;
-
-        case ActionStatus.Success:
-            newState = {...state};
-            newState.requests = {...state.requests};
-            newState.requests.signupPending = false;
-            break;
-
-        default:
-            throw "Unsupported case: " + action.status;
-    }
-
-    return newState;
-}
-
-function loadGameReducer(state: AppState, action: CustomAction) : AppState {
-    let newState = state;
-
-    switch (action.status) {
-        case ActionStatus.Pending:
-            newState = {...state};
-            newState.requests = {...state.requests};
-            newState.requests.loadGamePending = true;
-            break;
-
-        case ActionStatus.Success:
-            let da = <DataAction<Game>>action;
-            newState = {...state};
-            newState.requests = {...state.requests};
-            newState.requests.loadGamePending = false;
-            newState.currentGame = {
-                game: da.data,
-                history: null
-            };
-            break;
-
-        default:
-            throw "Unsupported case: " + action.status;
-    }
-
-    return newState;
-}
-
-function queryGamesReducer(state: AppState, action: CustomAction) : AppState {
     switch (action.status) {
         case ActionStatus.Pending: {
-            let da = <DataAction<GamesQuery>>action;
-            let newState = {...state};
-            newState.requests = {...state.requests};
-            newState.requests.gamesQueryPending = true;
-            newState.gamesQuery = {
-                query: da.data,
-                results: null
-            };
+            const newState = {...state};
+            newState.session = {...state.session};
+            newState.session.signupPending = true;
             return newState;
         }
 
         case ActionStatus.Success: {
-            let da = <DataAction<Game[]>>action;
-            let newState = {...state};
-            newState.requests = {...state.requests};
-            newState.requests.gamesQueryPending = false;
-            newState.gamesQuery.results = da.data;
+            const newState = {...state};
+            newState.session = {...state.session};
+            newState.session.signupPending = false;
             return newState;
         }
-        default:
-            throw "Unsupported case: " + action.status;
-    }
-}
 
-function updateGamesQueryReducer(state: AppState, action: CustomAction) : AppState {
-    switch (action.status) {
-        case ActionStatus.Success: {
-            let da = <DataAction<GamesQuery>>action;
-            let newState = {...state};
-            if (!newState.gamesQuery) {
-                newState.gamesQuery = {
-                    query: null,
-                    results: null
-                };
-            }
-            newState.gamesQuery.query = da.data;
-            return newState;
-        }
         default:
             throw "Unsupported case: " + action.status;
     }
@@ -171,18 +101,18 @@ function updateGamesQueryReducer(state: AppState, action: CustomAction) : AppSta
 function restoreSessionReducer(state: AppState, action : CustomAction) : AppState {
     switch (action.status) {
         case ActionStatus.Pending: {
-            let newState = {...state};
-            newState.requests = {...state.requests};
-            newState.requests.restoreSessionPending = true;
+            const newState = {...state};
+            newState.session = {...state.session};
+            newState.session.restoreSessionPending = true;
             return newState;
         }
 
         case ActionStatus.Success: {
-            let da = <DataAction<User>>action;
-            let newState = {...state};
-            newState.requests = {...state.requests};
-            newState.requests.restoreSessionPending = false;
-            newState.user = da.data;
+            const da = <DataAction<User>>action;
+            const newState = {...state};
+            newState.session = {...state.session};
+            newState.session.restoreSessionPending = false;
+            newState.session.user = da.data;
             return newState;
         }
 
@@ -191,16 +121,62 @@ function restoreSessionReducer(state: AppState, action : CustomAction) : AppStat
     }
 }
 
+//#endregion
+
+//#region Game search actions
+
+function queryGamesReducer(state: AppState, action: CustomAction) : AppState {
+    switch (action.status) {
+        case ActionStatus.Pending: {
+            const da = <DataAction<GamesQuery>>action;
+            const newState = {...state};
+            newState.gamesQuery = {
+                queryPending: true,
+                query: da.data,
+                results: null
+            };
+            return newState;
+        }
+
+        case ActionStatus.Success: {
+            const da = <DataAction<Game[]>>action;
+            const newState = {...state};
+            newState.gamesQuery = {
+                queryPending: false,
+                query: state.gamesQuery.query,
+                results: da.data
+            };
+            return newState;
+        }
+
+        default:
+            throw "Unsupported case: " + action.status;
+    }
+}
+
+function updateGamesQueryReducer(state: AppState, action: CustomAction) : AppState {
+    switch (action.status) {
+        case ActionStatus.Success: {
+            const da = <DataAction<GamesQuery>>action;
+            const newState = {...state};
+            newState.gamesQuery = {...state.gamesQuery};
+            newState.gamesQuery.query = da.data;
+            return newState;
+        }
+        default:
+            throw "Unsupported case: " + action.status;
+    }
+}
+//#endregion
+
+//#region Game creation actions
+
 function updateCreateGameFormReducer(state: AppState, action : CustomAction) : AppState {
     switch (action.status) {
         case ActionStatus.Success: {
-            let da = <DataAction<GameParameters>>action;
-            let newState = {...state};
-            if (!newState.createGameForm) {
-                newState.createGameForm = {
-                    parameters: null
-                };
-            }
+            const da = <DataAction<GameParameters>>action;
+            const newState = {...state};
+            newState.createGameForm = {...state.createGameForm};
             newState.createGameForm.parameters = da.data;
             return newState;
         }
@@ -212,20 +188,21 @@ function updateCreateGameFormReducer(state: AppState, action : CustomAction) : A
 function createGameReducer(state: AppState, action : CustomAction) : AppState {
     switch (action.status) {
         case ActionStatus.Pending: {
-            let newState = {...state};
-            newState.requests = {...state.requests};
-            newState.requests.createGamePending = true;
+            const newState = {...state};
+            newState.createGameForm = {...state.createGameForm};
+            newState.createGameForm.createGamePending = true;
             return newState;
         }
 
         case ActionStatus.Success: {
-            let da = <DataAction<Game>>action;
-            let newState = {...state};
-            newState.requests = {...state.requests};
-            newState.requests.createGamePending = false;
-            newState.currentGame = {
+            const da = <DataAction<Game>>action;
+            const newState = {...state};
+            newState.createGameForm = {...state.createGameForm};
+            newState.createGameForm.createGamePending = false;
+            newState.activeGame = {
                 game: da.data,
-                history: null
+                history: null,
+                loadGamePending: false
             };
             return newState;
         }
@@ -234,3 +211,34 @@ function createGameReducer(state: AppState, action : CustomAction) : AppState {
             throw "Unsupported case: " + action.status;
     }
 }
+//#endregion
+
+//#region Game actions
+
+function loadGameReducer(state: AppState, action: CustomAction) : AppState {
+    switch (action.status) {
+        case ActionStatus.Pending: {
+            const newState = {...state};
+            newState.activeGame = {
+                loadGamePending: true,
+                game: null,
+                history: null
+            };
+            return newState;
+        }
+        case ActionStatus.Success: {
+            const da = <DataAction<Game>>action;
+            const newState = {...state};
+            newState.activeGame = {
+                loadGamePending: false,
+                game: da.data,
+                history: null
+            };
+            return newState;
+        }
+        default:
+            throw "Unsupported case: " + action.status;
+    }
+}
+
+//#endregion

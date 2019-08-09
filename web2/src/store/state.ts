@@ -1,54 +1,78 @@
 import { Event, Game, GamesQuery, User, GameParameters } from '../api/model';
 import * as ModelFactory from '../api/modelFactory';
 
-export interface GameState {
+export interface AppState {
+    session: SessionState,
+    activeGame : ActiveGameState,
+    gamesQuery : GamesQueryState,
+    createGameForm : CreateGameFormState
+}
+
+export interface SessionState {
+    user : User,
+    signupPending : boolean,
+    loginPending : boolean,
+    logoutPending : boolean,
+    restoreSessionPending : boolean
+}
+
+export interface ActiveGameState {
+    loadGamePending : boolean,
     game : Game,
     history : Event[]
 }
 
 export interface GamesQueryState {
     query : GamesQuery,
-    results : Game[]
+    results : Game[],
+    queryPending : boolean
 }
 
 export interface CreateGameFormState {
-    parameters : GameParameters
-}
-
-export interface AppState {
-    user : User,
-    requests : RequestState,
-    currentGame : GameState,
-    gamesQuery : GamesQueryState,
-    createGameForm : CreateGameFormState
-}
-
-export interface RequestState {
-    loginPending : boolean,
-    logoutPending : boolean,
-    signupPending : boolean,
-    loadGamePending : boolean,
-    gamesQueryPending : boolean,
-    restoreSessionPending : boolean,
+    parameters : GameParameters,
     createGamePending : boolean
 }
 
-export function defaultState() : AppState {
-    return {
-        user: null,
-        requests:{
-            loginPending:false,
-            logoutPending:false,
-            signupPending:false,
-            loadGamePending:false,
-            gamesQueryPending:false,
-            restoreSessionPending:false,
-            createGamePending:false
-        },
-        currentGame: null,
-        gamesQuery: null,
-        createGameForm: {
-            parameters: ModelFactory.defaultGameParameters()
-        }
-    };
+export class StateFactory {
+    static defaultSesssionState() : SessionState {
+        return {
+            user: null,
+            loginPending: false,
+            logoutPending: false,
+            signupPending: false,
+            restoreSessionPending: false
+        };
+    }
+
+    static defaultActiveGameState() : ActiveGameState {
+        return {
+            game: null,
+            history: null,
+            loadGamePending: false
+        };
+    }
+
+    static defaultGamesQueryState() : GamesQueryState {
+        return {
+            query: ModelFactory.emptyGamesQuery(),
+            results: [],
+            queryPending: false
+        };
+    }
+
+    static defaultCreateGameFormState() : CreateGameFormState {
+        return {
+            parameters: ModelFactory.defaultGameParameters(),
+            createGamePending: false
+        };
+    }
+
+    static defaultAppState() : AppState {
+        return {
+            session: StateFactory.defaultSesssionState(),
+            activeGame: StateFactory.defaultActiveGameState(),
+            gamesQuery: StateFactory.defaultGamesQueryState(),
+            createGameForm: StateFactory.defaultCreateGameFormState()
+        };
+    }
 }
