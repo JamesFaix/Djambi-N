@@ -5,7 +5,7 @@ import * as Redirects from '../redirects';
 import * as ThunkActions from '../../thunkActions';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import { navigateTo } from '../../history';
+import { Link } from 'react-router-dom';
 
 interface LoginPageProps {
     onLoginClicked: (request: LoginRequest) => void
@@ -71,11 +71,11 @@ class loginPage extends React.Component<LoginPageProps, LoginPageState>{
                 </div>
                 <div>
                     Don't have an account yet?
-                    <button
-                        onClick={() => navigateTo(Routes.signup)}
-                    >
-                        Sign up
-                    </button>
+                    <Link to={Routes.signup}>
+                        <button>
+                            Sign up
+                        </button>
+                    </Link>
                 </div>
             </div>
         );

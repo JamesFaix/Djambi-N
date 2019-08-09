@@ -7,8 +7,8 @@ import { GamesQuery, Game } from '../../api/model';
 import GamesQueryFilters from '../gamesQuery/gamesQueryFilters';
 import GamesQueryResultsTable from '../gamesQuery/gamesQueryResultsTable';
 import { AppState } from '../../store/state';
-import { navigateTo } from '../../history';
 import Routes from '../../routes';
+import { Link } from 'react-router-dom';
 
 interface DashboardPageProps {
     gamesQuery : GamesQuery,
@@ -22,11 +22,11 @@ class dashboardPage extends React.Component<DashboardPageProps>{
         return (
             <div>
                 <Redirects.ToHomeIfNoSession/>
-                <button
-                    onClick={() => navigateTo(Routes.createGame)}
-                >
-                    Create game
-                </button>
+                <Link to={Routes.createGame}>
+                    <button>
+                        Create game
+                    </button>
+                </Link>
                 <GamesQueryFilters/>
                 <button
                     onClick={() => this.props.onSearchClicked(this.props.gamesQuery)}
