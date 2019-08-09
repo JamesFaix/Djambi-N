@@ -15,56 +15,48 @@ interface GamesQueryFiltersProps {
 
 class gamesQueryFilters extends React.Component<GamesQueryFiltersProps> {
 
-    private getQueryOrDefault(props: GamesQueryFiltersProps) {
-        let query = props.query;
-        if (!query) {
-            query = ModelFactory.emptyGamesQuery();
-        }
-        return query;
-    }
-
     private onChangeGameId(e : React.ChangeEvent<HTMLInputElement>) : void {
         const value = parseInt(e.target.value);
-        let query = this.getQueryOrDefault(this.props);
+        let query = {...this.props.query};
         query.gameId = value;
         this.props.onQueryChanged(query);
     }
 
     private onChangeDescription(e : React.ChangeEvent<HTMLInputElement>) : void {
         const value = e.target.value;
-        let query = this.getQueryOrDefault(this.props);
+        let query = {...this.props.query};
         query.descriptionContains = value;
         this.props.onQueryChanged(query);
     }
 
     private onChangeCreatedBy(e : React.ChangeEvent<HTMLInputElement>) : void {
         const value = e.target.value;
-        let query = this.getQueryOrDefault(this.props);
+        let query = {...this.props.query};
         query.createdByUserName = value;
         this.props.onQueryChanged(query);
     }
 
     private onChangePlayerUserName(e : React.ChangeEvent<HTMLInputElement>) : void {
         const value = e.target.value;
-        let query = this.getQueryOrDefault(this.props);
+        let query = {...this.props.query};
         query.playerUserName = value;
         this.props.onQueryChanged(query);
     }
 
     private onChangeIsPublic(value : boolean) : void {
-        let query = this.getQueryOrDefault(this.props);
+        let query = {...this.props.query};
         query.isPublic = value;
         this.props.onQueryChanged(query);
     }
 
     private onChangeAllowGuests(value : boolean) : void {
-        let query = this.getQueryOrDefault(this.props);
+        let query = {...this.props.query};
         query.allowGuests = value;
         this.props.onQueryChanged(query);
     }
 
     private onChangeStatus(value : GameStatus) : void {
-        let query = this.getQueryOrDefault(this.props);
+        let query = {...this.props.query};
         query.status = value;
         this.props.onQueryChanged(query);
     }
@@ -78,7 +70,7 @@ class gamesQueryFilters extends React.Component<GamesQueryFiltersProps> {
     }
 
     render() {
-        const query = this.getQueryOrDefault(this.props);
+        const query = this.props.query;
 
         return (
             <div>
@@ -164,15 +156,9 @@ class gamesQueryFilters extends React.Component<GamesQueryFiltersProps> {
 }
 
 const mapStateToProps = (state : AppState) => {
-    if (state.gamesQuery) {
-        return {
-            query: state.gamesQuery.query,
-        };
-    } else {
-        return {
-            query: null,
-        };
-    }
+    return {
+        query: state.gamesQuery.query,
+    };
 };
 
 const mapDispatchToProps = (dispatch : Dispatch) => {

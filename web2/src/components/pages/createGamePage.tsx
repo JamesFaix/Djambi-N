@@ -6,6 +6,7 @@ import { Dispatch } from 'redux';
 import * as Actions from '../../store/actions';
 import { connect } from 'react-redux';
 import * as ThunkActions from '../../thunkActions';
+import * as Redirects from '../redirects';
 
 interface CreateGamePageProps {
     formData : GameParameters,
@@ -46,6 +47,7 @@ class createGamePage extends React.Component<CreateGamePageProps> {
     render() {
         return (
             <div>
+                <Redirects.ToHomeIfNoSession/>
                 <table>
                     <tbody>
                         <tr>
@@ -103,15 +105,9 @@ class createGamePage extends React.Component<CreateGamePageProps> {
 }
 
 const mapStateToProps = (state : AppState) => {
-    if (state.createGameForm) {
-        return {
-            formData: state.createGameForm.parameters
-        };
-    } else {
-        return {
-            formData: ModelFactory.defaultGameParameters()
-        };
-    }
+    return {
+        formData: state.createGameForm.parameters
+    };
 };
 
 const mapDispatchToProps = (dispatch : Dispatch) => {
