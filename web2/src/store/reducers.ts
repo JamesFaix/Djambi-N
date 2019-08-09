@@ -1,5 +1,5 @@
 import { CustomAction, DataAction, ActionStatus, ActionTypes } from './actions';
-import { Session, Game, GamesQuery, User } from '../api/model';
+import { Game, GamesQuery, User } from '../api/model';
 import { AppState, defaultState } from './state';
 
 export function reducer(state: AppState, action : CustomAction) : AppState {
@@ -18,6 +18,8 @@ export function reducer(state: AppState, action : CustomAction) : AppState {
             return updateGamesQueryReducer(state, action);
         case ActionTypes.Redirect:
             return redirectReducer(state, action);
+        case ActionTypes.RestoreSession:
+            return restoreSessionReducer(state, action);
         default:
             return state;
     }
@@ -176,6 +178,29 @@ function redirectReducer(state: AppState, action : CustomAction) : AppState {
         case ActionStatus.Success: {
             let newState = {...state};
             newState.redirectRoute = null;
+            return newState;
+        }
+
+        default:
+            throw "Unsupported case: " + action.status;
+    }
+}
+
+function restoreSessionReducer(state: AppState, action : CustomAction) : AppState {
+    switch (action.status) {
+        case ActionStatus.Pending: {
+            let newState = {...state};
+            newState.requests = {...state.requests};
+            newState.requests.restoreSessionPending = true;
+            return newState;
+        }
+
+        case ActionStatus.Success: {
+            let da = <DataAction<User>>action;
+            let newState = {...state};
+            newState.requests = {...state.requests};
+            newState.requests.restoreSessionPending = false;
+            newState.user = da.data;
             return newState;
         }
 

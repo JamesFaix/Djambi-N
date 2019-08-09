@@ -63,3 +63,17 @@ export function queryGames(query: GamesQuery) {
             .catch(_ => dispatch(Actions.queryGamesError()));
     };
 }
+
+export function restoreSession() {
+    return function (dispatch : Dispatch) {
+        dispatch(Actions.restoreSessionRequest());
+        Api.getCurrentUser()
+            .then(user => dispatch(Actions.restoreSessionSuccess(user)))
+            .catch(error => {
+                let [status, message] = error;
+                if (status !== 401) {
+                    dispatch(Actions.restoreSessionError());
+                }
+            });
+    };
+}

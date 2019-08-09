@@ -23,7 +23,8 @@ export interface RequestState {
     logoutPending : boolean,
     signupPending : boolean,
     loadGamePending : boolean,
-    gamesQueryPending : boolean
+    gamesQueryPending : boolean,
+    restoreSessionPending : boolean
 }
 
 export function defaultState() : AppState {
@@ -34,7 +35,8 @@ export function defaultState() : AppState {
             logoutPending:false,
             signupPending:false,
             loadGamePending:false,
-            gamesQueryPending:false
+            gamesQueryPending:false,
+            restoreSessionPending:false
         },
         currentGame: null,
         gamesQuery: null,

@@ -1,4 +1,4 @@
-import { Session, LoginRequest, User, CreateUserRequest, Game, GamesQuery } from "../api/model";
+import { LoginRequest, User, CreateUserRequest, Game, GamesQuery } from "../api/model";
 
 export enum ActionStatus {
   Pending = "PENDING",
@@ -13,7 +13,8 @@ export enum ActionTypes {
   LoadGame = "LOAD_GAME",
   QueryGames = "QUERY_GAMES",
   UpdateGamesQuery = "UPDATE_GAMES_QUERY",
-  Redirect = "REDIRECT"
+  Redirect = "REDIRECT",
+  RestoreSession = "RESTORE_SESSION"
 }
 
 export interface CustomAction {
@@ -60,3 +61,7 @@ export const updateGamesQuery = (query: GamesQuery) => success(ActionTypes.Updat
 
 export const redirectPending = (route : string) => pending(ActionTypes.Redirect, route);
 export const redirectSuccess = () => success(ActionTypes.Redirect);
+
+export const restoreSessionRequest = () => pending(ActionTypes.RestoreSession);
+export const restoreSessionSuccess = (user: User) => success(ActionTypes.RestoreSession, user);
+export const restoreSessionError = () => error(ActionTypes.RestoreSession);
