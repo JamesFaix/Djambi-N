@@ -1,0 +1,39 @@
+body {
+    font: 14px "Century Gothic", Futura, sans-serif;
+    margin: 0;
+    background: white;
+    color: black;
+}
+
+button {
+    font: 14px "Century Gothic", Futura, sans-serif;
+    border: 1px;
+    background: white;
+    box-shadow: none;
+    border-radius: none;
+    border-style: solid;
+    border-color: gainsboro;
+    padding: 5px 10px 5px 10px;
+    color: black;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+th {
+    font-weight: normal;
+    border: 1px;
+    border-style: solid;
+    border-color: gainsboro;
+    padding: 5px 10px 5px 10px;
+}
+
+td {
+    font-weight: normal;
+    text-align: left;
+    border: 1px;
+    border-style: solid;
+    border-color: gainsboro;
+    padding: 5px 10px 5px 10px;
+}
