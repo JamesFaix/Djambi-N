@@ -6,16 +6,14 @@ import SignupPage from './pages/signupPage';
 import LoginPage from './pages/loginPage';
 import DashboardPage from './pages/dashboardPage';
 import { Switch } from 'react-router-dom';
-import * as Redirects from './redirects';
 import LobbyPage from './pages/lobbyPage';
-import SessionRestorer from './sessionRestorer';
 import CreateGamePage from './pages/createGamePage';
+import RedirectToLoginOrDashboard from './utilities/redirectToLoginOrDashboard';
 import PlayPage from './pages/playPage';
 
 const App : React.SFC<{}> = _ => {
     return (
         <div>
-            <SessionRestorer/>
             <TopBar/>
             <Switch>
                 <Route
@@ -44,7 +42,7 @@ const App : React.SFC<{}> = _ => {
                 />
                 <Route
                     path={Routes.base}
-                    component={Redirects.ToHome}
+                    component={RedirectToLoginOrDashboard}
                 />
             </Switch>
         </div>

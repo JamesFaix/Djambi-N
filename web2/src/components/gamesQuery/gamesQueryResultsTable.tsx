@@ -1,14 +1,16 @@
 import * as React from 'react';
-import { Game } from '../../api/model';
+import { Game, GameStatus } from '../../api/model';
 import { AppState } from '../../store/state';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import * as Actions from '../../store/actions';
 import * as ThunkActions from '../../thunkActions';
+import { navigateTo } from '../../history';
+import Routes from '../../routes';
 
 interface GamesQueryResultsTableProps {
     games : Game[],
-    onLoadGameClicked: (gameId: number) => void
+    onViewGameClicked: (game: Game) => void
 }
 
 class gamesQueryResultsTable extends React.Component<GamesQueryResultsTableProps> {
@@ -42,7 +44,7 @@ class gamesQueryResultsTable extends React.Component<GamesQueryResultsTableProps
             <tr key={rowNumber}>
                 <td>
                     <button
-                        onClick={e => this.props.onLoadGameClicked(game.id)}
+                        onClick={e => this.props.onViewGameClicked(game)}
                     >
                         Load
                     </button>
@@ -74,7 +76,7 @@ const mapStateToProps = (state : AppState) => {
 
 const mapDispatchToProps = (dispatch : Dispatch) => {
     return {
-        onLoadGameClicked: (gameId: number) => ThunkActions.loadGame(gameId)(dispatch)
+        onViewGameClicked: (game: Game) => ThunkActions.navigateToGame(game)
     };
 };
 

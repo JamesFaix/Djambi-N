@@ -1,4 +1,4 @@
-import { GamesQuery, CreatePlayerRequest, LoginRequest, CreateUserRequest, GameParameters } from "./model";
+import { GamesQuery, LoginRequest, CreateUserRequest, GameParameters } from "./model";
 
 export function emptyGamesQuery() : GamesQuery {
     return {

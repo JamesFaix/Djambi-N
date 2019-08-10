@@ -9,6 +9,10 @@ interface GameParametersTableProps {
 }
 
 const gameParametersTable : React.SFC<GameParametersTableProps> = props => {
+    if (!props.parameters) {
+        return null;
+    }
+
     return (
         <div>
             <table>

@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { CreateUserRequest } from '../../api/model';
 import Routes from '../../routes';
-import * as Redirects from '../redirects';
 import { Dispatch } from 'redux';
 import * as ThunkActions from '../../thunkActions';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import RedirectToDashboardIfLoggedIn from '../utilities/redirectToDashboardIfLoggedIn';
 
 interface SignupPageProps {
     onSignupClicked: (request: CreateUserRequest) => void
@@ -35,7 +35,7 @@ class signupPage extends React.Component<SignupPageProps, SignupPageState>{
     render() {
         return (
             <div>
-                <Redirects.ToHomeIfSession/>
+                <RedirectToDashboardIfLoggedIn/>
                 <table>
                     <tbody>
                         <tr>

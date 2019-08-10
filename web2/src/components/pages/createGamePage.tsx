@@ -1,14 +1,13 @@
 import * as React from 'react';
 import { GameParameters } from '../../api/model';
-import * as ModelFactory from '../../api/modelFactory';
 import { AppState } from '../../store/state';
 import { Dispatch } from 'redux';
 import * as Actions from '../../store/actions';
 import { connect } from 'react-redux';
 import * as ThunkActions from '../../thunkActions';
-import * as Redirects from '../redirects';
 import Routes from '../../routes';
 import { Link } from 'react-router-dom';
+import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
 
 interface CreateGamePageProps {
     formData : GameParameters,
@@ -49,7 +48,7 @@ class createGamePage extends React.Component<CreateGamePageProps> {
     render() {
         return (
             <div>
-                <Redirects.ToHomeIfNoSession/>
+                <RedirectToLoginIfNotLoggedIn/>
                 <Link to={Routes.dashboard}>
                     <button>
                         Home

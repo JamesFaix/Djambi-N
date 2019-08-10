@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { LoginRequest } from '../../api/model';
 import Routes from '../../routes';
-import * as Redirects from '../redirects';
 import * as ThunkActions from '../../thunkActions';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import RedirectToDashboardIfLoggedIn from '../utilities/redirectToDashboardIfLoggedIn';
 
 interface LoginPageProps {
     onLoginClicked: (request: LoginRequest) => void
@@ -35,7 +35,7 @@ class loginPage extends React.Component<LoginPageProps, LoginPageState>{
     render() {
         return (
             <div>
-                <Redirects.ToHomeIfSession/>
+                <RedirectToDashboardIfLoggedIn/>
                 <table>
                     <tbody>
                         <tr>

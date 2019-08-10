@@ -5,8 +5,10 @@ import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import Routes from '../../routes';
-import * as Redirects from '../redirects';
 import { Link } from 'react-router-dom';
+import LoadGame from '../utilities/loadGame';
+import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
+import RedirectToLobbyIfGameNotInProgress from '../utilities/redirectToLobbyIfGameNotInProgress';
 
 interface PlayPageProps {
     game : Game
@@ -14,32 +16,25 @@ interface PlayPageProps {
 
 class playPage extends React.Component<PlayPageProps> {
     render() {
+        const gameId = (this.props as any).match.params.gameId;
         return (
             <div>
-                <Redirects.ToHomeIfNoSession/>
-                <Redirects.ToHomeIfNoGame/>
+                <RedirectToLoginIfNotLoggedIn/>
+                <RedirectToLobbyIfGameNotInProgress/>
+                <LoadGame gameId={gameId}/>
                 <Link to={Routes.dashboard}>
                     <button>
                         Home
                     </button>
                 </Link>
-                <Link to={Routes.lobby(this.props.game.id)}>
+                <Link to={Routes.lobby(gameId)}>
                     <button>
                         Lobby
                     </button>
                 </Link>
-                {this.redirectIfNotInProgress()}
                 Game page content
             </div>
         );
-    }
-
-    private redirectIfNotInProgress(){
-        if (this.props.game.status === GameStatus.InProgress) {
-            return null;
-        } else {
-            return <Redirect to={Routes.lobby(this.props.game.id)}/>;
-        }
     }
 }
 

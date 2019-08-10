@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as Redirects from '../redirects';
 import { Dispatch } from 'redux';
 import * as ThunkActions from '../../thunkActions';
 import { connect } from 'react-redux';
@@ -9,6 +8,7 @@ import GamesQueryResultsTable from '../gamesQuery/gamesQueryResultsTable';
 import { AppState } from '../../store/state';
 import Routes from '../../routes';
 import { Link } from 'react-router-dom';
+import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
 
 interface DashboardPageProps {
     gamesQuery : GamesQuery,
@@ -21,7 +21,7 @@ class dashboardPage extends React.Component<DashboardPageProps>{
     render() {
         return (
             <div>
-                <Redirects.ToHomeIfNoSession/>
+                <RedirectToLoginIfNotLoggedIn/>
                 <Link to={Routes.createGame}>
                     <button>
                         Create game

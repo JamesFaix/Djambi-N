@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as Redirects from '../redirects';
 import Routes from '../../routes';
 import { Link } from 'react-router-dom';
 import GameParametersTable from '../lobby/gameParametersTable';
@@ -9,6 +8,8 @@ import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import * as ThunkActions from '../../thunkActions';
 import { AppState } from '../../store/state';
+import LoadGame from '../utilities/loadGame';
+import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
 
 interface LobbyPageProps {
     game : Game,
@@ -19,8 +20,8 @@ class lobbyPage extends React.Component<LobbyPageProps> {
     render() {
         return (
             <div>
-                <Redirects.ToHomeIfNoSession/>
-                <Redirects.ToHomeIfNoGame/>
+                <RedirectToLoginIfNotLoggedIn/>
+                <LoadGame gameId={(this.props as any).match.params.gameId}/>
                 <Link to={Routes.dashboard}>
                     <button>
                         Home
@@ -35,6 +36,10 @@ class lobbyPage extends React.Component<LobbyPageProps> {
     }
 
     private renderStartButton() {
+        if (!this.props.game) {
+            return null;
+        }
+
         if (this.props.game.status !== GameStatus.Pending
             || this.props.game.players.length < 2) {
             return null;
@@ -50,6 +55,10 @@ class lobbyPage extends React.Component<LobbyPageProps> {
     }
 
     private renderPlayButton() {
+        if (!this.props.game) {
+            return null;
+        }
+
         if (this.props.game.status !== GameStatus.InProgress) {
             return null;
         }

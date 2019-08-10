@@ -26,6 +26,10 @@ class lobbyPlayersTable extends React.Component<LobbyPlayersTableProps, LobbyPla
     }
 
     render() {
+        if (!this.props.game) {
+            return null;
+        }
+
         const seats = LobbySeats.getSeats(this.props.game, this.props.user);
         return (
             <div>
