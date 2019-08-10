@@ -17,7 +17,8 @@ export enum ActionTypes {
   CreateGame = "CREATE_GAME",
   UpdateCreateGameForm = "UPDATE_CREATE_GAME_FORM",
   AddPlayer = "ADD_PLAYER",
-  RemovePlayer = "REMOVE_PLAYER"
+  RemovePlayer = "REMOVE_PLAYER",
+  StartGame = "START_GAME"
 }
 
 export interface CustomAction {
@@ -79,3 +80,7 @@ export const addPlayerError = () => error(ActionTypes.AddPlayer);
 export const removePlayerRequest = (playerId: number) => pending(ActionTypes.RemovePlayer, playerId);
 export const removePlayerSuccess = (game : Game) => success(ActionTypes.RemovePlayer, game);
 export const removePlayerError = () => error(ActionTypes.RemovePlayer);
+
+export const startGameRequest = (gameId : number) => pending(ActionTypes.StartGame, gameId);
+export const startGameSuccess = (game : Game) => success(ActionTypes.StartGame, game);
+export const startGameError = () => error(ActionTypes.StartGame);

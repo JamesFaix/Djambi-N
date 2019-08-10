@@ -20,6 +20,7 @@ export interface ActiveGameState {
     loadGamePending : boolean,
     addPlayerPending : boolean,
     removePlayerPending : boolean,
+    startGamePending : boolean,
     game : Game,
     history : Event[]
 }
@@ -52,7 +53,8 @@ export class StateFactory {
             history: null,
             loadGamePending: false,
             addPlayerPending: false,
-            removePlayerPending: false
+            removePlayerPending: false,
+            startGamePending: false
         };
     }
 

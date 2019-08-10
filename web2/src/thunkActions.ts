@@ -128,3 +128,15 @@ export function removePlayer(gameId: number, playerId: number) {
     }
 }
 
+export function startGame(gameId: number) {
+    return function (dispatch: Dispatch) {
+        dispatch(Actions.startGameRequest(gameId));
+        return Api.startGame(gameId)
+            .then(resp => {
+                dispatch(Actions.startGameSuccess(resp.game));
+            })
+            .catch(_ => {
+                dispatch(Actions.startGameError());
+            });
+    }
+}
