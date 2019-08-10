@@ -1,4 +1,4 @@
-import { LoginRequest, User, CreateUserRequest, Game, GamesQuery, GameParameters } from "../api/model";
+import { LoginRequest, User, CreateUserRequest, Game, GamesQuery, GameParameters, CreatePlayerRequest } from "../api/model";
 
 export enum ActionStatus {
   Pending = "PENDING",
@@ -15,7 +15,9 @@ export enum ActionTypes {
   UpdateGamesQuery = "UPDATE_GAMES_QUERY",
   RestoreSession = "RESTORE_SESSION",
   CreateGame = "CREATE_GAME",
-  UpdateCreateGameForm = "UPDATE_CREATE_GAME_FORM"
+  UpdateCreateGameForm = "UPDATE_CREATE_GAME_FORM",
+  AddPlayer = "ADD_PLAYER",
+  RemovePlayer = "REMOVE_PLAYER"
 }
 
 export interface CustomAction {
@@ -69,3 +71,11 @@ export const updateCreateGameForm = (parameters : GameParameters) => success(Act
 export const createGameRequest = (parameters: GameParameters) => pending(ActionTypes.CreateGame, parameters);
 export const createGameSuccess = (game : Game) => success(ActionTypes.CreateGame, game);
 export const createGameError = () => error(ActionTypes.CreateGame);
+
+export const addPlayerRequest = (request: CreatePlayerRequest) => pending(ActionTypes.AddPlayer, request);
+export const addPlayerSuccess = (game : Game) => success(ActionTypes.AddPlayer, game);
+export const addPlayerError = () => error(ActionTypes.AddPlayer);
+
+export const removePlayerRequest = (playerId: number) => pending(ActionTypes.RemovePlayer, playerId);
+export const removePlayerSuccess = (game : Game) => success(ActionTypes.RemovePlayer, game);
+export const removePlayerError = () => error(ActionTypes.RemovePlayer);

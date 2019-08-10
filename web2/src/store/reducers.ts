@@ -1,5 +1,5 @@
 import { CustomAction, DataAction, ActionStatus, ActionTypes } from './actions';
-import { Game, GamesQuery, User, GameParameters } from '../api/model';
+import { Game, GamesQuery, User, GameParameters, CreatePlayerRequest } from '../api/model';
 import { AppState, StateFactory } from './state';
 
 export function reducer(state: AppState, action : CustomAction) : AppState {
@@ -29,7 +29,10 @@ export function reducer(state: AppState, action : CustomAction) : AppState {
         //Game actions
         case ActionTypes.LoadGame:
             return loadGameReducer(state, action);
-
+        case ActionTypes.AddPlayer:
+            return addPlayerReducer(state, action);
+        case ActionTypes.RemovePlayer:
+            return removePlayerReducer(state, action);
         default:
             return state;
     }
@@ -202,7 +205,9 @@ function createGameReducer(state: AppState, action : CustomAction) : AppState {
             newState.activeGame = {
                 game: da.data,
                 history: null,
-                loadGamePending: false
+                loadGamePending: false,
+                addPlayerPending: false,
+                removePlayerPending: false
             };
             return newState;
         }
@@ -221,6 +226,8 @@ function loadGameReducer(state: AppState, action: CustomAction) : AppState {
             const newState = {...state};
             newState.activeGame = {
                 loadGamePending: true,
+                addPlayerPending: false,
+                removePlayerPending: false,
                 game: null,
                 history: null
             };
@@ -231,9 +238,53 @@ function loadGameReducer(state: AppState, action: CustomAction) : AppState {
             const newState = {...state};
             newState.activeGame = {
                 loadGamePending: false,
+                addPlayerPending: false,
+                removePlayerPending: false,
                 game: da.data,
                 history: null
             };
+            return newState;
+        }
+        default:
+            throw "Unsupported case: " + action.status;
+    }
+}
+
+function addPlayerReducer(state: AppState, action : CustomAction) : AppState {
+    switch (action.status) {
+        case ActionStatus.Pending: {
+            const newState = {...state};
+            newState.activeGame = {...state.activeGame};
+            newState.activeGame.addPlayerPending = true;
+            return newState;
+        }
+        case ActionStatus.Success: {
+            const da = <DataAction<Game>>action;
+            const newState = {...state};
+            newState.activeGame = {...state.activeGame};
+            newState.activeGame.addPlayerPending = false;
+            newState.activeGame.game = da.data;
+            return newState;
+        }
+        default:
+            throw "Unsupported case: " + action.status;
+    }
+}
+
+function removePlayerReducer(state: AppState, action: CustomAction) : AppState {
+    switch (action.status) {
+        case ActionStatus.Pending: {
+            const newState = {...state};
+            newState.activeGame = {...state.activeGame};
+            newState.activeGame.removePlayerPending = true;
+            return newState;
+        }
+        case ActionStatus.Success: {
+            const da = <DataAction<Game>>action;
+            const newState = {...state};
+            newState.activeGame = {...state.activeGame};
+            newState.activeGame.removePlayerPending = false;
+            newState.activeGame.game = da.data;
             return newState;
         }
         default:

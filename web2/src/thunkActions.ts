@@ -1,5 +1,5 @@
 import { Dispatch } from "redux";
-import { LoginRequest, CreateUserRequest, GamesQuery, GameParameters } from "./api/model";
+import { LoginRequest, CreateUserRequest, GamesQuery, GameParameters, CreatePlayerRequest } from "./api/model";
 import * as Actions from "./store/actions";
 import * as Api from "./api/client";
 import * as ModelFactory from "./api/modelFactory";
@@ -101,3 +101,30 @@ export function createGame(formData : GameParameters) {
             });
     }
 }
+
+export function addPlayer(gameId: number, request : CreatePlayerRequest) {
+    return function (dispatch: Dispatch) {
+        dispatch(Actions.addPlayerRequest(request));
+        return Api.addPlayer(gameId, request)
+            .then(resp => {
+                dispatch(Actions.addPlayerSuccess(resp.game));
+            })
+            .catch(_ => {
+                dispatch(Actions.addPlayerError());
+            });
+    }
+}
+
+export function removePlayer(gameId: number, playerId: number) {
+    return function (dispatch: Dispatch) {
+        dispatch(Actions.removePlayerRequest(playerId));
+        return Api.removePlayer(gameId, playerId)
+            .then(resp => {
+                dispatch(Actions.removePlayerSuccess(resp.game));
+            })
+            .catch(_ => {
+                dispatch(Actions.removePlayerError());
+            });
+    }
+}
+

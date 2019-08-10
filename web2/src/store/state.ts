@@ -18,6 +18,8 @@ export interface SessionState {
 
 export interface ActiveGameState {
     loadGamePending : boolean,
+    addPlayerPending : boolean,
+    removePlayerPending : boolean,
     game : Game,
     history : Event[]
 }
@@ -48,7 +50,9 @@ export class StateFactory {
         return {
             game: null,
             history: null,
-            loadGamePending: false
+            loadGamePending: false,
+            addPlayerPending: false,
+            removePlayerPending: false
         };
     }
 
