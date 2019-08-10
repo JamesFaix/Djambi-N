@@ -134,6 +134,7 @@ export function startGame(gameId: number) {
         return Api.startGame(gameId)
             .then(resp => {
                 dispatch(Actions.startGameSuccess(resp.game));
+                navigateTo(Routes.play(gameId));
             })
             .catch(_ => {
                 dispatch(Actions.startGameError());

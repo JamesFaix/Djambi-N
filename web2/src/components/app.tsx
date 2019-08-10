@@ -10,6 +10,7 @@ import * as Redirects from './redirects';
 import LobbyPage from './pages/lobbyPage';
 import SessionRestorer from './sessionRestorer';
 import CreateGamePage from './pages/createGamePage';
+import PlayPage from './pages/playPage';
 
 const App : React.SFC<{}> = _ => {
     return (
@@ -30,12 +31,16 @@ const App : React.SFC<{}> = _ => {
                     component={DashboardPage}
                 />
                 <Route
+                    path={Routes.createGame}
+                    component={CreateGamePage}
+                />
+                <Route
                     path={Routes.lobbyPattern}
                     component={LobbyPage}
                 />
                 <Route
-                    path={Routes.createGame}
-                    component={CreateGamePage}
+                    path={Routes.playPattern}
+                    component={PlayPage}
                 />
                 <Route
                     path={Routes.base}

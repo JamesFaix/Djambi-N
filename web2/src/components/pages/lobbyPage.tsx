@@ -26,9 +26,10 @@ class lobbyPage extends React.Component<LobbyPageProps> {
                         Home
                     </button>
                 </Link>
+                {this.renderPlayButton()}
+                {this.renderStartButton()}
                 <GameParametersTable/>
                 <LobbyPlayersTable/>
-                {this.renderStartButton()}
             </div>
         );
     }
@@ -45,6 +46,20 @@ class lobbyPage extends React.Component<LobbyPageProps> {
             >
                 Start
             </button>
+        );
+    }
+
+    private renderPlayButton() {
+        if (this.props.game.status !== GameStatus.InProgress) {
+            return null;
+        }
+
+        return (
+            <Link to={Routes.play(this.props.game.id)}>
+                <button>
+                    Play
+                </button>
+            </Link>
         );
     }
 }
