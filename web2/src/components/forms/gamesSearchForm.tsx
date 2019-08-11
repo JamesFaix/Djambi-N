@@ -7,6 +7,7 @@ import EnumDropdown from '../controls/enumDropdown';
 import * as Actions from '../../store/actions';
 import { Dispatch } from 'redux';
 import * as ThunkActions from '../../thunkActions';
+import Styles from '../../styles/styles';
 
 interface GamesSearchFormProps {
     formData : GamesQuery,
@@ -19,7 +20,7 @@ class gamesSearchForm extends React.Component<GamesSearchFormProps> {
         const query = this.props.formData;
 
         return (
-            <div>
+            <div style={Styles.pageContainer()}>
                 <table>
                     <tbody>
                         <tr>
@@ -96,7 +97,7 @@ class gamesSearchForm extends React.Component<GamesSearchFormProps> {
                         </tr>
                     </tbody>
                 </table>
-                <button
+                <button style={Styles.smallTopMargin()}
                     onClick={() => this.props.submit(this.props.formData)}
                 >
                     Search

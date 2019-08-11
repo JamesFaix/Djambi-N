@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { LoginRequest } from '../../api/model';
 import * as ThunkActions from '../../thunkActions';
+import Styles from '../../styles/styles';
 
 interface LoginFormProps {
     submit: (formData: LoginRequest) => void
@@ -31,7 +32,7 @@ class loginForm extends React.Component<LoginFormProps, LoginFormState> {
 
     render() {
         return (
-            <div>
+            <div style={Styles.pageContainer()}>
                 <table>
                     <tbody>
                         <tr>
@@ -58,7 +59,7 @@ class loginForm extends React.Component<LoginFormProps, LoginFormState> {
                         </tr>
                     </tbody>
                 </table>
-                <button
+                <button style={Styles.smallTopMargin()}
                     onClick={() => this.props.submit(this.getFormDataFromState())}
                 >
                     Log in

@@ -5,6 +5,7 @@ import { Dispatch } from 'redux';
 import { GameParameters } from '../../api/model';
 import * as Actions from '../../store/actions';
 import * as ThunkActions from '../../thunkActions';
+import Styles from '../../styles/styles';
 
 interface CreateGameFormProps {
     formData : GameParameters,
@@ -15,7 +16,7 @@ interface CreateGameFormProps {
 class createGameForm extends React.Component<CreateGameFormProps> {
     render() {
         return (
-            <div>
+            <div style={Styles.pageContainer()}>
                 <table>
                     <tbody>
                         <tr>
@@ -62,7 +63,7 @@ class createGameForm extends React.Component<CreateGameFormProps> {
                         </tr>
                     </tbody>
                 </table>
-                <button
+                <button style={Styles.smallTopMargin()}
                     onClick={() => this.props.submit(this.props.formData)}
                 >
                     Create game

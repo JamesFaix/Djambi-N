@@ -20,7 +20,7 @@ const userSection : React.SFC<UserSectionProps> = props => {
 
 const notLoggedInUserSection : React.SFC<UserSectionProps> = props => {
     return (
-        <div style={{textAlign: "right"}}>
+        <div>
             (Not signed in)
         </div>
     );
@@ -28,7 +28,7 @@ const notLoggedInUserSection : React.SFC<UserSectionProps> = props => {
 
 const loggedInUserSection : React.SFC<UserSectionProps> = props => {
     return (
-        <div style={{textAlign: "right"}}>
+        <div>
             {props.user.name}
             <button
                 onClick={_ => props.onLogoutClicked()}

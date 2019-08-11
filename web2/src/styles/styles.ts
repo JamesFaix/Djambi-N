@@ -14,4 +14,10 @@ export default class Styles {
             height: "20px"
         };
     }
+
+    static smallTopMargin() : CSSProperties {
+        return {
+            marginTop: "10px"
+        };
+    }
 }

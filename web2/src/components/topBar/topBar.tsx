@@ -16,9 +16,15 @@ const TopBar : React.SFC<{}> = _ => {
 
     return (
         <div style={style}>
-            <NavigationSection/>
-            <TitleSection/>
-            <UserSection/>
+            <div style={{flex:1, textAlign:"left"}}>
+                <NavigationSection/>
+            </div>
+            <div style={{flex:1, textAlign:"center"}}>
+                <TitleSection/>
+            </div>
+            <div style={{flex:1, textAlign:"right"}}>
+                <UserSection/>
+            </div>
         </div>
     );
 };
