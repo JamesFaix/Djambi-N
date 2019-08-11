@@ -5,7 +5,8 @@ export interface AppState {
     session: SessionState,
     activeGame : ActiveGameState,
     gamesQuery : GamesQueryState,
-    createGameForm : CreateGameFormState
+    createGameForm : CreateGameFormState,
+    navigation : NavigationState
 }
 
 export interface SessionState {
@@ -34,6 +35,16 @@ export interface GamesQueryState {
 export interface CreateGameFormState {
     parameters : GameParameters,
     createGamePending : boolean
+}
+
+export interface NavigationState {
+    enableLogin ?: boolean,
+    enableSignup ?: boolean,
+    enableDashboard ?: boolean,
+    enableCreateGame ?: boolean,
+    enableLobby ?: boolean,
+    enablePlay ?: boolean,
+    gameId ?: number
 }
 
 export class StateFactory {
@@ -73,12 +84,17 @@ export class StateFactory {
         };
     }
 
+    static defaultNavigationState() : NavigationState {
+        return {};
+    }
+
     static defaultAppState() : AppState {
         return {
             session: StateFactory.defaultSesssionState(),
             activeGame: StateFactory.defaultActiveGameState(),
             gamesQuery: StateFactory.defaultGamesQueryState(),
-            createGameForm: StateFactory.defaultCreateGameFormState()
+            createGameForm: StateFactory.defaultCreateGameFormState(),
+            navigation: StateFactory.defaultNavigationState()
         };
     }
 }

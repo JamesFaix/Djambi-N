@@ -1,6 +1,4 @@
 import * as React from 'react';
-import Routes from '../../routes';
-import { Link } from 'react-router-dom';
 import GameParametersTable from '../tables/gameParametersTable';
 import LobbyPlayersTable from '../tables/lobbyPlayersTable';
 import { Game, GameStatus } from '../../api/model';
@@ -10,6 +8,7 @@ import * as ThunkActions from '../../thunkActions';
 import { AppState } from '../../store/state';
 import LoadGame from '../utilities/loadGame';
 import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
+import SetNavigationOptions from '../utilities/setNavigationOptions';
 
 interface LobbyPageProps {
     game : Game,
@@ -18,16 +17,16 @@ interface LobbyPageProps {
 
 class lobbyPage extends React.Component<LobbyPageProps> {
     render() {
+        const navOptions = {
+            enableDashboard: true,
+            enablePlay: this.props.game && this.props.game.status === GameStatus.InProgress
+        }
+
         return (
             <div>
                 <RedirectToLoginIfNotLoggedIn/>
+                <SetNavigationOptions options={navOptions}/>
                 <LoadGame gameId={(this.props as any).match.params.gameId}/>
-                <Link to={Routes.dashboard}>
-                    <button>
-                        Home
-                    </button>
-                </Link>
-                {this.renderPlayButton()}
                 {this.renderStartButton()}
                 <GameParametersTable/>
                 <LobbyPlayersTable/>
@@ -51,24 +50,6 @@ class lobbyPage extends React.Component<LobbyPageProps> {
             >
                 Start
             </button>
-        );
-    }
-
-    private renderPlayButton() {
-        if (!this.props.game) {
-            return null;
-        }
-
-        if (this.props.game.status !== GameStatus.InProgress) {
-            return null;
-        }
-
-        return (
-            <Link to={Routes.play(this.props.game.id)}>
-                <button>
-                    Play
-                </button>
-            </Link>
         );
     }
 }

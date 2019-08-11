@@ -1,4 +1,5 @@
 import { LoginRequest, User, CreateUserRequest, Game, GamesQuery, GameParameters, CreatePlayerRequest } from "../api/model";
+import { NavigationState } from "./state";
 
 export enum ActionStatus {
   Pending = "PENDING",
@@ -18,7 +19,8 @@ export enum ActionTypes {
   UpdateCreateGameForm = "UPDATE_CREATE_GAME_FORM",
   AddPlayer = "ADD_PLAYER",
   RemovePlayer = "REMOVE_PLAYER",
-  StartGame = "START_GAME"
+  StartGame = "START_GAME",
+  SetNavigationOptions = "SET_NAV_OPTIONS"
 }
 
 export interface CustomAction {
@@ -84,3 +86,5 @@ export const removePlayerError = () => error(ActionTypes.RemovePlayer);
 export const startGameRequest = (gameId : number) => pending(ActionTypes.StartGame, gameId);
 export const startGameSuccess = (game : Game) => success(ActionTypes.StartGame, game);
 export const startGameError = () => error(ActionTypes.StartGame);
+
+export const setNavigationOptions = (options : NavigationState) => success(ActionTypes.SetNavigationOptions, options);

@@ -1,6 +1,6 @@
 import { CustomAction, DataAction, ActionStatus, ActionTypes } from './actions';
 import { Game, GamesQuery, User, GameParameters, CreatePlayerRequest } from '../api/model';
-import { AppState, StateFactory } from './state';
+import { AppState, StateFactory, NavigationState } from './state';
 
 export function reducer(state: AppState, action : CustomAction) : AppState {
     switch (action.type) {
@@ -35,6 +35,10 @@ export function reducer(state: AppState, action : CustomAction) : AppState {
             return removePlayerReducer(state, action);
         case ActionTypes.StartGame:
             return startGameReducer(state, action);
+
+        //Misc
+        case ActionTypes.SetNavigationOptions:
+            return setNavigationOptionsReducer(state, action);
 
         default:
             return state;
@@ -302,3 +306,16 @@ function startGameReducer(state: AppState, action: CustomAction) : AppState {
 }
 
 //#endregion
+
+function setNavigationOptionsReducer(state: AppState, action: CustomAction) : AppState {
+    switch (action.status) {
+        case ActionStatus.Success: {
+            const da = <DataAction<NavigationState>>action;
+            const newState = {...state};
+            newState.navigation = da.data;
+            return newState;
+        }
+        default:
+            throw "Unsupported case: " + action.status;
+    }
+}

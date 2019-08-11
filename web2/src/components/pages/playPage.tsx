@@ -3,11 +3,10 @@ import { Game } from '../../api/model';
 import { AppState } from '../../store/state';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import Routes from '../../routes';
-import { Link } from 'react-router-dom';
 import LoadGame from '../utilities/loadGame';
 import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
 import RedirectToLobbyIfGameNotInProgress from '../utilities/redirectToLobbyIfGameNotInProgress';
+import SetNavigationOptions from '../utilities/setNavigationOptions';
 
 interface PlayPageProps {
     game : Game
@@ -20,17 +19,8 @@ class playPage extends React.Component<PlayPageProps> {
             <div>
                 <RedirectToLoginIfNotLoggedIn/>
                 <RedirectToLobbyIfGameNotInProgress/>
+                <SetNavigationOptions options={{enableDashboard: true, enableLobby: true}}/>
                 <LoadGame gameId={gameId}/>
-                <Link to={Routes.dashboard}>
-                    <button>
-                        Home
-                    </button>
-                </Link>
-                <Link to={Routes.lobby(gameId)}>
-                    <button>
-                        Lobby
-                    </button>
-                </Link>
                 Game page content
             </div>
         );

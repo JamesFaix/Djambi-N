@@ -6,10 +6,9 @@ import { GamesQuery, Game } from '../../api/model';
 import GamesQueryFilters from '../forms/gamesSearchForm';
 import GamesSearchResultsTable from '../tables/gamesSearchResultsTable';
 import { AppState } from '../../store/state';
-import Routes from '../../routes';
-import { Link } from 'react-router-dom';
 import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
 import GamesSearchForm from '../forms/gamesSearchForm';
+import SetNavigationOptions from '../utilities/setNavigationOptions';
 
 interface DashboardPageProps {
     gamesQuery : GamesQuery,
@@ -23,11 +22,7 @@ class dashboardPage extends React.Component<DashboardPageProps>{
         return (
             <div>
                 <RedirectToLoginIfNotLoggedIn/>
-                <Link to={Routes.createGame}>
-                    <button>
-                        Create game
-                    </button>
-                </Link>
+                <SetNavigationOptions options={{enableCreateGame: true}}/>
                 <GamesSearchForm/>
                 <GamesSearchResultsTable/>
             </div>
