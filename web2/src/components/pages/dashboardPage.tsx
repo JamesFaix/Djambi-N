@@ -3,12 +3,12 @@ import { Dispatch } from 'redux';
 import * as ThunkActions from '../../thunkActions';
 import { connect } from 'react-redux';
 import { GamesQuery, Game } from '../../api/model';
-import GamesQueryFilters from '../forms/gamesSearchForm';
 import GamesSearchResultsTable from '../tables/gamesSearchResultsTable';
 import { AppState } from '../../store/state';
 import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
 import GamesSearchForm from '../forms/gamesSearchForm';
 import SetNavigationOptions from '../utilities/setNavigationOptions';
+import Styles from '../../styles/styles';
 
 interface DashboardPageProps {
     gamesQuery : GamesQuery,
@@ -17,13 +17,14 @@ interface DashboardPageProps {
 }
 
 class dashboardPage extends React.Component<DashboardPageProps>{
-
     render() {
         return (
-            <div>
+            <div style={Styles.pageContainer()}>
                 <RedirectToLoginIfNotLoggedIn/>
                 <SetNavigationOptions options={{enableCreateGame: true}}/>
+                <div style={Styles.pageContainerSpacer()}></div>
                 <GamesSearchForm/>
+                <div style={Styles.pageContainerSpacer()}></div>
                 <GamesSearchResultsTable/>
             </div>
         );

@@ -7,6 +7,7 @@ import LoadGame from '../utilities/loadGame';
 import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
 import RedirectToLobbyIfGameNotInProgress from '../utilities/redirectToLobbyIfGameNotInProgress';
 import SetNavigationOptions from '../utilities/setNavigationOptions';
+import Styles from '../../styles/styles';
 
 interface PlayPageProps {
     game : Game
@@ -23,11 +24,12 @@ class playPage extends React.Component<PlayPageProps> {
         };
 
         return (
-            <div>
+            <div style={Styles.pageContainer()}>
                 <RedirectToLoginIfNotLoggedIn/>
                 <RedirectToLobbyIfGameNotInProgress/>
                 <SetNavigationOptions options={navOptions}/>
                 <LoadGame gameId={gameId}/>
+                <div style={Styles.pageContainerSpacer()}></div>
                 Game page content
             </div>
         );

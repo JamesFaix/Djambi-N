@@ -9,6 +9,7 @@ import { AppState } from '../../store/state';
 import LoadGame from '../utilities/loadGame';
 import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
 import SetNavigationOptions from '../utilities/setNavigationOptions';
+import Styles from '../../styles/styles';
 
 interface LobbyPageProps {
     game : Game,
@@ -26,13 +27,16 @@ class lobbyPage extends React.Component<LobbyPageProps> {
         };
 
         return (
-            <div>
+            <div style={Styles.pageContainer()}>
                 <RedirectToLoginIfNotLoggedIn/>
                 <SetNavigationOptions options={navOptions}/>
                 <LoadGame gameId={gameId}/>
-                {this.renderStartButton()}
+                <div style={Styles.pageContainerSpacer()}></div>
                 <GameParametersTable/>
+                <div style={Styles.pageContainerSpacer()}></div>
                 <LobbyPlayersTable/>
+                <div style={Styles.pageContainerSpacer()}></div>
+                {this.renderStartButton()}
             </div>
         );
     }
