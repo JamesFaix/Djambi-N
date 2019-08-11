@@ -7,6 +7,8 @@ const TopBar : React.SFC<{}> = _ => {
     const style = {
         height: "50px",
         borderStyle: "solid",
+        borderWidth: "thin",
+        borderColor: "gainsboro",
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center"

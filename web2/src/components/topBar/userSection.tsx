@@ -33,6 +33,7 @@ const loggedInUserSection : React.SFC<UserSectionProps> = props => {
             <button
                 onClick={_ => props.onLogoutClicked()}
                 title="Log out"
+                style={{backgroundColor:"white"}}
             >
                 <FontAwesomeIcon icon={faSignOutAlt}/>
             </button>

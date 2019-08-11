@@ -40,6 +40,7 @@ class navigationSection extends React.Component<NavigationSectionProps> {
             <button
                 onClick={() => this.props.redirect(route)}
                 title={title}
+                style={{backgroundColor:"white"}}
             >
                 {contents}
             </button>
