@@ -1,4 +1,4 @@
-import { LoginRequest, User, CreateUserRequest, Game, GamesQuery, GameParameters, CreatePlayerRequest } from "../api/model";
+import { LoginRequest, User, CreateUserRequest, Game, GamesQuery, GameParameters, CreatePlayerRequest, Event } from "../api/model";
 import { NavigationState } from "./state";
 
 export enum ActionStatus {
@@ -12,6 +12,7 @@ export enum ActionTypes {
   Logout = "LOGOUT",
   Signup = "SIGNUP",
   LoadGame = "LOAD_GAME",
+  LoadGameHistory = "LOAD_GAME_HISTORY",
   QueryGames = "QUERY_GAMES",
   UpdateGamesQuery = "UPDATE_GAMES_QUERY",
   RestoreSession = "RESTORE_SESSION",
@@ -58,6 +59,10 @@ export const signupError = () => error(ActionTypes.Signup);
 export const loadGameRequest = (gameId : number) => pending(ActionTypes.LoadGame, gameId);
 export const loadGameSuccess = (game : Game) => success(ActionTypes.LoadGame, game);
 export const loadGameError = () => error(ActionTypes.LoadGame);
+
+export const loadGameHistoryRequest = (gameId : number) => pending(ActionTypes.LoadGameHistory, gameId);
+export const loadGameHistorySuccess = (history : Event[]) => success(ActionTypes.LoadGameHistory, history);
+export const loadGameHistoryError = () => error(ActionTypes.LoadGameHistory);
 
 export const queryGamesRequest = (query : GamesQuery) => pending(ActionTypes.QueryGames, query);
 export const queryGamesSuccess = (games : Game[]) => success(ActionTypes.QueryGames, games);

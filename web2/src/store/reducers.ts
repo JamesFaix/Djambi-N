@@ -1,5 +1,5 @@
 import { CustomAction, DataAction, ActionStatus, ActionTypes } from './actions';
-import { Game, GamesQuery, User, GameParameters, CreatePlayerRequest } from '../api/model';
+import { Game, GamesQuery, User, GameParameters, CreatePlayerRequest, Event } from '../api/model';
 import { AppState, StateFactory, NavigationState } from './state';
 
 export function reducer(state: AppState, action : CustomAction) : AppState {
@@ -29,6 +29,8 @@ export function reducer(state: AppState, action : CustomAction) : AppState {
         //Game actions
         case ActionTypes.LoadGame:
             return loadGameReducer(state, action);
+        case ActionTypes.LoadGameHistory:
+            return loadGameHistoryReducer(state, action);
         case ActionTypes.AddPlayer:
             return addPlayerReducer(state, action);
         case ActionTypes.RemovePlayer:
@@ -235,6 +237,27 @@ function loadGameReducer(state: AppState, action: CustomAction) : AppState {
             const newState = {...state};
             newState.activeGame = StateFactory.defaultActiveGameState();
             newState.activeGame.game = da.data;
+            return newState;
+        }
+        default:
+            throw "Unsupported case: " + action.status;
+    }
+}
+
+function loadGameHistoryReducer(state: AppState, action: CustomAction) : AppState {
+    switch (action.status) {
+        case ActionStatus.Pending: {
+            const newState = {...state};
+            newState.activeGame = {...state.activeGame};
+            newState.activeGame.loadHistoryPending = true;
+            return newState;
+        }
+        case ActionStatus.Success: {
+            const da = <DataAction<Event[]>>action;
+            const newState = {...state};
+            newState.activeGame = {...state.activeGame};
+            newState.activeGame.loadHistoryPending = false;
+            newState.activeGame.history = da.data;
             return newState;
         }
         default:

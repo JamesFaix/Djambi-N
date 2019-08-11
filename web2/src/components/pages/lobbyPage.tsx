@@ -22,6 +22,7 @@ class lobbyPage extends React.Component<LobbyPageProps> {
 
         const navOptions = {
             enableDashboard: true,
+            enableHistory: true,
             enablePlay: this.props.game && this.props.game.status === GameStatus.InProgress,
             gameId: gameId
         };

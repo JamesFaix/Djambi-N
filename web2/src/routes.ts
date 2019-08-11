@@ -8,4 +8,6 @@ export default class Routes {
     static readonly createGame = "/games/create";
     static play = (gameId : number) => `/games/${gameId}/play`;
     static readonly playPattern = "/games/:gameId/play";
+    static gameHistory = (gameId: number) => `/games/${gameId}/history`;
+    static gameHistoryPattern = "/games/:gameId/history"
 }

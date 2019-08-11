@@ -1,37 +1,35 @@
 import * as React from 'react';
-import { Game } from '../../api/model';
-import { AppState } from '../../store/state';
+import { Game, GameStatus, Event } from '../../api/model';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import LoadGame from '../utilities/loadGame';
+import { AppState } from '../../store/state';
 import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
-import RedirectToLobbyIfGameNotInProgress from '../utilities/redirectToLobbyIfGameNotInProgress';
 import SetNavigationOptions from '../utilities/setNavigationOptions';
 import Styles from '../../styles/styles';
+import LoadGameAndHistory from '../utilities/loadGameAndHistory';
 
-interface PlayPageProps {
-    game : Game
+interface GameHistoryPageProps {
+    game : Game,
+    history : Event[]
 }
 
-class playPage extends React.Component<PlayPageProps> {
+class gameHistoryPage extends React.Component<GameHistoryPageProps> {
     render() {
         const gameId = (this.props as any).match.params.gameId;
 
         const navOptions = {
             enableDashboard: true,
             enableLobby: true,
-            enableHistory: true,
+            enablePlay: this.props.game && this.props.game.status === GameStatus.InProgress,
             gameId: gameId
         };
 
         return (
             <div style={Styles.pageContainer()}>
                 <RedirectToLoginIfNotLoggedIn/>
-                <RedirectToLobbyIfGameNotInProgress/>
                 <SetNavigationOptions options={navOptions}/>
-                <LoadGame gameId={gameId}/>
-                <div style={Styles.pageContainerSpacer()}></div>
-                Game page content
+                <LoadGameAndHistory gameId={gameId}/>
+                History page content
             </div>
         );
     }
@@ -39,9 +37,10 @@ class playPage extends React.Component<PlayPageProps> {
 
 const mapStateToProps = (state : AppState) => {
     return {
-        game: state.activeGame.game
+        game: state.activeGame.game,
+        history: state.activeGame.history
     };
-}
+};
 
 const mapDispatchToProps = (dispatch : Dispatch) => {
     return {
@@ -49,6 +48,6 @@ const mapDispatchToProps = (dispatch : Dispatch) => {
     };
 }
 
-const PlayPage = connect(mapStateToProps, mapDispatchToProps)(playPage);
+const GameHistoryPage = connect(mapStateToProps, mapDispatchToProps)(gameHistoryPage);
 
-export default PlayPage;
+export default GameHistoryPage;

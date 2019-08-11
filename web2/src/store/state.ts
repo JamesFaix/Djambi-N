@@ -19,6 +19,7 @@ export interface SessionState {
 
 export interface ActiveGameState {
     loadGamePending : boolean,
+    loadHistoryPending : boolean,
     addPlayerPending : boolean,
     removePlayerPending : boolean,
     startGamePending : boolean,
@@ -44,6 +45,7 @@ export interface NavigationState {
     enableCreateGame ?: boolean,
     enableLobby ?: boolean,
     enablePlay ?: boolean,
+    enableHistory ?: boolean,
     gameId ?: number
 }
 
@@ -63,6 +65,7 @@ export class StateFactory {
             game: null,
             history: null,
             loadGamePending: false,
+            loadHistoryPending: false,
             addPlayerPending: false,
             removePlayerPending: false,
             startGamePending: false

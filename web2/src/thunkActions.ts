@@ -1,5 +1,5 @@
 import { Dispatch } from "redux";
-import { LoginRequest, CreateUserRequest, GamesQuery, GameParameters, CreatePlayerRequest, User, GameStatus, Game } from "./api/model";
+import { LoginRequest, CreateUserRequest, GamesQuery, GameParameters, CreatePlayerRequest, User, GameStatus, Game, EventsQuery, ResultsDirection } from "./api/model";
 import * as Actions from "./store/actions";
 import * as Api from "./api/client";
 import * as ModelFactory from "./api/modelFactory";
@@ -153,6 +153,26 @@ export function loadAndNavigateToGame(gameId : number) {
             })
             .catch(_ => {
                 dispatch(Actions.loadGameError());
+            });
+    };
+}
+
+export function loadGameHistory(gameId: number) {
+    return function (dispatch : Dispatch) : Promise<void> {
+        dispatch(Actions.loadGameHistoryRequest(gameId));
+        const query : EventsQuery = {
+            maxResults : null,
+            direction : ResultsDirection.Descending,
+            thresholdTime : null,
+            thresholdEventId : null
+        };
+
+        return Api.getEvents(gameId, query)
+            .then(history => {
+                dispatch(Actions.loadGameHistorySuccess(history));
+            })
+            .catch(_ => {
+                dispatch(Actions.loadGameHistoryError());
             });
     };
 }

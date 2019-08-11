@@ -10,6 +10,7 @@ import LobbyPage from './pages/lobbyPage';
 import CreateGamePage from './pages/createGamePage';
 import RedirectToLoginOrDashboard from './utilities/redirectToLoginOrDashboard';
 import PlayPage from './pages/playPage';
+import GameHistoryPage from './pages/gameHistoryPage';
 
 const App : React.SFC<{}> = _ => {
     return (
@@ -39,6 +40,10 @@ const App : React.SFC<{}> = _ => {
                 <Route
                     path={Routes.playPattern}
                     component={PlayPage}
+                />
+                <Route
+                    path={Routes.gameHistoryPattern}
+                    component={GameHistoryPage}
                 />
                 <Route
                     path={Routes.base}
