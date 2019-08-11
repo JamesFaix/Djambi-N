@@ -3,8 +3,8 @@ import { Dispatch } from 'redux';
 import * as ThunkActions from '../../thunkActions';
 import { connect } from 'react-redux';
 import { GamesQuery, Game } from '../../api/model';
-import GamesQueryFilters from '../gamesQuery/gamesQueryFilters';
-import GamesQueryResultsTable from '../gamesQuery/gamesQueryResultsTable';
+import GamesQueryFilters from '../forms/gamesSearchForm';
+import GamesSearchResultsTable from '../tables/gamesSearchResultsTable';
 import { AppState } from '../../store/state';
 import Routes from '../../routes';
 import { Link } from 'react-router-dom';
@@ -33,7 +33,7 @@ class dashboardPage extends React.Component<DashboardPageProps>{
                 >
                     Search
                 </button>
-                <GamesQueryResultsTable/>
+                <GamesSearchResultsTable/>
             </div>
         );
     }

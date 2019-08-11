@@ -1,4 +1,4 @@
-import { Player, Game, User, Privilege, PlayerKind } from "../../api/model";
+import { Player, Game, User, Privilege, PlayerKind } from "../api/model";
 
 export enum SeatActionType {
     None,

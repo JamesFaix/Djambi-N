@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Game, User, CreatePlayerRequest, GameStatus, PlayerKind } from '../../api/model';
-import * as LobbySeats from './lobbySeats';
+import * as LobbySeats from '../../viewModel/lobbySeats';
 import { AppState } from '../../store/state';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';

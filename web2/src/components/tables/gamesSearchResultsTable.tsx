@@ -8,12 +8,12 @@ import * as ThunkActions from '../../thunkActions';
 import { navigateTo } from '../../history';
 import Routes from '../../routes';
 
-interface GamesQueryResultsTableProps {
+interface GamesSearchResultsTableProps {
     games : Game[],
     onViewGameClicked: (game: Game) => void
 }
 
-class gamesQueryResultsTable extends React.Component<GamesQueryResultsTableProps> {
+class gamesSearchResultsTable extends React.Component<GamesSearchResultsTableProps> {
     render() {
         return (
             <div>
@@ -80,6 +80,6 @@ const mapDispatchToProps = (dispatch : Dispatch) => {
     };
 };
 
-const GamesQueryResultsTable = connect(mapStateToProps, mapDispatchToProps)(gamesQueryResultsTable);
+const GamesSearchResultsTable = connect(mapStateToProps, mapDispatchToProps)(gamesSearchResultsTable);
 
-export default GamesQueryResultsTable;
+export default GamesSearchResultsTable;

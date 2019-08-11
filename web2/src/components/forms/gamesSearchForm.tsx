@@ -6,14 +6,13 @@ import TristateDropdown from '../controls/tristateDropdown';
 import EnumDropdown from '../controls/enumDropdown';
 import * as Actions from '../../store/actions';
 import { Dispatch } from 'redux';
-import * as ModelFactory from "../../api/modelFactory";
 
-interface GamesQueryFiltersProps {
+interface GamesSearchFormProps {
     query : GamesQuery,
     onQueryChanged : (query:GamesQuery) => void
 }
 
-class gamesQueryFilters extends React.Component<GamesQueryFiltersProps> {
+class gamesSearchForm extends React.Component<GamesSearchFormProps> {
 
     private onChangeGameId(e : React.ChangeEvent<HTMLInputElement>) : void {
         const value = parseInt(e.target.value);
@@ -167,6 +166,6 @@ const mapDispatchToProps = (dispatch : Dispatch) => {
     };
 };
 
-const GameQueryFilters = connect(mapStateToProps, mapDispatchToProps)(gamesQueryFilters);
+const GamesSearchForm = connect(mapStateToProps, mapDispatchToProps)(gamesSearchForm);
 
-export default GameQueryFilters;
+export default GamesSearchForm;
