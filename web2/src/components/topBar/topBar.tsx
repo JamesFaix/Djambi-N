@@ -14,8 +14,8 @@ const TopBar : React.SFC<{}> = _ => {
 
     return (
         <div style={style}>
-            <TitleSection/>
             <NavigationSection/>
+            <TitleSection/>
             <UserSection/>
         </div>
     );

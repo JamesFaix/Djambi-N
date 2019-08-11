@@ -2,6 +2,9 @@
     "name": "djambi-n",
     "version": "0.1.0",
     "dependencies": {
+        "@fortawesome/fontawesome-svg-core": "^1.2.21",
+        "@fortawesome/free-solid-svg-icons": "^5.10.1",
+        "@fortawesome/react-fontawesome": "^0.1.4",
         "@types/hoist-non-react-statics": "^3.3.1",
         "@types/mathjs": "^5.0.0",
         "@types/moment": "^2.13.0",

@@ -15,11 +15,18 @@ interface PlayPageProps {
 class playPage extends React.Component<PlayPageProps> {
     render() {
         const gameId = (this.props as any).match.params.gameId;
+
+        const navOptions = {
+            enableDashboard: true,
+            enableLobby: true,
+            gameId: gameId
+        };
+
         return (
             <div>
                 <RedirectToLoginIfNotLoggedIn/>
                 <RedirectToLobbyIfGameNotInProgress/>
-                <SetNavigationOptions options={{enableDashboard: true, enableLobby: true}}/>
+                <SetNavigationOptions options={navOptions}/>
                 <LoadGame gameId={gameId}/>
                 Game page content
             </div>

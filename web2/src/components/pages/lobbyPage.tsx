@@ -17,16 +17,19 @@ interface LobbyPageProps {
 
 class lobbyPage extends React.Component<LobbyPageProps> {
     render() {
+        const gameId = (this.props as any).match.params.gameId;
+
         const navOptions = {
             enableDashboard: true,
-            enablePlay: this.props.game && this.props.game.status === GameStatus.InProgress
-        }
+            enablePlay: this.props.game && this.props.game.status === GameStatus.InProgress,
+            gameId: gameId
+        };
 
         return (
             <div>
                 <RedirectToLoginIfNotLoggedIn/>
                 <SetNavigationOptions options={navOptions}/>
-                <LoadGame gameId={(this.props as any).match.params.gameId}/>
+                <LoadGame gameId={gameId}/>
                 {this.renderStartButton()}
                 <GameParametersTable/>
                 <LobbyPlayersTable/>

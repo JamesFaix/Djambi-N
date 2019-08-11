@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { navigateTo } from '../../history';
 import Routes from '../../routes';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faHome, faChessBoard, faPlus, faSignInAlt, faUserPlus, faDoorOpen } from '@fortawesome/free-solid-svg-icons'
 
 interface NavigationSectionProps {
     options : NavigationState,
@@ -15,19 +17,20 @@ class navigationSection extends React.Component<NavigationSectionProps> {
         const o = this.props.options;
         return (
             <div>
-                {this.renderButtonIf(o.enableSignup, "Sign up", Routes.signup)}
-                {this.renderButtonIf(o.enableLogin, "Login", Routes.login)}
-                {this.renderButtonIf(o.enableDashboard, "Home", Routes.dashboard)}
-                {this.renderButtonIf(o.enableCreateGame, "Create Game", Routes.createGame)}
-                {this.renderButtonIf(o.enableLobby, "Lobby", Routes.lobby(o.gameId))}
-                {this.renderButtonIf(o.enablePlay, "Play", Routes.play(o.gameId))}
+                {this.renderButtonIf(o.enableSignup, <FontAwesomeIcon icon={faUserPlus}/>, "Sign up", Routes.signup)}
+                {this.renderButtonIf(o.enableLogin, <FontAwesomeIcon icon={faSignInAlt}/>, "Log in", Routes.login)}
+                {this.renderButtonIf(o.enableDashboard, <FontAwesomeIcon icon={faHome}/>, "Home", Routes.dashboard)}
+                {this.renderButtonIf(o.enableCreateGame, <FontAwesomeIcon icon={faPlus}/>, "Create game", Routes.createGame)}
+                {this.renderButtonIf(o.enableLobby, <FontAwesomeIcon icon={faDoorOpen}/>, "Lobby", Routes.lobby(o.gameId))}
+                {this.renderButtonIf(o.enablePlay, <FontAwesomeIcon icon={faChessBoard}/>, "Play", Routes.play(o.gameId))}
             </div>
         );
     }
 
     private renderButtonIf(
         condition: boolean,
-        label: string,
+        contents: any,
+        title: string,
         route: string) : JSX.Element {
         if (!condition) {
             return null;
@@ -36,8 +39,9 @@ class navigationSection extends React.Component<NavigationSectionProps> {
         return(
             <button
                 onClick={() => this.props.redirect(route)}
+                title={title}
             >
-                {label}
+                {contents}
             </button>
         );
     }
