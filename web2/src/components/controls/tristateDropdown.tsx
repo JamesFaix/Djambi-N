@@ -4,7 +4,8 @@ import Dropdown from './dropdown';
 export interface TristateDropdownProps {
     name : string,
     onChange(name : string, value : boolean) : void,
-    value : boolean
+    value : boolean,
+    style ?: React.CSSProperties
 }
 
 export default class TristateDropdown extends React.Component<TristateDropdownProps> {
@@ -32,6 +33,7 @@ export default class TristateDropdown extends React.Component<TristateDropdownPr
                 onChange={(name, value) => this.props.onChange(name, value)}
                 currentValue={this.props.value}
                 items={TristateDropdown.items}
+                style={this.props.style}
             />
         );
     }

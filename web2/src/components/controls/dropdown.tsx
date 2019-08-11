@@ -9,7 +9,8 @@ export interface DropdownProps<T> {
     name : string,
     items : DropdownItem<T>[],
     onChange(name : string, item : T) : void,
-    currentValue : T
+    currentValue : T,
+    style ?: React.CSSProperties
 }
 
 export default class Dropdown<T> extends React.Component<DropdownProps<T>> {
@@ -34,6 +35,7 @@ export default class Dropdown<T> extends React.Component<DropdownProps<T>> {
                 name={this.props.name}
                 onChange={e => this.onChange(e)}
                 value={this.getLabelOfValue(this.props.currentValue)}
+                style={this.props.style}
             >
                 {this.props.items.map((item, i) =>
                     <option

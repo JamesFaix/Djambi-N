@@ -24,49 +24,20 @@ class gamesSearchForm extends React.Component<GamesSearchFormProps> {
                 <table>
                     <tbody>
                         <tr>
-                            <td>GameId</td>
-                            <td>
-                                <input
-                                    type="number"
-                                    min={1}
-                                    value={this.emptyIfNull(query.gameId)}
-                                    onChange={e => this.onChangeGameId(e)}
-                                />
+                            <td style={Styles.noBorder()}>
+                                Description
                             </td>
-                        </tr>
-                        <tr>
-                            <td>Description</td>
-                            <td>
+                            <td style={Styles.noBorder()}>
                                 <input
                                     type="text"
                                     value={this.emptyIfNull(query.descriptionContains)}
                                     onChange={e => this.onChangeDescription(e)}
                                 />
                             </td>
-                        </tr>
-                        <tr>
-                            <td>Created by user</td>
-                            <td>
-                                <input
-                                    type="text"
-                                    value={this.emptyIfNull(query.createdByUserName)}
-                                    onChange={e => this.onChangeCreatedBy(e)}
-                                />
+                            <td style={Styles.noBorder()}>
+                                Is public
                             </td>
-                        </tr>
-                        <tr>
-                            <td>Contains user</td>
-                            <td>
-                                <input
-                                    type="text"
-                                    value={this.emptyIfNull(query.playerUserName)}
-                                    onChange={e => this.onChangePlayerUserName(e)}
-                                />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Is public</td>
-                            <td>
+                            <td style={Styles.noBorder()}>
                                 <TristateDropdown
                                     name={"IsPublic"}
                                     value={query.isPublic}
@@ -75,8 +46,20 @@ class gamesSearchForm extends React.Component<GamesSearchFormProps> {
                             </td>
                         </tr>
                         <tr>
-                            <td>Allow guests</td>
-                            <td>
+                            <td style={Styles.noBorder()}>
+                                Created by user
+                            </td>
+                            <td style={Styles.noBorder()}>
+                                <input
+                                    type="text"
+                                    value={this.emptyIfNull(query.createdByUserName)}
+                                    onChange={e => this.onChangeCreatedBy(e)}
+                                />
+                            </td>
+                            <td style={Styles.noBorder()}>
+                                Allow guests
+                            </td>
+                            <td style={Styles.noBorder()}>
                                 <TristateDropdown
                                     name={"AllowGuests"}
                                     value={query.allowGuests}
@@ -85,13 +68,39 @@ class gamesSearchForm extends React.Component<GamesSearchFormProps> {
                             </td>
                         </tr>
                         <tr>
-                            <td>Status</td>
-                            <td>
+                            <td style={Styles.noBorder()}>
+                                Contains user
+                            </td>
+                            <td style={Styles.noBorder()}>
+                                <input
+                                    type="text"
+                                    value={this.emptyIfNull(query.playerUserName)}
+                                    onChange={e => this.onChangePlayerUserName(e)}
+                                />
+                            </td>
+                            <td style={Styles.noBorder()}>
+                                Status
+                            </td>
+                            <td style={Styles.noBorder()}>
                                 <EnumDropdown
                                     name={"Status"}
                                     value={query.status}
                                     onChange={(_, value) => this.onChangeStatus(value)}
                                     enum={GameStatus}
+                                />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style={Styles.noBorder()}>
+                                GameId
+                            </td>
+                            <td style={Styles.noBorder()}>
+                                <input
+                                    style={{width:"50px"}}
+                                    type="number"
+                                    min={1}
+                                    value={this.emptyIfNull(query.gameId)}
+                                    onChange={e => this.onChangeGameId(e)}
                                 />
                             </td>
                         </tr>

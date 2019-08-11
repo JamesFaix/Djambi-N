@@ -18,7 +18,9 @@ export default class LoginPage extends React.Component<{}>{
                 <div>
                     Don't have an account yet?
                     <Link to={Routes.signup}>
-                        <button>
+                        <button
+                            style={{margin:"10px"}}
+                        >
                             Sign up
                         </button>
                     </Link>

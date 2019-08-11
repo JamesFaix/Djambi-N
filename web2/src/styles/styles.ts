@@ -20,4 +20,10 @@ export default class Styles {
             marginTop: "10px"
         };
     }
+
+    static noBorder() : CSSProperties {
+        return {
+            borderStyle: "none"
+        };
+    }
 }

@@ -20,8 +20,10 @@ class createGameForm extends React.Component<CreateGameFormProps> {
                 <table>
                     <tbody>
                         <tr>
-                            <td>Region count</td>
-                            <td>
+                            <td style={Styles.noBorder()}>
+                                Region count
+                            </td>
+                            <td style={Styles.noBorder()}>
                                 <input
                                     type="number"
                                     min={3}
@@ -32,8 +34,10 @@ class createGameForm extends React.Component<CreateGameFormProps> {
                             </td>
                         </tr>
                         <tr>
-                            <td>Allow guests</td>
-                            <td>
+                            <td style={Styles.noBorder()}>
+                                Allow guests
+                            </td>
+                            <td style={Styles.noBorder()}>
                                 <input
                                     type="checkbox"
                                     checked={this.props.formData.allowGuests}
@@ -42,8 +46,10 @@ class createGameForm extends React.Component<CreateGameFormProps> {
                             </td>
                         </tr>
                         <tr>
-                            <td>Public</td>
-                            <td>
+                            <td style={Styles.noBorder()}>
+                                Public
+                            </td>
+                            <td style={Styles.noBorder()}>
                                 <input
                                     type="checkbox"
                                     checked={this.props.formData.isPublic}
@@ -52,8 +58,10 @@ class createGameForm extends React.Component<CreateGameFormProps> {
                             </td>
                         </tr>
                         <tr>
-                            <td>Description</td>
-                            <td>
+                            <td style={Styles.noBorder()}>
+                                Description
+                            </td>
+                            <td style={Styles.noBorder()}>
                                 <input
                                     type="text"
                                     value={this.props.formData.description}

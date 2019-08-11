@@ -7,7 +7,8 @@ export interface EnumDropdownProps<TEnum> {
     value : TEnum,
     enum : object,
     getLabel ?: (value : TEnum) => string,
-    includeNull ?: boolean
+    includeNull ?: boolean,
+    style ?: React.CSSProperties
 }
 
 export default class EnumDropdown<TEnum> extends React.Component<EnumDropdownProps<TEnum>> {
@@ -45,6 +46,7 @@ export default class EnumDropdown<TEnum> extends React.Component<EnumDropdownPro
                 onChange={(name, value) => this.props.onChange(name, value)}
                 currentValue={this.props.value}
                 items={this.getItems()}
+                style={this.props.style}
             />
         );
     }
