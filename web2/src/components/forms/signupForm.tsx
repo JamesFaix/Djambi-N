@@ -1,0 +1,81 @@
+import * as React from 'react';
+import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
+import { CreateUserRequest } from '../../api/model';
+import * as ThunkActions from '../../thunkActions';
+
+interface SignupFormProps {
+    submit: (formData: CreateUserRequest) => void
+}
+
+interface SignupFormState {
+    username : string,
+    password : string
+}
+
+class signupForm extends React.Component<SignupFormProps, SignupFormState> {
+    constructor(props : SignupFormProps) {
+        super(props);
+        this.state = {
+            username: "",
+            password: ""
+        };
+    }
+
+    private getFormDataFromState() : CreateUserRequest {
+        return {
+            name: this.state.username,
+            password: this.state.password
+        };
+    }
+
+    render() {
+        return (
+            <div>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>Username:</td>
+                            <td>
+                                <input
+                                    type="text"
+                                    value={this.state.username}
+                                    onChange={e => this.setState({ username: e.target.value })}
+                                >
+                                </input>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Password:</td>
+                            <td>
+                                <input
+                                    type="password"
+                                    value={this.state.password}
+                                    onChange={e => this.setState({ password: e.target.value })}
+                                >
+                                </input>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div>
+                    <button
+                        onClick={() => this.props.submit(this.getFormDataFromState())}
+                    >
+                        Sign up
+                    </button>
+                </div>
+            </div>
+        );
+    }
+}
+
+const mapDispatchToProps = (dispatch : Dispatch) => {
+    return {
+        submit: (request: CreateUserRequest) => ThunkActions.signup(request)(dispatch)
+    };
+};
+
+const SignupForm = connect(null, mapDispatchToProps)(signupForm);
+
+export default SignupForm;

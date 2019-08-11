@@ -6,70 +6,17 @@ import TristateDropdown from '../controls/tristateDropdown';
 import EnumDropdown from '../controls/enumDropdown';
 import * as Actions from '../../store/actions';
 import { Dispatch } from 'redux';
+import * as ThunkActions from '../../thunkActions';
 
 interface GamesSearchFormProps {
-    query : GamesQuery,
-    onQueryChanged : (query:GamesQuery) => void
+    formData : GamesQuery,
+    onFormDataChanged : (formData: GamesQuery) => void,
+    submit : (formData : GamesQuery) => void
 }
 
 class gamesSearchForm extends React.Component<GamesSearchFormProps> {
-
-    private onChangeGameId(e : React.ChangeEvent<HTMLInputElement>) : void {
-        const value = parseInt(e.target.value);
-        let query = {...this.props.query};
-        query.gameId = value;
-        this.props.onQueryChanged(query);
-    }
-
-    private onChangeDescription(e : React.ChangeEvent<HTMLInputElement>) : void {
-        const value = e.target.value;
-        let query = {...this.props.query};
-        query.descriptionContains = value;
-        this.props.onQueryChanged(query);
-    }
-
-    private onChangeCreatedBy(e : React.ChangeEvent<HTMLInputElement>) : void {
-        const value = e.target.value;
-        let query = {...this.props.query};
-        query.createdByUserName = value;
-        this.props.onQueryChanged(query);
-    }
-
-    private onChangePlayerUserName(e : React.ChangeEvent<HTMLInputElement>) : void {
-        const value = e.target.value;
-        let query = {...this.props.query};
-        query.playerUserName = value;
-        this.props.onQueryChanged(query);
-    }
-
-    private onChangeIsPublic(value : boolean) : void {
-        let query = {...this.props.query};
-        query.isPublic = value;
-        this.props.onQueryChanged(query);
-    }
-
-    private onChangeAllowGuests(value : boolean) : void {
-        let query = {...this.props.query};
-        query.allowGuests = value;
-        this.props.onQueryChanged(query);
-    }
-
-    private onChangeStatus(value : GameStatus) : void {
-        let query = {...this.props.query};
-        query.status = value;
-        this.props.onQueryChanged(query);
-    }
-
-    private emptyIfNull(value : any) : string {
-        if (value === null) {
-            return "";
-        } else {
-            return value + "";
-        }
-    }
-
     render() {
-        const query = this.props.query;
+        const query = this.props.formData;
 
         return (
             <div>
@@ -149,20 +96,84 @@ class gamesSearchForm extends React.Component<GamesSearchFormProps> {
                         </tr>
                     </tbody>
                 </table>
+                <button
+                    onClick={() => this.props.submit(this.props.formData)}
+                >
+                    Search
+                </button>
             </div>
         );
     }
+
+    private emptyIfNull(value : any) : string {
+        if (value === null) {
+            return "";
+        } else {
+            return value + "";
+        }
+    }
+
+    //#region Event handlers
+
+    private onChangeGameId(e : React.ChangeEvent<HTMLInputElement>) : void {
+        const value = parseInt(e.target.value);
+        let query = {...this.props.formData};
+        query.gameId = value;
+        this.props.onFormDataChanged(query);
+    }
+
+    private onChangeDescription(e : React.ChangeEvent<HTMLInputElement>) : void {
+        const value = e.target.value;
+        let query = {...this.props.formData};
+        query.descriptionContains = value;
+        this.props.onFormDataChanged(query);
+    }
+
+    private onChangeCreatedBy(e : React.ChangeEvent<HTMLInputElement>) : void {
+        const value = e.target.value;
+        let query = {...this.props.formData};
+        query.createdByUserName = value;
+        this.props.onFormDataChanged(query);
+    }
+
+    private onChangePlayerUserName(e : React.ChangeEvent<HTMLInputElement>) : void {
+        const value = e.target.value;
+        let query = {...this.props.formData};
+        query.playerUserName = value;
+        this.props.onFormDataChanged(query);
+    }
+
+    private onChangeIsPublic(value : boolean) : void {
+        let query = {...this.props.formData};
+        query.isPublic = value;
+        this.props.onFormDataChanged(query);
+    }
+
+    private onChangeAllowGuests(value : boolean) : void {
+        let query = {...this.props.formData};
+        query.allowGuests = value;
+        this.props.onFormDataChanged(query);
+    }
+
+    private onChangeStatus(value : GameStatus) : void {
+        let query = {...this.props.formData};
+        query.status = value;
+        this.props.onFormDataChanged(query);
+    }
+
+    //#endregion
 }
 
 const mapStateToProps = (state : AppState) => {
     return {
-        query: state.gamesQuery.query,
+        formData: state.gamesQuery.query,
     };
 };
 
 const mapDispatchToProps = (dispatch : Dispatch) => {
     return {
-        onQueryChanged: (query: GamesQuery) => dispatch(Actions.updateGamesQuery(query))
+        onFormDataChanged: (formData: GamesQuery) => dispatch(Actions.updateGamesQuery(formData)),
+        submit: (formData: GamesQuery) => ThunkActions.queryGames(formData)(dispatch)
     };
 };
 

@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { Game, GameStatus } from '../../api/model';
+import { Game } from '../../api/model';
 import { AppState } from '../../store/state';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import { Redirect } from 'react-router';
 import Routes from '../../routes';
 import { Link } from 'react-router-dom';
 import LoadGame from '../utilities/loadGame';

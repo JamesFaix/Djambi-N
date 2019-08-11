@@ -9,6 +9,7 @@ import { AppState } from '../../store/state';
 import Routes from '../../routes';
 import { Link } from 'react-router-dom';
 import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
+import GamesSearchForm from '../forms/gamesSearchForm';
 
 interface DashboardPageProps {
     gamesQuery : GamesQuery,
@@ -27,12 +28,7 @@ class dashboardPage extends React.Component<DashboardPageProps>{
                         Create game
                     </button>
                 </Link>
-                <GamesQueryFilters/>
-                <button
-                    onClick={() => this.props.onSearchClicked(this.props.gamesQuery)}
-                >
-                    Search
-                </button>
+                <GamesSearchForm/>
                 <GamesSearchResultsTable/>
             </div>
         );
