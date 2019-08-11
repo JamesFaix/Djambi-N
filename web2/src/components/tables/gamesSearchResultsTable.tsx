@@ -1,12 +1,10 @@
 import * as React from 'react';
-import { Game, GameStatus } from '../../api/model';
+import { Game } from '../../api/model';
 import { AppState } from '../../store/state';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import * as Actions from '../../store/actions';
 import * as ThunkActions from '../../thunkActions';
-import { navigateTo } from '../../history';
-import Routes from '../../routes';
+import { boolToYesOrNo } from '../../utilities/copy';
 
 interface GamesSearchResultsTableProps {
     games : Game[],
@@ -55,8 +53,8 @@ class gamesSearchResultsTable extends React.Component<GamesSearchResultsTablePro
                 <td>{game.status}</td>
                 <td>{game.players.length}</td>
                 <td>{game.parameters.regionCount}</td>
-                <td>{game.parameters.isPublic}</td>
-                <td>{game.parameters.allowGuests}</td>
+                <td>{boolToYesOrNo(game.parameters.isPublic)}</td>
+                <td>{boolToYesOrNo(game.parameters.allowGuests)}</td>
             </tr>
         );
     }
