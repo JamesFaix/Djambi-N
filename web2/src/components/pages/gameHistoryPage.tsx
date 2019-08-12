@@ -7,6 +7,7 @@ import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLogge
 import SetNavigationOptions from '../utilities/setNavigationOptions';
 import Styles from '../../styles/styles';
 import LoadGameAndHistory from '../utilities/loadGameAndHistory';
+import GameHistorySection from '../gameHistory/gameHistorySection';
 
 interface GameHistoryPageProps {
     game : Game,
@@ -29,7 +30,7 @@ class gameHistoryPage extends React.Component<GameHistoryPageProps> {
                 <RedirectToLoginIfNotLoggedIn/>
                 <SetNavigationOptions options={navOptions}/>
                 <LoadGameAndHistory gameId={gameId}/>
-                History page content
+                <GameHistorySection/>
             </div>
         );
     }
