@@ -143,20 +143,6 @@ export function loadGame(gameId: number) {
     };
 }
 
-export function loadAndNavigateToGame(gameId : number) {
-    return function (dispatch : Dispatch) : Promise<void> {
-        dispatch(Actions.loadGameRequest(gameId));
-        return Api.getGame(gameId)
-            .then(game => {
-                dispatch(Actions.loadGameSuccess(game));
-                navigateToGame(game);
-            })
-            .catch(_ => {
-                dispatch(Actions.loadGameError());
-            });
-    };
-}
-
 export function loadGameHistory(gameId: number) {
     return function (dispatch : Dispatch) : Promise<void> {
         dispatch(Actions.loadGameHistoryRequest(gameId));

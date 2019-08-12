@@ -1,20 +1,21 @@
 import * as React from 'react';
-import LastTurnSection from './lastTurnSection';
 import CurrentTurnSection from './currentTurnSection';
 import TurnCycleSection from './turnCycleSection';
+import GameHistorySection from './gameHistorySection';
 
 const TimelineBar : React.SFC<{}> = _ => {
     const style : React.CSSProperties = {
-        height: "150px",
-        width: "100%",
+        height: "100%",
+        width: "400px",
         borderStyle: "solid",
         borderWidth: "thin",
         borderColor: "gainsboro",
         display: "flex",
+        flexDirection: "column",
         justifyContent: "space-between",
         alignItems: "center",
         position: "fixed",
-        bottom: 0
+        right: 0
     };
 
     const sectionStyle : React.CSSProperties = {
@@ -22,19 +23,19 @@ const TimelineBar : React.SFC<{}> = _ => {
         borderStyle: "solid",
         borderWidth: "thin",
         borderColor: "gainsboro",
-        height: "100%"
+        width: "100%"
     };
 
     return (
         <div style={style}>
             <div style={sectionStyle}>
-                <LastTurnSection/>
+                <TurnCycleSection/>
             </div>
             <div style={sectionStyle}>
                 <CurrentTurnSection/>
             </div>
             <div style={sectionStyle}>
-                <TurnCycleSection/>
+                <GameHistorySection/>
             </div>
         </div>
     );

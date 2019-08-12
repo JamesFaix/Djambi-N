@@ -18,7 +18,6 @@ class gameHistorySection extends React.Component<GameHistorySectionProps> {
         const style : React.CSSProperties = {
             display: "flex",
             flexDirection: "column",
-            width: "50%"
         };
 
         return (

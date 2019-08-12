@@ -5,7 +5,7 @@ import { Dispatch } from 'redux';
 import { navigateTo } from '../../history';
 import Routes from '../../routes';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faHome, faChessBoard, faPlus, faSignInAlt, faUserPlus, faDoorOpen, faClock } from '@fortawesome/free-solid-svg-icons'
+import { faHome, faChessBoard, faPlus, faSignInAlt, faUserPlus, faDoorOpen } from '@fortawesome/free-solid-svg-icons'
 
 interface NavigationSectionProps {
     options : NavigationState,
@@ -23,7 +23,6 @@ class navigationSection extends React.Component<NavigationSectionProps> {
                 {this.renderButtonIf(o.enableCreateGame, <FontAwesomeIcon icon={faPlus}/>, "Create game", Routes.createGame)}
                 {this.renderButtonIf(o.enableLobby, <FontAwesomeIcon icon={faDoorOpen}/>, "Lobby", Routes.lobby(o.gameId))}
                 {this.renderButtonIf(o.enablePlay, <FontAwesomeIcon icon={faChessBoard}/>, "Play", Routes.play(o.gameId))}
-                {this.renderButtonIf(o.enableHistory, <FontAwesomeIcon icon={faClock}/>, "History", Routes.gameHistory(o.gameId))}
             </div>
         );
     }

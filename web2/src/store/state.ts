@@ -45,7 +45,6 @@ export interface NavigationState {
     enableCreateGame ?: boolean,
     enableLobby ?: boolean,
     enablePlay ?: boolean,
-    enableHistory ?: boolean,
     gameId ?: number
 }
 
