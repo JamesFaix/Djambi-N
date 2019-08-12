@@ -8,6 +8,7 @@ import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLogge
 import RedirectToLobbyIfGameNotInProgress from '../utilities/redirectToLobbyIfGameNotInProgress';
 import SetNavigationOptions from '../utilities/setNavigationOptions';
 import Styles from '../../styles/styles';
+import TimelineBar from '../timelineBar/timelineBar';
 
 interface PlayPageProps {
     game : Game
@@ -31,7 +32,10 @@ class playPage extends React.Component<PlayPageProps> {
                 <SetNavigationOptions options={navOptions}/>
                 <LoadGame gameId={gameId}/>
                 <div style={Styles.pageContainerSpacer()}></div>
-                Game page content
+                <div>
+                    Board
+                </div>
+                <TimelineBar/>
             </div>
         );
     }
