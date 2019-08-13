@@ -1,10 +1,9 @@
 import * as React from 'react';
-import Routes from '../../routes';
-import { Link } from 'react-router-dom';
 import RedirectToDashboardIfLoggedIn from '../utilities/redirectToDashboardIfLoggedIn';
 import SignupForm from '../forms/signupForm';
 import SetNavigationOptions from '../utilities/setNavigationOptions';
 import Styles from '../../styles/styles';
+import PromptToLoginSection from '../sections/promptToLoginSection';
 
 export default class SignupPage extends React.Component<{}>{
     render() {
@@ -15,16 +14,7 @@ export default class SignupPage extends React.Component<{}>{
                 <div style={Styles.pageContainerSpacer()}></div>
                 <SignupForm/>
                 <div style={Styles.pageContainerSpacer()}></div>
-                <div>
-                    Already have an account?
-                    <Link to={Routes.login}>
-                        <button
-                            style={{margin:"10px"}}
-                        >
-                            Log in
-                        </button>
-                    </Link>
-                </div>
+                <PromptToLoginSection/>
             </div>
         );
     }

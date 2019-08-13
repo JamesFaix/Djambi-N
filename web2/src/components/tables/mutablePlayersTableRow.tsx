@@ -77,6 +77,10 @@ interface RowPropsBase {
     user : User
 }
 
+const cellStyle = {
+    borderStyle: "none"
+}
+
 //#region Join
 
 interface JoinRowProps extends RowPropsBase {
@@ -87,20 +91,16 @@ class JoinRow extends React.Component<JoinRowProps> {
     render() {
         return (
             <tr style={this.props.style}>
-                <td>(Empty)</td>
-                <td></td>
+                <td style={cellStyle}>(Empty)</td>
+                <td style={cellStyle}></td>
                 {this.props.game.status === GameStatus.Pending ?
-                    <td>
+                    <td style={cellStyle}>
                         <button
                             onClick={() => this.onClick()}
                         >
                             Join
                         </button>
                     </td>
-                : null}
-                {this.props.game.status === GameStatus.InProgress ||
-                    this.props.game.status === GameStatus.Over ?
-                        <td></td>
                 : null}
             </tr>
         );
@@ -139,16 +139,16 @@ class AddGuestRow extends React.Component<AddGuestRowProps, AddGuestRowState> {
     render() {
         return (
             <tr style={this.props.style}>
-                <td>
+                <td style={cellStyle}>
                     <input
                         type="text"
                         value={this.state.guestName}
                         onChange={e => this.setState({guestName: e.target.value})}
                     />
                 </td>
-                <td></td>
+                <td style={cellStyle}></td>
                 {this.props.game.status === GameStatus.Pending ?
-                    <td>
+                    <td style={cellStyle}>
                         <button
                             onClick={() => this.onClick()}
                         >
@@ -186,10 +186,10 @@ class RemoveRow extends React.Component<RemoveRowProps> {
         const seat = this.props.seat;
         return (
             <tr style={this.props.style}>
-                <td>{seat.player.name}</td>
-                <td>{seat.note}</td>
+                <td style={cellStyle}>{seat.player.name}</td>
+                <td style={cellStyle}>{seat.note}</td>
                 {this.props.game.status === GameStatus.Pending ?
-                    <td>
+                    <td style={cellStyle}>
                         <button
                             onClick={() => this.props.removePlayer(this.props.game.id, seat.player.id)}
                         >
@@ -220,10 +220,10 @@ class NoActionRow extends React.Component<NoActionRowProps> {
 
         return (
             <tr style={this.props.style}>
-                <td>{playerName}</td>
-                <td>{seat.note}</td>
+                <td style={cellStyle}>{playerName}</td>
+                <td style={cellStyle}>{seat.note}</td>
                 {this.props.game.status === GameStatus.Pending ?
-                    <td></td>
+                    <td style={cellStyle}></td>
                 : null}
             </tr>
         );

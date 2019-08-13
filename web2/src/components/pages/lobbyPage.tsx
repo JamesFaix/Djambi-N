@@ -10,6 +10,7 @@ import LoadGame from '../utilities/loadGame';
 import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
 import SetNavigationOptions from '../utilities/setNavigationOptions';
 import Styles from '../../styles/styles';
+import PlayersTable from '../tables/playersTable';
 
 interface LobbyPageProps {
     game : Game,
@@ -32,13 +33,25 @@ class lobbyPage extends React.Component<LobbyPageProps> {
                 <RedirectToLoginIfNotLoggedIn/>
                 <SetNavigationOptions options={navOptions}/>
                 <LoadGame gameId={gameId}/>
+                {this.props.game ? this.renderBody() : null}
+            </div>
+        );
+    }
+
+    private renderBody() {
+        return (
+            <React.Fragment>
                 <div style={Styles.pageContainerSpacer()}></div>
                 <GameParametersTable/>
                 <div style={Styles.pageContainerSpacer()}></div>
-                <MutablePlayersTable/>
+                {
+                    this.props.game.status === GameStatus.Pending
+                        ? <MutablePlayersTable/>
+                        : <PlayersTable/>
+                }
                 <div style={Styles.pageContainerSpacer()}></div>
                 {this.renderStartButton()}
-            </div>
+            </React.Fragment>
         );
     }
 

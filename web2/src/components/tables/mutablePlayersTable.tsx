@@ -6,6 +6,7 @@ import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import * as ThunkActions from '../../thunkActions';
 import MutablePlayersTableRow from './mutablePlayersTableRow';
+import SectionHeader from '../sections/sectionHeader';
 
 interface MutablePlayersTableProps {
     user : User,
@@ -23,14 +24,9 @@ class mutablePlayersTable extends React.Component<MutablePlayersTableProps> {
         const seats = LobbySeats.getSeats(this.props.game, this.props.user);
         return (
             <div>
-                Seats
+                <SectionHeader text="Players"/>
                 <table>
                     <tbody>
-                        <tr>
-                            <th>Player</th>
-                            <th>Note</th>
-                            {this.renderIfPending(<th>Action</th>)}
-                        </tr>
                         {seats.map((s, i) => {
                             return (<MutablePlayersTableRow
                                 game={this.props.game}

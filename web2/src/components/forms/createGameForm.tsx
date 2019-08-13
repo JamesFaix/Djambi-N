@@ -6,6 +6,7 @@ import { GameParameters } from '../../api/model';
 import * as Actions from '../../store/actions';
 import * as ThunkActions from '../../thunkActions';
 import Styles from '../../styles/styles';
+import SectionHeader from '../sections/sectionHeader';
 
 interface CreateGameFormProps {
     formData : GameParameters,
@@ -17,6 +18,7 @@ class createGameForm extends React.Component<CreateGameFormProps> {
     render() {
         return (
             <div style={Styles.pageContainer()}>
+                <SectionHeader text="Game settings"/>
                 <table>
                     <tbody>
                         <tr>

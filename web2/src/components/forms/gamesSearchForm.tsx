@@ -8,6 +8,7 @@ import * as Actions from '../../store/actions';
 import { Dispatch } from 'redux';
 import * as ThunkActions from '../../thunkActions';
 import Styles from '../../styles/styles';
+import SectionHeader from '../sections/sectionHeader';
 
 interface GamesSearchFormProps {
     formData : GamesQuery,
@@ -21,6 +22,7 @@ class gamesSearchForm extends React.Component<GamesSearchFormProps> {
 
         return (
             <div style={Styles.pageContainer()}>
+                <SectionHeader text="Search games"/>
                 <table>
                     <tbody>
                         <tr>

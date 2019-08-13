@@ -70,7 +70,7 @@ export function getSeats(game : Game, self : User) : Seat[] {
     return seats;
 }
 
-function getPlayerNote(player : Player, game : Game) : string {
+export function getPlayerNote(player : Player, game : Game) : string {
     switch (player.kind) {
         case PlayerKind.User:
             return "";

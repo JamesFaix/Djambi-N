@@ -2,9 +2,9 @@ import * as React from 'react';
 
 const TitleSection : React.SFC<{}> = _ => {
     return (
-        <div>
+        <h1>
             Djambi-N
-        </div>
+        </h1>
     );
 };
 

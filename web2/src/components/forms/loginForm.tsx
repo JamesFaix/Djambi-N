@@ -4,6 +4,7 @@ import { Dispatch } from 'redux';
 import { LoginRequest } from '../../api/model';
 import * as ThunkActions from '../../thunkActions';
 import Styles from '../../styles/styles';
+import SectionHeader from '../sections/sectionHeader';
 
 interface LoginFormProps {
     submit: (formData: LoginRequest) => void
@@ -33,6 +34,7 @@ class loginForm extends React.Component<LoginFormProps, LoginFormState> {
     render() {
         return (
             <div style={Styles.pageContainer()}>
+                <SectionHeader text="Log in"/>
                 <table>
                     <tbody>
                         <tr>

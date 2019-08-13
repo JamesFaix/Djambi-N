@@ -4,6 +4,7 @@ import { Dispatch } from 'redux';
 import { CreateUserRequest } from '../../api/model';
 import * as ThunkActions from '../../thunkActions';
 import Styles from '../../styles/styles';
+import SectionHeader from '../sections/sectionHeader';
 
 interface SignupFormProps {
     submit: (formData: CreateUserRequest) => void
@@ -33,6 +34,7 @@ class signupForm extends React.Component<SignupFormProps, SignupFormState> {
     render() {
         return (
             <div style={Styles.pageContainer()}>
+                <SectionHeader text="Enter new account info"/>
                 <table>
                     <tbody>
                         <tr>
@@ -67,7 +69,7 @@ class signupForm extends React.Component<SignupFormProps, SignupFormState> {
                     <button style={Styles.smallTopMargin()}
                         onClick={() => this.props.submit(this.getFormDataFromState())}
                     >
-                        Sign up
+                        Create account
                     </button>
                 </div>
             </div>

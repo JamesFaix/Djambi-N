@@ -5,6 +5,7 @@ import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import * as ThunkActions from '../../thunkActions';
 import { boolToYesOrNo } from '../../utilities/copy';
+import SectionHeader from '../sections/sectionHeader';
 
 interface GamesSearchResultsTableProps {
     games : Game[],
@@ -15,6 +16,7 @@ class gamesSearchResultsTable extends React.Component<GamesSearchResultsTablePro
     render() {
         return (
             <div>
+                <SectionHeader text="Results"/>
                 <table>
                     <tbody>
                         <tr>
