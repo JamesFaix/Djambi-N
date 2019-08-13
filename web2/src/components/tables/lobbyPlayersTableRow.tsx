@@ -23,14 +23,13 @@ export default class LobbyPlayersTableRow extends React.Component<LobbyPlayersTa
             style.boxShadow = `inset 0 0 0 3px ${color}`;
         }
 
-        const isPending = this.props.game.status === GameStatus.Pending;
-
         switch (seat.action) {
             case LobbySeats.SeatActionType.None:
                 return (
                     <LobbyNoneRow
                         style={style}
-                        isGamePending={isPending}
+                        game={this.props.game}
+                        user={this.props.currentUser}
                         seat={seat}
                     />
                 );
@@ -39,15 +38,9 @@ export default class LobbyPlayersTableRow extends React.Component<LobbyPlayersTa
                 return (
                     <LobbyJoinRow
                         style={style}
-                        isGamePending={isPending}
-                        onAddSelfClicked={() => {
-                            const request : CreatePlayerRequest = {
-                                userId: this.props.currentUser.id,
-                                name: null,
-                                kind: PlayerKind.User
-                            };
-                            this.props.addPlayer(this.props.game.id, request);
-                        }}
+                        game={this.props.game}
+                        user={this.props.currentUser}
+                        addPlayer={this.props.addPlayer}
                     />
                 );
 
@@ -55,15 +48,9 @@ export default class LobbyPlayersTableRow extends React.Component<LobbyPlayersTa
                 return (
                     <LobbyAddGuestRow
                         style={style}
-                        isGamePending={isPending}
-                        onAddGuestClicked={(guestName: string) => {
-                            const request : CreatePlayerRequest = {
-                                userId: this.props.currentUser.id,
-                                name: guestName,
-                                kind: PlayerKind.Guest
-                            };
-                            this.props.addPlayer(this.props.game.id, request);
-                        }}
+                        game={this.props.game}
+                        user={this.props.currentUser}
+                        addPlayer={this.props.addPlayer}
                     />
                 );
 
@@ -71,11 +58,10 @@ export default class LobbyPlayersTableRow extends React.Component<LobbyPlayersTa
                 return (
                     <LobbyRemoveRow
                         style={style}
-                        isGamePending={isPending}
+                        game={this.props.game}
+                        user={this.props.currentUser}
                         seat={seat}
-                        currentUser={this.props.currentUser}
-                        onRemoveClicked={(playerId : number) =>
-                            this.props.removePlayer(this.props.game.id, playerId)}
+                        removePlayer={this.props.removePlayer}
                     />
                 );
 
@@ -85,10 +71,14 @@ export default class LobbyPlayersTableRow extends React.Component<LobbyPlayersTa
     }
 }
 
-interface LobbyJoinRowProps {
+interface LobbyRowProps {
     style : React.CSSProperties,
-    isGamePending : boolean,
-    onAddSelfClicked : () => void
+    game : Game,
+    user : User
+}
+
+interface LobbyJoinRowProps extends LobbyRowProps {
+    addPlayer : (gameId : number, request : CreatePlayerRequest) => void
 }
 
 class LobbyJoinRow extends React.Component<LobbyJoinRowProps> {
@@ -97,10 +87,10 @@ class LobbyJoinRow extends React.Component<LobbyJoinRowProps> {
             <tr style={this.props.style}>
                 <td>(Empty)</td>
                 <td></td>
-                {this.props.isGamePending ?
+                {this.props.game.status === GameStatus.Pending ?
                     <td>
                         <button
-                            onClick={() => this.props.onAddSelfClicked()}
+                            onClick={() => this.onClick()}
                         >
                             Join
                         </button>
@@ -109,12 +99,19 @@ class LobbyJoinRow extends React.Component<LobbyJoinRowProps> {
             </tr>
         );
     }
+
+    private onClick() {
+        const request : CreatePlayerRequest = {
+            userId: this.props.user.id,
+            name: null,
+            kind: PlayerKind.User
+        };
+        this.props.addPlayer(this.props.game.id, request);
+    }
 }
 
-interface LobbyAddGuestRowProps {
-    style : React.CSSProperties,
-    isGamePending : boolean,
-    onAddGuestClicked : (name : string) => void
+interface LobbyAddGuestRowProps extends LobbyRowProps {
+    addPlayer : (gameId : number, request : CreatePlayerRequest) => void
 }
 
 interface LobbyAddGuestRowState {
@@ -140,13 +137,10 @@ class LobbyAddGuestRow extends React.Component<LobbyAddGuestRowProps, LobbyAddGu
                     />
                 </td>
                 <td></td>
-                {this.props.isGamePending ?
+                {this.props.game.status === GameStatus.Pending ?
                     <td>
                         <button
-                            onClick={() => {
-                                this.setState({guestName: ""});
-                                this.props.onAddGuestClicked(this.state.guestName);
-                            }}
+                            onClick={() => this.onClick()}
                         >
                             Add guest
                         </button>
@@ -155,14 +149,22 @@ class LobbyAddGuestRow extends React.Component<LobbyAddGuestRowProps, LobbyAddGu
             </tr>
         );
     }
+
+    private onClick() {
+        this.setState({guestName: ""});
+
+        const request : CreatePlayerRequest = {
+            userId: this.props.user.id,
+            name: this.state.guestName,
+            kind: PlayerKind.Guest
+        };
+        this.props.addPlayer(this.props.game.id, request);
+    }
 }
 
-interface LobbyRemoveRowProps {
-    style : React.CSSProperties,
-    isGamePending : boolean,
+interface LobbyRemoveRowProps extends LobbyRowProps {
     seat : Seat,
-    currentUser : User,
-    onRemoveClicked : (playerId : number) => void
+    removePlayer : (gameId : number, playerId : number) => void
 }
 
 class LobbyRemoveRow extends React.Component<LobbyRemoveRowProps> {
@@ -172,12 +174,12 @@ class LobbyRemoveRow extends React.Component<LobbyRemoveRowProps> {
             <tr style={this.props.style}>
                 <td>{seat.player.name}</td>
                 <td>{seat.note}</td>
-                {this.props.isGamePending ?
+                {this.props.game.status === GameStatus.Pending ?
                     <td>
                         <button
-                            onClick={() => this.props.onRemoveClicked(seat.player.id)}
+                            onClick={() => this.props.removePlayer(this.props.game.id, seat.player.id)}
                         >
-                            {LobbySeats.isSeatSelf(seat, this.props.currentUser) ? "Quit" : "Remove"}
+                            {LobbySeats.isSeatSelf(seat, this.props.user) ? "Quit" : "Remove"}
                         </button>
                     </td>
                 : null}
@@ -186,9 +188,7 @@ class LobbyRemoveRow extends React.Component<LobbyRemoveRowProps> {
     }
 }
 
-interface LobbyNoneRowProps {
-    style : React.CSSProperties,
-    isGamePending : boolean,
+interface LobbyNoneRowProps extends LobbyRowProps {
     seat : Seat
 }
 
@@ -204,7 +204,7 @@ class LobbyNoneRow extends React.Component<LobbyNoneRowProps> {
             <tr style={this.props.style}>
                 <td>{playerName}</td>
                 <td>{seat.note}</td>
-                {this.props.isGamePending ?
+                {this.props.game.status === GameStatus.Pending ?
                     <td></td>
                 : null}
             </tr>
