@@ -26,7 +26,7 @@ export default class LobbyPlayersTableRow extends React.Component<LobbyPlayersTa
         switch (seat.action) {
             case LobbySeats.SeatActionType.None:
                 return (
-                    <LobbyNoneRow
+                    <NoActionRow
                         style={style}
                         game={this.props.game}
                         user={this.props.currentUser}
@@ -36,7 +36,7 @@ export default class LobbyPlayersTableRow extends React.Component<LobbyPlayersTa
 
             case LobbySeats.SeatActionType.Join:
                 return (
-                    <LobbyJoinRow
+                    <JoinRow
                         style={style}
                         game={this.props.game}
                         user={this.props.currentUser}
@@ -46,7 +46,7 @@ export default class LobbyPlayersTableRow extends React.Component<LobbyPlayersTa
 
             case LobbySeats.SeatActionType.AddGuest:
                 return (
-                    <LobbyAddGuestRow
+                    <AddGuestRow
                         style={style}
                         game={this.props.game}
                         user={this.props.currentUser}
@@ -56,7 +56,7 @@ export default class LobbyPlayersTableRow extends React.Component<LobbyPlayersTa
 
             case LobbySeats.SeatActionType.Remove:
                 return (
-                    <LobbyRemoveRow
+                    <RemoveRow
                         style={style}
                         game={this.props.game}
                         user={this.props.currentUser}
@@ -71,7 +71,7 @@ export default class LobbyPlayersTableRow extends React.Component<LobbyPlayersTa
     }
 }
 
-interface LobbyRowProps {
+interface RowPropsBase {
     style : React.CSSProperties,
     game : Game,
     user : User
@@ -79,11 +79,11 @@ interface LobbyRowProps {
 
 //#region Join
 
-interface LobbyJoinRowProps extends LobbyRowProps {
+interface JoinRowProps extends RowPropsBase {
     addPlayer : (gameId : number, request : CreatePlayerRequest) => void
 }
 
-class LobbyJoinRow extends React.Component<LobbyJoinRowProps> {
+class JoinRow extends React.Component<JoinRowProps> {
     render() {
         return (
             <tr style={this.props.style}>
@@ -97,6 +97,10 @@ class LobbyJoinRow extends React.Component<LobbyJoinRowProps> {
                             Join
                         </button>
                     </td>
+                : null}
+                {this.props.game.status === GameStatus.InProgress ||
+                    this.props.game.status === GameStatus.Over ?
+                        <td></td>
                 : null}
             </tr>
         );
@@ -116,16 +120,16 @@ class LobbyJoinRow extends React.Component<LobbyJoinRowProps> {
 
 //#region Add guest
 
-interface LobbyAddGuestRowProps extends LobbyRowProps {
+interface AddGuestRowProps extends RowPropsBase {
     addPlayer : (gameId : number, request : CreatePlayerRequest) => void
 }
 
-interface LobbyAddGuestRowState {
+interface AddGuestRowState {
     guestName : string
 }
 
-class LobbyAddGuestRow extends React.Component<LobbyAddGuestRowProps, LobbyAddGuestRowState> {
-    constructor(props: LobbyAddGuestRowProps) {
+class AddGuestRow extends React.Component<AddGuestRowProps, AddGuestRowState> {
+    constructor(props: AddGuestRowProps) {
         super(props);
         this.state = {
             guestName: ""
@@ -172,12 +176,12 @@ class LobbyAddGuestRow extends React.Component<LobbyAddGuestRowProps, LobbyAddGu
 
 //#region Remove
 
-interface LobbyRemoveRowProps extends LobbyRowProps {
+interface RemoveRowProps extends RowPropsBase {
     seat : Seat,
     removePlayer : (gameId : number, playerId : number) => void
 }
 
-class LobbyRemoveRow extends React.Component<LobbyRemoveRowProps> {
+class RemoveRow extends React.Component<RemoveRowProps> {
     render() {
         const seat = this.props.seat;
         return (
@@ -202,11 +206,11 @@ class LobbyRemoveRow extends React.Component<LobbyRemoveRowProps> {
 
 //#region None
 
-interface LobbyNoneRowProps extends LobbyRowProps {
+interface NoActionRowProps extends RowPropsBase {
     seat : Seat
 }
 
-class LobbyNoneRow extends React.Component<LobbyNoneRowProps> {
+class NoActionRow extends React.Component<NoActionRowProps> {
     render() {
         const seat = this.props.seat;
 
