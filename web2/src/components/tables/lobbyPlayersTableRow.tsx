@@ -77,6 +77,8 @@ interface LobbyRowProps {
     user : User
 }
 
+//#region Join
+
 interface LobbyJoinRowProps extends LobbyRowProps {
     addPlayer : (gameId : number, request : CreatePlayerRequest) => void
 }
@@ -109,6 +111,10 @@ class LobbyJoinRow extends React.Component<LobbyJoinRowProps> {
         this.props.addPlayer(this.props.game.id, request);
     }
 }
+
+//#endregion
+
+//#region Add guest
 
 interface LobbyAddGuestRowProps extends LobbyRowProps {
     addPlayer : (gameId : number, request : CreatePlayerRequest) => void
@@ -162,6 +168,10 @@ class LobbyAddGuestRow extends React.Component<LobbyAddGuestRowProps, LobbyAddGu
     }
 }
 
+//#endergion
+
+//#region Remove
+
 interface LobbyRemoveRowProps extends LobbyRowProps {
     seat : Seat,
     removePlayer : (gameId : number, playerId : number) => void
@@ -188,6 +198,10 @@ class LobbyRemoveRow extends React.Component<LobbyRemoveRowProps> {
     }
 }
 
+//#endregion
+
+//#region None
+
 interface LobbyNoneRowProps extends LobbyRowProps {
     seat : Seat
 }
@@ -211,3 +225,5 @@ class LobbyNoneRow extends React.Component<LobbyNoneRowProps> {
         );
     }
 }
+
+//#endregion
