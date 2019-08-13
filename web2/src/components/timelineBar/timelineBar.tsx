@@ -19,6 +19,14 @@ const TimelineBar : React.SFC<{}> = _ => {
     };
 
     const sectionStyle : React.CSSProperties = {
+        flex: 0,
+        borderStyle: "solid",
+        borderWidth: "thin",
+        borderColor: "gainsboro",
+        width: "100%"
+    };
+
+    const historySectionStyle : React.CSSProperties = {
         flex: 1,
         borderStyle: "solid",
         borderWidth: "thin",
@@ -34,7 +42,7 @@ const TimelineBar : React.SFC<{}> = _ => {
             <div style={sectionStyle}>
                 <CurrentTurnSection/>
             </div>
-            <div style={sectionStyle}>
+            <div style={historySectionStyle}>
                 <GameHistorySection/>
             </div>
         </div>
