@@ -1,6 +1,6 @@
 import * as React from 'react';
 import GameParametersTable from '../tables/gameParametersTable';
-import LobbyPlayersTable from '../tables/lobbyPlayersTable';
+import MutablePlayersTable from '../tables/mutablePlayersTable';
 import { Game, GameStatus } from '../../api/model';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
@@ -35,7 +35,7 @@ class lobbyPage extends React.Component<LobbyPageProps> {
                 <div style={Styles.pageContainerSpacer()}></div>
                 <GameParametersTable/>
                 <div style={Styles.pageContainerSpacer()}></div>
-                <LobbyPlayersTable/>
+                <MutablePlayersTable/>
                 <div style={Styles.pageContainerSpacer()}></div>
                 {this.renderStartButton()}
             </div>

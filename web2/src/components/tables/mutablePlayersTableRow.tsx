@@ -4,7 +4,7 @@ import * as LobbySeats from '../../viewModel/lobbySeats';
 import { User, CreatePlayerRequest, PlayerKind, Game, GameStatus } from '../../api/model';
 import Colors from '../../utilities/colors';
 
-interface LobbyPlayersTableRowProps {
+interface MutablePlayersTableRowProps {
     game : Game,
     currentUser : User,
     seat : Seat,
@@ -12,7 +12,7 @@ interface LobbyPlayersTableRowProps {
     removePlayer : (gameId : number, playerId : number) => void
 }
 
-export default class LobbyPlayersTableRow extends React.Component<LobbyPlayersTableRowProps> {
+export default class MutablePlayersTableRow extends React.Component<MutablePlayersTableRowProps> {
     render() {
         const seat = this.props.seat;
 

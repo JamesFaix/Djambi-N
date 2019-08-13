@@ -5,16 +5,16 @@ import { AppState } from '../../store/state';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import * as ThunkActions from '../../thunkActions';
-import LobbyPlayersTableRow from './lobbyPlayersTableRow';
+import MutablePlayersTableRow from './mutablePlayersTableRow';
 
-interface LobbyPlayersTableProps {
+interface MutablePlayersTableProps {
     user : User,
     game : Game,
     addPlayer : (gameId: number, request: CreatePlayerRequest) => void,
     removePlayer : (gameId: number, playerId: number) => void
 }
 
-class lobbyPlayersTable extends React.Component<LobbyPlayersTableProps> {
+class mutablePlayersTable extends React.Component<MutablePlayersTableProps> {
     render() {
         if (!this.props.game) {
             return null;
@@ -32,7 +32,7 @@ class lobbyPlayersTable extends React.Component<LobbyPlayersTableProps> {
                             {this.renderIfPending(<th>Action</th>)}
                         </tr>
                         {seats.map((s, i) => {
-                            return (<LobbyPlayersTableRow
+                            return (<MutablePlayersTableRow
                                 game={this.props.game}
                                 currentUser={this.props.user}
                                 seat={s}
@@ -66,6 +66,6 @@ const mapDispatchToProps = (dispatch : Dispatch) => {
     }
 };
 
-const LobbyPlayersTable = connect(mapStateToProps, mapDispatchToProps)(lobbyPlayersTable);
+const MutablePlayersTable = connect(mapStateToProps, mapDispatchToProps)(mutablePlayersTable);
 
-export default LobbyPlayersTable;
+export default MutablePlayersTable;
