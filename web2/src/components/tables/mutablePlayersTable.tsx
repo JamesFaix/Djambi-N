@@ -6,7 +6,7 @@ import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import * as ThunkActions from '../../thunkActions';
 import MutablePlayersTableRow from './mutablePlayersTableRow';
-import SectionHeader from '../sections/sectionHeader';
+import { SectionHeader } from '../controls/headers';
 
 interface MutablePlayersTableProps {
     user : User,

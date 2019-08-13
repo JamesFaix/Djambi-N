@@ -6,7 +6,7 @@ import { GameParameters } from '../../api/model';
 import * as Actions from '../../store/actions';
 import * as ThunkActions from '../../thunkActions';
 import Styles from '../../styles/styles';
-import SectionHeader from '../sections/sectionHeader';
+import { SectionHeader } from '../controls/headers';
 
 interface CreateGameFormProps {
     formData : GameParameters,

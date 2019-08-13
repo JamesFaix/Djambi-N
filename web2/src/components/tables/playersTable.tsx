@@ -3,7 +3,7 @@ import { Game, Player } from '../../api/model';
 import { AppState } from '../../store/state';
 import { connect } from 'react-redux';
 import * as LobbySeats from '../../viewModel/lobbySeats';
-import SectionHeader from '../sections/sectionHeader';
+import { SectionHeader } from '../controls/headers';
 
 interface PlayersTableProps {
     game: Game

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import Routes from '../../routes';
-import SectionHeader from './sectionHeader';
+import { SectionHeader } from '../controls/headers';
 
 const PromptToSignupSection : React.SFC<{}> = props => {
     return (

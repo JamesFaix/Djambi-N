@@ -8,7 +8,7 @@ import * as Actions from '../../store/actions';
 import { Dispatch } from 'redux';
 import * as ThunkActions from '../../thunkActions';
 import Styles from '../../styles/styles';
-import SectionHeader from '../sections/sectionHeader';
+import { SectionHeader } from '../controls/headers';
 
 interface GamesSearchFormProps {
     formData : GamesQuery,

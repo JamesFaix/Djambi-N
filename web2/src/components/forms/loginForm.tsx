@@ -4,7 +4,7 @@ import { Dispatch } from 'redux';
 import { LoginRequest } from '../../api/model';
 import * as ThunkActions from '../../thunkActions';
 import Styles from '../../styles/styles';
-import SectionHeader from '../sections/sectionHeader';
+import { SectionHeader } from '../controls/headers';
 
 interface LoginFormProps {
     submit: (formData: LoginRequest) => void

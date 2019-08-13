@@ -5,7 +5,7 @@ import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import * as ThunkActions from '../../thunkActions';
 import { boolToYesOrNo } from '../../utilities/copy';
-import SectionHeader from '../sections/sectionHeader';
+import { SectionHeader } from '../controls/headers';
 
 interface GamesSearchResultsTableProps {
     games : Game[],

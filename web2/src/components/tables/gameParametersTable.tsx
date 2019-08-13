@@ -3,7 +3,7 @@ import { GameParameters, GameStatus } from "../../api/model";
 import { AppState } from '../../store/state';
 import { connect } from 'react-redux';
 import { boolToYesOrNo } from '../../utilities/copy';
-import SectionHeader from '../sections/sectionHeader';
+import { SectionHeader } from '../controls/headers';
 
 interface GameParametersTableProps {
     parameters : GameParameters,
