@@ -8,8 +8,7 @@ import RedirectToLobbyIfGameNotInProgress from '../utilities/redirectToLobbyIfGa
 import SetNavigationOptions from '../utilities/setNavigationOptions';
 import Styles from '../../styles/styles';
 import TimelineBar from '../timelineBar/timelineBar';
-import LoadGameAndHistory from '../utilities/loadGameAndHistory';
-import LoadBoard from '../utilities/loadBoard';
+import LoadGameFull from '../utilities/loadGameFull';
 
 interface PlayPageProps {
     game : Game
@@ -31,8 +30,7 @@ class playPage extends React.Component<PlayPageProps> {
                 <RedirectToLoginIfNotLoggedIn/>
                 <RedirectToLobbyIfGameNotInProgress/>
                 <SetNavigationOptions options={navOptions}/>
-                <LoadGameAndHistory gameId={gameId}/>
-                <LoadBoard/>
+                <LoadGameFull gameId={gameId}/>
                 <div style={Styles.pageContainerSpacer()}></div>
                 <div>
                     Board

@@ -1,5 +1,5 @@
 import { Dispatch } from "redux";
-import { LoginRequest, CreateUserRequest, GamesQuery, GameParameters, CreatePlayerRequest, User, GameStatus, Game, EventsQuery, ResultsDirection } from "./api/model";
+import { LoginRequest, CreateUserRequest, GamesQuery, GameParameters, CreatePlayerRequest, User, GameStatus, Game, EventsQuery, Event, ResultsDirection, Board } from "./api/model";
 import * as Actions from "./store/actions";
 import * as Api from "./api/client";
 import * as ModelFactory from "./api/modelFactory";
@@ -130,22 +130,22 @@ export function redirectToLoginOrDashboard() {
 
 //#region Game actions
 
-export function loadGame(gameId: number) {
-    return function (dispatch : Dispatch) : Promise<void> {
-        dispatch(Actions.loadGameRequest(gameId));
-        return Api.getGame(gameId)
-            .then(game => {
-                dispatch(Actions.loadGameSuccess(game));
-            })
-            .catch(_ => {
-                dispatch(Actions.loadGameError());
-            });
-    };
+async function loadGameInner(gameId : number, dispatch : Dispatch) : Promise<Game> {
+    dispatch(Actions.loadGameRequest(gameId));
+    try {
+        const game = await Api.getGame(gameId);
+        dispatch(Actions.loadGameSuccess(game));
+        return game;
+    }
+    catch (ex) {
+        dispatch(Actions.loadGameError());
+        throw ex;
+    }
 }
 
-export function loadGameHistory(gameId: number) {
-    return function (dispatch : Dispatch) : Promise<void> {
-        dispatch(Actions.loadGameHistoryRequest(gameId));
+async function loadHistoryInner(gameId : number, dispatch : Dispatch) : Promise<Event[]> {
+    dispatch(Actions.loadGameHistoryRequest(gameId));
+    try {
         const query : EventsQuery = {
             maxResults : null,
             direction : ResultsDirection.Descending,
@@ -153,26 +153,40 @@ export function loadGameHistory(gameId: number) {
             thresholdEventId : null
         };
 
-        return Api.getEvents(gameId, query)
-            .then(history => {
-                dispatch(Actions.loadGameHistorySuccess(history));
-            })
-            .catch(_ => {
-                dispatch(Actions.loadGameHistoryError());
-            });
+        const history = await Api.getEvents(gameId, query);
+        dispatch(Actions.loadGameHistorySuccess(history));
+        return history;
+    }
+    catch (ex) {
+        dispatch(Actions.loadGameHistoryError());
+        throw ex;
+    }
+}
+
+async function loadBoardInner(regionCount : number, dispatch : Dispatch) : Promise<Board> {
+    dispatch(Actions.loadBoardRequest(regionCount));
+    try {
+        const board = await Api.getBoard(regionCount);
+        dispatch(Actions.loadBoardSuccess(board));
+        return board;
+    }
+    catch (ex) {
+        dispatch(Actions.loadBoardError());
+        throw ex;
+    }
+}
+
+export function loadGame(gameId: number) {
+    return async function (dispatch : Dispatch) : Promise<void> {
+        await loadGameInner(gameId, dispatch);
     };
 }
 
-export function loadBoard(regionCount: number) {
-    return function (dispatch : Dispatch) : Promise<void> {
-        dispatch(Actions.loadBoardRequest(regionCount));
-        return Api.getBoard(regionCount)
-            .then(board => {
-                dispatch(Actions.loadBoardSuccess(board));
-            })
-            .catch(_ => {
-                dispatch(Actions.loadBoardError());
-            });
+export function loadGameFull(gameId : number) {
+    return async function (dispatch : Dispatch) : Promise<void> {
+        const game = await loadGameInner(gameId, dispatch);
+        await loadHistoryInner(gameId, dispatch);
+        await loadBoardInner(game.parameters.regionCount, dispatch);
     };
 }
 
