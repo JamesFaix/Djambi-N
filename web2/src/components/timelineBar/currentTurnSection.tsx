@@ -52,7 +52,7 @@ class currentTurnSection extends React.Component<CurrentTurnSectionProps> {
         return (
             <div>
                 <p>
-                    {player.name}
+                    {player.name},<br/>
                     {Copy.getTurnPrompt(turn)}
                 </p>
                 <div>

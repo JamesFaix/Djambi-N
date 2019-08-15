@@ -11,8 +11,7 @@ export default class GameHistoryEffectBox extends React.Component<GameHistoryEff
         const f = this.props.effect;
         return (
             <div>
-                {f.kind}<br/>
-                {JSON.stringify(f.value)}
+                {f.kind} {JSON.stringify(f.value)}
             </div>
         );
     }
