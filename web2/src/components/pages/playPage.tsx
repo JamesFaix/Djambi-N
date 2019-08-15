@@ -3,13 +3,13 @@ import { Game } from '../../api/model';
 import { AppState } from '../../store/state';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import LoadGame from '../utilities/loadGame';
 import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
 import RedirectToLobbyIfGameNotInProgress from '../utilities/redirectToLobbyIfGameNotInProgress';
 import SetNavigationOptions from '../utilities/setNavigationOptions';
 import Styles from '../../styles/styles';
 import TimelineBar from '../timelineBar/timelineBar';
 import LoadGameAndHistory from '../utilities/loadGameAndHistory';
+import LoadBoard from '../utilities/loadBoard';
 
 interface PlayPageProps {
     game : Game
@@ -32,6 +32,7 @@ class playPage extends React.Component<PlayPageProps> {
                 <RedirectToLobbyIfGameNotInProgress/>
                 <SetNavigationOptions options={navOptions}/>
                 <LoadGameAndHistory gameId={gameId}/>
+                <LoadBoard/>
                 <div style={Styles.pageContainerSpacer()}></div>
                 <div>
                     Board

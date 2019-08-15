@@ -1,12 +1,14 @@
-import { Event, Game, GamesQuery, User, GameParameters } from '../api/model';
+import { Event, Game, GamesQuery, User, GameParameters, Board } from '../api/model';
 import * as ModelFactory from '../api/modelFactory';
+import { number } from 'prop-types';
 
 export interface AppState {
     session: SessionState,
     activeGame : ActiveGameState,
     gamesQuery : GamesQueryState,
     createGameForm : CreateGameFormState,
-    navigation : NavigationState
+    navigation : NavigationState,
+    boards : BoardsState
 }
 
 export interface SessionState {
@@ -24,7 +26,7 @@ export interface ActiveGameState {
     removePlayerPending : boolean,
     startGamePending : boolean,
     game : Game,
-    history : Event[]
+    history : Event[],
 }
 
 export interface GamesQueryState {
@@ -46,6 +48,11 @@ export interface NavigationState {
     enableLobby ?: boolean,
     enablePlay ?: boolean,
     gameId ?: number
+}
+
+export interface BoardsState {
+    loadBoardPending : boolean,
+    boards : Map<number, Board>
 }
 
 export class StateFactory {
@@ -90,13 +97,21 @@ export class StateFactory {
         return {};
     }
 
+    static defaultBoardsState() : BoardsState {
+        return {
+            loadBoardPending: false,
+            boards: new Map<number, Board>()
+        };
+    }
+
     static defaultAppState() : AppState {
         return {
             session: StateFactory.defaultSesssionState(),
             activeGame: StateFactory.defaultActiveGameState(),
             gamesQuery: StateFactory.defaultGamesQueryState(),
             createGameForm: StateFactory.defaultCreateGameFormState(),
-            navigation: StateFactory.defaultNavigationState()
+            navigation: StateFactory.defaultNavigationState(),
+            boards: StateFactory.defaultBoardsState()
         };
     }
 }

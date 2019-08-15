@@ -163,6 +163,19 @@ export function loadGameHistory(gameId: number) {
     };
 }
 
+export function loadBoard(regionCount: number) {
+    return function (dispatch : Dispatch) : Promise<void> {
+        dispatch(Actions.loadBoardRequest(regionCount));
+        return Api.getBoard(regionCount)
+            .then(board => {
+                dispatch(Actions.loadBoardSuccess(board));
+            })
+            .catch(_ => {
+                dispatch(Actions.loadBoardError());
+            });
+    };
+}
+
 export function createGame(formData : GameParameters) {
     return function (dispatch : Dispatch) : Promise<void> {
         dispatch(Actions.createGameRequest(formData));

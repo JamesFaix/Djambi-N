@@ -1,4 +1,4 @@
-import { LoginRequest, User, CreateUserRequest, Game, GamesQuery, GameParameters, CreatePlayerRequest, Event } from "../api/model";
+import { LoginRequest, User, CreateUserRequest, Game, GamesQuery, GameParameters, CreatePlayerRequest, Event, Board } from "../api/model";
 import { NavigationState } from "./state";
 
 export enum ActionStatus {
@@ -21,7 +21,8 @@ export enum ActionTypes {
   AddPlayer = "ADD_PLAYER",
   RemovePlayer = "REMOVE_PLAYER",
   StartGame = "START_GAME",
-  SetNavigationOptions = "SET_NAV_OPTIONS"
+  SetNavigationOptions = "SET_NAV_OPTIONS",
+  LoadBoard = "LOAD_BOARD"
 }
 
 export interface CustomAction {
@@ -63,6 +64,10 @@ export const loadGameError = () => error(ActionTypes.LoadGame);
 export const loadGameHistoryRequest = (gameId : number) => pending(ActionTypes.LoadGameHistory, gameId);
 export const loadGameHistorySuccess = (history : Event[]) => success(ActionTypes.LoadGameHistory, history);
 export const loadGameHistoryError = () => error(ActionTypes.LoadGameHistory);
+
+export const loadBoardRequest = (regionCount : number) => pending(ActionTypes.LoadBoard, regionCount);
+export const loadBoardSuccess = (board : Board) => success(ActionTypes.LoadBoard, board);
+export const loadBoardError = () => error(ActionTypes.LoadBoard);
 
 export const queryGamesRequest = (query : GamesQuery) => pending(ActionTypes.QueryGames, query);
 export const queryGamesSuccess = (games : Game[]) => success(ActionTypes.QueryGames, games);
