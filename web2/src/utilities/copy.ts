@@ -1,5 +1,6 @@
 import { Turn, Selection, Game, TurnStatus, SelectionKind, Location, Piece, PieceKind, Board } from "../api/model";
 import Debug from "../debug";
+import { BoardView } from "../viewModel/board/model";
 
 export function boolToYesOrNo(value : boolean) : string {
     if (value === true) {
@@ -17,7 +18,27 @@ function locationToString(location : Location) : string {
 
 const centerCellName = "Seat";
 
-function getCellLabel(cellId : number, board : Board) : string {
+export function getCellLabel(cellId : number, board : Board) : string {
+    //The first time the board is needed it must be fetched from the API.
+    //To avoid making this asynchronous, this just skips the API call if the board is not already cached.
+    if (board) {
+        const cell = board.cells.find(c => c.id === cellId);
+
+        const base = cell.locations.find(l => l.x === 0 && l.y === 0)
+            ? centerCellName
+            : locationToString(cell.locations[0]);
+
+        if (Debug.showPieceAndCellIds){
+            return `${base} (${cellId})`;
+        } else {
+            return base;
+        }
+    } else {
+        return cellId.toString();
+    }
+}
+
+export function getCellViewLabel(cellId : number, board : BoardView) : string {
     //The first time the board is needed it must be fetched from the API.
     //To avoid making this asynchronous, this just skips the API call if the board is not already cached.
     if (board) {
