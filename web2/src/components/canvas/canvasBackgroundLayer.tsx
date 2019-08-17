@@ -2,13 +2,15 @@ import * as React from 'react';
 import { Layer } from 'react-konva';
 import { BoardView } from '../../viewModel/board/model';
 import CanvasPolygon, { CanvasPolygonStyle } from './canvasPolygon';
+import { connect } from 'react-redux';
+import { AppState } from '../../store/state';
 
 export interface CanvasBackgroundLayerProps {
     board : BoardView,
     style : CanvasPolygonStyle
 }
 
-export default class CanvasBackgroundLayer extends React.Component<CanvasBackgroundLayerProps> {
+class canvasBackgroundLayer extends React.Component<CanvasBackgroundLayerProps> {
     render() {
         return (
             <Layer>
@@ -20,3 +22,13 @@ export default class CanvasBackgroundLayer extends React.Component<CanvasBackgro
         );
     }
 }
+
+
+const mapStateToProps = (state : AppState) => {
+    return {
+        board: state.activeGame.boardView
+    };
+};
+
+const CanvasBackgroundLayer = connect(mapStateToProps)(canvasBackgroundLayer);
+export default CanvasBackgroundLayer;

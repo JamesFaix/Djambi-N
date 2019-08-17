@@ -1,6 +1,6 @@
 import { Event, Game, GamesQuery, User, GameParameters, Board } from '../api/model';
 import * as ModelFactory from '../api/modelFactory';
-import { number } from 'prop-types';
+import { BoardView } from '../viewModel/board/model';
 
 export interface AppState {
     session: SessionState,
@@ -25,8 +25,10 @@ export interface ActiveGameState {
     addPlayerPending : boolean,
     removePlayerPending : boolean,
     startGamePending : boolean,
+    selectionPending : boolean,
     game : Game,
     history : Event[],
+    boardView : BoardView,
 }
 
 export interface GamesQueryState {
@@ -74,7 +76,9 @@ export class StateFactory {
             loadHistoryPending: false,
             addPlayerPending: false,
             removePlayerPending: false,
-            startGamePending: false
+            startGamePending: false,
+            selectionPending: false,
+            boardView: null
         };
     }
 

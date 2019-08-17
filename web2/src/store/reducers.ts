@@ -1,6 +1,7 @@
 import { CustomAction, DataAction, ActionStatus, ActionTypes } from './actions';
 import { Game, GamesQuery, User, GameParameters, Event, Board } from '../api/model';
 import { AppState, StateFactory, NavigationState } from './state';
+import { BoardView } from '../viewModel/board/model';
 
 export function reducer(state: AppState, action : CustomAction) : AppState {
     switch (action.type) {
@@ -39,6 +40,10 @@ export function reducer(state: AppState, action : CustomAction) : AppState {
             return removePlayerReducer(state, action);
         case ActionTypes.StartGame:
             return startGameReducer(state, action);
+        case ActionTypes.SelectCell:
+            return selectCellReducer(state, action);
+        case ActionTypes.UpdateBoardView:
+            return updateBoardViewReducer(state, action);
 
         //Misc
         case ActionTypes.SetNavigationOptions:
@@ -351,6 +356,27 @@ function startGameReducer(state: AppState, action: CustomAction) : AppState {
     }
 }
 
+function selectCellReducer(state: AppState, action: CustomAction) : AppState {
+    switch (action.status) {
+        case ActionStatus.Pending: {
+            const newState = {...state};
+            newState.activeGame = {...state.activeGame};
+            newState.activeGame.selectionPending = true;
+            return newState;
+        }
+        case ActionStatus.Success: {
+            const da = <DataAction<Game>>action;
+            const newState = {...state};
+            newState.activeGame = {...state.activeGame};
+            newState.activeGame.selectionPending = false;
+            newState.activeGame.game = da.data;
+            return newState;
+        }
+        default:
+            throw "Unsupported case: " + action.status;
+    }
+}
+
 //#endregion
 
 function setNavigationOptionsReducer(state: AppState, action: CustomAction) : AppState {
@@ -359,6 +385,20 @@ function setNavigationOptionsReducer(state: AppState, action: CustomAction) : Ap
             const da = <DataAction<NavigationState>>action;
             const newState = {...state};
             newState.navigation = da.data;
+            return newState;
+        }
+        default:
+            throw "Unsupported case: " + action.status;
+    }
+}
+
+function updateBoardViewReducer(state: AppState, action : CustomAction) : AppState {
+    switch (action.status) {
+        case ActionStatus.Success: {
+            const da = <DataAction<BoardView>>action;
+            const newState = {...state};
+            newState.activeGame = {...state.activeGame};
+            newState.activeGame.boardView = da.data;
             return newState;
         }
         default:

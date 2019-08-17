@@ -1,51 +1,46 @@
 import * as React from 'react';
-import CanvasCell from './canvasCell';
-import CanvasLabel from './canvasLabel';
-import CanvasPiece from './canvasPiece';
-import CanvasPolygon from './canvasPolygon';
-import Debug from '../../debug';
-import Geometry from '../../viewModel/board/geometry';
-import { BoardView, CellType, CellView } from '../../viewModel/board/model';
-import { Layer, Stage } from 'react-konva';
-import { Point } from '../../viewModel/board/model';
+import { Stage } from 'react-konva';
 import CanvasCellsLayer from './canvasCellsLayer';
 import CanvasPiecesLayer from './canvasPiecesLayer';
 import CanvasLabelsLayer from './canvasLabelsLayer';
 import CanvasBackgroundLayer from './canvasBackgroundLayer';
-import Colors from '../../utilities/colors';
+
+export interface CanvasBoardStyle {
+    width : number,
+    height : number
+    scale : number,
+    strokeWidth : number,
+    strokeColor : string
+}
 
 export interface CanvasBoardProps {
-    board : BoardView,
-    selectCell : (cell : CellView) => void,
-    scale : number,
-    boardStrokeWidth : number,
-    size : Point
+    style : CanvasBoardStyle
 }
 
 export default class CanvasBoard extends React.Component<CanvasBoardProps> {
     render() {
+        const style = this.props.style;
+
+        const stageStyle = {
+            width: style.width,
+            height: style.height
+        };
+
+        const backgroundStyle = {
+            strokeWidth: style.strokeWidth,
+            strokeColor: style.strokeColor
+        };
+
+        const piecesStyle = {
+            scale: style.scale
+        };
+
         return (
-            <Stage style={{width: this.props.size.x, height: this.props.size.y}}>
-                <CanvasBackgroundLayer
-                    board={this.props.board}
-                    style={{
-                        strokeWidth: this.props.boardStrokeWidth,
-                        strokeColor: Colors.getBoardBorderColor()
-                    }}
-                />
-                <CanvasCellsLayer
-                    board={this.props.board}
-                    selectCell={cell => this.props.selectCell(cell)}
-                />
-                <CanvasPiecesLayer
-                    board={this.props.board}
-                    selectCell={cell => this.props.selectCell(cell)}
-                    scale={this.props.scale}
-                />
-                <CanvasLabelsLayer
-                    board={this.props.board}
-                    selectCell={cell => this.props.selectCell(cell)}
-                />
+            <Stage style={stageStyle}>
+                <CanvasBackgroundLayer style={backgroundStyle}/>
+                <CanvasCellsLayer/>
+                <CanvasPiecesLayer style={piecesStyle}/>
+                <CanvasLabelsLayer/>
             </Stage>
         );
     }

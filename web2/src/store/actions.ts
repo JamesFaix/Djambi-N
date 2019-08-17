@@ -1,5 +1,6 @@
 import { LoginRequest, User, CreateUserRequest, Game, GamesQuery, GameParameters, CreatePlayerRequest, Event, Board } from "../api/model";
 import { NavigationState } from "./state";
+import { BoardView } from "../viewModel/board/model";
 
 export enum ActionStatus {
   Pending = "PENDING",
@@ -22,7 +23,9 @@ export enum ActionTypes {
   RemovePlayer = "REMOVE_PLAYER",
   StartGame = "START_GAME",
   SetNavigationOptions = "SET_NAV_OPTIONS",
-  LoadBoard = "LOAD_BOARD"
+  LoadBoard = "LOAD_BOARD",
+  SelectCell = "SELECT_CELL",
+  UpdateBoardView = "UPDATE_BOARD_VIEW"
 }
 
 export interface CustomAction {
@@ -98,3 +101,9 @@ export const startGameSuccess = (game : Game) => success(ActionTypes.StartGame, 
 export const startGameError = () => error(ActionTypes.StartGame);
 
 export const setNavigationOptions = (options : NavigationState) => success(ActionTypes.SetNavigationOptions, options);
+
+export const selectCellRequest = (cellId : number) => pending(ActionTypes.SelectCell, cellId);
+export const selectCellSuccess = (game : Game) => success(ActionTypes.SelectCell, game);
+export const selectCellError = () => error(ActionTypes.SelectCell);
+
+export const updateBoardView = (board : BoardView) => success(ActionTypes.UpdateBoardView, board);

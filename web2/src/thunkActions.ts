@@ -244,6 +244,19 @@ export function startGame(gameId: number) {
     }
 }
 
+export function selectCell(gameId: number, cellId : number) {
+    return function (dispatch: Dispatch) : Promise<void> {
+        dispatch(Actions.selectCellRequest(cellId));
+        return Api.selectCell(gameId, cellId)
+            .then(resp => {
+                dispatch(Actions.selectCellSuccess(resp.game));
+            })
+            .catch(_ => {
+                dispatch(Actions.selectCellError());
+            });
+    }
+}
+
 //#endregion
 
 //#region Games search
