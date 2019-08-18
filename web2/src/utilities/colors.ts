@@ -13,7 +13,7 @@ export default class Colors {
             case 6: return "magenta";
             case 7: return "gold";
             default:
-                throw "Unsupported colorID";
+                throw "Unsupported colorID " + colorId;
         }
     }
 
@@ -37,8 +37,8 @@ export default class Colors {
     private static getCellBaseColor(type : CellType) {
         switch(type){
             case CellType.Center: return "#828282"; //Gray
-            case CellType.Even: return "white";
-            case CellType.Odd: return "black";
+            case CellType.Even: return "#FFFFFF";
+            case CellType.Odd: return "#000000";
             default: throw "Unsupported celltype";
         }
     }

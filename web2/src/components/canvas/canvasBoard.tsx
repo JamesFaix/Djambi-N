@@ -4,6 +4,7 @@ import CanvasCellsLayer from './canvasCellsLayer';
 import CanvasPiecesLayer from './canvasPiecesLayer';
 import CanvasLabelsLayer from './canvasLabelsLayer';
 import CanvasBackgroundLayer from './canvasBackgroundLayer';
+import { BoardView, CellView } from '../../viewModel/board/model';
 
 export interface CanvasBoardStyle {
     width : number,
@@ -14,17 +15,15 @@ export interface CanvasBoardStyle {
 }
 
 export interface CanvasBoardProps {
+    gameId : number,
+    board : BoardView,
+    selectCell : (cell : CellView) => void,
     style : CanvasBoardStyle
 }
 
 export default class CanvasBoard extends React.Component<CanvasBoardProps> {
     render() {
         const style = this.props.style;
-
-        const stageStyle = {
-            width: style.width,
-            height: style.height
-        };
 
         const backgroundStyle = {
             strokeWidth: style.strokeWidth,
@@ -36,11 +35,29 @@ export default class CanvasBoard extends React.Component<CanvasBoardProps> {
         };
 
         return (
-            <Stage style={stageStyle}>
-                <CanvasBackgroundLayer style={backgroundStyle}/>
-                <CanvasCellsLayer/>
-                <CanvasPiecesLayer style={piecesStyle}/>
-                <CanvasLabelsLayer/>
+            <Stage
+                width={style.width}
+                height={style.height}
+            >
+                <CanvasBackgroundLayer
+                    board={this.props.board}
+                    style={backgroundStyle}
+                />
+                <CanvasCellsLayer
+                    gameId={this.props.gameId}
+                    board={this.props.board}
+                    selectCell={this.props.selectCell}
+                />
+                <CanvasPiecesLayer
+                    board={this.props.board}
+                    selectCell={this.props.selectCell}
+                    style={piecesStyle}
+                />
+                <CanvasLabelsLayer
+                    gameId={this.props.gameId}
+                    board={this.props.board}
+                    selectCell={this.props.selectCell}
+                />
             </Stage>
         );
     }

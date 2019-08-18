@@ -3,10 +3,6 @@ import { Layer } from 'react-konva';
 import { CellView, BoardView, Point } from '../../viewModel/board/model';
 import CanvasPiece from './canvasPiece';
 import Geometry from '../../viewModel/board/geometry';
-import { AppState } from '../../store/state';
-import { Dispatch } from 'redux';
-import { connect } from 'react-redux';
-import * as ThunkActions from '../../thunkActions';
 
 export interface CanvasPiecesLayerStyle {
     scale : number
@@ -18,9 +14,13 @@ export interface CanvasPiecesLayerProps {
     style : CanvasPiecesLayerStyle
 }
 
-class canvasPiecesLayer extends React.Component<CanvasPiecesLayerProps> {
+export default class CanvasPiecesLayer extends React.Component<CanvasPiecesLayerProps> {
     render() {
         const size = this.getPieceSize();
+
+        console.log("rendering pieces layer");
+        console.log(this.props.board);
+
         return (
             <Layer>
                 {
@@ -51,20 +51,3 @@ class canvasPiecesLayer extends React.Component<CanvasPiecesLayerProps> {
         return Geometry.Point.add(cellCenter, offset);
     }
 }
-
-const mapStateToProps = (state : AppState) => {
-    return {
-        gameId: state.activeGame.game.id,
-        board: state.activeGame.boardView
-    };
-};
-
-const mapDispatchToProps = (dispatch : Dispatch) => {
-    const gameId : any = null;
-    return {
-        selectCell : (cell : CellView) => ThunkActions.selectCell(gameId, cell.id)(dispatch)
-    };
-}
-
-const CanvasPiecesLayer = connect(mapStateToProps, mapDispatchToProps)(canvasPiecesLayer);
-export default CanvasPiecesLayer;

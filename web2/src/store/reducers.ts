@@ -2,6 +2,7 @@ import { CustomAction, DataAction, ActionStatus, ActionTypes } from './actions';
 import { Game, GamesQuery, User, GameParameters, Event, Board } from '../api/model';
 import { AppState, StateFactory, NavigationState } from './state';
 import { BoardView } from '../viewModel/board/model';
+import BoardViewFactory from '../viewModel/board/boardViewFactory';
 
 export function reducer(state: AppState, action : CustomAction) : AppState {
     switch (action.type) {
@@ -42,8 +43,6 @@ export function reducer(state: AppState, action : CustomAction) : AppState {
             return startGameReducer(state, action);
         case ActionTypes.SelectCell:
             return selectCellReducer(state, action);
-        case ActionTypes.UpdateBoardView:
-            return updateBoardViewReducer(state, action);
 
         //Misc
         case ActionTypes.SetNavigationOptions:
@@ -244,6 +243,7 @@ function loadGameReducer(state: AppState, action: CustomAction) : AppState {
             const newState = {...state};
             newState.activeGame = StateFactory.defaultActiveGameState();
             newState.activeGame.game = da.data;
+            updateBoardView(newState, da.data);
             return newState;
         }
         default:
@@ -265,6 +265,7 @@ function loadBoardReducer(state: AppState, action: CustomAction) : AppState {
             newState.boards = {...state.boards};
             newState.boards.loadBoardPending = false;
             newState.boards.boards.set(da.data.regionCount, da.data);
+            updateBoardView(newState, state.activeGame.game);
             return newState;
         }
         default:
@@ -349,6 +350,7 @@ function startGameReducer(state: AppState, action: CustomAction) : AppState {
             newState.activeGame = {...state.activeGame};
             newState.activeGame.startGamePending = false;
             newState.activeGame.game = da.data;
+            updateBoardView(newState, da.data);
             return newState;
         }
         default:
@@ -370,10 +372,23 @@ function selectCellReducer(state: AppState, action: CustomAction) : AppState {
             newState.activeGame = {...state.activeGame};
             newState.activeGame.selectionPending = false;
             newState.activeGame.game = da.data;
+            updateBoardView(newState, da.data);
             return newState;
         }
         default:
             throw "Unsupported case: " + action.status;
+    }
+}
+
+function updateBoardView(state : AppState, game : Game) : void {
+    const rc = game.parameters.regionCount;
+    const board = state.boards.boards.get(rc);
+    if (board){
+        let bv = BoardViewFactory.createEmptyBoardView(board);
+        bv = BoardViewFactory.fillEmptyBoardView(bv, game);
+        state.activeGame.boardView = bv;
+    } else {
+        console.log("skipping boardview update due to missing board");
     }
 }
 
@@ -385,20 +400,6 @@ function setNavigationOptionsReducer(state: AppState, action: CustomAction) : Ap
             const da = <DataAction<NavigationState>>action;
             const newState = {...state};
             newState.navigation = da.data;
-            return newState;
-        }
-        default:
-            throw "Unsupported case: " + action.status;
-    }
-}
-
-function updateBoardViewReducer(state: AppState, action : CustomAction) : AppState {
-    switch (action.status) {
-        case ActionStatus.Success: {
-            const da = <DataAction<BoardView>>action;
-            const newState = {...state};
-            newState.activeGame = {...state.activeGame};
-            newState.activeGame.boardView = da.data;
             return newState;
         }
         default:

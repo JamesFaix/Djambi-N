@@ -6,11 +6,13 @@ import {
     Line,
     Point,
     Polygon,
+    PieceView,
 } from "./model";
 import Geometry from "./geometry";
 import {
     Board,
-    Location
+    Location,
+    Game
 } from "../../api/model";
 import { List } from "../../utilities/collections";
 const Point = Geometry.Point;
@@ -251,5 +253,41 @@ export default class BoardViewFactory {
             return CellType.Odd;
         }
         return CellType.Even;
+    }
+
+    public static fillEmptyBoardView(board : BoardView, game : Game) : BoardView {
+        const newCells : CellView[] = board.cells.map(c => {
+            let newState = CellState.Default;
+            const turn = game.currentTurn;
+
+            if (turn) {
+                if (turn.selections.find(s => s.cellId === c.id)) {
+                    newState = CellState.Selected;
+                } else if (turn.selectionOptions.find(cellId => cellId === c.id)) {
+                    newState = CellState.Selectable;
+                }
+            }
+
+            const piece = game.pieces.find(p => p.cellId === c.id);
+            const owner = piece ? game.players.find(p => p.id === piece.playerId) : null;
+            const colorId = owner ? owner.colorId : null;
+            const pieceView : PieceView = piece ? { id : piece.id, kind: piece.kind, colorId: colorId } : null;
+
+            return {
+                id: c.id,
+                locations: c.locations,
+                type: c.type,
+                state: newState,
+                piece: pieceView,
+                polygon: c.polygon
+            };
+        });
+
+        return {
+            regionCount : board.regionCount,
+            cellCountPerSide: board.cellCountPerSide,
+            cells : newCells,
+            polygon : board.polygon
+        };
     }
 }

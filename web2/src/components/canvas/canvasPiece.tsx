@@ -14,7 +14,8 @@ export interface CanvasPieceProps {
 
 export default class CanvasPiece extends React.Component<CanvasPieceProps> {
     render() {
-        const playerColor = Colors.getColorFromPlayerColorId(this.props.piece.colorId);
+        const colorId = this.props.piece.colorId;
+        const playerColor = colorId ? Colors.getColorFromPlayerColorId(colorId) : null;
         return (
             <Image
                 image={Images.getPieceImage(this.props.piece.kind)}

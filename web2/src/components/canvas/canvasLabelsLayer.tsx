@@ -3,10 +3,6 @@ import { Layer } from 'react-konva';
 import { CellView, BoardView } from '../../viewModel/board/model';
 import Debug from '../../debug';
 import CanvasLabel from './canvasLabel';
-import { AppState } from '../../store/state';
-import { Dispatch } from 'redux';
-import { connect } from 'react-redux';
-import * as ThunkActions from '../../thunkActions';
 
 export interface CanvasLabelsLayerProps {
     gameId : number,
@@ -14,11 +10,14 @@ export interface CanvasLabelsLayerProps {
     selectCell : (cell : CellView) => void
 }
 
-class canvasLabelsLayer extends React.Component<CanvasLabelsLayerProps> {
+export default class CanvasLabelsLayer extends React.Component<CanvasLabelsLayerProps> {
     render() {
         if (!Debug.showCellLabels){
             return null;
         }
+
+        console.log("rendering labels layer");
+        console.log(this.props.board);
 
         const board = this.props.board;
 
@@ -38,20 +37,3 @@ class canvasLabelsLayer extends React.Component<CanvasLabelsLayerProps> {
         );
     }
 }
-
-const mapStateToProps = (state : AppState) => {
-    return {
-        gameId: state.activeGame.game.id,
-        board: state.activeGame.boardView
-    };
-};
-
-const mapDispatchToProps = (dispatch : Dispatch) => {
-    const gameId : any = null;
-    return {
-        selectCell : (cell : CellView) => ThunkActions.selectCell(gameId, cell.id)(dispatch)
-    };
-}
-
-const CanvasLabelsLayer = connect(mapStateToProps, mapDispatchToProps)(canvasLabelsLayer);
-export default CanvasLabelsLayer;
