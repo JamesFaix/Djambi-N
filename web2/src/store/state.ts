@@ -1,6 +1,6 @@
 import { Event, Game, GamesQuery, User, GameParameters, Board } from '../api/model';
 import * as ModelFactory from '../api/modelFactory';
-import { BoardView } from '../viewModel/board/model';
+import { BoardView, Point } from '../viewModel/board/model';
 
 export interface AppState {
     session: SessionState,
@@ -8,7 +8,8 @@ export interface AppState {
     gamesQuery : GamesQueryState,
     createGameForm : CreateGameFormState,
     navigation : NavigationState,
-    boards : BoardsState
+    boards : BoardsState,
+    display : DisplayState
 }
 
 export interface SessionState {
@@ -55,6 +56,13 @@ export interface NavigationState {
 export interface BoardsState {
     loadBoardPending : boolean,
     boards : Map<number, Board>
+}
+
+export interface DisplayState {
+    zoomLevel : number,
+    boardContainerSize : Point,
+    canvasMargin : number,
+    canvasContentPadding : number,
 }
 
 export class StateFactory {
@@ -108,6 +116,15 @@ export class StateFactory {
         };
     }
 
+    static defaultDisplayState() : DisplayState {
+        return {
+            zoomLevel: 0,
+            boardContainerSize: { x: 1000, y: 1000 },
+            canvasContentPadding: 5,
+            canvasMargin: 5,
+        };
+    }
+
     static defaultAppState() : AppState {
         return {
             session: StateFactory.defaultSesssionState(),
@@ -115,7 +132,8 @@ export class StateFactory {
             gamesQuery: StateFactory.defaultGamesQueryState(),
             createGameForm: StateFactory.defaultCreateGameFormState(),
             navigation: StateFactory.defaultNavigationState(),
-            boards: StateFactory.defaultBoardsState()
+            boards: StateFactory.defaultBoardsState(),
+            display: StateFactory.defaultDisplayState()
         };
     }
 }

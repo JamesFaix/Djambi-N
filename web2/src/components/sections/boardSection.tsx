@@ -5,21 +5,27 @@ import { AppState } from '../../store/state';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import * as ThunkActions from '../../thunkActions';
+import CanvasTransformService from '../../viewModel/board/canvasTransformService';
 
 export interface BoardSectionProps {
     gameId : number,
     board : BoardView,
-    selectCell : (cell : CellView) => void
+    zoomLevel : number,
+    selectCell : (gameId: number, cell : CellView) => void
 }
 
 class boardSection extends React.Component<BoardSectionProps> {
     render(){
+        const zoomScale = CanvasTransformService.getZoomScaleFactor(this.props.zoomLevel);
+        const sizeScale = 500;
+        const scale = zoomScale * sizeScale;
+
         const boardStyle : CanvasBoardStyle = {
             width: 1000, //get from CanvasTransformService
             height : 1000, //get from CanvasTransformService
             strokeWidth : 5, //5 maybe put in settings somewhere
             strokeColor : "black", //pull from Colors module
-            scale : 500 //get from CanvasTransformService
+            scale : scale //get from CanvasTransformService
         };
 
         if (!this.props.board) {
@@ -32,7 +38,7 @@ class boardSection extends React.Component<BoardSectionProps> {
                     style={boardStyle}
                     gameId={this.props.gameId}
                     board={this.props.board}
-                    selectCell={this.props.selectCell}
+                    selectCell={cell => this.props.selectCell(this.props.gameId, cell)}
                 />
             </div>
         );
@@ -43,13 +49,14 @@ const mapStateToProps = (state : AppState) => {
     const game = state.activeGame.game;
     return {
         gameId: game ? game.id : null,
-        board: state.activeGame.boardView
+        board: state.activeGame.boardView,
+        zoomLevel: state.display.zoomLevel
     };
 }
 
 const mapDispatchToProps = (dispatch: Dispatch, ownProps : any) => {
     return {
-        selectCell: (cell : CellView) => ThunkActions.selectCell(ownProps.activeGame.game.id, cell.id)(dispatch)
+        selectCell: (gameId : number, cell : CellView) => ThunkActions.selectCell(gameId, cell.id)(dispatch)
     };
 }
 

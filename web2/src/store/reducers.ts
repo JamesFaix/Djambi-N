@@ -3,6 +3,8 @@ import { Game, GamesQuery, User, GameParameters, Event, Board } from '../api/mod
 import { AppState, StateFactory, NavigationState } from './state';
 import { BoardView } from '../viewModel/board/model';
 import BoardViewFactory from '../viewModel/board/boardViewFactory';
+import CanvasTransformService from '../viewModel/board/canvasTransformService';
+import Geometry from '../viewModel/board/geometry';
 
 export function reducer(state: AppState, action : CustomAction) : AppState {
     switch (action.type) {
@@ -47,6 +49,8 @@ export function reducer(state: AppState, action : CustomAction) : AppState {
         //Misc
         case ActionTypes.SetNavigationOptions:
             return setNavigationOptionsReducer(state, action);
+        case ActionTypes.Zoom:
+            return zoomReducer(state, action);
 
         default:
             return state;
@@ -383,13 +387,23 @@ function selectCellReducer(state: AppState, action: CustomAction) : AppState {
 function updateBoardView(state : AppState, game : Game) : void {
     const rc = game.parameters.regionCount;
     const board = state.boards.boards.get(rc);
-    if (board){
-        let bv = BoardViewFactory.createEmptyBoardView(board);
-        bv = BoardViewFactory.fillEmptyBoardView(bv, game);
-        state.activeGame.boardView = bv;
-    } else {
+    if (!board){
         console.log("skipping boardview update due to missing board");
+        return;
     }
+
+    let bv = BoardViewFactory.createEmptyBoardView(board);
+    bv = BoardViewFactory.fillEmptyBoardView(bv, game);
+    const cts = new CanvasTransformService(
+        state.display.boardContainerSize,
+        state.display.canvasMargin,
+        state.display.canvasContentPadding,
+        state.display.zoomLevel,
+        state.activeGame.game.parameters.regionCount
+    );
+    const t = cts.getBoardViewTransform();
+    bv = Geometry.Board.transform(bv, t);
+    state.activeGame.boardView = bv;
 }
 
 //#endregion
@@ -400,6 +414,21 @@ function setNavigationOptionsReducer(state: AppState, action: CustomAction) : Ap
             const da = <DataAction<NavigationState>>action;
             const newState = {...state};
             newState.navigation = da.data;
+            return newState;
+        }
+        default:
+            throw "Unsupported case: " + action.status;
+    }
+}
+
+function zoomReducer(state: AppState, action: CustomAction) : AppState {
+    switch (action.status) {
+        case ActionStatus.Success: {
+            const da = <DataAction<number>>action;
+            const newState = {...state};
+            newState.display = {...state.display};
+            newState.display.zoomLevel = da.data;
+            updateBoardView(newState, state.activeGame.game);
             return newState;
         }
         default:

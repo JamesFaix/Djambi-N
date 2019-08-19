@@ -78,11 +78,11 @@ export default class CanvasTransformService{
 
     public getScale() : number {
         return this.getContainerSizeScaleFactor()
-            * this.getZoomScaleFactor();
+            * CanvasTransformService.getZoomScaleFactor(this.zoomLevel);
     }
 
-    public getZoomScaleFactor() : number {
-        switch (this.zoomLevel) {
+    public static getZoomScaleFactor(zoomLevel : number) : number {
+        switch (zoomLevel) {
             //Increments of 0.1 from 0.5 to 2.0
             case -5: return 0.5;
             case -4: return 0.6;
@@ -107,13 +107,13 @@ export default class CanvasTransformService{
             case 13: return 3.5;
             case 14: return 4.0;
 
-            default: throw "Unsupported zoom level: " + this.zoomLevel;
+            default: throw `Unsupported zoom level: ${zoomLevel}`;
         }
     }
 
-    public minZoomLevel() { return -5; }
+    public static minZoomLevel() { return -5; }
 
-    public maxZoomLevel() { return 14; }
+    public static maxZoomLevel() { return 14; }
 
     private getContainerSizeScaleFactor() : number {
         let contentAreaSize = this.getCanvasContentAreaSizeWithNoZoom();

@@ -25,6 +25,7 @@ export enum ActionTypes {
   SetNavigationOptions = "SET_NAV_OPTIONS",
   LoadBoard = "LOAD_BOARD",
   SelectCell = "SELECT_CELL",
+  Zoom = "ZOOM"
 }
 
 export interface CustomAction {
@@ -104,3 +105,5 @@ export const setNavigationOptions = (options : NavigationState) => success(Actio
 export const selectCellRequest = (cellId : number) => pending(ActionTypes.SelectCell, cellId);
 export const selectCellSuccess = (game : Game) => success(ActionTypes.SelectCell, game);
 export const selectCellError = () => error(ActionTypes.SelectCell);
+
+export const zoom = (level : number) => success(ActionTypes.Zoom, level);
