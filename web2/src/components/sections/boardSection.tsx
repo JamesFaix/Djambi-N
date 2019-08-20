@@ -64,7 +64,7 @@ const mapStateToProps = (state : AppState) => {
     };
 }
 
-const mapDispatchToProps = (dispatch: Dispatch, ownProps : any) => {
+const mapDispatchToProps = (dispatch: Dispatch) => {
     return {
         selectCell: (gameId : number, cell : CellView) => ThunkActions.selectCell(gameId, cell.id)(dispatch),
         loadPieceImages: () => Images.init(dispatch)

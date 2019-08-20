@@ -10,11 +10,12 @@ import {history} from './history';
 import { logger } from 'redux-logger';
 import { StateFactory } from './store/state';
 import "./index.css";
+import Debug from './debug';
 
 const store = createStore(
     reducer,
     StateFactory.defaultAppState(),
-    applyMiddleware(thunk, logger)
+    Debug.logRedux ? applyMiddleware(thunk, logger) : applyMiddleware(thunk)
 );
 
 render(

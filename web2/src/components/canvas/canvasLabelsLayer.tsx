@@ -16,9 +16,6 @@ export default class CanvasLabelsLayer extends React.Component<CanvasLabelsLayer
             return null;
         }
 
-        console.log("rendering labels layer");
-        console.log(this.props.board);
-
         const board = this.props.board;
 
         return (

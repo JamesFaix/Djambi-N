@@ -11,9 +11,6 @@ export interface CanvasCellsLayerProps {
 
 export default class CanvasCellsLayer extends React.Component<CanvasCellsLayerProps> {
     render() {
-        console.log("rendering cells layer");
-        console.log(this.props.board);
-
         return (
             <Layer>
                 {

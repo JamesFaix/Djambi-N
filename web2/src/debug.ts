@@ -20,4 +20,6 @@ export default class Debug {
     public static readonly logApiErrors = true;
 
     public static readonly logApiSuccesses = false;
+
+    public static readonly logRedux = false;
 }

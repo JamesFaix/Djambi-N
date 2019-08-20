@@ -391,7 +391,6 @@ function updateBoardView(state : AppState, game : Game) : void {
     const rc = game.parameters.regionCount;
     const board = state.boards.boards.get(rc);
     if (!board){
-        console.log("skipping boardview update due to missing board");
         return;
     }
 

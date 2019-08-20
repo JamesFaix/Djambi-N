@@ -20,9 +20,6 @@ export default class CanvasPiecesLayer extends React.Component<CanvasPiecesLayer
     render() {
         const size = this.getPieceSize();
 
-        console.log("rendering pieces layer");
-        console.log(this.props.board);
-
         return (
             <Layer>
                 {

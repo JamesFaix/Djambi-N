@@ -10,9 +10,6 @@ export interface CanvasBackgroundLayerProps {
 
 export default class CanvasBackgroundLayer extends React.Component<CanvasBackgroundLayerProps> {
     render() {
-        console.log("rendering background layer");
-        console.log(this.props.board);
-
         return (
             <Layer>
                 <CanvasPolygon
