@@ -1,6 +1,5 @@
-import { LoginRequest, User, CreateUserRequest, Game, GamesQuery, GameParameters, CreatePlayerRequest, Event, Board } from "../api/model";
+import { LoginRequest, User, CreateUserRequest, Game, GamesQuery, GameParameters, CreatePlayerRequest, Event, Board, PieceKind } from "../api/model";
 import { NavigationState } from "./state";
-import { BoardView } from "../viewModel/board/model";
 
 export enum ActionStatus {
   Pending = "PENDING",
@@ -25,7 +24,8 @@ export enum ActionTypes {
   SetNavigationOptions = "SET_NAV_OPTIONS",
   LoadBoard = "LOAD_BOARD",
   SelectCell = "SELECT_CELL",
-  Zoom = "ZOOM"
+  Zoom = "ZOOM",
+  LoadPieceImage = "LOAD_PIECE_IMAGE"
 }
 
 export interface CustomAction {
@@ -107,3 +107,5 @@ export const selectCellSuccess = (game : Game) => success(ActionTypes.SelectCell
 export const selectCellError = () => error(ActionTypes.SelectCell);
 
 export const zoom = (level : number) => success(ActionTypes.Zoom, level);
+
+export const loadPieceImage = (pieceKind : PieceKind, image : HTMLImageElement) => success(ActionTypes.LoadPieceImage, [pieceKind, image]);

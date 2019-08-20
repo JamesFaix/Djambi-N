@@ -1,5 +1,6 @@
 import { PieceKind } from "../api/model";
-import { memoize } from "./functions";
+import { Dispatch } from "redux";
+import * as Actions from '../store/actions';
 
 function getPieceImagePath(kind : PieceKind) : string {
     switch (kind) {
@@ -14,10 +15,22 @@ function getPieceImagePath(kind : PieceKind) : string {
     }
 }
 
-function createPieceImage(kind : PieceKind) : HTMLImageElement {
+function createPieceImage(kind : PieceKind, dispatch : Dispatch) : HTMLImageElement {
     const image = new (window as any).Image() as HTMLImageElement;
     image.src = getPieceImagePath(kind);
+    image.onload = () => dispatch(Actions.loadPieceImage(kind, image));
     return image;
 }
 
-export const getPieceImage = memoize(createPieceImage);
+export function init(dispatch : Dispatch) : void {
+    const kinds = [
+        PieceKind.Assassin,
+        PieceKind.Chief,
+        PieceKind.Corpse,
+        PieceKind.Diplomat,
+        PieceKind.Gravedigger,
+        PieceKind.Reporter,
+        PieceKind.Thug
+    ];
+    kinds.forEach(k => createPieceImage(k, dispatch));
+}

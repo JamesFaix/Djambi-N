@@ -1,7 +1,6 @@
 import { CustomAction, DataAction, ActionStatus, ActionTypes } from './actions';
-import { Game, GamesQuery, User, GameParameters, Event, Board } from '../api/model';
+import { Game, GamesQuery, User, GameParameters, Event, Board, PieceKind } from '../api/model';
 import { AppState, StateFactory, NavigationState } from './state';
-import { BoardView } from '../viewModel/board/model';
 import BoardViewFactory from '../viewModel/board/boardViewFactory';
 import CanvasTransformService from '../viewModel/board/canvasTransformService';
 import Geometry from '../viewModel/board/geometry';
@@ -51,6 +50,8 @@ export function reducer(state: AppState, action : CustomAction) : AppState {
             return setNavigationOptionsReducer(state, action);
         case ActionTypes.Zoom:
             return zoomReducer(state, action);
+        case ActionTypes.LoadPieceImage:
+            return loadPieceImageReducer(state, action);
 
         default:
             return state;
@@ -268,7 +269,9 @@ function loadBoardReducer(state: AppState, action: CustomAction) : AppState {
             const newState = {...state};
             newState.boards = {...state.boards};
             newState.boards.loadBoardPending = false;
-            newState.boards.boards.set(da.data.regionCount, da.data);
+            const boards = new Map<number, Board>(state.boards.boards);
+            boards.set(da.data.regionCount, da.data);
+            newState.boards.boards = boards;
             updateBoardView(newState, state.activeGame.game);
             return newState;
         }
@@ -431,6 +434,23 @@ function zoomReducer(state: AppState, action: CustomAction) : AppState {
             updateBoardView(newState, state.activeGame.game);
             return newState;
         }
+        default:
+            throw "Unsupported case: " + action.status;
+    }
+}
+
+function loadPieceImageReducer(state : AppState, action : CustomAction) : AppState {
+    switch (action.status) {
+        case ActionStatus.Success:
+            const da = <DataAction<[PieceKind, HTMLImageElement]>>action;
+            const [kind, image] = da.data;
+            const newState = {...state};
+            newState.images = {...state.images};
+            const pieces = new Map<PieceKind, HTMLImageElement>(state.images.pieces);
+            pieces.set(kind, image);
+            newState.images.pieces = pieces;
+            return newState;
+
         default:
             throw "Unsupported case: " + action.status;
     }

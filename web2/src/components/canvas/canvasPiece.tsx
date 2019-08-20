@@ -3,13 +3,13 @@ import { Image } from 'react-konva';
 import { PieceView } from '../../viewModel/board/model';
 import { Point } from '../../viewModel/board/model';
 import Colors from '../../utilities/colors';
-import * as Images from '../../utilities/images';
 
 export interface CanvasPieceProps {
     piece : PieceView,
     onClick : () => void,
     size : number,
-    location : Point
+    location : Point,
+    image : HTMLImageElement
 }
 
 export default class CanvasPiece extends React.Component<CanvasPieceProps> {
@@ -18,7 +18,7 @@ export default class CanvasPiece extends React.Component<CanvasPieceProps> {
         const playerColor = colorId ? Colors.getColorFromPlayerColorId(colorId) : null;
         return (
             <Image
-                image={Images.getPieceImage(this.props.piece.kind)}
+                image={this.props.image}
                 x={this.props.location.x}
                 y={this.props.location.y}
                 height={this.props.size}

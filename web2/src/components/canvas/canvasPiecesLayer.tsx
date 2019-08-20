@@ -3,6 +3,7 @@ import { Layer } from 'react-konva';
 import { CellView, BoardView, Point } from '../../viewModel/board/model';
 import CanvasPiece from './canvasPiece';
 import Geometry from '../../viewModel/board/geometry';
+import { PieceKind } from '../../api/model';
 
 export interface CanvasPiecesLayerStyle {
     scale : number
@@ -11,7 +12,8 @@ export interface CanvasPiecesLayerStyle {
 export interface CanvasPiecesLayerProps {
     board : BoardView,
     selectCell : (cell : CellView) => void,
-    style : CanvasPiecesLayerStyle
+    style : CanvasPiecesLayerStyle,
+    images : Map<PieceKind, HTMLImageElement>
 }
 
 export default class CanvasPiecesLayer extends React.Component<CanvasPiecesLayerProps> {
@@ -26,15 +28,23 @@ export default class CanvasPiecesLayer extends React.Component<CanvasPiecesLayer
                 {
                     this.props.board.cells
                         .filter(c => c.piece !== null)
-                        .map((c, i) =>
-                            <CanvasPiece
-                                key={"piece" + i}
-                                piece={c.piece}
-                                onClick={() => this.props.selectCell(c)}
-                                size={size}
-                                location={this.getPieceLocation(c)}
-                            />
-                        )
+                        .map((c, i) => {
+                            const image = this.props.images.get(c.piece.kind);
+                            if (image) {
+                                return (
+                                    <CanvasPiece
+                                        key={"piece" + i}
+                                        piece={c.piece}
+                                        onClick={() => this.props.selectCell(c)}
+                                        size={size}
+                                        location={this.getPieceLocation(c)}
+                                        image={image}
+                                    />
+                                );
+                            } else {
+                                return null;
+                            }
+                        })
                 }
             </Layer>
         );

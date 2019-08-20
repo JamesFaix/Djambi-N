@@ -6,15 +6,23 @@ import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import * as ThunkActions from '../../thunkActions';
 import CanvasTransformService from '../../viewModel/board/canvasTransformService';
+import { PieceKind } from '../../api/model';
+import * as Images from '../../utilities/images';
 
 export interface BoardSectionProps {
     gameId : number,
     board : BoardView,
     zoomLevel : number,
-    selectCell : (gameId: number, cell : CellView) => void
+    pieceImages : Map<PieceKind, HTMLImageElement>,
+    selectCell : (gameId: number, cell : CellView) => void,
+    loadPieceImages : () => void
 }
 
 class boardSection extends React.Component<BoardSectionProps> {
+    componentDidMount(){
+        this.props.loadPieceImages();
+    }
+
     render(){
         const zoomScale = CanvasTransformService.getZoomScaleFactor(this.props.zoomLevel);
         const sizeScale = 500;
@@ -39,6 +47,7 @@ class boardSection extends React.Component<BoardSectionProps> {
                     gameId={this.props.gameId}
                     board={this.props.board}
                     selectCell={cell => this.props.selectCell(this.props.gameId, cell)}
+                    pieceImages={this.props.pieceImages}
                 />
             </div>
         );
@@ -50,13 +59,15 @@ const mapStateToProps = (state : AppState) => {
     return {
         gameId: game ? game.id : null,
         board: state.activeGame.boardView,
-        zoomLevel: state.display.zoomLevel
+        zoomLevel: state.display.zoomLevel,
+        pieceImages: state.images.pieces
     };
 }
 
 const mapDispatchToProps = (dispatch: Dispatch, ownProps : any) => {
     return {
-        selectCell: (gameId : number, cell : CellView) => ThunkActions.selectCell(gameId, cell.id)(dispatch)
+        selectCell: (gameId : number, cell : CellView) => ThunkActions.selectCell(gameId, cell.id)(dispatch),
+        loadPieceImages: () => Images.init(dispatch)
     };
 }
 
