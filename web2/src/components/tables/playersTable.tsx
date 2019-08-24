@@ -4,6 +4,7 @@ import { AppState } from '../../store/state';
 import { connect } from 'react-redux';
 import * as LobbySeats from '../../viewModel/lobbySeats';
 import { SectionHeader } from '../controls/headers';
+import Styles from '../../styles/styles';
 
 interface PlayersTableProps {
     game: Game
@@ -12,16 +13,13 @@ interface PlayersTableProps {
 class playersTable extends React.Component<PlayersTableProps> {
     render() {
         const g = this.props.game;
-        const cellStyle = {
-            borderStyle: "none"
-        };
         return (
             <div>
                 <SectionHeader text="Players"/>
                 <table>
                     <tbody>
                         {g.players
-                            .map((p, i) => this.renderRow(g, p, i, cellStyle))
+                            .map((p, i) => this.renderRow(g, p, i))
                         }
                     </tbody>
                 </table>
@@ -29,12 +27,17 @@ class playersTable extends React.Component<PlayersTableProps> {
         );
     }
 
-    private renderRow(game: Game, player: Player, rowNumber: number, style : React.CSSProperties) {
+    private renderRow(game: Game, player: Player, rowNumber: number) {
+        const rowStyle = Styles.playerBoxGlow(player.colorId);
+        const cellStyle = {
+            borderStyle: "none"
+        };
+
         return (
-            <tr key={rowNumber}>
-                <td style={style}>{player.name}</td>
-                <td style={style}>{LobbySeats.getPlayerNote(player, game)}</td>
-                <td style={style}>{player.status}</td>
+            <tr key={rowNumber} style={rowStyle}>
+                <td style={cellStyle}>{player.name}</td>
+                <td style={cellStyle}>{LobbySeats.getPlayerNote(player, game)}</td>
+                <td style={cellStyle}>{player.status}</td>
             </tr>
         );
     }

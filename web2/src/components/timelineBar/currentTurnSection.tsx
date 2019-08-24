@@ -5,6 +5,7 @@ import Colors from '../../utilities/colors';
 import * as Copy from '../../utilities/copy';
 import { AppState } from '../../store/state';
 import { connect } from 'react-redux';
+import Styles from '../../styles/styles';
 
 interface CurrentTurnSectionProps {
     game : Game,
@@ -21,7 +22,6 @@ class currentTurnSection extends React.Component<CurrentTurnSectionProps> {
         }
 
         const player = this.getCurrentPlayer(this.props.game);
-        const color = Colors.getColorFromPlayerColorId(player.colorId);
 
         return (
             <div>
@@ -41,16 +41,18 @@ class currentTurnSection extends React.Component<CurrentTurnSectionProps> {
     }
 
     private renderForOtherPlayer(player : Player) {
+        const style = Styles.playerBoxGlow(player.colorId);
         return (
-            <div>
+            <div style={style}>
                 {`Waiting on ${player.name}...`}
             </div>
         );
     }
 
     private renderForCurrentPlayer(player : Player, turn : Turn) {
+        const style = Styles.playerBoxGlow(player.colorId);
         return (
-            <div>
+            <div style={style}>
                 <p>
                     {player.name},<br/>
                     {Copy.getTurnPrompt(turn)}

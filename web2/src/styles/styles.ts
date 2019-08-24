@@ -1,4 +1,5 @@
 import { CSSProperties } from 'react';
+import Colors from '../utilities/colors';
 
 export default class Styles {
     static pageContainer() : CSSProperties {
@@ -24,6 +25,21 @@ export default class Styles {
     static noBorder() : CSSProperties {
         return {
             borderStyle: "none"
+        };
+    }
+
+    static playerBoxGlow(playerColorId : number) : CSSProperties {
+        const color = Colors.getColorFromPlayerColorId(playerColorId);
+        return {
+            boxShadow: `inset 0 0 0 3px ${color}`
+        };
+    }
+
+    static box() : CSSProperties {
+        return {
+            borderStyle:"solid",
+            borderWidth:1,
+            borderColor:"gainsboro"
         };
     }
 }

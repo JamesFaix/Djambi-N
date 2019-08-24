@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Event, Game } from "../../api/model";
 import GameHistoryEffectBox from './gameHistoryEffectBox';
-import Colors from '../../utilities/colors';
+import Styles from '../../styles/styles';
 
 interface GameHistoryEventBoxProps {
     game : Game, //This will be needed eventually to get the correct player names from playerIDs in event objects
@@ -13,16 +13,9 @@ export default class GameHistoryEventBox extends React.Component<GameHistoryEven
         const e = this.props.event;
         const p = this.props.game.players.find(p => p.id === e.actingPlayerId);
 
-        const borderStyle : React.CSSProperties = {
-            borderStyle:"solid",
-            borderWidth:1,
-            borderColor:"gainsboro"
-        };
-
-        if (p) {
-            const color = Colors.getColorFromPlayerColorId(p.colorId);
-            borderStyle.boxShadow = `inset 0 0 0 3px ${color}`;
-        }
+        const borderStyle = p
+            ? Styles.playerBoxGlow(p.colorId)
+            : Styles.box();
 
         const agentName = this.getAgentName();
 
