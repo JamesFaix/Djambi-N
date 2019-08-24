@@ -2,42 +2,40 @@ import * as MathJs from 'mathjs';
 import Geometry from './geometry';
 import { Point } from './model';
 
+export interface CanvasTranformData {
+    containerSize : Point,
+    canvasMargin : number,
+    contentPadding : number,
+    regionCount : number,
+    zoomLevel : number
+}
+
 export default class CanvasTransformService{
-    constructor(
-        private readonly containerSize : Point,
-        private readonly canvasMargin : number,
-        private readonly contentPadding : number,
-        private readonly zoomLevel : number,
-        private readonly regionCount : number
-    ) {
-
-    }
-
     //--- Transforms ---
 
-    public getBoardViewTransform() : MathJs.Matrix {
+    public static getBoardViewTransform(data : CanvasTranformData) : MathJs.Matrix {
         //Order is very important. Last transform gets applied to image first
         return Geometry.Transform.compose([
-            this.getTransformToCenterBoardInCanvas(),
-            this.getTransformToScaleBoard(),
+            CanvasTransformService.getTransformToCenterBoardInCanvas(data),
+            CanvasTransformService.getTransformToScaleBoard(data),
         ]);
     }
 
-    private getTransformToScaleBoard() : MathJs.Matrix {
-        const scale = this.getScale();
+    private static getTransformToScaleBoard(data: CanvasTranformData) : MathJs.Matrix {
+        const scale = CanvasTransformService.getScale(data);
         return Geometry.Transform.scale({ x: scale, y: scale });
     }
 
-    private getTransformToCenterBoardInCanvas() : MathJs.Matrix {
+    private static getTransformToCenterBoardInCanvas(data : CanvasTranformData) : MathJs.Matrix {
         //Boardviews start with their centroid at 0,0.
         const Point = Geometry.Point;
 
-        const canvasSize = this.getSize();
+        const canvasSize = CanvasTransformService.getSize(data);
 
         let offset = Point.multiplyScalar(canvasSize, 0.5);
 
-        let centroidToCenterOffset = Geometry.RegularPolygon.sideToCentroidOffsetFromCenterRatios(this.regionCount);
-        centroidToCenterOffset = Point.multiplyScalar(centroidToCenterOffset, this.getScale());
+        let centroidToCenterOffset = Geometry.RegularPolygon.sideToCentroidOffsetFromCenterRatios(data.regionCount);
+        centroidToCenterOffset = Point.multiplyScalar(centroidToCenterOffset, CanvasTransformService.getScale(data));
 
         offset = Point.add(offset, centroidToCenterOffset);
 
@@ -46,39 +44,44 @@ export default class CanvasTransformService{
 
     //------
 
-    private getCanvasContentAreaSizeWithNoZoom() : Point {
-        return Geometry.Point.subtractScalar(this.containerSize, 2 * this.canvasMargin);
+    private static getCanvasContentAreaSizeWithNoZoom(containerSize : Point, canvasMargin : number) : Point {
+        return Geometry.Point.subtractScalar(containerSize, 2 * canvasMargin);
     }
 
-    private getBoardPolygonBaseSize() : Point {
-        return Geometry.RegularPolygon.sideToSizeRatios(this.regionCount);
+    private static getBoardPolygonBaseSize(regionCount : number) : Point {
+        return Geometry.RegularPolygon.sideToSizeRatios(regionCount);
     }
 
-    private getTotalMarginSize() : Point {
-        const n = 2 * (this.canvasMargin + this.contentPadding);
+    private static getTotalMarginSize(canvasMargin : number, contentPadding : number) : Point {
+        const n = 2 * (canvasMargin + contentPadding);
         return { x: n, y: n };
     }
 
-    private getBoardSize() : Point {
-        let size = this.getBoardPolygonBaseSize();
-        size = Geometry.Point.multiplyScalar(size, this.getScale());
-        size = Geometry.Point.add(size, this.getTotalMarginSize());
+    private static getBoardSize(data : CanvasTranformData) : Point {
+        let size = CanvasTransformService.getBoardPolygonBaseSize(data.regionCount);
+        size = Geometry.Point.multiplyScalar(size, CanvasTransformService.getScale(data));
+        size = Geometry.Point.add(size, this.getTotalMarginSize(data.canvasMargin, data.contentPadding));
         return size;
     }
 
-    public getSize() : Point {
-        const boardSize = this.getBoardSize();
+    public static getSize(data : CanvasTranformData) : Point {
+        const boardSize = CanvasTransformService.getBoardSize(data);
         return {
-            x: Math.max(boardSize.x, this.containerSize.x),
-            y: Math.max(boardSize.y, this.containerSize.y)
+            x: Math.max(boardSize.x, data.containerSize.x),
+            y: Math.max(boardSize.y, data.containerSize.y)
         };
     }
 
     //--- Scale
 
-    public getScale() : number {
-        return this.getContainerSizeScaleFactor()
-            * CanvasTransformService.getZoomScaleFactor(this.zoomLevel);
+    public static getScale(data : CanvasTranformData) : number {
+        return CanvasTransformService.getContainerSizeScaleFactor(
+            data.containerSize,
+            data.canvasMargin,
+            data.contentPadding,
+            data.regionCount
+        )
+            * CanvasTransformService.getZoomScaleFactor(data.zoomLevel);
     }
 
     public static getZoomScaleFactor(zoomLevel : number) : number {
@@ -115,10 +118,15 @@ export default class CanvasTransformService{
 
     public static maxZoomLevel() { return 14; }
 
-    private getContainerSizeScaleFactor() : number {
-        let contentAreaSize = this.getCanvasContentAreaSizeWithNoZoom();
-        contentAreaSize = Geometry.Point.subtractScalar(contentAreaSize, 2 * this.contentPadding);
-        const boardBaseSize = this.getBoardPolygonBaseSize();
+    private static getContainerSizeScaleFactor(
+        containerSize : Point,
+        canvasMargin : number,
+        contentPadding : number,
+        regionCount : number
+    ) : number {
+        let contentAreaSize = CanvasTransformService.getCanvasContentAreaSizeWithNoZoom(containerSize, canvasMargin);
+        contentAreaSize = Geometry.Point.subtractScalar(contentAreaSize, 2 * contentPadding);
+        const boardBaseSize = CanvasTransformService.getBoardPolygonBaseSize(regionCount);
         return Geometry.Rectangle.largestScaleWithinBox(boardBaseSize, contentAreaSize);
     }
 

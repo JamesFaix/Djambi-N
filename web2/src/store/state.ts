@@ -60,7 +60,8 @@ export interface BoardsState {
 }
 
 export interface DisplayState {
-    zoomLevel : number,
+    boardZoomLevel : number,
+    boardScrollPercent : Point,
     boardContainerSize : Point,
     canvasMargin : number,
     canvasContentPadding : number,
@@ -123,7 +124,8 @@ export class StateFactory {
 
     static defaultDisplayState() : DisplayState {
         return {
-            zoomLevel: 0,
+            boardZoomLevel: 0,
+            boardScrollPercent: { x: 0.5, y: 0.5 },
             boardContainerSize: { x: 1000, y: 1000 },
             canvasContentPadding: 5,
             canvasMargin: 5,

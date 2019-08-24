@@ -1,51 +1,20 @@
-import * as React from 'react';
 import { AppState } from '../../store/state';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import * as Actions from '../../store/actions';
-import CanvasTransformService from '../../viewModel/board/canvasTransformService';
-
-interface BoardZoomSliderProps {
-    currentZoomLevel : number,
-    changeZoomLevel : (level : number) => void
-}
-
-class boardZoomSlider extends React.Component<BoardZoomSliderProps> {
-    render() : JSX.Element {
-        const level = this.props.currentZoomLevel;
-        const cts = CanvasTransformService;
-        const scale = cts.getZoomScaleFactor(level);
-        return (
-            <div>
-                <input
-                    type="range"
-                    value={level}
-                    min={cts.minZoomLevel()}
-                    max={cts.maxZoomLevel()}
-                    onChange={e => this.onSliderChanged(e)}
-                />
-                {`Zoom ${scale * 100}%`}
-            </div>
-        );
-    }
-
-    private onSliderChanged(e : React.ChangeEvent<HTMLInputElement>) {
-        const newLevel = Number(e.target.value);
-        this.props.changeZoomLevel(newLevel);
-    }
-}
+import { ZoomSlider } from './zoomSlider';
 
 const mapStateToProps = (state : AppState) => {
     return {
-        currentZoomLevel: state.display.zoomLevel
+        currentZoomLevel: state.display.boardZoomLevel
     };
 }
 
 const mapDispatchToProps = (dispatch : Dispatch) => {
     return {
-        changeZoomLevel: (level : number) => dispatch(Actions.zoom(level))
+        changeZoomLevel: (level : number) => dispatch(Actions.boardZoom(level))
     };
 }
 
-const BoardZoomSlider = connect(mapStateToProps, mapDispatchToProps)(boardZoomSlider);
+const BoardZoomSlider = connect(mapStateToProps, mapDispatchToProps)(ZoomSlider);
 export default BoardZoomSlider;

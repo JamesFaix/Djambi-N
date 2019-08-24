@@ -1,5 +1,6 @@
 import { LoginRequest, User, CreateUserRequest, Game, GamesQuery, GameParameters, CreatePlayerRequest, Event, Board, PieceKind } from "../api/model";
 import { NavigationState } from "./state";
+import { Point } from "../viewModel/board/model";
 
 export enum ActionStatus {
   Pending = "PENDING",
@@ -24,7 +25,8 @@ export enum ActionTypes {
   SetNavigationOptions = "SET_NAV_OPTIONS",
   LoadBoard = "LOAD_BOARD",
   SelectCell = "SELECT_CELL",
-  Zoom = "ZOOM",
+  BoardZoom = "BOARD_ZOOM",
+  BoardScroll = "BOARD_SCROLL",
   LoadPieceImage = "LOAD_PIECE_IMAGE"
 }
 
@@ -106,6 +108,7 @@ export const selectCellRequest = (cellId : number) => pending(ActionTypes.Select
 export const selectCellSuccess = (game : Game) => success(ActionTypes.SelectCell, game);
 export const selectCellError = () => error(ActionTypes.SelectCell);
 
-export const zoom = (level : number) => success(ActionTypes.Zoom, level);
+export const boardZoom = (level : number) => success(ActionTypes.BoardZoom, level);
+export const boardScroll = (scrollPercent : Point) => success(ActionTypes.BoardScroll, scrollPercent);
 
 export const loadPieceImage = (pieceKind : PieceKind, image : HTMLImageElement) => success(ActionTypes.LoadPieceImage, [pieceKind, image]);

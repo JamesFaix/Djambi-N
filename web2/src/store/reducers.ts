@@ -2,8 +2,9 @@ import { CustomAction, DataAction, ActionStatus, ActionTypes } from './actions';
 import { Game, GamesQuery, User, GameParameters, Event, Board, PieceKind } from '../api/model';
 import { AppState, StateFactory, NavigationState } from './state';
 import BoardViewFactory from '../viewModel/board/boardViewFactory';
-import CanvasTransformService from '../viewModel/board/canvasTransformService';
+import CanvasTransformService, { CanvasTranformData } from '../viewModel/board/canvasTransformService';
 import Geometry from '../viewModel/board/geometry';
+import { Point } from '../viewModel/board/model';
 
 export function reducer(state: AppState, action : CustomAction) : AppState {
     switch (action.type) {
@@ -48,8 +49,10 @@ export function reducer(state: AppState, action : CustomAction) : AppState {
         //Misc
         case ActionTypes.SetNavigationOptions:
             return setNavigationOptionsReducer(state, action);
-        case ActionTypes.Zoom:
-            return zoomReducer(state, action);
+        case ActionTypes.BoardZoom:
+            return boardZoomReducer(state, action);
+        case ActionTypes.BoardScroll:
+            return boardScrollReducer(state, action);
         case ActionTypes.LoadPieceImage:
             return loadPieceImageReducer(state, action);
 
@@ -396,14 +399,14 @@ function updateBoardView(state : AppState, game : Game) : void {
 
     let bv = BoardViewFactory.createEmptyBoardView(board);
     bv = BoardViewFactory.fillEmptyBoardView(bv, game);
-    const cts = new CanvasTransformService(
-        state.display.boardContainerSize,
-        state.display.canvasMargin,
-        state.display.canvasContentPadding,
-        state.display.zoomLevel,
-        state.activeGame.game.parameters.regionCount
-    );
-    const t = cts.getBoardViewTransform();
+    const data : CanvasTranformData = {
+        containerSize: state.display.boardContainerSize,
+        canvasMargin: state.display.canvasMargin,
+        contentPadding: state.display.canvasContentPadding,
+        zoomLevel: state.display.boardZoomLevel,
+        regionCount: state.activeGame.game.parameters.regionCount
+    };
+    const t = CanvasTransformService.getBoardViewTransform(data);
     bv = Geometry.Board.transform(bv, t);
     state.activeGame.boardView = bv;
 }
@@ -423,13 +426,28 @@ function setNavigationOptionsReducer(state: AppState, action: CustomAction) : Ap
     }
 }
 
-function zoomReducer(state: AppState, action: CustomAction) : AppState {
+function boardZoomReducer(state: AppState, action: CustomAction) : AppState {
     switch (action.status) {
         case ActionStatus.Success: {
             const da = <DataAction<number>>action;
             const newState = {...state};
             newState.display = {...state.display};
-            newState.display.zoomLevel = da.data;
+            newState.display.boardZoomLevel = da.data;
+            updateBoardView(newState, state.activeGame.game);
+            return newState;
+        }
+        default:
+            throw "Unsupported case: " + action.status;
+    }
+}
+
+function boardScrollReducer(state: AppState, action: CustomAction) : AppState {
+    switch (action.status) {
+        case ActionStatus.Success: {
+            const da = <DataAction<Point>>action;
+            const newState = {...state};
+            newState.display = {...state.display};
+            newState.display.boardScrollPercent = da.data;
             updateBoardView(newState, state.activeGame.game);
             return newState;
         }

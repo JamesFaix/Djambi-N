@@ -10,7 +10,6 @@ import Styles from '../../styles/styles';
 import TimelineBar from '../timelineBar/timelineBar';
 import LoadGameFull from '../utilities/loadGameFull';
 import BoardSection from '../sections/boardSection';
-import BoardZoomSlider from '../controls/boardZoomSlider';
 
 interface PlayPageProps {
     game : Game
@@ -34,7 +33,6 @@ class playPage extends React.Component<PlayPageProps> {
                 <SetNavigationOptions options={navOptions}/>
                 <LoadGameFull gameId={gameId}/>
                 <BoardSection/>
-                <BoardZoomSlider/>
                 <TimelineBar/>
             </div>
         );

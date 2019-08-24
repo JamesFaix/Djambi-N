@@ -5,13 +5,15 @@ import { AppState } from '../../store/state';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import * as ThunkActions from '../../thunkActions';
-import CanvasTransformService from '../../viewModel/board/canvasTransformService';
+import CanvasTransformService, { CanvasTranformData } from '../../viewModel/board/canvasTransformService';
 import { PieceKind } from '../../api/model';
 import * as Images from '../../utilities/images';
+import BoardArea from './boardArea';
 
 export interface BoardSectionProps {
     gameId : number,
     board : BoardView,
+    transformData : CanvasTranformData,
     zoomLevel : number,
     pieceImages : Map<PieceKind, HTMLImageElement>,
     selectCell : (gameId: number, cell : CellView) => void,
@@ -24,43 +26,66 @@ class boardSection extends React.Component<BoardSectionProps> {
     }
 
     render(){
-        const zoomScale = CanvasTransformService.getZoomScaleFactor(this.props.zoomLevel);
-        const sizeScale = 500;
-        const scale = zoomScale * sizeScale;
-
-        const boardStyle : CanvasBoardStyle = {
-            width: 1000, //get from CanvasTransformService
-            height : 1000, //get from CanvasTransformService
-            strokeWidth : 5, //5 maybe put in settings somewhere
-            strokeColor : "black", //pull from Colors module
-            scale : scale //get from CanvasTransformService
-        };
-
         if (!this.props.board) {
             return null;
         }
 
+        const internalSize = CanvasTransformService.getSize(this.props.transformData);
+
+        const boardStyle : CanvasBoardStyle = {
+            width: internalSize.x,
+            height: internalSize.y,
+            strokeWidth: 5, //5 maybe put in settings somewhere
+            strokeColor: "black", //pull from Colors module
+            scale: CanvasTransformService.getScale(this.props.transformData)
+        };
+
         return (
             <div>
-                <CanvasBoard
-                    style={boardStyle}
-                    gameId={this.props.gameId}
-                    board={this.props.board}
-                    selectCell={cell => this.props.selectCell(this.props.gameId, cell)}
-                    pieceImages={this.props.pieceImages}
-                />
+                <BoardArea
+                    innerStyle={{
+                        width:"1000px",
+                        height:"1000px"
+                    }}
+                    outerStyle={{
+                        width:"100%",
+                        height:"100%",
+                        display:"flex",
+                        flexDirection:"column",
+                        alignItems:"center"
+                    }}
+                >
+                    <CanvasBoard
+                        style={boardStyle}
+                        gameId={this.props.gameId}
+                        board={this.props.board}
+                        selectCell={cell => this.props.selectCell(this.props.gameId, cell)}
+                        pieceImages={this.props.pieceImages}
+                    />
+                </BoardArea>
             </div>
         );
     }
 }
 
 const mapStateToProps = (state : AppState) => {
+    if (!state.activeGame.game) {
+        return null;
+    }
+
     const game = state.activeGame.game;
     return {
         gameId: game ? game.id : null,
         board: state.activeGame.boardView,
-        zoomLevel: state.display.zoomLevel,
-        pieceImages: state.images.pieces
+        zoomLevel: state.display.boardZoomLevel,
+        pieceImages: state.images.pieces,
+        transformData: {
+            containerSize: state.display.boardContainerSize,
+            canvasMargin: state.display.canvasMargin,
+            contentPadding: state.display.canvasContentPadding,
+            zoomLevel: state.display.boardZoomLevel,
+            regionCount: state.activeGame.game.parameters.regionCount
+        }
     };
 }
 
