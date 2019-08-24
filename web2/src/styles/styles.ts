@@ -31,7 +31,8 @@ export default class Styles {
     static playerBoxGlow(playerColorId : number) : CSSProperties {
         const color = Colors.getColorFromPlayerColorId(playerColorId);
         return {
-            boxShadow: `inset 0 0 0 3px ${color}`
+            boxShadow: `inset 0 0 0 3px ${color}`,
+            padding: "5px"
         };
     }
 
@@ -39,7 +40,8 @@ export default class Styles {
         return {
             borderStyle:"solid",
             borderWidth:1,
-            borderColor:"gainsboro"
+            borderColor:"gainsboro",
+            padding: "5px"
         };
     }
 }
