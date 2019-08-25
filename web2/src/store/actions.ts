@@ -1,4 +1,4 @@
-import { LoginRequest, User, CreateUserRequest, Game, GamesQuery, GameParameters, CreatePlayerRequest, Event, Board, PieceKind } from "../api/model";
+import { LoginRequest, User, CreateUserRequest, Game, GamesQuery, GameParameters, CreatePlayerRequest, Event, Board, PieceKind, PlayerStatus } from "../api/model";
 import { NavigationState } from "./state";
 import { Point } from "../viewModel/board/model";
 
@@ -27,7 +27,10 @@ export enum ActionTypes {
   SelectCell = "SELECT_CELL",
   BoardZoom = "BOARD_ZOOM",
   BoardScroll = "BOARD_SCROLL",
-  LoadPieceImage = "LOAD_PIECE_IMAGE"
+  LoadPieceImage = "LOAD_PIECE_IMAGE",
+  EndTurn = "END_TURN",
+  ResetTurn = "RESET_TURN",
+  ChangePlayerStatus = "CHANGE_PLAYER_STATUS"
 }
 
 export interface CustomAction {
@@ -112,3 +115,15 @@ export const boardZoom = (level : number) => success(ActionTypes.BoardZoom, leve
 export const boardScroll = (scrollPercent : Point) => success(ActionTypes.BoardScroll, scrollPercent);
 
 export const loadPieceImage = (pieceKind : PieceKind, image : HTMLImageElement) => success(ActionTypes.LoadPieceImage, [pieceKind, image]);
+
+export const endTurnRequest = () => pending(ActionTypes.EndTurn);
+export const endTurnSuccess = (game : Game) => success(ActionTypes.EndTurn, game);
+export const endTurnError = () => error(ActionTypes.EndTurn);
+
+export const resetTurnRequest = () => pending(ActionTypes.ResetTurn);
+export const resetTurnSuccess = (game : Game) => success(ActionTypes.ResetTurn, game);
+export const resetTurnError = () => error(ActionTypes.ResetTurn);
+
+export const changePlayerStatusRequest = () => pending(ActionTypes.ChangePlayerStatus);
+export const changePlayerStatusSuccess = (game : Game) => success(ActionTypes.ChangePlayerStatus, game);
+export const changePlayerStatusError = () => error(ActionTypes.ChangePlayerStatus);

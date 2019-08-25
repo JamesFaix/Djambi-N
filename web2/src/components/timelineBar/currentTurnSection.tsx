@@ -6,6 +6,7 @@ import * as Copy from '../../utilities/copy';
 import { AppState } from '../../store/state';
 import { connect } from 'react-redux';
 import Styles from '../../styles/styles';
+import CurrentTurnActionsBar from './currentTurnActionsBar';
 
 interface CurrentTurnSectionProps {
     game : Game,
@@ -31,6 +32,7 @@ class currentTurnSection extends React.Component<CurrentTurnSectionProps> {
                         ? this.renderForCurrentPlayer(player, turn)
                         : this.renderForOtherPlayer(player)
                 }
+                <CurrentTurnActionsBar/>
             </div>
         );
     }

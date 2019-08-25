@@ -44,4 +44,11 @@ export default class Styles {
             padding: "5px"
         };
     }
+
+    static iconButton() : CSSProperties {
+        return {
+            backgroundColor: "white",
+            color: "black"
+        };
+    }
 }

@@ -45,8 +45,14 @@ export function reducer(state: AppState, action : CustomAction) : AppState {
             return startGameReducer(state, action);
         case ActionTypes.SelectCell:
             return selectCellReducer(state, action);
+        case ActionTypes.EndTurn:
+            return endTurnReducer(state, action);
+        case ActionTypes.ResetTurn:
+            return resetTurnReducer(state, action);
+        case ActionTypes.ChangePlayerStatus:
+            return changePlayerStatusReducer(state, action);
 
-        //Misc
+            //Misc
         case ActionTypes.SetNavigationOptions:
             return setNavigationOptionsReducer(state, action);
         case ActionTypes.BoardZoom:
@@ -381,6 +387,72 @@ function selectCellReducer(state: AppState, action: CustomAction) : AppState {
             const newState = {...state};
             newState.activeGame = {...state.activeGame};
             newState.activeGame.selectionPending = false;
+            newState.activeGame.game = da.data;
+            updateBoardView(newState, da.data);
+            return newState;
+        }
+        default:
+            throw "Unsupported case: " + action.status;
+    }
+}
+
+function endTurnReducer(state: AppState, action: CustomAction) : AppState {
+    switch (action.status) {
+        case ActionStatus.Pending: {
+            const newState = {...state};
+            newState.activeGame = {...state.activeGame};
+            newState.activeGame.endTurnPending = true;
+            return newState;
+        }
+        case ActionStatus.Success: {
+            const da = <DataAction<Game>>action;
+            const newState = {...state};
+            newState.activeGame = {...state.activeGame};
+            newState.activeGame.endTurnPending = false;
+            newState.activeGame.game = da.data;
+            updateBoardView(newState, da.data);
+            return newState;
+        }
+        default:
+            throw "Unsupported case: " + action.status;
+    }
+}
+
+function resetTurnReducer(state: AppState, action: CustomAction) : AppState {
+    switch (action.status) {
+        case ActionStatus.Pending: {
+            const newState = {...state};
+            newState.activeGame = {...state.activeGame};
+            newState.activeGame.resetTurnPending = true;
+            return newState;
+        }
+        case ActionStatus.Success: {
+            const da = <DataAction<Game>>action;
+            const newState = {...state};
+            newState.activeGame = {...state.activeGame};
+            newState.activeGame.resetTurnPending = false;
+            newState.activeGame.game = da.data;
+            updateBoardView(newState, da.data);
+            return newState;
+        }
+        default:
+            throw "Unsupported case: " + action.status;
+    }
+}
+
+function changePlayerStatusReducer(state: AppState, action: CustomAction) : AppState {
+    switch (action.status) {
+        case ActionStatus.Pending: {
+            const newState = {...state};
+            newState.activeGame = {...state.activeGame};
+            newState.activeGame.playerStatusChangePending = true;
+            return newState;
+        }
+        case ActionStatus.Success: {
+            const da = <DataAction<Game>>action;
+            const newState = {...state};
+            newState.activeGame = {...state.activeGame};
+            newState.activeGame.playerStatusChangePending = false;
             newState.activeGame.game = da.data;
             updateBoardView(newState, da.data);
             return newState;

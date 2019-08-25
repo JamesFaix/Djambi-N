@@ -6,6 +6,7 @@ import { navigateTo } from '../../history';
 import Routes from '../../routes';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHome, faChessBoard, faPlus, faSignInAlt, faUserPlus, faDoorOpen } from '@fortawesome/free-solid-svg-icons'
+import Styles from '../../styles/styles';
 
 interface NavigationSectionProps {
     options : NavigationState,
@@ -35,12 +36,11 @@ class navigationSection extends React.Component<NavigationSectionProps> {
         if (!condition) {
             return null;
         }
-
         return(
             <button
                 onClick={() => this.props.redirect(route)}
                 title={title}
-                style={{backgroundColor:"white"}}
+                style={Styles.iconButton()}
             >
                 {contents}
             </button>

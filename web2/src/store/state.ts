@@ -28,6 +28,9 @@ export interface ActiveGameState {
     removePlayerPending : boolean,
     startGamePending : boolean,
     selectionPending : boolean,
+    endTurnPending : boolean,
+    resetTurnPending : boolean,
+    playerStatusChangePending : boolean,
     game : Game,
     history : Event[],
     boardView : BoardView,
@@ -92,6 +95,9 @@ export class StateFactory {
             removePlayerPending: false,
             startGamePending: false,
             selectionPending: false,
+            endTurnPending: false,
+            resetTurnPending: false,
+            playerStatusChangePending: false,
             boardView: null
         };
     }

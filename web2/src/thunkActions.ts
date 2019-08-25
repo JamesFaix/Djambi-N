@@ -1,5 +1,5 @@
 import { Dispatch } from "redux";
-import { LoginRequest, CreateUserRequest, GamesQuery, GameParameters, CreatePlayerRequest, User, GameStatus, Game, EventsQuery, Event, ResultsDirection, Board } from "./api/model";
+import { LoginRequest, CreateUserRequest, GamesQuery, GameParameters, CreatePlayerRequest, User, GameStatus, Game, EventsQuery, Event, ResultsDirection, Board, PlayerStatus } from "./api/model";
 import * as Actions from "./store/actions";
 import * as Api from "./api/client";
 import * as ModelFactory from "./api/modelFactory";
@@ -253,6 +253,45 @@ export function selectCell(gameId: number, cellId : number) {
             })
             .catch(_ => {
                 dispatch(Actions.selectCellError());
+            });
+    }
+}
+
+export function endTurn(gameId: number) {
+    return function (dispatch: Dispatch) : Promise<void> {
+        dispatch(Actions.endTurnRequest());
+        return Api.commitTurn(gameId)
+            .then(resp => {
+                dispatch(Actions.endTurnSuccess(resp.game));
+            })
+            .catch(_ => {
+                dispatch(Actions.endTurnError());
+            });
+    }
+}
+
+export function resetTurn(gameId: number) {
+    return function (dispatch: Dispatch) : Promise<void> {
+        dispatch(Actions.resetTurnRequest());
+        return Api.resetTurn(gameId)
+            .then(resp => {
+                dispatch(Actions.resetTurnSuccess(resp.game));
+            })
+            .catch(_ => {
+                dispatch(Actions.resetTurnError());
+            });
+    }
+}
+
+export function changePlayerStatus(gameId: number, playerId: number, status: PlayerStatus) {
+    return function (dispatch: Dispatch) : Promise<void> {
+        dispatch(Actions.changePlayerStatusRequest());
+        return Api.updatePlayerStatus(gameId, playerId, status)
+            .then(resp => {
+                dispatch(Actions.changePlayerStatusSuccess(resp.game));
+            })
+            .catch(_ => {
+                dispatch(Actions.changePlayerStatusError());
             });
     }
 }
