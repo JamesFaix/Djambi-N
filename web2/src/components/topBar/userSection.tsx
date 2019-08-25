@@ -4,8 +4,8 @@ import { AppState } from '../../store/state';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import * as ThunkActions from '../../thunkActions';
-import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import IconButton from '../controls/iconButton';
+import Icons from '../../utilities/icons';
 
 interface UserSectionProps {
     user : User,
@@ -32,7 +32,7 @@ const loggedInUserSection : React.SFC<UserSectionProps> = props => {
             {props.user.name}
             <IconButton
                 title="Log out"
-                icon={faSignOutAlt}
+                icon={Icons.logout}
                 onClick={() => props.onLogoutClicked()}
             />
         </div>

@@ -1,19 +1,12 @@
 import * as React from 'react';
-import { AppState, NavigationState } from '../../store/state';
-import { Dispatch } from 'redux';
-import { connect } from 'react-redux';
-import { User, Game } from '../../api/model';
+import { NavigationState } from '../../store/state';
 import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
 import RedirectToLobbyIfGameNotInProgress from '../utilities/redirectToLobbyIfGameNotInProgress';
 import SetNavigationOptions from '../utilities/setNavigationOptions';
 import Styles from '../../styles/styles';
+import DiplomacyPlayersTable from '../tables/diplomacyPlayersTable';
 
-interface DiplomacyPageProps {
-    user : User,
-    game : Game
-}
-
-class diplomacyPage extends React.Component<DiplomacyPageProps>{
+export default class DiplomacyPage extends React.Component<{}>{
     render() {
         const gameId = (this.props as any).match.params.gameId;
 
@@ -29,24 +22,8 @@ class diplomacyPage extends React.Component<DiplomacyPageProps>{
                 <RedirectToLoginIfNotLoggedIn/>
                 <RedirectToLobbyIfGameNotInProgress/>
                 <SetNavigationOptions options={navOptions}/>
-                Content
+                <DiplomacyPlayersTable/>
             </div>
         );
     }
 }
-
-const mapStateToProps = (state : AppState) => {
-    return {
-        user: state.session.user,
-        game: state.activeGame.game
-    };
-}
-
-const mapDispatchToProps = (dispatch : Dispatch) => {
-    return {
-
-    };
-}
-
-const DiplomacyPage = connect(mapStateToProps, mapDispatchToProps)(diplomacyPage);
-export default DiplomacyPage;

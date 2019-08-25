@@ -3,8 +3,8 @@ import { AppState, NavigationState } from '../../store/state';
 import { connect } from 'react-redux';
 import { navigateTo } from '../../history';
 import Routes from '../../routes';
-import { faHome, faChessBoard, faPlus, faSignInAlt, faUserPlus, faDoorOpen } from '@fortawesome/free-solid-svg-icons'
 import IconButton from '../controls/iconButton';
+import Icons from '../../utilities/icons';
 
 interface NavigationSectionProps {
     options : NavigationState
@@ -18,42 +18,42 @@ class navigationSection extends React.Component<NavigationSectionProps> {
                 {o.enableSignup ?
                     <IconButton
                         title={"Sign up"}
-                        icon={faUserPlus}
+                        icon={Icons.signup}
                         onClick={() => navigateTo(Routes.signup)}
                     />
                 : null}
                 {o.enableLogin ?
                     <IconButton
                         title={"Log in"}
-                        icon={faSignInAlt}
+                        icon={Icons.login}
                         onClick={() => navigateTo(Routes.login)}
                     />
                 : null}
                 {o.enableDashboard ?
                     <IconButton
                         title={"Home"}
-                        icon={faHome}
+                        icon={Icons.home}
                         onClick={() => navigateTo(Routes.dashboard)}
                     />
                 : null}
                 {o.enableCreateGame ?
                     <IconButton
                         title={"Create game"}
-                        icon={faPlus}
+                        icon={Icons.newGame}
                         onClick={() => navigateTo(Routes.createGame)}
                     />
                 : null}
                 {o.enableLobby ?
                     <IconButton
                         title={"Lobby"}
-                        icon={faDoorOpen}
+                        icon={Icons.lobby}
                         onClick={() => navigateTo(Routes.lobby(o.gameId))}
                     />
                 : null}
                 {o.enablePlay ?
                     <IconButton
                         title={"Play"}
-                        icon={faChessBoard}
+                        icon={Icons.play}
                         onClick={() => navigateTo(Routes.play(o.gameId))}
                     />
                 : null}

@@ -3,6 +3,9 @@ import { Seat } from '../../viewModel/lobbySeats';
 import * as LobbySeats from '../../viewModel/lobbySeats';
 import { User, CreatePlayerRequest, PlayerKind, Game, GameStatus } from '../../api/model';
 import Colors from '../../utilities/colors';
+import IconButton from '../controls/iconButton';
+import Icons from '../../utilities/icons';
+import PlayerNoteIcon from '../controls/playerNoteIcon';
 
 interface MutablePlayersTableRowProps {
     game : Game,
@@ -95,11 +98,11 @@ class JoinRow extends React.Component<JoinRowProps> {
                 <td style={cellStyle}></td>
                 {this.props.game.status === GameStatus.Pending ?
                     <td style={cellStyle}>
-                        <button
+                        <IconButton
+                            title="Join"
+                            icon={Icons.join}
                             onClick={() => this.onClick()}
-                        >
-                            Join
-                        </button>
+                        />
                     </td>
                 : null}
             </tr>
@@ -149,11 +152,11 @@ class AddGuestRow extends React.Component<AddGuestRowProps, AddGuestRowState> {
                 <td style={cellStyle}></td>
                 {this.props.game.status === GameStatus.Pending ?
                     <td style={cellStyle}>
-                        <button
+                        <IconButton
+                            title="Add guest"
+                            icon={Icons.addGuest}
                             onClick={() => this.onClick()}
-                        >
-                            Add guest
-                        </button>
+                        />
                     </td>
                 : null}
             </tr>
@@ -177,6 +180,7 @@ class AddGuestRow extends React.Component<AddGuestRowProps, AddGuestRowState> {
 //#region Remove
 
 interface RemoveRowProps extends RowPropsBase {
+    game : Game,
     seat : Seat,
     removePlayer : (gameId : number, playerId : number) => void
 }
@@ -187,14 +191,19 @@ class RemoveRow extends React.Component<RemoveRowProps> {
         return (
             <tr style={this.props.style}>
                 <td style={cellStyle}>{seat.player.name}</td>
-                <td style={cellStyle}>{seat.note}</td>
+                <td style={cellStyle}>
+                    <PlayerNoteIcon
+                        player={seat.player}
+                        game={this.props.game}
+                    />
+                </td>
                 {this.props.game.status === GameStatus.Pending ?
                     <td style={cellStyle}>
-                        <button
+                        <IconButton
+                            title={LobbySeats.isSeatSelf(seat, this.props.user) ? "Quit" : "Remove"}
+                            icon={Icons.quit}
                             onClick={() => this.props.removePlayer(this.props.game.id, seat.player.id)}
-                        >
-                            {LobbySeats.isSeatSelf(seat, this.props.user) ? "Quit" : "Remove"}
-                        </button>
+                        />
                     </td>
                 : null}
             </tr>
@@ -207,7 +216,8 @@ class RemoveRow extends React.Component<RemoveRowProps> {
 //#region None
 
 interface NoActionRowProps extends RowPropsBase {
-    seat : Seat
+    seat : Seat,
+    game : Game
 }
 
 class NoActionRow extends React.Component<NoActionRowProps> {
@@ -221,7 +231,12 @@ class NoActionRow extends React.Component<NoActionRowProps> {
         return (
             <tr style={this.props.style}>
                 <td style={cellStyle}>{playerName}</td>
-                <td style={cellStyle}>{seat.note}</td>
+                <td style={cellStyle}>
+                    <PlayerNoteIcon
+                        player={seat.player}
+                        game={this.props.game}
+                    />
+                </td>
                 {this.props.game.status === GameStatus.Pending ?
                     <td style={cellStyle}></td>
                 : null}
