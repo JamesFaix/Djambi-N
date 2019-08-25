@@ -45,10 +45,10 @@ export default class Styles {
         };
     }
 
-    static iconButton() : CSSProperties {
+    static iconButton(isMouseOver : boolean) : CSSProperties {
         return {
-            backgroundColor: "white",
-            color: "black"
+            backgroundColor: isMouseOver ? "black" : "white",
+            color: isMouseOver ?  "white" : "black"
         };
     }
 }

@@ -9,18 +9,33 @@ interface IconButtonProps {
     icon: IconDefinition
 }
 
-const IconButton : React.SFC<IconButtonProps> = props => {
-    return (
-        <button
-            title={props.title}
-            onClick={props.onClick}
-            style={Styles.iconButton()}
-        >
-            <FontAwesomeIcon
-                icon={props.icon}
-            />
-        </button>
-    );
+interface IconButtonState {
+    isMouseOver : boolean
+}
+
+class IconButton extends React.Component<IconButtonProps, IconButtonState> {
+    constructor(props : IconButtonProps) {
+        super(props);
+        this.state = {
+            isMouseOver: false
+        };
+    }
+
+    render() {
+        return (
+            <button
+                title={this.props.title}
+                onClick={this.props.onClick}
+                style={Styles.iconButton(this.state.isMouseOver)}
+                onMouseOver={() => this.setState({isMouseOver: true})}
+                onMouseOut={() => this.setState({isMouseOver: false})}
+            >
+                <FontAwesomeIcon
+                    icon={this.props.icon}
+                />
+            </button>
+        );
+    }
 };
 
 export default IconButton;
