@@ -1,4 +1,4 @@
-import { IconDefinition, faIdBadge, faSpinner, faHeart, faHandshake, faFlag, faSkull, faTrophy, faUserPlus, faSignInAlt, faHome, faPlus, faDoorOpen, faChessBoard, faSignOutAlt, faMinus } from "@fortawesome/free-solid-svg-icons";
+import { IconDefinition, faIdBadge, faSpinner, faHeart, faHandshake, faFlag, faSkull, faTrophy, faUserPlus, faSignInAlt, faHome, faPlus, faDoorOpen, faChessBoard, faSignOutAlt, faMinus, faHandMiddleFinger } from "@fortawesome/free-solid-svg-icons";
 
 export default class Icons {
     public static readonly guest: IconDefinition = faIdBadge;
@@ -21,4 +21,5 @@ export default class Icons {
     public static readonly join : IconDefinition = faPlus;
     public static readonly addGuest : IconDefinition = faPlus;
     public static readonly quit : IconDefinition = faMinus;
+    public static readonly revokeDraw : IconDefinition = faHandMiddleFinger;
 }

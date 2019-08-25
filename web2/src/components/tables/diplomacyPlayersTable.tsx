@@ -5,11 +5,11 @@ import { connect } from 'react-redux';
 import { User, Game, Player, PlayerStatus } from '../../api/model';
 import Styles from '../../styles/styles';
 import IconButton from '../controls/iconButton';
-import { faHandshake, faHandMiddleFinger, faFlag } from '@fortawesome/free-solid-svg-icons';
 import * as ThunkActions from '../../thunkActions';
 import PlayerStatusIcon from '../controls/playerStatusIcon';
 import PlayerNoteIcon from '../controls/playerNoteIcon';
 import { SectionHeader } from '../controls/headers';
+import Icons from '../../utilities/icons';
 
 interface DiplomacyPageProps {
     user : User,
@@ -31,6 +31,19 @@ class diplomacyPlayersTable extends React.Component<DiplomacyPageProps>{
                 <SectionHeader text="Diplomatic actions"/>
                 <table>
                     <tbody>
+                        <tr>
+                            <th style={Styles.noBorder()}>
+                                Player
+                            </th>
+                            <th style={Styles.noBorder()}>
+                                Status
+                            </th>
+                            <th style={Styles.noBorder()}>
+                            </th>
+                            <th style={Styles.noBorder()}>
+                                Actions
+                            </th>
+                        </tr>
                         {players.map((p, i) =>
                             <PlayerRow
                                 game={this.props.game}
@@ -56,19 +69,19 @@ const PlayerRow : React.SFC<PlayerRowProps> = props => {
     const p = props.player;
     return (
         <tr style={Styles.playerBoxGlow(props.player.colorId)}>
-            <td>{p.name}</td>
-            <td>
+            <td style={Styles.noBorder()}>{p.name}</td>
+            <td style={Styles.noBorder()}>
                 <PlayerStatusIcon
                     player={p}
                 />
             </td>
-            <td>
+            <td style={Styles.noBorder()}>
                 <PlayerNoteIcon
                     player={p}
                     game={props.game}
                 />
             </td>
-            <td>
+            <td style={Styles.noBorder()}>
                 <PlayerDiplomacyActionButtons
                     gameId={props.game.id}
                     player={p}
@@ -98,21 +111,21 @@ const PlayerDiplomacyActionButtons : React.SFC<PlayerDiplomacyActionButtonsProps
             {canAcceptDraw ?
                 <IconButton
                     title="Accept draw"
-                    icon={faHandshake}
+                    icon={Icons.playerStatusAcceptsDraw}
                     onClick={() => props.changePlayerStatus(props.gameId, p.id, PlayerStatus.AcceptsDraw)}
                 />
             : null}
             {canRevokeDraw ?
                 <IconButton
                     title="Revoke draw"
-                    icon={faHandMiddleFinger}
+                    icon={Icons.revokeDraw}
                     onClick={() => props.changePlayerStatus(props.gameId, p.id, PlayerStatus.Alive)}
                 />
             : null}
             {canConcede ?
                 <IconButton
                     title="Concede"
-                    icon={faFlag}
+                    icon={Icons.playerStatusConceded}
                     onClick={() => props.changePlayerStatus(props.gameId, p.id, PlayerStatus.Conceded)}
                 />
             : null}
