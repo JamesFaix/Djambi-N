@@ -3,13 +3,11 @@ import { Dispatch } from 'redux';
 import { AppState } from '../../store/state';
 import { connect } from 'react-redux';
 import { Game, User, TurnStatus } from '../../api/model';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHandshake, faRecycle, faCheck } from '@fortawesome/free-solid-svg-icons';
 import * as ThunkActions from '../../thunkActions';
 import { navigateTo } from '../../history';
 import Routes from '../../routes';
-import { Link } from 'react-router-dom';
-import Styles from '../../styles/styles';
+import IconButton from '../controls/iconButton';
 
 interface CurrentTurnActionsBarProps {
     user : User,
@@ -46,13 +44,11 @@ class currentTurnActionsBar extends React.Component<CurrentTurnActionsBarProps> 
         }
 
         return (
-            <button
-                style={Styles.iconButton()}
+            <IconButton
+                title="Reset turn"
+                icon={faRecycle}
                 onClick={() => this.props.resetTurn(this.props.game.id)}
-                title={"Reset turn"}
-            >
-                <FontAwesomeIcon icon={faRecycle}/>
-            </button>
+            />
         );
     }
 
@@ -64,26 +60,21 @@ class currentTurnActionsBar extends React.Component<CurrentTurnActionsBarProps> 
         }
 
         return (
-            <button
-                style={Styles.iconButton()}
-                onClick={() => this.props.endTurn(this.props.game.id)}
+            <IconButton
                 title={"Finish turn"}
-            >
-                <FontAwesomeIcon icon={faCheck}/>
-            </button>
+                icon={faCheck}
+                onClick={() => this.props.endTurn(this.props.game.id)}
+            />
         );
     }
 
     private renderDiplomacyButton() {
         return (
-            <button
+            <IconButton
                 title={"Concede or Draw"}
-                style={Styles.iconButton()}
-            >
-                <Link to={Routes.diplomacy(this.props.game.id)}>
-                    <FontAwesomeIcon icon={faHandshake}/>
-                </Link>
-            </button>
+                icon={faHandshake}
+                onClick={() => navigateTo(Routes.diplomacy(this.props.game.id))}
+            />
         );
     }
 }

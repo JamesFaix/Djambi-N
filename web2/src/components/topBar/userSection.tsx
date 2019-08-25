@@ -4,9 +4,8 @@ import { AppState } from '../../store/state';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import * as ThunkActions from '../../thunkActions';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
-import Styles from '../../styles/styles';
+import IconButton from '../controls/iconButton';
 
 interface UserSectionProps {
     user : User,
@@ -31,13 +30,11 @@ const loggedInUserSection : React.SFC<UserSectionProps> = props => {
     return (
         <div>
             {props.user.name}
-            <button
-                onClick={_ => props.onLogoutClicked()}
+            <IconButton
                 title="Log out"
-                style={Styles.iconButton()}
-            >
-                <FontAwesomeIcon icon={faSignOutAlt}/>
-            </button>
+                icon={faSignOutAlt}
+                onClick={() => props.onLogoutClicked()}
+            />
         </div>
     );
 };

@@ -1,16 +1,13 @@
 import * as React from 'react';
 import { AppState, NavigationState } from '../../store/state';
 import { connect } from 'react-redux';
-import { Dispatch } from 'redux';
 import { navigateTo } from '../../history';
 import Routes from '../../routes';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHome, faChessBoard, faPlus, faSignInAlt, faUserPlus, faDoorOpen } from '@fortawesome/free-solid-svg-icons'
-import Styles from '../../styles/styles';
+import IconButton from '../controls/iconButton';
 
 interface NavigationSectionProps {
-    options : NavigationState,
-    redirect: (route: string) => void
+    options : NavigationState
 }
 
 class navigationSection extends React.Component<NavigationSectionProps> {
@@ -18,32 +15,49 @@ class navigationSection extends React.Component<NavigationSectionProps> {
         const o = this.props.options;
         return (
             <div>
-                {this.renderButtonIf(o.enableSignup, <FontAwesomeIcon icon={faUserPlus}/>, "Sign up", Routes.signup)}
-                {this.renderButtonIf(o.enableLogin, <FontAwesomeIcon icon={faSignInAlt}/>, "Log in", Routes.login)}
-                {this.renderButtonIf(o.enableDashboard, <FontAwesomeIcon icon={faHome}/>, "Home", Routes.dashboard)}
-                {this.renderButtonIf(o.enableCreateGame, <FontAwesomeIcon icon={faPlus}/>, "Create game", Routes.createGame)}
-                {this.renderButtonIf(o.enableLobby, <FontAwesomeIcon icon={faDoorOpen}/>, "Lobby", Routes.lobby(o.gameId))}
-                {this.renderButtonIf(o.enablePlay, <FontAwesomeIcon icon={faChessBoard}/>, "Play", Routes.play(o.gameId))}
+                {o.enableSignup ?
+                    <IconButton
+                        title={"Sign up"}
+                        icon={faUserPlus}
+                        onClick={() => navigateTo(Routes.signup)}
+                    />
+                : null}
+                {o.enableLogin ?
+                    <IconButton
+                        title={"Log in"}
+                        icon={faSignInAlt}
+                        onClick={() => navigateTo(Routes.login)}
+                    />
+                : null}
+                {o.enableDashboard ?
+                    <IconButton
+                        title={"Home"}
+                        icon={faHome}
+                        onClick={() => navigateTo(Routes.dashboard)}
+                    />
+                : null}
+                {o.enableCreateGame ?
+                    <IconButton
+                        title={"Create game"}
+                        icon={faPlus}
+                        onClick={() => navigateTo(Routes.createGame)}
+                    />
+                : null}
+                {o.enableLobby ?
+                    <IconButton
+                        title={"Lobby"}
+                        icon={faDoorOpen}
+                        onClick={() => navigateTo(Routes.lobby(o.gameId))}
+                    />
+                : null}
+                {o.enablePlay ?
+                    <IconButton
+                        title={"Play"}
+                        icon={faChessBoard}
+                        onClick={() => navigateTo(Routes.play(o.gameId))}
+                    />
+                : null}
             </div>
-        );
-    }
-
-    private renderButtonIf(
-        condition: boolean,
-        contents: any,
-        title: string,
-        route: string) : JSX.Element {
-        if (!condition) {
-            return null;
-        }
-        return(
-            <button
-                onClick={() => this.props.redirect(route)}
-                title={title}
-                style={Styles.iconButton()}
-            >
-                {contents}
-            </button>
         );
     }
 };
@@ -54,12 +68,5 @@ const mapStateToProps = (state : AppState) => {
     };
 };
 
-const mapDispatchToProps = (dispatch : Dispatch) => {
-    return {
-        redirect: (route : string) => navigateTo(route)
-    };
-}
-
-const NavigationSection = connect(mapStateToProps, mapDispatchToProps)(navigationSection);
-
+const NavigationSection = connect(mapStateToProps)(navigationSection);
 export default NavigationSection;

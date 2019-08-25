@@ -1,15 +1,15 @@
 import * as React from 'react';
 import { Game } from '../../api/model';
 import { AppState } from '../../store/state';
-import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import * as ThunkActions from '../../thunkActions';
 import { boolToYesOrNo } from '../../utilities/copy';
 import { SectionHeader } from '../controls/headers';
+import IconButton from '../controls/iconButton';
+import { faDoorOpen } from '@fortawesome/free-solid-svg-icons';
 
 interface GamesSearchResultsTableProps {
-    games : Game[],
-    onViewGameClicked: (game: Game) => void
+    games : Game[]
 }
 
 class gamesSearchResultsTable extends React.Component<GamesSearchResultsTableProps> {
@@ -31,35 +31,45 @@ class gamesSearchResultsTable extends React.Component<GamesSearchResultsTablePro
                             <th>Allow guests</th>
                         </tr>
                         {this.props.games
-                            .map((g, i) => this.renderRow(g, i))
+                            .map((g, i) =>
+                                <GameRow
+                                    key={i}
+                                    game={g}
+                                />
+                            )
                         }
                     </tbody>
                 </table>
             </div>
         );
     }
+}
 
-    private renderRow(game: Game, rowNumber: number) {
-        return (
-            <tr key={rowNumber}>
-                <td>
-                    <button
-                        onClick={e => this.props.onViewGameClicked(game)}
-                    >
-                        Load
-                    </button>
-                </td>
-                <td>{game.id}</td>
-                <td>{game.parameters.description}</td>
-                <td>{game.createdBy.userName}</td>
-                <td>{game.status}</td>
-                <td>{game.players.length}</td>
-                <td>{game.parameters.regionCount}</td>
-                <td>{boolToYesOrNo(game.parameters.isPublic)}</td>
-                <td>{boolToYesOrNo(game.parameters.allowGuests)}</td>
-            </tr>
-        );
-    }
+interface GameRowProps {
+    game : Game
+}
+
+const GameRow : React.SFC<GameRowProps> = props => {
+    const game = props.game;
+    return (
+        <tr>
+            <td>
+                <IconButton
+                    title="Load"
+                    icon={faDoorOpen}
+                    onClick={() => ThunkActions.navigateToGame(game)}
+                />
+            </td>
+            <td>{game.id}</td>
+            <td>{game.parameters.description}</td>
+            <td>{game.createdBy.userName}</td>
+            <td>{game.status}</td>
+            <td>{game.players.length}</td>
+            <td>{game.parameters.regionCount}</td>
+            <td>{boolToYesOrNo(game.parameters.isPublic)}</td>
+            <td>{boolToYesOrNo(game.parameters.allowGuests)}</td>
+        </tr>
+    );
 }
 
 const mapStateToProps = (state : AppState) => {
@@ -74,12 +84,5 @@ const mapStateToProps = (state : AppState) => {
     }
 };
 
-const mapDispatchToProps = (dispatch : Dispatch) => {
-    return {
-        onViewGameClicked: (game: Game) => ThunkActions.navigateToGame(game)
-    };
-};
-
-const GamesSearchResultsTable = connect(mapStateToProps, mapDispatchToProps)(gamesSearchResultsTable);
-
+const GamesSearchResultsTable = connect(mapStateToProps)(gamesSearchResultsTable);
 export default GamesSearchResultsTable;
