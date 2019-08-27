@@ -11,6 +11,10 @@ interface GameHistoryEventBoxProps {
 export default class GameHistoryEventBox extends React.Component<GameHistoryEventBoxProps> {
     render() {
         const e = this.props.event;
+        if (!e) {
+            return null;
+        }
+
         const p = this.props.game.players.find(p => p.id === e.actingPlayerId);
 
         const borderStyle = p
