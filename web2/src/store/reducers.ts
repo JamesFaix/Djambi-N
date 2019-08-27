@@ -5,6 +5,7 @@ import BoardViewFactory from '../viewModel/board/boardViewFactory';
 import CanvasTransformService, { CanvasTranformData } from '../viewModel/board/canvasTransformService';
 import Geometry from '../viewModel/board/geometry';
 import { Point } from '../viewModel/board/model';
+import { ApiRequest, ApiResponse, ApiError } from '../api/requestModel';
 
 export function reducer(state: AppState, action : CustomAction) : AppState {
     switch (action.type) {
@@ -61,6 +62,14 @@ export function reducer(state: AppState, action : CustomAction) : AppState {
             return boardScrollReducer(state, action);
         case ActionTypes.LoadPieceImage:
             return loadPieceImageReducer(state, action);
+
+        //API
+        case ActionTypes.ApiRequest:
+            return apiRequestReducer(state, action);
+        case ActionTypes.ApiResponse:
+            return apiResponseReducer(state, action);
+        case ActionTypes.ApiError:
+            return apiErrorReducer(state, action);
 
         default:
             return state;
@@ -543,4 +552,28 @@ function loadPieceImageReducer(state : AppState, action : CustomAction) : AppSta
         default:
             throw "Unsupported case: " + action.status;
     }
+}
+
+function apiRequestReducer(state : AppState, action : CustomAction) : AppState {
+    const da = <DataAction<ApiRequest>>action;
+    const newState = {...state};
+    newState.apiClient = {...state.apiClient};
+    newState.apiClient.openRequests.push(da.data);
+    return newState;
+}
+
+function apiResponseReducer(state : AppState, action : CustomAction) : AppState {
+    const da = <DataAction<ApiResponse>>action;
+    const newState = {...state};
+    newState.apiClient = {...state.apiClient};
+    newState.apiClient.openRequests = state.apiClient.openRequests.filter(r => r.id !== da.data.requestId);
+    return newState;
+}
+
+function apiErrorReducer(state : AppState, action : CustomAction) : AppState {
+    const da = <DataAction<ApiError>>action;
+    const newState = {...state};
+    newState.apiClient = {...state.apiClient};
+    newState.apiClient.openRequests = state.apiClient.openRequests.filter(r => r.id !== da.data.requestId);
+    return newState;
 }

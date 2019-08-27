@@ -11,11 +11,20 @@ import { logger } from 'redux-logger';
 import { StateFactory } from './store/state';
 import "./index.css";
 import Debug from './debug';
+import { ApiClientCore } from './api/clientCore';
+import { ApiRequest, ApiResponse, ApiError } from './api/requestModel';
+import * as Actions from './store/actions';
 
 const store = createStore(
     reducer,
     StateFactory.defaultAppState(),
     Debug.logRedux ? applyMiddleware(thunk, logger) : applyMiddleware(thunk)
+);
+
+ApiClientCore.init(
+    (request: ApiRequest) => store.dispatch(Actions.apiRequest(request)),
+    (response: ApiResponse) => store.dispatch(Actions.apiResponse(response)),
+    (error: ApiError) => store.dispatch(Actions.apiError(error)),
 );
 
 render(

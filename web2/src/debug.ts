@@ -17,9 +17,7 @@ export default class Debug {
 
     public static readonly showCellLabels = false;
 
-    public static readonly logApiErrors = true;
+    public static readonly logApi = false;
 
-    public static readonly logApiSuccesses = false;
-
-    public static readonly logRedux = false;
+    public static readonly logRedux = true;
 }

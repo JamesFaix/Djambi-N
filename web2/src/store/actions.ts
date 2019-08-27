@@ -1,6 +1,7 @@
 import { LoginRequest, User, CreateUserRequest, Game, GamesQuery, GameParameters, CreatePlayerRequest, Event, Board, PieceKind, PlayerStatus } from "../api/model";
 import { NavigationState } from "./state";
 import { Point } from "../viewModel/board/model";
+import { ApiResponse, ApiRequest, ApiError } from "../api/requestModel";
 
 export enum ActionStatus {
   Pending = "PENDING",
@@ -30,7 +31,10 @@ export enum ActionTypes {
   LoadPieceImage = "LOAD_PIECE_IMAGE",
   EndTurn = "END_TURN",
   ResetTurn = "RESET_TURN",
-  ChangePlayerStatus = "CHANGE_PLAYER_STATUS"
+  ChangePlayerStatus = "CHANGE_PLAYER_STATUS",
+  ApiRequest = "API_REQUEST",
+  ApiResponse = "API_RESPONSE",
+  ApiError = "API_ERROR"
 }
 
 export interface CustomAction {
@@ -127,3 +131,7 @@ export const resetTurnError = () => error(ActionTypes.ResetTurn);
 export const changePlayerStatusRequest = () => pending(ActionTypes.ChangePlayerStatus);
 export const changePlayerStatusSuccess = (game : Game) => success(ActionTypes.ChangePlayerStatus, game);
 export const changePlayerStatusError = () => error(ActionTypes.ChangePlayerStatus);
+
+export const apiRequest = (request : ApiRequest) => pending(ActionTypes.ApiRequest, request);
+export const apiResponse = (response : ApiResponse) => success(ActionTypes.ApiResponse, response);
+export const apiError = (apiError : ApiError) => error(ActionTypes.ApiError, apiError);

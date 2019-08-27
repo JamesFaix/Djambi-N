@@ -1,6 +1,7 @@
 import { Event, Game, GamesQuery, User, GameParameters, Board, PieceKind } from '../api/model';
 import * as ModelFactory from '../api/modelFactory';
 import { BoardView, Point } from '../viewModel/board/model';
+import { ApiRequest } from '../api/requestModel';
 
 export interface AppState {
     session: SessionState,
@@ -10,7 +11,8 @@ export interface AppState {
     navigation : NavigationState,
     boards : BoardsState,
     display : DisplayState,
-    images : ImagesState
+    images : ImagesState,
+    apiClient : ApiClientState
 }
 
 export interface SessionState {
@@ -72,6 +74,10 @@ export interface DisplayState {
 
 export interface ImagesState {
     pieces : Map<PieceKind, HTMLImageElement>
+}
+
+export interface ApiClientState {
+    openRequests : ApiRequest[]
 }
 
 export class StateFactory {
@@ -144,6 +150,12 @@ export class StateFactory {
         };
     }
 
+    static defaultApiClientState() : ApiClientState {
+        return {
+            openRequests: []
+        };
+    }
+
     static defaultAppState() : AppState {
         return {
             session: StateFactory.defaultSesssionState(),
@@ -153,7 +165,8 @@ export class StateFactory {
             navigation: StateFactory.defaultNavigationState(),
             boards: StateFactory.defaultBoardsState(),
             display: StateFactory.defaultDisplayState(),
-            images : StateFactory.defaultImagesState()
+            images : StateFactory.defaultImagesState(),
+            apiClient: StateFactory.defaultApiClientState()
         };
     }
 }
