@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Game, Player } from '../../api/model';
 import TurnCycleTurnBox from './turnCycleTurnBox';
-import { AppState } from '../../store/state';
+import { State } from '../../store/root';
 import { connect } from 'react-redux';
 import { PlayHeader } from '../controls/headers';
 
@@ -38,7 +38,7 @@ class turnCycleSection extends React.Component<TurnCycleSectionProps> {
     }
 }
 
-const mapStateToProps = (state : AppState) => {
+const mapStateToProps = (state : State) => {
     return {
         game: state.activeGame.game
     };

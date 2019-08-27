@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { User } from "../../api/model";
-import { AppState } from '../../store/state';
+import { State } from '../../store/root';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import ApiActions from '../../apiActions';
@@ -22,7 +22,7 @@ class redirectToLoginIfNotLoggedIn extends React.Component<RedirectToLoginIfNotL
     }
 }
 
-const mapStateToProps = (state: AppState) => {
+const mapStateToProps = (state: State) => {
     return {
         user: state.session.user
     };

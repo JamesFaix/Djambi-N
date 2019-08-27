@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Game } from '../../api/model';
-import { AppState } from '../../store/state';
+import { State } from '../../store/root';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
@@ -39,7 +39,7 @@ class playPage extends React.Component<PlayPageProps> {
     }
 }
 
-const mapStateToProps = (state : AppState) => {
+const mapStateToProps = (state : State) => {
     return {
         game: state.activeGame.game
     };

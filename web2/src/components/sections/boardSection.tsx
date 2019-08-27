@@ -1,7 +1,7 @@
 import * as React from 'react';
 import CanvasBoard, { CanvasBoardStyle } from '../canvas/canvasBoard';
 import { BoardView, CellView } from '../../viewModel/board/model';
-import { AppState } from '../../store/state';
+import { State } from '../../store/root';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import CanvasTransformService, { CanvasTranformData } from '../../viewModel/board/canvasTransformService';
@@ -68,7 +68,7 @@ class boardSection extends React.Component<BoardSectionProps> {
     }
 }
 
-const mapStateToProps = (state : AppState) => {
+const mapStateToProps = (state : State) => {
     if (!state.activeGame.game) {
         return null;
     }

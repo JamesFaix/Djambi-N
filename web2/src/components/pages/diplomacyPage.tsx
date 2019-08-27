@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { NavigationState } from '../../store/state';
 import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
 import RedirectToLobbyIfGameNotInProgress from '../utilities/redirectToLobbyIfGameNotInProgress';
 import SetNavigationOptions from '../utilities/setNavigationOptions';
@@ -12,7 +11,7 @@ export default class DiplomacyPage extends React.Component<{}>{
     render() {
         const gameId = (this.props as any).match.params.gameId;
 
-        const navOptions : NavigationState = {
+        const navOptions = {
             enableDashboard: true,
             enableLobby: true,
             gameId: gameId,

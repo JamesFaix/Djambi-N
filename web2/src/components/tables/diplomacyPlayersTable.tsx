@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { AppState } from '../../store/state';
+import { State } from '../../store/root';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { User, Game, Player, PlayerStatus } from '../../api/model';
@@ -133,7 +133,7 @@ const PlayerDiplomacyActionButtons : React.SFC<PlayerDiplomacyActionButtonsProps
     );
 };
 
-const mapStateToProps = (state : AppState) => {
+const mapStateToProps = (state : State) => {
     return {
         user: state.session.user,
         game: state.activeGame.game

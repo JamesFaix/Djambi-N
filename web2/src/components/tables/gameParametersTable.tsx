@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { GameParameters, GameStatus } from "../../api/model";
-import { AppState } from '../../store/state';
+import { State } from '../../store/root';
 import { connect } from 'react-redux';
 import { boolToYesOrNo } from '../../utilities/copy';
 import { SectionHeader } from '../controls/headers';
@@ -55,7 +55,7 @@ const gameParametersTable : React.SFC<GameParametersTableProps> = props => {
     );
 }
 
-const mapStateToProps = (state : AppState) => {
+const mapStateToProps = (state : State) => {
     if (state.activeGame.game) {
         return {
             parameters: state.activeGame.game.parameters,

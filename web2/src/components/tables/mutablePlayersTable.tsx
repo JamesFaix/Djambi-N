@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Game, User, CreatePlayerRequest, GameStatus } from '../../api/model';
 import * as LobbySeats from '../../viewModel/lobbySeats';
-import { AppState } from '../../store/state';
+import { State } from '../../store/root';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import MutablePlayersTableRow from './mutablePlayersTableRow';
@@ -48,7 +48,7 @@ class mutablePlayersTable extends React.Component<MutablePlayersTableProps> {
     }
 }
 
-const mapStateToProps = (state : AppState) => {
+const mapStateToProps = (state : State) => {
     return {
         game: state.activeGame.game,
         user: state.session.user

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Game, GameStatus } from "../../api/model";
-import { AppState } from '../../store/state';
+import { State } from '../../store/root';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import ApiActions from '../../apiActions';
@@ -26,7 +26,7 @@ class redirectToLobbyIfGameNotInProgress extends React.Component<RedirectToLobby
     }
 }
 
-const mapStateToProps = (state: AppState) => {
+const mapStateToProps = (state: State) => {
     return {
         game: state.activeGame.game
     };

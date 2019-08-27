@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Dispatch } from 'redux';
-import { AppState } from '../../store/state';
+import { State } from '../../store/root';
 import { connect } from 'react-redux';
 import { Game, User, TurnStatus } from '../../api/model';
 import { faHandshake, faRecycle, faCheck } from '@fortawesome/free-solid-svg-icons';
@@ -79,7 +79,7 @@ class currentTurnActionsBar extends React.Component<CurrentTurnActionsBarProps> 
     }
 }
 
-const mapStateToProps = (state : AppState) => {
+const mapStateToProps = (state : State) => {
     return {
         user: state.session.user,
         game: state.activeGame.game

@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { AppState } from '../../store/state';
+import { State } from '../../store/root';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { GameParameters } from '../../api/model';
-import * as Actions from '../../store/actions';
 import Styles from '../../styles/styles';
 import { SectionHeader } from '../controls/headers';
 import ApiActions from '../../apiActions';
+import * as StoreCreateGameForm from '../../store/createGameForm';
 
 interface CreateGameFormProps {
     formData : GameParameters,
@@ -111,7 +111,7 @@ class createGameForm extends React.Component<CreateGameFormProps> {
     }
 }
 
-const mapStateToProps = (state : AppState) => {
+const mapStateToProps = (state : State) => {
     return {
         formData: state.createGameForm.parameters
     };
@@ -119,7 +119,7 @@ const mapStateToProps = (state : AppState) => {
 
 const mapDispatchToProps = (dispatch : Dispatch) => {
     return {
-        onFormDataChanged: (formData: GameParameters) => dispatch(Actions.updateCreateGameForm(formData)),
+        onFormDataChanged: (formData: GameParameters) => dispatch(StoreCreateGameForm.Actions.updateCreateGameForm(formData)),
         submit: (formData: GameParameters) => ApiActions.createGame(formData)(dispatch)
     };
 };

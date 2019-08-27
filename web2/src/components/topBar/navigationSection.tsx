@@ -1,13 +1,14 @@
 import * as React from 'react';
-import { AppState, NavigationState } from '../../store/state';
+import { State } from '../../store/root';
 import { connect } from 'react-redux';
 import { navigateTo } from '../../history';
 import Routes from '../../routes';
 import IconButton from '../controls/iconButton';
 import Icons from '../../utilities/icons';
+import * as Navigation from '../../store/navigation';
 
 interface NavigationSectionProps {
-    options : NavigationState
+    options : Navigation.State
 }
 
 class navigationSection extends React.Component<NavigationSectionProps> {
@@ -62,7 +63,7 @@ class navigationSection extends React.Component<NavigationSectionProps> {
     }
 };
 
-const mapStateToProps = (state : AppState) => {
+const mapStateToProps = (state : State) => {
     return {
         options: state.navigation
     };

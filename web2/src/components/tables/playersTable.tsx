@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Game, Player, PlayerStatus, PlayerKind } from '../../api/model';
-import { AppState } from '../../store/state';
+import { State } from '../../store/root';
 import { connect } from 'react-redux';
 import { SectionHeader } from '../controls/headers';
 import Styles from '../../styles/styles';
@@ -82,7 +82,7 @@ class PlayerName extends React.Component<PlayerNameProps> {
     }
 }
 
-const mapStateToProps = (state : AppState) => {
+const mapStateToProps = (state : State) => {
     return {
         game: state.activeGame.game
     };

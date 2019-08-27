@@ -3,7 +3,7 @@ import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { GamesQuery, Game } from '../../api/model';
 import GamesSearchResultsTable from '../tables/gamesSearchResultsTable';
-import { AppState } from '../../store/state';
+import { State } from '../../store/root';
 import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
 import GamesSearchForm from '../forms/gamesSearchForm';
 import SetNavigationOptions from '../utilities/setNavigationOptions';
@@ -31,7 +31,7 @@ class dashboardPage extends React.Component<DashboardPageProps>{
     }
 }
 
-const mapStateToProps = (state: AppState) => {
+const mapStateToProps = (state: State) => {
     if (state.gamesQuery){
         return {
             gamesQuery: state.gamesQuery.query,

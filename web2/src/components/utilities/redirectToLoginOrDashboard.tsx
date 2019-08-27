@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { User } from "../../api/model";
-import { AppState } from '../../store/state';
+import { State } from '../../store/root';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { navigateTo } from '../../history';
@@ -27,7 +27,7 @@ class redirectToLoginOrDashboard extends React.Component<RedirectToLoginOrDashbo
     }
 }
 
-const mapStateToProps = (state: AppState) => {
+const mapStateToProps = (state: State) => {
     return {
         user: state.session.user
     };

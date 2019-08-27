@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { User } from '../../api/model';
-import { AppState } from '../../store/state';
+import { State } from '../../store/root';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import IconButton from '../controls/iconButton';
@@ -39,7 +39,7 @@ const loggedInUserSection : React.SFC<UserSectionProps> = props => {
     );
 };
 
-const mapStateToProps = (state : AppState) => {
+const mapStateToProps = (state : State) => {
     return {
         user: state.session.user
     };

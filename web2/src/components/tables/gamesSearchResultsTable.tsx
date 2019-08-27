@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Game } from '../../api/model';
-import { AppState } from '../../store/state';
+import { State } from '../../store/root';
 import { connect } from 'react-redux';
 import { boolToYesOrNo } from '../../utilities/copy';
 import { SectionHeader } from '../controls/headers';
@@ -72,7 +72,7 @@ const GameRow : React.SFC<GameRowProps> = props => {
     );
 }
 
-const mapStateToProps = (state : AppState) => {
+const mapStateToProps = (state : State) => {
     if (state.gamesQuery && state.gamesQuery.results) {
         return {
             games: state.gamesQuery.results

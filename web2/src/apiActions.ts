@@ -1,10 +1,13 @@
 import { Dispatch } from "redux";
-import { LoginRequest, CreateUserRequest, GamesQuery, GameParameters, CreatePlayerRequest, User, GameStatus, Game, EventsQuery, Event, ResultsDirection, Board, PlayerStatus } from "./api/model";
-import * as Actions from "./store/actions";
+import { LoginRequest, CreateUserRequest, GameParameters, CreatePlayerRequest, User, GameStatus, Game, EventsQuery, Event, ResultsDirection, Board, PlayerStatus, GamesQuery } from "./api/model";
 import * as Api from "./api/client";
 import * as ModelFactory from "./api/modelFactory";
 import Routes from "./routes";
 import { navigateTo } from './history';
+import * as StoreGamesQuery from './store/gamesQuery';
+import * as StoreSession from './store/session';
+import * as StoreActiveGame from './store/activeGame';
+import * as StoreBoards from './store/boards';
 
 //#region Session actions
 
@@ -12,7 +15,7 @@ export default class ApiActions {
     public static login(request : LoginRequest) {
         return async function (dispatch : Dispatch) : Promise<void> {
             const session = await Api.login(request);
-            dispatch(Actions.login(session.user));
+            dispatch(StoreSession.Actions.login(session.user));
             navigateTo(Routes.dashboard);
             return ApiActions.queryGamesForUser(session.user, dispatch);
         };
@@ -21,7 +24,7 @@ export default class ApiActions {
     public static logout() {
         return async function (dispatch : Dispatch) : Promise<void> {
             await Api.logout();
-            dispatch(Actions.logout());
+            dispatch(StoreSession.Actions.logout());
             navigateTo(Routes.login);
         };
     }
@@ -29,7 +32,7 @@ export default class ApiActions {
     public static signup(request : CreateUserRequest) {
         return async function (dispatch : Dispatch) : Promise<void> {
             const user = await Api.createUser(request);
-            dispatch(Actions.signup(user));
+            dispatch(StoreSession.Actions.signup(user));
             const loginRequest = ModelFactory.loginRequestFromCreateUserRequest(request);
             return ApiActions.login(loginRequest)(dispatch);
         };
@@ -39,7 +42,7 @@ export default class ApiActions {
         return async function (dispatch : Dispatch) : Promise<void> {
             try {
                 const user = await Api.getCurrentUser();
-                dispatch(Actions.restoreSession(user));
+                dispatch(StoreSession.Actions.restoreSession(user));
                 return ApiActions.queryGamesForUser(user, dispatch);
             }
             catch (ex) {
@@ -55,7 +58,7 @@ export default class ApiActions {
         return async function (dispatch : Dispatch) : Promise<void> {
             try {
                 const user = await Api.getCurrentUser();
-                    dispatch(Actions.restoreSession(user));
+                    dispatch(StoreSession.Actions.restoreSession(user));
                     navigateTo(Routes.dashboard);
                     return ApiActions.queryGamesForUser(user, dispatch);
             }
@@ -72,7 +75,7 @@ export default class ApiActions {
         return async function (dispatch : Dispatch) : Promise<void> {
             try {
                 const user = await Api.getCurrentUser();
-                dispatch(Actions.restoreSession(user))
+                dispatch(StoreSession.Actions.restoreSession(user));
                 return ApiActions.queryGamesForUser(user, dispatch);
             }
             catch (ex) {
@@ -89,7 +92,7 @@ export default class ApiActions {
         return async function (dispatch : Dispatch) : Promise<void> {
             try {
                 const user = await Api.getCurrentUser();
-                dispatch(Actions.restoreSession(user));
+                dispatch(StoreSession.Actions.restoreSession(user));
                 navigateTo(Routes.dashboard);
                 return ApiActions.queryGamesForUser(user, dispatch);
             }
@@ -111,7 +114,7 @@ export default class ApiActions {
 
     private static async loadGameInner(gameId : number, dispatch : Dispatch) : Promise<Game> {
         const game = await Api.getGame(gameId);
-        dispatch(Actions.loadGame(game));
+        dispatch(StoreActiveGame.Actions.loadGame(game));
         return game;
     }
 
@@ -124,13 +127,13 @@ export default class ApiActions {
         };
 
         const history = await Api.getEvents(gameId, query);
-        dispatch(Actions.loadGameHistory(history));
+        dispatch(StoreActiveGame.Actions.loadGameHistory(history));
         return history;
     }
 
     private static async loadBoardInner(regionCount : number, dispatch : Dispatch) : Promise<Board> {
         const board = await Api.getBoard(regionCount);
-        dispatch(Actions.loadBoard(board));
+        dispatch(StoreBoards.Actions.loadBoard(board));
         return board;
     }
 
@@ -151,7 +154,7 @@ export default class ApiActions {
     public static createGame(formData : GameParameters) {
         return async function (dispatch : Dispatch) : Promise<void> {
             const game = await Api.createGame(formData);
-            dispatch(Actions.createGame(game));
+            dispatch(StoreActiveGame.Actions.createGame(game));
             navigateTo(Routes.lobby(game.id));
         }
     }
@@ -159,21 +162,21 @@ export default class ApiActions {
     public static addPlayer(gameId: number, request : CreatePlayerRequest) {
         return async function (dispatch: Dispatch) : Promise<void> {
             const resp = await Api.addPlayer(gameId, request);
-            dispatch(Actions.updateGame(resp));
+            dispatch(StoreActiveGame.Actions.updateGame(resp));
         }
     }
 
     public static removePlayer(gameId: number, playerId: number) {
         return async function (dispatch: Dispatch) : Promise<void> {
             const resp = await Api.removePlayer(gameId, playerId);
-            dispatch(Actions.updateGame(resp));
+            dispatch(StoreActiveGame.Actions.updateGame(resp));
         }
     }
 
     public static startGame(gameId: number) {
         return async function (dispatch: Dispatch) : Promise<void> {
             const resp = await Api.startGame(gameId);
-            dispatch(Actions.updateGame(resp));
+            dispatch(StoreActiveGame.Actions.updateGame(resp));
             navigateTo(Routes.play(gameId));
         }
     }
@@ -181,28 +184,28 @@ export default class ApiActions {
     public static selectCell(gameId: number, cellId : number) {
         return async function (dispatch: Dispatch) : Promise<void> {
             const resp = await Api.selectCell(gameId, cellId);
-            dispatch(Actions.updateGame(resp));
+            dispatch(StoreActiveGame.Actions.updateGame(resp));
         }
     }
 
     public static endTurn(gameId: number) {
         return async function (dispatch: Dispatch) : Promise<void> {
             const resp = await Api.commitTurn(gameId);
-            dispatch(Actions.updateGame(resp));
+            dispatch(StoreActiveGame.Actions.updateGame(resp));
         }
     }
 
     public static resetTurn(gameId: number) {
         return async function (dispatch: Dispatch) : Promise<void> {
             const resp = await Api.resetTurn(gameId);
-            dispatch(Actions.updateGame(resp));
+            dispatch(StoreActiveGame.Actions.updateGame(resp));
         }
     }
 
     public static changePlayerStatus(gameId: number, playerId: number, status: PlayerStatus) {
         return async function (dispatch: Dispatch) : Promise<void> {
             const resp = await Api.updatePlayerStatus(gameId, playerId, status);
-            dispatch(Actions.updateGame(resp));
+            dispatch(StoreActiveGame.Actions.updateGame(resp));
         }
     }
 
@@ -213,7 +216,7 @@ export default class ApiActions {
     public static queryGames(query: GamesQuery) {
         return async function (dispatch : Dispatch) : Promise<void> {
             const games = await Api.getGames(query);
-            dispatch(Actions.queryGames(games));
+            dispatch(StoreGamesQuery.Actions.queryGames(games));
         };
     }
 
@@ -224,7 +227,7 @@ export default class ApiActions {
     private static queryGamesForUser(user: User, dispatch: Dispatch) : Promise<void> {
         const query = ModelFactory.emptyGamesQuery();
         query.playerUserName = user.name;
-        dispatch(Actions.updateGamesQuery(query));
+        dispatch(StoreGamesQuery.Actions.updateGamesQuery(query));
         return ApiActions.queryGames(query)(dispatch)
     }
 

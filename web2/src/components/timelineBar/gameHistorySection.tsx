@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Event, Game } from "../../api/model";
-import { AppState } from '../../store/state';
+import { State } from '../../store/root';
 import { connect } from 'react-redux';
 import GameHistoryEventBox from './gameHistoryEventBox';
 import { PlayHeader } from '../controls/headers';
@@ -40,7 +40,7 @@ class gameHistorySection extends React.Component<GameHistorySectionProps> {
     }
 }
 
-const mapStateToProps = (state : AppState) => {
+const mapStateToProps = (state : State) => {
     return {
         game: state.activeGame.game,
         history: state.activeGame.history

@@ -1,6 +1,6 @@
 import { PieceKind } from "../api/model";
 import { Dispatch } from "redux";
-import * as Actions from '../store/actions';
+import * as StoreImages from '../store/images';
 
 function getPieceImagePath(kind : PieceKind) : string {
     switch (kind) {
@@ -18,7 +18,7 @@ function getPieceImagePath(kind : PieceKind) : string {
 function createPieceImage(kind : PieceKind, dispatch : Dispatch) : HTMLImageElement {
     const image = new (window as any).Image() as HTMLImageElement;
     image.src = getPieceImagePath(kind);
-    image.onload = () => dispatch(Actions.loadPieceImage(kind, image));
+    image.onload = () => dispatch(StoreImages.Actions.loadPieceImage(kind, image));
     return image;
 }
 

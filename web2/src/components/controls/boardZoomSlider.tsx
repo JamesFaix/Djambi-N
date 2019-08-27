@@ -1,10 +1,10 @@
-import { AppState } from '../../store/state';
+import { State } from '../../store/root';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import * as Actions from '../../store/actions';
 import { ZoomSlider } from './zoomSlider';
+import * as StoreDisplay from '../../store/display';
 
-const mapStateToProps = (state : AppState) => {
+const mapStateToProps = (state : State) => {
     return {
         currentZoomLevel: state.display.boardZoomLevel
     };
@@ -12,7 +12,7 @@ const mapStateToProps = (state : AppState) => {
 
 const mapDispatchToProps = (dispatch : Dispatch) => {
     return {
-        changeZoomLevel: (level : number) => dispatch(Actions.boardZoom(level))
+        changeZoomLevel: (level : number) => dispatch(StoreDisplay.Actions.boardZoom(level))
     };
 }
 

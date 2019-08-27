@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { GamesQuery, GameStatus } from '../../api/model';
-import { AppState } from '../../store/state';
+import { State } from '../../store/root';
 import { connect } from 'react-redux';
 import TristateDropdown from '../controls/tristateDropdown';
 import EnumDropdown from '../controls/enumDropdown';
-import * as Actions from '../../store/actions';
 import { Dispatch } from 'redux';
 import Styles from '../../styles/styles';
 import { SectionHeader } from '../controls/headers';
 import ApiActions from '../../apiActions';
+import * as StoreGamesQuery from '../../store/gamesQuery';
 
 interface GamesSearchFormProps {
     formData : GamesQuery,
@@ -176,7 +176,7 @@ class gamesSearchForm extends React.Component<GamesSearchFormProps> {
     //#endregion
 }
 
-const mapStateToProps = (state : AppState) => {
+const mapStateToProps = (state : State) => {
     return {
         formData: state.gamesQuery.query,
     };
@@ -184,7 +184,7 @@ const mapStateToProps = (state : AppState) => {
 
 const mapDispatchToProps = (dispatch : Dispatch) => {
     return {
-        onFormDataChanged: (formData: GamesQuery) => dispatch(Actions.updateGamesQuery(formData)),
+        onFormDataChanged: (formData: GamesQuery) => dispatch(StoreGamesQuery.Actions.updateGamesQuery(formData)),
         submit: (formData: GamesQuery) => ApiActions.queryGames(formData)(dispatch)
     };
 };

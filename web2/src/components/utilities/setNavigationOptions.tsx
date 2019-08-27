@@ -1,12 +1,11 @@
 import * as React from 'react';
-import { NavigationState } from '../../store/state';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import * as Actions from '../../store/actions';
+import * as Navigation from '../../store/navigation';
 
 interface SetNavigationOptionsProps {
-    options : NavigationState,
-    setOptions : (options : NavigationState) => void
+    options : Navigation.State,
+    setOptions : (options : Navigation.State) => void
 }
 
 class setNavigationOptions extends React.Component<SetNavigationOptionsProps> {
@@ -21,7 +20,7 @@ class setNavigationOptions extends React.Component<SetNavigationOptionsProps> {
 
 const mapDispatchToProps = (dispatch : Dispatch) => {
     return {
-        setOptions: (options: NavigationState) => dispatch(Actions.setNavigationOptions(options))
+        setOptions: (options: Navigation.State) => dispatch(Navigation.Actions.setNavigationOptions(options))
     };
 }
 

@@ -1,11 +1,11 @@
 import { Dispatch } from "redux";
-import { AppState } from "../../store/state";
+import { State } from "../../store/root";
 import { connect } from "react-redux";
 import ZoomableScrollArea from "../controls/zoomableScrollArea";
-import * as Actions from '../../store/actions';
 import { Point } from "../../viewModel/board/model";
+import * as StoreDisplay from '../../store/display';
 
-const mapStateToProps = (state : AppState) => {
+const mapStateToProps = (state : State) => {
     return {
         size: state.display.boardContainerSize,
         zoomLevel: state.display.boardZoomLevel,
@@ -15,8 +15,8 @@ const mapStateToProps = (state : AppState) => {
 
 const mapDispatchToProps = (dispatch : Dispatch) => {
     return {
-        onScroll : (scrollPercent : Point) => dispatch(Actions.boardScroll(scrollPercent)),
-        onZoom : (level : number) => dispatch(Actions.boardZoom(level))
+        onScroll : (scrollPercent : Point) => dispatch(StoreDisplay.Actions.boardScroll(scrollPercent)),
+        onZoom : (level : number) => dispatch(StoreDisplay.Actions.boardZoom(level))
     };
 }
 

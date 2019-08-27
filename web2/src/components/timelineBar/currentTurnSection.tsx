@@ -3,7 +3,7 @@ import { PlayHeader } from '../controls/headers';
 import { Game, User, Player, Turn, TurnStatus, Board } from '../../api/model';
 import Colors from '../../utilities/colors';
 import * as Copy from '../../utilities/copy';
-import { AppState } from '../../store/state';
+import { State } from '../../store/root';
 import { connect } from 'react-redux';
 import Styles from '../../styles/styles';
 import CurrentTurnActionsBar from './currentTurnActionsBar';
@@ -92,7 +92,7 @@ class currentTurnSection extends React.Component<CurrentTurnSectionProps> {
     }
 }
 
-const mapStateToProps = (state : AppState) => {
+const mapStateToProps = (state : State) => {
     const game = state.activeGame.game;
     const param = game ? game.parameters : null;
     const rc = param ? param.regionCount : null;

@@ -4,7 +4,7 @@ import MutablePlayersTable from '../tables/mutablePlayersTable';
 import { Game, GameStatus } from '../../api/model';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import { AppState } from '../../store/state';
+import { State } from '../../store/root';
 import LoadGame from '../utilities/loadGame';
 import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
 import SetNavigationOptions from '../utilities/setNavigationOptions';
@@ -75,7 +75,7 @@ class lobbyPage extends React.Component<LobbyPageProps> {
     }
 }
 
-const mapStateToProps = (state : AppState) => {
+const mapStateToProps = (state : State) => {
     return {
         game: state.activeGame.game
     };
