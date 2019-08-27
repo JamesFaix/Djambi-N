@@ -3,7 +3,7 @@ import { User } from "../../api/model";
 import { AppState } from '../../store/state';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import * as ThunkActions from '../../thunkActions';
+import ApiActions from '../../apiActions';
 
 interface RedirectToDashboardIfLoggedInProps {
     user : User,
@@ -30,7 +30,7 @@ const mapStateToProps = (state: AppState) => {
 
 const mapDispatchToProps = (dispatch : Dispatch) => {
     return {
-        restoreSessionAndRedirect: () => ThunkActions.redirectToDashboardIfLoggedIn()(dispatch)
+        restoreSessionAndRedirect: () => ApiActions.redirectToDashboardIfLoggedIn()(dispatch)
     };
 };
 

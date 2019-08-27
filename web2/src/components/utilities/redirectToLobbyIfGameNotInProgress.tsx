@@ -3,7 +3,7 @@ import { Game, GameStatus } from "../../api/model";
 import { AppState } from '../../store/state';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import * as ThunkActions from '../../thunkActions';
+import ApiActions from '../../apiActions';
 
 interface RedirectToLobbyIfGameNotInProgressProps {
     game: Game,
@@ -34,7 +34,7 @@ const mapStateToProps = (state: AppState) => {
 
 const mapDispatchToProps = (dispatch : Dispatch) => {
     return {
-        redirect: (game: Game) => ThunkActions.navigateToGame(game)
+        redirect: (game: Game) => ApiActions.navigateToGame(game)
     };
 };
 

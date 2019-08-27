@@ -2,9 +2,9 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { LoginRequest } from '../../api/model';
-import * as ThunkActions from '../../thunkActions';
 import Styles from '../../styles/styles';
 import { SectionHeader } from '../controls/headers';
+import ApiActions from '../../apiActions';
 
 interface LoginFormProps {
     submit: (formData: LoginRequest) => void
@@ -77,7 +77,7 @@ class loginForm extends React.Component<LoginFormProps, LoginFormState> {
 
 const mapDispatchToProps = (dispatch : Dispatch) => {
     return {
-        submit: (formData : LoginRequest) => ThunkActions.login(formData)(dispatch)
+        submit: (formData : LoginRequest) => ApiActions.login(formData)(dispatch)
     };
 };
 

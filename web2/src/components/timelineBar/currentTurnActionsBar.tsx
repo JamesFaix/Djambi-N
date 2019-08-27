@@ -4,10 +4,10 @@ import { AppState } from '../../store/state';
 import { connect } from 'react-redux';
 import { Game, User, TurnStatus } from '../../api/model';
 import { faHandshake, faRecycle, faCheck } from '@fortawesome/free-solid-svg-icons';
-import * as ThunkActions from '../../thunkActions';
 import { navigateTo } from '../../history';
 import Routes from '../../routes';
 import IconButton from '../controls/iconButton';
+import ApiActions from '../../apiActions';
 
 interface CurrentTurnActionsBarProps {
     user : User,
@@ -88,8 +88,8 @@ const mapStateToProps = (state : AppState) => {
 
 const mapDispatchToProps = (dispatch : Dispatch) => {
     return {
-        endTurn: (gameId : number) => ThunkActions.endTurn(gameId)(dispatch),
-        resetTurn: (gameId : number) => ThunkActions.resetTurn(gameId)(dispatch)
+        endTurn: (gameId : number) => ApiActions.endTurn(gameId)(dispatch),
+        resetTurn: (gameId : number) => ApiActions.resetTurn(gameId)(dispatch)
     };
 }
 

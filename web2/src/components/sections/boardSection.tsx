@@ -4,11 +4,11 @@ import { BoardView, CellView } from '../../viewModel/board/model';
 import { AppState } from '../../store/state';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import * as ThunkActions from '../../thunkActions';
 import CanvasTransformService, { CanvasTranformData } from '../../viewModel/board/canvasTransformService';
 import { PieceKind } from '../../api/model';
 import * as Images from '../../utilities/images';
 import BoardArea from './boardArea';
+import ApiActions from '../../apiActions';
 
 export interface BoardSectionProps {
     gameId : number,
@@ -91,7 +91,7 @@ const mapStateToProps = (state : AppState) => {
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
     return {
-        selectCell: (gameId : number, cell : CellView) => ThunkActions.selectCell(gameId, cell.id)(dispatch),
+        selectCell: (gameId : number, cell : CellView) => ApiActions.selectCell(gameId, cell.id)(dispatch),
         loadPieceImages: () => Images.init(dispatch)
     };
 }

@@ -4,13 +4,13 @@ import MutablePlayersTable from '../tables/mutablePlayersTable';
 import { Game, GameStatus } from '../../api/model';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import * as ThunkActions from '../../thunkActions';
 import { AppState } from '../../store/state';
 import LoadGame from '../utilities/loadGame';
 import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
 import SetNavigationOptions from '../utilities/setNavigationOptions';
 import Styles from '../../styles/styles';
 import PlayersTable from '../tables/playersTable';
+import ApiActions from '../../apiActions';
 
 interface LobbyPageProps {
     game : Game,
@@ -83,7 +83,7 @@ const mapStateToProps = (state : AppState) => {
 
 const mapDispatchToProps = (dispatch : Dispatch) => {
     return {
-        onStartGameClicked: (gameId : number) => ThunkActions.startGame(gameId)(dispatch)
+        onStartGameClicked: (gameId : number) => ApiActions.startGame(gameId)(dispatch)
     };
 }
 

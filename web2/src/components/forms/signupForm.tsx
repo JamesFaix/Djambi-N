@@ -2,9 +2,9 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { CreateUserRequest } from '../../api/model';
-import * as ThunkActions from '../../thunkActions';
 import Styles from '../../styles/styles';
 import { SectionHeader } from '../controls/headers';
+import ApiActions from '../../apiActions';
 
 interface SignupFormProps {
     submit: (formData: CreateUserRequest) => void
@@ -79,7 +79,7 @@ class signupForm extends React.Component<SignupFormProps, SignupFormState> {
 
 const mapDispatchToProps = (dispatch : Dispatch) => {
     return {
-        submit: (request: CreateUserRequest) => ThunkActions.signup(request)(dispatch)
+        submit: (request: CreateUserRequest) => ApiActions.signup(request)(dispatch)
     };
 };
 

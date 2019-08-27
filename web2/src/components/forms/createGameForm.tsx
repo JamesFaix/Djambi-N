@@ -4,9 +4,9 @@ import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { GameParameters } from '../../api/model';
 import * as Actions from '../../store/actions';
-import * as ThunkActions from '../../thunkActions';
 import Styles from '../../styles/styles';
 import { SectionHeader } from '../controls/headers';
+import ApiActions from '../../apiActions';
 
 interface CreateGameFormProps {
     formData : GameParameters,
@@ -120,7 +120,7 @@ const mapStateToProps = (state : AppState) => {
 const mapDispatchToProps = (dispatch : Dispatch) => {
     return {
         onFormDataChanged: (formData: GameParameters) => dispatch(Actions.updateCreateGameForm(formData)),
-        submit: (formData: GameParameters) => ThunkActions.createGame(formData)(dispatch)
+        submit: (formData: GameParameters) => ApiActions.createGame(formData)(dispatch)
     };
 };
 

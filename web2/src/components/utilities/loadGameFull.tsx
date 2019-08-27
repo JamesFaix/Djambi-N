@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Dispatch } from 'redux';
-import * as ThunkActions from '../../thunkActions';
 import { connect } from 'react-redux';
+import ApiActions from '../../apiActions';
 
 interface LoadGameFullProps {
     gameId : number,
@@ -20,7 +20,7 @@ class loadGameFull extends React.Component<LoadGameFullProps> {
 
 const mapDispatchToProps = (dispatch : Dispatch) => {
     return {
-        loadGameFull : (gameId : number) => ThunkActions.loadGameFull(gameId)(dispatch)
+        loadGameFull : (gameId : number) => ApiActions.loadGameFull(gameId)(dispatch)
     };
 }
 

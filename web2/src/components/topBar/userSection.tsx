@@ -3,9 +3,9 @@ import { User } from '../../api/model';
 import { AppState } from '../../store/state';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
-import * as ThunkActions from '../../thunkActions';
 import IconButton from '../controls/iconButton';
 import Icons from '../../utilities/icons';
+import ApiActions from '../../apiActions';
 
 interface UserSectionProps {
     user : User,
@@ -47,7 +47,7 @@ const mapStateToProps = (state : AppState) => {
 
 const mapDispatchToProps = (dispatch : Dispatch) => {
     return {
-        onLogoutClicked: () => ThunkActions.logout()(dispatch)
+        onLogoutClicked: () => ApiActions.logout()(dispatch)
     };
 }
 

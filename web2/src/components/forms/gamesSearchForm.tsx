@@ -6,9 +6,9 @@ import TristateDropdown from '../controls/tristateDropdown';
 import EnumDropdown from '../controls/enumDropdown';
 import * as Actions from '../../store/actions';
 import { Dispatch } from 'redux';
-import * as ThunkActions from '../../thunkActions';
 import Styles from '../../styles/styles';
 import { SectionHeader } from '../controls/headers';
+import ApiActions from '../../apiActions';
 
 interface GamesSearchFormProps {
     formData : GamesQuery,
@@ -185,7 +185,7 @@ const mapStateToProps = (state : AppState) => {
 const mapDispatchToProps = (dispatch : Dispatch) => {
     return {
         onFormDataChanged: (formData: GamesQuery) => dispatch(Actions.updateGamesQuery(formData)),
-        submit: (formData: GamesQuery) => ThunkActions.queryGames(formData)(dispatch)
+        submit: (formData: GamesQuery) => ApiActions.queryGames(formData)(dispatch)
     };
 };
 

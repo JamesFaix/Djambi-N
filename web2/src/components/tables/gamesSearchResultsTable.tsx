@@ -2,11 +2,11 @@ import * as React from 'react';
 import { Game } from '../../api/model';
 import { AppState } from '../../store/state';
 import { connect } from 'react-redux';
-import * as ThunkActions from '../../thunkActions';
 import { boolToYesOrNo } from '../../utilities/copy';
 import { SectionHeader } from '../controls/headers';
 import IconButton from '../controls/iconButton';
 import { faDoorOpen } from '@fortawesome/free-solid-svg-icons';
+import ApiActions from '../../apiActions';
 
 interface GamesSearchResultsTableProps {
     games : Game[]
@@ -57,7 +57,7 @@ const GameRow : React.SFC<GameRowProps> = props => {
                 <IconButton
                     title="Load"
                     icon={faDoorOpen}
-                    onClick={() => ThunkActions.navigateToGame(game)}
+                    onClick={() => ApiActions.navigateToGame(game)}
                 />
             </td>
             <td>{game.id}</td>

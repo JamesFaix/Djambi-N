@@ -3,9 +3,9 @@ import { User } from "../../api/model";
 import { AppState } from '../../store/state';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import * as ThunkActions from '../../thunkActions';
 import { navigateTo } from '../../history';
 import Routes from '../../routes';
+import ApiActions from '../../apiActions';
 
 interface RedirectToLoginOrDashboardProps {
     user : User,
@@ -36,7 +36,7 @@ const mapStateToProps = (state: AppState) => {
 const mapDispatchToProps = (dispatch : Dispatch) => {
     return {
         redirectToDashboard: () => navigateTo(Routes.dashboard),
-        restoreSessionAndRedirect: () => ThunkActions.redirectToLoginOrDashboard()(dispatch)
+        restoreSessionAndRedirect: () => ApiActions.redirectToLoginOrDashboard()(dispatch)
     };
 };
 

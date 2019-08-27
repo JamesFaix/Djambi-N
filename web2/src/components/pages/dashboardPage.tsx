@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Dispatch } from 'redux';
-import * as ThunkActions from '../../thunkActions';
 import { connect } from 'react-redux';
 import { GamesQuery, Game } from '../../api/model';
 import GamesSearchResultsTable from '../tables/gamesSearchResultsTable';
@@ -9,6 +8,7 @@ import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLogge
 import GamesSearchForm from '../forms/gamesSearchForm';
 import SetNavigationOptions from '../utilities/setNavigationOptions';
 import Styles from '../../styles/styles';
+import ApiActions from '../../apiActions';
 
 interface DashboardPageProps {
     gamesQuery : GamesQuery,
@@ -47,7 +47,7 @@ const mapStateToProps = (state: AppState) => {
 
 const mapDispatchToProps = (dispatch : Dispatch) => {
     return {
-        onSearchClicked: (query: GamesQuery) => ThunkActions.queryGames(query)(dispatch)
+        onSearchClicked: (query: GamesQuery) => ApiActions.queryGames(query)(dispatch)
     };
 };
 

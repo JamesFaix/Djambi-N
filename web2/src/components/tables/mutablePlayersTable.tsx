@@ -4,9 +4,9 @@ import * as LobbySeats from '../../viewModel/lobbySeats';
 import { AppState } from '../../store/state';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import * as ThunkActions from '../../thunkActions';
 import MutablePlayersTableRow from './mutablePlayersTableRow';
 import { SectionHeader } from '../controls/headers';
+import ApiActions from '../../apiActions';
 
 interface MutablePlayersTableProps {
     user : User,
@@ -57,8 +57,8 @@ const mapStateToProps = (state : AppState) => {
 
 const mapDispatchToProps = (dispatch : Dispatch) => {
     return {
-        addPlayer: (gameId: number, request: CreatePlayerRequest) => ThunkActions.addPlayer(gameId, request)(dispatch),
-        removePlayer: (gameId: number, playerId: number) => ThunkActions.removePlayer(gameId, playerId)(dispatch)
+        addPlayer: (gameId: number, request: CreatePlayerRequest) => ApiActions.addPlayer(gameId, request)(dispatch),
+        removePlayer: (gameId: number, playerId: number) => ApiActions.removePlayer(gameId, playerId)(dispatch)
     }
 };
 

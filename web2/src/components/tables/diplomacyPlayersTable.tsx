@@ -5,11 +5,11 @@ import { connect } from 'react-redux';
 import { User, Game, Player, PlayerStatus } from '../../api/model';
 import Styles from '../../styles/styles';
 import IconButton from '../controls/iconButton';
-import * as ThunkActions from '../../thunkActions';
 import PlayerStatusIcon from '../controls/playerStatusIcon';
 import PlayerNoteIcon from '../controls/playerNoteIcon';
 import { SectionHeader } from '../controls/headers';
 import Icons from '../../utilities/icons';
+import ApiActions from '../../apiActions';
 
 interface DiplomacyPageProps {
     user : User,
@@ -143,7 +143,7 @@ const mapStateToProps = (state : AppState) => {
 const mapDispatchToProps = (dispatch : Dispatch) => {
     return {
         changePlayerStatus: (gameId : number, playerId : number, status : PlayerStatus) =>
-            ThunkActions.changePlayerStatus(gameId, playerId, status)(dispatch)
+            ApiActions.changePlayerStatus(gameId, playerId, status)(dispatch)
     };
 }
 

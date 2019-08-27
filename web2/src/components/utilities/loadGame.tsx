@@ -2,8 +2,8 @@ import * as React from 'react';
 import { Game } from '../../api/model';
 import { AppState } from '../../store/state';
 import { Dispatch } from 'redux';
-import * as ThunkActions from '../../thunkActions';
 import { connect } from 'react-redux';
+import ApiActions from '../../apiActions';
 
 interface LoadGameProps {
     gameId : number,
@@ -33,7 +33,7 @@ const mapStateToProps = (state : AppState) => {
 
 const mapDispatchToProps = (dispatch : Dispatch) => {
     return {
-        loadGame: (gameId : number) => ThunkActions.loadGame(gameId)(dispatch)
+        loadGame: (gameId : number) => ApiActions.loadGame(gameId)(dispatch)
     };
 }
 
