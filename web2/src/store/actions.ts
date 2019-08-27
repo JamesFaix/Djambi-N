@@ -1,4 +1,4 @@
-import { User, Game, GamesQuery, GameParameters, Event, Board, PieceKind } from "../api/model";
+import { User, Game, GamesQuery, GameParameters, Event, Board, PieceKind, StateAndEventResponse } from "../api/model";
 import { NavigationState } from "./state";
 import { Point } from "../viewModel/board/model";
 import { ApiResponse, ApiRequest, ApiError } from "../api/requestModel";
@@ -14,21 +14,15 @@ export enum ActionTypes {
   RestoreSession = "RESTORE_SESSION",
   CreateGame = "CREATE_GAME",
   UpdateCreateGameForm = "UPDATE_CREATE_GAME_FORM",
-  AddPlayer = "ADD_PLAYER",
-  RemovePlayer = "REMOVE_PLAYER",
-  StartGame = "START_GAME",
   SetNavigationOptions = "SET_NAV_OPTIONS",
   LoadBoard = "LOAD_BOARD",
-  SelectCell = "SELECT_CELL",
   BoardZoom = "BOARD_ZOOM",
   BoardScroll = "BOARD_SCROLL",
   LoadPieceImage = "LOAD_PIECE_IMAGE",
-  EndTurn = "END_TURN",
-  ResetTurn = "RESET_TURN",
-  ChangePlayerStatus = "CHANGE_PLAYER_STATUS",
   ApiRequest = "API_REQUEST",
   ApiResponse = "API_RESPONSE",
-  ApiError = "API_ERROR"
+  ApiError = "API_ERROR",
+  UpdateGame = "UPDATE_GAME"
 }
 
 export interface CustomAction {
@@ -61,13 +55,7 @@ export const updateGamesQuery = (query: GamesQuery) => create(ActionTypes.Update
 export const updateCreateGameForm = (parameters : GameParameters) => create(ActionTypes.UpdateCreateGameForm, parameters);
 export const createGame = (game : Game) => create(ActionTypes.CreateGame, game);
 
-export const addPlayer = (game : Game) => create(ActionTypes.AddPlayer, game);
-export const removePlayer = (game : Game) => create(ActionTypes.RemovePlayer, game);
-export const startGame = (game : Game) => create(ActionTypes.StartGame, game);
-export const selectCell = (game : Game) => create(ActionTypes.SelectCell, game);
-export const endTurn = (game : Game) => create(ActionTypes.EndTurn, game);
-export const resetTurn = (game : Game) => create(ActionTypes.ResetTurn, game);
-export const changePlayerStatus = (game : Game) => create(ActionTypes.ChangePlayerStatus, game);
+export const updateGame = (response : StateAndEventResponse) => create(ActionTypes.UpdateGame, response);
 
 export const setNavigationOptions = (options : NavigationState) => create(ActionTypes.SetNavigationOptions, options);
 export const boardZoom = (level : number) => create(ActionTypes.BoardZoom, level);

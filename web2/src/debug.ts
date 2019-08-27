@@ -19,5 +19,5 @@ export default class Debug {
 
     public static readonly logApi = false;
 
-    public static readonly logRedux = true;
+    public static readonly logRedux = false;
 }

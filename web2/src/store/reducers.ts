@@ -1,5 +1,5 @@
 import { CustomAction, DataAction, ActionTypes } from './actions';
-import { Game, GamesQuery, User, GameParameters, Event, Board, PieceKind } from '../api/model';
+import { Game, GamesQuery, User, GameParameters, Event, Board, PieceKind, StateAndEventResponse } from '../api/model';
 import { AppState, StateFactory, NavigationState } from './state';
 import BoardViewFactory from '../viewModel/board/boardViewFactory';
 import CanvasTransformService, { CanvasTranformData } from '../viewModel/board/canvasTransformService';
@@ -38,20 +38,8 @@ export function reducer(state: AppState, action : CustomAction) : AppState {
             return loadGameHistoryReducer(state, action);
         case ActionTypes.LoadBoard:
             return loadBoardReducer(state, action);
-        case ActionTypes.AddPlayer:
-            return addPlayerReducer(state, action);
-        case ActionTypes.RemovePlayer:
-            return removePlayerReducer(state, action);
-        case ActionTypes.StartGame:
-            return startGameReducer(state, action);
-        case ActionTypes.SelectCell:
-            return selectCellReducer(state, action);
-        case ActionTypes.EndTurn:
-            return endTurnReducer(state, action);
-        case ActionTypes.ResetTurn:
-            return resetTurnReducer(state, action);
-        case ActionTypes.ChangePlayerStatus:
-            return changePlayerStatusReducer(state, action);
+        case ActionTypes.UpdateGame:
+            return updateGameReducer(state, action);
 
             //Misc
         case ActionTypes.SetNavigationOptions:
@@ -178,64 +166,15 @@ function loadGameHistoryReducer(state: AppState, action: CustomAction) : AppStat
     return newState;
 }
 
-function addPlayerReducer(state: AppState, action : CustomAction) : AppState {
-    const da = <DataAction<Game>>action;
+function updateGameReducer(state: AppState, action : CustomAction) : AppState {
+    const da = <DataAction<StateAndEventResponse>>action;
+    const game = da.data.game;
+    const event = da.data.event;
     const newState = {...state};
     newState.activeGame = {...state.activeGame};
-    newState.activeGame.game = da.data;
-    return newState;
-}
-
-function removePlayerReducer(state: AppState, action: CustomAction) : AppState {
-    const da = <DataAction<Game>>action;
-    const newState = {...state};
-    newState.activeGame = {...state.activeGame};
-    newState.activeGame.game = da.data;
-    return newState;
-}
-
-function startGameReducer(state: AppState, action: CustomAction) : AppState {
-    const da = <DataAction<Game>>action;
-    const newState = {...state};
-    newState.activeGame = {...state.activeGame};
-    newState.activeGame.game = da.data;
-    updateBoardView(newState, da.data);
-    return newState;
-}
-
-function selectCellReducer(state: AppState, action: CustomAction) : AppState {
-    const da = <DataAction<Game>>action;
-    const newState = {...state};
-    newState.activeGame = {...state.activeGame};
-    newState.activeGame.game = da.data;
-    updateBoardView(newState, da.data);
-    return newState;
-}
-
-function endTurnReducer(state: AppState, action: CustomAction) : AppState {
-    const da = <DataAction<Game>>action;
-    const newState = {...state};
-    newState.activeGame = {...state.activeGame};
-    newState.activeGame.game = da.data;
-    updateBoardView(newState, da.data);
-    return newState;
-}
-
-function resetTurnReducer(state: AppState, action: CustomAction) : AppState {
-    const da = <DataAction<Game>>action;
-    const newState = {...state};
-    newState.activeGame = {...state.activeGame};
-    newState.activeGame.game = da.data;
-    updateBoardView(newState, da.data);
-    return newState;
-}
-
-function changePlayerStatusReducer(state: AppState, action: CustomAction) : AppState {
-    const da = <DataAction<Game>>action;
-    const newState = {...state};
-    newState.activeGame = {...state.activeGame};
-    newState.activeGame.game = da.data;
-    updateBoardView(newState, da.data);
+    newState.activeGame.game = game;
+    newState.activeGame.history = [event].concat(state.activeGame.history);
+    updateBoardView(newState, game);
     return newState;
 }
 

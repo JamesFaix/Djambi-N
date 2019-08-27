@@ -158,21 +158,21 @@ export function createGame(formData : GameParameters) {
 export function addPlayer(gameId: number, request : CreatePlayerRequest) {
     return async function (dispatch: Dispatch) : Promise<void> {
         const resp = await Api.addPlayer(gameId, request);
-        dispatch(Actions.addPlayer(resp.game));
+        dispatch(Actions.updateGame(resp));
     }
 }
 
 export function removePlayer(gameId: number, playerId: number) {
     return async function (dispatch: Dispatch) : Promise<void> {
         const resp = await Api.removePlayer(gameId, playerId);
-        dispatch(Actions.removePlayer(resp.game));
+        dispatch(Actions.updateGame(resp));
     }
 }
 
 export function startGame(gameId: number) {
     return async function (dispatch: Dispatch) : Promise<void> {
         const resp = await Api.startGame(gameId);
-        dispatch(Actions.startGame(resp.game));
+        dispatch(Actions.updateGame(resp));
         navigateTo(Routes.play(gameId));
     }
 }
@@ -180,28 +180,28 @@ export function startGame(gameId: number) {
 export function selectCell(gameId: number, cellId : number) {
     return async function (dispatch: Dispatch) : Promise<void> {
         const resp = await Api.selectCell(gameId, cellId);
-        dispatch(Actions.selectCell(resp.game));
+        dispatch(Actions.updateGame(resp));
     }
 }
 
 export function endTurn(gameId: number) {
     return async function (dispatch: Dispatch) : Promise<void> {
         const resp = await Api.commitTurn(gameId);
-        dispatch(Actions.endTurn(resp.game));
+        dispatch(Actions.updateGame(resp));
     }
 }
 
 export function resetTurn(gameId: number) {
     return async function (dispatch: Dispatch) : Promise<void> {
         const resp = await Api.resetTurn(gameId);
-        dispatch(Actions.resetTurn(resp.game));
+        dispatch(Actions.updateGame(resp));
     }
 }
 
 export function changePlayerStatus(gameId: number, playerId: number, status: PlayerStatus) {
     return async function (dispatch: Dispatch) : Promise<void> {
         const resp = await Api.updatePlayerStatus(gameId, playerId, status);
-        dispatch(Actions.changePlayerStatus(resp.game));
+        dispatch(Actions.updateGame(resp));
     }
 }
 
