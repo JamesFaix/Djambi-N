@@ -9,120 +9,98 @@ import { navigateTo } from './history';
 //#region Session actions
 
 export function login(request : LoginRequest) {
-    return function (dispatch : Dispatch) : Promise<void> {
-        dispatch(Actions.loginRequest(request));
-        return Api.login(request)
-            .then(session => {
-                dispatch(Actions.loginSuccess(session.user));
-                navigateTo(Routes.dashboard);
-                return queryGamesForUser(session.user, dispatch);
-            })
-            .catch(_ => {
-                dispatch(Actions.loginError());
-            });
+    return async function (dispatch : Dispatch) : Promise<void> {
+        const session = await Api.login(request);
+        dispatch(Actions.login(session.user));
+        navigateTo(Routes.dashboard);
+        return queryGamesForUser(session.user, dispatch);
     };
 }
 
 export function logout() {
-    return function (dispatch : Dispatch) : Promise<void> {
-        dispatch(Actions.logoutRequest());
-        return Api.logout()
-            .then(_ => {
-                dispatch(Actions.logoutSuccess());
-                navigateTo(Routes.login);
-            })
-            .catch(_ => {
-                dispatch(Actions.logoutError());
-            });
+    return async function (dispatch : Dispatch) : Promise<void> {
+        await Api.logout();
+        dispatch(Actions.logout());
+        navigateTo(Routes.login);
     };
 }
 
 export function signup(request : CreateUserRequest) {
-    return function (dispatch : Dispatch) : Promise<void> {
-        dispatch(Actions.signupRequest(request));
-        return Api.createUser(request)
-            .then(user => {
-                dispatch(Actions.signupSuccess(user));
-                const loginRequest = ModelFactory.loginRequestFromCreateUserRequest(request);
-                return login(loginRequest)(dispatch);
-            })
-            .catch(_ => {
-                dispatch(Actions.signupError());
-            });
+    return async function (dispatch : Dispatch) : Promise<void> {
+        const user = await Api.createUser(request);
+        dispatch(Actions.signup(user));
+        const loginRequest = ModelFactory.loginRequestFromCreateUserRequest(request);
+        return login(loginRequest)(dispatch);
     };
 }
 
 export function restoreSession() {
-    return function (dispatch : Dispatch) : Promise<void> {
-        dispatch(Actions.restoreSessionRequest());
-        return Api.getCurrentUser()
-            .then(user => {
-                dispatch(Actions.restoreSessionSuccess(user));
-                return queryGamesForUser(user, dispatch);
-            })
-            .catch(error => {
-                let [status, message] = error;
-                if (status !== 401) {
-                    dispatch(Actions.restoreSessionError());
-                }
-            });
+    return async function (dispatch : Dispatch) : Promise<void> {
+        try {
+            const user = await Api.getCurrentUser();
+            dispatch(Actions.restoreSession(user));
+            return queryGamesForUser(user, dispatch);
+        }
+        catch (ex) {
+            let [status, message] = ex;
+            if (status !== 401) {
+                throw ex;
+            }
+        }
     };
 }
 
 export function redirectToDashboardIfLoggedIn() {
-    return function (dispatch : Dispatch) : Promise<void> {
-        dispatch(Actions.restoreSessionRequest());
-        return Api.getCurrentUser()
-            .then(user => {
-                dispatch(Actions.restoreSessionSuccess(user));
+    return async function (dispatch : Dispatch) : Promise<void> {
+        try {
+            const user = await Api.getCurrentUser();
+                dispatch(Actions.restoreSession(user));
                 navigateTo(Routes.dashboard);
                 return queryGamesForUser(user, dispatch);
-            })
-            .catch(error => {
-                let [status, message] = error;
-                if (status !== 401) {
-                    dispatch(Actions.restoreSessionError());
-                }
-            });
+        }
+        catch(ex) {
+            let [status, message] = ex;
+            if (status !== 401) {
+                throw ex;
+            }
+        }
     };
 }
 
 export function redirectToLoginIfNotLoggedIn() {
-    return function (dispatch : Dispatch) : Promise<void> {
-        dispatch(Actions.restoreSessionRequest());
-        return Api.getCurrentUser()
-            .then(user => {
-                dispatch(Actions.restoreSessionSuccess(user))
-                return queryGamesForUser(user, dispatch);
-            })
-            .catch(error => {
-                let [status, message] = error;
-                if (status !== 401) {
-                    dispatch(Actions.restoreSessionError());
-                }
-                navigateTo(Routes.login);
-            });
+    return async function (dispatch : Dispatch) : Promise<void> {
+        try {
+            const user = await Api.getCurrentUser();
+            dispatch(Actions.restoreSession(user))
+            return queryGamesForUser(user, dispatch);
+        }
+        catch (ex) {
+            let [status, message] = ex;
+            if (status !== 401) {
+                throw ex;
+            }
+            navigateTo(Routes.login);
+        }
     };
 }
 
 export function redirectToLoginOrDashboard() {
-    return function (dispatch : Dispatch) : Promise<void> {
-        dispatch(Actions.restoreSessionRequest());
-        return Api.getCurrentUser()
-            .then(user => {
-                dispatch(Actions.restoreSessionSuccess(user));
-                navigateTo(Routes.dashboard);
-                return queryGamesForUser(user, dispatch);
-            })
-            .catch(error => {
-                let [status, message] = error;
-                if (status === 401) {
-                    navigateTo(Routes.login);
-                }
-                else {
-                    dispatch(Actions.restoreSessionError());
-                }
-            });
+    return async function (dispatch : Dispatch) : Promise<void> {
+        try {
+            const user = await Api.getCurrentUser();
+            dispatch(Actions.restoreSession(user));
+            navigateTo(Routes.dashboard);
+            return queryGamesForUser(user, dispatch);
+        }
+        catch (ex) {
+            let [status, message] = ex;
+            if (status === 401) {
+                navigateTo(Routes.login);
+            }
+            else {
+                throw ex;
+            }
+        }
     };
 }
 
@@ -131,49 +109,28 @@ export function redirectToLoginOrDashboard() {
 //#region Game actions
 
 async function loadGameInner(gameId : number, dispatch : Dispatch) : Promise<Game> {
-    dispatch(Actions.loadGameRequest(gameId));
-    try {
-        const game = await Api.getGame(gameId);
-        dispatch(Actions.loadGameSuccess(game));
-        return game;
-    }
-    catch (ex) {
-        dispatch(Actions.loadGameError());
-        throw ex;
-    }
+    const game = await Api.getGame(gameId);
+    dispatch(Actions.loadGame(game));
+    return game;
 }
 
 async function loadHistoryInner(gameId : number, dispatch : Dispatch) : Promise<Event[]> {
-    dispatch(Actions.loadGameHistoryRequest(gameId));
-    try {
-        const query : EventsQuery = {
-            maxResults : null,
-            direction : ResultsDirection.Descending,
-            thresholdTime : null,
-            thresholdEventId : null
-        };
+    const query : EventsQuery = {
+        maxResults : null,
+        direction : ResultsDirection.Descending,
+        thresholdTime : null,
+        thresholdEventId : null
+    };
 
-        const history = await Api.getEvents(gameId, query);
-        dispatch(Actions.loadGameHistorySuccess(history));
-        return history;
-    }
-    catch (ex) {
-        dispatch(Actions.loadGameHistoryError());
-        throw ex;
-    }
+    const history = await Api.getEvents(gameId, query);
+    dispatch(Actions.loadGameHistory(history));
+    return history;
 }
 
 async function loadBoardInner(regionCount : number, dispatch : Dispatch) : Promise<Board> {
-    dispatch(Actions.loadBoardRequest(regionCount));
-    try {
-        const board = await Api.getBoard(regionCount);
-        dispatch(Actions.loadBoardSuccess(board));
-        return board;
-    }
-    catch (ex) {
-        dispatch(Actions.loadBoardError());
-        throw ex;
-    }
+    const board = await Api.getBoard(regionCount);
+    dispatch(Actions.loadBoard(board));
+    return board;
 }
 
 export function loadGame(gameId: number) {
@@ -191,108 +148,60 @@ export function loadGameFull(gameId : number) {
 }
 
 export function createGame(formData : GameParameters) {
-    return function (dispatch : Dispatch) : Promise<void> {
-        dispatch(Actions.createGameRequest(formData));
-        return Api.createGame(formData)
-            .then(game => {
-                dispatch(Actions.createGameSuccess(game));
-                navigateTo(Routes.lobby(game.id));
-            })
-            .catch(_ => {
-                dispatch(Actions.createGameError())
-            });
+    return async function (dispatch : Dispatch) : Promise<void> {
+        const game = await Api.createGame(formData);
+        dispatch(Actions.createGame(game));
+        navigateTo(Routes.lobby(game.id));
     }
 }
 
 export function addPlayer(gameId: number, request : CreatePlayerRequest) {
-    return function (dispatch: Dispatch) : Promise<void> {
-        dispatch(Actions.addPlayerRequest(request));
-        return Api.addPlayer(gameId, request)
-            .then(resp => {
-                dispatch(Actions.addPlayerSuccess(resp.game));
-            })
-            .catch(_ => {
-                dispatch(Actions.addPlayerError());
-            });
+    return async function (dispatch: Dispatch) : Promise<void> {
+        const resp = await Api.addPlayer(gameId, request);
+        dispatch(Actions.addPlayer(resp.game));
     }
 }
 
 export function removePlayer(gameId: number, playerId: number) {
-    return function (dispatch: Dispatch) : Promise<void> {
-        dispatch(Actions.removePlayerRequest(playerId));
-        return Api.removePlayer(gameId, playerId)
-            .then(resp => {
-                dispatch(Actions.removePlayerSuccess(resp.game));
-            })
-            .catch(_ => {
-                dispatch(Actions.removePlayerError());
-            });
+    return async function (dispatch: Dispatch) : Promise<void> {
+        const resp = await Api.removePlayer(gameId, playerId);
+        dispatch(Actions.removePlayer(resp.game));
     }
 }
 
 export function startGame(gameId: number) {
-    return function (dispatch: Dispatch) : Promise<void> {
-        dispatch(Actions.startGameRequest(gameId));
-        return Api.startGame(gameId)
-            .then(resp => {
-                dispatch(Actions.startGameSuccess(resp.game));
-                navigateTo(Routes.play(gameId));
-            })
-            .catch(_ => {
-                dispatch(Actions.startGameError());
-            });
+    return async function (dispatch: Dispatch) : Promise<void> {
+        const resp = await Api.startGame(gameId);
+        dispatch(Actions.startGame(resp.game));
+        navigateTo(Routes.play(gameId));
     }
 }
 
 export function selectCell(gameId: number, cellId : number) {
-    return function (dispatch: Dispatch) : Promise<void> {
-        dispatch(Actions.selectCellRequest(cellId));
-        return Api.selectCell(gameId, cellId)
-            .then(resp => {
-                dispatch(Actions.selectCellSuccess(resp.game));
-            })
-            .catch(_ => {
-                dispatch(Actions.selectCellError());
-            });
+    return async function (dispatch: Dispatch) : Promise<void> {
+        const resp = await Api.selectCell(gameId, cellId);
+        dispatch(Actions.selectCell(resp.game));
     }
 }
 
 export function endTurn(gameId: number) {
-    return function (dispatch: Dispatch) : Promise<void> {
-        dispatch(Actions.endTurnRequest());
-        return Api.commitTurn(gameId)
-            .then(resp => {
-                dispatch(Actions.endTurnSuccess(resp.game));
-            })
-            .catch(_ => {
-                dispatch(Actions.endTurnError());
-            });
+    return async function (dispatch: Dispatch) : Promise<void> {
+        const resp = await Api.commitTurn(gameId);
+        dispatch(Actions.endTurn(resp.game));
     }
 }
 
 export function resetTurn(gameId: number) {
-    return function (dispatch: Dispatch) : Promise<void> {
-        dispatch(Actions.resetTurnRequest());
-        return Api.resetTurn(gameId)
-            .then(resp => {
-                dispatch(Actions.resetTurnSuccess(resp.game));
-            })
-            .catch(_ => {
-                dispatch(Actions.resetTurnError());
-            });
+    return async function (dispatch: Dispatch) : Promise<void> {
+        const resp = await Api.resetTurn(gameId);
+        dispatch(Actions.resetTurn(resp.game));
     }
 }
 
 export function changePlayerStatus(gameId: number, playerId: number, status: PlayerStatus) {
-    return function (dispatch: Dispatch) : Promise<void> {
-        dispatch(Actions.changePlayerStatusRequest());
-        return Api.updatePlayerStatus(gameId, playerId, status)
-            .then(resp => {
-                dispatch(Actions.changePlayerStatusSuccess(resp.game));
-            })
-            .catch(_ => {
-                dispatch(Actions.changePlayerStatusError());
-            });
+    return async function (dispatch: Dispatch) : Promise<void> {
+        const resp = await Api.updatePlayerStatus(gameId, playerId, status);
+        dispatch(Actions.changePlayerStatus(resp.game));
     }
 }
 
@@ -301,15 +210,9 @@ export function changePlayerStatus(gameId: number, playerId: number, status: Pla
 //#region Games search
 
 export function queryGames(query: GamesQuery) {
-    return function (dispatch : Dispatch) : Promise<void> {
-        dispatch(Actions.queryGamesRequest(query));
-        return Api.getGames(query)
-            .then(games => {
-                dispatch(Actions.queryGamesSuccess(games));
-            })
-            .catch(_ => {
-                dispatch(Actions.queryGamesError());
-            });
+    return async function (dispatch : Dispatch) : Promise<void> {
+        const games = await Api.getGames(query);
+        dispatch(Actions.queryGames(games));
     };
 }
 

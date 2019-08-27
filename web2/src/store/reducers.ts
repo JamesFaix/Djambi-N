@@ -1,4 +1,4 @@
-import { CustomAction, DataAction, ActionStatus, ActionTypes } from './actions';
+import { CustomAction, DataAction, ActionTypes } from './actions';
 import { Game, GamesQuery, User, GameParameters, Event, Board, PieceKind } from '../api/model';
 import { AppState, StateFactory, NavigationState } from './state';
 import BoardViewFactory from '../viewModel/board/boardViewFactory';
@@ -79,87 +79,30 @@ export function reducer(state: AppState, action : CustomAction) : AppState {
 //#region Session actions
 
 function loginReducer(state: AppState, action : CustomAction) : AppState {
-    switch (action.status) {
-        case ActionStatus.Pending: {
-            const newState = {...state};
-            newState.session = {...state.session};
-            newState.session.loginPending = true;
-            return newState;
-        }
-
-        case ActionStatus.Success: {
-            const da = <DataAction<User>>action;
-            const newState = {...state};
-            newState.session = {...state.session};
-            newState.session.loginPending = false;
-            newState.session.user = da.data;
-            return newState;
-        }
-
-        default:
-            throw "Unsupported case: " + action.status;
-    }
+    const da = <DataAction<User>>action;
+    const newState = {...state};
+    newState.session = {...state.session};
+    newState.session.user = da.data;
+    return newState;
 }
 
 function logoutReducer(state: AppState, action : CustomAction) : AppState {
-    switch (action.status) {
-        case ActionStatus.Pending:
-            const newState = {...state};
-            newState.session = {...state.session};
-            newState.session.logoutPending = true;
-            return newState;
-
-        case ActionStatus.Success:
-            //This is the one case where the normal combineReducers pattern doesn't make sense
-            return StateFactory.defaultAppState();
-
-        default:
-            throw "Unsupported case: " + action.status;
-    }
+    //This is the one case where the normal combineReducers pattern doesn't make sense
+    return StateFactory.defaultAppState();
 }
 
 function signupReducer(state: AppState, action : CustomAction) : AppState {
-    switch (action.status) {
-        case ActionStatus.Pending: {
-            const newState = {...state};
-            newState.session = {...state.session};
-            newState.session.signupPending = true;
-            return newState;
-        }
-
-        case ActionStatus.Success: {
-            const newState = {...state};
-            newState.session = {...state.session};
-            newState.session.signupPending = false;
-            return newState;
-        }
-
-        default:
-            throw "Unsupported case: " + action.status;
-    }
+    const newState = {...state};
+    newState.session = {...state.session};
+    return newState;
 }
 
 function restoreSessionReducer(state: AppState, action : CustomAction) : AppState {
-    switch (action.status) {
-        case ActionStatus.Pending: {
-            const newState = {...state};
-            newState.session = {...state.session};
-            newState.session.restoreSessionPending = true;
-            return newState;
-        }
-
-        case ActionStatus.Success: {
-            const da = <DataAction<User>>action;
-            const newState = {...state};
-            newState.session = {...state.session};
-            newState.session.restoreSessionPending = false;
-            newState.session.user = da.data;
-            return newState;
-        }
-
-        default:
-            throw "Unsupported case: " + action.status;
-    }
+    const da = <DataAction<User>>action;
+    const newState = {...state};
+    newState.session = {...state.session};
+    newState.session.user = da.data;
+    return newState;
 }
 
 //#endregion
@@ -167,308 +110,133 @@ function restoreSessionReducer(state: AppState, action : CustomAction) : AppStat
 //#region Game search actions
 
 function queryGamesReducer(state: AppState, action: CustomAction) : AppState {
-    switch (action.status) {
-        case ActionStatus.Pending: {
-            const da = <DataAction<GamesQuery>>action;
-            const newState = {...state};
-            newState.gamesQuery = {
-                queryPending: true,
-                query: da.data,
-                results: null
-            };
-            return newState;
-        }
-
-        case ActionStatus.Success: {
-            const da = <DataAction<Game[]>>action;
-            const newState = {...state};
-            newState.gamesQuery = {
-                queryPending: false,
-                query: state.gamesQuery.query,
-                results: da.data
-            };
-            return newState;
-        }
-
-        default:
-            throw "Unsupported case: " + action.status;
-    }
+    const da = <DataAction<Game[]>>action;
+    const newState = {...state};
+    newState.gamesQuery = {
+        query: state.gamesQuery.query,
+        results: da.data
+    };
+    return newState;
 }
 
 function updateGamesQueryReducer(state: AppState, action: CustomAction) : AppState {
-    switch (action.status) {
-        case ActionStatus.Success: {
-            const da = <DataAction<GamesQuery>>action;
-            const newState = {...state};
-            newState.gamesQuery = {...state.gamesQuery};
-            newState.gamesQuery.query = da.data;
-            return newState;
-        }
-        default:
-            throw "Unsupported case: " + action.status;
-    }
+    const da = <DataAction<GamesQuery>>action;
+    const newState = {...state};
+    newState.gamesQuery = {...state.gamesQuery};
+    newState.gamesQuery.query = da.data;
+    return newState;
 }
 //#endregion
 
 //#region Game creation actions
 
 function updateCreateGameFormReducer(state: AppState, action : CustomAction) : AppState {
-    switch (action.status) {
-        case ActionStatus.Success: {
-            const da = <DataAction<GameParameters>>action;
-            const newState = {...state};
-            newState.createGameForm = {...state.createGameForm};
-            newState.createGameForm.parameters = da.data;
-            return newState;
-        }
-        default:
-            throw "Unsupported case: " + action.status;
-    }
+    const da = <DataAction<GameParameters>>action;
+    const newState = {...state};
+    newState.createGameForm = {...state.createGameForm};
+    newState.createGameForm.parameters = da.data;
+    return newState;
 }
 
 function createGameReducer(state: AppState, action : CustomAction) : AppState {
-    switch (action.status) {
-        case ActionStatus.Pending: {
-            const newState = {...state};
-            newState.createGameForm = {...state.createGameForm};
-            newState.createGameForm.createGamePending = true;
-            return newState;
-        }
-
-        case ActionStatus.Success: {
-            const da = <DataAction<Game>>action;
-            const newState = {...state};
-            newState.createGameForm = {...state.createGameForm};
-            newState.createGameForm.createGamePending = false;
-            newState.activeGame = StateFactory.defaultActiveGameState();
-            newState.activeGame.game = da.data;
-            return newState;
-        }
-
-        default:
-            throw "Unsupported case: " + action.status;
-    }
+    const da = <DataAction<Game>>action;
+    const newState = {...state};
+    newState.createGameForm = {...state.createGameForm};
+    newState.activeGame = StateFactory.defaultActiveGameState();
+    newState.activeGame.game = da.data;
+    return newState;
 }
 //#endregion
 
 //#region Game actions
 
 function loadGameReducer(state: AppState, action: CustomAction) : AppState {
-    switch (action.status) {
-        case ActionStatus.Pending: {
-            const newState = {...state};
-            newState.activeGame = StateFactory.defaultActiveGameState();
-            newState.activeGame.loadGamePending = true;
-            return newState;
-        }
-        case ActionStatus.Success: {
-            const da = <DataAction<Game>>action;
-            const newState = {...state};
-            newState.activeGame = StateFactory.defaultActiveGameState();
-            newState.activeGame.game = da.data;
-            updateBoardView(newState, da.data);
-            return newState;
-        }
-        default:
-            throw "Unsupported case: " + action.status;
-    }
+    const da = <DataAction<Game>>action;
+    const newState = {...state};
+    newState.activeGame = StateFactory.defaultActiveGameState();
+    newState.activeGame.game = da.data;
+    updateBoardView(newState, da.data);
+    return newState;
 }
 
 function loadBoardReducer(state: AppState, action: CustomAction) : AppState {
-    switch (action.status) {
-        case ActionStatus.Pending: {
-            const newState = {...state};
-            newState.boards = {...state.boards};
-            newState.boards.loadBoardPending = true;
-            return newState;
-        }
-        case ActionStatus.Success: {
-            const da = <DataAction<Board>>action;
-            const newState = {...state};
-            newState.boards = {...state.boards};
-            newState.boards.loadBoardPending = false;
-            const boards = new Map<number, Board>(state.boards.boards);
-            boards.set(da.data.regionCount, da.data);
-            newState.boards.boards = boards;
-            updateBoardView(newState, state.activeGame.game);
-            return newState;
-        }
-        default:
-            throw "Unsupported case: " + action.status;
-    }
+    const da = <DataAction<Board>>action;
+    const newState = {...state};
+    newState.boards = {...state.boards};
+    const boards = new Map<number, Board>(state.boards.boards);
+    boards.set(da.data.regionCount, da.data);
+    newState.boards.boards = boards;
+    updateBoardView(newState, state.activeGame.game);
+    return newState;
 }
 
 function loadGameHistoryReducer(state: AppState, action: CustomAction) : AppState {
-    switch (action.status) {
-        case ActionStatus.Pending: {
-            const newState = {...state};
-            newState.activeGame = {...state.activeGame};
-            newState.activeGame.loadHistoryPending = true;
-            return newState;
-        }
-        case ActionStatus.Success: {
-            const da = <DataAction<Event[]>>action;
-            const newState = {...state};
-            newState.activeGame = {...state.activeGame};
-            newState.activeGame.loadHistoryPending = false;
-            newState.activeGame.history = da.data;
-            return newState;
-        }
-        default:
-            throw "Unsupported case: " + action.status;
-    }
+    const da = <DataAction<Event[]>>action;
+    const newState = {...state};
+    newState.activeGame = {...state.activeGame};
+    newState.activeGame.history = da.data;
+    return newState;
 }
 
 function addPlayerReducer(state: AppState, action : CustomAction) : AppState {
-    switch (action.status) {
-        case ActionStatus.Pending: {
-            const newState = {...state};
-            newState.activeGame = {...state.activeGame};
-            newState.activeGame.addPlayerPending = true;
-            return newState;
-        }
-        case ActionStatus.Success: {
-            const da = <DataAction<Game>>action;
-            const newState = {...state};
-            newState.activeGame = {...state.activeGame};
-            newState.activeGame.addPlayerPending = false;
-            newState.activeGame.game = da.data;
-            return newState;
-        }
-        default:
-            throw "Unsupported case: " + action.status;
-    }
+    const da = <DataAction<Game>>action;
+    const newState = {...state};
+    newState.activeGame = {...state.activeGame};
+    newState.activeGame.game = da.data;
+    return newState;
 }
 
 function removePlayerReducer(state: AppState, action: CustomAction) : AppState {
-    switch (action.status) {
-        case ActionStatus.Pending: {
-            const newState = {...state};
-            newState.activeGame = {...state.activeGame};
-            newState.activeGame.removePlayerPending = true;
-            return newState;
-        }
-        case ActionStatus.Success: {
-            const da = <DataAction<Game>>action;
-            const newState = {...state};
-            newState.activeGame = {...state.activeGame};
-            newState.activeGame.removePlayerPending = false;
-            newState.activeGame.game = da.data;
-            return newState;
-        }
-        default:
-            throw "Unsupported case: " + action.status;
-    }
+    const da = <DataAction<Game>>action;
+    const newState = {...state};
+    newState.activeGame = {...state.activeGame};
+    newState.activeGame.game = da.data;
+    return newState;
 }
 
 function startGameReducer(state: AppState, action: CustomAction) : AppState {
-    switch (action.status) {
-        case ActionStatus.Pending: {
-            const newState = {...state};
-            newState.activeGame = {...state.activeGame};
-            newState.activeGame.startGamePending = true;
-            return newState;
-        }
-        case ActionStatus.Success: {
-            const da = <DataAction<Game>>action;
-            const newState = {...state};
-            newState.activeGame = {...state.activeGame};
-            newState.activeGame.startGamePending = false;
-            newState.activeGame.game = da.data;
-            updateBoardView(newState, da.data);
-            return newState;
-        }
-        default:
-            throw "Unsupported case: " + action.status;
-    }
+    const da = <DataAction<Game>>action;
+    const newState = {...state};
+    newState.activeGame = {...state.activeGame};
+    newState.activeGame.game = da.data;
+    updateBoardView(newState, da.data);
+    return newState;
 }
 
 function selectCellReducer(state: AppState, action: CustomAction) : AppState {
-    switch (action.status) {
-        case ActionStatus.Pending: {
-            const newState = {...state};
-            newState.activeGame = {...state.activeGame};
-            newState.activeGame.selectionPending = true;
-            return newState;
-        }
-        case ActionStatus.Success: {
-            const da = <DataAction<Game>>action;
-            const newState = {...state};
-            newState.activeGame = {...state.activeGame};
-            newState.activeGame.selectionPending = false;
-            newState.activeGame.game = da.data;
-            updateBoardView(newState, da.data);
-            return newState;
-        }
-        default:
-            throw "Unsupported case: " + action.status;
-    }
+    const da = <DataAction<Game>>action;
+    const newState = {...state};
+    newState.activeGame = {...state.activeGame};
+    newState.activeGame.game = da.data;
+    updateBoardView(newState, da.data);
+    return newState;
 }
 
 function endTurnReducer(state: AppState, action: CustomAction) : AppState {
-    switch (action.status) {
-        case ActionStatus.Pending: {
-            const newState = {...state};
-            newState.activeGame = {...state.activeGame};
-            newState.activeGame.endTurnPending = true;
-            return newState;
-        }
-        case ActionStatus.Success: {
-            const da = <DataAction<Game>>action;
-            const newState = {...state};
-            newState.activeGame = {...state.activeGame};
-            newState.activeGame.endTurnPending = false;
-            newState.activeGame.game = da.data;
-            updateBoardView(newState, da.data);
-            return newState;
-        }
-        default:
-            throw "Unsupported case: " + action.status;
-    }
+    const da = <DataAction<Game>>action;
+    const newState = {...state};
+    newState.activeGame = {...state.activeGame};
+    newState.activeGame.game = da.data;
+    updateBoardView(newState, da.data);
+    return newState;
 }
 
 function resetTurnReducer(state: AppState, action: CustomAction) : AppState {
-    switch (action.status) {
-        case ActionStatus.Pending: {
-            const newState = {...state};
-            newState.activeGame = {...state.activeGame};
-            newState.activeGame.resetTurnPending = true;
-            return newState;
-        }
-        case ActionStatus.Success: {
-            const da = <DataAction<Game>>action;
-            const newState = {...state};
-            newState.activeGame = {...state.activeGame};
-            newState.activeGame.resetTurnPending = false;
-            newState.activeGame.game = da.data;
-            updateBoardView(newState, da.data);
-            return newState;
-        }
-        default:
-            throw "Unsupported case: " + action.status;
-    }
+    const da = <DataAction<Game>>action;
+    const newState = {...state};
+    newState.activeGame = {...state.activeGame};
+    newState.activeGame.game = da.data;
+    updateBoardView(newState, da.data);
+    return newState;
 }
 
 function changePlayerStatusReducer(state: AppState, action: CustomAction) : AppState {
-    switch (action.status) {
-        case ActionStatus.Pending: {
-            const newState = {...state};
-            newState.activeGame = {...state.activeGame};
-            newState.activeGame.playerStatusChangePending = true;
-            return newState;
-        }
-        case ActionStatus.Success: {
-            const da = <DataAction<Game>>action;
-            const newState = {...state};
-            newState.activeGame = {...state.activeGame};
-            newState.activeGame.playerStatusChangePending = false;
-            newState.activeGame.game = da.data;
-            updateBoardView(newState, da.data);
-            return newState;
-        }
-        default:
-            throw "Unsupported case: " + action.status;
-    }
+    const da = <DataAction<Game>>action;
+    const newState = {...state};
+    newState.activeGame = {...state.activeGame};
+    newState.activeGame.game = da.data;
+    updateBoardView(newState, da.data);
+    return newState;
 }
 
 function updateBoardView(state : AppState, game : Game) : void {
@@ -495,63 +263,39 @@ function updateBoardView(state : AppState, game : Game) : void {
 //#endregion
 
 function setNavigationOptionsReducer(state: AppState, action: CustomAction) : AppState {
-    switch (action.status) {
-        case ActionStatus.Success: {
-            const da = <DataAction<NavigationState>>action;
-            const newState = {...state};
-            newState.navigation = da.data;
-            return newState;
-        }
-        default:
-            throw "Unsupported case: " + action.status;
-    }
+    const da = <DataAction<NavigationState>>action;
+    const newState = {...state};
+    newState.navigation = da.data;
+    return newState;
 }
 
 function boardZoomReducer(state: AppState, action: CustomAction) : AppState {
-    switch (action.status) {
-        case ActionStatus.Success: {
-            const da = <DataAction<number>>action;
-            const newState = {...state};
-            newState.display = {...state.display};
-            newState.display.boardZoomLevel = da.data;
-            updateBoardView(newState, state.activeGame.game);
-            return newState;
-        }
-        default:
-            throw "Unsupported case: " + action.status;
-    }
+    const da = <DataAction<number>>action;
+    const newState = {...state};
+    newState.display = {...state.display};
+    newState.display.boardZoomLevel = da.data;
+    updateBoardView(newState, state.activeGame.game);
+    return newState;
 }
 
 function boardScrollReducer(state: AppState, action: CustomAction) : AppState {
-    switch (action.status) {
-        case ActionStatus.Success: {
-            const da = <DataAction<Point>>action;
-            const newState = {...state};
-            newState.display = {...state.display};
-            newState.display.boardScrollPercent = da.data;
-            updateBoardView(newState, state.activeGame.game);
-            return newState;
-        }
-        default:
-            throw "Unsupported case: " + action.status;
-    }
+    const da = <DataAction<Point>>action;
+    const newState = {...state};
+    newState.display = {...state.display};
+    newState.display.boardScrollPercent = da.data;
+    updateBoardView(newState, state.activeGame.game);
+    return newState;
 }
 
 function loadPieceImageReducer(state : AppState, action : CustomAction) : AppState {
-    switch (action.status) {
-        case ActionStatus.Success:
-            const da = <DataAction<[PieceKind, HTMLImageElement]>>action;
-            const [kind, image] = da.data;
-            const newState = {...state};
-            newState.images = {...state.images};
-            const pieces = new Map<PieceKind, HTMLImageElement>(state.images.pieces);
-            pieces.set(kind, image);
-            newState.images.pieces = pieces;
-            return newState;
-
-        default:
-            throw "Unsupported case: " + action.status;
-    }
+    const da = <DataAction<[PieceKind, HTMLImageElement]>>action;
+    const [kind, image] = da.data;
+    const newState = {...state};
+    newState.images = {...state.images};
+    const pieces = new Map<PieceKind, HTMLImageElement>(state.images.pieces);
+    pieces.set(kind, image);
+    newState.images.pieces = pieces;
+    return newState;
 }
 
 function apiRequestReducer(state : AppState, action : CustomAction) : AppState {

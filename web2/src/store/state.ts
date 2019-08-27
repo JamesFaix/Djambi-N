@@ -16,37 +16,22 @@ export interface AppState {
 }
 
 export interface SessionState {
-    user : User,
-    signupPending : boolean,
-    loginPending : boolean,
-    logoutPending : boolean,
-    restoreSessionPending : boolean
+    user : User
 }
 
 export interface ActiveGameState {
-    loadGamePending : boolean,
-    loadHistoryPending : boolean,
-    addPlayerPending : boolean,
-    removePlayerPending : boolean,
-    startGamePending : boolean,
-    selectionPending : boolean,
-    endTurnPending : boolean,
-    resetTurnPending : boolean,
-    playerStatusChangePending : boolean,
     game : Game,
     history : Event[],
-    boardView : BoardView,
+    boardView : BoardView
 }
 
 export interface GamesQueryState {
     query : GamesQuery,
-    results : Game[],
-    queryPending : boolean
+    results : Game[]
 }
 
 export interface CreateGameFormState {
-    parameters : GameParameters,
-    createGamePending : boolean
+    parameters : GameParameters
 }
 
 export interface NavigationState {
@@ -60,7 +45,6 @@ export interface NavigationState {
 }
 
 export interface BoardsState {
-    loadBoardPending : boolean,
     boards : Map<number, Board>
 }
 
@@ -83,11 +67,7 @@ export interface ApiClientState {
 export class StateFactory {
     static defaultSesssionState() : SessionState {
         return {
-            user: null,
-            loginPending: false,
-            logoutPending: false,
-            signupPending: false,
-            restoreSessionPending: false
+            user: null
         };
     }
 
@@ -95,15 +75,6 @@ export class StateFactory {
         return {
             game: null,
             history: null,
-            loadGamePending: false,
-            loadHistoryPending: false,
-            addPlayerPending: false,
-            removePlayerPending: false,
-            startGamePending: false,
-            selectionPending: false,
-            endTurnPending: false,
-            resetTurnPending: false,
-            playerStatusChangePending: false,
             boardView: null
         };
     }
@@ -111,15 +82,13 @@ export class StateFactory {
     static defaultGamesQueryState() : GamesQueryState {
         return {
             query: ModelFactory.emptyGamesQuery(),
-            results: [],
-            queryPending: false
+            results: []
         };
     }
 
     static defaultCreateGameFormState() : CreateGameFormState {
         return {
-            parameters: ModelFactory.defaultGameParameters(),
-            createGamePending: false
+            parameters: ModelFactory.defaultGameParameters()
         };
     }
 
@@ -129,7 +98,6 @@ export class StateFactory {
 
     static defaultBoardsState() : BoardsState {
         return {
-            loadBoardPending: false,
             boards: new Map<number, Board>()
         };
     }
