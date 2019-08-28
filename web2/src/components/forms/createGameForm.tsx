@@ -23,9 +23,7 @@ class createGameForm extends React.Component<CreateGameFormProps> {
                 <table className={Classes.borderlessTable}>
                     <tbody>
                         <tr>
-                            <td>
-                                Region count
-                            </td>
+                            <td>Region count</td>
                             <td>
                                 <input
                                     type="number"
@@ -37,9 +35,7 @@ class createGameForm extends React.Component<CreateGameFormProps> {
                             </td>
                         </tr>
                         <tr>
-                            <td>
-                                Allow guests
-                            </td>
+                            <td>Allow guests</td>
                             <td>
                                 <input
                                     type="checkbox"
@@ -49,9 +45,7 @@ class createGameForm extends React.Component<CreateGameFormProps> {
                             </td>
                         </tr>
                         <tr>
-                            <td>
-                                Public
-                            </td>
+                            <td>Public</td>
                             <td>
                                 <input
                                     type="checkbox"
@@ -61,9 +55,7 @@ class createGameForm extends React.Component<CreateGameFormProps> {
                             </td>
                         </tr>
                         <tr>
-                            <td>
-                                Description
-                            </td>
+                            <td>Description</td>
                             <td>
                                 <input
                                     type="text"

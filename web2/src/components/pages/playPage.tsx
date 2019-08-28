@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Game } from '../../api/model';
 import { State } from '../../store/root';
-import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
 import RedirectToLobbyIfGameNotInProgress from '../utilities/redirectToLobbyIfGameNotInProgress';
@@ -45,12 +44,6 @@ const mapStateToProps = (state : State) => {
     };
 }
 
-const mapDispatchToProps = (dispatch : Dispatch) => {
-    return {
-
-    };
-}
-
-const PlayPage = connect(mapStateToProps, mapDispatchToProps)(playPage);
+const PlayPage = connect(mapStateToProps)(playPage);
 
 export default PlayPage;

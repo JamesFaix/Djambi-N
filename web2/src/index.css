@@ -53,6 +53,15 @@ p {
     align-items: center;
 }
 
+.narrowContainer {
+    width: 500px;
+}
+
+.containerSize {
+    width: 100%;
+    height: 100%;
+}
+
 .verticalSpacerLarge {
     height: 20px;
 }
@@ -65,6 +74,14 @@ p {
     border-style: none;
 }
 
+.centered {
+    text-align: center;
+}
+
+.indented {
+    margin-left: 10px;
+}
+
 .box {
     border-style: solid;
     border-width: 1;
@@ -75,6 +92,12 @@ p {
 .iconButton {
     color: black;
     background-color: white;
+}
+
+.thinBorder {
+    border-style: solid;
+    border-width: thin;
+    border-color: gainsboro;
 }
 
 .iconButton:hover {

@@ -80,7 +80,7 @@ class currentTurnSection extends React.Component<CurrentTurnSectionProps> {
             <div>
                 Pending turn:
                 <br/>
-                <div style={{marginLeft: "10px"}}>
+                <div className={Classes.indented}>
                     {descriptions}
                     {this.renderEllipsisIfSelectionRequired(turn)}
                 </div>

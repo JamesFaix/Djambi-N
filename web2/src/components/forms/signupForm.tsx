@@ -39,9 +39,7 @@ class signupForm extends React.Component<SignupFormProps, SignupFormState> {
                 <table>
                     <tbody>
                         <tr>
-                            <td>
-                                Username
-                            </td>
+                            <td>Username</td>
                             <td>
                                 <input
                                     type="text"
@@ -52,9 +50,7 @@ class signupForm extends React.Component<SignupFormProps, SignupFormState> {
                             </td>
                         </tr>
                         <tr>
-                            <td>
-                                Password
-                            </td>
+                            <td>Password</td>
                             <td>
                                 <input
                                     type="password"

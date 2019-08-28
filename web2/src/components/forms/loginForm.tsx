@@ -39,9 +39,7 @@ class loginForm extends React.Component<LoginFormProps, LoginFormState> {
                 <table className={Classes.borderlessTable}>
                     <tbody>
                         <tr>
-                            <td>
-                                Username
-                            </td>
+                            <td>Username</td>
                             <td>
                                 <input
                                     type="text"
@@ -52,9 +50,7 @@ class loginForm extends React.Component<LoginFormProps, LoginFormState> {
                             </td>
                         </tr>
                         <tr>
-                            <td>
-                                Password
-                            </td>
+                            <td>Password</td>
                             <td>
                                 <input
                                     type="password"

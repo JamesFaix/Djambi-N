@@ -4,6 +4,7 @@ import { State } from '../../store/root';
 import { connect } from 'react-redux';
 import GameHistoryEventBox from './gameHistoryEventBox';
 import { PlayHeader } from '../controls/headers';
+import { Styles } from '../../styles/styles';
 
 interface GameHistorySectionProps {
     game : Game,
@@ -16,13 +17,8 @@ class gameHistorySection extends React.Component<GameHistorySectionProps> {
             return null;
         }
 
-        const style : React.CSSProperties = {
-            display: "flex",
-            flexDirection: "column",
-        };
-
         return (
-            <div style={style}>
+            <div style={Styles.historyContainer}>
                 <PlayHeader text="History"/>
                 {
                     this.props.history.map((e, i) => {

@@ -2,27 +2,21 @@ import * as React from 'react';
 import TitleSection from './titleSection';
 import UserSection from './userSection';
 import NavigationSection from './navigationSection';
+import { Classes, Styles } from '../../styles/styles';
 
 const TopBar : React.SFC<{}> = _ => {
-    const style = {
-        height: "50px",
-        borderStyle: "solid",
-        borderWidth: "thin",
-        borderColor: "gainsboro",
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center"
-    };
-
     return (
-        <div style={style}>
-            <div style={{flex:1, textAlign:"left"}}>
+        <div
+            className={Classes.thinBorder}
+            style={Styles.topBar}
+        >
+            <div style={Styles.topBarNavigation}>
                 <NavigationSection/>
             </div>
-            <div style={{flex:1, textAlign:"center"}}>
+            <div style={Styles.topBarTitle}>
                 <TitleSection/>
             </div>
-            <div style={{flex:1, textAlign:"right"}}>
+            <div style={Styles.topBarUser}>
                 <UserSection/>
             </div>
         </div>

@@ -26,7 +26,7 @@ export default class GameHistoryEventBox extends React.Component<GameHistoryEven
                 {`Event ${e.id} - ${e.createdBy.time}`}<br/>
                 {`${agentName} did a ${e.kind}.`}<br/>
                 Effects:<br/>
-                <div style={{marginLeft:"10px"}}>
+                <div className={Classes.indented}>
                     {e.effects.map((f, i) => {
                         return (
                             <GameHistoryEffectBox

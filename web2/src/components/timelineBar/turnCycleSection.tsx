@@ -4,6 +4,7 @@ import TurnCycleTurnBox from './turnCycleTurnBox';
 import { State } from '../../store/root';
 import { connect } from 'react-redux';
 import { PlayHeader } from '../controls/headers';
+import { Styles } from '../../styles/styles';
 
 interface TurnCycleSectionProps {
     game: Game
@@ -16,13 +17,10 @@ class turnCycleSection extends React.Component<TurnCycleSectionProps> {
         }
 
         const players = this.getTurnCyclePlayers();
-        const style = {
-            display: "flex"
-        };
         return (
             <div>
                 <PlayHeader text="Turn cycle"/>
-                <div style={style}>
+                <div style={Styles.turnCycleSection}>
                     {players.map((p, i) => {
                         return <TurnCycleTurnBox player={p} key={i}/>;
                     })}

@@ -27,9 +27,7 @@ class gamesSearchForm extends React.Component<GamesSearchFormProps> {
                 <table className={Classes.borderlessTable}>
                     <tbody>
                         <tr>
-                            <td>
-                                Description
-                            </td>
+                            <td>Description</td>
                             <td>
                                 <input
                                     type="text"
@@ -37,9 +35,7 @@ class gamesSearchForm extends React.Component<GamesSearchFormProps> {
                                     onChange={e => this.onChangeDescription(e)}
                                 />
                             </td>
-                            <td>
-                                Is public
-                            </td>
+                            <td>Is public</td>
                             <td>
                                 <TristateDropdown
                                     name={"IsPublic"}
@@ -49,9 +45,7 @@ class gamesSearchForm extends React.Component<GamesSearchFormProps> {
                             </td>
                         </tr>
                         <tr>
-                            <td>
-                                Created by user
-                            </td>
+                            <td>Created by user</td>
                             <td>
                                 <input
                                     type="text"
@@ -59,9 +53,7 @@ class gamesSearchForm extends React.Component<GamesSearchFormProps> {
                                     onChange={e => this.onChangeCreatedBy(e)}
                                 />
                             </td>
-                            <td>
-                                Allow guests
-                            </td>
+                            <td>Allow guests</td>
                             <td>
                                 <TristateDropdown
                                     name={"AllowGuests"}
@@ -71,9 +63,7 @@ class gamesSearchForm extends React.Component<GamesSearchFormProps> {
                             </td>
                         </tr>
                         <tr>
-                            <td>
-                                Contains user
-                            </td>
+                            <td>Contains user</td>
                             <td>
                                 <input
                                     type="text"
@@ -81,9 +71,7 @@ class gamesSearchForm extends React.Component<GamesSearchFormProps> {
                                     onChange={e => this.onChangePlayerUserName(e)}
                                 />
                             </td>
-                            <td>
-                                Status
-                            </td>
+                            <td>Status</td>
                             <td>
                                 <EnumDropdown
                                     name={"Status"}
@@ -94,9 +82,7 @@ class gamesSearchForm extends React.Component<GamesSearchFormProps> {
                             </td>
                         </tr>
                         <tr>
-                            <td>
-                                GameId
-                            </td>
+                            <td>GameId</td>
                             <td>
                                 <input
                                     style={{width:"50px"}}

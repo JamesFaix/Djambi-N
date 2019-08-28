@@ -27,19 +27,27 @@ const gameParametersTable : React.SFC<GameParametersTableProps> = props => {
                     </tr>
                     <tr>
                         <td>Regions</td>
-                        <td style={{textAlign:"center"}}>{props.parameters.regionCount}</td>
+                        <td className={Classes.centered}>
+                            {props.parameters.regionCount}
+                        </td>
                     </tr>
                     <tr>
                         <td>Allow guests</td>
-                        <td style={{textAlign:"center"}}>{boolToYesOrNo(props.parameters.allowGuests)}</td>
+                        <td className={Classes.centered}>
+                            {boolToYesOrNo(props.parameters.allowGuests)}
+                        </td>
                     </tr>
                     <tr>
                         <td>Public</td>
-                        <td style={{textAlign:"center"}}>{boolToYesOrNo(props.parameters.isPublic)}</td>
+                        <td className={Classes.centered}>
+                            {boolToYesOrNo(props.parameters.isPublic)}
+                        </td>
                     </tr>
                     <tr>
                         <td>Status</td>
-                        <td style={{textAlign:"center"}}>{props.status}</td>
+                        <td className={Classes.centered}>
+                            {props.status}
+                        </td>
                     </tr>
                 </tbody>
             </table>

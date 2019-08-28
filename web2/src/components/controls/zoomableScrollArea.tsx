@@ -7,7 +7,6 @@ import { Point } from '../../viewModel/board/model';
 interface ZoomableScrollAreaProps {
     size : Point,
     innerStyle : React.CSSProperties,
-    outerStyle : React.CSSProperties,
     zoomLevel : number,
     scrollPercent : Point,
     onScroll : (scrollPercent : Point) => void,
@@ -17,7 +16,7 @@ interface ZoomableScrollAreaProps {
 export default class ZoomableScrollArea extends React.Component<ZoomableScrollAreaProps> {
     render() {
         return (
-            <div style={this.props.outerStyle}>
+            <React.Fragment>
                 <Scrollbars
                     ref='scrollbar'
                     onScrollFrame={e => this.onScroll(e)}
@@ -29,7 +28,7 @@ export default class ZoomableScrollArea extends React.Component<ZoomableScrollAr
                     level={this.props.zoomLevel}
                     changeLevel={level => this.onZoom(level)}
                 />
-            </div>
+            </React.Fragment>
         );
     }
 

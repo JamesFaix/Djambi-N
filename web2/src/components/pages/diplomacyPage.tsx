@@ -25,7 +25,7 @@ export default class DiplomacyPage extends React.Component<{}>{
                 <SetNavigationOptions options={navOptions}/>
                 <DiplomacyPlayersTable/>
                 <br/>
-                <div style={{width:"500px"}}>
+                <div className={Classes.narrowContainer}>
                     <p>
                         If a player concedes (<FontAwesomeIcon icon={Icons.playerStatusConceded}/>),
                         they are removed from the turn cycle and all their pieces are abandoned. This cannot be undone.

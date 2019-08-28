@@ -9,6 +9,8 @@ import { PieceKind } from '../../api/model';
 import * as Images from '../../utilities/images';
 import BoardArea from './boardArea';
 import ApiActions from '../../apiActions';
+import { Classes } from '../../styles/styles';
+import Colors from '../../utilities/colors';
 
 export interface BoardSectionProps {
     gameId : number,
@@ -35,24 +37,17 @@ class boardSection extends React.Component<BoardSectionProps> {
         const boardStyle : CanvasBoardStyle = {
             width: internalSize.x,
             height: internalSize.y,
-            strokeWidth: 5, //5 maybe put in settings somewhere
-            strokeColor: "black", //pull from Colors module
+            strokeWidth: 5, //TODO: maybe put in settings somewhere
+            strokeColor: Colors.getBoardBorderColor(),
             scale: CanvasTransformService.getScale(this.props.transformData)
         };
 
         return (
-            <div>
+            <div className={`${Classes.pageContainer} ${Classes.containerSize}`}>
                 <BoardArea
                     innerStyle={{
                         width:"1000px",
                         height:"1000px"
-                    }}
-                    outerStyle={{
-                        width:"100%",
-                        height:"100%",
-                        display:"flex",
-                        flexDirection:"column",
-                        alignItems:"center"
                     }}
                 >
                     <CanvasBoard

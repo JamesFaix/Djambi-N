@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { Seat } from '../../viewModel/lobbySeats';
 import * as LobbySeats from '../../viewModel/lobbySeats';
-import { User, CreatePlayerRequest, PlayerKind, Game, GameStatus } from '../../api/model';
-import Colors from '../../utilities/colors';
+import { User, CreatePlayerRequest, PlayerKind, Game } from '../../api/model';
 import IconButton from '../controls/iconButton';
 import Icons from '../../utilities/icons';
 import PlayerNoteIcon from '../controls/playerNoteIcon';
@@ -19,18 +18,10 @@ export default class MutablePlayersTableRow extends React.Component<MutablePlaye
     render() {
         const seat = this.props.seat;
 
-        const style : React.CSSProperties = {};
-
-        if (seat.player && seat.player.colorId) {
-            const color = Colors.getColorFromPlayerColorId(seat.player.colorId);
-            style.boxShadow = `inset 0 0 0 3px ${color}`;
-        }
-
         switch (seat.action) {
             case LobbySeats.SeatActionType.None:
                 return (
                     <NoActionRow
-                        style={style}
                         game={this.props.game}
                         user={this.props.currentUser}
                         seat={seat}
@@ -40,7 +31,6 @@ export default class MutablePlayersTableRow extends React.Component<MutablePlaye
             case LobbySeats.SeatActionType.Join:
                 return (
                     <JoinRow
-                        style={style}
                         game={this.props.game}
                         user={this.props.currentUser}
                         addPlayer={this.props.addPlayer}
@@ -50,7 +40,6 @@ export default class MutablePlayersTableRow extends React.Component<MutablePlaye
             case LobbySeats.SeatActionType.AddGuest:
                 return (
                     <AddGuestRow
-                        style={style}
                         game={this.props.game}
                         user={this.props.currentUser}
                         addPlayer={this.props.addPlayer}
@@ -60,7 +49,6 @@ export default class MutablePlayersTableRow extends React.Component<MutablePlaye
             case LobbySeats.SeatActionType.Remove:
                 return (
                     <RemoveRow
-                        style={style}
                         game={this.props.game}
                         user={this.props.currentUser}
                         seat={seat}
@@ -75,7 +63,6 @@ export default class MutablePlayersTableRow extends React.Component<MutablePlaye
 }
 
 interface RowPropsBase {
-    style : React.CSSProperties,
     game : Game,
     user : User
 }
@@ -89,18 +76,16 @@ interface JoinRowProps extends RowPropsBase {
 class JoinRow extends React.Component<JoinRowProps> {
     render() {
         return (
-            <tr style={this.props.style}>
+            <tr>
                 <td>(Empty)</td>
                 <td></td>
-                {this.props.game.status === GameStatus.Pending ?
-                    <td>
-                        <IconButton
-                            title="Join"
-                            icon={Icons.join}
-                            onClick={() => this.onClick()}
-                        />
-                    </td>
-                : null}
+                <td>
+                    <IconButton
+                        title="Join"
+                        icon={Icons.join}
+                        onClick={() => this.onClick()}
+                    />
+                </td>
             </tr>
         );
     }
@@ -137,7 +122,7 @@ class AddGuestRow extends React.Component<AddGuestRowProps, AddGuestRowState> {
 
     render() {
         return (
-            <tr style={this.props.style}>
+            <tr>
                 <td>
                     <input
                         type="text"
@@ -146,15 +131,13 @@ class AddGuestRow extends React.Component<AddGuestRowProps, AddGuestRowState> {
                     />
                 </td>
                 <td></td>
-                {this.props.game.status === GameStatus.Pending ?
-                    <td>
-                        <IconButton
-                            title="Add guest"
-                            icon={Icons.addGuest}
-                            onClick={() => this.onClick()}
-                        />
-                    </td>
-                : null}
+                <td>
+                    <IconButton
+                        title="Add guest"
+                        icon={Icons.addGuest}
+                        onClick={() => this.onClick()}
+                    />
+                </td>
             </tr>
         );
     }
@@ -176,7 +159,6 @@ class AddGuestRow extends React.Component<AddGuestRowProps, AddGuestRowState> {
 //#region Remove
 
 interface RemoveRowProps extends RowPropsBase {
-    game : Game,
     seat : Seat,
     removePlayer : (gameId : number, playerId : number) => void
 }
@@ -185,7 +167,7 @@ class RemoveRow extends React.Component<RemoveRowProps> {
     render() {
         const seat = this.props.seat;
         return (
-            <tr style={this.props.style}>
+            <tr>
                 <td>{seat.player.name}</td>
                 <td>
                     <PlayerNoteIcon
@@ -193,15 +175,13 @@ class RemoveRow extends React.Component<RemoveRowProps> {
                         game={this.props.game}
                     />
                 </td>
-                {this.props.game.status === GameStatus.Pending ?
-                    <td>
-                        <IconButton
-                            title={LobbySeats.isSeatSelf(seat, this.props.user) ? "Quit" : "Remove"}
-                            icon={Icons.quit}
-                            onClick={() => this.props.removePlayer(this.props.game.id, seat.player.id)}
-                        />
-                    </td>
-                : null}
+                <td>
+                    <IconButton
+                        title={LobbySeats.isSeatSelf(seat, this.props.user) ? "Quit" : "Remove"}
+                        icon={Icons.quit}
+                        onClick={() => this.props.removePlayer(this.props.game.id, seat.player.id)}
+                    />
+                </td>
             </tr>
         );
     }
@@ -212,8 +192,7 @@ class RemoveRow extends React.Component<RemoveRowProps> {
 //#region None
 
 interface NoActionRowProps extends RowPropsBase {
-    seat : Seat,
-    game : Game
+    seat : Seat
 }
 
 class NoActionRow extends React.Component<NoActionRowProps> {
@@ -225,7 +204,7 @@ class NoActionRow extends React.Component<NoActionRowProps> {
             : "(Empty)";
 
         return (
-            <tr style={this.props.style}>
+            <tr>
                 <td>{playerName}</td>
                 <td>
                     <PlayerNoteIcon
@@ -233,9 +212,7 @@ class NoActionRow extends React.Component<NoActionRowProps> {
                         game={this.props.game}
                     />
                 </td>
-                {this.props.game.status === GameStatus.Pending ?
-                    <td></td>
-                : null}
+                <td></td>
             </tr>
         );
     }
