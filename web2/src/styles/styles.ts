@@ -1,7 +1,5 @@
 export class Classes {
-    static iconButton(mouseover : boolean) {
-        return mouseover ? "iconButtonMouseover" : "iconButton";
-    }
+    static readonly iconButton = "iconButton";
 
     static readonly pageContainer = "pageContainer";
 
