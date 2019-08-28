@@ -52,6 +52,8 @@
         "awesome-typescript-loader": "^5.2.1",
         "chai": "^4.2.0",
         "css-loader": "^1.0.1",
+        "less": "^3.10.3",
+        "less-loader": "^5.0.0",
         "mocha": "^6.1.4",
         "source-map-loader": "^0.2.4",
         "style-loader": "^0.23.1",
