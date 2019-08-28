@@ -80,10 +80,6 @@ interface RowPropsBase {
     user : User
 }
 
-const cellStyle = {
-    borderStyle: "none"
-}
-
 //#region Join
 
 interface JoinRowProps extends RowPropsBase {
@@ -94,10 +90,10 @@ class JoinRow extends React.Component<JoinRowProps> {
     render() {
         return (
             <tr style={this.props.style}>
-                <td style={cellStyle}>(Empty)</td>
-                <td style={cellStyle}></td>
+                <td>(Empty)</td>
+                <td></td>
                 {this.props.game.status === GameStatus.Pending ?
-                    <td style={cellStyle}>
+                    <td>
                         <IconButton
                             title="Join"
                             icon={Icons.join}
@@ -142,16 +138,16 @@ class AddGuestRow extends React.Component<AddGuestRowProps, AddGuestRowState> {
     render() {
         return (
             <tr style={this.props.style}>
-                <td style={cellStyle}>
+                <td>
                     <input
                         type="text"
                         value={this.state.guestName}
                         onChange={e => this.setState({guestName: e.target.value})}
                     />
                 </td>
-                <td style={cellStyle}></td>
+                <td></td>
                 {this.props.game.status === GameStatus.Pending ?
-                    <td style={cellStyle}>
+                    <td>
                         <IconButton
                             title="Add guest"
                             icon={Icons.addGuest}
@@ -190,15 +186,15 @@ class RemoveRow extends React.Component<RemoveRowProps> {
         const seat = this.props.seat;
         return (
             <tr style={this.props.style}>
-                <td style={cellStyle}>{seat.player.name}</td>
-                <td style={cellStyle}>
+                <td>{seat.player.name}</td>
+                <td>
                     <PlayerNoteIcon
                         player={seat.player}
                         game={this.props.game}
                     />
                 </td>
                 {this.props.game.status === GameStatus.Pending ?
-                    <td style={cellStyle}>
+                    <td>
                         <IconButton
                             title={LobbySeats.isSeatSelf(seat, this.props.user) ? "Quit" : "Remove"}
                             icon={Icons.quit}
@@ -230,15 +226,15 @@ class NoActionRow extends React.Component<NoActionRowProps> {
 
         return (
             <tr style={this.props.style}>
-                <td style={cellStyle}>{playerName}</td>
-                <td style={cellStyle}>
+                <td>{playerName}</td>
+                <td>
                     <PlayerNoteIcon
                         player={seat.player}
                         game={this.props.game}
                     />
                 </td>
                 {this.props.game.status === GameStatus.Pending ?
-                    <td style={cellStyle}></td>
+                    <td></td>
                 : null}
             </tr>
         );

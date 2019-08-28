@@ -1,54 +1,24 @@
 import { CSSProperties } from 'react';
-import Colors from '../utilities/colors';
-
 export default class Styles {
-    static pageContainer() : CSSProperties {
-        return {
-            display: "flex",
-            alignItems: "center",
-            flexDirection: "column"
-        };
-    }
-
-    static pageContainerSpacer() : CSSProperties {
-        return {
-            height: "20px"
-        };
-    }
-
     static smallTopMargin() : CSSProperties {
         return {
             marginTop: "10px"
         };
     }
+}
 
-    static noBorder() : CSSProperties {
-        return {
-            borderStyle: "none"
-        };
+export class Classes {
+    static iconButton(mouseover : boolean) {
+        return mouseover ? "iconButtonMouseover" : "iconButton";
     }
 
-    static playerBoxGlow(playerColorId : number) : CSSProperties {
-        const color = Colors.getColorFromPlayerColorId(playerColorId);
-        return {
-            boxShadow: `inset 0 0 0 3px ${color}`,
-            padding: "5px"
-        };
-    }
+    static readonly pageContainer = "pageContainer";
 
-    static box() : CSSProperties {
-        return {
-            borderStyle:"solid",
-            borderWidth:1,
-            borderColor:"gainsboro",
-            padding: "5px"
-        };
-    }
+    static readonly pageContainerSpacer = "pageContainerSpacer";
 
-    static iconButton(isMouseOver : boolean) : CSSProperties {
-        return {
-            backgroundColor: isMouseOver ? "black" : "white",
-            color: isMouseOver ?  "white" : "black"
-        };
-    }
+    static readonly borderlessTable = "borderlessTable";
+
+    static readonly box = "box";
+
+    static readonly playerBox = "playerBox";
 }

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Game, User, CreatePlayerRequest, GameStatus } from '../../api/model';
+import { Game, User, CreatePlayerRequest } from '../../api/model';
 import * as LobbySeats from '../../viewModel/lobbySeats';
 import { State } from '../../store/root';
 import { Dispatch } from 'redux';
@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import MutablePlayersTableRow from './mutablePlayersTableRow';
 import { SectionHeader } from '../controls/headers';
 import ApiActions from '../../apiActions';
+import { Classes } from '../../styles/styles';
 
 interface MutablePlayersTableProps {
     user : User,
@@ -25,7 +26,7 @@ class mutablePlayersTable extends React.Component<MutablePlayersTableProps> {
         return (
             <div>
                 <SectionHeader text="Players"/>
-                <table>
+                <table className={Classes.borderlessTable}>
                     <tbody>
                         {seats.map((s, i) => {
                             return (<MutablePlayersTableRow
@@ -41,10 +42,6 @@ class mutablePlayersTable extends React.Component<MutablePlayersTableProps> {
                 </table>
             </div>
         );
-    }
-
-    private renderIfPending(element : JSX.Element) : JSX.Element {
-        return this.props.game.status === GameStatus.Pending ? element : null;
     }
 }
 

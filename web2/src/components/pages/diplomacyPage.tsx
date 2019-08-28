@@ -2,7 +2,7 @@ import * as React from 'react';
 import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
 import RedirectToLobbyIfGameNotInProgress from '../utilities/redirectToLobbyIfGameNotInProgress';
 import SetNavigationOptions from '../utilities/setNavigationOptions';
-import Styles from '../../styles/styles';
+import { Classes } from '../../styles/styles';
 import DiplomacyPlayersTable from '../tables/diplomacyPlayersTable';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Icons from '../../utilities/icons';
@@ -19,7 +19,7 @@ export default class DiplomacyPage extends React.Component<{}>{
         };
 
         return (
-            <div style={Styles.pageContainer()}>
+            <div className={Classes.pageContainer}>
                 <RedirectToLoginIfNotLoggedIn/>
                 <RedirectToLobbyIfGameNotInProgress/>
                 <SetNavigationOptions options={navOptions}/>

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Player } from '../../api/model';
-import Styles from '../../styles/styles';
+import { Classes } from '../../styles/styles';
 
 interface TurnCycleTurnBoxProps {
     player : Player
@@ -9,9 +9,11 @@ interface TurnCycleTurnBoxProps {
 export default class TurnCycleTurnBox extends React.Component<TurnCycleTurnBoxProps> {
     render() {
         const p = this.props.player;
-        const style = Styles.playerBoxGlow(p.colorId);
         return (
-            <div style={style}>
+            <div
+                className={Classes.playerBox}
+                data-player-color-id={p.colorId}
+            >
                 {p.name}
             </div>
         );

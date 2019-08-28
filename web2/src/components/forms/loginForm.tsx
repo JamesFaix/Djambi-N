@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { LoginRequest } from '../../api/model';
-import Styles from '../../styles/styles';
+import Styles, { Classes } from '../../styles/styles';
 import { SectionHeader } from '../controls/headers';
 import ApiActions from '../../apiActions';
 
@@ -33,15 +33,15 @@ class loginForm extends React.Component<LoginFormProps, LoginFormState> {
 
     render() {
         return (
-            <div style={Styles.pageContainer()}>
+            <div className={Classes.pageContainer}>
                 <SectionHeader text="Log in"/>
-                <table>
+                <table className={Classes.borderlessTable}>
                     <tbody>
                         <tr>
-                            <td style={Styles.noBorder()}>
+                            <td>
                                 Username
                             </td>
-                            <td style={Styles.noBorder()}>
+                            <td>
                                 <input
                                     type="text"
                                     value={this.state.username}
@@ -51,10 +51,10 @@ class loginForm extends React.Component<LoginFormProps, LoginFormState> {
                             </td>
                         </tr>
                         <tr>
-                            <td style={Styles.noBorder()}>
+                            <td>
                                 Password
                             </td>
-                            <td style={Styles.noBorder()}>
+                            <td>
                                 <input
                                     type="password"
                                     value={this.state.password}

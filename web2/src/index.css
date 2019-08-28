@@ -44,3 +44,84 @@ p {
     margin-block-start: 0;
     margin-block-end: 0;
 }
+
+/* classes */
+
+.pageContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.pageContainerSpacer {
+    height: 20px;
+}
+
+.noBorder {
+    border-style: none;
+}
+
+.box {
+    border-style: solid;
+    border-width: 1;
+    border-color: gainsboro;
+    padding: 5px;
+}
+
+.iconButton {
+    color: black;
+    background-color: white;
+}
+
+.iconButtonMouseover {
+    color: white;
+    background-color: black;
+}
+
+.borderlessTable td {
+    border-style: none;
+}
+
+.borderlessTable th {
+    border-style: none;
+}
+
+.playerBox[data-player-color-id='0'] {
+    box-shadow: inset 0 0 0 3px blue;
+    padding: 5px
+}
+
+.playerBox[data-player-color-id='1'] {
+    box-shadow: inset 0 0 0 3px red;
+    padding: 5px
+}
+
+.playerBox[data-player-color-id='2'] {
+    box-shadow: inset 0 0 0 3px green;
+    padding: 5px
+}
+
+.playerBox[data-player-color-id='3'] {
+    box-shadow: inset 0 0 0 3px orange;
+    padding: 5px
+}
+
+.playerBox[data-player-color-id='4'] {
+    box-shadow: inset 0 0 0 3px brown;
+    padding: 5px
+}
+
+.playerBox[data-player-color-id='5'] {
+    box-shadow: inset 0 0 0 3px teal;
+    padding: 5px
+}
+
+.playerBox[data-player-color-id='6'] {
+    box-shadow: inset 0 0 0 3px magenta;
+    padding: 5px
+}
+
+.playerBox[data-player-color-id='7'] {
+    box-shadow: inset 0 0 0 3px gold;
+    padding: 5px
+}

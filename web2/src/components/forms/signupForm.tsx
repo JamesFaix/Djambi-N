@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { CreateUserRequest } from '../../api/model';
-import Styles from '../../styles/styles';
+import Styles, { Classes } from '../../styles/styles';
 import { SectionHeader } from '../controls/headers';
 import ApiActions from '../../apiActions';
 
@@ -33,15 +33,15 @@ class signupForm extends React.Component<SignupFormProps, SignupFormState> {
 
     render() {
         return (
-            <div style={Styles.pageContainer()}>
+            <div className={Classes.pageContainer}>
                 <SectionHeader text="Enter new account info"/>
                 <table>
                     <tbody>
                         <tr>
-                            <td style={Styles.noBorder()}>
+                            <td>
                                 Username
                             </td>
-                            <td style={Styles.noBorder()}>
+                            <td>
                                 <input
                                     type="text"
                                     value={this.state.username}
@@ -51,10 +51,10 @@ class signupForm extends React.Component<SignupFormProps, SignupFormState> {
                             </td>
                         </tr>
                         <tr>
-                            <td style={Styles.noBorder()}>
+                            <td>
                                 Password
                             </td>
-                            <td style={Styles.noBorder()}>
+                            <td>
                                 <input
                                     type="password"
                                     value={this.state.password}

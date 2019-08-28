@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { PlayHeader } from '../controls/headers';
 import { Game, User, Player, Turn, TurnStatus, Board } from '../../api/model';
-import Colors from '../../utilities/colors';
 import * as Copy from '../../utilities/copy';
 import { State } from '../../store/root';
 import { connect } from 'react-redux';
-import Styles from '../../styles/styles';
+import { Classes } from '../../styles/styles';
 import CurrentTurnActionsBar from './currentTurnActionsBar';
 
 interface CurrentTurnSectionProps {
@@ -43,18 +42,22 @@ class currentTurnSection extends React.Component<CurrentTurnSectionProps> {
     }
 
     private renderForOtherPlayer(player : Player) {
-        const style = Styles.playerBoxGlow(player.colorId);
         return (
-            <div style={style}>
+            <div
+                className={Classes.playerBox}
+                data-player-color-id={player.colorId}
+            >
                 {`Waiting on ${player.name}...`}
             </div>
         );
     }
 
     private renderForCurrentPlayer(player : Player, turn : Turn) {
-        const style = Styles.playerBoxGlow(player.colorId);
         return (
-            <div style={style}>
+            <div
+                className={Classes.playerBox}
+                data-player-color-id={player.colorId}
+            >
                 <p>
                     {player.name},<br/>
                     {Copy.getTurnPrompt(turn)}

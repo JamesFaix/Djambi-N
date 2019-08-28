@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { Game, Player, PlayerStatus, PlayerKind } from '../../api/model';
+import { Game, Player, PlayerKind } from '../../api/model';
 import { State } from '../../store/root';
 import { connect } from 'react-redux';
 import { SectionHeader } from '../controls/headers';
-import Styles from '../../styles/styles';
+import { Classes } from '../../styles/styles';
 import PlayerStatusIcon from '../controls/playerStatusIcon';
 import PlayerNoteIcon from '../controls/playerNoteIcon';
 
@@ -17,7 +17,7 @@ class playersTable extends React.Component<PlayersTableProps> {
         return (
             <div>
                 <SectionHeader text="Players"/>
-                <table>
+                <table className={Classes.borderlessTable}>
                     <tbody>
                         {g.players.map((p, i) =>
                             <PlayerRow
@@ -41,20 +41,18 @@ interface PlayerRowProps {
 class PlayerRow extends React.Component<PlayerRowProps> {
     render() {
         const player = this.props.player;
-        const rowStyle = Styles.playerBoxGlow(player.colorId);
-        const cellStyle = {
-            borderStyle: "none"
-        };
-
         return (
-            <tr style={rowStyle}>
-                <td style={cellStyle}>
+            <tr
+                className={Classes.playerBox}
+                data-player-color-id={player.colorId}
+            >
+                <td>
                     <PlayerName player={player}/>
                 </td>
-                <td style={cellStyle}>
+                <td>
                     <PlayerNoteIcon player={player} game={this.props.game}/>
                 </td>
-                <td style={cellStyle}>
+                <td>
                     <PlayerStatusIcon player={player}/>
                 </td>
             </tr>

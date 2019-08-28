@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Event, Game } from "../../api/model";
 import GameHistoryEffectBox from './gameHistoryEffectBox';
-import Styles from '../../styles/styles';
+import { Classes } from '../../styles/styles';
 
 interface GameHistoryEventBoxProps {
     game : Game, //This will be needed eventually to get the correct player names from playerIDs in event objects
@@ -16,15 +16,13 @@ export default class GameHistoryEventBox extends React.Component<GameHistoryEven
         }
 
         const p = this.props.game.players.find(p => p.id === e.actingPlayerId);
-
-        const borderStyle = p
-            ? Styles.playerBoxGlow(p.colorId)
-            : Styles.box();
-
         const agentName = this.getAgentName();
 
         return (
-            <div style={borderStyle}>
+            <div
+                className={p ? Classes.playerBox : Classes.box}
+                data-player-color-id={p ? p.colorId : null}
+            >
                 {`Event ${e.id} - ${e.createdBy.time}`}<br/>
                 {`${agentName} did a ${e.kind}.`}<br/>
                 Effects:<br/>

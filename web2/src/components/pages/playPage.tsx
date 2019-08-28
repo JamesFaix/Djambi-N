@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
 import RedirectToLobbyIfGameNotInProgress from '../utilities/redirectToLobbyIfGameNotInProgress';
 import SetNavigationOptions from '../utilities/setNavigationOptions';
-import Styles from '../../styles/styles';
+import { Classes } from '../../styles/styles';
 import TimelineBar from '../timelineBar/timelineBar';
 import LoadGameFull from '../utilities/loadGameFull';
 import BoardSection from '../sections/boardSection';
@@ -27,7 +27,7 @@ class playPage extends React.Component<PlayPageProps> {
         };
 
         return (
-            <div style={Styles.pageContainer()}>
+            <div className={Classes.pageContainer}>
                 <RedirectToLoginIfNotLoggedIn/>
                 <RedirectToLobbyIfGameNotInProgress/>
                 <SetNavigationOptions options={navOptions}/>

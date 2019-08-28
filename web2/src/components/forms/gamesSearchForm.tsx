@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import TristateDropdown from '../controls/tristateDropdown';
 import EnumDropdown from '../controls/enumDropdown';
 import { Dispatch } from 'redux';
-import Styles from '../../styles/styles';
+import Styles, { Classes } from '../../styles/styles';
 import { SectionHeader } from '../controls/headers';
 import ApiActions from '../../apiActions';
 import * as StoreGamesQuery from '../../store/gamesQuery';
@@ -21,25 +21,25 @@ class gamesSearchForm extends React.Component<GamesSearchFormProps> {
         const query = this.props.formData;
 
         return (
-            <div style={Styles.pageContainer()}>
+            <div className={Classes.pageContainer}>
                 <SectionHeader text="Search games"/>
-                <table>
+                <table className={Classes.borderlessTable}>
                     <tbody>
                         <tr>
-                            <td style={Styles.noBorder()}>
+                            <td>
                                 Description
                             </td>
-                            <td style={Styles.noBorder()}>
+                            <td>
                                 <input
                                     type="text"
                                     value={this.emptyIfNull(query.descriptionContains)}
                                     onChange={e => this.onChangeDescription(e)}
                                 />
                             </td>
-                            <td style={Styles.noBorder()}>
+                            <td>
                                 Is public
                             </td>
-                            <td style={Styles.noBorder()}>
+                            <td>
                                 <TristateDropdown
                                     name={"IsPublic"}
                                     value={query.isPublic}
@@ -48,20 +48,20 @@ class gamesSearchForm extends React.Component<GamesSearchFormProps> {
                             </td>
                         </tr>
                         <tr>
-                            <td style={Styles.noBorder()}>
+                            <td>
                                 Created by user
                             </td>
-                            <td style={Styles.noBorder()}>
+                            <td>
                                 <input
                                     type="text"
                                     value={this.emptyIfNull(query.createdByUserName)}
                                     onChange={e => this.onChangeCreatedBy(e)}
                                 />
                             </td>
-                            <td style={Styles.noBorder()}>
+                            <td>
                                 Allow guests
                             </td>
-                            <td style={Styles.noBorder()}>
+                            <td>
                                 <TristateDropdown
                                     name={"AllowGuests"}
                                     value={query.allowGuests}
@@ -70,20 +70,20 @@ class gamesSearchForm extends React.Component<GamesSearchFormProps> {
                             </td>
                         </tr>
                         <tr>
-                            <td style={Styles.noBorder()}>
+                            <td>
                                 Contains user
                             </td>
-                            <td style={Styles.noBorder()}>
+                            <td>
                                 <input
                                     type="text"
                                     value={this.emptyIfNull(query.playerUserName)}
                                     onChange={e => this.onChangePlayerUserName(e)}
                                 />
                             </td>
-                            <td style={Styles.noBorder()}>
+                            <td>
                                 Status
                             </td>
-                            <td style={Styles.noBorder()}>
+                            <td>
                                 <EnumDropdown
                                     name={"Status"}
                                     value={query.status}
@@ -93,10 +93,10 @@ class gamesSearchForm extends React.Component<GamesSearchFormProps> {
                             </td>
                         </tr>
                         <tr>
-                            <td style={Styles.noBorder()}>
+                            <td>
                                 GameId
                             </td>
-                            <td style={Styles.noBorder()}>
+                            <td>
                                 <input
                                     style={{width:"50px"}}
                                     type="number"

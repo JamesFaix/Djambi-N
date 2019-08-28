@@ -8,7 +8,7 @@ import { State } from '../../store/root';
 import LoadGame from '../utilities/loadGame';
 import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
 import SetNavigationOptions from '../utilities/setNavigationOptions';
-import Styles from '../../styles/styles';
+import { Classes } from '../../styles/styles';
 import PlayersTable from '../tables/playersTable';
 import ApiActions from '../../apiActions';
 
@@ -29,7 +29,7 @@ class lobbyPage extends React.Component<LobbyPageProps> {
         };
 
         return (
-            <div style={Styles.pageContainer()}>
+            <div className={Classes.pageContainer}>
                 <RedirectToLoginIfNotLoggedIn/>
                 <SetNavigationOptions options={navOptions}/>
                 <LoadGame gameId={gameId}/>
@@ -41,15 +41,15 @@ class lobbyPage extends React.Component<LobbyPageProps> {
     private renderBody() {
         return (
             <React.Fragment>
-                <div style={Styles.pageContainerSpacer()}></div>
+                <div className={Classes.pageContainerSpacer}></div>
                 <GameParametersTable/>
-                <div style={Styles.pageContainerSpacer()}></div>
+                <div className={Classes.pageContainerSpacer}></div>
                 {
                     this.props.game.status === GameStatus.Pending
                         ? <MutablePlayersTable/>
                         : <PlayersTable/>
                 }
-                <div style={Styles.pageContainerSpacer()}></div>
+                <div className={Classes.pageContainerSpacer}></div>
                 {this.renderStartButton()}
             </React.Fragment>
         );

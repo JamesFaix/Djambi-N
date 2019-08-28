@@ -2,6 +2,7 @@ import * as React from 'react';
 import CurrentTurnSection from './currentTurnSection';
 import TurnCycleSection from './turnCycleSection';
 import GameHistorySection from './gameHistorySection';
+import { Classes } from '../../styles/styles';
 
 const TimelineBar : React.SFC<{}> = _ => {
     const style : React.CSSProperties = {
@@ -10,10 +11,7 @@ const TimelineBar : React.SFC<{}> = _ => {
         borderStyle: "solid",
         borderWidth: "thin",
         borderColor: "gainsboro",
-        display: "flex",
-        flexDirection: "column",
         justifyContent: "space-between",
-        alignItems: "center",
         position: "fixed",
         right: 0
     };
@@ -35,7 +33,10 @@ const TimelineBar : React.SFC<{}> = _ => {
     };
 
     return (
-        <div style={style}>
+        <div
+            className={Classes.pageContainer}
+            style={style}
+        >
             <div style={sectionStyle}>
                 <TurnCycleSection/>
             </div>

@@ -4,6 +4,7 @@ import { State } from '../../store/root';
 import { connect } from 'react-redux';
 import { boolToYesOrNo } from '../../utilities/copy';
 import { SectionHeader } from '../controls/headers';
+import { Classes } from '../../styles/styles';
 
 interface GameParametersTableProps {
     parameters : GameParameters,
@@ -15,39 +16,30 @@ const gameParametersTable : React.SFC<GameParametersTableProps> = props => {
         return null;
     }
 
-    const cellStyle = {
-        borderStyle:"none"
-    };
-
-    const centeredCellStyle : React.CSSProperties = {
-        borderStyle: "none",
-        textAlign: "center"
-    }
-
     return (
         <div>
             <SectionHeader text="Game settings"/>
-            <table>
+            <table className={Classes.borderlessTable}>
                 <tbody>
                     <tr>
-                        <td style={cellStyle}>Description</td>
-                        <td style={cellStyle}>{props.parameters.description}</td>
+                        <td>Description</td>
+                        <td>{props.parameters.description}</td>
                     </tr>
                     <tr>
-                        <td style={cellStyle}>Regions</td>
-                        <td style={centeredCellStyle}>{props.parameters.regionCount}</td>
+                        <td>Regions</td>
+                        <td style={{textAlign:"center"}}>{props.parameters.regionCount}</td>
                     </tr>
                     <tr>
-                        <td style={cellStyle}>Allow guests</td>
-                        <td style={centeredCellStyle}>{boolToYesOrNo(props.parameters.allowGuests)}</td>
+                        <td>Allow guests</td>
+                        <td style={{textAlign:"center"}}>{boolToYesOrNo(props.parameters.allowGuests)}</td>
                     </tr>
                     <tr>
-                        <td style={cellStyle}>Public</td>
-                        <td style={centeredCellStyle}>{boolToYesOrNo(props.parameters.isPublic)}</td>
+                        <td>Public</td>
+                        <td style={{textAlign:"center"}}>{boolToYesOrNo(props.parameters.isPublic)}</td>
                     </tr>
                     <tr>
-                        <td style={cellStyle}>Status</td>
-                        <td style={centeredCellStyle}>{props.status}</td>
+                        <td>Status</td>
+                        <td style={{textAlign:"center"}}>{props.status}</td>
                     </tr>
                 </tbody>
             </table>

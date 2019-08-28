@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
-import Styles from '../../styles/styles';
+import { Classes } from '../../styles/styles';
 
 interface IconButtonProps {
     title: string,
@@ -26,7 +26,7 @@ class IconButton extends React.Component<IconButtonProps, IconButtonState> {
             <button
                 title={this.props.title}
                 onClick={this.props.onClick}
-                style={Styles.iconButton(this.state.isMouseOver)}
+                className={Classes.iconButton(this.state.isMouseOver)}
                 onMouseOver={() => this.setState({isMouseOver: true})}
                 onMouseOut={() => this.setState({isMouseOver: false})}
             >

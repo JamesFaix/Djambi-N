@@ -2,6 +2,8 @@ import { CellType, CellView, CellState, CellHighlight } from "../viewModel/board
 import Color from '../viewModel/board/color';
 
 export default class Colors {
+    //Note: this function should really only used for canvas elements.
+    //Separate CSS classes exist for player colors in DOM elements
     static getColorFromPlayerColorId(colorId : number) : string {
         switch (colorId) {
             case 0: return "blue";

@@ -3,7 +3,7 @@ import { State } from '../../store/root';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { GameParameters } from '../../api/model';
-import Styles from '../../styles/styles';
+import Styles, { Classes } from '../../styles/styles';
 import { SectionHeader } from '../controls/headers';
 import ApiActions from '../../apiActions';
 import * as StoreCreateGameForm from '../../store/createGameForm';
@@ -17,15 +17,15 @@ interface CreateGameFormProps {
 class createGameForm extends React.Component<CreateGameFormProps> {
     render() {
         return (
-            <div style={Styles.pageContainer()}>
+            <div className={Classes.pageContainer}>
                 <SectionHeader text="Game settings"/>
-                <table>
+                <table className={Classes.borderlessTable}>
                     <tbody>
                         <tr>
-                            <td style={Styles.noBorder()}>
+                            <td>
                                 Region count
                             </td>
-                            <td style={Styles.noBorder()}>
+                            <td>
                                 <input
                                     type="number"
                                     min={3}
@@ -36,10 +36,10 @@ class createGameForm extends React.Component<CreateGameFormProps> {
                             </td>
                         </tr>
                         <tr>
-                            <td style={Styles.noBorder()}>
+                            <td>
                                 Allow guests
                             </td>
-                            <td style={Styles.noBorder()}>
+                            <td>
                                 <input
                                     type="checkbox"
                                     checked={this.props.formData.allowGuests}
@@ -48,10 +48,10 @@ class createGameForm extends React.Component<CreateGameFormProps> {
                             </td>
                         </tr>
                         <tr>
-                            <td style={Styles.noBorder()}>
+                            <td>
                                 Public
                             </td>
-                            <td style={Styles.noBorder()}>
+                            <td>
                                 <input
                                     type="checkbox"
                                     checked={this.props.formData.isPublic}
@@ -60,10 +60,10 @@ class createGameForm extends React.Component<CreateGameFormProps> {
                             </td>
                         </tr>
                         <tr>
-                            <td style={Styles.noBorder()}>
+                            <td>
                                 Description
                             </td>
-                            <td style={Styles.noBorder()}>
+                            <td>
                                 <input
                                     type="text"
                                     value={this.props.formData.description}

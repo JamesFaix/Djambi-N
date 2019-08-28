@@ -3,7 +3,7 @@ import { State } from '../../store/root';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { User, Game, Player, PlayerStatus } from '../../api/model';
-import Styles from '../../styles/styles';
+import { Classes } from '../../styles/styles';
 import IconButton from '../controls/iconButton';
 import PlayerStatusIcon from '../controls/playerStatusIcon';
 import PlayerNoteIcon from '../controls/playerNoteIcon';
@@ -29,20 +29,13 @@ class diplomacyPlayersTable extends React.Component<DiplomacyPageProps>{
         return (
             <div>
                 <SectionHeader text="Diplomatic actions"/>
-                <table>
+                <table className={Classes.borderlessTable}>
                     <tbody>
                         <tr>
-                            <th style={Styles.noBorder()}>
-                                Player
-                            </th>
-                            <th style={Styles.noBorder()}>
-                                Status
-                            </th>
-                            <th style={Styles.noBorder()}>
-                            </th>
-                            <th style={Styles.noBorder()}>
-                                Actions
-                            </th>
+                            <th>Player</th>
+                            <th>Status</th>
+                            <th></th>
+                            <th>Actions</th>
                         </tr>
                         {players.map((p, i) =>
                             <PlayerRow
@@ -68,20 +61,23 @@ interface PlayerRowProps {
 const PlayerRow : React.SFC<PlayerRowProps> = props => {
     const p = props.player;
     return (
-        <tr style={Styles.playerBoxGlow(props.player.colorId)}>
-            <td style={Styles.noBorder()}>{p.name}</td>
-            <td style={Styles.noBorder()}>
+        <tr
+            className={Classes.playerBox}
+            data-player-color-id={p.colorId}
+        >
+            <td>{p.name}</td>
+            <td>
                 <PlayerStatusIcon
                     player={p}
                 />
             </td>
-            <td style={Styles.noBorder()}>
+            <td>
                 <PlayerNoteIcon
                     player={p}
                     game={props.game}
                 />
             </td>
-            <td style={Styles.noBorder()}>
+            <td>
                 <PlayerDiplomacyActionButtons
                     gameId={props.game.id}
                     player={p}
