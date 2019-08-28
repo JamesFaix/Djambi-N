@@ -7,7 +7,6 @@ import { Router } from 'react-router-dom';
 import thunk from 'redux-thunk';
 import {history} from './history';
 import { logger } from 'redux-logger';
-import "./index.css";
 import "./styles/styles.less";
 import Debug from './debug';
 import { ApiClientCore } from './api/clientCore';
