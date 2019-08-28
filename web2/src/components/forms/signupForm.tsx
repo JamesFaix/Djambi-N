@@ -2,9 +2,10 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { CreateUserRequest } from '../../api/model';
-import Styles, { Classes } from '../../styles/styles';
+import { Classes } from '../../styles/styles';
 import { SectionHeader } from '../controls/headers';
 import ApiActions from '../../apiActions';
+import { VerticalSpacerSmall } from '../utilities/spacers';
 
 interface SignupFormProps {
     submit: (formData: CreateUserRequest) => void
@@ -66,7 +67,8 @@ class signupForm extends React.Component<SignupFormProps, SignupFormState> {
                     </tbody>
                 </table>
                 <div>
-                    <button style={Styles.smallTopMargin()}
+                    <VerticalSpacerSmall/>
+                    <button
                         onClick={() => this.props.submit(this.getFormDataFromState())}
                     >
                         Create account

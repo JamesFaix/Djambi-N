@@ -53,8 +53,12 @@ p {
     align-items: center;
 }
 
-.pageContainerSpacer {
+.verticalSpacerLarge {
     height: 20px;
+}
+
+.verticalSpacerSmall {
+    height: 10px;
 }
 
 .noBorder {

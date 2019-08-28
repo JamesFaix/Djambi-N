@@ -1,12 +1,3 @@
-import { CSSProperties } from 'react';
-export default class Styles {
-    static smallTopMargin() : CSSProperties {
-        return {
-            marginTop: "10px"
-        };
-    }
-}
-
 export class Classes {
     static iconButton(mouseover : boolean) {
         return mouseover ? "iconButtonMouseover" : "iconButton";
@@ -14,7 +5,9 @@ export class Classes {
 
     static readonly pageContainer = "pageContainer";
 
-    static readonly pageContainerSpacer = "pageContainerSpacer";
+    static readonly verticalSpacerLarge = "verticalSpacerLarge";
+
+    static readonly verticalSpacerSmall = "verticalSpacerSmall";
 
     static readonly borderlessTable = "borderlessTable";
 

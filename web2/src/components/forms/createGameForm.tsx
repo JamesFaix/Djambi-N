@@ -3,10 +3,11 @@ import { State } from '../../store/root';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { GameParameters } from '../../api/model';
-import Styles, { Classes } from '../../styles/styles';
+import { Classes } from '../../styles/styles';
 import { SectionHeader } from '../controls/headers';
 import ApiActions from '../../apiActions';
 import * as StoreCreateGameForm from '../../store/createGameForm';
+import { VerticalSpacerSmall } from '../utilities/spacers';
 
 interface CreateGameFormProps {
     formData : GameParameters,
@@ -73,7 +74,8 @@ class createGameForm extends React.Component<CreateGameFormProps> {
                         </tr>
                     </tbody>
                 </table>
-                <button style={Styles.smallTopMargin()}
+                <VerticalSpacerSmall/>
+                <button
                     onClick={() => this.props.submit(this.props.formData)}
                 >
                     Create game

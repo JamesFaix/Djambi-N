@@ -3,6 +3,7 @@ import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLogge
 import CreateGameForm from '../forms/createGameForm';
 import SetNavigationOptions from '../utilities/setNavigationOptions';
 import { Classes } from '../../styles/styles';
+import { VerticalSpacerLarge } from '../utilities/spacers';
 
 export default class CreateGamePage extends React.Component<{}> {
     render() {
@@ -10,7 +11,7 @@ export default class CreateGamePage extends React.Component<{}> {
             <div className={Classes.pageContainer}>
                 <RedirectToLoginIfNotLoggedIn/>
                 <SetNavigationOptions options={{enableDashboard: true}}/>
-                <div className={Classes.pageContainerSpacer}></div>
+                <VerticalSpacerLarge/>
                 <CreateGameForm/>
             </div>
         );

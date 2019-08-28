@@ -5,10 +5,11 @@ import { connect } from 'react-redux';
 import TristateDropdown from '../controls/tristateDropdown';
 import EnumDropdown from '../controls/enumDropdown';
 import { Dispatch } from 'redux';
-import Styles, { Classes } from '../../styles/styles';
+import { Classes } from '../../styles/styles';
 import { SectionHeader } from '../controls/headers';
 import ApiActions from '../../apiActions';
 import * as StoreGamesQuery from '../../store/gamesQuery';
+import { VerticalSpacerSmall } from '../utilities/spacers';
 
 interface GamesSearchFormProps {
     formData : GamesQuery,
@@ -108,7 +109,8 @@ class gamesSearchForm extends React.Component<GamesSearchFormProps> {
                         </tr>
                     </tbody>
                 </table>
-                <button style={Styles.smallTopMargin()}
+                <VerticalSpacerSmall/>
+                <button
                     onClick={() => this.props.submit(this.props.formData)}
                 >
                     Search

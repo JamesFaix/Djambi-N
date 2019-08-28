@@ -11,6 +11,7 @@ import SetNavigationOptions from '../utilities/setNavigationOptions';
 import { Classes } from '../../styles/styles';
 import PlayersTable from '../tables/playersTable';
 import ApiActions from '../../apiActions';
+import { VerticalSpacerLarge } from '../utilities/spacers';
 
 interface LobbyPageProps {
     game : Game,
@@ -41,15 +42,15 @@ class lobbyPage extends React.Component<LobbyPageProps> {
     private renderBody() {
         return (
             <React.Fragment>
-                <div className={Classes.pageContainerSpacer}></div>
+                <VerticalSpacerLarge/>
                 <GameParametersTable/>
-                <div className={Classes.pageContainerSpacer}></div>
+                <VerticalSpacerLarge/>
                 {
                     this.props.game.status === GameStatus.Pending
                         ? <MutablePlayersTable/>
                         : <PlayersTable/>
                 }
-                <div className={Classes.pageContainerSpacer}></div>
+                <VerticalSpacerLarge/>
                 {this.renderStartButton()}
             </React.Fragment>
         );

@@ -9,6 +9,7 @@ import GamesSearchForm from '../forms/gamesSearchForm';
 import SetNavigationOptions from '../utilities/setNavigationOptions';
 import { Classes } from '../../styles/styles';
 import ApiActions from '../../apiActions';
+import { VerticalSpacerLarge } from '../utilities/spacers';
 
 interface DashboardPageProps {
     gamesQuery : GamesQuery,
@@ -22,9 +23,9 @@ class dashboardPage extends React.Component<DashboardPageProps>{
             <div className={Classes.pageContainer}>
                 <RedirectToLoginIfNotLoggedIn/>
                 <SetNavigationOptions options={{enableCreateGame: true}}/>
-                <div className={Classes.pageContainerSpacer}></div>
+                <VerticalSpacerLarge/>
                 <GamesSearchForm/>
-                <div className={Classes.pageContainerSpacer}></div>
+                <VerticalSpacerLarge/>
                 <GamesSearchResultsTable/>
             </div>
         );

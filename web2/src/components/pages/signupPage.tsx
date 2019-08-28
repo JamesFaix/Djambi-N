@@ -4,6 +4,7 @@ import SignupForm from '../forms/signupForm';
 import SetNavigationOptions from '../utilities/setNavigationOptions';
 import { Classes } from '../../styles/styles';
 import PromptToLoginSection from '../sections/promptToLoginSection';
+import { VerticalSpacerLarge } from '../utilities/spacers';
 
 export default class SignupPage extends React.Component<{}>{
     render() {
@@ -11,9 +12,9 @@ export default class SignupPage extends React.Component<{}>{
             <div className={Classes.pageContainer}>
                 <RedirectToDashboardIfLoggedIn/>
                 <SetNavigationOptions options={{enableLogin: true}}/>
-                <div className={Classes.pageContainerSpacer}></div>
+                <VerticalSpacerLarge/>
                 <SignupForm/>
-                <div className={Classes.pageContainerSpacer}></div>
+                <VerticalSpacerLarge/>
                 <PromptToLoginSection/>
             </div>
         );

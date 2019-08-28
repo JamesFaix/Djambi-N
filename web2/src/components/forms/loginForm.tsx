@@ -2,9 +2,10 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { LoginRequest } from '../../api/model';
-import Styles, { Classes } from '../../styles/styles';
+import { Classes } from '../../styles/styles';
 import { SectionHeader } from '../controls/headers';
 import ApiActions from '../../apiActions';
+import { VerticalSpacerSmall } from '../utilities/spacers';
 
 interface LoginFormProps {
     submit: (formData: LoginRequest) => void
@@ -65,7 +66,8 @@ class loginForm extends React.Component<LoginFormProps, LoginFormState> {
                         </tr>
                     </tbody>
                 </table>
-                <button style={Styles.smallTopMargin()}
+                <VerticalSpacerSmall/>
+                <button
                     onClick={() => this.props.submit(this.getFormDataFromState())}
                 >
                     Log in
