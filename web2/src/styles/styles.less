@@ -1,20 +1,16 @@
-body {
-    font: 14px "Century Gothic", Futura, sans-serif;
-    margin: 0;
-    background: white;
-    color: black;
-}
+@text-color: black;
+@background-color: white;
+@border-color: gainsboro;
+@hover-text-color: white;
+@hover-background-color: black;
+@font: 14px "Century Gothic", Futura, sans-serif;
+@text-padding:  5px 10px 5px 10px;
 
-button {
-    font: 14px "Century Gothic", Futura, sans-serif;
-    border: 1px;
-    background: white;
-    box-shadow: none;
-    border-radius: none;
-    border-style: solid;
-    border-color: gainsboro;
-    padding: 5px 10px 5px 10px;
-    color: black;
+body {
+    font: @font;
+    margin: 0;
+    background: @background-color;
+    color: @text-color;
 }
 
 table {
@@ -22,22 +18,31 @@ table {
 }
 
 th {
+    padding: @text-padding;
     font-weight: normal;
-    padding: 5px 10px 5px 10px;
 }
 
 td {
-    font-weight: normal;
-    text-align: left;
-    border: 1px;
-    border-style: solid;
-    border-color: gainsboro;
-    padding: 5px 10px 5px 10px;
+    padding: @text-padding;
+}
+
+.buttonMixin {
+    box-shadow: none;
+    border-style: none;
+    padding: @text-padding;
+    font: @font;
 }
 
 button {
-    border-style: none;
-    background-color: gainsboro
+    .buttonMixin;
+    background-color: transparent;
+    color: @text-color;
+}
+
+button:hover {
+    .buttonMixin;
+    background-color: @hover-background-color;
+    color: @hover-text-color;
 }
 
 p {
@@ -70,10 +75,6 @@ p {
     height: 10px;
 }
 
-.noBorder {
-    border-style: none;
-}
-
 .centered {
     text-align: center;
 }
@@ -85,70 +86,31 @@ p {
 .box {
     border-style: solid;
     border-width: 1;
-    border-color: gainsboro;
+    border-color: @border-color;
     padding: 5px;
-}
-
-.iconButton {
-    color: black;
-    background-color: white;
 }
 
 .thinBorder {
     border-style: solid;
     border-width: thin;
-    border-color: gainsboro;
+    border-color: @border-color;
 }
 
-.iconButton:hover {
-    color: white;
-    background-color: black;
+.stripedTable {
+    tr:nth-child(even) {
+        background-color: @border-color
+    }
 }
 
-.borderlessTable td {
-    border-style: none;
+.playerBoxMixin(@color) {
+    box-shadow: inset 0 0 0 3px @color;
+    padding: 5px;
 }
-
-.borderlessTable th {
-    border-style: none;
-}
-
-.playerBox[data-player-color-id='0'] {
-    box-shadow: inset 0 0 0 3px blue;
-    padding: 5px
-}
-
-.playerBox[data-player-color-id='1'] {
-    box-shadow: inset 0 0 0 3px red;
-    padding: 5px
-}
-
-.playerBox[data-player-color-id='2'] {
-    box-shadow: inset 0 0 0 3px green;
-    padding: 5px
-}
-
-.playerBox[data-player-color-id='3'] {
-    box-shadow: inset 0 0 0 3px orange;
-    padding: 5px
-}
-
-.playerBox[data-player-color-id='4'] {
-    box-shadow: inset 0 0 0 3px brown;
-    padding: 5px
-}
-
-.playerBox[data-player-color-id='5'] {
-    box-shadow: inset 0 0 0 3px teal;
-    padding: 5px
-}
-
-.playerBox[data-player-color-id='6'] {
-    box-shadow: inset 0 0 0 3px magenta;
-    padding: 5px
-}
-
-.playerBox[data-player-color-id='7'] {
-    box-shadow: inset 0 0 0 3px gold;
-    padding: 5px
-}
+.playerBox[data-player-color-id='0'] { .playerBoxMixin(blue); }
+.playerBox[data-player-color-id='1'] { .playerBoxMixin(red); }
+.playerBox[data-player-color-id='2'] { .playerBoxMixin(green); }
+.playerBox[data-player-color-id='3'] { .playerBoxMixin(orange); }
+.playerBox[data-player-color-id='4'] { .playerBoxMixin(brown); }
+.playerBox[data-player-color-id='5'] { .playerBoxMixin(teal); }
+.playerBox[data-player-color-id='6'] { .playerBoxMixin(magenta); }
+.playerBox[data-player-color-id='7'] { .playerBoxMixin(gold); }

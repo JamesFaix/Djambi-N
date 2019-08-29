@@ -19,7 +19,7 @@ const gameParametersTable : React.SFC<GameParametersTableProps> = props => {
     return (
         <div>
             <SectionHeader text="Game settings"/>
-            <table className={Classes.borderlessTable}>
+            <table>
                 <tbody>
                     <tr>
                         <td>Description</td>

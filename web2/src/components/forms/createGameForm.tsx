@@ -20,7 +20,7 @@ class createGameForm extends React.Component<CreateGameFormProps> {
         return (
             <div className={Classes.pageContainer}>
                 <SectionHeader text="Game settings"/>
-                <table className={Classes.borderlessTable}>
+                <table>
                     <tbody>
                         <tr>
                             <td>Region count</td>

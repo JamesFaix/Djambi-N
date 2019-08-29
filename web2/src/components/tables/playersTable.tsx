@@ -17,7 +17,7 @@ class playersTable extends React.Component<PlayersTableProps> {
         return (
             <div>
                 <SectionHeader text="Players"/>
-                <table className={Classes.borderlessTable}>
+                <table>
                     <tbody>
                         {g.players.map((p, i) =>
                             <PlayerRow

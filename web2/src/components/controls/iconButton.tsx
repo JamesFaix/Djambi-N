@@ -14,7 +14,6 @@ const IconButton : React.SFC<IconButtonProps> = props => {
         <button
             title={props.title}
             onClick={props.onClick}
-            className={Classes.iconButton}
         >
             <FontAwesomeIcon icon={props.icon}/>
         </button>

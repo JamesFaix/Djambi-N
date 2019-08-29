@@ -24,7 +24,7 @@ class gamesSearchForm extends React.Component<GamesSearchFormProps> {
         return (
             <div className={Classes.pageContainer}>
                 <SectionHeader text="Search games"/>
-                <table className={Classes.borderlessTable}>
+                <table>
                     <tbody>
                         <tr>
                             <td>Description</td>

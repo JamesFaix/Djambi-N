@@ -36,7 +36,7 @@ class loginForm extends React.Component<LoginFormProps, LoginFormState> {
         return (
             <div className={Classes.pageContainer}>
                 <SectionHeader text="Log in"/>
-                <table className={Classes.borderlessTable}>
+                <table>
                     <tbody>
                         <tr>
                             <td>Username</td>

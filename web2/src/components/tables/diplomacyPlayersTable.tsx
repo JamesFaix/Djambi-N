@@ -29,7 +29,7 @@ class diplomacyPlayersTable extends React.Component<DiplomacyPageProps>{
         return (
             <div>
                 <SectionHeader text="Diplomatic actions"/>
-                <table className={Classes.borderlessTable}>
+                <table>
                     <tbody>
                         <tr>
                             <th>Player</th>

@@ -1,6 +1,4 @@
 export class Classes {
-    static readonly iconButton = "iconButton";
-
     static readonly pageContainer = "pageContainer";
 
     static readonly narrowContainer = "narrowContainer";
@@ -11,7 +9,7 @@ export class Classes {
 
     static readonly verticalSpacerSmall = "verticalSpacerSmall";
 
-    static readonly borderlessTable = "borderlessTable";
+    static readonly stripedTable = "stripedTable";
 
     static readonly centered = "centered";
 

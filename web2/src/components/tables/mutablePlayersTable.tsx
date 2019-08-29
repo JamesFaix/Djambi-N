@@ -7,7 +7,6 @@ import { connect } from 'react-redux';
 import MutablePlayersTableRow from './mutablePlayersTableRow';
 import { SectionHeader } from '../controls/headers';
 import ApiActions from '../../apiActions';
-import { Classes } from '../../styles/styles';
 
 interface MutablePlayersTableProps {
     user : User,
@@ -26,7 +25,7 @@ class mutablePlayersTable extends React.Component<MutablePlayersTableProps> {
         return (
             <div>
                 <SectionHeader text="Players"/>
-                <table className={Classes.borderlessTable}>
+                <table>
                     <tbody>
                         {seats.map((s, i) => {
                             return (<MutablePlayersTableRow

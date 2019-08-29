@@ -7,6 +7,7 @@ import { SectionHeader } from '../controls/headers';
 import IconButton from '../controls/iconButton';
 import { faDoorOpen } from '@fortawesome/free-solid-svg-icons';
 import ApiActions from '../../apiActions';
+import { Classes } from '../../styles/styles';
 
 interface GamesSearchResultsTableProps {
     games : Game[]
@@ -17,7 +18,7 @@ class gamesSearchResultsTable extends React.Component<GamesSearchResultsTablePro
         return (
             <div>
                 <SectionHeader text="Results"/>
-                <table>
+                <table className={Classes.stripedTable}>
                     <tbody>
                         <tr>
                             <th></th>
