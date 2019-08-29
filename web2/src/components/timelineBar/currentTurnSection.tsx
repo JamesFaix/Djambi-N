@@ -26,12 +26,17 @@ class currentTurnSection extends React.Component<CurrentTurnSectionProps> {
         return (
             <div>
                 <PlayHeader text="Current turn"/>
-                {
-                    player.userId === this.props.user.id
-                        ? this.renderForCurrentPlayer(player, turn)
-                        : this.renderForOtherPlayer(player)
-                }
-                <CurrentTurnActionsBar/>
+                <div
+                    className={Classes.playerBox}
+                    data-player-color-id={player.colorId}
+                >
+                    {
+                        player.userId === this.props.user.id
+                            ? this.renderForCurrentPlayer(player, turn)
+                            : this.renderForOtherPlayer(player)
+                    }
+                    <CurrentTurnActionsBar/>
+                </div>
             </div>
         );
     }
@@ -43,21 +48,15 @@ class currentTurnSection extends React.Component<CurrentTurnSectionProps> {
 
     private renderForOtherPlayer(player : Player) {
         return (
-            <div
-                className={Classes.playerBox}
-                data-player-color-id={player.colorId}
-            >
+            <React.Fragment>
                 {`Waiting on ${player.name}...`}
-            </div>
+            </React.Fragment>
         );
     }
 
     private renderForCurrentPlayer(player : Player, turn : Turn) {
         return (
-            <div
-                className={Classes.playerBox}
-                data-player-color-id={player.colorId}
-            >
+            <React.Fragment>
                 <p>
                     {player.name},<br/>
                     {Copy.getTurnPrompt(turn)}
@@ -65,7 +64,7 @@ class currentTurnSection extends React.Component<CurrentTurnSectionProps> {
                 <div>
                     {this.getSelectionsDescription(turn)}
                 </div>
-            </div>
+            </React.Fragment>
         );
     }
 
