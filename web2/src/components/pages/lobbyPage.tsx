@@ -12,6 +12,8 @@ import { Classes } from '../../styles/styles';
 import PlayersTable from '../tables/playersTable';
 import ApiActions from '../../apiActions';
 import { VerticalSpacerLarge } from '../utilities/spacers';
+import Icons from '../../utilities/icons';
+import IconButton from '../controls/iconButton';
 
 interface LobbyPageProps {
     game : Game,
@@ -67,11 +69,12 @@ class lobbyPage extends React.Component<LobbyPageProps> {
         }
 
         return (
-            <button
+            <IconButton
+                icon={Icons.Page.play}
+                title="Start"
+                showTitle={true}
                 onClick={() => this.props.onStartGameClicked(this.props.game.id)}
-            >
-                Start
-            </button>
+            />
         );
     }
 }

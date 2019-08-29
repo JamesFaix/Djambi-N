@@ -12,7 +12,6 @@ import {
     faHome,
     faPlus,
     faDoorOpen,
-    faChessBoard,
     faSignOutAlt,
     faMinus,
     faHandMiddleFinger,
@@ -20,7 +19,8 @@ import {
     faCheck,
     faPlay,
     faAward,
-    faBan
+    faBan,
+    faSearch
 } from "@fortawesome/free-solid-svg-icons";
 
 export default class Icons {
@@ -61,7 +61,8 @@ export default class Icons {
         public static readonly home : IconDefinition = faHome;
         public static readonly newGame : IconDefinition = faPlus;
         public static readonly lobby : IconDefinition = faDoorOpen;
-        public static readonly play : IconDefinition = faChessBoard;
+        public static readonly play : IconDefinition = faPlay;
         public static readonly logout : IconDefinition = faSignOutAlt;
+        public static readonly search : IconDefinition = faSearch;
     }
 }

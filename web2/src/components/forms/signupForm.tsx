@@ -6,6 +6,8 @@ import { Classes } from '../../styles/styles';
 import { SectionHeader } from '../controls/headers';
 import ApiActions from '../../apiActions';
 import { VerticalSpacerSmall } from '../utilities/spacers';
+import Icons from '../../utilities/icons';
+import IconButton from '../controls/iconButton';
 
 interface SignupFormProps {
     submit: (formData: CreateUserRequest) => void
@@ -64,11 +66,12 @@ class signupForm extends React.Component<SignupFormProps, SignupFormState> {
                 </table>
                 <div>
                     <VerticalSpacerSmall/>
-                    <button
+                    <IconButton
+                        icon={Icons.Page.signup}
+                        title="Create account"
+                        showTitle={true}
                         onClick={() => this.props.submit(this.getFormDataFromState())}
-                    >
-                        Create account
-                    </button>
+                    />
                 </div>
             </div>
         );

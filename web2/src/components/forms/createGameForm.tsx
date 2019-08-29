@@ -8,6 +8,8 @@ import { SectionHeader } from '../controls/headers';
 import ApiActions from '../../apiActions';
 import * as StoreCreateGameForm from '../../store/createGameForm';
 import { VerticalSpacerSmall } from '../utilities/spacers';
+import Icons from '../../utilities/icons';
+import IconButton from '../controls/iconButton';
 
 interface CreateGameFormProps {
     formData : GameParameters,
@@ -67,11 +69,12 @@ class createGameForm extends React.Component<CreateGameFormProps> {
                     </tbody>
                 </table>
                 <VerticalSpacerSmall/>
-                <button
+                <IconButton
+                    icon={Icons.Page.newGame}
+                    title="Create game"
+                    showTitle={true}
                     onClick={() => this.props.submit(this.props.formData)}
-                >
-                    Create game
-                </button>
+                />
             </div>
         );
     }

@@ -6,6 +6,8 @@ import { Classes } from '../../styles/styles';
 import { SectionHeader } from '../controls/headers';
 import ApiActions from '../../apiActions';
 import { VerticalSpacerSmall } from '../utilities/spacers';
+import Icons from '../../utilities/icons';
+import IconButton from '../controls/iconButton';
 
 interface LoginFormProps {
     submit: (formData: LoginRequest) => void
@@ -63,11 +65,12 @@ class loginForm extends React.Component<LoginFormProps, LoginFormState> {
                     </tbody>
                 </table>
                 <VerticalSpacerSmall/>
-                <button
+                <IconButton
+                    icon={Icons.Page.login}
+                    title="Log in"
+                    showTitle={true}
                     onClick={() => this.props.submit(this.getFormDataFromState())}
-                >
-                    Log in
-                </button>
+                />
             </div>
         );
     }
