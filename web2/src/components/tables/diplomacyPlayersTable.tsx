@@ -8,8 +8,8 @@ import IconButton from '../controls/iconButton';
 import PlayerStatusIcon from '../controls/playerStatusIcon';
 import PlayerNoteIcon from '../controls/playerNoteIcon';
 import { SectionHeader } from '../controls/headers';
-import Icons from '../../utilities/icons';
 import ApiActions from '../../apiActions';
+import { Icons } from '../../utilities/icons';
 
 interface DiplomacyPageProps {
     user : User,
@@ -28,7 +28,7 @@ class diplomacyPlayersTable extends React.Component<DiplomacyPageProps>{
 
         return (
             <div>
-                <SectionHeader text="Diplomatic actions"/>
+                <SectionHeader text="Diplomacy"/>
                 <table>
                     <tbody>
                         <tr>
@@ -106,22 +106,19 @@ const PlayerDiplomacyActionButtons : React.SFC<PlayerDiplomacyActionButtonsProps
         <div>
             {canAcceptDraw ?
                 <IconButton
-                    title="Accept draw"
-                    icon={Icons.PlayerAction.acceptDraw}
+                    icon={Icons.PlayerActions.acceptDraw}
                     onClick={() => props.changePlayerStatus(props.gameId, p.id, PlayerStatus.AcceptsDraw)}
                 />
             : null}
             {canRevokeDraw ?
                 <IconButton
-                    title="Revoke draw"
-                    icon={Icons.PlayerAction.revokeDraw}
+                    icon={Icons.PlayerActions.revokeDraw}
                     onClick={() => props.changePlayerStatus(props.gameId, p.id, PlayerStatus.Alive)}
                 />
             : null}
             {canConcede ?
                 <IconButton
-                    title="Concede"
-                    icon={Icons.PlayerAction.concede}
+                    icon={Icons.PlayerActions.concede}
                     onClick={() => props.changePlayerStatus(props.gameId, p.id, PlayerStatus.Conceded)}
                 />
             : null}

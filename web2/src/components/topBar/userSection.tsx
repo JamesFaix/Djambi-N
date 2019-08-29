@@ -4,8 +4,8 @@ import { State } from '../../store/root';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import IconButton from '../controls/iconButton';
-import Icons from '../../utilities/icons';
 import ApiActions from '../../apiActions';
+import { Icons } from '../../utilities/icons';
 
 interface UserSectionProps {
     user : User,
@@ -31,8 +31,7 @@ const loggedInUserSection : React.SFC<UserSectionProps> = props => {
         <div>
             {props.user.name}
             <IconButton
-                title="Log out"
-                icon={Icons.Page.logout}
+                icon={Icons.UserActions.logout}
                 onClick={() => props.onLogoutClicked()}
             />
         </div>

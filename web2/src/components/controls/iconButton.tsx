@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
+import { IconInfo } from '../../utilities/icons';
 
 interface IconButtonProps {
-    title: string,
     onClick: () => void,
-    icon: IconDefinition,
+    icon: IconInfo,
     showTitle ?: boolean
 }
 
@@ -14,14 +13,14 @@ const IconButton : React.SFC<IconButtonProps> = props => {
 
     return (
         <button
-            title={props.title}
+            title={props.icon.title}
             onClick={props.onClick}
             style={style}
         >
-            <FontAwesomeIcon icon={props.icon}/>
+            <FontAwesomeIcon icon={props.icon.icon}/>
             {props.showTitle ?
                 <div style={{padding: "0px 0px 0px 5px"}}>
-                    {props.title}
+                    {props.icon.title}
                 </div>
             : null}
         </button>

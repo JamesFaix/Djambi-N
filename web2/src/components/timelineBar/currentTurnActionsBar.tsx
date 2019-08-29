@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { Game, User, TurnStatus } from '../../api/model';
 import IconButton from '../controls/iconButton';
 import ApiActions from '../../apiActions';
-import Icons from '../../utilities/icons';
+import { Icons } from '../../utilities/icons';
 
 interface CurrentTurnActionsBarProps {
     user : User,
@@ -42,8 +42,7 @@ class currentTurnActionsBar extends React.Component<CurrentTurnActionsBarProps> 
 
         return (
             <IconButton
-                title="Reset turn"
-                icon={Icons.PlayerAction.resetTurn}
+                icon={Icons.PlayerActions.resetTurn}
                 onClick={() => this.props.resetTurn(this.props.game.id)}
             />
         );
@@ -58,8 +57,7 @@ class currentTurnActionsBar extends React.Component<CurrentTurnActionsBarProps> 
 
         return (
             <IconButton
-                title={"Finish turn"}
-                icon={Icons.PlayerAction.endTurn}
+                icon={Icons.PlayerActions.endTurn}
                 onClick={() => this.props.endTurn(this.props.game.id)}
             />
         );

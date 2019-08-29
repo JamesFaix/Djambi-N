@@ -22,48 +22,105 @@ import {
     faBan,
     faSearch
 } from "@fortawesome/free-solid-svg-icons";
+import { PlayerStatus, GameStatus } from "../api/model";
 
-export default class Icons {
-    public static readonly guest: IconDefinition = faIdBadge;
+export interface IconInfo {
+    icon : IconDefinition,
+    title : string
+}
 
-    public static readonly PlayerStatus = class {
-        public static readonly Pending : IconDefinition = faSpinner;
-        public static readonly Alive : IconDefinition = faHeart;
-        public static readonly AcceptsDraw : IconDefinition = faHandshake;
-        public static readonly Conceded : IconDefinition = faFlag;
-        public static readonly Eliminated : IconDefinition = faSkull;
-        public static readonly Victorious : IconDefinition = faTrophy;
+export class Icons {
+    private static readonly playerStatusIcons = new Map<PlayerStatus, IconInfo>([
+        [PlayerStatus.AcceptsDraw, {
+            icon: faHandshake,
+            title: "Accepts draw"
+        }],
+        [PlayerStatus.Alive, {
+            icon: faHeart,
+            title: "Alive"
+        }],
+        [PlayerStatus.Conceded, {
+            icon: faFlag,
+            title: "Conceded"
+        }],
+        [PlayerStatus.Eliminated, {
+            icon: faSkull,
+            title: "Eliminated"
+        }],
+        [PlayerStatus.Pending, {
+            icon: faSpinner,
+            title: "Pending"
+        }],
+        [PlayerStatus.Victorious, {
+            icon: faTrophy,
+            title: "Victorious"
+        }],
+        [PlayerStatus.WillConcede, {
+            icon: faFlag,
+            title: "Will concede"
+        }]
+    ]);
+
+    private static readonly gameStatusIcons = new Map<GameStatus, IconInfo>([
+        [GameStatus.Canceled, {
+            icon: faBan,
+            title: "Canceled"
+        }],
+        [GameStatus.InProgress, {
+            icon: faPlay,
+            title: "In progress"
+        }],
+        [GameStatus.Over, {
+            icon: faAward,
+            title: "Over"
+        }],
+        [GameStatus.Pending, {
+            icon: faSpinner,
+            title: "Pending"
+        }]
+    ]);
+
+    public static playerStatus(status : PlayerStatus) {
+        return this.playerStatusIcons.get(status);
     }
 
-    public static readonly LobbyAction = class {
-        public static readonly AddPlayer : IconDefinition = faPlus;
-        public static readonly RemovePlayer : IconDefinition = faMinus;
+    public static gameStatus(status : GameStatus) {
+        return this.gameStatusIcons.get(status);
     }
 
-    public static readonly GameStatus = class {
-        public static readonly Pending : IconDefinition = faSpinner;
-        public static readonly InProgress : IconDefinition = faPlay;
-        public static readonly Canceled : IconDefinition = faBan;
-        public static readonly Over : IconDefinition = faAward;
+    public static readonly Pages = class {
+        public static readonly login : IconInfo = { icon: faSignInAlt, title: "Log in" };
+        public static readonly home : IconInfo = { icon: faHome, title: "Home" };
+        public static readonly newGame : IconInfo = { icon: faPlus, title: "Create game" };
+        public static readonly lobby : IconInfo = { icon: faDoorOpen, title: "Lobby" };
+        public static readonly play : IconInfo = { icon: faPlay, title: "Play" };
+        public static readonly diplomacy : IconInfo = { icon: faHandshake, title: "Diplomacy" };
+        public static readonly signup : IconInfo = { icon: faUserPlus, title: "Sign up" }
     }
 
-    public static readonly PlayerAction = class {
-        public static readonly concede : IconDefinition = faFlag;
-        public static readonly acceptDraw : IconDefinition = faHandshake;
-        public static readonly revokeDraw : IconDefinition = faHandMiddleFinger;
-        public static readonly endTurn : IconDefinition = faCheck;
-        public static readonly resetTurn : IconDefinition = faRecycle;
+    public static readonly UserActions = class {
+        public static readonly login : IconInfo = { icon: faSignInAlt, title: "Log in" };
+        public static readonly signup: IconInfo = { icon: faUserPlus, title: "Create account" };
+        public static readonly logout : IconInfo = { icon: faSignOutAlt, title: "Log out" };
+        public static readonly search : IconInfo = { icon: faSearch, title: "Search" };
+        public static readonly createGame : IconInfo = { icon: faPlus, title: "Create game" };
+        public static readonly startGame : IconInfo = { icon: faPlay, title: "Start game" };
+        public static readonly playerJoin : IconInfo = { icon: faPlus, title: "Join" };
+        public static readonly playerAddGuest : IconInfo = { icon: faPlus, title: "Add guest" };
+        public static readonly playerQuit : IconInfo = { icon: faMinus, title: "Quit" };
+        public static readonly playerRemove : IconInfo = { icon: faMinus, title: "Remove" };
+        public static readonly loadGame : IconInfo = { icon: faDoorOpen, title: "Load game" };
     }
 
-    public static readonly Page = class {
-        public static readonly signup : IconDefinition = faUserPlus;
-        public static readonly login : IconDefinition = faSignInAlt;
-        public static readonly home : IconDefinition = faHome;
-        public static readonly newGame : IconDefinition = faPlus;
-        public static readonly lobby : IconDefinition = faDoorOpen;
-        public static readonly play : IconDefinition = faPlay;
-        public static readonly logout : IconDefinition = faSignOutAlt;
-        public static readonly search : IconDefinition = faSearch;
-        public static readonly diplomacy : IconDefinition = faHandshake;
+    public static readonly PlayerActions = class {
+        public static readonly concede : IconInfo = { icon: faFlag, title: "Concede" };
+        public static readonly acceptDraw : IconInfo = { icon: faHandshake, title: "Accept draw" };
+        public static readonly revokeDraw : IconInfo = { icon: faHandMiddleFinger, title: "Revoke draw" };
+        public static readonly endTurn : IconInfo = { icon: faCheck, title: "Finish turn" };
+        public static readonly resetTurn : IconInfo = { icon: faRecycle, title: "Reset turn" };
+    }
+
+    public static readonly PlayerNotes = class {
+        public static readonly guest: IconDefinition = faIdBadge;
     }
 }
