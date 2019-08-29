@@ -64,5 +64,6 @@ export default class Icons {
         public static readonly play : IconDefinition = faPlay;
         public static readonly logout : IconDefinition = faSignOutAlt;
         public static readonly search : IconDefinition = faSearch;
+        public static readonly diplomacy : IconDefinition = faHandshake;
     }
 }

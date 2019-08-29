@@ -7,6 +7,7 @@ export interface State {
     enableCreateGame ?: boolean,
     enableLobby ?: boolean,
     enablePlay ?: boolean,
+    enableDiplomacy ?: boolean,
     gameId ?: number
 }
 

@@ -3,8 +3,6 @@ import { Dispatch } from 'redux';
 import { State } from '../../store/root';
 import { connect } from 'react-redux';
 import { Game, User, TurnStatus } from '../../api/model';
-import { navigateTo } from '../../history';
-import Routes from '../../routes';
 import IconButton from '../controls/iconButton';
 import ApiActions from '../../apiActions';
 import Icons from '../../utilities/icons';
@@ -22,7 +20,6 @@ class currentTurnActionsBar extends React.Component<CurrentTurnActionsBarProps> 
             <div>
                 {this.renderEndButton()}
                 {this.renderResetButton()}
-                {this.renderDiplomacyButton()}
             </div>
         );
     }
@@ -64,16 +61,6 @@ class currentTurnActionsBar extends React.Component<CurrentTurnActionsBarProps> 
                 title={"Finish turn"}
                 icon={Icons.PlayerAction.endTurn}
                 onClick={() => this.props.endTurn(this.props.game.id)}
-            />
-        );
-    }
-
-    private renderDiplomacyButton() {
-        return (
-            <IconButton
-                title={"Concede or Draw"}
-                icon={Icons.PlayerAction.acceptDraw}
-                onClick={() => navigateTo(Routes.diplomacy(this.props.game.id))}
             />
         );
     }

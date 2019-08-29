@@ -24,10 +24,12 @@ class lobbyPage extends React.Component<LobbyPageProps> {
     render() {
         const gameId = (this.props as any).match.params.gameId;
 
+        const inProgress =  this.props.game && this.props.game.status === GameStatus.InProgress;
+
         const navOptions = {
             enableDashboard: true,
-            enableHistory: true,
-            enablePlay: this.props.game && this.props.game.status === GameStatus.InProgress,
+            enablePlay: inProgress,
+            enableDiplomacy: inProgress,
             gameId: gameId
         };
 

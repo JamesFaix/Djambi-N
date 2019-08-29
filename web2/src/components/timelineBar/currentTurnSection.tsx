@@ -35,7 +35,6 @@ class currentTurnSection extends React.Component<CurrentTurnSectionProps> {
                             ? this.renderForCurrentPlayer(player, turn)
                             : this.renderForOtherPlayer(player)
                     }
-                    <CurrentTurnActionsBar/>
                 </div>
             </div>
         );
@@ -64,6 +63,7 @@ class currentTurnSection extends React.Component<CurrentTurnSectionProps> {
                 <div>
                     {this.getSelectionsDescription(turn)}
                 </div>
+                <CurrentTurnActionsBar/>
             </React.Fragment>
         );
     }
