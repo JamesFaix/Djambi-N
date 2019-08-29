@@ -61,14 +61,30 @@ const GameRow : React.SFC<GameRowProps> = props => {
                     onClick={() => ApiActions.navigateToGame(game)}
                 />
             </td>
-            <td>{game.id}</td>
-            <td>{game.parameters.description}</td>
-            <td>{game.createdBy.userName}</td>
-            <td>{game.status}</td>
-            <td>{game.players.length}</td>
-            <td>{game.parameters.regionCount}</td>
-            <td>{boolToYesOrNo(game.parameters.isPublic)}</td>
-            <td>{boolToYesOrNo(game.parameters.allowGuests)}</td>
+            <td className={Classes.centered}>
+                {game.id}
+            </td>
+            <td>
+                {game.parameters.description}
+            </td>
+            <td>
+                {game.createdBy.userName}
+            </td>
+            <td className={Classes.centered}>
+                {game.status}
+            </td>
+            <td className={Classes.centered}>
+                {game.players.length}
+            </td>
+            <td className={Classes.centered}>
+                {game.parameters.regionCount}
+            </td>
+            <td className={Classes.centered}>
+                {boolToYesOrNo(game.parameters.isPublic)}
+            </td>
+            <td className={Classes.centered}>
+                {boolToYesOrNo(game.parameters.allowGuests)}
+            </td>
         </tr>
     );
 }
