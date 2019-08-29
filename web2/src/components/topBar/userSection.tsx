@@ -32,7 +32,7 @@ const loggedInUserSection : React.SFC<UserSectionProps> = props => {
             {props.user.name}
             <IconButton
                 title="Log out"
-                icon={Icons.logout}
+                icon={Icons.Page.logout}
                 onClick={() => props.onLogoutClicked()}
             />
         </div>

@@ -82,7 +82,7 @@ class JoinRow extends React.Component<JoinRowProps> {
                 <td>
                     <IconButton
                         title="Join"
-                        icon={Icons.join}
+                        icon={Icons.LobbyAction.AddPlayer}
                         onClick={() => this.onClick()}
                     />
                 </td>
@@ -134,7 +134,7 @@ class AddGuestRow extends React.Component<AddGuestRowProps, AddGuestRowState> {
                 <td>
                     <IconButton
                         title="Add guest"
-                        icon={Icons.addGuest}
+                        icon={Icons.LobbyAction.AddPlayer}
                         onClick={() => this.onClick()}
                     />
                 </td>
@@ -178,7 +178,7 @@ class RemoveRow extends React.Component<RemoveRowProps> {
                 <td>
                     <IconButton
                         title={LobbySeats.isSeatSelf(seat, this.props.user) ? "Quit" : "Remove"}
-                        icon={Icons.quit}
+                        icon={Icons.LobbyAction.RemovePlayer}
                         onClick={() => this.props.removePlayer(this.props.game.id, seat.player.id)}
                     />
                 </td>

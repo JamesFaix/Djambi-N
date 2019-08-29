@@ -19,42 +19,42 @@ class navigationSection extends React.Component<NavigationSectionProps> {
                 {o.enableSignup ?
                     <IconButton
                         title={"Sign up"}
-                        icon={Icons.signup}
+                        icon={Icons.Page.signup}
                         onClick={() => navigateTo(Routes.signup)}
                     />
                 : null}
                 {o.enableLogin ?
                     <IconButton
                         title={"Log in"}
-                        icon={Icons.login}
+                        icon={Icons.Page.login}
                         onClick={() => navigateTo(Routes.login)}
                     />
                 : null}
                 {o.enableDashboard ?
                     <IconButton
                         title={"Home"}
-                        icon={Icons.home}
+                        icon={Icons.Page.home}
                         onClick={() => navigateTo(Routes.dashboard)}
                     />
                 : null}
                 {o.enableCreateGame ?
                     <IconButton
                         title={"Create game"}
-                        icon={Icons.newGame}
+                        icon={Icons.Page.newGame}
                         onClick={() => navigateTo(Routes.createGame)}
                     />
                 : null}
                 {o.enableLobby ?
                     <IconButton
                         title={"Lobby"}
-                        icon={Icons.lobby}
+                        icon={Icons.Page.lobby}
                         onClick={() => navigateTo(Routes.lobby(o.gameId))}
                     />
                 : null}
                 {o.enablePlay ?
                     <IconButton
                         title={"Play"}
-                        icon={Icons.play}
+                        icon={Icons.Page.play}
                         onClick={() => navigateTo(Routes.play(o.gameId))}
                     />
                 : null}

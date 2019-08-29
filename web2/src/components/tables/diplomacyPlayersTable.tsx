@@ -107,21 +107,21 @@ const PlayerDiplomacyActionButtons : React.SFC<PlayerDiplomacyActionButtonsProps
             {canAcceptDraw ?
                 <IconButton
                     title="Accept draw"
-                    icon={Icons.playerStatusAcceptsDraw}
+                    icon={Icons.PlayerAction.acceptDraw}
                     onClick={() => props.changePlayerStatus(props.gameId, p.id, PlayerStatus.AcceptsDraw)}
                 />
             : null}
             {canRevokeDraw ?
                 <IconButton
                     title="Revoke draw"
-                    icon={Icons.revokeDraw}
+                    icon={Icons.PlayerAction.revokeDraw}
                     onClick={() => props.changePlayerStatus(props.gameId, p.id, PlayerStatus.Alive)}
                 />
             : null}
             {canConcede ?
                 <IconButton
                     title="Concede"
-                    icon={Icons.playerStatusConceded}
+                    icon={Icons.PlayerAction.concede}
                     onClick={() => props.changePlayerStatus(props.gameId, p.id, PlayerStatus.Conceded)}
                 />
             : null}

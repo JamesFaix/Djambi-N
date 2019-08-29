@@ -30,47 +30,49 @@ export default class PlayerStatusIcon extends React.Component<PlayerStatusIconPr
     }
 
     private getIconDetails(player : Player) : PlayerIconDetails {
+        const i = Icons.PlayerStatus;
+
         switch (player.status) {
             case PlayerStatus.Pending:
                 return {
                     hint: "Pending",
-                    icon: Icons.playerStatusPending,
+                    icon: i.Pending,
                     isActive: false
                 };
             case PlayerStatus.Alive:
                 return {
                     hint: "Alive",
-                    icon: Icons.playerStatusAlive,
+                    icon: i.Alive,
                     isActive: player.kind !== PlayerKind.Neutral
                 };
             case PlayerStatus.AcceptsDraw:
                 return {
                     hint: "Will accept draw",
-                    icon: Icons.playerStatusAcceptsDraw,
+                    icon: i.AcceptsDraw,
                     isActive: player.kind !== PlayerKind.Neutral
                 };
             case PlayerStatus.Conceded:
                 return {
                     hint: "Conceded",
-                    icon: Icons.playerStatusConceded,
+                    icon: i.Conceded,
                     isActive: false
                 };
             case PlayerStatus.WillConcede:
                 return {
                     hint: "Will concede at the start of next turn",
-                    icon: Icons.playerStatusConceded,
+                    icon: i.Conceded,
                     isActive: true
                 };
             case PlayerStatus.Eliminated:
                 return {
                     hint: "Eliminated",
-                    icon: Icons.playerStatusEliminated,
+                    icon: i.Eliminated,
                     isActive: false
                 };
             case PlayerStatus.Victorious:
                 return {
                     hint: "Victorious",
-                    icon: Icons.playerStatusVictorious,
+                    icon: i.Victorious,
                     isActive: true
                 };
             default:

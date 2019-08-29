@@ -18,6 +18,8 @@ export default class DiplomacyPage extends React.Component<{}>{
             enablePlay: true
         };
 
+        const i = Icons.PlayerAction;
+
         return (
             <div className={Classes.pageContainer}>
                 <RedirectToLoginIfNotLoggedIn/>
@@ -27,14 +29,14 @@ export default class DiplomacyPage extends React.Component<{}>{
                 <br/>
                 <div className={Classes.narrowContainer}>
                     <p>
-                        If a player concedes (<FontAwesomeIcon icon={Icons.playerStatusConceded}/>),
+                        If a player concedes (<FontAwesomeIcon icon={i.concede}/>),
                         they are removed from the turn cycle and all their pieces are abandoned. This cannot be undone.
                         If a player concedes when it is not their turn, it does not take effect until their next turn would start.
                     </p>
                     <br/>
                     <p>
-                        If all players who have not conceded or been eliminated accept a draw (<FontAwesomeIcon icon={Icons.playerStatusAcceptsDraw}/>),
-                        the game ends and no one wins. If you have accepted a draw, but not everyone has, you can revoke your acceptance at any time (<FontAwesomeIcon icon={Icons.revokeDraw}/>).
+                        If all players who have not conceded or been eliminated accept a draw (<FontAwesomeIcon icon={i.acceptDraw}/>),
+                        the game ends and no one wins. If you have accepted a draw, but not everyone has, you can revoke your acceptance at any time (<FontAwesomeIcon icon={i.revokeDraw}/>).
                     </p>
                 </div>
             </div>
