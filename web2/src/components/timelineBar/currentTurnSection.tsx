@@ -25,7 +25,7 @@ class currentTurnSection extends React.Component<CurrentTurnSectionProps> {
 
         return (
             <div>
-                <PlayHeader text="Current turn"/>
+                <PlayHeader text="Present"/>
                 <div
                     className={Classes.playerBox}
                     data-player-color-id={player.colorId}

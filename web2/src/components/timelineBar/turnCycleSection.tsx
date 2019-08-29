@@ -19,7 +19,7 @@ class turnCycleSection extends React.Component<TurnCycleSectionProps> {
         const players = this.getTurnCyclePlayers();
         return (
             <div>
-                <PlayHeader text="Turn cycle"/>
+                <PlayHeader text="Future"/>
                 <div style={Styles.turnCycleSection}>
                     {players.map((p, i) => {
                         return <TurnCycleTurnBox player={p} key={i}/>;

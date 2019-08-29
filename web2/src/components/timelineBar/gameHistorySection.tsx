@@ -19,7 +19,7 @@ class gameHistorySection extends React.Component<GameHistorySectionProps> {
 
         return (
             <div style={Styles.historyContainer}>
-                <PlayHeader text="History"/>
+                <PlayHeader text="Past"/>
                 {
                     this.props.history.map((e, i) => {
                         return (
