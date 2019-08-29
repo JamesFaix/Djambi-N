@@ -20,6 +20,8 @@ export class Classes {
     static readonly playerBox = "playerBox";
 
     static readonly thinBorder = "thinBorder";
+
+    static readonly iconBox = "iconBox";
 }
 
 export class Styles {

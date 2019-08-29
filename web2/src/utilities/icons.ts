@@ -17,7 +17,10 @@ import {
     faMinus,
     faHandMiddleFinger,
     faRecycle,
-    faCheck
+    faCheck,
+    faPlay,
+    faAward,
+    faBan
 } from "@fortawesome/free-solid-svg-icons";
 
 export default class Icons {
@@ -39,9 +42,9 @@ export default class Icons {
 
     public static readonly GameStatus = class {
         public static readonly Pending : IconDefinition = faSpinner;
-        public static readonly InProgress : IconDefinition = null;
-        public static readonly Canceled : IconDefinition = null;
-        public static readonly Over : IconDefinition = null;
+        public static readonly InProgress : IconDefinition = faPlay;
+        public static readonly Canceled : IconDefinition = faBan;
+        public static readonly Over : IconDefinition = faAward;
     }
 
     public static readonly PlayerAction = class {

@@ -1,8 +1,8 @@
 import { PlayerStatus, PlayerKind, Player } from "../../api/model";
 import { IconDefinition } from "@fortawesome/free-solid-svg-icons";
 import * as React from 'react';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Icons from "../../utilities/icons";
+import IconBox from "./iconBox";
 
 interface PlayerStatusIconProps {
     player : Player
@@ -17,14 +17,12 @@ interface PlayerIconDetails {
 export default class PlayerStatusIcon extends React.Component<PlayerStatusIconProps> {
     render() {
         const details = this.getIconDetails(this.props.player);
-        const style = {
-            color: details.isActive ? "black" : "gray"
-        };
+        const color = details.isActive ? null : "gray";
         return (
-            <FontAwesomeIcon
+            <IconBox
                 icon={details.icon}
-                style={style}
                 title={details.hint}
+                color={color}
             />
         );
     }
