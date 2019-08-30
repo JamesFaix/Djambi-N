@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { TimelineHeader } from '../controls/headers';
-import { Game, User, Player, Turn, TurnStatus, Board } from '../../api/model';
+import { Game, User, Player, Board } from '../../api/model';
 import * as Copy from '../../utilities/copy';
 import { State } from '../../store/root';
 import { connect } from 'react-redux';
@@ -34,7 +34,7 @@ class currentTurnSection extends React.Component<CurrentTurnSectionProps> {
                 >
                     {
                         isCurrentUser
-                            ? this.renderForCurrentPlayer(p, turn)
+                            ? this.renderForCurrentPlayer()
                             : this.renderForOtherPlayer(p)
                     }
                 </div>
@@ -55,44 +55,27 @@ class currentTurnSection extends React.Component<CurrentTurnSectionProps> {
         );
     }
 
-    private renderForCurrentPlayer(player : Player, turn : Turn) {
+    private renderForCurrentPlayer() {
+        const game = this.props.game;
+        const board = this.props.board;
+        const turn = game.currentTurn;
+
         return (
             <React.Fragment>
-                <p>
-                    {player.name},<br/>
-                    {Copy.getTurnPrompt(turn)}
+                {turn.selections.map((s, i) =>
+                    <p key={"row" + i}>
+                        {Copy.getSelectionDescription(s, game, board)}
+                    </p>)
+                }
+                <p style={{
+                    fontStyle:"italic",
+                    padding:"5px"
+                }}>
+                    {`(${Copy.getTurnPrompt(turn)})`}
                 </p>
-                <div>
-                    {this.getSelectionsDescription(turn)}
-                </div>
                 <CurrentTurnActionsBar/>
             </React.Fragment>
         );
-    }
-
-    private getSelectionsDescription(turn : Turn) {
-        const game = this.props.game;
-        const board = this.props.board;
-
-        const descriptions = turn.selections
-            .map((s, i) => <p key={"row" + i}>{Copy.getSelectionDescription(s, game, board)}</p>);
-
-        return (
-            <div>
-                Pending turn:
-                <br/>
-                <div className={Classes.indented}>
-                    {descriptions}
-                    {this.renderEllipsisIfSelectionRequired(turn)}
-                </div>
-            </div>
-        );
-    }
-
-    private renderEllipsisIfSelectionRequired(turn : Turn) {
-        return turn.status === TurnStatus.AwaitingSelection
-            ? <p>...</p>
-            : null;
     }
 }
 

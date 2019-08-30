@@ -125,23 +125,23 @@ export function getSelectionDescription(selection : Selection, game : Game, boar
 
     switch (selection.kind) {
         case SelectionKind.Drop:
-            return `Drop target piece at cell ${cell}`;
+            return `Drop target piece at cell ${cell}.`;
 
         case SelectionKind.Move:
             if (piece === null) {
-                return `Move to cell ${cell}`;
+                return `Move to cell ${cell}.`;
             } else {
-                return `Move to cell ${cell} and target ${piece}`;
+                return `Move to cell ${cell} and target ${piece}.`;
             }
 
         case SelectionKind.Subject:
-            return `Pick up ${piece}`;
+            return `Pick up ${piece}.`;
 
         case SelectionKind.Target:
-            return `Target ${piece} at cell ${cell}`;
+            return `Target ${piece} at cell ${cell}.`;
 
         case SelectionKind.Vacate:
-            return `Vacate ${centerCellName} to cell ${cell}`;
+            return `Vacate ${centerCellName} to cell ${cell}.`;
 
         default: throw "Invalid selection kind.";
     }
