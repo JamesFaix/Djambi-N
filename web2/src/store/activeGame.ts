@@ -1,6 +1,7 @@
 import { CustomAction, DataAction } from "./root";
 import { Game, Event, StateAndEventResponse } from "../api/model";
 import { BoardView } from "../viewModel/board/model";
+import GameHistory from "../viewModel/gameHistory";
 
 export interface State {
     game : Game,
@@ -64,7 +65,8 @@ export function reducer(state : State, action : CustomAction) : State {
         case ActionTypes.LoadGameHistory: {
             const da = <DataAction<Event[]>>action;
             const newState = {...state};
-            newState.history = da.data;
+            const history = da.data.filter(e => GameHistory.isDisplayableEvent(e));
+            newState.history = history;
             return newState;
         }
         //Load game and update game must be at a higher level because they update multiple areas of the store
