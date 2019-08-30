@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconInfo } from '../../utilities/icons';
+import { Classes } from '../../styles/styles';
 
 interface IconButtonProps {
     onClick: () => void,
@@ -9,19 +10,16 @@ interface IconButtonProps {
 }
 
 const IconButton : React.SFC<IconButtonProps> = props => {
-    const style = props.showTitle ? {display:"flex"} : null;
-
     return (
         <button
             title={props.icon.title}
             onClick={props.onClick}
-            style={style}
         >
             <FontAwesomeIcon icon={props.icon.icon}/>
             {props.showTitle ?
-                <div style={{padding: "0px 0px 0px 5px"}}>
+                <span className={Classes.iconBox}>
                     {props.icon.title}
-                </div>
+                </span>
             : null}
         </button>
     );
