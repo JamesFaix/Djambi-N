@@ -3,8 +3,9 @@ import { Event, Game } from "../../api/model";
 import { State } from '../../store/root';
 import { connect } from 'react-redux';
 import GameHistoryEventBox from './gameHistoryEventBox';
-import { PlayHeader } from '../controls/headers';
+import { TimelineHeader } from '../controls/headers';
 import { Styles } from '../../styles/styles';
+import { Icons } from '../../utilities/icons';
 
 interface GameHistorySectionProps {
     game : Game,
@@ -19,7 +20,7 @@ class gameHistorySection extends React.Component<GameHistorySectionProps> {
 
         return (
             <div style={Styles.historyContainer}>
-                <PlayHeader text="Past"/>
+                <TimelineHeader icon={Icons.Timeline.history}/>
                 {
                     this.props.history.map((e, i) => {
                         return (

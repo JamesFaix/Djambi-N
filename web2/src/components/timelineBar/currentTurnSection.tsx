@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { PlayHeader } from '../controls/headers';
+import { TimelineHeader } from '../controls/headers';
 import { Game, User, Player, Turn, TurnStatus, Board } from '../../api/model';
 import * as Copy from '../../utilities/copy';
 import { State } from '../../store/root';
 import { connect } from 'react-redux';
 import { Classes } from '../../styles/styles';
 import CurrentTurnActionsBar from './currentTurnActionsBar';
+import { Icons } from '../../utilities/icons';
 
 interface CurrentTurnSectionProps {
     game : Game,
@@ -21,19 +22,20 @@ class currentTurnSection extends React.Component<CurrentTurnSectionProps> {
             return null;
         }
 
-        const player = this.getCurrentPlayer(this.props.game);
+        const p = this.getCurrentPlayer(this.props.game);
+        const isCurrentUser = p.userId === this.props.user.id;
 
         return (
             <div>
-                <PlayHeader text="Present"/>
+                <TimelineHeader icon={Icons.Timeline.currentTurn(p.name, isCurrentUser)}/>
                 <div
                     className={Classes.playerBox}
-                    data-player-color-id={player.colorId}
+                    data-player-color-id={p.colorId}
                 >
                     {
-                        player.userId === this.props.user.id
-                            ? this.renderForCurrentPlayer(player, turn)
-                            : this.renderForOtherPlayer(player)
+                        isCurrentUser
+                            ? this.renderForCurrentPlayer(p, turn)
+                            : this.renderForOtherPlayer(p)
                     }
                 </div>
             </div>

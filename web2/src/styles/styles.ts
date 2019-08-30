@@ -22,6 +22,10 @@ export class Classes {
     static readonly thinBorder = "thinBorder";
 
     static readonly iconBox = "iconBox";
+
+    static readonly sectionHeader = "sectionHeader";
+
+    static readonly timelineHeader = "timelineHeader";
 }
 
 export class Styles {

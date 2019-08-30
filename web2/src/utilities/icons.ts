@@ -20,7 +20,11 @@ import {
     faPlay,
     faAward,
     faBan,
-    faSearch
+    faSearch,
+    faScroll,
+    faClock,
+    faEllipsisH,
+    faExclamation
 } from "@fortawesome/free-solid-svg-icons";
 import { PlayerStatus, GameStatus } from "../api/model";
 
@@ -122,5 +126,16 @@ export class Icons {
 
     public static readonly PlayerNotes = class {
         public static readonly guest: IconDefinition = faIdBadge;
+    }
+
+    public static readonly Timeline = class {
+        public static readonly history : IconInfo = { icon: faScroll, title: "History" };
+        public static readonly turnCycle : IconInfo = { icon: faClock, title: "Turn cycle" };
+        public static currentTurn(playerName : string, isCurrentUser : boolean) : IconInfo {
+            return {
+                icon: isCurrentUser ? faExclamation: faEllipsisH,
+                title: `${playerName}'s turn`
+            };
+        }
     }
 }
