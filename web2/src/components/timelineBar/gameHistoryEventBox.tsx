@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Event, Game } from "../../api/model";
 import GameHistoryEffectBox from './gameHistoryEffectBox';
 import { Classes } from '../../styles/styles';
+import GameHistory from '../../viewModel/gameHistory';
 
 interface GameHistoryEventBoxProps {
     game : Game, //This will be needed eventually to get the correct player names from playerIDs in event objects
@@ -27,7 +28,9 @@ export default class GameHistoryEventBox extends React.Component<GameHistoryEven
                 {`${agentName} did a ${e.kind}.`}<br/>
                 Effects:<br/>
                 <div className={Classes.indented}>
-                    {e.effects.map((f, i) => {
+                    {e.effects
+                        .filter(f => GameHistory.isDisplayableEffect(f))
+                        .map((f, i) => {
                         return (
                             <GameHistoryEffectBox
                                 game={this.props.game}
