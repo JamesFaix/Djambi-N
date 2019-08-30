@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Player, Game, PlayerKind } from '../../api/model';
 import Colors from '../../utilities/colors';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import * as LobbySeats from '../../viewModel/lobbySeats';
-import Icons from '../../utilities/icons';
+import IconBox from './iconBox';
+import { Icons } from '../../utilities/icons';
 
 interface PlayerNoteIconProps {
     player : Player,
@@ -30,11 +30,15 @@ export default class PlayerNoteIcon extends React.Component<PlayerNoteIconProps>
                 : "black";
         const note = LobbySeats.getPlayerNote(this.props.player, this.props.game);
 
+        const info = {
+            title: note,
+            icon: Icons.PlayerNotes.guest
+        };
+
         return (
-            <FontAwesomeIcon
-                icon={Icons.guest}
-                style={{color: color}}
-                title={note}
+            <IconBox
+                icon={info}
+                color={color}
             />
         );
     }

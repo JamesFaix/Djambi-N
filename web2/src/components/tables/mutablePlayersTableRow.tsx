@@ -3,8 +3,8 @@ import { Seat } from '../../viewModel/lobbySeats';
 import * as LobbySeats from '../../viewModel/lobbySeats';
 import { User, CreatePlayerRequest, PlayerKind, Game } from '../../api/model';
 import IconButton from '../controls/iconButton';
-import Icons from '../../utilities/icons';
 import PlayerNoteIcon from '../controls/playerNoteIcon';
+import { Icons } from '../../utilities/icons';
 
 interface MutablePlayersTableRowProps {
     game : Game,
@@ -81,8 +81,7 @@ class JoinRow extends React.Component<JoinRowProps> {
                 <td></td>
                 <td>
                     <IconButton
-                        title="Join"
-                        icon={Icons.join}
+                        icon={Icons.UserActions.playerJoin}
                         onClick={() => this.onClick()}
                     />
                 </td>
@@ -133,8 +132,7 @@ class AddGuestRow extends React.Component<AddGuestRowProps, AddGuestRowState> {
                 <td></td>
                 <td>
                     <IconButton
-                        title="Add guest"
-                        icon={Icons.addGuest}
+                        icon={Icons.UserActions.playerAddGuest}
                         onClick={() => this.onClick()}
                     />
                 </td>
@@ -166,6 +164,10 @@ interface RemoveRowProps extends RowPropsBase {
 class RemoveRow extends React.Component<RemoveRowProps> {
     render() {
         const seat = this.props.seat;
+        const icon = LobbySeats.isSeatSelf(seat, this.props.user)
+            ? Icons.UserActions.playerQuit
+            : Icons.UserActions.playerRemove;
+
         return (
             <tr>
                 <td>{seat.player.name}</td>
@@ -177,8 +179,7 @@ class RemoveRow extends React.Component<RemoveRowProps> {
                 </td>
                 <td>
                     <IconButton
-                        title={LobbySeats.isSeatSelf(seat, this.props.user) ? "Quit" : "Remove"}
-                        icon={Icons.quit}
+                        icon={icon}
                         onClick={() => this.props.removePlayer(this.props.game.id, seat.player.id)}
                     />
                 </td>

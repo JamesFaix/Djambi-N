@@ -21,7 +21,7 @@ class playPage extends React.Component<PlayPageProps> {
         const navOptions = {
             enableDashboard: true,
             enableLobby: true,
-            enableHistory: true,
+            enableDiplomacy: true,
             gameId: gameId
         };
 

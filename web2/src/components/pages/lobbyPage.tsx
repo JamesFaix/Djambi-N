@@ -12,6 +12,8 @@ import { Classes } from '../../styles/styles';
 import PlayersTable from '../tables/playersTable';
 import ApiActions from '../../apiActions';
 import { VerticalSpacerLarge } from '../utilities/spacers';
+import IconButton from '../controls/iconButton';
+import { Icons } from '../../utilities/icons';
 
 interface LobbyPageProps {
     game : Game,
@@ -22,10 +24,12 @@ class lobbyPage extends React.Component<LobbyPageProps> {
     render() {
         const gameId = (this.props as any).match.params.gameId;
 
+        const inProgress =  this.props.game && this.props.game.status === GameStatus.InProgress;
+
         const navOptions = {
             enableDashboard: true,
-            enableHistory: true,
-            enablePlay: this.props.game && this.props.game.status === GameStatus.InProgress,
+            enablePlay: inProgress,
+            enableDiplomacy: inProgress,
             gameId: gameId
         };
 
@@ -67,11 +71,11 @@ class lobbyPage extends React.Component<LobbyPageProps> {
         }
 
         return (
-            <button
+            <IconButton
+                icon={Icons.UserActions.startGame}
+                showTitle={true}
                 onClick={() => this.props.onStartGameClicked(this.props.game.id)}
-            >
-                Start
-            </button>
+            />
         );
     }
 }

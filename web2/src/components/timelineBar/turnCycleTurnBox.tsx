@@ -13,6 +13,7 @@ export default class TurnCycleTurnBox extends React.Component<TurnCycleTurnBoxPr
             <div
                 className={Classes.playerBox}
                 data-player-color-id={p.colorId}
+                style={{flex:1,textAlign:"center"}}
             >
                 {p.name}
             </div>

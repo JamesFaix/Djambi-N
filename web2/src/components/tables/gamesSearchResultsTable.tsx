@@ -5,9 +5,10 @@ import { connect } from 'react-redux';
 import { boolToYesOrNo } from '../../utilities/copy';
 import { SectionHeader } from '../controls/headers';
 import IconButton from '../controls/iconButton';
-import { faDoorOpen } from '@fortawesome/free-solid-svg-icons';
 import ApiActions from '../../apiActions';
 import { Classes } from '../../styles/styles';
+import IconBox from '../controls/iconBox';
+import { Icons } from '../../utilities/icons';
 
 interface GamesSearchResultsTableProps {
     games : Game[]
@@ -56,8 +57,7 @@ const GameRow : React.SFC<GameRowProps> = props => {
         <tr>
             <td>
                 <IconButton
-                    title="Load"
-                    icon={faDoorOpen}
+                    icon={Icons.UserActions.loadGame}
                     onClick={() => ApiActions.navigateToGame(game)}
                 />
             </td>
@@ -71,7 +71,7 @@ const GameRow : React.SFC<GameRowProps> = props => {
                 {game.createdBy.userName}
             </td>
             <td className={Classes.centered}>
-                {game.status}
+                <IconBox icon={Icons.gameStatus(game.status)}/>
             </td>
             <td className={Classes.centered}>
                 {game.players.length}

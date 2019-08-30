@@ -1,18 +1,19 @@
 import * as React from 'react';
-import { Game, Effect } from "../../api/model";
+import { Game, Effect, Board } from "../../api/model";
+import * as Copy from '../../utilities/copy';
 
 interface GameHistoryEffectBoxProps {
-    game : Game, //This will be needed eventually to get the correct player names from playerIDs in effect objects
-    effect : Effect
+    game : Game,
+    effect : Effect,
+    board : Board
 }
 
-export default class GameHistoryEffectBox extends React.Component<GameHistoryEffectBoxProps> {
-    render() {
-        const f = this.props.effect;
-        return (
-            <div>
-                {f.kind} {JSON.stringify(f.value)}
-            </div>
-        );
-    }
+const GameHistoryEffectBox : React.SFC<GameHistoryEffectBoxProps> = props => {
+    return (
+        <div>
+            {Copy.getEffectDescription(props.effect, props.game, props.board)}
+        </div>
+    );
 }
+
+export default GameHistoryEffectBox;

@@ -3,11 +3,9 @@ import { Dispatch } from 'redux';
 import { State } from '../../store/root';
 import { connect } from 'react-redux';
 import { Game, User, TurnStatus } from '../../api/model';
-import { faHandshake, faRecycle, faCheck } from '@fortawesome/free-solid-svg-icons';
-import { navigateTo } from '../../history';
-import Routes from '../../routes';
 import IconButton from '../controls/iconButton';
 import ApiActions from '../../apiActions';
+import { Icons } from '../../utilities/icons';
 
 interface CurrentTurnActionsBarProps {
     user : User,
@@ -22,7 +20,6 @@ class currentTurnActionsBar extends React.Component<CurrentTurnActionsBarProps> 
             <div>
                 {this.renderEndButton()}
                 {this.renderResetButton()}
-                {this.renderDiplomacyButton()}
             </div>
         );
     }
@@ -45,8 +42,7 @@ class currentTurnActionsBar extends React.Component<CurrentTurnActionsBarProps> 
 
         return (
             <IconButton
-                title="Reset turn"
-                icon={faRecycle}
+                icon={Icons.PlayerActions.resetTurn}
                 onClick={() => this.props.resetTurn(this.props.game.id)}
             />
         );
@@ -61,19 +57,8 @@ class currentTurnActionsBar extends React.Component<CurrentTurnActionsBarProps> 
 
         return (
             <IconButton
-                title={"Finish turn"}
-                icon={faCheck}
+                icon={Icons.PlayerActions.endTurn}
                 onClick={() => this.props.endTurn(this.props.game.id)}
-            />
-        );
-    }
-
-    private renderDiplomacyButton() {
-        return (
-            <IconButton
-                title={"Concede or Draw"}
-                icon={faHandshake}
-                onClick={() => navigateTo(Routes.diplomacy(this.props.game.id))}
             />
         );
     }

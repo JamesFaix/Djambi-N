@@ -13,6 +13,7 @@ import CanvasTransformService, { CanvasTranformData } from '../viewModel/board/c
 import BoardViewFactory from '../viewModel/board/boardViewFactory';
 import Geometry from '../viewModel/board/geometry';
 import { Point } from '../viewModel/board/model';
+import GameHistory from '../viewModel/gameHistory';
 
 export interface State {
     session: Session.State,
@@ -106,7 +107,9 @@ function updateGameReducer(state: State, action : CustomAction) : State {
     const newState = {...state};
     newState.activeGame = {...state.activeGame};
     newState.activeGame.game = game;
-    newState.activeGame.history = [event].concat(state.activeGame.history);
+    if (GameHistory.isDisplayableEvent(event)) {
+        newState.activeGame.history = [event].concat(state.activeGame.history);
+    }
     updateBoardView(newState, game);
     return newState;
 }

@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { PlayHeader } from '../controls/headers';
-import { Game, User, Player, Turn, TurnStatus, Board } from '../../api/model';
+import { TimelineHeader } from '../controls/headers';
+import { Game, User, Player, Board } from '../../api/model';
 import * as Copy from '../../utilities/copy';
 import { State } from '../../store/root';
 import { connect } from 'react-redux';
 import { Classes } from '../../styles/styles';
 import CurrentTurnActionsBar from './currentTurnActionsBar';
+import { Icons } from '../../utilities/icons';
 
 interface CurrentTurnSectionProps {
     game : Game,
@@ -21,17 +22,22 @@ class currentTurnSection extends React.Component<CurrentTurnSectionProps> {
             return null;
         }
 
-        const player = this.getCurrentPlayer(this.props.game);
+        const p = this.getCurrentPlayer(this.props.game);
+        const isCurrentUser = p.userId === this.props.user.id;
 
         return (
             <div>
-                <PlayHeader text="Current turn"/>
-                {
-                    player.userId === this.props.user.id
-                        ? this.renderForCurrentPlayer(player, turn)
-                        : this.renderForOtherPlayer(player)
-                }
-                <CurrentTurnActionsBar/>
+                <TimelineHeader icon={Icons.Timeline.currentTurn(p.name, isCurrentUser)}/>
+                <div
+                    className={Classes.playerBox}
+                    data-player-color-id={p.colorId}
+                >
+                    {
+                        isCurrentUser
+                            ? this.renderForCurrentPlayer()
+                            : this.renderForOtherPlayer(p)
+                    }
+                </div>
             </div>
         );
     }
@@ -43,55 +49,33 @@ class currentTurnSection extends React.Component<CurrentTurnSectionProps> {
 
     private renderForOtherPlayer(player : Player) {
         return (
-            <div
-                className={Classes.playerBox}
-                data-player-color-id={player.colorId}
-            >
+            <React.Fragment>
                 {`Waiting on ${player.name}...`}
-            </div>
+            </React.Fragment>
         );
     }
 
-    private renderForCurrentPlayer(player : Player, turn : Turn) {
-        return (
-            <div
-                className={Classes.playerBox}
-                data-player-color-id={player.colorId}
-            >
-                <p>
-                    {player.name},<br/>
-                    {Copy.getTurnPrompt(turn)}
-                </p>
-                <div>
-                    {this.getSelectionsDescription(turn)}
-                </div>
-            </div>
-        );
-    }
-
-    private getSelectionsDescription(turn : Turn) {
+    private renderForCurrentPlayer() {
         const game = this.props.game;
         const board = this.props.board;
-
-        const descriptions = turn.selections
-            .map((s, i) => <p key={"row" + i}>{Copy.getSelectionDescription(s, game, board)}</p>);
+        const turn = game.currentTurn;
 
         return (
-            <div>
-                Pending turn:
-                <br/>
-                <div className={Classes.indented}>
-                    {descriptions}
-                    {this.renderEllipsisIfSelectionRequired(turn)}
-                </div>
-            </div>
+            <React.Fragment>
+                {turn.selections.map((s, i) =>
+                    <p key={"row" + i}>
+                        {Copy.getSelectionDescription(s, game, board)}
+                    </p>)
+                }
+                <p style={{
+                    fontStyle:"italic",
+                    padding:"5px"
+                }}>
+                    {`(${Copy.getTurnPrompt(turn)})`}
+                </p>
+                <CurrentTurnActionsBar/>
+            </React.Fragment>
         );
-    }
-
-    private renderEllipsisIfSelectionRequired(turn : Turn) {
-        return turn.status === TurnStatus.AwaitingSelection
-            ? <p>...</p>
-            : null;
     }
 }
 

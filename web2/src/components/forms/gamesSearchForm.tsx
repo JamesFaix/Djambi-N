@@ -10,6 +10,8 @@ import { SectionHeader } from '../controls/headers';
 import ApiActions from '../../apiActions';
 import * as StoreGamesQuery from '../../store/gamesQuery';
 import { VerticalSpacerSmall } from '../utilities/spacers';
+import IconButton from '../controls/iconButton';
+import { Icons } from '../../utilities/icons';
 
 interface GamesSearchFormProps {
     formData : GamesQuery,
@@ -96,11 +98,11 @@ class gamesSearchForm extends React.Component<GamesSearchFormProps> {
                     </tbody>
                 </table>
                 <VerticalSpacerSmall/>
-                <button
+                <IconButton
+                    icon={Icons.UserActions.search}
+                    showTitle={true}
                     onClick={() => this.props.submit(this.props.formData)}
-                >
-                    Search
-                </button>
+                />
             </div>
         );
     }
