@@ -48,11 +48,9 @@ class currentTurnSection extends React.Component<CurrentTurnSectionProps> {
     }
 
     private renderForOtherPlayer(player : Player) {
-        return (
-            <React.Fragment>
-                {`Waiting on ${player.name}...`}
-            </React.Fragment>
-        );
+        return (<>
+            {`Waiting on ${player.name}...`}
+        </>);
     }
 
     private renderForCurrentPlayer() {
@@ -60,22 +58,20 @@ class currentTurnSection extends React.Component<CurrentTurnSectionProps> {
         const board = this.props.board;
         const turn = game.currentTurn;
 
-        return (
-            <React.Fragment>
-                {turn.selections.map((s, i) =>
-                    <p key={"row" + i}>
-                        {Copy.getSelectionDescription(s, game, board)}
-                    </p>)
-                }
-                <p style={{
-                    fontStyle:"italic",
-                    padding:"5px"
-                }}>
-                    {`(${Copy.getTurnPrompt(turn)})`}
-                </p>
-                <CurrentTurnActionsBar/>
-            </React.Fragment>
-        );
+        return (<>
+            {turn.selections.map((s, i) =>
+                <p key={"row" + i}>
+                    {Copy.getSelectionDescription(s, game, board)}
+                </p>)
+            }
+            <p style={{
+                fontStyle:"italic",
+                padding:"5px"
+            }}>
+                {`(${Copy.getTurnPrompt(turn)})`}
+            </p>
+            <CurrentTurnActionsBar/>
+        </>);
     }
 }
 

@@ -15,21 +15,19 @@ interface ZoomableScrollAreaProps {
 
 export default class ZoomableScrollArea extends React.Component<ZoomableScrollAreaProps> {
     render() {
-        return (
-            <React.Fragment>
-                <Scrollbars
-                    ref='scrollbar'
-                    onScrollFrame={e => this.onScroll(e)}
-                    style={this.props.innerStyle}
-                >
-                        {this.props.children}
-                </Scrollbars>
-                <ZoomSlider
-                    level={this.props.zoomLevel}
-                    changeLevel={level => this.onZoom(level)}
-                />
-            </React.Fragment>
-        );
+        return (<>
+            <Scrollbars
+                ref='scrollbar'
+                onScrollFrame={e => this.onScroll(e)}
+                style={this.props.innerStyle}
+            >
+                    {this.props.children}
+            </Scrollbars>
+            <ZoomSlider
+                level={this.props.zoomLevel}
+                changeLevel={level => this.onZoom(level)}
+            />
+        </>);
     }
 
     private onScroll(e : positionValues) : void {

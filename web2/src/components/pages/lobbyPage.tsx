@@ -44,20 +44,18 @@ class lobbyPage extends React.Component<LobbyPageProps> {
     }
 
     private renderBody() {
-        return (
-            <React.Fragment>
-                <VerticalSpacerLarge/>
-                <GameParametersTable/>
-                <VerticalSpacerLarge/>
-                {
-                    this.props.game.status === GameStatus.Pending
-                        ? <MutablePlayersTable/>
-                        : <PlayersTable/>
-                }
-                <VerticalSpacerLarge/>
-                {this.renderStartButton()}
-            </React.Fragment>
-        );
+        return (<>
+            <VerticalSpacerLarge/>
+            <GameParametersTable/>
+            <VerticalSpacerLarge/>
+            {
+                this.props.game.status === GameStatus.Pending
+                    ? <MutablePlayersTable/>
+                    : <PlayersTable/>
+            }
+            <VerticalSpacerLarge/>
+            {this.renderStartButton()}
+        </>);
     }
 
     private renderStartButton() {
