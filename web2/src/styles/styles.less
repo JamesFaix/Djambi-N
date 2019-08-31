@@ -131,3 +131,54 @@ p {
     padding: 5px;
     font-weight: bold;
 }
+
+//page layout
+
+.appContainer {
+    display: flex;
+    flex-direction: column;
+}
+
+.topBar {
+    .thinBorder;
+    height: 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.topBarNavigation {
+    flex: 1;
+    text-align: left;
+}
+
+.topBarTitle {
+    flex: 1;
+    text-align: center;
+}
+
+.topBarUser {
+    flex: 1;
+    text-align: right;
+}
+
+.basicPageContainer {
+    display: flex;
+    flex-direction: row;
+}
+
+.basicPageMargin {
+    width: 25%;
+}
+
+.basicPageContentContainer {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    align-items: center;
+}
+
+.playPageContainer {
+    display: flex;
+    flex-direction: row;
+}

@@ -26,6 +26,21 @@ export class Classes {
     static readonly sectionHeader = "sectionHeader";
 
     static readonly timelineHeader = "timelineHeader";
+
+    //page layout
+
+    static readonly appContainer = "appContainer";
+
+    static readonly topBar = "topBar";
+    static readonly topBarNavigation = "topBarNavigation";
+    static readonly topBarTitle = "topBarTitle";
+    static readonly topBarUser = "topBarUser";
+
+    static readonly basicPageContainer = "basicPageContainer";
+    static readonly basicPageMargin = "basicPageMargin";
+    static readonly basicPageContentContainer = "basicPageContentContainer";
+
+    static readonly playPageContainer = "playPageContainer";
 }
 
 export class Styles {
@@ -54,27 +69,5 @@ export class Styles {
     static readonly historyContainer : React.CSSProperties = {
         display: "flex",
         flexDirection: "column"
-    }
-
-    static readonly topBar : React.CSSProperties = {
-        height: "50px",
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center"
-    }
-
-    static readonly topBarNavigation : React.CSSProperties = {
-        flex: 1,
-        textAlign: "left"
-    }
-
-    static readonly topBarTitle : React.CSSProperties = {
-        flex: 1,
-        textAlign: "center"
-    }
-
-    static readonly topBarUser : React.CSSProperties = {
-        flex: 1,
-        textAlign: "right"
     }
 }

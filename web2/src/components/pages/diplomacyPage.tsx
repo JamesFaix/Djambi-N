@@ -7,6 +7,7 @@ import DiplomacyPlayersTable from '../tables/diplomacyPlayersTable';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Icons } from '../../utilities/icons';
 import { VerticalSpacerLarge } from '../utilities/spacers';
+import BasicPageContainer from '../sections/basicPageContainer';
 
 export default class DiplomacyPage extends React.Component<{}>{
     render() {
@@ -22,7 +23,7 @@ export default class DiplomacyPage extends React.Component<{}>{
         const i = Icons.PlayerActions;
 
         return (
-            <div className={Classes.pageContainer}>
+            <BasicPageContainer>
                 <RedirectToLoginIfNotLoggedIn/>
                 <RedirectToLobbyIfGameNotInProgress/>
                 <SetNavigationOptions options={navOptions}/>
@@ -41,7 +42,7 @@ export default class DiplomacyPage extends React.Component<{}>{
                         the game ends and no one wins. If you have accepted a draw, but not everyone has, you can revoke your acceptance at any time (<FontAwesomeIcon icon={i.revokeDraw.icon}/>).
                     </p>
                 </div>
-            </div>
+            </BasicPageContainer>
         );
     }
 }

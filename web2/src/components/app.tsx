@@ -11,10 +11,14 @@ import CreateGamePage from './pages/createGamePage';
 import RedirectToLoginOrDashboard from './utilities/redirectToLoginOrDashboard';
 import PlayPage from './pages/playPage';
 import DiplomacyPage from './pages/diplomacyPage';
+import { Classes } from '../styles/styles';
 
 const App : React.SFC<{}> = _ => {
     return (
-        <div>
+        <div
+            id={"app-container"}
+            className={Classes.appContainer}
+        >
             <TopBar/>
             <Switch>
                 <Route

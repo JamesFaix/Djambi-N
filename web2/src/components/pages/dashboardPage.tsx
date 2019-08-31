@@ -7,9 +7,9 @@ import { State } from '../../store/root';
 import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
 import GamesSearchForm from '../forms/gamesSearchForm';
 import SetNavigationOptions from '../utilities/setNavigationOptions';
-import { Classes } from '../../styles/styles';
 import ApiActions from '../../apiActions';
 import { VerticalSpacerLarge } from '../utilities/spacers';
+import BasicPageContainer from '../sections/basicPageContainer';
 
 interface DashboardPageProps {
     gamesQuery : GamesQuery,
@@ -20,14 +20,14 @@ interface DashboardPageProps {
 class dashboardPage extends React.Component<DashboardPageProps>{
     render() {
         return (
-            <div className={Classes.pageContainer}>
+            <BasicPageContainer>
                 <RedirectToLoginIfNotLoggedIn/>
                 <SetNavigationOptions options={{enableCreateGame: true}}/>
                 <VerticalSpacerLarge/>
                 <GamesSearchForm/>
                 <VerticalSpacerLarge/>
                 <GamesSearchResultsTable/>
-            </div>
+            </BasicPageContainer>
         );
     }
 }

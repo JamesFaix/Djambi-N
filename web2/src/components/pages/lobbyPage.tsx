@@ -8,12 +8,12 @@ import { State } from '../../store/root';
 import LoadGame from '../utilities/loadGame';
 import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
 import SetNavigationOptions from '../utilities/setNavigationOptions';
-import { Classes } from '../../styles/styles';
 import PlayersTable from '../tables/playersTable';
 import ApiActions from '../../apiActions';
 import { VerticalSpacerLarge } from '../utilities/spacers';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
+import BasicPageContainer from '../sections/basicPageContainer';
 
 interface LobbyPageProps {
     game : Game,
@@ -34,12 +34,12 @@ class lobbyPage extends React.Component<LobbyPageProps> {
         };
 
         return (
-            <div className={Classes.pageContainer}>
+            <BasicPageContainer>
                 <RedirectToLoginIfNotLoggedIn/>
                 <SetNavigationOptions options={navOptions}/>
                 <LoadGame gameId={gameId}/>
                 {this.props.game ? this.renderBody() : null}
-            </div>
+            </BasicPageContainer>
         );
     }
 

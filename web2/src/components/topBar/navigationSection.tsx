@@ -6,6 +6,7 @@ import Routes from '../../routes';
 import IconButton from '../controls/iconButton';
 import * as Navigation from '../../store/navigation';
 import { Icons } from '../../utilities/icons';
+import { Classes } from '../../styles/styles';
 
 interface NavigationSectionProps {
     options : Navigation.State
@@ -15,7 +16,10 @@ class navigationSection extends React.Component<NavigationSectionProps> {
     render() {
         const o = this.props.options;
         return (
-            <div>
+            <div
+                id={"navigation-section"}
+                className={Classes.topBarNavigation}
+            >
                 {o.enableSignup ?
                     <IconButton
                         icon={Icons.Pages.signup}

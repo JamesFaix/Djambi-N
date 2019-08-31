@@ -6,6 +6,7 @@ import { Dispatch } from 'redux';
 import IconButton from '../controls/iconButton';
 import ApiActions from '../../apiActions';
 import { Icons } from '../../utilities/icons';
+import { Classes } from '../../styles/styles';
 
 interface UserSectionProps {
     user : User,
@@ -13,29 +14,34 @@ interface UserSectionProps {
 }
 
 const userSection : React.SFC<UserSectionProps> = props => {
-    return props.user
-        ? loggedInUserSection(props)
-        : notLoggedInUserSection(props);
+    return (
+        <div
+            id={"user-section"}
+            className={Classes.topBarUser}
+        >
+            {
+                props.user
+                    ? loggedInUserSection(props)
+                    : notLoggedInUserSection(props)
+            }
+        </div>
+    );
 }
 
 const notLoggedInUserSection : React.SFC<UserSectionProps> = props => {
-    return (
-        <div>
-            (Not signed in)
-        </div>
-    );
+    return (<>
+        (Not signed in)
+    </>);
 };
 
 const loggedInUserSection : React.SFC<UserSectionProps> = props => {
-    return (
-        <div>
-            {props.user.name}
-            <IconButton
-                icon={Icons.UserActions.logout}
-                onClick={() => props.onLogoutClicked()}
-            />
-        </div>
-    );
+    return (<>
+        {props.user.name}
+        <IconButton
+            icon={Icons.UserActions.logout}
+            onClick={() => props.onLogoutClicked()}
+        />
+    </>);
 };
 
 const mapStateToProps = (state : State) => {
