@@ -55,21 +55,6 @@ p {
 
 /* classes */
 
-.pageContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.narrowContainer {
-    width: 500px;
-}
-
-.containerSize {
-    width: 100%;
-    height: 100%;
-}
-
 .centered {
     text-align: center;
 }
@@ -129,17 +114,30 @@ p {
 
 //page layout
 
-.appContainer {
+.centeredContainer() {
+    align-items: center;
+}
+
+.verticalContainer() {
     display: flex;
     flex-direction: column;
 }
 
-.topBar {
-    .thinBorder;
-    height: @top-bar-height;
+.horizontalContainer() {
     display: flex;
+    flex-direction: row;
+}
+
+.appContainer {
+    .verticalContainer();
+}
+
+.topBar {
+    .thinBorder();
+    .horizontalContainer();
+    .centeredContainer();
+    height: @top-bar-height;
     justify-content: space-between;
-    align-items: center;
 }
 
 .topBarNavigation {
@@ -158,8 +156,7 @@ p {
 }
 
 .basicPageContainer {
-    display: flex;
-    flex-direction: row;
+    .horizontalContainer();
 }
 
 .basicPageMargin {
@@ -167,57 +164,48 @@ p {
 }
 
 .basicPageContentContainer {
-    display: flex;
-    flex-direction: column;
+    .verticalContainer();
+    .centeredContainer();
     width: 50%;
-    align-items: center;
     margin-top: 20px;
 }
 
 .playPageContainer {
-    display: flex;
-    flex-direction: row;
+    .horizontalContainer();
 }
 
 .timelineBar {
-    .thinBorder;
+    .thinBorder();
     width: @timeline-width;
 }
 
 .timelineBarTurnCycle {
-    .thinBorder;
+    .thinBorder();
     flex: 0;
     width: 100%;
 }
 
 .timelineBarCurrentTurn {
-    .thinBorder;
+    .thinBorder();
     flex: 0;
     width: 100%;
 }
 
 .timelineBarHistory {
-    .thinBorder;
+    .thinBorder();
+    .verticalContainer();
     flex: 1;
     width: 100%;
-    display: flex;
-    flex-direction: column;
 }
 
 .boardSection {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    .verticalContainer();
+    .centeredContainer();
     width: calc(100vw ~"-" @timeline-width ~"-" @border-padding);
     height: calc(100vh ~"-" @top-bar-height ~"-" @border-padding);
 }
 
-.boardScrollArea {
-
-}
-
 .canvasBoard {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    .verticalContainer();
+    .centeredContainer();
 }

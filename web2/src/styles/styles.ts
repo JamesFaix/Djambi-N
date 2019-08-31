@@ -1,10 +1,4 @@
 export class Classes {
-    static readonly pageContainer = "pageContainer";
-
-    static readonly narrowContainer = "narrowContainer";
-
-    static readonly containerSize = "containerSize";
-
     static readonly stripedTable = "stripedTable";
 
     static readonly centered = "centered";
@@ -42,6 +36,5 @@ export class Classes {
     static readonly timelineBarCurrentTurn = "timelineBarCurrentTurn";
     static readonly timelineBarHistory = "timelineBarHistory";
     static readonly boardSection = "boardSection";
-    static readonly boardScrollArea = "boardScrollArea";
     static readonly canvasBoard = "canvasBoard";
 }

@@ -2,7 +2,6 @@ import * as React from 'react';
 import Scrollbars, { positionValues } from 'react-custom-scrollbars';
 import Geometry from '../../viewModel/board/geometry';
 import { Point } from '../../viewModel/board/model';
-import { Classes } from '../../styles/styles';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import * as StoreDisplay from '../../store/display';
@@ -17,7 +16,6 @@ class boardScrollArea extends React.Component<BoardScrollAreaProps> {
             <Scrollbars
                 ref='scrollbar'
                 onScrollFrame={e => this.onScroll(e)}
-                className={Classes.boardScrollArea}
                 id="board-scroll-area"
             >
                     {this.props.children}
