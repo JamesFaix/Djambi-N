@@ -8,7 +8,6 @@ import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLogge
 import GamesSearchForm from '../forms/gamesSearchForm';
 import SetNavigationOptions from '../utilities/setNavigationOptions';
 import ApiActions from '../../apiActions';
-import { VerticalSpacerLarge } from '../utilities/spacers';
 import BasicPageContainer from '../sections/basicPageContainer';
 
 interface DashboardPageProps {
@@ -23,9 +22,9 @@ class dashboardPage extends React.Component<DashboardPageProps>{
             <BasicPageContainer>
                 <RedirectToLoginIfNotLoggedIn/>
                 <SetNavigationOptions options={{enableCreateGame: true}}/>
-                <VerticalSpacerLarge/>
                 <GamesSearchForm/>
-                <VerticalSpacerLarge/>
+                <br/>
+                <br/>
                 <GamesSearchResultsTable/>
             </BasicPageContainer>
         );

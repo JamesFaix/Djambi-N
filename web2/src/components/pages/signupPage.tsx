@@ -3,7 +3,6 @@ import RedirectToDashboardIfLoggedIn from '../utilities/redirectToDashboardIfLog
 import SignupForm from '../forms/signupForm';
 import SetNavigationOptions from '../utilities/setNavigationOptions';
 import PromptToLoginSection from '../sections/promptToLoginSection';
-import { VerticalSpacerLarge } from '../utilities/spacers';
 import BasicPageContainer from '../sections/basicPageContainer';
 
 export default class SignupPage extends React.Component<{}>{
@@ -12,9 +11,8 @@ export default class SignupPage extends React.Component<{}>{
             <BasicPageContainer>
                 <RedirectToDashboardIfLoggedIn/>
                 <SetNavigationOptions options={{enableLogin: true}}/>
-                <VerticalSpacerLarge/>
                 <SignupForm/>
-                <VerticalSpacerLarge/>
+                <br/>
                 <PromptToLoginSection/>
             </BasicPageContainer>
         );

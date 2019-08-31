@@ -5,7 +5,6 @@ import { LoginRequest } from '../../api/model';
 import { Classes } from '../../styles/styles';
 import { SectionHeader } from '../controls/headers';
 import ApiActions from '../../apiActions';
-import { VerticalSpacerSmall } from '../utilities/spacers';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
 
@@ -64,7 +63,7 @@ class loginForm extends React.Component<LoginFormProps, LoginFormState> {
                         </tr>
                     </tbody>
                 </table>
-                <VerticalSpacerSmall/>
+                <br/>
                 <IconButton
                     icon={Icons.UserActions.login}
                     showTitle={true}

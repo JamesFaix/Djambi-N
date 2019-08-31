@@ -5,7 +5,6 @@ import { CreateUserRequest } from '../../api/model';
 import { Classes } from '../../styles/styles';
 import { SectionHeader } from '../controls/headers';
 import ApiActions from '../../apiActions';
-import { VerticalSpacerSmall } from '../utilities/spacers';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
 
@@ -65,7 +64,7 @@ class signupForm extends React.Component<SignupFormProps, SignupFormState> {
                     </tbody>
                 </table>
                 <div>
-                    <VerticalSpacerSmall/>
+                    <br/>
                     <IconButton
                         icon={Icons.UserActions.signup}
                         showTitle={true}

@@ -10,7 +10,6 @@ import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLogge
 import SetNavigationOptions from '../utilities/setNavigationOptions';
 import PlayersTable from '../tables/playersTable';
 import ApiActions from '../../apiActions';
-import { VerticalSpacerLarge } from '../utilities/spacers';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
 import BasicPageContainer from '../sections/basicPageContainer';
@@ -45,15 +44,16 @@ class lobbyPage extends React.Component<LobbyPageProps> {
 
     private renderBody() {
         return (<>
-            <VerticalSpacerLarge/>
             <GameParametersTable/>
-            <VerticalSpacerLarge/>
+            <br/>
+            <br/>
             {
                 this.props.game.status === GameStatus.Pending
                     ? <MutablePlayersTable/>
                     : <PlayersTable/>
             }
-            <VerticalSpacerLarge/>
+            <br/>
+            <br/>
             {this.renderStartButton()}
         </>);
     }

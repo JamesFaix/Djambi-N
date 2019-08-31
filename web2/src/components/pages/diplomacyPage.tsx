@@ -6,7 +6,6 @@ import { Classes } from '../../styles/styles';
 import DiplomacyPlayersTable from '../tables/diplomacyPlayersTable';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Icons } from '../../utilities/icons';
-import { VerticalSpacerLarge } from '../utilities/spacers';
 import BasicPageContainer from '../sections/basicPageContainer';
 
 export default class DiplomacyPage extends React.Component<{}>{
@@ -27,7 +26,6 @@ export default class DiplomacyPage extends React.Component<{}>{
                 <RedirectToLoginIfNotLoggedIn/>
                 <RedirectToLobbyIfGameNotInProgress/>
                 <SetNavigationOptions options={navOptions}/>
-                <VerticalSpacerLarge/>
                 <DiplomacyPlayersTable/>
                 <br/>
                 <div className={Classes.narrowContainer}>

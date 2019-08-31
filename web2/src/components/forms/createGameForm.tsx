@@ -7,7 +7,6 @@ import { Classes } from '../../styles/styles';
 import { SectionHeader } from '../controls/headers';
 import ApiActions from '../../apiActions';
 import * as StoreCreateGameForm from '../../store/createGameForm';
-import { VerticalSpacerSmall } from '../utilities/spacers';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
 
@@ -68,7 +67,7 @@ class createGameForm extends React.Component<CreateGameFormProps> {
                         </tr>
                     </tbody>
                 </table>
-                <VerticalSpacerSmall/>
+                <br/>
                 <IconButton
                     icon={Icons.UserActions.createGame}
                     showTitle={true}

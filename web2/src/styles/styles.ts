@@ -5,10 +5,6 @@ export class Classes {
 
     static readonly containerSize = "containerSize";
 
-    static readonly verticalSpacerLarge = "verticalSpacerLarge";
-
-    static readonly verticalSpacerSmall = "verticalSpacerSmall";
-
     static readonly stripedTable = "stripedTable";
 
     static readonly centered = "centered";
