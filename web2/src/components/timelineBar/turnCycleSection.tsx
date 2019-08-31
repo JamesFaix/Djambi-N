@@ -4,7 +4,7 @@ import TurnCycleTurnBox from './turnCycleTurnBox';
 import { State } from '../../store/root';
 import { connect } from 'react-redux';
 import { TimelineHeader } from '../controls/headers';
-import { Styles } from '../../styles/styles';
+import { Classes } from '../../styles/styles';
 import { Icons } from '../../utilities/icons';
 
 interface TurnCycleSectionProps {
@@ -19,9 +19,12 @@ class turnCycleSection extends React.Component<TurnCycleSectionProps> {
 
         const players = this.getTurnCyclePlayers();
         return (
-            <div>
+            <div
+                id="turn-cycle-secion"
+                className={Classes.timelineBarTurnCycle}
+            >
                 <TimelineHeader icon={Icons.Timeline.turnCycle}/>
-                <div style={Styles.turnCycleSection}>
+                <div style={{display:"flex"}}>
                     {players.map((p, i) => {
                         return <TurnCycleTurnBox player={p} key={i}/>;
                     })}

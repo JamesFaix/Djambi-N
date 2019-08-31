@@ -22,25 +22,23 @@ class mutablePlayersTable extends React.Component<MutablePlayersTableProps> {
         }
 
         const seats = LobbySeats.getSeats(this.props.game, this.props.user);
-        return (
-            <div>
-                <SectionHeader text="Players"/>
-                <table>
-                    <tbody>
-                        {seats.map((s, i) => {
-                            return (<MutablePlayersTableRow
-                                game={this.props.game}
-                                currentUser={this.props.user}
-                                seat={s}
-                                addPlayer={this.props.addPlayer}
-                                removePlayer={this.props.removePlayer}
-                                key={i}
-                            />);
-                        })}
-                    </tbody>
-                </table>
-            </div>
-        );
+        return (<>
+            <SectionHeader text="Players"/>
+            <table>
+                <tbody>
+                    {seats.map((s, i) => {
+                        return (<MutablePlayersTableRow
+                            game={this.props.game}
+                            currentUser={this.props.user}
+                            seat={s}
+                            addPlayer={this.props.addPlayer}
+                            removePlayer={this.props.removePlayer}
+                            key={i}
+                        />);
+                    })}
+                </tbody>
+            </table>
+        </>);
     }
 }
 

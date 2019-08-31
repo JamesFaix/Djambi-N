@@ -37,33 +37,9 @@ export class Classes {
     static readonly basicPageContentContainer = "basicPageContentContainer";
 
     static readonly playPageContainer = "playPageContainer";
-}
-
-export class Styles {
-    static readonly timelineBar : React.CSSProperties = {
-        height: "100%",
-        width: "400px",
-        justifyContent: "space-between",
-        position: "fixed",
-        right: 0
-    }
-
-    static readonly timelineBarSection : React.CSSProperties = {
-        flex: 0,
-        width: "100%"
-    }
-
-    static readonly timelineBarHistorySection : React.CSSProperties = {
-        flex: 1,
-        width: "100%"
-    }
-
-    static readonly turnCycleSection : React.CSSProperties = {
-        display: "flex"
-    }
-
-    static readonly historyContainer : React.CSSProperties = {
-        display: "flex",
-        flexDirection: "column"
-    }
+    static readonly timelineBar = "timelineBar";
+    static readonly timelineBarTurnCycle = "timelineBarTurnCycle";
+    static readonly timelineBarCurrentTurn = "timelineBarCurrentTurn";
+    static readonly timelineBarHistory = "timelineBarHistory";
+    static readonly boardSection = "boardSection";
 }

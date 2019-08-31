@@ -26,29 +26,27 @@ class diplomacyPlayersTable extends React.Component<DiplomacyPageProps>{
         const user = this.props.user;
         const players = this.props.game.players.filter(p => p.userId === user.id);
 
-        return (
-            <div>
-                <SectionHeader text="Diplomacy"/>
-                <table>
-                    <tbody>
-                        <tr>
-                            <th>Player</th>
-                            <th>Status</th>
-                            <th></th>
-                            <th>Actions</th>
-                        </tr>
-                        {players.map((p, i) =>
-                            <PlayerRow
-                                game={this.props.game}
-                                player={p}
-                                changePlayerStatus={this.props.changePlayerStatus}
-                                key={i}
-                            />
-                        )}
-                    </tbody>
-                </table>
-            </div>
-        )
+        return (<>
+            <SectionHeader text="Diplomacy"/>
+            <table>
+                <tbody>
+                    <tr>
+                        <th>Player</th>
+                        <th>Status</th>
+                        <th></th>
+                        <th>Actions</th>
+                    </tr>
+                    {players.map((p, i) =>
+                        <PlayerRow
+                            game={this.props.game}
+                            player={p}
+                            changePlayerStatus={this.props.changePlayerStatus}
+                            key={i}
+                        />
+                    )}
+                </tbody>
+            </table>
+        </>);
     }
 }
 

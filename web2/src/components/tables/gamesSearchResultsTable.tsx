@@ -16,34 +16,32 @@ interface GamesSearchResultsTableProps {
 
 class gamesSearchResultsTable extends React.Component<GamesSearchResultsTableProps> {
     render() {
-        return (
-            <div>
-                <SectionHeader text="Results"/>
-                <table className={Classes.stripedTable}>
-                    <tbody>
-                        <tr>
-                            <th></th>
-                            <th>GameID</th>
-                            <th>Description</th>
-                            <th>Created by</th>
-                            <th>Status</th>
-                            <th># Players</th>
-                            <th># Regions</th>
-                            <th>Is public</th>
-                            <th>Allow guests</th>
-                        </tr>
-                        {this.props.games
-                            .map((g, i) =>
-                                <GameRow
-                                    key={i}
-                                    game={g}
-                                />
-                            )
-                        }
-                    </tbody>
-                </table>
-            </div>
-        );
+        return (<>
+            <SectionHeader text="Results"/>
+            <table className={Classes.stripedTable}>
+                <tbody>
+                    <tr>
+                        <th></th>
+                        <th>GameID</th>
+                        <th>Description</th>
+                        <th>Created by</th>
+                        <th>Status</th>
+                        <th># Players</th>
+                        <th># Regions</th>
+                        <th>Is public</th>
+                        <th>Allow guests</th>
+                    </tr>
+                    {this.props.games
+                        .map((g, i) =>
+                            <GameRow
+                                key={i}
+                                game={g}
+                            />
+                        )
+                    }
+                </tbody>
+            </table>
+        </>);
     }
 }
 

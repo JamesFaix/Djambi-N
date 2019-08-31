@@ -2,7 +2,6 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { LoginRequest } from '../../api/model';
-import { Classes } from '../../styles/styles';
 import { SectionHeader } from '../controls/headers';
 import ApiActions from '../../apiActions';
 import IconButton from '../controls/iconButton';
@@ -34,43 +33,41 @@ class loginForm extends React.Component<LoginFormProps, LoginFormState> {
     }
 
     render() {
-        return (
-            <div className={Classes.pageContainer}>
-                <SectionHeader text="Log in"/>
-                <table>
-                    <tbody>
-                        <tr>
-                            <td>Username</td>
-                            <td>
-                                <input
-                                    type="text"
-                                    value={this.state.username}
-                                    onChange={e => this.setState({ username: e.target.value })}
-                                >
-                                </input>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Password</td>
-                            <td>
-                                <input
-                                    type="password"
-                                    value={this.state.password}
-                                    onChange={e => this.setState({ password: e.target.value })}
-                                >
-                                </input>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <br/>
-                <IconButton
-                    icon={Icons.UserActions.login}
-                    showTitle={true}
-                    onClick={() => this.props.submit(this.getFormDataFromState())}
-                />
-            </div>
-        );
+        return (<>
+            <SectionHeader text="Log in"/>
+            <table>
+                <tbody>
+                    <tr>
+                        <td>Username</td>
+                        <td>
+                            <input
+                                type="text"
+                                value={this.state.username}
+                                onChange={e => this.setState({ username: e.target.value })}
+                            >
+                            </input>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Password</td>
+                        <td>
+                            <input
+                                type="password"
+                                value={this.state.password}
+                                onChange={e => this.setState({ password: e.target.value })}
+                            >
+                            </input>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <br/>
+            <IconButton
+                icon={Icons.UserActions.login}
+                showTitle={true}
+                onClick={() => this.props.submit(this.getFormDataFromState())}
+            />
+        </>);
     }
 }
 

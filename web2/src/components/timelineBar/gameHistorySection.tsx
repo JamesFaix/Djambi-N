@@ -4,7 +4,7 @@ import { State } from '../../store/root';
 import { connect } from 'react-redux';
 import GameHistoryEventBox from './gameHistoryEventBox';
 import { TimelineHeader } from '../controls/headers';
-import { Styles } from '../../styles/styles';
+import { Classes } from '../../styles/styles';
 import { Icons } from '../../utilities/icons';
 
 interface GameHistorySectionProps {
@@ -19,7 +19,10 @@ const gameHistorySection : React.SFC<GameHistorySectionProps> = props => {
     }
 
     return (
-        <div style={Styles.historyContainer}>
+        <div
+            id="history-section"
+            className={Classes.timelineBarHistory}
+        >
             <TimelineHeader icon={Icons.Timeline.history}/>
             {
                 props.history.map((e, i) => {

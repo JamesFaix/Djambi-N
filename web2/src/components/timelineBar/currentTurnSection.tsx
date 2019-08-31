@@ -26,7 +26,10 @@ class currentTurnSection extends React.Component<CurrentTurnSectionProps> {
         const isCurrentUser = p.userId === this.props.user.id;
 
         return (
-            <div>
+            <div
+                id="current-turn-section"
+                className={Classes.timelineBarCurrentTurn}
+            >
                 <TimelineHeader icon={Icons.Timeline.currentTurn(p.name, isCurrentUser)}/>
                 <div
                     className={Classes.playerBox}
