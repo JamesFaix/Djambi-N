@@ -6,6 +6,7 @@ import CanvasLabelsLayer from './canvasLabelsLayer';
 import CanvasBackgroundLayer from './canvasBackgroundLayer';
 import { BoardView, CellView } from '../../viewModel/board/model';
 import { PieceKind } from '../../api/model';
+import { Classes } from '../../styles/styles';
 
 export interface CanvasBoardStyle {
     width : number,
@@ -38,6 +39,7 @@ export default class CanvasBoard extends React.Component<CanvasBoardProps> {
 
         return (
             <Stage
+                className={Classes.canvasBoard}
                 width={style.width}
                 height={style.height}
             >

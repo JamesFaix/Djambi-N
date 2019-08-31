@@ -4,7 +4,10 @@
 @hover-text-color: white;
 @hover-background-color: black;
 @font: 14px "Century Gothic", Futura, sans-serif;
-@text-padding:  5px 10px 5px 10px;
+@text-padding: 5px 10px 5px 10px;
+@top-bar-height: 50px;
+@timeline-width: 400px;
+@border-padding: 3px;
 
 body {
     font: @font;
@@ -133,7 +136,7 @@ p {
 
 .topBar {
     .thinBorder;
-    height: 50px;
+    height: @top-bar-height;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -178,11 +181,7 @@ p {
 
 .timelineBar {
     .thinBorder;
-    height: 100%;
-    width: 400px;
-    justify-content: space-between;
-    position: fixed;
-    right: 0;
+    width: @timeline-width;
 }
 
 .timelineBarTurnCycle {
@@ -208,4 +207,17 @@ p {
 .boardSection {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    width: calc(100vw ~"-" @timeline-width ~"-" @border-padding);
+    height: calc(100vh ~"-" @top-bar-height ~"-" @border-padding);
+}
+
+.boardScrollArea {
+
+}
+
+.canvasBoard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }

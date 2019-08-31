@@ -7,10 +7,11 @@ import { connect } from 'react-redux';
 import CanvasTransformService, { CanvasTranformData } from '../../viewModel/board/canvasTransformService';
 import { PieceKind } from '../../api/model';
 import * as Images from '../../utilities/images';
-import BoardArea from './boardArea';
 import ApiActions from '../../apiActions';
 import { Classes } from '../../styles/styles';
 import Colors from '../../utilities/colors';
+import BoardScrollArea from './boardScrollArea';
+import BoardZoomSlider from '../controls/boardZoomSlider';
 
 export interface BoardSectionProps {
     gameId : number,
@@ -43,13 +44,11 @@ class boardSection extends React.Component<BoardSectionProps> {
         };
 
         return (
-            <div className={`${Classes.pageContainer} ${Classes.containerSize}`}>
-                <BoardArea
-                    innerStyle={{
-                        width:"1000px",
-                        height:"1000px"
-                    }}
-                >
+            <div
+                id="board-section"
+                className={Classes.boardSection}
+            >
+                <BoardScrollArea>
                     <CanvasBoard
                         style={boardStyle}
                         gameId={this.props.gameId}
@@ -57,7 +56,8 @@ class boardSection extends React.Component<BoardSectionProps> {
                         selectCell={cell => this.props.selectCell(this.props.gameId, cell)}
                         pieceImages={this.props.pieceImages}
                     />
-                </BoardArea>
+                </BoardScrollArea>
+                <BoardZoomSlider/>
             </div>
         );
     }

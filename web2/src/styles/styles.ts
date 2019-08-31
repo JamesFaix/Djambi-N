@@ -42,4 +42,6 @@ export class Classes {
     static readonly timelineBarCurrentTurn = "timelineBarCurrentTurn";
     static readonly timelineBarHistory = "timelineBarHistory";
     static readonly boardSection = "boardSection";
+    static readonly boardScrollArea = "boardScrollArea";
+    static readonly canvasBoard = "canvasBoard";
 }
