@@ -16,17 +16,22 @@ interface CurrentTurnSectionProps {
 
 class currentTurnSection extends React.Component<CurrentTurnSectionProps> {
     render() {
-        const game = this.props.game;
-        const turn = game ? game.currentTurn : null;
-        if (!turn) {
+        const g = this.props.game;
+        const u = this.props.user;
+        const turn = g ? g.currentTurn : null;
+
+        if (!turn || !u) {
             return null;
         }
 
-        const p = this.getCurrentPlayer(this.props.game);
-        const isCurrentUser = p.userId === this.props.user.id;
+        const p = this.getCurrentPlayer(g);
+        const isCurrentUser = p.userId === u.id;
 
         return (
-            <div>
+            <div
+                id="current-turn-section"
+                className={Classes.timelineBarCurrentTurn}
+            >
                 <TimelineHeader icon={Icons.Timeline.currentTurn(p.name, isCurrentUser)}/>
                 <div
                     className={Classes.playerBox}
@@ -48,11 +53,9 @@ class currentTurnSection extends React.Component<CurrentTurnSectionProps> {
     }
 
     private renderForOtherPlayer(player : Player) {
-        return (
-            <React.Fragment>
-                {`Waiting on ${player.name}...`}
-            </React.Fragment>
-        );
+        return (<>
+            {`Waiting on ${player.name}...`}
+        </>);
     }
 
     private renderForCurrentPlayer() {
@@ -60,22 +63,20 @@ class currentTurnSection extends React.Component<CurrentTurnSectionProps> {
         const board = this.props.board;
         const turn = game.currentTurn;
 
-        return (
-            <React.Fragment>
-                {turn.selections.map((s, i) =>
-                    <p key={"row" + i}>
-                        {Copy.getSelectionDescription(s, game, board)}
-                    </p>)
-                }
-                <p style={{
-                    fontStyle:"italic",
-                    padding:"5px"
-                }}>
-                    {`(${Copy.getTurnPrompt(turn)})`}
-                </p>
-                <CurrentTurnActionsBar/>
-            </React.Fragment>
-        );
+        return (<>
+            {turn.selections.map((s, i) =>
+                <p key={"row" + i}>
+                    {Copy.getSelectionDescription(s, game, board)}
+                </p>)
+            }
+            <p style={{
+                fontStyle:"italic",
+                padding:"5px"
+            }}>
+                {`(${Copy.getTurnPrompt(turn)})`}
+            </p>
+            <CurrentTurnActionsBar/>
+        </>);
     }
 }
 

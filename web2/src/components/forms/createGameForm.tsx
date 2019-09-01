@@ -3,11 +3,9 @@ import { State } from '../../store/root';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { GameParameters } from '../../api/model';
-import { Classes } from '../../styles/styles';
 import { SectionHeader } from '../controls/headers';
 import ApiActions from '../../apiActions';
 import * as StoreCreateGameForm from '../../store/createGameForm';
-import { VerticalSpacerSmall } from '../utilities/spacers';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
 
@@ -19,63 +17,61 @@ interface CreateGameFormProps {
 
 class createGameForm extends React.Component<CreateGameFormProps> {
     render() {
-        return (
-            <div className={Classes.pageContainer}>
-                <SectionHeader text="Game settings"/>
-                <table>
-                    <tbody>
-                        <tr>
-                            <td>Region count</td>
-                            <td>
-                                <input
-                                    type="number"
-                                    min={3}
-                                    max={8}
-                                    value={this.props.formData.regionCount}
-                                    onChange={e => this.onChangeRegionCount(e)}
-                                />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Allow guests</td>
-                            <td>
-                                <input
-                                    type="checkbox"
-                                    checked={this.props.formData.allowGuests}
-                                    onChange={e => this.onChangeAllowGuests(e)}
-                                />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Public</td>
-                            <td>
-                                <input
-                                    type="checkbox"
-                                    checked={this.props.formData.isPublic}
-                                    onChange={e => this.onChangeIsPublic(e)}
-                                />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Description</td>
-                            <td>
-                                <input
-                                    type="text"
-                                    value={this.props.formData.description}
-                                    onChange={e => this.onChangeDescription(e)}
-                                />
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <VerticalSpacerSmall/>
-                <IconButton
-                    icon={Icons.UserActions.createGame}
-                    showTitle={true}
-                    onClick={() => this.props.submit(this.props.formData)}
-                />
-            </div>
-        );
+        return (<>
+            <SectionHeader text="Game settings"/>
+            <table>
+                <tbody>
+                    <tr>
+                        <td>Region count</td>
+                        <td>
+                            <input
+                                type="number"
+                                min={3}
+                                max={8}
+                                value={this.props.formData.regionCount}
+                                onChange={e => this.onChangeRegionCount(e)}
+                            />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Allow guests</td>
+                        <td>
+                            <input
+                                type="checkbox"
+                                checked={this.props.formData.allowGuests}
+                                onChange={e => this.onChangeAllowGuests(e)}
+                            />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Public</td>
+                        <td>
+                            <input
+                                type="checkbox"
+                                checked={this.props.formData.isPublic}
+                                onChange={e => this.onChangeIsPublic(e)}
+                            />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Description</td>
+                        <td>
+                            <input
+                                type="text"
+                                value={this.props.formData.description}
+                                onChange={e => this.onChangeDescription(e)}
+                            />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <br/>
+            <IconButton
+                icon={Icons.UserActions.createGame}
+                showTitle={true}
+                onClick={() => this.props.submit(this.props.formData)}
+            />
+        </>);
     }
 
     private onChangeRegionCount(e : React.ChangeEvent<HTMLInputElement>) : void {

@@ -14,22 +14,20 @@ interface PlayersTableProps {
 class playersTable extends React.Component<PlayersTableProps> {
     render() {
         const g = this.props.game;
-        return (
-            <div>
-                <SectionHeader text="Players"/>
-                <table>
-                    <tbody>
-                        {g.players.map((p, i) =>
-                            <PlayerRow
-                                player={p}
-                                game={g}
-                                key={i}
-                            />
-                        )}
-                    </tbody>
-                </table>
-            </div>
-        );
+        return (<>
+            <SectionHeader text="Players"/>
+            <table>
+                <tbody>
+                    {g.players.map((p, i) =>
+                        <PlayerRow
+                            player={p}
+                            game={g}
+                            key={i}
+                        />
+                    )}
+                </tbody>
+            </table>
+        </>);
     }
 }
 

@@ -1,8 +1,8 @@
 export default class Debug {
-    static Initialize() {
+    static init() {
         const w = (window as any);
-        w.getDebugSetting = (name : string) => this.getSetting(name);
-        w.setDebugSetting = (name : string, value : any) => this.setSetting(name, value);
+        w.debugGet = (name : string) => this.getSetting(name);
+        w.debugSet = (name : string, value : any) => this.setSetting(name, value);
     }
 
     private static getSetting(name : string) : any {
@@ -20,4 +20,6 @@ export default class Debug {
     public static readonly logApi = false;
 
     public static readonly logRedux = false;
+
+    public static readonly logSse = false;
 }

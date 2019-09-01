@@ -1,14 +1,4 @@
 export class Classes {
-    static readonly pageContainer = "pageContainer";
-
-    static readonly narrowContainer = "narrowContainer";
-
-    static readonly containerSize = "containerSize";
-
-    static readonly verticalSpacerLarge = "verticalSpacerLarge";
-
-    static readonly verticalSpacerSmall = "verticalSpacerSmall";
-
     static readonly stripedTable = "stripedTable";
 
     static readonly centered = "centered";
@@ -26,55 +16,25 @@ export class Classes {
     static readonly sectionHeader = "sectionHeader";
 
     static readonly timelineHeader = "timelineHeader";
-}
 
-export class Styles {
-    static readonly timelineBar : React.CSSProperties = {
-        height: "100%",
-        width: "400px",
-        justifyContent: "space-between",
-        position: "fixed",
-        right: 0
-    }
+    //page layout
 
-    static readonly timelineBarSection : React.CSSProperties = {
-        flex: 0,
-        width: "100%"
-    }
+    static readonly appContainer = "appContainer";
 
-    static readonly timelineBarHistorySection : React.CSSProperties = {
-        flex: 1,
-        width: "100%"
-    }
+    static readonly topBar = "topBar";
+    static readonly topBarNavigation = "topBarNavigation";
+    static readonly topBarTitle = "topBarTitle";
+    static readonly topBarUser = "topBarUser";
 
-    static readonly turnCycleSection : React.CSSProperties = {
-        display: "flex"
-    }
+    static readonly basicPageContainer = "basicPageContainer";
+    static readonly basicPageMargin = "basicPageMargin";
+    static readonly basicPageContentContainer = "basicPageContentContainer";
 
-    static readonly historyContainer : React.CSSProperties = {
-        display: "flex",
-        flexDirection: "column"
-    }
-
-    static readonly topBar : React.CSSProperties = {
-        height: "50px",
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center"
-    }
-
-    static readonly topBarNavigation : React.CSSProperties = {
-        flex: 1,
-        textAlign: "left"
-    }
-
-    static readonly topBarTitle : React.CSSProperties = {
-        flex: 1,
-        textAlign: "center"
-    }
-
-    static readonly topBarUser : React.CSSProperties = {
-        flex: 1,
-        textAlign: "right"
-    }
+    static readonly playPageContainer = "playPageContainer";
+    static readonly timelineBar = "timelineBar";
+    static readonly timelineBarTurnCycle = "timelineBarTurnCycle";
+    static readonly timelineBarCurrentTurn = "timelineBarCurrentTurn";
+    static readonly timelineBarHistory = "timelineBarHistory";
+    static readonly boardSection = "boardSection";
+    static readonly canvasBoard = "canvasBoard";
 }

@@ -8,6 +8,7 @@ import * as StoreGamesQuery from './store/gamesQuery';
 import * as StoreSession from './store/session';
 import * as StoreActiveGame from './store/activeGame';
 import * as StoreBoards from './store/boards';
+import { SseClientManager } from "./utilities/serverSentEvents";
 
 //#region Session actions
 
@@ -17,6 +18,7 @@ export default class ApiActions {
             const session = await Api.login(request);
             dispatch(StoreSession.Actions.login(session.user));
             navigateTo(Routes.dashboard);
+            SseClientManager.connect();
             return ApiActions.queryGamesForUser(session.user, dispatch);
         };
     }
@@ -26,6 +28,7 @@ export default class ApiActions {
             await Api.logout();
             dispatch(StoreSession.Actions.logout());
             navigateTo(Routes.login);
+            SseClientManager.disconnect();
         };
     }
 
@@ -43,6 +46,7 @@ export default class ApiActions {
             try {
                 const user = await Api.getCurrentUser();
                 dispatch(StoreSession.Actions.restoreSession(user));
+                SseClientManager.connect();
                 return ApiActions.queryGamesForUser(user, dispatch);
             }
             catch (ex) {

@@ -16,43 +16,41 @@ const gameParametersTable : React.SFC<GameParametersTableProps> = props => {
         return null;
     }
 
-    return (
-        <div>
-            <SectionHeader text="Game settings"/>
-            <table>
-                <tbody>
-                    <tr>
-                        <td>Description</td>
-                        <td>{props.parameters.description}</td>
-                    </tr>
-                    <tr>
-                        <td>Regions</td>
-                        <td className={Classes.centered}>
-                            {props.parameters.regionCount}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Allow guests</td>
-                        <td className={Classes.centered}>
-                            {boolToYesOrNo(props.parameters.allowGuests)}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Public</td>
-                        <td className={Classes.centered}>
-                            {boolToYesOrNo(props.parameters.isPublic)}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Status</td>
-                        <td className={Classes.centered}>
-                            {props.status}
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    );
+    return (<>
+        <SectionHeader text="Game settings"/>
+        <table>
+            <tbody>
+                <tr>
+                    <td>Description</td>
+                    <td>{props.parameters.description}</td>
+                </tr>
+                <tr>
+                    <td>Regions</td>
+                    <td className={Classes.centered}>
+                        {props.parameters.regionCount}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Allow guests</td>
+                    <td className={Classes.centered}>
+                        {boolToYesOrNo(props.parameters.allowGuests)}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Public</td>
+                    <td className={Classes.centered}>
+                        {boolToYesOrNo(props.parameters.isPublic)}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Status</td>
+                    <td className={Classes.centered}>
+                        {props.status}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </>);
 }
 
 const mapStateToProps = (state : State) => {

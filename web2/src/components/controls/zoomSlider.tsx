@@ -12,7 +12,9 @@ export class ZoomSlider extends React.Component<ZoomSliderProps> {
         const cts = CanvasTransformService;
         const scale = cts.getZoomScaleFactor(level);
         return (
-            <div>
+            <div
+                id="zoom-slider"
+            >
                 <input
                     type="range"
                     value={level}

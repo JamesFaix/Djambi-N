@@ -13,6 +13,7 @@ import { ApiClientCore } from './api/clientCore';
 import { ApiRequest, ApiResponse, ApiError } from './api/requestModel';
 import * as StoreApiClient from './store/apiClient';
 import * as StoreRoot from './store/root';
+import { SseClientManager } from './utilities/serverSentEvents';
 
 const store = createStore(
     StoreRoot.reducer,
@@ -25,6 +26,10 @@ ApiClientCore.init(
     (response: ApiResponse) => store.dispatch(StoreApiClient.Actions.apiResponse(response)),
     (error: ApiError) => store.dispatch(StoreApiClient.Actions.apiError(error)),
 );
+
+SseClientManager.init(store);
+
+Debug.init();
 
 render(
     <Provider store={store}>

@@ -5,11 +5,9 @@ import { connect } from 'react-redux';
 import TristateDropdown from '../controls/tristateDropdown';
 import EnumDropdown from '../controls/enumDropdown';
 import { Dispatch } from 'redux';
-import { Classes } from '../../styles/styles';
 import { SectionHeader } from '../controls/headers';
 import ApiActions from '../../apiActions';
 import * as StoreGamesQuery from '../../store/gamesQuery';
-import { VerticalSpacerSmall } from '../utilities/spacers';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
 
@@ -23,88 +21,86 @@ class gamesSearchForm extends React.Component<GamesSearchFormProps> {
     render() {
         const query = this.props.formData;
 
-        return (
-            <div className={Classes.pageContainer}>
-                <SectionHeader text="Search games"/>
-                <table>
-                    <tbody>
-                        <tr>
-                            <td>Description</td>
-                            <td>
-                                <input
-                                    type="text"
-                                    value={this.emptyIfNull(query.descriptionContains)}
-                                    onChange={e => this.onChangeDescription(e)}
-                                />
-                            </td>
-                            <td>Is public</td>
-                            <td>
-                                <TristateDropdown
-                                    name={"IsPublic"}
-                                    value={query.isPublic}
-                                    onChange={(_, value) => this.onChangeIsPublic(value)}
-                                />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Created by user</td>
-                            <td>
-                                <input
-                                    type="text"
-                                    value={this.emptyIfNull(query.createdByUserName)}
-                                    onChange={e => this.onChangeCreatedBy(e)}
-                                />
-                            </td>
-                            <td>Allow guests</td>
-                            <td>
-                                <TristateDropdown
-                                    name={"AllowGuests"}
-                                    value={query.allowGuests}
-                                    onChange={(_, value) => this.onChangeAllowGuests(value)}
-                                />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Contains user</td>
-                            <td>
-                                <input
-                                    type="text"
-                                    value={this.emptyIfNull(query.playerUserName)}
-                                    onChange={e => this.onChangePlayerUserName(e)}
-                                />
-                            </td>
-                            <td>Status</td>
-                            <td>
-                                <EnumDropdown
-                                    name={"Status"}
-                                    value={query.status}
-                                    onChange={(_, value) => this.onChangeStatus(value)}
-                                    enum={GameStatus}
-                                />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>GameId</td>
-                            <td>
-                                <input
-                                    style={{width:"50px"}}
-                                    type="number"
-                                    min={1}
-                                    value={this.emptyIfNull(query.gameId)}
-                                    onChange={e => this.onChangeGameId(e)}
-                                />
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <VerticalSpacerSmall/>
-                <IconButton
-                    icon={Icons.UserActions.search}
-                    showTitle={true}
-                    onClick={() => this.props.submit(this.props.formData)}
-                />
-            </div>
-        );
+        return (<>
+            <SectionHeader text="Search games"/>
+            <table>
+                <tbody>
+                    <tr>
+                        <td>Description</td>
+                        <td>
+                            <input
+                                type="text"
+                                value={this.emptyIfNull(query.descriptionContains)}
+                                onChange={e => this.onChangeDescription(e)}
+                            />
+                        </td>
+                        <td>Is public</td>
+                        <td>
+                            <TristateDropdown
+                                name={"IsPublic"}
+                                value={query.isPublic}
+                                onChange={(_, value) => this.onChangeIsPublic(value)}
+                            />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Created by user</td>
+                        <td>
+                            <input
+                                type="text"
+                                value={this.emptyIfNull(query.createdByUserName)}
+                                onChange={e => this.onChangeCreatedBy(e)}
+                            />
+                        </td>
+                        <td>Allow guests</td>
+                        <td>
+                            <TristateDropdown
+                                name={"AllowGuests"}
+                                value={query.allowGuests}
+                                onChange={(_, value) => this.onChangeAllowGuests(value)}
+                            />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Contains user</td>
+                        <td>
+                            <input
+                                type="text"
+                                value={this.emptyIfNull(query.playerUserName)}
+                                onChange={e => this.onChangePlayerUserName(e)}
+                            />
+                        </td>
+                        <td>Status</td>
+                        <td>
+                            <EnumDropdown
+                                name={"Status"}
+                                value={query.status}
+                                onChange={(_, value) => this.onChangeStatus(value)}
+                                enum={GameStatus}
+                            />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>GameId</td>
+                        <td>
+                            <input
+                                style={{width:"50px"}}
+                                type="number"
+                                min={1}
+                                value={this.emptyIfNull(query.gameId)}
+                                onChange={e => this.onChangeGameId(e)}
+                            />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <br/>
+            <IconButton
+                icon={Icons.UserActions.search}
+                showTitle={true}
+                onClick={() => this.props.submit(this.props.formData)}
+            />
+        </>);
     }
 
     private emptyIfNull(value : any) : string {

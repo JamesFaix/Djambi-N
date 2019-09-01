@@ -5,10 +5,10 @@ import { connect } from 'react-redux';
 import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
 import RedirectToLobbyIfGameNotInProgress from '../utilities/redirectToLobbyIfGameNotInProgress';
 import SetNavigationOptions from '../utilities/setNavigationOptions';
-import { Classes } from '../../styles/styles';
 import TimelineBar from '../timelineBar/timelineBar';
 import LoadGameFull from '../utilities/loadGameFull';
 import BoardSection from '../sections/boardSection';
+import PlayPageContainer from '../sections/playPageContainer';
 
 interface PlayPageProps {
     game : Game
@@ -26,14 +26,14 @@ class playPage extends React.Component<PlayPageProps> {
         };
 
         return (
-            <div className={Classes.pageContainer}>
+            <PlayPageContainer>
                 <RedirectToLoginIfNotLoggedIn/>
                 <RedirectToLobbyIfGameNotInProgress/>
                 <SetNavigationOptions options={navOptions}/>
                 <LoadGameFull gameId={gameId}/>
                 <BoardSection/>
                 <TimelineBar/>
-            </div>
+            </PlayPageContainer>
         );
     }
 }
