@@ -16,14 +16,16 @@ interface CurrentTurnSectionProps {
 
 class currentTurnSection extends React.Component<CurrentTurnSectionProps> {
     render() {
-        const game = this.props.game;
-        const turn = game ? game.currentTurn : null;
-        if (!turn) {
+        const g = this.props.game;
+        const u = this.props.user;
+        const turn = g ? g.currentTurn : null;
+
+        if (!turn || !u) {
             return null;
         }
 
-        const p = this.getCurrentPlayer(this.props.game);
-        const isCurrentUser = p.userId === this.props.user.id;
+        const p = this.getCurrentPlayer(g);
+        const isCurrentUser = p.userId === u.id;
 
         return (
             <div

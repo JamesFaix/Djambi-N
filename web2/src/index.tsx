@@ -29,6 +29,8 @@ ApiClientCore.init(
 
 SseClientManager.init(store);
 
+Debug.init();
+
 render(
     <Provider store={store}>
         <Router history={history}>
