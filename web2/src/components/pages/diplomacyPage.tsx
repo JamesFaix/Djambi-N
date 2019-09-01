@@ -2,21 +2,30 @@ import * as React from 'react';
 import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
 import RedirectToLobbyIfGameNotInProgress from '../utilities/redirectToLobbyIfGameNotInProgress';
 import SetNavigationOptions from '../utilities/setNavigationOptions';
-import { Classes } from '../../styles/styles';
 import DiplomacyPlayersTable from '../tables/diplomacyPlayersTable';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Icons } from '../../utilities/icons';
 import BasicPageContainer from '../sections/basicPageContainer';
+import * as StoreNavigation from '../../store/navigation';
+import { Privilege, User } from '../../api/model';
+import { State } from '../../store/root';
+import { connect } from 'react-redux';
 
-export default class DiplomacyPage extends React.Component<{}>{
+interface DiplomacyPageProps {
+    user : User
+}
+
+class diplomacyPage extends React.Component<DiplomacyPageProps>{
     render() {
         const gameId = (this.props as any).match.params.gameId;
+        const u = this.props.user;
 
-        const navOptions = {
+        const navOptions : StoreNavigation.State = {
             enableDashboard: true,
             enableLobby: true,
+            enablePlay: true,
+            enableSnapshots: u && u.privileges.includes(Privilege.Snapshots),
             gameId: gameId,
-            enablePlay: true
         };
 
         const i = Icons.PlayerActions;
@@ -42,3 +51,12 @@ export default class DiplomacyPage extends React.Component<{}>{
         );
     }
 }
+
+const mapStateToProps = (state : State) => {
+    return {
+        user: state.session.user
+    };
+}
+
+const DiplomacyPage = connect(mapStateToProps)(diplomacyPage);
+export default DiplomacyPage;

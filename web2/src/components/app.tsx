@@ -12,6 +12,7 @@ import RedirectToLoginOrDashboard from './utilities/redirectToLoginOrDashboard';
 import PlayPage from './pages/playPage';
 import DiplomacyPage from './pages/diplomacyPage';
 import { Classes } from '../styles/styles';
+import SnapshotsPage from './pages/snapshotsPage';
 
 const App : React.SFC<{}> = _ => {
     return (
@@ -48,6 +49,10 @@ const App : React.SFC<{}> = _ => {
                 <Route
                     path={Routes.diplomacyPattern}
                     component={DiplomacyPage}
+                />
+                <Route
+                    path={Routes.snapshotsPattern}
+                    component={SnapshotsPage}
                 />
                 <Route
                     path={Routes.base}

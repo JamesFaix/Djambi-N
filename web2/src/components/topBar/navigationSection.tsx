@@ -62,6 +62,12 @@ class navigationSection extends React.Component<NavigationSectionProps> {
                         onClick={() => navigateTo(Routes.diplomacy(o.gameId))}
                     />
                 : null}
+                {o.enableSnapshots ?
+                    <IconButton
+                        icon={Icons.Pages.snapshots}
+                        onClick={() => navigateTo(Routes.snapshots(o.gameId))}
+                    />
+                : null}
             </div>
         );
     }
