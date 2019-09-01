@@ -5,9 +5,12 @@ import { Point } from '../../viewModel/board/model';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import * as StoreDisplay from '../../store/display';
+import { State } from '../../store/root';
 
 interface BoardScrollAreaProps {
+    scrollPercent : Point,
     onScroll : (scrollPercent : Point) => void,
+    onResize : (size : Point) => void
 }
 
 class boardScrollArea extends React.Component<BoardScrollAreaProps> {
@@ -23,6 +26,13 @@ class boardScrollArea extends React.Component<BoardScrollAreaProps> {
         );
     }
 
+    componentDidMount(){
+        const r = this.refs.scrollbar as any;
+        const size = { x: r.getClientWidth(), y: r.getClientHeight() };
+        this.props.onResize(size);
+        this.props.onScroll(this.props.scrollPercent)
+    }
+
     private onScroll(e : positionValues) : void {
         const scrollContainerSize = { x: e.clientWidth, y: e.clientHeight };
         const scrollContentSize = { x: e.scrollWidth, y: e.scrollHeight };
@@ -35,11 +45,18 @@ class boardScrollArea extends React.Component<BoardScrollAreaProps> {
     }
 }
 
-const mapDispatchToProps = (dispatch : Dispatch) => {
+const mapStateToProps = (state : State) => {
     return {
-        onScroll : (scrollPercent : Point) => dispatch(StoreDisplay.Actions.boardScroll(scrollPercent)),
+        scrollPercent: state.display.boardScrollPercent
     };
 }
 
-const BoardScrollArea = connect(null, mapDispatchToProps)(boardScrollArea);
+const mapDispatchToProps = (dispatch : Dispatch) => {
+    return {
+        onScroll : (scrollPercent : Point) => dispatch(StoreDisplay.Actions.boardScroll(scrollPercent)),
+        onResize : (size : Point) => dispatch(StoreDisplay.Actions.boardAreaResize(size))
+    };
+}
+
+const BoardScrollArea = connect(mapStateToProps, mapDispatchToProps)(boardScrollArea);
 export default BoardScrollArea;
