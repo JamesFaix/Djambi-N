@@ -21,7 +21,7 @@ const GameHistoryEventBox : React.SFC<GameHistoryEventBoxProps> = props => {
     const p = props.game.players.find(p => p.id === e.actingPlayerId);
 
     const date = e.createdBy.time;
-    const m = Moment(date).local();
+    const m = Moment.utc(date).local();
     const dateText = m.format("M/D/YY h:mma");
 
     return (
