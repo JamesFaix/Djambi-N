@@ -18,7 +18,7 @@ class boardScrollArea extends React.Component<BoardScrollAreaProps> {
                 onScrollFrame={e => this.onScroll(e)}
                 id="board-scroll-area"
             >
-                    {this.props.children}
+                {this.props.children}
             </Scrollbars>
         );
     }
