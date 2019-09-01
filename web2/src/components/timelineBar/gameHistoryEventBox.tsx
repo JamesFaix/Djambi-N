@@ -22,7 +22,7 @@ const GameHistoryEventBox : React.SFC<GameHistoryEventBoxProps> = props => {
 
     const date = e.createdBy.time;
     const m = Moment(date).local();
-    const dateText = m.format("MM/DD/YY hh:mm:ssa");
+    const dateText = m.format("M/D/YY h:mma");
 
     return (
         <div
