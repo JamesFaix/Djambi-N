@@ -1,8 +1,19 @@
-@text-color: black;
-@background-color: white;
-@border-color: gainsboro;
-@hover-text-color: white;
-@hover-background-color: black;
+:root {
+    --background-color: white;
+    --text-color: black;
+    --border-color: gainsboro;
+    --hover-text-color: white;
+    --hover-background-color: black;
+    --player-color-0: blue;
+    --player-color-1: red;
+    --player-color-2: green;
+    --player-color-3: orange;
+    --player-color-4: brown;
+    --player-color-5: teal;
+    --player-color-6: magenta;
+    --player-color-7: gold;
+}
+
 @font: 14px "Century Gothic", Futura, sans-serif;
 @text-padding: 5px 10px 5px 10px;
 @top-bar-height: 50px;
@@ -12,8 +23,8 @@
 body {
     font: @font;
     margin: 0;
-    background: @background-color;
-    color: @text-color;
+    background: var(--background-color);
+    color: var(--text-color);
 }
 
 table {
@@ -39,19 +50,19 @@ td {
 button {
     .buttonMixin;
     background-color: transparent;
-    color: @text-color;
+    color: var(--text-color);
 }
 
 button:hover {
     .buttonMixin;
-    background-color: @hover-background-color;
-    color: @hover-text-color;
+    background-color: var(--hover-background-color);
+    color: var(--hover-text-color);
 }
 
 button[data-active="true"] {
     .buttonMixin;
-    background-color: @hover-background-color;
-    color: @hover-text-color;
+    background-color: var(--hover-background-color);
+    color: var(--hover-text-color);
 }
 
 p {
@@ -72,19 +83,19 @@ p {
 .box {
     border-style: solid;
     border-width: 1;
-    border-color: @border-color;
+    border-color: var(--border-color);
     padding: 5px;
 }
 
 .thinBorder {
     border-style: solid;
     border-width: thin;
-    border-color: @border-color;
+    border-color: var(--border-color);
 }
 
 .stripedTable {
     tr:nth-child(even) {
-        background-color: @border-color
+        background-color: var(--border-color)
     }
 }
 
@@ -96,14 +107,14 @@ p {
     box-shadow: inset 0 0 0 3px @color;
     padding: 10px;
 }
-.playerBox[data-player-color-id='0'] { .playerBoxMixin(blue); }
-.playerBox[data-player-color-id='1'] { .playerBoxMixin(red); }
-.playerBox[data-player-color-id='2'] { .playerBoxMixin(green); }
-.playerBox[data-player-color-id='3'] { .playerBoxMixin(orange); }
-.playerBox[data-player-color-id='4'] { .playerBoxMixin(brown); }
-.playerBox[data-player-color-id='5'] { .playerBoxMixin(teal); }
-.playerBox[data-player-color-id='6'] { .playerBoxMixin(magenta); }
-.playerBox[data-player-color-id='7'] { .playerBoxMixin(gold); }
+.playerBox[data-player-color-id='0'] { .playerBoxMixin(var(--player-color-0)); }
+.playerBox[data-player-color-id='1'] { .playerBoxMixin(var(--player-color-1)); }
+.playerBox[data-player-color-id='2'] { .playerBoxMixin(var(--player-color-2)); }
+.playerBox[data-player-color-id='3'] { .playerBoxMixin(var(--player-color-3)); }
+.playerBox[data-player-color-id='4'] { .playerBoxMixin(var(--player-color-4)); }
+.playerBox[data-player-color-id='5'] { .playerBoxMixin(var(--player-color-5)); }
+.playerBox[data-player-color-id='6'] { .playerBoxMixin(var(--player-color-6)); }
+.playerBox[data-player-color-id='7'] { .playerBoxMixin(var(--player-color-7)); }
 
 .sectionHeader {
     text-align: center;
