@@ -1,27 +1,22 @@
 import * as React from 'react';
 import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
 import BasicPageContainer from '../sections/basicPageContainer';
-import { State } from '../../store/root';
-import { connect } from 'react-redux';
+import SnapshotsTable from '../tables/snapshotsTable';
+import CreateSnapshotForm from '../forms/createSnapshotForm';
+import LoadSnapshots from '../utilities/loadSnapshots';
 
-interface SnapshotPageProps {
-}
-
-class snapshotsPage extends React.Component<SnapshotPageProps>{
+export default class SnapshotsPage extends React.Component<{}>{
     render() {
+        const gameId = (this.props as any).match.params.gameId;
         return (
             <BasicPageContainer>
                 <RedirectToLoginIfNotLoggedIn/>
-                Content
-        </BasicPageContainer>
+                <LoadSnapshots gameId={gameId}/>
+                <SnapshotsTable/>
+                <br/>
+                <br/>
+                <CreateSnapshotForm/>
+            </BasicPageContainer>
         );
     }
 }
-
-const mapStateToProps = (state : State) => {
-    return {
-    };
-}
-
-const SnapshotsPage = connect(mapStateToProps)(snapshotsPage)
-export default SnapshotsPage;

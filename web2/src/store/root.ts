@@ -79,7 +79,6 @@ export function reducer(state: State, action : CustomAction) : State {
 function loadGameReducer(state: State, action: CustomAction) : State {
     const da = <DataAction<Game>>action;
     const newState = {...state};
-    newState.activeGame = ActiveGame.defaultState,
     newState.activeGame.game = da.data;
     updateBoardView(newState, da.data);
     return newState;
