@@ -7,7 +7,6 @@ import { connect } from 'react-redux';
 import { State } from '../../store/root';
 import LoadGame from '../utilities/loadGame';
 import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
-import SetNavigationOptions from '../utilities/setNavigationOptions';
 import PlayersTable from '../tables/playersTable';
 import ApiActions from '../../apiActions';
 import IconButton from '../controls/iconButton';
@@ -23,22 +22,12 @@ interface LobbyPageProps {
 class lobbyPage extends React.Component<LobbyPageProps> {
     render() {
         const gameId = (this.props as any).match.params.gameId;
-
-        const inProgress =  this.props.game && this.props.game.status === GameStatus.InProgress;
-
-        const navOptions = {
-            enableDashboard: true,
-            enablePlay: inProgress,
-            enableDiplomacy: inProgress,
-            gameId: gameId
-        };
-
+        const g = this.props.game;
         return (
             <BasicPageContainer>
                 <RedirectToLoginIfNotLoggedIn/>
-                <SetNavigationOptions options={navOptions}/>
                 <LoadGame gameId={gameId}/>
-                {this.props.game ? this.renderBody() : null}
+                {g ? this.renderBody() : null}
             </BasicPageContainer>
         );
     }

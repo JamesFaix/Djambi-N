@@ -4,7 +4,7 @@ import GameHistoryEffectBox from './gameHistoryEffectBox';
 import { Classes } from '../../styles/styles';
 import GameHistory from '../../viewModel/gameHistory';
 import * as Copy from '../../utilities/copy';
-import Moment from 'moment';
+import { dateToString } from '../../utilities/dates';
 
 interface GameHistoryEventBoxProps {
     game : Game, //This will be needed eventually to get the correct player names from playerIDs in event objects
@@ -20,9 +20,7 @@ const GameHistoryEventBox : React.SFC<GameHistoryEventBoxProps> = props => {
 
     const p = props.game.players.find(p => p.id === e.actingPlayerId);
 
-    const date = e.createdBy.time;
-    const m = Moment.utc(date).local();
-    const dateText = m.format("M/D/YY h:mma");
+    const dateText = dateToString(e.createdBy.time);
 
     return (
         <div

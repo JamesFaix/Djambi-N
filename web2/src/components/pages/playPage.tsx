@@ -4,32 +4,22 @@ import { State } from '../../store/root';
 import { connect } from 'react-redux';
 import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
 import RedirectToLobbyIfGameNotInProgress from '../utilities/redirectToLobbyIfGameNotInProgress';
-import SetNavigationOptions from '../utilities/setNavigationOptions';
 import TimelineBar from '../timelineBar/timelineBar';
 import LoadGameFull from '../utilities/loadGameFull';
 import BoardSection from '../sections/boardSection';
 import PlayPageContainer from '../sections/playPageContainer';
 
 interface PlayPageProps {
-    game : Game
+    game : Game,
 }
 
 class playPage extends React.Component<PlayPageProps> {
     render() {
         const gameId = (this.props as any).match.params.gameId;
-
-        const navOptions = {
-            enableDashboard: true,
-            enableLobby: true,
-            enableDiplomacy: true,
-            gameId: gameId
-        };
-
         return (
             <PlayPageContainer>
                 <RedirectToLoginIfNotLoggedIn/>
                 <RedirectToLobbyIfGameNotInProgress/>
-                <SetNavigationOptions options={navOptions}/>
                 <LoadGameFull gameId={gameId}/>
                 <BoardSection/>
                 <TimelineBar/>
@@ -40,7 +30,7 @@ class playPage extends React.Component<PlayPageProps> {
 
 const mapStateToProps = (state : State) => {
     return {
-        game: state.activeGame.game
+        game: state.activeGame.game,
     };
 }
 

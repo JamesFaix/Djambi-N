@@ -6,7 +6,6 @@ import GamesSearchResultsTable from '../tables/gamesSearchResultsTable';
 import { State } from '../../store/root';
 import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
 import GamesSearchForm from '../forms/gamesSearchForm';
-import SetNavigationOptions from '../utilities/setNavigationOptions';
 import ApiActions from '../../apiActions';
 import BasicPageContainer from '../sections/basicPageContainer';
 
@@ -21,7 +20,6 @@ class dashboardPage extends React.Component<DashboardPageProps>{
         return (
             <BasicPageContainer>
                 <RedirectToLoginIfNotLoggedIn/>
-                <SetNavigationOptions options={{enableCreateGame: true}}/>
                 <GamesSearchForm/>
                 <br/>
                 <br/>

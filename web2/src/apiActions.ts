@@ -1,5 +1,5 @@
 import { Dispatch } from "redux";
-import { LoginRequest, CreateUserRequest, GameParameters, CreatePlayerRequest, User, GameStatus, Game, EventsQuery, Event, ResultsDirection, Board, PlayerStatus, GamesQuery } from "./api/model";
+import { LoginRequest, CreateUserRequest, GameParameters, CreatePlayerRequest, User, GameStatus, Game, EventsQuery, Event, ResultsDirection, Board, PlayerStatus, GamesQuery, CreateSnapshotRequest } from "./api/model";
 import * as Api from "./api/client";
 import * as ModelFactory from "./api/modelFactory";
 import Routes from "./routes";
@@ -38,23 +38,6 @@ export default class ApiActions {
             dispatch(StoreSession.Actions.signup(user));
             const loginRequest = ModelFactory.loginRequestFromCreateUserRequest(request);
             return ApiActions.login(loginRequest)(dispatch);
-        };
-    }
-
-    public static restoreSession() {
-        return async function (dispatch : Dispatch) : Promise<void> {
-            try {
-                const user = await Api.getCurrentUser();
-                dispatch(StoreSession.Actions.restoreSession(user));
-                SseClientManager.connect();
-                return ApiActions.queryGamesForUser(user, dispatch);
-            }
-            catch (ex) {
-                let [status, message] = ex;
-                if (status !== 401) {
-                    throw ex;
-                }
-            }
         };
     }
 
@@ -210,6 +193,38 @@ export default class ApiActions {
         return async function (dispatch: Dispatch) : Promise<void> {
             const resp = await Api.updatePlayerStatus(gameId, playerId, status);
             dispatch(StoreActiveGame.Actions.updateGame(resp));
+        }
+    }
+
+    //#endregion
+
+    //#region Snapshots
+
+    public static getSnapshots(gameId: number) {
+        return async function(dispatch: Dispatch) : Promise<void> {
+            const snapshots = await Api.getSnapshotsForGame(gameId);
+            dispatch(StoreActiveGame.Actions.loadSnapshots(snapshots))
+        }
+    }
+
+    public static saveSnapshot(gameId : number, request : CreateSnapshotRequest) {
+        return async function(dispatch: Dispatch) : Promise<void> {
+            const snapshot = await Api.createSnapshot(gameId, request);
+            dispatch(StoreActiveGame.Actions.snapshotSaved(snapshot));
+        }
+    }
+
+    public static loadSnapshot(gameId : number, snapshotId : number) {
+        return async function(dispatch: Dispatch) : Promise<void> {
+            await Api.loadSnapshot(gameId, snapshotId);
+            return ApiActions.loadGameFull(gameId)(dispatch);
+        }
+    }
+
+    public static deleteSnapshot(gameId : number, snapshotId : number) {
+        return async function(dispatch: Dispatch) : Promise<void> {
+            await Api.loadSnapshot(gameId, snapshotId);
+            dispatch(StoreActiveGame.Actions.snapshotDeleted(snapshotId));
         }
     }
 

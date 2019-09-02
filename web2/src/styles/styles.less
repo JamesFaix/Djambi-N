@@ -48,6 +48,12 @@ button:hover {
     color: @hover-text-color;
 }
 
+button[data-active="true"] {
+    .buttonMixin;
+    background-color: @hover-background-color;
+    color: @hover-text-color;
+}
+
 p {
     margin-block-start: 0;
     margin-block-end: 0;

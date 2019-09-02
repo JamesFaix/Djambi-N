@@ -22,7 +22,7 @@ class gamesSearchResultsTable extends React.Component<GamesSearchResultsTablePro
                 <tbody>
                     <tr>
                         <th></th>
-                        <th>GameID</th>
+                        <th>ID</th>
                         <th>Description</th>
                         <th>Created by</th>
                         <th>Status</th>

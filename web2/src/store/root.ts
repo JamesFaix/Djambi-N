@@ -1,6 +1,5 @@
 import * as GamesQuery from './gamesQuery';
 import * as CreateGameForm from './createGameForm';
-import * as Navigation from './navigation';
 import * as Display from './display';
 import * as Session from './session';
 import * as ActiveGame from './activeGame';
@@ -20,7 +19,6 @@ export interface State {
     activeGame : ActiveGame.State,
     gamesQuery : GamesQuery.State,
     createGameForm : CreateGameForm.State,
-    navigation : Navigation.State,
     boards : Boards.State,
     display : Display.State,
     images : Images.State,
@@ -32,7 +30,6 @@ export const defaultState : State = {
     activeGame: ActiveGame.defaultState,
     gamesQuery: GamesQuery.defaultState,
     createGameForm: CreateGameForm.defaultState,
-    navigation: Navigation.defaultState,
     boards: Boards.defaultState,
     display: Display.defaultState,
     images : Images.defaultState,
@@ -55,7 +52,6 @@ const combinedReducer : Reducer<State, CustomAction> = combineReducers({
     display: Display.reducer,
     gamesQuery: GamesQuery.reducer,
     images: Images.reducer,
-    navigation: Navigation.reducer,
     session: Session.reducer
 });
 
@@ -83,7 +79,6 @@ export function reducer(state: State, action : CustomAction) : State {
 function loadGameReducer(state: State, action: CustomAction) : State {
     const da = <DataAction<Game>>action;
     const newState = {...state};
-    newState.activeGame = ActiveGame.defaultState,
     newState.activeGame.game = da.data;
     updateBoardView(newState, da.data);
     return newState;

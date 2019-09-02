@@ -24,7 +24,10 @@ import {
     faScroll,
     faClock,
     faEllipsisH,
-    faExclamation
+    faExclamation,
+    faCamera,
+    faSave,
+    faTrashAlt
 } from "@fortawesome/free-solid-svg-icons";
 import { PlayerStatus, GameStatus } from "../api/model";
 
@@ -99,7 +102,8 @@ export class Icons {
         public static readonly lobby : IconInfo = { icon: faDoorOpen, title: "Lobby" };
         public static readonly play : IconInfo = { icon: faPlay, title: "Play" };
         public static readonly diplomacy : IconInfo = { icon: faHandshake, title: "Diplomacy" };
-        public static readonly signup : IconInfo = { icon: faUserPlus, title: "Sign up" }
+        public static readonly signup : IconInfo = { icon: faUserPlus, title: "Sign up" };
+        public static readonly snapshots : IconInfo = { icon: faCamera, title: "Snapshots" };
     }
 
     public static readonly UserActions = class {
@@ -137,5 +141,11 @@ export class Icons {
                 title: `${playerName}'s turn`
             };
         }
+    }
+
+    public static readonly Snapshots = class {
+        public static readonly save : IconInfo = { icon: faSave, title: "Save" };
+        public static readonly load : IconInfo = { icon: faDoorOpen, title: "Load" };
+        public static readonly delete : IconInfo = { icon: faTrashAlt, title: "Delete" };
     }
 }

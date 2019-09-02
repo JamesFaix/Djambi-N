@@ -13,4 +13,7 @@ export default class Routes {
 
     static diplomacy = (gameId : number) => `/games/${gameId}/diplomacy`;
     static readonly diplomacyPattern = "/games/:gameId/diplomacy";
+
+    static snapshots = (gameId : number) => `/games/${gameId}/snapshots`;
+    static readonly snapshotsPattern = "/games/:gameId/snapshots";
 }
