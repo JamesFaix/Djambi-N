@@ -1,68 +1,83 @@
 import * as React from 'react';
-import { State } from '../../store/root';
 import { connect } from 'react-redux';
 import { navigateTo } from '../../history';
 import Routes from '../../routes';
 import IconButton from '../controls/iconButton';
-import * as Navigation from '../../store/navigation';
 import { Icons } from '../../utilities/icons';
 import { Classes } from '../../styles/styles';
+import { withRouter } from 'react-router';
+import { User, Privilege, Game, GameStatus } from '../../api/model';
+import { State } from '../../store/root';
 
 interface NavigationSectionProps {
-    options : Navigation.State
+    location : any,
+    user : User,
+    game : Game
+}
+
+interface NavigationOptions {
+    showLogin ?: boolean,
+    showSignup ?: boolean,
+    showHome ?: boolean,
+    showCreateGame ?: boolean,
+    showLobby ?: boolean,
+    showPlay ?: boolean,
+    showDiplomacy ?: boolean,
+    showSnapshots ?: boolean,
+    gameId ?: number
 }
 
 class navigationSection extends React.Component<NavigationSectionProps> {
     render() {
-        const o = this.props.options;
+        const o = this.getOptionsFromProps(this.props);
         return (
             <div
                 id={"navigation-section"}
                 className={Classes.topBarNavigation}
             >
-                {o.enableSignup ?
+                {o.showSignup ?
                     <IconButton
                         icon={Icons.Pages.signup}
                         onClick={() => navigateTo(Routes.signup)}
                     />
                 : null}
-                {o.enableLogin ?
+                {o.showLogin ?
                     <IconButton
                         icon={Icons.Pages.login}
                         onClick={() => navigateTo(Routes.login)}
                     />
                 : null}
-                {o.enableDashboard ?
+                {o.showHome ?
                     <IconButton
                         icon={Icons.Pages.home}
                         onClick={() => navigateTo(Routes.dashboard)}
                     />
                 : null}
-                {o.enableCreateGame ?
+                {o.showCreateGame ?
                     <IconButton
                         icon={Icons.Pages.newGame}
                         onClick={() => navigateTo(Routes.createGame)}
                     />
                 : null}
-                {o.enableLobby ?
+                {o.showLobby ?
                     <IconButton
                         icon={Icons.Pages.lobby}
                         onClick={() => navigateTo(Routes.lobby(o.gameId))}
                     />
                 : null}
-                {o.enablePlay ?
+                {o.showPlay ?
                     <IconButton
                         icon={Icons.Pages.play}
                         onClick={() => navigateTo(Routes.play(o.gameId))}
                     />
                 : null}
-                {o.enableDiplomacy ?
+                {o.showDiplomacy ?
                     <IconButton
                         icon={Icons.Pages.diplomacy}
                         onClick={() => navigateTo(Routes.diplomacy(o.gameId))}
                     />
                 : null}
-                {o.enableSnapshots ?
+                {o.showSnapshots ?
                     <IconButton
                         icon={Icons.Pages.snapshots}
                         onClick={() => navigateTo(Routes.snapshots(o.gameId))}
@@ -71,13 +86,88 @@ class navigationSection extends React.Component<NavigationSectionProps> {
             </div>
         );
     }
+
+    private getOptionsFromProps(props : NavigationSectionProps) : NavigationOptions {
+        const route : string = props.location.pathname;
+
+        if (route === Routes.login) {
+            return { showSignup: true };
+        }
+
+        if (route === Routes.signup) {
+            return { showLogin: true };
+        }
+
+        if (route === Routes.dashboard) {
+            return { showCreateGame: true };
+        }
+
+        if (route === Routes.createGame) {
+            return { showHome: true };
+        }
+
+        if (route.startsWith("/games")) {
+            const parts = route.split("/");
+            //parts[0] is ""
+            //parts[1] is "games"
+            const gameId = parts[2];
+            const page = parts[3];
+
+            const showPlay = props.game && (props.game.status === GameStatus.InProgress);
+            const showDiplomacy = props.game && (props.game.status === GameStatus.InProgress);
+            const showSnapshots = props.user && (props.user.privileges.includes(Privilege.Snapshots));
+
+            switch(page) {
+                case "lobby": {
+                    return {
+                        showHome: true,
+                        showPlay: showPlay,
+                        showDiplomacy: showDiplomacy,
+                        showSnapshots: showSnapshots,
+                        gameId: Number(gameId)
+                    };
+                }
+                case "play": {
+                    return {
+                        showHome: true,
+                        showLobby: true,
+                        showDiplomacy: showDiplomacy,
+                        showSnapshots: showSnapshots,
+                        gameId: Number(gameId)
+                    };
+                }
+                case "diplomacy": {
+                    return {
+                        showHome: true,
+                        showLobby: true,
+                        showPlay: showPlay,
+                        showSnapshots: showSnapshots,
+                        gameId: Number(gameId)
+                    };
+                }
+                case "snapshots": {
+                    return {
+                        showHome: true,
+                        showLobby: true,
+                        showPlay: showPlay,
+                        showDiplomacy: showDiplomacy,
+                        gameId: Number(gameId)
+                    };
+                }
+            }
+        }
+
+        return {};
+    }
 };
 
 const mapStateToProps = (state : State) => {
     return {
-        options: state.navigation
+        user: state.session.user,
+        game: state.activeGame.game
     };
-};
+}
 
-const NavigationSection = connect(mapStateToProps)(navigationSection);
+let NavigationSection1 = connect(mapStateToProps)(navigationSection);
+let NavigationSection = withRouter(props => <NavigationSection1 {...props}/>)
 export default NavigationSection;
