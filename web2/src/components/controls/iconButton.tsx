@@ -6,7 +6,8 @@ import { Classes } from '../../styles/styles';
 interface IconButtonProps {
     onClick: () => void,
     icon: IconInfo,
-    showTitle ?: boolean
+    showTitle ?: boolean,
+    active ?: boolean
 }
 
 const IconButton : React.SFC<IconButtonProps> = props => {
@@ -14,6 +15,8 @@ const IconButton : React.SFC<IconButtonProps> = props => {
         <button
             title={props.icon.title}
             onClick={props.onClick}
+            data-active={props.active}
+            disabled={props.active}
         >
             <FontAwesomeIcon icon={props.icon.icon}/>
             {props.showTitle ?
