@@ -9,7 +9,6 @@ import { PieceKind } from '../../api/model';
 import * as Images from '../../utilities/images';
 import ApiActions from '../../apiActions';
 import { Classes } from '../../styles/styles';
-import Colors from '../../utilities/colors';
 import BoardScrollArea from './boardScrollArea';
 import BoardZoomSlider from '../controls/boardZoomSlider';
 
@@ -20,7 +19,8 @@ export interface BoardSectionProps {
     zoomLevel : number,
     pieceImages : Map<PieceKind, HTMLImageElement>,
     selectCell : (gameId: number, cell : CellView) => void,
-    loadPieceImages : () => void
+    loadPieceImages : () => void,
+    theme : Theme
 }
 
 class boardSection extends React.Component<BoardSectionProps> {
@@ -39,8 +39,8 @@ class boardSection extends React.Component<BoardSectionProps> {
             width: internalSize.x,
             height: internalSize.y,
             strokeWidth: 5, //TODO: maybe put in settings somewhere
-            strokeColor: Colors.getBoardBorderColor(),
-            scale: CanvasTransformService.getScale(this.props.transformData)
+            scale: CanvasTransformService.getScale(this.props.transformData),
+            theme: this.props.theme
         };
 
         return (
@@ -80,7 +80,8 @@ const mapStateToProps = (state : State) => {
             contentPadding: state.display.canvasContentPadding,
             zoomLevel: state.display.boardZoomLevel,
             regionCount: state.activeGame.game.parameters.regionCount
-        }
+        },
+        theme: state.display.theme
     };
 }
 

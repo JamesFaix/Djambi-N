@@ -13,6 +13,7 @@ import PlayPage from './pages/playPage';
 import DiplomacyPage from './pages/diplomacyPage';
 import { Classes } from '../styles/styles';
 import SnapshotsPage from './pages/snapshotsPage';
+import SettingsPage from './pages/settingsPage';
 
 const App : React.SFC<{}> = _ => {
     return (
@@ -53,6 +54,10 @@ const App : React.SFC<{}> = _ => {
                 <Route
                     path={Routes.snapshotsPattern}
                     component={SnapshotsPage}
+                />
+                <Route
+                    path={Routes.settings}
+                    component={SettingsPage}
                 />
                 <Route
                     path={Routes.base}

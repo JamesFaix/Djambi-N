@@ -1,5 +1,7 @@
 import { CustomAction, DataAction } from "./root";
 import { Point } from "../viewModel/board/model";
+import ThemeFactory from "../themes/themeFactory";
+import ThemeService from "../themes/themeService";
 
 export interface State {
     boardZoomLevel : number,
@@ -7,6 +9,7 @@ export interface State {
     boardContainerSize : Point,
     canvasMargin : number,
     canvasContentPadding : number,
+    theme : Theme
 }
 
 export const defaultState : State = {
@@ -15,12 +18,14 @@ export const defaultState : State = {
     boardContainerSize: { x: 1000, y: 1000 },
     canvasContentPadding: 5,
     canvasMargin: 5,
+    theme: ThemeFactory.default
 };
 
 export enum ActionTypes {
     BoardZoom = "BOARD_ZOOM",
     BoardScroll = "BOARD_SCROLL",
-    BoardAreaResize = "BOARD_AREA_RESIZE"
+    BoardAreaResize = "BOARD_AREA_RESIZE",
+    ChangeTheme = "CHANGE_THEME"
 }
 
 export class Actions {
@@ -44,6 +49,13 @@ export class Actions {
             data: size
         };
     }
+
+    public static changeTheme(themeName : string) {
+        return {
+            type: ActionTypes.ChangeTheme,
+            data: themeName
+        };
+    }
 }
 
 export function reducer(state : State, action : CustomAction) : State {
@@ -54,6 +66,14 @@ export function reducer(state : State, action : CustomAction) : State {
             const da = <DataAction<Point>>action;
             const newState = {...state};
             newState.boardContainerSize = da.data;
+            return newState;
+        }
+        case ActionTypes.ChangeTheme: {
+            const da = <DataAction<string>>action;
+            const newState = {...state};
+            const theme = ThemeFactory.getThemes().get(da.data);
+            newState.theme = theme;
+            ThemeService.applyToCss(theme);
             return newState;
         }
         //BoardScroll and BoardZoom must be handled at a higher level because they update the boardview

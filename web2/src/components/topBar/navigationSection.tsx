@@ -50,6 +50,7 @@ interface NavigationOptions {
     showPlay : ButtonState,
     showDiplomacy : ButtonState,
     showSnapshots : ButtonState,
+    showSettings : ButtonState,
     gameId : number
 }
 
@@ -65,6 +66,7 @@ function getOptionsFromProps(props : NavigationSectionProps) : NavigationOptions
         showPlay: ButtonState.Hidden,
         showDiplomacy: ButtonState.Hidden,
         showSnapshots: ButtonState.Hidden,
+        showSettings: ButtonState.Hidden,
         gameId: null
     };
 
@@ -80,12 +82,20 @@ function getOptionsFromProps(props : NavigationSectionProps) : NavigationOptions
 
     else if (route === Routes.dashboard) {
         o.showHome = ButtonState.Active;
+        o.showSettings = ButtonState.Inactive;
         o.showCreateGame = ButtonState.Inactive;
     }
 
     else if (route === Routes.createGame) {
         o.showCreateGame = ButtonState.Active;
+        o.showSettings = ButtonState.Inactive;
         o.showHome = ButtonState.Inactive;
+    }
+
+    else if (route === Routes.settings) {
+        o.showSettings = ButtonState.Active;
+        o.showHome = ButtonState.Inactive;
+        o.showCreateGame = ButtonState.Inactive;
     }
 
     else if (route.startsWith("/games")) {
@@ -97,6 +107,7 @@ function getOptionsFromProps(props : NavigationSectionProps) : NavigationOptions
 
         o.gameId = Number(gameId);
         o.showHome = ButtonState.Inactive;
+        o.showSettings = ButtonState.Inactive;
         o.showLobby = ButtonState.Inactive;
 
         if(props.game && props.game.status === GameStatus.InProgress) {
@@ -151,6 +162,11 @@ const navigationSection : React.SFC<NavigationSectionProps> = props => {
                 icon={Icons.Pages.home}
                 state={o.showHome}
                 route={Routes.dashboard}
+            />
+            <NavigationButton
+                icon={Icons.Pages.settings}
+                state={o.showSettings}
+                route={Routes.settings}
             />
             <NavigationButton
                 icon={Icons.Pages.newGame}

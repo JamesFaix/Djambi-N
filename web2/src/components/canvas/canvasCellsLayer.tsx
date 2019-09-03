@@ -6,7 +6,8 @@ import { CellView, BoardView } from '../../viewModel/board/model';
 export interface CanvasCellsLayerProps {
     gameId : number,
     board : BoardView,
-    selectCell : (cell : CellView) => void
+    selectCell : (cell : CellView) => void,
+    theme : Theme
 }
 
 export default class CanvasCellsLayer extends React.Component<CanvasCellsLayerProps> {
@@ -19,6 +20,7 @@ export default class CanvasCellsLayer extends React.Component<CanvasCellsLayerPr
                             key={"cell" + i}
                             cell={c}
                             selectCell={(cell) => this.props.selectCell(cell)}
+                            theme={this.props.theme}
                         />
                     )
                 }

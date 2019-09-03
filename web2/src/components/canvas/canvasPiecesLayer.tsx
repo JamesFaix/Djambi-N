@@ -6,7 +6,8 @@ import Geometry from '../../viewModel/board/geometry';
 import { PieceKind } from '../../api/model';
 
 export interface CanvasPiecesLayerStyle {
-    scale : number
+    scale : number,
+    theme : Theme
 }
 
 export interface CanvasPiecesLayerProps {
@@ -36,6 +37,7 @@ export default class CanvasPiecesLayer extends React.Component<CanvasPiecesLayer
                                         size={size}
                                         location={this.getPieceLocation(c)}
                                         image={image}
+                                        theme={this.props.style.theme}
                                     />
                                 );
                             } else {

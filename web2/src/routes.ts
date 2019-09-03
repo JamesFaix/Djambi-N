@@ -4,6 +4,7 @@ export default class Routes {
     static readonly signup = "/signup";
     static readonly dashboard = "/dashboard";
     static readonly createGame = "/games/create";
+    static readonly settings = "/settings";
 
     static lobby = (gameId : number) => `/games/${gameId}/lobby`;
     static readonly lobbyPattern = "/games/:gameId/lobby";
