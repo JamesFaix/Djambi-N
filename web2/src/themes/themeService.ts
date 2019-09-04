@@ -4,12 +4,14 @@ import { PieceKind } from "../api/model";
 import { Dispatch } from "redux";
 import * as StoreDisplay from '../store/display';
 import ThemeFactory from "./themeFactory";
+import LocalStorageService from "../utilities/localStorageService";
 
 export default class ThemeService {
 
     //#region Theme initialization
 
     public static changeTheme(themeName : string, dispatch : Dispatch) : void {
+        LocalStorageService.themeName = themeName;
         const theme = ThemeFactory.getThemes().get(themeName);
         dispatch(StoreDisplay.Actions.changeTheme(theme));
         this.applyToCss(theme);
@@ -71,6 +73,15 @@ export default class ThemeService {
     }
 
     //#endregion
+
+    public static loadSavedTheme(dispatch : Dispatch) : void {
+        return ThemeService.changeTheme(ThemeService.getSavedThemeName(), dispatch);
+    }
+
+    private static getSavedThemeName() : string {
+        let name = LocalStorageService.themeName;
+        return name ? name : ThemeFactory.default.name;
+    }
 
     //#region Colors
 

@@ -10,7 +10,6 @@ import * as StoreActiveGame from './store/activeGame';
 import * as StoreBoards from './store/boards';
 import { SseClientManager } from "./utilities/serverSentEvents";
 import ThemeService from "./themes/themeService";
-import ThemeFactory from "./themes/themeFactory";
 
 //#region Session actions
 
@@ -100,7 +99,7 @@ export default class ApiActions {
 
     private static finishLoginSetup(user : User, dispatch : Dispatch) : Promise<void> {
         SseClientManager.connect();
-        ThemeService.changeTheme(ThemeFactory.default.name, dispatch); //TODO: Use user-preferred theme
+        ThemeService.loadSavedTheme(dispatch);
         return ApiActions.queryGamesForUser(user, dispatch);
     }
 
