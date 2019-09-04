@@ -2,12 +2,14 @@ interface Theme {
     name : string,
     colors : ThemeColors,
     images : ThemeImagePaths,
-    copy : ThemeCopy
+    copy : ThemeCopy,
+    fonts : ThemeFonts
 }
 
 interface ThemeColors {
     background : string,
     text : string,
+    headerText : string,
     border : string,
 
     hoverText : string,
@@ -54,6 +56,7 @@ interface ThemePieceImagePaths {
 
 interface ThemeCopy {
     centerCellName : string,
+    gameTitle : string,
     pieces : ThemePieceNames
 }
 
@@ -65,4 +68,9 @@ interface ThemePieceNames {
     gravedigger : string,
     reporter : string,
     thug : string
+}
+
+interface ThemeFonts {
+    headerFamily : string,
+    normalFamily : string
 }

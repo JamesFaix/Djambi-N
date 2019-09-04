@@ -1,6 +1,7 @@
 :root {
     --background-color: white;
     --text-color: black;
+    --header-text-color: black;
     --border-color: gainsboro;
     --hover-text-color: white;
     --hover-background-color: black;
@@ -13,19 +14,27 @@
     --player-color-5: teal;
     --player-color-6: magenta;
     --player-color-7: gold;
+
+    --font-family: "Century Gothic", Geneva, sans-serif;
+    --header-font-family: "Century Gothic", Geneva, sans-serif;
 }
 
-@font: 14px "Century Gothic", Futura, sans-serif;
 @text-padding: 5px 10px 5px 10px;
 @top-bar-height: 50px;
 @timeline-width: 400px;
 @border-padding: 3px;
 
 body {
-    font: @font;
+    font-family: var(--font-family);
+    font-size: 14px;
     margin: 0;
     background: var(--background-color);
     color: var(--text-color);
+}
+
+h1 {
+    font-family: var(--header-font-family);
+    color: var(--header-text-color);
 }
 
 table {
@@ -45,7 +54,6 @@ td {
     box-shadow: none;
     border-style: none;
     padding: @text-padding;
-    font: @font;
 }
 
 button {
@@ -122,12 +130,16 @@ p {
     padding: 10px;
     font-weight: bold;
     font-size: large;
+    font-family: var(--header-font-family);
+    color: var(--header-text-color);
 }
 
 .timelineHeader {
     text-align: center;
     padding: 5px;
     font-weight: bold;
+    font-family: var(--header-font-family);
+    color: var(--header-text-color);
 }
 
 //page layout

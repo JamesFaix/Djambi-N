@@ -24,6 +24,7 @@ export default class ThemeService {
 
         s.setProperty("--background-color", c.background);
         s.setProperty("--text-color", c.text);
+        s.setProperty("--header-text-color", c.headerText);
         s.setProperty("--border-color", c.border);
         s.setProperty("--hover-text-color", c.hoverText);
         s.setProperty("--hover-background-color", c.hoverBackground);
@@ -36,6 +37,9 @@ export default class ThemeService {
         s.setProperty("--player-color-5", c.player5);
         s.setProperty("--player-color-6", c.player6);
         s.setProperty("--player-color-7", c.player7);
+
+        s.setProperty("--font-family", theme.fonts.normalFamily);
+        s.setProperty("--header-font-family", theme.fonts.headerFamily);
     }
 
     private static loadThemeImages(theme : Theme, dispatch : Dispatch) : void {

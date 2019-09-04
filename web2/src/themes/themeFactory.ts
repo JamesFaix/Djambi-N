@@ -6,6 +6,7 @@ export default class ThemeFactory {
         colors: {
             background: "white",
             text: "black",
+            headerText: "black",
             border: "gainsboro",
             hoverText: "white",
             hoverBackground: "black",
@@ -45,6 +46,7 @@ export default class ThemeFactory {
             }
         },
         copy: {
+            gameTitle: "Djambi-N",
             centerCellName: "Seat",
             pieces: {
                 assassin: "Assassin",
@@ -55,6 +57,10 @@ export default class ThemeFactory {
                 reporter: "Reporter",
                 thug: "Thug"
             }
+        },
+        fonts: {
+            headerFamily: "Century Gothic, Geneva, sans-serif",
+            normalFamily: "Century Gothic, Geneva, sans-serif"
         }
     };
 
@@ -62,6 +68,7 @@ export default class ThemeFactory {
         name: "Anesto",
         colors: {
             ...ThemeFactory.default.colors,
+            background: "oldlace",
             cells: {
                 ...ThemeFactory.default.colors.cells,
                 //Cell colors must be in hex
@@ -83,6 +90,7 @@ export default class ThemeFactory {
             }
         },
         copy: {
+            gameTitle: "Djambi",
             centerCellName: "Maze",
             pieces: {
                 ...ThemeFactory.default.copy.pieces,
@@ -91,6 +99,10 @@ export default class ThemeFactory {
                 reporter: "Journalist",
                 thug: "Militant"
             }
+        },
+        fonts: {
+            headerFamily: "Georgia, serif",
+            normalFamily: "Georgia, serif"
         }
     }
 
@@ -98,6 +110,13 @@ export default class ThemeFactory {
         name: "Hotdogtown",
         colors: {
             ...ThemeFactory.default.colors,
+            headerText: "indianred",
+            background: "lemonchiffon",
+            cells: {
+                ...ThemeFactory.default.colors.cells,
+                odd: "#00FFFF", //cyan
+                even: "#FFFFFF",
+            }
         },
         images: {
             pieces: {
@@ -111,6 +130,7 @@ export default class ThemeFactory {
             }
         },
         copy: {
+            gameTitle: "Hotdogtown",
             centerCellName: "Booth",
             pieces: {
                 assassin: "Fork",
@@ -121,15 +141,21 @@ export default class ThemeFactory {
                 reporter: "Fart",
                 thug: "Fries"
             }
+        },
+        fonts: {
+            ...ThemeFactory.default.fonts,
+            headerFamily: "Comic Sans MS",
         }
     }
 
     public static readonly void : Theme = {
+        ...ThemeFactory.default,
         name: "Void",
         colors: {
             ...ThemeFactory.default.colors,
             background: "#161616", //dark gray
             text: "#dcdcdc", //light gray
+            headerText: "#dcdcdc",
             border: "#dcdcdc",
             cells: {
                 ...ThemeFactory.default.colors.cells,
@@ -147,6 +173,7 @@ export default class ThemeFactory {
             }
         },
         copy: {
+            gameTitle: "Void",
             centerCellName: "Void",
             pieces: {
                 assassin: "Hunter",
