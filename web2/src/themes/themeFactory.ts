@@ -1,6 +1,3 @@
-import { PieceKind } from "../api/model";
-import { Dispatch } from "react";
-
 const imagesDir = "../../resources/images";
 
 export default class ThemeFactory {
@@ -75,10 +72,54 @@ export default class ThemeFactory {
         }
     }
 
+    public static readonly hotdogtown : Theme = {
+        name: "Hotdogtown",
+        colors: {
+            ...ThemeFactory.default.colors,
+        },
+        images: {
+            pieces: {
+                assassin: `${imagesDir}/hotdogtown/assassin.png`,
+                chief: `${imagesDir}/hotdogtown/chief.png`,
+                corpse: `${imagesDir}/hotdogtown/corpse.png`,
+                diplomat: `${imagesDir}/hotdogtown/diplomat.png`,
+                gravedigger: `${imagesDir}/hotdogtown/gravedigger.png`,
+                reporter: `${imagesDir}/hotdogtown/reporter.png`,
+                thug: `${imagesDir}/hotdogtown/thug.png`
+            }
+        }
+    }
+
+    public static readonly void : Theme = {
+        name: "Void",
+        colors: {
+            ...ThemeFactory.default.colors,
+            background: "#161616", //dark gray
+            text: "#dcdcdc", //light gray
+            border: "#dcdcdc",
+            cells: {
+                ...ThemeFactory.default.colors.cells,
+                even: "#000000",
+                odd: "#333333",
+                center: "#EEEEEE"
+            }
+        },
+        images: {
+            pieces: {
+                ...ThemeFactory.default.images.pieces,
+                chief: `${imagesDir}/void/chief.png`,
+                gravedigger: `${imagesDir}/void/gravedigger.png`,
+                reporter: `${imagesDir}/void/reporter.png`,
+            }
+        }
+    }
+
     public static getThemes() : Map<string, Theme> {
         const themes = [
             ThemeFactory.default,
-            ThemeFactory.anesto
+            ThemeFactory.anesto,
+            ThemeFactory.hotdogtown,
+            ThemeFactory.void
         ];
 
         return new Map<string, Theme>(themes.map(t => [t.name, t]));
