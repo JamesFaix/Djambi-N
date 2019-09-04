@@ -11,7 +11,8 @@ import { Icons } from '../../utilities/icons';
 interface CurrentTurnSectionProps {
     game : Game,
     board : Board,
-    user : User
+    user : User,
+    theme : Theme
 }
 
 class currentTurnSection extends React.Component<CurrentTurnSectionProps> {
@@ -66,7 +67,7 @@ class currentTurnSection extends React.Component<CurrentTurnSectionProps> {
         return (<>
             {turn.selections.map((s, i) =>
                 <p key={"row" + i}>
-                    {Copy.getSelectionDescription(s, game, board)}
+                    {Copy.getSelectionDescription(this.props.theme, s, game, board)}
                 </p>)
             }
             <p style={{
@@ -87,9 +88,10 @@ const mapStateToProps = (state : State) => {
     const board = rc ? state.boards.boards.get(rc) : null;
 
     return {
-        game : game,
-        user : state.session.user,
-        board : board
+        game: game,
+        user: state.session.user,
+        board: board,
+        theme: state.display.theme
     };
 }
 

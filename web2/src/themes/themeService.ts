@@ -72,6 +72,8 @@ export default class ThemeService {
 
     //#endregion
 
+    //#region Colors
+
     public static getPlayerColor(theme : Theme, playerColorId : number) : string {
         const c = theme.colors;
         switch(playerColorId) {
@@ -133,4 +135,24 @@ export default class ThemeService {
                 throw "Invalid cell state: " + state;
         }
     }
+
+    //#endregion
+
+    //#region Copy
+
+    public static getPieceName(theme : Theme, kind : PieceKind) : string {
+        const c = theme.copy.pieces;
+        switch (kind) {
+            case PieceKind.Assassin: return c.assassin;
+            case PieceKind.Chief: return c.chief;
+            case PieceKind.Corpse: return c.corpse;
+            case PieceKind.Diplomat: return c.diplomat;
+            case PieceKind.Gravedigger: return c.gravedigger;
+            case PieceKind.Reporter: return c.reporter;
+            case PieceKind.Thug: return c.thug;
+            default: throw "Invalid piece kind: " + kind;
+        }
+    }
+
+    //#endregion
 }

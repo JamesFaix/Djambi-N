@@ -1,7 +1,8 @@
 interface Theme {
     name : string,
     colors : ThemeColors,
-    images : ThemeImagePaths
+    images : ThemeImagePaths,
+    copy : ThemeCopy
 }
 
 interface ThemeColors {
@@ -42,6 +43,21 @@ interface ThemeImagePaths {
 }
 
 interface ThemePieceImagePaths {
+    assassin : string,
+    chief : string,
+    corpse : string,
+    diplomat : string,
+    gravedigger : string,
+    reporter : string,
+    thug : string
+}
+
+interface ThemeCopy {
+    centerCellName : string,
+    pieces : ThemePieceNames
+}
+
+interface ThemePieceNames {
     assassin : string,
     chief : string,
     corpse : string,

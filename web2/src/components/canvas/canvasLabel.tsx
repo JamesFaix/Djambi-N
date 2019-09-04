@@ -9,6 +9,7 @@ export interface CanvasLabelProps {
     board : BoardView,
     cell : CellView,
     onClick : () => void,
+    theme : Theme
 }
 
 export default class CanvasLabel extends React.Component<CanvasLabelProps> {
@@ -19,7 +20,7 @@ export default class CanvasLabel extends React.Component<CanvasLabelProps> {
         }
         const cell = this.props.cell;
 
-        let text = Copy.getCellViewLabel(cell.id, this.props.board);
+        let text = Copy.getCellViewLabel(this.props.theme, cell.id, this.props.board);
         if (Debug.showPieceAndCellIds && cell.piece !== null) {
             text += "\nP " + cell.piece.id;
         }

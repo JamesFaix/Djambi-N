@@ -64,6 +64,7 @@ export default class CanvasBoard extends React.Component<CanvasBoardProps> {
                     gameId={this.props.gameId}
                     board={this.props.board}
                     selectCell={this.props.selectCell}
+                    theme={this.props.style.theme}
                 />
             </Stage>
         );

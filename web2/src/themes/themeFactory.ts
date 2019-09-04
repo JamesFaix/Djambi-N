@@ -43,6 +43,18 @@ export default class ThemeFactory {
                 reporter: `${imagesDir}/default/reporter.png`,
                 thug: `${imagesDir}/default/thug.png`
             }
+        },
+        copy: {
+            centerCellName: "Seat",
+            pieces: {
+                assassin: "Assassin",
+                chief: "Chief",
+                corpse: "Corpse",
+                diplomat: "Diplomat",
+                gravedigger: "Gravedigger",
+                reporter: "Reporter",
+                thug: "Thug"
+            }
         }
     };
 
@@ -69,6 +81,16 @@ export default class ThemeFactory {
                 reporter: `${imagesDir}/anesto/reporter.png`,
                 thug: `${imagesDir}/anesto/thug.png`
             }
+        },
+        copy: {
+            centerCellName: "Maze",
+            pieces: {
+                ...ThemeFactory.default.copy.pieces,
+                diplomat: "Provocateur",
+                gravedigger: "Necromobile",
+                reporter: "Journalist",
+                thug: "Militant"
+            }
         }
     }
 
@@ -86,6 +108,18 @@ export default class ThemeFactory {
                 gravedigger: `${imagesDir}/hotdogtown/gravedigger.png`,
                 reporter: `${imagesDir}/hotdogtown/reporter.png`,
                 thug: `${imagesDir}/hotdogtown/thug.png`
+            }
+        },
+        copy: {
+            centerCellName: "Booth",
+            pieces: {
+                assassin: "Fork",
+                chief: "Ketchup",
+                corpse: "Hotdog",
+                diplomat: "Hugger",
+                gravedigger: "Eater",
+                reporter: "Fart",
+                thug: "Fries"
             }
         }
     }
@@ -110,6 +144,18 @@ export default class ThemeFactory {
                 chief: `${imagesDir}/void/chief.png`,
                 gravedigger: `${imagesDir}/void/gravedigger.png`,
                 reporter: `${imagesDir}/void/reporter.png`,
+            }
+        },
+        copy: {
+            centerCellName: "Void",
+            pieces: {
+                assassin: "Hunter",
+                chief: "Conduit",
+                corpse: "Husk",
+                diplomat: "Transporter",
+                gravedigger: "Reaper",
+                reporter: "Scientist",
+                thug: "Zealot"
             }
         }
     }
