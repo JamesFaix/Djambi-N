@@ -9,6 +9,7 @@ import * as StoreSession from './store/session';
 import * as StoreActiveGame from './store/activeGame';
 import * as StoreBoards from './store/boards';
 import { SseClientManager } from "./utilities/serverSentEvents";
+import ThemeService from "./themes/themeService";
 
 //#region Session actions
 
@@ -18,8 +19,7 @@ export default class ApiActions {
             const session = await Api.login(request);
             dispatch(StoreSession.Actions.login(session.user));
             navigateTo(Routes.dashboard);
-            SseClientManager.connect();
-            return ApiActions.queryGamesForUser(session.user, dispatch);
+            return ApiActions.finishLoginSetup(session.user, dispatch);
         };
     }
 
@@ -45,9 +45,9 @@ export default class ApiActions {
         return async function (dispatch : Dispatch) : Promise<void> {
             try {
                 const user = await Api.getCurrentUser();
-                    dispatch(StoreSession.Actions.restoreSession(user));
-                    navigateTo(Routes.dashboard);
-                    return ApiActions.queryGamesForUser(user, dispatch);
+                dispatch(StoreSession.Actions.restoreSession(user));
+                navigateTo(Routes.dashboard);
+                return ApiActions.finishLoginSetup(user, dispatch);
             }
             catch(ex) {
                 let [status, message] = ex;
@@ -63,9 +63,10 @@ export default class ApiActions {
             try {
                 const user = await Api.getCurrentUser();
                 dispatch(StoreSession.Actions.restoreSession(user));
-                return ApiActions.queryGamesForUser(user, dispatch);
+                return ApiActions.finishLoginSetup(user, dispatch);
             }
             catch (ex) {
+                console.log(ex);
                 let [status, message] = ex;
                 if (status !== 401) {
                     throw ex;
@@ -81,9 +82,10 @@ export default class ApiActions {
                 const user = await Api.getCurrentUser();
                 dispatch(StoreSession.Actions.restoreSession(user));
                 navigateTo(Routes.dashboard);
-                return ApiActions.queryGamesForUser(user, dispatch);
+                return ApiActions.finishLoginSetup(user, dispatch);
             }
             catch (ex) {
+                console.log(ex);
                 let [status, message] = ex;
                 if (status === 401) {
                     navigateTo(Routes.login);
@@ -93,6 +95,12 @@ export default class ApiActions {
                 }
             }
         };
+    }
+
+    private static finishLoginSetup(user : User, dispatch : Dispatch) : Promise<void> {
+        SseClientManager.connect();
+        ThemeService.changeTheme("Default", dispatch); //TODO: Use user-preferred theme
+        return ApiActions.queryGamesForUser(user, dispatch);
     }
 
     //#endregion

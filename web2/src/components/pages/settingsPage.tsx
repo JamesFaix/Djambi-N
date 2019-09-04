@@ -5,9 +5,9 @@ import { State } from '../../store/root';
 import { connect } from 'react-redux';
 import ThemeFactory from '../../themes/themeFactory';
 import { Dispatch } from 'redux';
-import * as StoreDisplay from '../../store/display';
 import Dropdown from '../controls/dropdown';
 import { SectionHeader } from '../controls/headers';
+import ThemeService from '../../themes/themeService';
 
 interface SettingsPageProps {
 }
@@ -66,7 +66,7 @@ const mapStateToProps = (state : State) => {
 
 const mapDispatchToProps = (dispatch : Dispatch) => {
     return {
-        selectTheme: (themeName : string) => dispatch(StoreDisplay.Actions.changeTheme(themeName))
+        selectTheme: (themeName : string) => ThemeService.changeTheme(themeName, dispatch)
     };
 }
 

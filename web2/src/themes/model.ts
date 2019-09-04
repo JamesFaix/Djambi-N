@@ -1,6 +1,7 @@
 interface Theme {
     name : string,
-    colors : ThemeColors
+    colors : ThemeColors,
+    images : ThemeImagePaths
 }
 
 interface ThemeColors {
@@ -34,4 +35,18 @@ interface ThemeCellColors {
     selectedIntensity: number,
     selectableColor: string,
     selectableIntensity: number
+}
+
+interface ThemeImagePaths {
+    pieces : ThemePieceImagePaths
+}
+
+interface ThemePieceImagePaths {
+    assassin : string,
+    chief : string,
+    corpse : string,
+    diplomat : string,
+    gravedigger : string,
+    reporter : string,
+    thug : string
 }

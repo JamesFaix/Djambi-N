@@ -6,7 +6,6 @@ import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import CanvasTransformService, { CanvasTranformData } from '../../viewModel/board/canvasTransformService';
 import { PieceKind } from '../../api/model';
-import * as Images from '../../utilities/images';
 import ApiActions from '../../apiActions';
 import { Classes } from '../../styles/styles';
 import BoardScrollArea from './boardScrollArea';
@@ -19,15 +18,10 @@ export interface BoardSectionProps {
     zoomLevel : number,
     pieceImages : Map<PieceKind, HTMLImageElement>,
     selectCell : (gameId: number, cell : CellView) => void,
-    loadPieceImages : () => void,
     theme : Theme
 }
 
 class boardSection extends React.Component<BoardSectionProps> {
-    componentDidMount(){
-        this.props.loadPieceImages();
-    }
-
     render(){
         if (!this.props.board) {
             return null;
@@ -73,7 +67,7 @@ const mapStateToProps = (state : State) => {
         gameId: game ? game.id : null,
         board: state.activeGame.boardView,
         zoomLevel: state.display.boardZoomLevel,
-        pieceImages: state.images.pieces,
+        pieceImages: state.display.images.pieces,
         transformData: {
             containerSize: state.display.boardContainerSize,
             canvasMargin: state.display.canvasMargin,
@@ -87,8 +81,7 @@ const mapStateToProps = (state : State) => {
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
     return {
-        selectCell: (gameId : number, cell : CellView) => ApiActions.selectCell(gameId, cell.id)(dispatch),
-        loadPieceImages: () => Images.init(dispatch)
+        selectCell: (gameId : number, cell : CellView) => ApiActions.selectCell(gameId, cell.id)(dispatch)
     };
 }
 

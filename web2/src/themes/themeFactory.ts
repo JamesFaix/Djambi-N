@@ -1,3 +1,8 @@
+import { PieceKind } from "../api/model";
+import { Dispatch } from "react";
+
+const imagesDir = "../../resources/images";
+
 export default class ThemeFactory {
     public static readonly default : Theme = {
         name: "Default",
@@ -30,6 +35,17 @@ export default class ThemeFactory {
                 selectableColor: "#E5E500", //Yellow
                 selectableIntensity: 0.5
             }
+        },
+        images: {
+            pieces: {
+                assassin: `${imagesDir}/default/assassin.png`,
+                chief: `${imagesDir}/default/chief.png`,
+                corpse: `${imagesDir}/default/corpse.png`,
+                diplomat: `${imagesDir}/default/diplomat.png`,
+                gravedigger: `${imagesDir}/default/gravedigger.png`,
+                reporter: `${imagesDir}/default/reporter.png`,
+                thug: `${imagesDir}/default/thug.png`
+            }
         }
     };
 
@@ -44,6 +60,17 @@ export default class ThemeFactory {
                 odd: "#828282", //Gray
                 center: "#000080", //Navy
                 border: "black"
+            }
+        },
+        images: {
+            pieces: {
+                assassin: `${imagesDir}/anesto/assassin.png`,
+                chief: `${imagesDir}/anesto/chief.png`,
+                corpse: `${imagesDir}/anesto/corpse.png`,
+                diplomat: `${imagesDir}/anesto/diplomat.png`,
+                gravedigger: `${imagesDir}/anesto/gravedigger.png`,
+                reporter: `${imagesDir}/anesto/reporter.png`,
+                thug: `${imagesDir}/anesto/thug.png`
             }
         }
     }

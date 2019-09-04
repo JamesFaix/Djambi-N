@@ -1,36 +1,88 @@
 import { CellView, CellType, CellState, CellHighlight } from "../viewModel/board/model";
 import Color from "../viewModel/board/color";
+import { PieceKind } from "../api/model";
+import { Dispatch } from "redux";
+import * as StoreDisplay from '../store/display';
+import ThemeFactory from "./themeFactory";
 
 export default class ThemeService {
-    public static applyToCss(theme : Theme) : void {
-        const docStyle = document.documentElement.style;
 
-        docStyle.setProperty("--background-color", theme.colors.background);
-        docStyle.setProperty("--text-color", theme.colors.text);
-        docStyle.setProperty("--border-color", theme.colors.border);
-        docStyle.setProperty("--hover-text-color", theme.colors.hoverText);
-        docStyle.setProperty("--hover-background-color", theme.colors.hoverBackground);
+    //#region Theme initialization
 
-        docStyle.setProperty("--player-color-0", theme.colors.player0);
-        docStyle.setProperty("--player-color-1", theme.colors.player1);
-        docStyle.setProperty("--player-color-2", theme.colors.player2);
-        docStyle.setProperty("--player-color-3", theme.colors.player3);
-        docStyle.setProperty("--player-color-4", theme.colors.player4);
-        docStyle.setProperty("--player-color-5", theme.colors.player5);
-        docStyle.setProperty("--player-color-6", theme.colors.player6);
-        docStyle.setProperty("--player-color-7", theme.colors.player7);
+    public static changeTheme(themeName : string, dispatch : Dispatch) : void {
+        const theme = ThemeFactory.getThemes().get(themeName);
+        dispatch(StoreDisplay.Actions.changeTheme(theme));
+        this.applyToCss(theme);
+        ThemeService.loadThemeImages(theme, dispatch);
     }
 
+    private static applyToCss(theme : Theme) : void {
+        const s = document.documentElement.style;
+        const c  = theme.colors;
+
+        s.setProperty("--background-color", c.background);
+        s.setProperty("--text-color", c.text);
+        s.setProperty("--border-color", c.border);
+        s.setProperty("--hover-text-color", c.hoverText);
+        s.setProperty("--hover-background-color", c.hoverBackground);
+
+        s.setProperty("--player-color-0", c.player0);
+        s.setProperty("--player-color-1", c.player1);
+        s.setProperty("--player-color-2", c.player2);
+        s.setProperty("--player-color-3", c.player3);
+        s.setProperty("--player-color-4", c.player4);
+        s.setProperty("--player-color-5", c.player5);
+        s.setProperty("--player-color-6", c.player6);
+        s.setProperty("--player-color-7", c.player7);
+    }
+
+    private static loadThemeImages(theme : Theme, dispatch : Dispatch) : void {
+        const kinds = [
+            PieceKind.Assassin,
+            PieceKind.Chief,
+            PieceKind.Corpse,
+            PieceKind.Diplomat,
+            PieceKind.Gravedigger,
+            PieceKind.Reporter,
+            PieceKind.Thug
+        ];
+        kinds.forEach(k => ThemeService.createPieceImage(theme, k, dispatch));
+    }
+
+    private static createPieceImage(theme : Theme, kind : PieceKind, dispatch : Dispatch) : HTMLImageElement {
+        const image = new (window as any).Image() as HTMLImageElement;
+        image.src = ThemeService.getPieceImagePath(theme, kind);
+        image.onload = () => dispatch(StoreDisplay.Actions.pieceImageLoaded(kind, image));
+        return image;
+    }
+
+    public static getPieceImagePath(theme : Theme, kind : PieceKind) : string {
+        const i = theme.images.pieces;
+        switch (kind) {
+            case PieceKind.Assassin: return i.assassin;
+            case PieceKind.Chief: return i.chief;
+            case PieceKind.Corpse: return i.corpse;
+            case PieceKind.Diplomat: return i.diplomat;
+            case PieceKind.Gravedigger: return i.gravedigger;
+            case PieceKind.Reporter: return i.reporter;
+            case PieceKind.Thug: return i.thug;
+            default: throw "Invalid piece kind: " + kind;
+        }
+    }
+
+    //#endregion
+
     public static getPlayerColor(theme : Theme, playerColorId : number) : string {
+        const c = theme.colors;
         switch(playerColorId) {
-            case 0: return theme.colors.player0;
-            case 1: return theme.colors.player1;
-            case 2: return theme.colors.player2;
-            case 3: return theme.colors.player3;
-            case 4: return theme.colors.player4;
-            case 5: return theme.colors.player5;
-            case 6: return theme.colors.player6;
-            case 7: return theme.colors.player7;
+            case 0: return c.player0;
+            case 1: return c.player1;
+            case 2: return c.player2;
+            case 3: return c.player3;
+            case 4: return c.player4;
+            case 5: return c.player5;
+            case 6: return c.player6;
+            case 7: return c.player7;
             default: throw "Unsupported player color id: " + playerColorId;
         }
     }
