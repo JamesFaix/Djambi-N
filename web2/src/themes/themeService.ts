@@ -5,6 +5,7 @@ import { Dispatch } from "redux";
 import * as StoreDisplay from '../store/display';
 import ThemeFactory from "./themeFactory";
 import LocalStorageService from "../utilities/localStorageService";
+import { Theme } from './model';
 
 export default class ThemeService {
 
@@ -14,7 +15,7 @@ export default class ThemeService {
         LocalStorageService.themeName = themeName;
         const theme = ThemeFactory.getThemes().get(themeName);
         dispatch(StoreDisplay.Actions.changeTheme(theme));
-        this.applyToCss(theme);
+        ThemeService.applyToCss(theme);
         ThemeService.loadThemeImages(theme, dispatch);
     }
 

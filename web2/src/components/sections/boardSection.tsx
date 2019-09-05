@@ -10,6 +10,7 @@ import ApiActions from '../../apiActions';
 import { Classes } from '../../styles/styles';
 import BoardScrollArea from './boardScrollArea';
 import BoardZoomSlider from '../controls/boardZoomSlider';
+import { Theme } from '../../themes/model';
 
 export interface BoardSectionProps {
     gameId : number,

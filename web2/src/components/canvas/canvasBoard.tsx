@@ -7,6 +7,7 @@ import CanvasBackgroundLayer from './canvasBackgroundLayer';
 import { BoardView, CellView } from '../../viewModel/board/model';
 import { PieceKind } from '../../api/model';
 import { Classes } from '../../styles/styles';
+import { Theme } from '../../themes/model';
 
 export interface CanvasBoardStyle {
     width : number,

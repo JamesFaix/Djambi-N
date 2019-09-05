@@ -8,6 +8,7 @@ import { Dispatch } from 'redux';
 import Dropdown from '../controls/dropdown';
 import { SectionHeader } from '../controls/headers';
 import ThemeService from '../../themes/themeService';
+import { Theme } from '../../themes/model';
 
 interface SettingsPageProps {
 }

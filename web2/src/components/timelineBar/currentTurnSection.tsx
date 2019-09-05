@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { Classes } from '../../styles/styles';
 import CurrentTurnActionsBar from './currentTurnActionsBar';
 import { Icons } from '../../utilities/icons';
+import { Theme } from '../../themes/model';
 
 interface CurrentTurnSectionProps {
     game : Game,

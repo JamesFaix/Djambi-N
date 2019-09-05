@@ -2,6 +2,7 @@ import { Turn, Selection, Game, TurnStatus, SelectionKind, Location, Piece, Piec
 import Debug from "../debug";
 import { BoardView } from "../viewModel/board/model";
 import ThemeService from "../themes/themeService";
+import { Theme } from "../themes/model";
 
 export function boolToYesOrNo(value : boolean) : string {
     if (value === true) {

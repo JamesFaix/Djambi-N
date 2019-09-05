@@ -3,6 +3,7 @@ import { Layer } from 'react-konva';
 import { CellView, BoardView } from '../../viewModel/board/model';
 import Debug from '../../debug';
 import CanvasLabel from './canvasLabel';
+import { Theme } from '../../themes/model';
 
 export interface CanvasLabelsLayerProps {
     gameId : number,

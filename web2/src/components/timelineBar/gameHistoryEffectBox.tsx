@@ -3,6 +3,7 @@ import { Game, Effect, Board } from "../../api/model";
 import * as Copy from '../../utilities/copy';
 import { State } from '../../store/root';
 import { connect } from 'react-redux';
+import { Theme } from '../../themes/model';
 
 interface GameHistoryEffectBoxProps {
     game : Game,

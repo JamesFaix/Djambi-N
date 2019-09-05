@@ -5,6 +5,7 @@ import { CellView, BoardView } from '../../viewModel/board/model';
 import { Text } from 'react-konva';
 import * as Copy from '../../utilities/copy';
 import ThemeService from '../../themes/themeService';
+import { Theme } from '../../themes/model';
 
 export interface CanvasLabelProps {
     board : BoardView,

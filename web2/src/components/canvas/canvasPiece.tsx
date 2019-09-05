@@ -3,6 +3,7 @@ import { Image } from 'react-konva';
 import { PieceView } from '../../viewModel/board/model';
 import { Point } from '../../viewModel/board/model';
 import ThemeService from '../../themes/themeService';
+import { Theme } from '../../themes/model';
 
 export interface CanvasPieceProps {
     piece : PieceView,
