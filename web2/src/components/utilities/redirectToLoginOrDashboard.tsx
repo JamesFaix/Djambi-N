@@ -5,7 +5,7 @@ import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { navigateTo } from '../../history';
 import Routes from '../../routes';
-import ApiActions from '../../apiActions';
+import SessionStoreFlows from '../../storeFlows/session';
 
 interface RedirectToLoginOrDashboardProps {
     user : User,
@@ -36,7 +36,7 @@ const mapStateToProps = (state: State) => {
 const mapDispatchToProps = (dispatch : Dispatch) => {
     return {
         redirectToDashboard: () => navigateTo(Routes.dashboard),
-        restoreSessionAndRedirect: () => ApiActions.redirectToLoginOrDashboard()(dispatch)
+        restoreSessionAndRedirect: () => SessionStoreFlows.redirectToLoginOrDashboard()(dispatch)
     };
 };
 

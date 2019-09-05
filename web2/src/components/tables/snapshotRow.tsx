@@ -5,8 +5,8 @@ import { dateToString } from '../../utilities/dates';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
 import { Dispatch } from 'redux';
-import ApiActions from '../../apiActions';
 import { State } from '../../store/root';
+import SnapshotStoreFlows from '../../storeFlows/snapshots';
 
 interface SnapshotRowProps {
     gameId : number,
@@ -59,8 +59,8 @@ const mapStateToProps = (state : State) => {
 
 const mapDispatchToProps = (dispatch : Dispatch) => {
     return {
-        load: (gameId : number, snapshotId : number) => ApiActions.loadSnapshot(gameId, snapshotId)(dispatch),
-        delete: (gameId : number, snapshotId : number) => ApiActions.deleteSnapshot(gameId, snapshotId)(dispatch),
+        load: (gameId : number, snapshotId : number) => SnapshotStoreFlows.loadSnapshot(gameId, snapshotId)(dispatch),
+        delete: (gameId : number, snapshotId : number) => SnapshotStoreFlows.deleteSnapshot(gameId, snapshotId)(dispatch),
     };
 }
 

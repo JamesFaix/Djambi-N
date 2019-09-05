@@ -3,7 +3,8 @@ import { State } from '../../store/root';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { SectionHeader } from '../controls/headers';
-import { DebugSettings, DebugService } from '../../debug';
+import { DebugSettings } from '../../debug';
+import MiscStoreFlows from '../../storeFlows/misc';
 
 interface DebugSettingsFormProps {
     formData : DebugSettings,
@@ -127,7 +128,7 @@ const mapStateToProps = (state : State) => {
 
 const mapDispatchToProps = (dispatch : Dispatch) => {
     return {
-        onFormDataChanged: (formData: DebugSettings) => DebugService.applySettings(formData, dispatch),
+        onFormDataChanged: (formData: DebugSettings) => MiscStoreFlows.applySettings(formData, dispatch),
     };
 };
 

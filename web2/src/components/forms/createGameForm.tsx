@@ -4,10 +4,10 @@ import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { GameParameters } from '../../api/model';
 import { SectionHeader } from '../controls/headers';
-import ApiActions from '../../apiActions';
 import * as StoreCreateGameForm from '../../store/createGameForm';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
+import GameStoreFlows from '../../storeFlows/game';
 
 interface CreateGameFormProps {
     formData : GameParameters,
@@ -112,7 +112,7 @@ const mapStateToProps = (state : State) => {
 const mapDispatchToProps = (dispatch : Dispatch) => {
     return {
         onFormDataChanged: (formData: GameParameters) => dispatch(StoreCreateGameForm.Actions.updateCreateGameForm(formData)),
-        submit: (formData: GameParameters) => ApiActions.createGame(formData)(dispatch)
+        submit: (formData: GameParameters) => GameStoreFlows.createGame(formData)(dispatch)
     };
 };
 

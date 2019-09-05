@@ -3,7 +3,7 @@ import { Game } from '../../api/model';
 import { State } from '../../store/root';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import ApiActions from '../../apiActions';
+import GameStoreFlows from '../../storeFlows/game';
 
 interface LoadGameProps {
     gameId : number,
@@ -33,7 +33,7 @@ const mapStateToProps = (state : State) => {
 
 const mapDispatchToProps = (dispatch : Dispatch) => {
     return {
-        loadGame: (gameId : number) => ApiActions.loadGame(gameId)(dispatch)
+        loadGame: (gameId : number) => GameStoreFlows.loadGame(gameId)(dispatch)
     };
 }
 

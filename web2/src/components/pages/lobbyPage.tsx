@@ -8,10 +8,10 @@ import { State } from '../../store/root';
 import LoadGame from '../utilities/loadGame';
 import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
 import PlayersTable from '../tables/playersTable';
-import ApiActions from '../../apiActions';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
 import BasicPageContainer from '../sections/basicPageContainer';
+import GameStoreFlows from '../../storeFlows/game';
 
 interface LobbyPageProps {
     user : User,
@@ -76,7 +76,7 @@ const mapStateToProps = (state : State) => {
 
 const mapDispatchToProps = (dispatch : Dispatch) => {
     return {
-        onStartGameClicked: (gameId : number) => ApiActions.startGame(gameId)(dispatch)
+        onStartGameClicked: (gameId : number) => GameStoreFlows.startGame(gameId)(dispatch)
     };
 }
 

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import ApiActions from '../../apiActions';
+import SnapshotStoreFlows from '../../storeFlows/snapshots';
 
 interface LoadSnapshotsProps {
     gameId : number,
@@ -20,7 +20,7 @@ class loadSnapshots extends React.Component<LoadSnapshotsProps> {
 
 const mapDispatchToProps = (dispatch : Dispatch) => {
     return {
-        getSnapshots : (gameId : number) => ApiActions.getSnapshots(gameId)(dispatch)
+        getSnapshots : (gameId : number) => SnapshotStoreFlows.getSnapshots(gameId)(dispatch)
     };
 }
 

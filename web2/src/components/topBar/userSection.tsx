@@ -4,9 +4,9 @@ import { State } from '../../store/root';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import IconButton from '../controls/iconButton';
-import ApiActions from '../../apiActions';
 import { Icons } from '../../utilities/icons';
 import { Classes } from '../../styles/styles';
+import SessionStoreFlows from '../../storeFlows/session';
 
 interface UserSectionProps {
     user : User,
@@ -52,7 +52,7 @@ const mapStateToProps = (state : State) => {
 
 const mapDispatchToProps = (dispatch : Dispatch) => {
     return {
-        onLogoutClicked: () => ApiActions.logout()(dispatch)
+        onLogoutClicked: () => SessionStoreFlows.logout()(dispatch)
     };
 }
 

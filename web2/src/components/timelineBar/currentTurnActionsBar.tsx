@@ -4,8 +4,8 @@ import { State } from '../../store/root';
 import { connect } from 'react-redux';
 import { Game, User, TurnStatus } from '../../api/model';
 import IconButton from '../controls/iconButton';
-import ApiActions from '../../apiActions';
 import { Icons } from '../../utilities/icons';
+import GameStoreFlows from '../../storeFlows/game';
 
 interface CurrentTurnActionsBarProps {
     user : User,
@@ -73,8 +73,8 @@ const mapStateToProps = (state : State) => {
 
 const mapDispatchToProps = (dispatch : Dispatch) => {
     return {
-        endTurn: (gameId : number) => ApiActions.endTurn(gameId)(dispatch),
-        resetTurn: (gameId : number) => ApiActions.resetTurn(gameId)(dispatch)
+        endTurn: (gameId : number) => GameStoreFlows.endTurn(gameId)(dispatch),
+        resetTurn: (gameId : number) => GameStoreFlows.resetTurn(gameId)(dispatch)
     };
 }
 
