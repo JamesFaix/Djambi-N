@@ -6,6 +6,7 @@ import { Game, PlayerStatus, GameStatus } from '../../api/model';
 import { State } from '../../store/root';
 import { connect } from 'react-redux';
 import RedirectToLobbyIfNotGameStatus from '../utilities/redirectToLobbyIfNotGameStatus';
+import LoadGame from '../utilities/loadGame';
 
 interface GameOverPageProps {
     game : Game
@@ -13,10 +14,13 @@ interface GameOverPageProps {
 
 class gameOverPage extends React.Component<GameOverPageProps> {
     render() {
+        const gameId = (this.props as any).match.params.gameId;
+
         return (
             <BasicPageContainer>
                 <RedirectToLoginIfNotLoggedIn/>
                 <RedirectToLobbyIfNotGameStatus status={GameStatus.Over}/>
+                <LoadGame gameId={gameId}/>
                 <SectionHeader text="Game over"/>
                 <p>
                     {this.getGameOverText()}
@@ -26,7 +30,8 @@ class gameOverPage extends React.Component<GameOverPageProps> {
     }
 
     private getGameOverText() : string {
-        if (this.props.game.status !== GameStatus.Over) {
+        if (!this.props.game
+            || this.props.game.status !== GameStatus.Over) {
             return "";
         }
 

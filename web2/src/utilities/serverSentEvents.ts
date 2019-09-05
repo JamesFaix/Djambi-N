@@ -1,8 +1,10 @@
 import Environment from "../environment";
-import { StateAndEventResponse } from "../api/model";
+import { StateAndEventResponse, GameStatus } from "../api/model";
 import { Store } from "redux";
 import { State, CustomAction, AppStore, getAppState } from "../store/root";
 import * as StoreActiveGame from '../store/activeGame';
+import { navigateTo } from "../history";
+import Routes from "../routes";
 
 class SseClient {
     private readonly source : EventSource;
@@ -52,6 +54,9 @@ class SseClient {
 
         if (update.game.id === activeGameId) {
             this.store.dispatch(StoreActiveGame.Actions.updateGame(update));
+            if (update.game.status === GameStatus.Over) {
+                navigateTo(Routes.gameOver(update.game.id));
+            }
         } else {
             console.log(`An event occurred in game ${update.game.id}`);
             //TODO: Toast notification

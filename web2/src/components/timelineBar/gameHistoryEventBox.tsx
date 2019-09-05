@@ -14,7 +14,7 @@ interface GameHistoryEventBoxProps {
 
 const GameHistoryEventBox : React.SFC<GameHistoryEventBoxProps> = props => {
     const e = props.event;
-    if (!e) {
+    if (!e || !props.game || !props.board) {
         return null;
     }
 

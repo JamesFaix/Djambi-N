@@ -1,7 +1,7 @@
 import * as StoreActiveGame from '../store/activeGame';
 import { Dispatch } from 'redux';
 import * as Api from "../api/client";
-import { Game, EventsQuery, ResultsDirection, Event, Board, GameParameters, CreatePlayerRequest, PlayerStatus } from '../api/model';
+import { Game, EventsQuery, ResultsDirection, Event, Board, GameParameters, CreatePlayerRequest, PlayerStatus, GameStatus } from '../api/model';
 import Routes from '../routes';
 import { navigateTo } from '../history';
 import * as StoreBoards from '../store/boards';
@@ -87,6 +87,9 @@ export default class GameStoreFlows {
         return async function (dispatch: Dispatch) : Promise<void> {
             const resp = await Api.commitTurn(gameId);
             dispatch(StoreActiveGame.Actions.updateGame(resp));
+            if (resp.game.status === GameStatus.Over) {
+                navigateTo(Routes.gameOver(gameId));
+            }
         }
     }
 
@@ -101,6 +104,9 @@ export default class GameStoreFlows {
         return async function (dispatch: Dispatch) : Promise<void> {
             const resp = await Api.updatePlayerStatus(gameId, playerId, status);
             dispatch(StoreActiveGame.Actions.updateGame(resp));
+            if (resp.game.status === GameStatus.Over) {
+                navigateTo(Routes.gameOver(gameId));
+            }
         }
     }
 }
