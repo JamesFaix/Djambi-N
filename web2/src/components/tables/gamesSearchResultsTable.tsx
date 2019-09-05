@@ -2,13 +2,13 @@ import * as React from 'react';
 import { Game } from '../../api/model';
 import { State } from '../../store/root';
 import { connect } from 'react-redux';
-import { boolToYesOrNo } from '../../utilities/copy';
 import { SectionHeader } from '../controls/headers';
 import IconButton from '../controls/iconButton';
 import { Classes } from '../../styles/styles';
 import IconBox from '../controls/iconBox';
 import { Icons } from '../../utilities/icons';
 import MiscStoreFlows from '../../storeFlows/misc';
+import Copy from '../../utilities/copy';
 
 interface GamesSearchResultsTableProps {
     games : Game[]
@@ -78,10 +78,10 @@ const GameRow : React.SFC<GameRowProps> = props => {
                 {game.parameters.regionCount}
             </td>
             <td className={Classes.centered}>
-                {boolToYesOrNo(game.parameters.isPublic)}
+                {Copy.boolToYesOrNo(game.parameters.isPublic)}
             </td>
             <td className={Classes.centered}>
-                {boolToYesOrNo(game.parameters.allowGuests)}
+                {Copy.boolToYesOrNo(game.parameters.allowGuests)}
             </td>
         </tr>
     );

@@ -1,16 +1,15 @@
 import Environment from "../environment";
 import { StateAndEventResponse } from "../api/model";
 import { Store } from "redux";
-import { State, CustomAction } from "../store/root";
+import { State, CustomAction, AppStore, getAppState } from "../store/root";
 import * as StoreActiveGame from '../store/activeGame';
-import * as StoreRoot from '../store/root';
 
 class SseClient {
     private readonly source : EventSource;
-    private readonly store : Store<State, CustomAction>;
+    private readonly store : AppStore;
 
     constructor(
-        store : Store<State, CustomAction>
+        store : AppStore
     ) {
         this.store = store;
 
@@ -25,7 +24,7 @@ class SseClient {
     }
 
     private shouldLog() : boolean {
-        return StoreRoot.getState(this.store).settings.debug.logSse;
+        return getAppState(this.store).settings.debug.logSse;
     }
 
     dispose() : void {

@@ -2,9 +2,9 @@ import * as React from 'react';
 import { GameParameters, GameStatus } from "../../api/model";
 import { State } from '../../store/root';
 import { connect } from 'react-redux';
-import { boolToYesOrNo } from '../../utilities/copy';
 import { SectionHeader } from '../controls/headers';
 import { Classes } from '../../styles/styles';
+import Copy from '../../utilities/copy';
 
 interface GameParametersTableProps {
     parameters : GameParameters,
@@ -33,13 +33,13 @@ const gameParametersTable : React.SFC<GameParametersTableProps> = props => {
                 <tr>
                     <td>Allow guests</td>
                     <td className={Classes.centered}>
-                        {boolToYesOrNo(props.parameters.allowGuests)}
+                        {Copy.boolToYesOrNo(props.parameters.allowGuests)}
                     </td>
                 </tr>
                 <tr>
                     <td>Public</td>
                     <td className={Classes.centered}>
-                        {boolToYesOrNo(props.parameters.isPublic)}
+                        {Copy.boolToYesOrNo(props.parameters.isPublic)}
                     </td>
                 </tr>
                 <tr>

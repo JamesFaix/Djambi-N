@@ -2,7 +2,7 @@ import * as React from 'react';
 import Geometry from '../../viewModel/board/geometry';
 import { CellView, BoardView } from '../../viewModel/board/model';
 import { Text } from 'react-konva';
-import * as Copy from '../../utilities/copy';
+import Copy from '../../utilities/copy';
 import ThemeService from '../../themes/themeService';
 import { Theme } from '../../themes/model';
 import { DebugSettings } from '../../debug';
@@ -23,15 +23,10 @@ export default class CanvasLabel extends React.Component<CanvasLabelProps> {
         if (!s.showCellLabels) {
             return null;
         }
+
         const cell = this.props.cell;
-
-        let text = Copy.getCellViewLabel(this.props.theme, cell.id, this.props.board, s.showCellAndPieceIds);
-        if (s.showCellAndPieceIds && cell.piece !== null) {
-            text += "\nP " + cell.piece.id;
-        }
-
+        const text = Copy.getCellViewLabel(cell);
         const color = ThemeService.getCellTextColor(this.props.theme, cell.type);
-
         const rect = Geometry.Cell.boundingBox(cell);
 
         return (

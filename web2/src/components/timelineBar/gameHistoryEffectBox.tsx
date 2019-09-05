@@ -1,33 +1,19 @@
 import * as React from 'react';
 import { Game, Effect, Board } from "../../api/model";
-import * as Copy from '../../utilities/copy';
-import { State } from '../../store/root';
-import { connect } from 'react-redux';
-import { Theme } from '../../themes/model';
-import { DebugSettings } from '../../debug';
+import Copy from '../../utilities/copy';
 
 interface GameHistoryEffectBoxProps {
     game : Game,
     effect : Effect,
-    board : Board,
-    theme : Theme,
-    debugSettings : DebugSettings
+    board : Board
 }
 
-const gameHistoryEffectBox : React.SFC<GameHistoryEffectBoxProps> = props => {
+const GameHistoryEffectBox : React.SFC<GameHistoryEffectBoxProps> = props => {
     return (
         <div>
-            {Copy.getEffectDescription(props.theme, props.effect, props.game, props.board, props.debugSettings.showCellAndPieceIds)}
+            {Copy.getEffectDescription(props.effect, props.game, props.board)}
         </div>
     );
 }
 
-const mapStateToProps = (state : State) => {
-    return {
-        theme: state.display.theme,
-        debugSettings: state.settings.debug
-    };
-}
-
-const GameHistoryEffectBox = connect(mapStateToProps)(gameHistoryEffectBox);
 export default GameHistoryEffectBox;
