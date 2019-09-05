@@ -11,6 +11,8 @@ interface ThemeColors {
     text : string,
     headerText : string,
     border : string,
+    altRowText : string,
+    altRowBackground : string,
 
     hoverText : string,
     hoverBackground : string,
@@ -31,7 +33,15 @@ interface ThemeCellColors {
     even: string,
     odd: string,
     center: string,
-    border: string,
+
+    evenBorder : string,
+    oddBorder: string,
+    centerBorder : string,
+
+    evenText : string,
+    oddText : string,
+    centerText : string,
+
     boardBorder: string,
 
     selectedColor: string,

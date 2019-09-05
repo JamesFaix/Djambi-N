@@ -28,6 +28,8 @@ export default class ThemeService {
         s.setProperty("--border-color", c.border);
         s.setProperty("--hover-text-color", c.hoverText);
         s.setProperty("--hover-background-color", c.hoverBackground);
+        s.setProperty("--alt-row-background-color", c.altRowBackground);
+        s.setProperty("--alt-row-text-color", c.altRowText);
 
         s.setProperty("--player-color-0", c.player0);
         s.setProperty("--player-color-1", c.player1);
@@ -148,6 +150,26 @@ export default class ThemeService {
 
             default:
                 throw "Invalid cell state: " + state;
+        }
+    }
+
+    public static getCellBorderColor(theme : Theme, type : CellType) {
+        const c = theme.colors.cells;
+        switch(type){
+            case CellType.Center: return c.centerBorder;
+            case CellType.Even: return c.evenBorder;
+            case CellType.Odd: return c.oddBorder;
+            default: throw "Unsupported celltype: " + type;
+        }
+    }
+
+    public static getCellTextColor(theme : Theme, type : CellType) {
+        const c = theme.colors.cells;
+        switch(type){
+            case CellType.Center: return c.centerText;
+            case CellType.Even: return c.evenText;
+            case CellType.Odd: return c.oddText;
+            default: throw "Unsupported celltype: " + type;
         }
     }
 

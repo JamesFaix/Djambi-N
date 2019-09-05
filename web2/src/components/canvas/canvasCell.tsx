@@ -14,7 +14,7 @@ export default class CanvasCell extends React.Component<CanvasCellProps> {
         const cell = this.props.cell;
         const theme = this.props.theme;
         const color = ThemeService.getCellColor(theme, cell);
-        let borderColor = theme.colors.cells.border;
+        let borderColor = ThemeService.getCellBorderColor(theme, cell.type);
         if (!borderColor) {
             borderColor = color;
         }

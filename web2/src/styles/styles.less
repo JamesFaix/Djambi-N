@@ -3,6 +3,8 @@
     --text-color: black;
     --header-text-color: black;
     --border-color: gainsboro;
+    --alt-row-text-color: black;
+    --alt-row-background-color: gainsboro;
     --hover-text-color: white;
     --hover-background-color: black;
 
@@ -104,7 +106,8 @@ p {
 
 .stripedTable {
     tr:nth-child(even) {
-        background-color: var(--border-color)
+        background-color: var(--alt-row-background-color);
+        color: var(--alt-row-text-color);
     }
 }
 

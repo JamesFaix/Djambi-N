@@ -1,5 +1,11 @@
 const imagesDir = "../../resources/images";
 
+const whiteHex = "#FFFFFF";
+const blackHex = "#000000";
+const medGrayHex = "#828282";
+const darkGrayHex = "#161616";
+const lightGrayHex = "#DCDCDC";
+
 export default class ThemeFactory {
     public static readonly default : Theme = {
         name: "Default",
@@ -10,6 +16,8 @@ export default class ThemeFactory {
             border: "gainsboro",
             hoverText: "white",
             hoverBackground: "black",
+            altRowText: "black",
+            altRowBackground: "gainsboro",
 
             player0: "blue",
             player1: "red",
@@ -22,10 +30,18 @@ export default class ThemeFactory {
 
             cells: {
                 //Cell colors must be in hex
-                even: "#FFFFFF",
-                odd: "#000000",
-                center: "#828282", //Medium gray
-                border: null,
+                even: whiteHex,
+                odd: blackHex,
+                center: medGrayHex,
+
+                evenBorder: null,
+                oddBorder: null,
+                centerBorder: null,
+
+                evenText: blackHex,
+                oddText: whiteHex,
+                centerText: whiteHex,
+
                 boardBorder: "black",
 
                 selectedColor: "#6AC921", //Green
@@ -72,10 +88,17 @@ export default class ThemeFactory {
             cells: {
                 ...ThemeFactory.default.colors.cells,
                 //Cell colors must be in hex
-                even: "#828282", //Gray
-                odd: "#828282", //Gray
+                even: medGrayHex,
+                odd: medGrayHex,
                 center: "#000080", //Navy
-                border: "black"
+
+                evenBorder: blackHex,
+                oddBorder: blackHex,
+                centerBorder: whiteHex,
+
+                evenText: blackHex,
+                oddText: blackHex,
+                centerText: whiteHex,
             }
         },
         images: {
@@ -115,7 +138,7 @@ export default class ThemeFactory {
             cells: {
                 ...ThemeFactory.default.colors.cells,
                 odd: "#00FFFF", //cyan
-                even: "#FFFFFF",
+                even: whiteHex,
             }
         },
         images: {
@@ -153,15 +176,23 @@ export default class ThemeFactory {
         name: "Void",
         colors: {
             ...ThemeFactory.default.colors,
-            background: "#161616", //dark gray
-            text: "#dcdcdc", //light gray
-            headerText: "#dcdcdc",
-            border: "#dcdcdc",
+            background: darkGrayHex,
+            text: lightGrayHex,
+            headerText: lightGrayHex,
+            border: lightGrayHex,
+            hoverBackground: lightGrayHex,
+            hoverText: darkGrayHex,
+            altRowBackground: "#333333",
+            altRowText: lightGrayHex,
             cells: {
                 ...ThemeFactory.default.colors.cells,
-                even: "#000000",
+                even: blackHex,
                 odd: "#333333",
-                center: "#EEEEEE"
+                center: "#EEEEEE",
+
+                centerBorder: "#DDDDDD",
+                evenBorder: "#DDDDDD",
+                oddBorder: "#DDDDDD",
             }
         },
         images: {
