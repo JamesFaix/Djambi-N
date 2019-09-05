@@ -1,5 +1,4 @@
 import Environment from '../environment';
-import Debug from '../debug';
 import { ApiRequest, ApiResponse, ApiError } from './requestModel';
 
 export enum HttpMethod {
@@ -18,19 +17,22 @@ export class ApiClientCore {
     private static onRequest : (request: ApiRequest) => void;
     private static onResponse : (response: ApiResponse) => void;
     private static onError : (error: ApiError) => void;
+    private static shouldLog : () => boolean;
 
     public static init(
         onRequest : (request: ApiRequest) => void,
         onResponse : (response : ApiResponse) => void,
-        onError : (error : ApiError) => void
+        onError : (error : ApiError) => void,
+        shouldLog : () => boolean,
     ) : void {
-        if (!onRequest || !onResponse || !onError) {
+        if (!onRequest || !onResponse || !onError || !shouldLog) {
             throw "Must initialize all callbacks at once.";
         }
 
         this.onRequest = onRequest;
         this.onResponse = onResponse;
         this.onError = onError;
+        this.shouldLog = shouldLog;
     }
 
     public static sendRequest<TBody, TResponse>(
@@ -78,7 +80,7 @@ export class ApiClientCore {
 
                     return response.json()
                         .then(errorMessage => {
-                            if (Debug.logApi) {
+                            if (this.shouldLog()) {
                                 console.log(endpointDescription + " failed (" + errorMessage + ")");
                             }
                             throw [response.status, errorMessage];
@@ -91,7 +93,7 @@ export class ApiClientCore {
                         });
                     }
 
-                    if (Debug.logApi) {
+                    if (this.shouldLog()) {
                         console.log(endpointDescription + " succeeded");
                     }
                     return response.json();

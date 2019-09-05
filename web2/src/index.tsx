@@ -6,9 +6,7 @@ import { createStore, applyMiddleware } from 'redux';
 import { Router } from 'react-router-dom';
 import thunk from 'redux-thunk';
 import {history} from './history';
-import { logger } from 'redux-logger';
 import "./styles/styles.less";
-import Debug from './debug';
 import { ApiClientCore } from './api/clientCore';
 import { ApiRequest, ApiResponse, ApiError } from './api/requestModel';
 import * as StoreApiClient from './store/apiClient';
@@ -18,18 +16,17 @@ import { SseClientManager } from './utilities/serverSentEvents';
 const store = createStore(
     StoreRoot.reducer,
     StoreRoot.defaultState,
-    Debug.logRedux ? applyMiddleware(thunk, logger) : applyMiddleware(thunk)
+    applyMiddleware(thunk)
 );
 
 ApiClientCore.init(
     (request: ApiRequest) => store.dispatch(StoreApiClient.Actions.apiRequest(request)),
     (response: ApiResponse) => store.dispatch(StoreApiClient.Actions.apiResponse(response)),
     (error: ApiError) => store.dispatch(StoreApiClient.Actions.apiError(error)),
+    () => StoreRoot.getState(store).settings.debug.logApi
 );
 
 SseClientManager.init(store);
-
-Debug.init();
 
 render(
     <Provider store={store}>

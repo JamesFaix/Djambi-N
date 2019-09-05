@@ -1,5 +1,29 @@
-import { Turn, Selection, Game, TurnStatus, SelectionKind, Location, Piece, PieceKind, Board, Effect, Event, EventKind, EffectKind, PlayerStatusChangedEffect, PlayerStatus, PieceAbandonedEffect, PieceDroppedEffect, PieceEnlistedEffect, PieceKilledEffect, PieceMovedEffect, PieceVacatedEffect, PlayerOutOfMovesEffect, TurnCyclePlayerFellFromPowerEffect, TurnCyclePlayerRoseToPowerEffect } from "../api/model";
-import Debug from "../debug";
+import {
+    Turn,
+    Selection,
+    Game,
+    TurnStatus,
+    SelectionKind,
+    Location,
+    Piece,
+    PieceKind,
+    Board,
+    Effect,
+    Event,
+    EventKind,
+    EffectKind,
+    PlayerStatusChangedEffect,
+    PlayerStatus,
+    PieceAbandonedEffect,
+    PieceDroppedEffect,
+    PieceEnlistedEffect,
+    PieceKilledEffect,
+    PieceMovedEffect,
+    PieceVacatedEffect,
+    PlayerOutOfMovesEffect,
+    TurnCyclePlayerFellFromPowerEffect,
+    TurnCyclePlayerRoseToPowerEffect
+} from "../api/model";
 import { BoardView } from "../viewModel/board/model";
 import ThemeService from "../themes/themeService";
 import { Theme } from "../themes/model";
@@ -18,7 +42,7 @@ function locationToString(location : Location) : string {
     return `(${location.region}, ${location.x}, ${location.y})`;
 }
 
-export function getCellLabel(theme : Theme, cellId : number, board : Board) : string {
+export function getCellLabel(theme : Theme, cellId : number, board : Board, showIds : boolean) : string {
     //The first time the board is needed it must be fetched from the API.
     //To avoid making this asynchronous, this just skips the API call if the board is not already cached.
     if (board) {
@@ -28,7 +52,7 @@ export function getCellLabel(theme : Theme, cellId : number, board : Board) : st
             ? theme.copy.centerCellName
             : locationToString(cell.locations[0]);
 
-        if (Debug.showPieceAndCellIds){
+        if (showIds){
             return `${base} (${cellId})`;
         } else {
             return base;
@@ -38,7 +62,7 @@ export function getCellLabel(theme : Theme, cellId : number, board : Board) : st
     }
 }
 
-export function getCellViewLabel(theme : Theme, cellId : number, board : BoardView) : string {
+export function getCellViewLabel(theme : Theme, cellId : number, board : BoardView, showIds : boolean) : string {
     //The first time the board is needed it must be fetched from the API.
     //To avoid making this asynchronous, this just skips the API call if the board is not already cached.
     if (board) {
@@ -48,7 +72,7 @@ export function getCellViewLabel(theme : Theme, cellId : number, board : BoardVi
             ? theme.copy.centerCellName
             : locationToString(cell.locations[0]);
 
-        if (Debug.showPieceAndCellIds){
+        if (showIds){
             return `${base} (${cellId})`;
         } else {
             return base;
@@ -58,7 +82,7 @@ export function getCellViewLabel(theme : Theme, cellId : number, board : BoardVi
     }
 }
 
-function getPieceLabel(theme : Theme, piece : Piece, game : Game) : string {
+function getPieceLabel(theme : Theme, piece : Piece, game : Game, showIds : boolean) : string {
     const kindName = ThemeService.getPieceName(theme, piece.kind);
 
     if (piece.kind === PieceKind.Corpse) {
@@ -70,7 +94,7 @@ function getPieceLabel(theme : Theme, piece : Piece, game : Game) : string {
         ? `${player.name}'s ${kindName}`
         : `Neutral ${kindName}`;
 
-    if (Debug.showPieceAndCellIds){
+    if (showIds){
         return `${base} (#${piece.id})`;
     } else {
         return base;
@@ -101,13 +125,13 @@ function getSelectionPrompt(kind : SelectionKind) : string {
     }
 }
 
-export function getSelectionDescription(theme : Theme, selection : Selection, game : Game, board : Board) : string {
+export function getSelectionDescription(theme : Theme, selection : Selection, game : Game, board : Board, showIds : boolean) : string {
     const cell = selection.cellId
-        ? getCellLabel(theme, selection.cellId, board)
+        ? getCellLabel(theme, selection.cellId, board, showIds)
         : null;
 
     const piece = selection.pieceId
-        ? getPieceLabel(theme, game.pieces.find(p => p.id === selection.pieceId), game)
+        ? getPieceLabel(theme, game.pieces.find(p => p.id === selection.pieceId), game, showIds)
         : null;
 
     switch (selection.kind) {
@@ -139,31 +163,31 @@ function getPlayerName(playerId : number, game : Game) : string {
     return game.players.find(p => p.id === playerId).name;
 }
 
-export function getEffectDescription(theme : Theme, effect : Effect, game : Game, board: Board) : string {
+export function getEffectDescription(theme : Theme, effect : Effect, game : Game, board: Board, showIds : boolean) : string {
     switch (effect.kind) {
         case EffectKind.PieceAbandoned: {
             const f = <PieceAbandonedEffect>effect.value;
-            return `${getPieceLabel(theme, f.oldPiece, game)} was abandoned.`;
+            return `${getPieceLabel(theme, f.oldPiece, game, showIds)} was abandoned.`;
         }
         case EffectKind.PieceDropped: {
             const f = <PieceDroppedEffect>effect.value;
-            return `${getPieceLabel(theme, f.oldPiece, game)} was dropped at ${getCellLabel(theme, f.newCellId, board)}.`;
+            return `${getPieceLabel(theme, f.oldPiece, game, showIds)} was dropped at ${getCellLabel(theme, f.newCellId, board, showIds)}.`;
         }
         case EffectKind.PieceEnlisted: {
             const f = <PieceEnlistedEffect>effect.value;
-            return `${getPieceLabel(theme, f.oldPiece, game)} was enlisted by ${getPlayerName(f.newPlayerId, game)}.`;
+            return `${getPieceLabel(theme, f.oldPiece, game, showIds)} was enlisted by ${getPlayerName(f.newPlayerId, game)}.`;
         }
         case EffectKind.PieceKilled: {
             const f = <PieceKilledEffect>effect.value;
-            return `${getPieceLabel(theme, f.oldPiece, game)} was killed.`;
+            return `${getPieceLabel(theme, f.oldPiece, game, showIds)} was killed.`;
         }
         case EffectKind.PieceMoved: {
             const f = <PieceMovedEffect>effect.value;
-            return `${getPieceLabel(theme, f.oldPiece, game)} was moved to ${getCellLabel(theme, f.newCellId, board)}.`;
+            return `${getPieceLabel(theme, f.oldPiece, game, showIds)} was moved to ${getCellLabel(theme, f.newCellId, board, showIds)}.`;
         }
         case EffectKind.PieceVacated: {
             const f = <PieceVacatedEffect>effect.value;
-            return `${getPieceLabel(theme, f.oldPiece, game)} vacated the ${theme.copy.centerCellName} to ${getCellLabel(theme, f.newCellId, board)}.`;
+            return `${getPieceLabel(theme, f.oldPiece, game, showIds)} vacated the ${theme.copy.centerCellName} to ${getCellLabel(theme, f.newCellId, board, showIds)}.`;
         }
         case EffectKind.PlayerOutOfMoves: {
             const f = <PlayerOutOfMovesEffect>effect.value;

@@ -8,12 +8,14 @@ import { Classes } from '../../styles/styles';
 import CurrentTurnActionsBar from './currentTurnActionsBar';
 import { Icons } from '../../utilities/icons';
 import { Theme } from '../../themes/model';
+import { DebugSettings } from '../../debug';
 
 interface CurrentTurnSectionProps {
     game : Game,
     board : Board,
     user : User,
-    theme : Theme
+    theme : Theme,
+    debugSettings : DebugSettings
 }
 
 class currentTurnSection extends React.Component<CurrentTurnSectionProps> {
@@ -61,14 +63,13 @@ class currentTurnSection extends React.Component<CurrentTurnSectionProps> {
     }
 
     private renderForCurrentPlayer() {
-        const game = this.props.game;
-        const board = this.props.board;
-        const turn = game.currentTurn;
+        const p = this.props;
+        const turn = p.game.currentTurn;
 
         return (<>
             {turn.selections.map((s, i) =>
                 <p key={"row" + i}>
-                    {Copy.getSelectionDescription(this.props.theme, s, game, board)}
+                    {Copy.getSelectionDescription(p.theme, s, p.game, p.board, p.debugSettings.showCellAndPieceIds)}
                 </p>)
             }
             <p style={{
@@ -92,7 +93,8 @@ const mapStateToProps = (state : State) => {
         game: game,
         user: state.session.user,
         board: board,
-        theme: state.display.theme
+        theme: state.display.theme,
+        debugSettings: state.settings.debug
     };
 }
 

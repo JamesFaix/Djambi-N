@@ -1,3 +1,5 @@
+import { DebugSettings } from "../debug";
+
 const keyPrefix = "Djambi_";
 
 export default class LocalStorageService {
@@ -6,5 +8,15 @@ export default class LocalStorageService {
     }
     static set themeName(value : string) {
         localStorage.setItem(`${keyPrefix}themeName`, value);
+    }
+
+    static get debugSettings() : DebugSettings {
+        const json = localStorage.getItem(`${keyPrefix}debugSettings`);
+        const obj = JSON.parse(json);
+        return obj;
+    }
+    static set debugSettings(value : DebugSettings) {
+        const json = JSON.stringify(value);
+        localStorage.setItem(`${keyPrefix}debugSettings`, json);
     }
 }

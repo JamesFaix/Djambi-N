@@ -1,25 +1,32 @@
-export default class Debug {
-    static init() {
-        const w = (window as any);
-        w.debugGet = (name : string) => this.getSetting(name);
-        w.debugSet = (name : string, value : any) => this.setSetting(name, value);
+import { Dispatch } from "redux";
+import LocalStorageService from "./utilities/localStorageService";
+import * as StoreSettings from './store/settings';
+
+export interface DebugSettings {
+    showCellLabels : boolean,
+    showCellAndPieceIds : boolean,
+    logApi : boolean,
+    logSse : boolean,
+    logRedux : boolean
+}
+
+export const defaultDebugSettings : DebugSettings = {
+    showCellLabels : false,
+    showCellAndPieceIds : false,
+    logApi : false,
+    logSse : false,
+    logRedux : false
+}
+
+export class DebugService {
+    public static applySettings(settings : DebugSettings, dispatch : Dispatch) : void {
+        LocalStorageService.debugSettings = settings;
+        dispatch(StoreSettings.Actions.applyDebugSettings(settings));
     }
 
-    private static getSetting(name : string) : any {
-        return (this as any)[name];
+    public static loadSavedSettings(dispatch : Dispatch) {
+        let settings = LocalStorageService.debugSettings;
+        if (!settings) { settings = defaultDebugSettings; }
+        dispatch(StoreSettings.Actions.applyDebugSettings(settings));
     }
-
-    private static setSetting(name : string, value : any) : void {
-        (this as any)[name] = value;
-    }
-
-    public static readonly showPieceAndCellIds = false;
-
-    public static readonly showCellLabels = false;
-
-    public static readonly logApi = false;
-
-    public static readonly logRedux = false;
-
-    public static readonly logSse = false;
 }
