@@ -1,9 +1,9 @@
 import Environment from "../environment";
 import { StateAndEventResponse } from "../api/model";
-import Debug from '../debug';
 import { Store } from "redux";
 import { State, CustomAction } from "../store/root";
 import * as StoreActiveGame from '../store/activeGame';
+import * as StoreRoot from '../store/root';
 
 class SseClient {
     private readonly source : EventSource;
@@ -24,18 +24,22 @@ class SseClient {
         this.source = s;
     }
 
+    private shouldLog() : boolean {
+        return StoreRoot.getState(this.store).settings.debug.logSse;
+    }
+
     dispose() : void {
         this.source.close();
     }
 
     private onOpen(e : Event) {
-        if (Debug.logSse) {
+        if (this.shouldLog()) {
             console.log("SSE Open");
         }
     }
 
     private onMessage(e : MessageEvent) {
-        if (Debug.logSse) {
+        if (this.shouldLog()) {
             console.log("SSE Message");
         }
 
@@ -56,7 +60,7 @@ class SseClient {
     }
 
     private onError(e : Event) {
-     //   if (Debug.logSse) {
+     // if (this.shouldLog()) {
             console.log("SSE Error");
             console.log(e);
       //  }

@@ -4,6 +4,7 @@ import { CellView, BoardView, Point } from '../../viewModel/board/model';
 import CanvasPiece from './canvasPiece';
 import Geometry from '../../viewModel/board/geometry';
 import { PieceKind } from '../../api/model';
+import { Theme } from '../../themes/model';
 
 export interface CanvasPiecesLayerStyle {
     scale : number,

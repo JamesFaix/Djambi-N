@@ -1,3 +1,5 @@
+import { Theme } from "./model";
+
 const imagesDir = "../../resources/images";
 
 const whiteHex = "#FFFFFF";

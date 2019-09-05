@@ -8,6 +8,8 @@ import { Dispatch } from 'redux';
 import Dropdown from '../controls/dropdown';
 import { SectionHeader } from '../controls/headers';
 import ThemeService from '../../themes/themeService';
+import { Theme } from '../../themes/model';
+import DebugSettingsForm from '../forms/debugSettingsForm';
 
 interface SettingsPageProps {
 }
@@ -19,6 +21,7 @@ export default class SettingsPage extends React.Component<SettingsPageProps> {
                 <RedirectToLoginIfNotLoggedIn/>
                 <SectionHeader text="Settings"/>
                 <ThemeSection/>
+                <DebugSettingsForm/>
             </BasicPageContainer>
         );
     }

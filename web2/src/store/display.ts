@@ -1,7 +1,8 @@
 import { CustomAction, DataAction } from "./root";
 import { Point } from "../viewModel/board/model";
-import ThemeFactory from "../themes/themeFactory";
 import { PieceKind, Piece } from "../api/model";
+import ThemeFactory from "../themes/themeFactory";
+import { Theme } from "../themes/model";
 
 interface Images {
     pieces : Map<PieceKind, HTMLImageElement>

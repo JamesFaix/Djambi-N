@@ -2,6 +2,7 @@ import * as React from 'react';
 import CanvasPolygon from './canvasPolygon';
 import { CellView } from '../../viewModel/board/model';
 import ThemeService from '../../themes/themeService';
+import { Theme } from '../../themes/model';
 
 export interface CanvasCellProps {
     cell : CellView,

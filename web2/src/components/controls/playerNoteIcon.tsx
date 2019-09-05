@@ -6,6 +6,7 @@ import { Icons } from '../../utilities/icons';
 import ThemeService from '../../themes/themeService';
 import { State } from '../../store/root';
 import { connect } from 'react-redux';
+import { Theme } from '../../themes/model';
 
 interface PlayerNoteIconProps {
     player : Player,

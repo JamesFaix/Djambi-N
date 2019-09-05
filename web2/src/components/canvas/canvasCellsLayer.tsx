@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Layer } from 'react-konva';
 import CanvasCell from './canvasCell';
 import { CellView, BoardView } from '../../viewModel/board/model';
+import { Theme } from '../../themes/model';
 
 export interface CanvasCellsLayerProps {
     gameId : number,

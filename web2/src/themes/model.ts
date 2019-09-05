@@ -1,4 +1,4 @@
-interface Theme {
+export interface Theme {
     name : string,
     colors : ThemeColors,
     images : ThemeImagePaths,

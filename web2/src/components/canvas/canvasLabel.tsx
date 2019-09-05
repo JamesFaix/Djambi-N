@@ -1,28 +1,32 @@
 import * as React from 'react';
-import Debug from '../../debug';
 import Geometry from '../../viewModel/board/geometry';
 import { CellView, BoardView } from '../../viewModel/board/model';
 import { Text } from 'react-konva';
 import * as Copy from '../../utilities/copy';
 import ThemeService from '../../themes/themeService';
+import { Theme } from '../../themes/model';
+import { DebugSettings } from '../../debug';
 
 export interface CanvasLabelProps {
     board : BoardView,
     cell : CellView,
     onClick : () => void,
-    theme : Theme
+    theme : Theme,
+    debugSettings : DebugSettings
 }
 
 export default class CanvasLabel extends React.Component<CanvasLabelProps> {
 
     render() {
-        if (!Debug.showCellLabels) {
+        const s = this.props.debugSettings;
+
+        if (!s.showCellLabels) {
             return null;
         }
         const cell = this.props.cell;
 
-        let text = Copy.getCellViewLabel(this.props.theme, cell.id, this.props.board);
-        if (Debug.showPieceAndCellIds && cell.piece !== null) {
+        let text = Copy.getCellViewLabel(this.props.theme, cell.id, this.props.board, s.showCellAndPieceIds);
+        if (s.showCellAndPieceIds && cell.piece !== null) {
             text += "\nP " + cell.piece.id;
         }
 

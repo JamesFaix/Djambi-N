@@ -10,6 +10,8 @@ import ApiActions from '../../apiActions';
 import { Classes } from '../../styles/styles';
 import BoardScrollArea from './boardScrollArea';
 import BoardZoomSlider from '../controls/boardZoomSlider';
+import { Theme } from '../../themes/model';
+import { DebugSettings } from '../../debug';
 
 export interface BoardSectionProps {
     gameId : number,
@@ -18,23 +20,25 @@ export interface BoardSectionProps {
     zoomLevel : number,
     pieceImages : Map<PieceKind, HTMLImageElement>,
     selectCell : (gameId: number, cell : CellView) => void,
-    theme : Theme
+    theme : Theme,
+    debugSettings : DebugSettings
 }
 
 class boardSection extends React.Component<BoardSectionProps> {
     render(){
-        if (!this.props.board) {
+        const p = this.props;
+        if (!p.board) {
             return null;
         }
 
-        const internalSize = CanvasTransformService.getSize(this.props.transformData);
+        const internalSize = CanvasTransformService.getSize(p.transformData);
 
         const boardStyle : CanvasBoardStyle = {
             width: internalSize.x,
             height: internalSize.y,
             strokeWidth: 5, //TODO: maybe put in settings somewhere
-            scale: CanvasTransformService.getScale(this.props.transformData),
-            theme: this.props.theme
+            scale: CanvasTransformService.getScale(p.transformData),
+            theme: p.theme
         };
 
         return (
@@ -45,10 +49,11 @@ class boardSection extends React.Component<BoardSectionProps> {
                 <BoardScrollArea>
                     <CanvasBoard
                         style={boardStyle}
-                        gameId={this.props.gameId}
-                        board={this.props.board}
-                        selectCell={cell => this.props.selectCell(this.props.gameId, cell)}
-                        pieceImages={this.props.pieceImages}
+                        gameId={p.gameId}
+                        board={p.board}
+                        selectCell={cell => p.selectCell(p.gameId, cell)}
+                        pieceImages={p.pieceImages}
+                        debugSettings={p.debugSettings}
                     />
                 </BoardScrollArea>
                 <BoardZoomSlider/>
@@ -75,7 +80,8 @@ const mapStateToProps = (state : State) => {
             zoomLevel: state.display.boardZoomLevel,
             regionCount: state.activeGame.game.parameters.regionCount
         },
-        theme: state.display.theme
+        theme: state.display.theme,
+        debugSettings: state.settings.debug
     };
 }
 

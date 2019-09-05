@@ -5,13 +5,14 @@ import * as Session from './session';
 import * as ActiveGame from './activeGame';
 import * as Boards from './boards';
 import * as ApiClient from './apiClient';
-import { combineReducers, Reducer } from 'redux';
+import { combineReducers, Reducer, Store } from 'redux';
 import { Game, Board, StateAndEventResponse } from '../api/model';
 import CanvasTransformService, { CanvasTranformData } from '../viewModel/board/canvasTransformService';
 import BoardViewFactory from '../viewModel/board/boardViewFactory';
 import Geometry from '../viewModel/board/geometry';
 import { Point } from '../viewModel/board/model';
 import GameHistory from '../viewModel/gameHistory';
+import * as Settings from './settings';
 
 export interface State {
     session: Session.State,
@@ -20,7 +21,8 @@ export interface State {
     createGameForm : CreateGameForm.State,
     boards : Boards.State,
     display : Display.State,
-    apiClient : ApiClient.State
+    apiClient : ApiClient.State,
+    settings : Settings.State
 }
 
 export const defaultState : State = {
@@ -30,7 +32,12 @@ export const defaultState : State = {
     createGameForm: CreateGameForm.defaultState,
     boards: Boards.defaultState,
     display: Display.defaultState,
-    apiClient: ApiClient.defaultState
+    apiClient: ApiClient.defaultState,
+    settings: Settings.defaultState
+}
+
+export function getState(store : Store<State, CustomAction>) : State {
+    return store.getState() as State;
 }
 
 export interface CustomAction {
@@ -48,10 +55,23 @@ const combinedReducer : Reducer<State, CustomAction> = combineReducers({
     createGameForm : CreateGameForm.reducer,
     display: Display.reducer,
     gamesQuery: GamesQuery.reducer,
-    session: Session.reducer
+    session: Session.reducer,
+    settings: Settings.reducer
 });
 
 export function reducer(state: State, action : CustomAction) : State {
+    const newState = reducerInner(state, action);
+    if (newState.settings.debug && newState.settings.debug.logRedux) {
+        console.log("Old state:");
+        console.log(state);
+        console.log(action);
+        console.log("New state:");
+        console.log(newState);
+    }
+    return newState;
+}
+
+function reducerInner(state: State, action : CustomAction) : State {
     switch (action.type) {
         case Session.ActionTypes.Logout:
             return defaultState; //Logout clears all state

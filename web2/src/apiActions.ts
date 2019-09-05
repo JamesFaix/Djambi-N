@@ -10,6 +10,7 @@ import * as StoreActiveGame from './store/activeGame';
 import * as StoreBoards from './store/boards';
 import { SseClientManager } from "./utilities/serverSentEvents";
 import ThemeService from "./themes/themeService";
+import { DebugService } from "./debug";
 
 //#region Session actions
 
@@ -100,6 +101,7 @@ export default class ApiActions {
     private static finishLoginSetup(user : User, dispatch : Dispatch) : Promise<void> {
         SseClientManager.connect();
         ThemeService.loadSavedTheme(dispatch);
+        DebugService.loadSavedSettings(dispatch);
         return ApiActions.queryGamesForUser(user, dispatch);
     }
 
