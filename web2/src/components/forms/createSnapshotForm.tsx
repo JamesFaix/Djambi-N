@@ -7,6 +7,7 @@ import IconButton from '../controls/iconButton';
 import { CreateSnapshotRequest } from '../../api/model';
 import { Icons } from '../../utilities/icons';
 import SnapshotStoreFlows from '../../storeFlows/snapshots';
+import HtmlInputTypes from '../htmlInputTypes';
 
 interface CreateSnapshotFormProps {
     gameId : number,
@@ -34,7 +35,7 @@ class createSnapshotForm extends React.Component<CreateSnapshotFormProps, Create
                         <td>Description</td>
                         <td>
                             <input
-                                type="text"
+                                type={HtmlInputTypes.Text}
                                 onChange={e => this.onDescriptionChanged(e)}
                             />
                         </td>

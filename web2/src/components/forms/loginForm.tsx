@@ -6,6 +6,7 @@ import { SectionHeader } from '../controls/headers';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
 import SessionStoreFlows from '../../storeFlows/session';
+import HtmlInputTypes from '../htmlInputTypes';
 
 interface LoginFormProps {
     submit: (formData: LoginRequest) => void
@@ -41,7 +42,7 @@ class loginForm extends React.Component<LoginFormProps, LoginFormState> {
                         <td>Username</td>
                         <td>
                             <input
-                                type="text"
+                                type={HtmlInputTypes.Text}
                                 value={this.state.username}
                                 onChange={e => this.setState({ username: e.target.value })}
                             >
@@ -52,7 +53,7 @@ class loginForm extends React.Component<LoginFormProps, LoginFormState> {
                         <td>Password</td>
                         <td>
                             <input
-                                type="password"
+                                type={HtmlInputTypes.Password}
                                 value={this.state.password}
                                 onChange={e => this.setState({ password: e.target.value })}
                             >

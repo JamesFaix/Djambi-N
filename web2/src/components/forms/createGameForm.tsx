@@ -8,6 +8,7 @@ import * as StoreCreateGameForm from '../../store/createGameForm';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
 import GameStoreFlows from '../../storeFlows/game';
+import HtmlInputTypes from '../htmlInputTypes';
 
 interface CreateGameFormProps {
     formData : GameParameters,
@@ -25,7 +26,7 @@ class createGameForm extends React.Component<CreateGameFormProps> {
                         <td>Region count</td>
                         <td>
                             <input
-                                type="number"
+                                type={HtmlInputTypes.Number}
                                 min={3}
                                 max={8}
                                 value={this.props.formData.regionCount}
@@ -37,7 +38,7 @@ class createGameForm extends React.Component<CreateGameFormProps> {
                         <td>Allow guests</td>
                         <td>
                             <input
-                                type="checkbox"
+                                type={HtmlInputTypes.CheckBox}
                                 checked={this.props.formData.allowGuests}
                                 onChange={e => this.onChangeAllowGuests(e)}
                             />
@@ -47,7 +48,7 @@ class createGameForm extends React.Component<CreateGameFormProps> {
                         <td>Public</td>
                         <td>
                             <input
-                                type="checkbox"
+                                type={HtmlInputTypes.CheckBox}
                                 checked={this.props.formData.isPublic}
                                 onChange={e => this.onChangeIsPublic(e)}
                             />
@@ -57,7 +58,7 @@ class createGameForm extends React.Component<CreateGameFormProps> {
                         <td>Description</td>
                         <td>
                             <input
-                                type="text"
+                                type={HtmlInputTypes.Text}
                                 value={this.props.formData.description}
                                 onChange={e => this.onChangeDescription(e)}
                             />
