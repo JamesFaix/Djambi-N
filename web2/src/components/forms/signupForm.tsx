@@ -3,9 +3,9 @@ import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { CreateUserRequest } from '../../api/model';
 import { SectionHeader } from '../controls/headers';
-import ApiActions from '../../apiActions';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
+import SessionStoreFlows from '../../storeFlows/session';
 
 interface SignupFormProps {
     submit: (formData: CreateUserRequest) => void
@@ -75,7 +75,7 @@ class signupForm extends React.Component<SignupFormProps, SignupFormState> {
 
 const mapDispatchToProps = (dispatch : Dispatch) => {
     return {
-        submit: (request: CreateUserRequest) => ApiActions.signup(request)(dispatch)
+        submit: (request: CreateUserRequest) => SessionStoreFlows.signup(request)(dispatch)
     };
 };
 

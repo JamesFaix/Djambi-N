@@ -3,9 +3,9 @@ import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { LoginRequest } from '../../api/model';
 import { SectionHeader } from '../controls/headers';
-import ApiActions from '../../apiActions';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
+import SessionStoreFlows from '../../storeFlows/session';
 
 interface LoginFormProps {
     submit: (formData: LoginRequest) => void
@@ -73,7 +73,7 @@ class loginForm extends React.Component<LoginFormProps, LoginFormState> {
 
 const mapDispatchToProps = (dispatch : Dispatch) => {
     return {
-        submit: (formData : LoginRequest) => ApiActions.login(formData)(dispatch)
+        submit: (formData : LoginRequest) => SessionStoreFlows.login(formData)(dispatch)
     };
 };
 

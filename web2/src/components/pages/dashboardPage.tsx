@@ -6,8 +6,8 @@ import GamesSearchResultsTable from '../tables/gamesSearchResultsTable';
 import { State } from '../../store/root';
 import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
 import GamesSearchForm from '../forms/gamesSearchForm';
-import ApiActions from '../../apiActions';
 import BasicPageContainer from '../sections/basicPageContainer';
+import MiscStoreFlows from '../../storeFlows/misc';
 
 interface DashboardPageProps {
     gamesQuery : GamesQuery,
@@ -45,7 +45,7 @@ const mapStateToProps = (state: State) => {
 
 const mapDispatchToProps = (dispatch : Dispatch) => {
     return {
-        onSearchClicked: (query: GamesQuery) => ApiActions.queryGames(query)(dispatch)
+        onSearchClicked: (query: GamesQuery) => MiscStoreFlows.queryGames(query)(dispatch)
     };
 };
 

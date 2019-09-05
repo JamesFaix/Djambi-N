@@ -6,10 +6,10 @@ import TristateDropdown from '../controls/tristateDropdown';
 import EnumDropdown from '../controls/enumDropdown';
 import { Dispatch } from 'redux';
 import { SectionHeader } from '../controls/headers';
-import ApiActions from '../../apiActions';
 import * as StoreGamesQuery from '../../store/gamesQuery';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
+import MiscStoreFlows from '../../storeFlows/misc';
 
 interface GamesSearchFormProps {
     formData : GamesQuery,
@@ -171,7 +171,7 @@ const mapStateToProps = (state : State) => {
 const mapDispatchToProps = (dispatch : Dispatch) => {
     return {
         onFormDataChanged: (formData: GamesQuery) => dispatch(StoreGamesQuery.Actions.updateGamesQuery(formData)),
-        submit: (formData: GamesQuery) => ApiActions.queryGames(formData)(dispatch)
+        submit: (formData: GamesQuery) => MiscStoreFlows.queryGames(formData)(dispatch)
     };
 };
 

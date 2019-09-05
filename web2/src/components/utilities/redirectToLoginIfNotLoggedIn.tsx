@@ -3,7 +3,7 @@ import { User } from "../../api/model";
 import { State } from '../../store/root';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import ApiActions from '../../apiActions';
+import SessionStoreFlows from '../../storeFlows/session';
 
 interface RedirectToLoginIfNotLoggedInProps {
     user : User,
@@ -30,7 +30,7 @@ const mapStateToProps = (state: State) => {
 
 const mapDispatchToProps = (dispatch : Dispatch) => {
     return {
-        restoreSessionOrRedirect: () => ApiActions.redirectToLoginIfNotLoggedIn()(dispatch)
+        restoreSessionOrRedirect: () => SessionStoreFlows.redirectToLoginIfNotLoggedIn()(dispatch)
     };
 };
 

@@ -6,12 +6,12 @@ import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import CanvasTransformService, { CanvasTranformData } from '../../viewModel/board/canvasTransformService';
 import { PieceKind } from '../../api/model';
-import ApiActions from '../../apiActions';
 import { Classes } from '../../styles/styles';
 import BoardScrollArea from './boardScrollArea';
 import BoardZoomSlider from '../controls/boardZoomSlider';
 import { Theme } from '../../themes/model';
 import { DebugSettings } from '../../debug';
+import GameStoreFlows from '../../storeFlows/game';
 
 export interface BoardSectionProps {
     gameId : number,
@@ -87,7 +87,7 @@ const mapStateToProps = (state : State) => {
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
     return {
-        selectCell: (gameId : number, cell : CellView) => ApiActions.selectCell(gameId, cell.id)(dispatch)
+        selectCell: (gameId : number, cell : CellView) => GameStoreFlows.selectCell(gameId, cell.id)(dispatch)
     };
 }
 

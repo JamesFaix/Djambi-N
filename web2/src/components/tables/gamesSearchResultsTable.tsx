@@ -5,10 +5,10 @@ import { connect } from 'react-redux';
 import { boolToYesOrNo } from '../../utilities/copy';
 import { SectionHeader } from '../controls/headers';
 import IconButton from '../controls/iconButton';
-import ApiActions from '../../apiActions';
 import { Classes } from '../../styles/styles';
 import IconBox from '../controls/iconBox';
 import { Icons } from '../../utilities/icons';
+import MiscStoreFlows from '../../storeFlows/misc';
 
 interface GamesSearchResultsTableProps {
     games : Game[]
@@ -56,7 +56,7 @@ const GameRow : React.SFC<GameRowProps> = props => {
             <td>
                 <IconButton
                     icon={Icons.UserActions.loadGame}
-                    onClick={() => ApiActions.navigateToGame(game)}
+                    onClick={() => MiscStoreFlows.navigateToGame(game)}
                 />
             </td>
             <td className={Classes.centered}>
