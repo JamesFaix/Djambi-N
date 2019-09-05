@@ -1,10 +1,11 @@
 import * as React from 'react';
 import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
-import RedirectToLobbyIfGameNotInProgress from '../utilities/redirectToLobbyIfGameNotInProgress';
 import DiplomacyPlayersTable from '../tables/diplomacyPlayersTable';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Icons } from '../../utilities/icons';
 import BasicPageContainer from '../sections/basicPageContainer';
+import { GameStatus } from '../../api/model';
+import RedirectToLobbyIfNotGameStatus from '../utilities/redirectToLobbyIfNotGameStatus';
 
 const DiplomacyPage : React.SFC<{}> = _ => {
     const i = Icons.PlayerActions;
@@ -12,7 +13,7 @@ const DiplomacyPage : React.SFC<{}> = _ => {
     return (
         <BasicPageContainer>
             <RedirectToLoginIfNotLoggedIn/>
-            <RedirectToLobbyIfGameNotInProgress/>
+            <RedirectToLobbyIfNotGameStatus status={GameStatus.InProgress}/>
             <DiplomacyPlayersTable/>
             <br/>
             <p>

@@ -1,13 +1,13 @@
 import * as React from 'react';
-import { Game } from '../../api/model';
+import { Game, GameStatus } from '../../api/model';
 import { State } from '../../store/root';
 import { connect } from 'react-redux';
 import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
-import RedirectToLobbyIfGameNotInProgress from '../utilities/redirectToLobbyIfGameNotInProgress';
 import TimelineBar from '../timelineBar/timelineBar';
 import LoadGameFull from '../utilities/loadGameFull';
 import BoardSection from '../sections/boardSection';
 import PlayPageContainer from '../sections/playPageContainer';
+import RedirectToLobbyIfNotGameStatus from '../utilities/redirectToLobbyIfNotGameStatus';
 
 interface PlayPageProps {
     game : Game,
@@ -19,7 +19,7 @@ class playPage extends React.Component<PlayPageProps> {
         return (
             <PlayPageContainer>
                 <RedirectToLoginIfNotLoggedIn/>
-                <RedirectToLobbyIfGameNotInProgress/>
+                <RedirectToLobbyIfNotGameStatus status={GameStatus.InProgress}/>
                 <LoadGameFull gameId={gameId}/>
                 <BoardSection/>
                 <TimelineBar/>
