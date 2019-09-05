@@ -1,3 +1,4 @@
+import { AppStore, getAppState } from "../store/root";
 import {
     Turn,
     Selection,
@@ -24,242 +25,258 @@ import {
     TurnCyclePlayerFellFromPowerEffect,
     TurnCyclePlayerRoseToPowerEffect
 } from "../api/model";
-import { BoardView } from "../viewModel/board/model";
+import { BoardView, CellView } from "../viewModel/board/model";
 import ThemeService from "../themes/themeService";
 import { Theme } from "../themes/model";
 
-export function boolToYesOrNo(value : boolean) : string {
-    if (value === true) {
-        return "Yes";
-    } else if (value === false) {
-        return "No"
-    } else { //null/undefined
-        return null;
+export default class Copy {
+    private static store : AppStore
+
+    public static init(store : AppStore) : void {
+        if (!store) throw "Cannot initialize if arguments are null.";
+        if (this.store) throw "Cannot initialize twice.";
+
+        this.store = store;
     }
-}
 
-function locationToString(location : Location) : string {
-    return `(${location.region}, ${location.x}, ${location.y})`;
-}
+    private static getTheme() : Theme {
+        return getAppState(this.store).display.theme;
+    }
 
-export function getCellLabel(theme : Theme, cellId : number, board : Board, showIds : boolean) : string {
-    //The first time the board is needed it must be fetched from the API.
-    //To avoid making this asynchronous, this just skips the API call if the board is not already cached.
-    if (board) {
+    private static showIds() : boolean {
+        return getAppState(this.store).settings.debug.showCellAndPieceIds;
+    }
+
+    private static centerCellName() : string {
+        return this.getTheme().copy.centerCellName;
+    }
+
+    public static boolToYesOrNo(value : boolean) : string {
+        if (value === true) {
+            return "Yes";
+        } else if (value === false) {
+            return "No"
+        } else { //null/undefined
+            return null;
+        }
+    }
+
+    private static locationToString(location : Location) : string {
+        return `(${location.region}, ${location.x}, ${location.y})`;
+    }
+
+    public static getCellLabel(cellId : number, board : Board) : string {
+        //The first time the board is needed it must be fetched from the API.
+        //To avoid making this asynchronous, this just skips the API call if the board is not already cached.
+        if (!board) {
+            return cellId.toString();
+        }
+
         const cell = board.cells.find(c => c.id === cellId);
 
         const base = cell.locations.find(l => l.x === 0 && l.y === 0)
-            ? theme.copy.centerCellName
-            : locationToString(cell.locations[0]);
+            ? this.centerCellName()
+            : Copy.locationToString(cell.locations[0]);
 
-        if (showIds){
+        if (this.showIds()){
             return `${base} (${cellId})`;
         } else {
             return base;
         }
-    } else {
-        return cellId.toString();
     }
-}
 
-export function getCellViewLabel(theme : Theme, cellId : number, board : BoardView, showIds : boolean) : string {
-    //The first time the board is needed it must be fetched from the API.
-    //To avoid making this asynchronous, this just skips the API call if the board is not already cached.
-    if (board) {
-        const cell = board.cells.find(c => c.id === cellId);
-
+    public static getCellViewLabel(cell : CellView) : string {
         const base = cell.locations.find(l => l.x === 0 && l.y === 0)
-            ? theme.copy.centerCellName
-            : locationToString(cell.locations[0]);
+            ? this.centerCellName()
+            : Copy.locationToString(cell.locations[0]);
 
-        if (showIds){
-            return `${base} (${cellId})`;
+        if (!this.showIds()) {
+            return base;
+        } else if (!cell.piece) {
+            return `${base} (${cell.id})`;
+        } else {
+            return `${base} (${cell.id})\nP${cell.piece.id}`;
+        }
+    }
+
+    private static getPieceLabel(piece : Piece, game : Game) : string {
+        const kindName = ThemeService.getPieceName(this.getTheme(), piece.kind);
+
+        if (piece.kind === PieceKind.Corpse) {
+            return kindName;
+        }
+
+        const player = game.players.find(p => p.id === piece.playerId);
+        const base = player
+            ? `${player.name}'s ${kindName}`
+            : `Neutral ${kindName}`;
+
+        if (this.showIds()){
+            return `${base} (#${piece.id})`;
         } else {
             return base;
         }
-    } else {
-        return cellId.toString();
-    }
-}
-
-function getPieceLabel(theme : Theme, piece : Piece, game : Game, showIds : boolean) : string {
-    const kindName = ThemeService.getPieceName(theme, piece.kind);
-
-    if (piece.kind === PieceKind.Corpse) {
-        return kindName;
     }
 
-    const player = game.players.find(p => p.id === piece.playerId);
-    const base = player
-        ? `${player.name}'s ${kindName}`
-        : `Neutral ${kindName}`;
-
-    if (showIds){
-        return `${base} (#${piece.id})`;
-    } else {
-        return base;
+    public static getTurnPrompt(turn : Turn) : string {
+        switch (turn.status) {
+            case TurnStatus.AwaitingSelection:
+                return Copy.getSelectionPrompt(turn.requiredSelectionKind);
+            case TurnStatus.AwaitingCommit:
+                return "End your turn or reset.";
+            case TurnStatus.DeadEnd:
+                return "No futher selections are available. You must reset.";
+            default:
+                throw "Invalid turn status.";
+        }
     }
-}
 
-export function getTurnPrompt(turn : Turn) : string {
-    switch (turn.status) {
-        case TurnStatus.AwaitingSelection:
-            return getSelectionPrompt(turn.requiredSelectionKind);
-        case TurnStatus.AwaitingCommit:
-            return "End your turn or reset.";
-        case TurnStatus.DeadEnd:
-            return "No futher selections are available. You must reset.";
-        default:
-            throw "Invalid turn status.";
+    private static getSelectionPrompt(kind : SelectionKind) : string {
+        switch (kind) {
+            case SelectionKind.Drop: return "Select a cell to drop the target piece in.";
+            case SelectionKind.Move: return "Select a cell to move to.";
+            case SelectionKind.Subject: return "Select a piece to move.";
+            case SelectionKind.Target: return "Select a piece to target.";
+            case SelectionKind.Vacate: return "Select a cell to vacate to.";
+            default: throw "Invalid selection kind.";
+        }
     }
-}
 
-function getSelectionPrompt(kind : SelectionKind) : string {
-    switch (kind) {
-        case SelectionKind.Drop: return "Select a cell to drop the target piece in.";
-        case SelectionKind.Move: return "Select a cell to move to.";
-        case SelectionKind.Subject: return "Select a piece to move.";
-        case SelectionKind.Target: return "Select a piece to target.";
-        case SelectionKind.Vacate: return "Select a cell to vacate to.";
-        default: throw "Invalid selection kind.";
+    public static getSelectionDescription(selection : Selection, game : Game, board : Board) : string {
+        const cell = selection.cellId
+            ? Copy.getCellLabel(selection.cellId, board)
+            : null;
+
+        const piece = selection.pieceId
+            ? Copy.getPieceLabel(game.pieces.find(p => p.id === selection.pieceId), game)
+            : null;
+
+        switch (selection.kind) {
+            case SelectionKind.Drop:
+                return `Drop target piece at cell ${cell}.`;
+
+            case SelectionKind.Move:
+                if (piece === null) {
+                    return `Move to cell ${cell}.`;
+                } else {
+                    return `Move to cell ${cell} and target ${piece}.`;
+                }
+
+            case SelectionKind.Subject:
+                return `Pick up ${piece}.`;
+
+            case SelectionKind.Target:
+                return `Target ${piece} at cell ${cell}.`;
+
+            case SelectionKind.Vacate:
+                return `Vacate ${this.centerCellName()} to cell ${cell}.`;
+
+            default: throw "Invalid selection kind.";
+        }
     }
-}
 
-export function getSelectionDescription(theme : Theme, selection : Selection, game : Game, board : Board, showIds : boolean) : string {
-    const cell = selection.cellId
-        ? getCellLabel(theme, selection.cellId, board, showIds)
-        : null;
+    private static getPlayerName(playerId : number, game : Game) : string {
+        return game.players.find(p => p.id === playerId).name;
+    }
 
-    const piece = selection.pieceId
-        ? getPieceLabel(theme, game.pieces.find(p => p.id === selection.pieceId), game, showIds)
-        : null;
-
-    switch (selection.kind) {
-        case SelectionKind.Drop:
-            return `Drop target piece at cell ${cell}.`;
-
-        case SelectionKind.Move:
-            if (piece === null) {
-                return `Move to cell ${cell}.`;
-            } else {
-                return `Move to cell ${cell} and target ${piece}.`;
+    public static getEffectDescription(effect : Effect, game : Game, board: Board) : string {
+        switch (effect.kind) {
+            case EffectKind.PieceAbandoned: {
+                const f = <PieceAbandonedEffect>effect.value;
+                return `${Copy.getPieceLabel(f.oldPiece, game)} was abandoned.`;
             }
-
-        case SelectionKind.Subject:
-            return `Pick up ${piece}.`;
-
-        case SelectionKind.Target:
-            return `Target ${piece} at cell ${cell}.`;
-
-        case SelectionKind.Vacate:
-            return `Vacate ${theme.copy.centerCellName} to cell ${cell}.`;
-
-        default: throw "Invalid selection kind.";
-    }
-
-}
-
-function getPlayerName(playerId : number, game : Game) : string {
-    return game.players.find(p => p.id === playerId).name;
-}
-
-export function getEffectDescription(theme : Theme, effect : Effect, game : Game, board: Board, showIds : boolean) : string {
-    switch (effect.kind) {
-        case EffectKind.PieceAbandoned: {
-            const f = <PieceAbandonedEffect>effect.value;
-            return `${getPieceLabel(theme, f.oldPiece, game, showIds)} was abandoned.`;
-        }
-        case EffectKind.PieceDropped: {
-            const f = <PieceDroppedEffect>effect.value;
-            return `${getPieceLabel(theme, f.oldPiece, game, showIds)} was dropped at ${getCellLabel(theme, f.newCellId, board, showIds)}.`;
-        }
-        case EffectKind.PieceEnlisted: {
-            const f = <PieceEnlistedEffect>effect.value;
-            return `${getPieceLabel(theme, f.oldPiece, game, showIds)} was enlisted by ${getPlayerName(f.newPlayerId, game)}.`;
-        }
-        case EffectKind.PieceKilled: {
-            const f = <PieceKilledEffect>effect.value;
-            return `${getPieceLabel(theme, f.oldPiece, game, showIds)} was killed.`;
-        }
-        case EffectKind.PieceMoved: {
-            const f = <PieceMovedEffect>effect.value;
-            return `${getPieceLabel(theme, f.oldPiece, game, showIds)} was moved to ${getCellLabel(theme, f.newCellId, board, showIds)}.`;
-        }
-        case EffectKind.PieceVacated: {
-            const f = <PieceVacatedEffect>effect.value;
-            return `${getPieceLabel(theme, f.oldPiece, game, showIds)} vacated the ${theme.copy.centerCellName} to ${getCellLabel(theme, f.newCellId, board, showIds)}.`;
-        }
-        case EffectKind.PlayerOutOfMoves: {
-            const f = <PlayerOutOfMovesEffect>effect.value;
-            return `${getPlayerName(f.playerId, game)} is out of moves.`;
-        }
-        case EffectKind.PlayerStatusChanged: {
-            const f = <PlayerStatusChangedEffect>effect.value;
-            switch (f.newStatus) {
-                case PlayerStatus.Eliminated:
-                    return `${getPlayerName(f.playerId, game)} was eliminated.`;
-                case PlayerStatus.Victorious:
-                    return `${getPlayerName(f.playerId, game)} won.`;
-                case PlayerStatus.Alive:
-                    return `${getPlayerName(f.playerId, game)} will no longer accept a draw.`;
-                case PlayerStatus.WillConcede:
-                    return `${getPlayerName(f.playerId, game)} will concede at the start of their next turn.`;
-                case PlayerStatus.Conceded:
-                    return `${getPlayerName(f.playerId, game)} conceded.`;
-                case PlayerStatus.AcceptsDraw:
-                    return `${getPlayerName(f.playerId, game)} will accept a draw.`;
-                default:
-                    throw "Unsupported player status: " + f.newStatus;
+            case EffectKind.PieceDropped: {
+                const f = <PieceDroppedEffect>effect.value;
+                return `${Copy.getPieceLabel(f.oldPiece, game)} was dropped at ${Copy.getCellLabel(f.newCellId, board)}.`;
             }
-        }
-        case EffectKind.TurnCyclePlayerFellFromPower: {
-            const f = <TurnCyclePlayerFellFromPowerEffect>effect.value;
-            return `${getPlayerName(f.playerId, game)} fell from power.`;
-        }
-        case EffectKind.TurnCyclePlayerRoseToPower: {
-            const f = <TurnCyclePlayerRoseToPowerEffect>effect.value;
-            return `${getPlayerName(f.playerId, game)} rose to power.`;
-        }
-        default:
-            throw "Unsupported effect kind: " + effect.kind;
-    }
-}
-
-export function getEventDescription(event : Event, game : Game) : string {
-    const agent = getAgentName(event, game);
-
-    switch (event.kind) {
-        case EventKind.GameStarted:
-            return `Game started`;
-
-        case EventKind.TurnCommitted:
-            return `${agent} took a turn`;
-
-        case EventKind.PlayerStatusChanged:
-            const f = event.effects.find(x => x.kind === EffectKind.PlayerStatusChanged);
-            const s = (<PlayerStatusChangedEffect>f.value).newStatus;
-            switch (s) {
-                case PlayerStatus.AcceptsDraw:
-                    return `${agent} will accept a draw`;
-                case PlayerStatus.Conceded:
-                    return `${agent} conceded`
-                case PlayerStatus.Alive:
-                    return `${agent} will no longer accept a draw`;
-                default:
-                    throw "Unsupported player status: " + s;
+            case EffectKind.PieceEnlisted: {
+                const f = <PieceEnlistedEffect>effect.value;
+                return `${Copy.getPieceLabel(f.oldPiece, game)} was enlisted by ${Copy.getPlayerName(f.newPlayerId, game)}.`;
             }
-
-        default:
-            throw "Unsupported event kind: " + event.kind;
+            case EffectKind.PieceKilled: {
+                const f = <PieceKilledEffect>effect.value;
+                return `${Copy.getPieceLabel(f.oldPiece, game)} was killed.`;
+            }
+            case EffectKind.PieceMoved: {
+                const f = <PieceMovedEffect>effect.value;
+                return `${Copy.getPieceLabel(f.oldPiece, game)} was moved to ${Copy.getCellLabel(f.newCellId, board)}.`;
+            }
+            case EffectKind.PieceVacated: {
+                const f = <PieceVacatedEffect>effect.value;
+                return `${Copy.getPieceLabel(f.oldPiece, game)} vacated the ${this.centerCellName()} to ${Copy.getCellLabel(f.newCellId, board)}.`;
+            }
+            case EffectKind.PlayerOutOfMoves: {
+                const f = <PlayerOutOfMovesEffect>effect.value;
+                return `${Copy.getPlayerName(f.playerId, game)} is out of moves.`;
+            }
+            case EffectKind.PlayerStatusChanged: {
+                const f = <PlayerStatusChangedEffect>effect.value;
+                switch (f.newStatus) {
+                    case PlayerStatus.Eliminated:
+                        return `${Copy.getPlayerName(f.playerId, game)} was eliminated.`;
+                    case PlayerStatus.Victorious:
+                        return `${Copy.getPlayerName(f.playerId, game)} won.`;
+                    case PlayerStatus.Alive:
+                        return `${Copy.getPlayerName(f.playerId, game)} will no longer accept a draw.`;
+                    case PlayerStatus.WillConcede:
+                        return `${Copy.getPlayerName(f.playerId, game)} will concede at the start of their next turn.`;
+                    case PlayerStatus.Conceded:
+                        return `${Copy.getPlayerName(f.playerId, game)} conceded.`;
+                    case PlayerStatus.AcceptsDraw:
+                        return `${Copy.getPlayerName(f.playerId, game)} will accept a draw.`;
+                    default:
+                        throw "Unsupported player status: " + f.newStatus;
+                }
+            }
+            case EffectKind.TurnCyclePlayerFellFromPower: {
+                const f = <TurnCyclePlayerFellFromPowerEffect>effect.value;
+                return `${Copy.getPlayerName(f.playerId, game)} fell from power.`;
+            }
+            case EffectKind.TurnCyclePlayerRoseToPower: {
+                const f = <TurnCyclePlayerRoseToPowerEffect>effect.value;
+                return `${Copy.getPlayerName(f.playerId, game)} rose to power.`;
+            }
+            default:
+                throw "Unsupported effect kind: " + effect.kind;
+        }
     }
-}
 
-function getAgentName(e : Event, g : Game): string {
-    if (e.actingPlayerId) {
-        return g.players.find(p => p.id === e.actingPlayerId).name;
-    } else if (e.createdBy.userId) {
-        return e.createdBy.userName;
-    } else {
-        return "System";
+    public static getEventDescription(event : Event, game : Game) : string {
+        const agent = Copy.getAgentName(event, game);
+
+        switch (event.kind) {
+            case EventKind.GameStarted:
+                return `Game started`;
+
+            case EventKind.TurnCommitted:
+                return `${agent} took a turn`;
+
+            case EventKind.PlayerStatusChanged:
+                const f = event.effects.find(x => x.kind === EffectKind.PlayerStatusChanged);
+                const s = (<PlayerStatusChangedEffect>f.value).newStatus;
+                switch (s) {
+                    case PlayerStatus.AcceptsDraw:
+                        return `${agent} will accept a draw`;
+                    case PlayerStatus.Conceded:
+                        return `${agent} conceded`
+                    case PlayerStatus.Alive:
+                        return `${agent} will no longer accept a draw`;
+                    default:
+                        throw "Unsupported player status: " + s;
+                }
+
+            default:
+                throw "Unsupported event kind: " + event.kind;
+        }
+    }
+
+    private static getAgentName(e : Event, g : Game): string {
+        if (e.actingPlayerId) {
+            return g.players.find(p => p.id === e.actingPlayerId).name;
+        } else if (e.createdBy.userId) {
+            return e.createdBy.userName;
+        } else {
+            return "System";
+        }
     }
 }

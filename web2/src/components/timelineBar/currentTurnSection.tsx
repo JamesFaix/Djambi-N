@@ -1,21 +1,17 @@
 import * as React from 'react';
 import { TimelineHeader } from '../controls/headers';
 import { Game, User, Player, Board } from '../../api/model';
-import * as Copy from '../../utilities/copy';
 import { State } from '../../store/root';
 import { connect } from 'react-redux';
 import { Classes } from '../../styles/styles';
 import CurrentTurnActionsBar from './currentTurnActionsBar';
 import { Icons } from '../../utilities/icons';
-import { Theme } from '../../themes/model';
-import { DebugSettings } from '../../debug';
+import Copy from '../../utilities/copy';
 
 interface CurrentTurnSectionProps {
     game : Game,
     board : Board,
-    user : User,
-    theme : Theme,
-    debugSettings : DebugSettings
+    user : User
 }
 
 class currentTurnSection extends React.Component<CurrentTurnSectionProps> {
@@ -69,7 +65,7 @@ class currentTurnSection extends React.Component<CurrentTurnSectionProps> {
         return (<>
             {turn.selections.map((s, i) =>
                 <p key={"row" + i}>
-                    {Copy.getSelectionDescription(p.theme, s, p.game, p.board, p.debugSettings.showCellAndPieceIds)}
+                    {Copy.getSelectionDescription(s, p.game, p.board)}
                 </p>)
             }
             <p style={{
@@ -92,9 +88,7 @@ const mapStateToProps = (state : State) => {
     return {
         game: game,
         user: state.session.user,
-        board: board,
-        theme: state.display.theme,
-        debugSettings: state.settings.debug
+        board: board
     };
 }
 

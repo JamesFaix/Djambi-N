@@ -3,7 +3,7 @@ import { Event, Game, Board } from "../../api/model";
 import GameHistoryEffectBox from './gameHistoryEffectBox';
 import { Classes } from '../../styles/styles';
 import GameHistory from '../../viewModel/gameHistory';
-import * as Copy from '../../utilities/copy';
+import Copy from '../../utilities/copy';
 import { dateToString } from '../../utilities/dates';
 
 interface GameHistoryEventBoxProps {

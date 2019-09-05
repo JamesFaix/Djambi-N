@@ -36,16 +36,18 @@ export const defaultState : State = {
     settings: Settings.defaultState
 }
 
-export function getState(store : Store<State, CustomAction>) : State {
-    return store.getState() as State;
-}
-
 export interface CustomAction {
     type: string
 }
 
 export interface DataAction<T> extends CustomAction {
     data : T
+}
+
+export type AppStore = Store<State, CustomAction>;
+
+export function getAppState(store : AppStore) : State {
+    return store.getState() as State;
 }
 
 const combinedReducer : Reducer<State, CustomAction> = combineReducers({
