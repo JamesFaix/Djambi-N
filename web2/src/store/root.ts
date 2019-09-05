@@ -5,7 +5,6 @@ import * as Session from './session';
 import * as ActiveGame from './activeGame';
 import * as Boards from './boards';
 import * as ApiClient from './apiClient';
-import * as Images from './images';
 import { combineReducers, Reducer } from 'redux';
 import { Game, Board, StateAndEventResponse } from '../api/model';
 import CanvasTransformService, { CanvasTranformData } from '../viewModel/board/canvasTransformService';
@@ -21,7 +20,6 @@ export interface State {
     createGameForm : CreateGameForm.State,
     boards : Boards.State,
     display : Display.State,
-    images : Images.State,
     apiClient : ApiClient.State
 }
 
@@ -32,7 +30,6 @@ export const defaultState : State = {
     createGameForm: CreateGameForm.defaultState,
     boards: Boards.defaultState,
     display: Display.defaultState,
-    images : Images.defaultState,
     apiClient: ApiClient.defaultState
 }
 
@@ -51,7 +48,6 @@ const combinedReducer : Reducer<State, CustomAction> = combineReducers({
     createGameForm : CreateGameForm.reducer,
     display: Display.reducer,
     gamesQuery: GamesQuery.reducer,
-    images: Images.reducer,
     session: Session.reducer
 });
 

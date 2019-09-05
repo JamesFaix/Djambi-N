@@ -4,11 +4,13 @@ import Geometry from '../../viewModel/board/geometry';
 import { CellView, BoardView } from '../../viewModel/board/model';
 import { Text } from 'react-konva';
 import * as Copy from '../../utilities/copy';
+import ThemeService from '../../themes/themeService';
 
 export interface CanvasLabelProps {
     board : BoardView,
     cell : CellView,
     onClick : () => void,
+    theme : Theme
 }
 
 export default class CanvasLabel extends React.Component<CanvasLabelProps> {
@@ -19,10 +21,12 @@ export default class CanvasLabel extends React.Component<CanvasLabelProps> {
         }
         const cell = this.props.cell;
 
-        let text = Copy.getCellViewLabel(cell.id, this.props.board);
+        let text = Copy.getCellViewLabel(this.props.theme, cell.id, this.props.board);
         if (Debug.showPieceAndCellIds && cell.piece !== null) {
             text += "\nP " + cell.piece.id;
         }
+
+        const color = ThemeService.getCellTextColor(this.props.theme, cell.type);
 
         const rect = Geometry.Cell.boundingBox(cell);
 
@@ -35,7 +39,7 @@ export default class CanvasLabel extends React.Component<CanvasLabelProps> {
                 text={text}
                 align={"center"}
                 verticalAlign={"middle"}
-                fill='#FFFFFF'
+                fill={color}
                 shadowColor='#000000'
                 shadowBlur={10}
                 shadowOpacity={1}

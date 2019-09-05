@@ -6,10 +6,8 @@ import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import CanvasTransformService, { CanvasTranformData } from '../../viewModel/board/canvasTransformService';
 import { PieceKind } from '../../api/model';
-import * as Images from '../../utilities/images';
 import ApiActions from '../../apiActions';
 import { Classes } from '../../styles/styles';
-import Colors from '../../utilities/colors';
 import BoardScrollArea from './boardScrollArea';
 import BoardZoomSlider from '../controls/boardZoomSlider';
 
@@ -20,14 +18,10 @@ export interface BoardSectionProps {
     zoomLevel : number,
     pieceImages : Map<PieceKind, HTMLImageElement>,
     selectCell : (gameId: number, cell : CellView) => void,
-    loadPieceImages : () => void
+    theme : Theme
 }
 
 class boardSection extends React.Component<BoardSectionProps> {
-    componentDidMount(){
-        this.props.loadPieceImages();
-    }
-
     render(){
         if (!this.props.board) {
             return null;
@@ -39,8 +33,8 @@ class boardSection extends React.Component<BoardSectionProps> {
             width: internalSize.x,
             height: internalSize.y,
             strokeWidth: 5, //TODO: maybe put in settings somewhere
-            strokeColor: Colors.getBoardBorderColor(),
-            scale: CanvasTransformService.getScale(this.props.transformData)
+            scale: CanvasTransformService.getScale(this.props.transformData),
+            theme: this.props.theme
         };
 
         return (
@@ -73,21 +67,21 @@ const mapStateToProps = (state : State) => {
         gameId: game ? game.id : null,
         board: state.activeGame.boardView,
         zoomLevel: state.display.boardZoomLevel,
-        pieceImages: state.images.pieces,
+        pieceImages: state.display.images.pieces,
         transformData: {
             containerSize: state.display.boardContainerSize,
             canvasMargin: state.display.canvasMargin,
             contentPadding: state.display.canvasContentPadding,
             zoomLevel: state.display.boardZoomLevel,
             regionCount: state.activeGame.game.parameters.regionCount
-        }
+        },
+        theme: state.display.theme
     };
 }
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
     return {
-        selectCell: (gameId : number, cell : CellView) => ApiActions.selectCell(gameId, cell.id)(dispatch),
-        loadPieceImages: () => Images.init(dispatch)
+        selectCell: (gameId : number, cell : CellView) => ApiActions.selectCell(gameId, cell.id)(dispatch)
     };
 }
 

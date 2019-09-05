@@ -7,7 +7,8 @@ import CanvasLabel from './canvasLabel';
 export interface CanvasLabelsLayerProps {
     gameId : number,
     board : BoardView,
-    selectCell : (cell : CellView) => void
+    selectCell : (cell : CellView) => void,
+    theme : Theme
 }
 
 export default class CanvasLabelsLayer extends React.Component<CanvasLabelsLayerProps> {
@@ -27,6 +28,7 @@ export default class CanvasLabelsLayer extends React.Component<CanvasLabelsLayer
                             board={board}
                             cell={c}
                             onClick={() => this.props.selectCell(c)}
+                            theme={this.props.theme}
                         />
                     )
                 }

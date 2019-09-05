@@ -27,7 +27,8 @@ import {
     faExclamation,
     faCamera,
     faSave,
-    faTrashAlt
+    faTrashAlt,
+    faCog
 } from "@fortawesome/free-solid-svg-icons";
 import { PlayerStatus, GameStatus } from "../api/model";
 
@@ -104,6 +105,7 @@ export class Icons {
         public static readonly diplomacy : IconInfo = { icon: faHandshake, title: "Diplomacy" };
         public static readonly signup : IconInfo = { icon: faUserPlus, title: "Sign up" };
         public static readonly snapshots : IconInfo = { icon: faCamera, title: "Snapshots" };
+        public static readonly settings : IconInfo = { icon: faCog, title: "Settings" };
     }
 
     public static readonly UserActions = class {

@@ -2,20 +2,21 @@ import * as React from 'react';
 import { Image } from 'react-konva';
 import { PieceView } from '../../viewModel/board/model';
 import { Point } from '../../viewModel/board/model';
-import Colors from '../../utilities/colors';
+import ThemeService from '../../themes/themeService';
 
 export interface CanvasPieceProps {
     piece : PieceView,
     onClick : () => void,
     size : number,
     location : Point,
-    image : HTMLImageElement
+    image : HTMLImageElement,
+    theme : Theme
 }
 
 export default class CanvasPiece extends React.Component<CanvasPieceProps> {
     render() {
         const colorId = this.props.piece.colorId;
-        const playerColor = colorId ? Colors.getColorFromPlayerColorId(colorId) : null;
+        const playerColor = colorId ? ThemeService.getPlayerColor(this.props.theme, colorId) : null;
         return (
             <Image
                 image={this.props.image}

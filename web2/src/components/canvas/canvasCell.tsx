@@ -1,18 +1,20 @@
 import * as React from 'react';
 import CanvasPolygon from './canvasPolygon';
 import { CellView } from '../../viewModel/board/model';
-import Colors from '../../utilities/colors';
+import ThemeService from '../../themes/themeService';
 
 export interface CanvasCellProps {
     cell : CellView,
-    selectCell : (cell : CellView) => void
+    selectCell : (cell : CellView) => void,
+    theme : Theme
 }
 
 export default class CanvasCell extends React.Component<CanvasCellProps> {
     render() {
         const cell = this.props.cell;
-        const color = Colors.getCellViewColor(cell);
-        let borderColor = Colors.getCellViewBorderColor(cell);
+        const theme = this.props.theme;
+        const color = ThemeService.getCellColor(theme, cell);
+        let borderColor = ThemeService.getCellBorderColor(theme, cell.type);
         if (!borderColor) {
             borderColor = color;
         }

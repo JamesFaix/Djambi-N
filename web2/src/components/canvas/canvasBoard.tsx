@@ -13,7 +13,7 @@ export interface CanvasBoardStyle {
     height : number
     scale : number,
     strokeWidth : number,
-    strokeColor : string
+    theme : Theme
 }
 
 export interface CanvasBoardProps {
@@ -30,11 +30,12 @@ export default class CanvasBoard extends React.Component<CanvasBoardProps> {
 
         const backgroundStyle = {
             strokeWidth: style.strokeWidth,
-            strokeColor: style.strokeColor
+            strokeColor: style.theme.colors.cells.boardBorder
         };
 
         const piecesStyle = {
-            scale: style.scale
+            scale: style.scale,
+            theme: style.theme
         };
 
         return (
@@ -51,6 +52,7 @@ export default class CanvasBoard extends React.Component<CanvasBoardProps> {
                     gameId={this.props.gameId}
                     board={this.props.board}
                     selectCell={this.props.selectCell}
+                    theme={style.theme}
                 />
                 <CanvasPiecesLayer
                     board={this.props.board}
@@ -62,6 +64,7 @@ export default class CanvasBoard extends React.Component<CanvasBoardProps> {
                     gameId={this.props.gameId}
                     board={this.props.board}
                     selectCell={this.props.selectCell}
+                    theme={this.props.style.theme}
                 />
             </Stage>
         );
