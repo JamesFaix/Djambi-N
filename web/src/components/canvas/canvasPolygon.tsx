@@ -1,18 +1,23 @@
 import * as React from 'react';
 import { Context } from 'konva';
-import { Polygon } from '../../boardRendering/model';
+import { Polygon } from '../../viewModel/board/model';
 import { Shape } from 'react-konva';
 
-export interface CanvasPolygonProps {
+export interface CanvasPolygonStyle {
     fillColor ?: string,
-    polygon : Polygon,
-    onClick ?: () => void,
     strokeColor ?: string,
     strokeWidth ?: number
 }
 
+export interface CanvasPolygonProps {
+    polygon : Polygon,
+    onClick ?: () => void,
+    style: CanvasPolygonStyle
+}
+
 export default class CanvasPolygon extends React.Component<CanvasPolygonProps> {
     render() {
+        const style = this.props.style;
         return (
             <Shape
                 sceneFunc={(ctx : Context, shape : any) => {
@@ -30,9 +35,9 @@ export default class CanvasPolygon extends React.Component<CanvasPolygonProps> {
                     ctx.closePath();
                     ctx.fillStrokeShape(shape);
                 }}
-                fill={this.props.fillColor}
-                stroke={this.props.strokeColor}
-                strokeWidth={this.props.strokeWidth}
+                fill={style.fillColor}
+                stroke={style.strokeColor}
+                strokeWidth={style.strokeWidth}
                 onClick={() => this.props.onClick()}
             />
         );

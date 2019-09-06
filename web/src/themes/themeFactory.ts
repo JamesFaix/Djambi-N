@@ -1,226 +1,233 @@
-import Theme from './theme';
+import { Theme } from "./model";
+
+const imagesDir = "../../resources/images";
+
+const whiteHex = "#FFFFFF";
+const blackHex = "#000000";
+const medGrayHex = "#828282";
+const darkGrayHex = "#161616";
+const lightGrayHex = "#DCDCDC";
 
 export default class ThemeFactory {
-    private static getModernTheme() : Theme {
-        return {
-            pageStyle: {
-                backgroundColor: "#FFFFFF",
-                textColor: "#000000",
-                borderColor: "#EEEEEE",
-                hintTextColor: "#AAAAAA"
-            },
-            cellStyle: {
-                colorCenter: "#828282", //Gray
-                colorEven: "#000000",   //Black
-                colorOdd: "#FFFFFF",    //White
-                borderColorCenter: null,
-                borderColorEven: null,
-                borderColorOdd: null,
-                textColorCenter: "#000000",
-                textColorEven: "#FFFFFF",
-                textColorOdd: "#000000"
-            },
-            cellHighlightStyle: {
+    public static readonly default : Theme = {
+        name: "Default",
+        colors: {
+            background: "white",
+            text: "black",
+            headerText: "black",
+            border: "gainsboro",
+            hoverText: "white",
+            hoverBackground: "black",
+            altRowText: "black",
+            altRowBackground: "gainsboro",
+
+            player0: "blue",
+            player1: "red",
+            player2: "green",
+            player3: "orange",
+            player4: "brown",
+            player5: "teal",
+            player6: "magenta",
+            player7: "gold",
+
+            cells: {
+                //Cell colors must be in hex
+                even: whiteHex,
+                odd: blackHex,
+                center: medGrayHex,
+
+                evenBorder: null,
+                oddBorder: null,
+                centerBorder: null,
+
+                evenText: blackHex,
+                oddText: whiteHex,
+                centerText: whiteHex,
+
+                boardBorder: "black",
+
                 selectedColor: "#6AC921", //Green
                 selectedIntensity: 0.75,
-                selectionOptionColor: "#E5E500", //Yellow
-                selectionOptionIntensity: 0.5,
-            },
-            centerCellName: "The Seat",
-            pieces: {
-                imageAssassin: "../resources/daggerEmoji.png",
-                imageChief: "../resources/crownEmoji.png",
-                imageCorpse: "../resources/skullEmoji.png",
-                imageDiplomat: "../resources/doveEmoji.png",
-                imageGravedigger: "../resources/pickEmoji.png",
-                imageReporter: "../resources/newspaperEmoji.png",
-                imageThug: "../resources/fistEmoji.png",
-
-                nameAssassin: "Assassin",
-                nameChief: "Chief",
-                nameCorpse: "Corpse",
-                nameDiplomat: "Diplomat",
-                nameGravedigger: "Gravedigger",
-                nameReporter: "Reporter",
-                nameThug: "Thug",
-            },
-            players: {
-                color0: "#CC2B08", //Red
-                color1: "#47CC08", //Green
-                color2: "#08A9CC", //Blue
-                color3: "#8D08CC", //Purple
-                color4: "#CC8708", //Orange
-                color5: "#CC0884", //Pink
-                color6: "#08CC8B", //Teal
-                color7: "#996A0C", //Brown
-            },
-            gameCopy: {
-                effectGameStatusChangedInProgress: "Game started.",
-                effectGameStatusChangedOver: "Game over.",
-                effectPieceAbandoned: "%(piece)s was abandoned.",
-                effectPieceDropped: "%(piece)s was dropped at %(newCell)s.",
-                effectPieceEnlisted: "%(piece)s was enlisted by player %(newPlayer)s.",
-                effectPieceKilled: "%(piece)s was killed.",
-                effectPieceMoved: "%(piece)s moved from %(oldCell)s to %(newCell)s.",
-                effectPieceVacated: "%(piece)s fled %(center)s to %(newCell)s.",
-                effectPlayerAdded: "%(player)s joined the game.",
-                effectNeutralPlayerAdded: "Neutral player %(player)s added to the game.",
-                effectPlayerOutOfMoves: "%(player)s is out of moves.",
-                effectPlayerRemoved: "%(player)s was removed from the game.",
-                effectPlayerStatusChangedAlive: "%(player)s will no longer accept a draw.",
-                effectPlayerStatusChangedAcceptsDraw: "%(player)s will accept a draw.",
-                effectPlayerStatusChangedConceded: "%(player)s conceded.",
-                effectPlayerStatusChangedWillConcede: "%(player)s will concede at the start of their next turn.",
-                effectPlayerStatusChangedEliminated: "%(player)s was eliminated.",
-                effectPlayerStatusChangedVictorious: "%(player)s won.",
-                effectTurnCycleAdvanced: "Turn cycle advanced by 1. [%(newCycle)s]",
-                effectTurnCyclePlayerFellFromPower: "%(player)s fell from power. [%(newCycle)s]",
-                effectTurnCyclePlayerRemoved: "%(player)s removed from the turn cycle. [%(newCycle)s]",
-                effectTurnCyclePlayerRoseToPower: "%(player)s rose to power. [%(newCycle)s]",
-
-                eventGameStarted: "Game started",
-                eventTurnCommitted: "%(player)s took a turn",
-                eventPlayerStatusChanged: "%(player)s changed their status",
-
-                selectionDescriptionSubject: "Pick up %s",
-                selectionDescriptionMove: "Move to cell %s",
-                selectionDescriptionMoveAndTarget: "Move to cell %s and target %s",
-                selectionDescriptionTarget: "Target %s at cell %s",
-                selectionDescriptionDrop: "Drop target piece at cell %s",
-                selectionDescriptionVacate: "Vacate %s to cell %s",
-
-                selectionPromptDrop: "%s, select a cell to drop the target piece in.",
-                selectionPromptMove: "%s, select a cell to move to.",
-                selectionPromptSubject: "%s, select a piece to move.",
-                selectionPromptTarget: "%s, select a piece to target.",
-                selectionPromptVacate: "%s, select a cell to vacate to.",
-
-                turnPromptCommit: "%s, end your turn or reset.",
-                turnPromptDeadEnd: "%s, no further selections are available. You must reset."
+                selectableColor: "#E5E500", //Yellow
+                selectableIntensity: 0.5
             }
-        };
-    }
-
-    private static getHotdogtownThemeFragment() : Theme {
-        return {
-            centerCellName: "The Booth",
+        },
+        images: {
             pieces: {
-                nameAssassin: "Fork",
-                nameChief: "Sauce",
-                nameCorpse: "Hotdog",
-                nameDiplomat: "Hugger",
-                nameGravedigger: "Eater",
-                nameReporter: "Fart",
-                nameThug: "Fries",
-
-                imageAssassin: "../resources/forkEmoji.png",
-                imageChief: "../resources/ketchupEmoji.png",
-                imageCorpse: "../resources/hotdogEmoji.png",
-                imageDiplomat: "../resources/hugEmoji.png",
-                imageGravedigger: "../resources/droolEmoji.png",
-                imageReporter: "../resources/fartEmoji.png",
-                imageThug: "../resources/friesEmoji.png",
+                assassin: `${imagesDir}/default/assassin.png`,
+                chief: `${imagesDir}/default/chief.png`,
+                corpse: `${imagesDir}/default/corpse.png`,
+                diplomat: `${imagesDir}/default/diplomat.png`,
+                gravedigger: `${imagesDir}/default/gravedigger.png`,
+                reporter: `${imagesDir}/default/reporter.png`,
+                thug: `${imagesDir}/default/thug.png`
             }
-        };
-    }
-
-    private static getVoidThemeFragment() : Theme {
-        return {
-            pageStyle: {
-                backgroundColor: "#161616",
-                textColor: "#dcdcdc",
-                borderColor: "#dcdcdc",
-                hintTextColor: "#aaaaaa"
-            },
-            cellStyle: {
-                colorCenter : "#EEEEEE", //Very light gray
-                colorEven : "#000000",   //Black
-                colorOdd : "#333333",    //Dark gray
-                borderColorCenter: "#DDDDDD",
-                borderColorEven: "#DDDDDD",
-                borderColorOdd: "#DDDDDD",
-                textColorCenter: "#000000",
-                textColorEven: "#dcdcdc", //gainsboro
-                textColorOdd: "#dcdcdc",
-            },
-            centerCellName: "The Void",
+        },
+        copy: {
+            gameTitle: "Djambi-N",
+            centerCellName: "Seat",
             pieces: {
-                nameAssassin : "Hunter",
-                nameChief : "Conduit",
-                nameCorpse : "Husk",
-                nameDiplomat : "Transporter",
-                nameGravedigger : "Reaper",
-                nameReporter : "Scientist",
-                nameThug : "Zealot",
-
-                imageAssassin : "../resources/daggerEmoji.png",
-                imageChief : "../resources/eyeEmoji.png",
-                imageCorpse : "../resources/skullEmoji.png",
-                imageDiplomat : "../resources/doveEmoji.png",
-                imageGravedigger : "../resources/sicleIcon.png",
-                imageReporter : "../resources/testTubeEmoji.png",
-                imageThug : "../resources/fistEmoji.png",
+                assassin: "Assassin",
+                chief: "Chief",
+                corpse: "Corpse",
+                diplomat: "Diplomat",
+                gravedigger: "Gravedigger",
+                reporter: "Reporter",
+                thug: "Thug"
             }
-        };
-    }
+        },
+        fonts: {
+            headerFamily: "Century Gothic, Geneva, sans-serif",
+            normalFamily: "Century Gothic, Geneva, sans-serif"
+        }
+    };
 
-    private static getClassicThemeFragment() : Theme {
-        return {
-            pageStyle: {
-                backgroundColor: "#FFFFFF",
-                textColor: "#000000",
-                borderColor: "#EEEEEE",
-                hintTextColor: "#AAAAAA"
-            },
-            cellStyle: {
-                colorCenter : "#000080", //Navy
-                colorEven : "#a7a7a7",   //Medium gray
-                colorOdd : "#a7a7a7",    //Medium gray
-                borderColorCenter: "#FFFFFF",
-                borderColorEven: "#000000",
-                borderColorOdd: "#000000",
-                textColorCenter: "#FFFFFF",
-                textColorEven: "#000000",
-                textColorOdd: "#000000",
-            },
-            centerCellName : "The Maze",
+    public static readonly anesto : Theme = {
+        name: "Anesto",
+        colors: {
+            ...ThemeFactory.default.colors,
+            background: "oldlace",
+            cells: {
+                ...ThemeFactory.default.colors.cells,
+                //Cell colors must be in hex
+                even: medGrayHex,
+                odd: medGrayHex,
+                center: "#000080", //Navy
+
+                evenBorder: blackHex,
+                oddBorder: blackHex,
+                centerBorder: whiteHex,
+
+                evenText: blackHex,
+                oddText: blackHex,
+                centerText: whiteHex,
+            }
+        },
+        images: {
             pieces: {
-                nameAssassin : "Assassin",
-                nameChief : "Chief",
-                nameCorpse : "Corpse",
-                nameDiplomat : "Provocateur",
-                nameGravedigger : "Necromobile",
-                nameReporter : "Journalist",
-                nameThug : "Militant",
-
-                imageAssassin : "../resources/classicAssassin.png",
-                imageChief : "../resources/classicChief.png",
-                imageCorpse : "../resources/classicCorpse.png",
-                imageDiplomat : "../resources/classicDiplomat.png",
-                imageGravedigger : "../resources/classicNecromobile.png",
-                imageReporter : "../resources/classicReporter.png",
-                imageThug : "../resources/classicMilitant.png",
+                assassin: `${imagesDir}/anesto/assassin.png`,
+                chief: `${imagesDir}/anesto/chief.png`,
+                corpse: `${imagesDir}/anesto/corpse.png`,
+                diplomat: `${imagesDir}/anesto/diplomat.png`,
+                gravedigger: `${imagesDir}/anesto/gravedigger.png`,
+                reporter: `${imagesDir}/anesto/reporter.png`,
+                thug: `${imagesDir}/anesto/thug.png`
             }
-        };
+        },
+        copy: {
+            gameTitle: "Djambi",
+            centerCellName: "Maze",
+            pieces: {
+                ...ThemeFactory.default.copy.pieces,
+                diplomat: "Provocateur",
+                gravedigger: "Necromobile",
+                reporter: "Journalist",
+                thug: "Militant"
+            }
+        },
+        fonts: {
+            headerFamily: "Georgia, serif",
+            normalFamily: "Georgia, serif"
+        }
     }
 
-    private static merge(theme1 : Theme, theme2 : Theme) : Theme {
-        return {...theme1, ...theme2};
+    public static readonly hotdogtown : Theme = {
+        name: "Hotdogtown",
+        colors: {
+            ...ThemeFactory.default.colors,
+            headerText: "indianred",
+            background: "lemonchiffon",
+            cells: {
+                ...ThemeFactory.default.colors.cells,
+                odd: "#00FFFF", //cyan
+                even: whiteHex,
+            }
+        },
+        images: {
+            pieces: {
+                assassin: `${imagesDir}/hotdogtown/assassin.png`,
+                chief: `${imagesDir}/hotdogtown/chief.png`,
+                corpse: `${imagesDir}/hotdogtown/corpse.png`,
+                diplomat: `${imagesDir}/hotdogtown/diplomat.png`,
+                gravedigger: `${imagesDir}/hotdogtown/gravedigger.png`,
+                reporter: `${imagesDir}/hotdogtown/reporter.png`,
+                thug: `${imagesDir}/hotdogtown/thug.png`
+            }
+        },
+        copy: {
+            gameTitle: "Hotdogtown",
+            centerCellName: "Booth",
+            pieces: {
+                assassin: "Fork",
+                chief: "Ketchup",
+                corpse: "Hotdog",
+                diplomat: "Hugger",
+                gravedigger: "Eater",
+                reporter: "Fart",
+                thug: "Fries"
+            }
+        },
+        fonts: {
+            ...ThemeFactory.default.fonts,
+            headerFamily: "Comic Sans MS",
+        }
     }
 
-    public static get defaultTheme() : Theme {
-        return this.getModernTheme();
+    public static readonly void : Theme = {
+        ...ThemeFactory.default,
+        name: "Void",
+        colors: {
+            ...ThemeFactory.default.colors,
+            background: darkGrayHex,
+            text: lightGrayHex,
+            headerText: lightGrayHex,
+            border: lightGrayHex,
+            hoverBackground: lightGrayHex,
+            hoverText: darkGrayHex,
+            altRowBackground: "#333333",
+            altRowText: lightGrayHex,
+            cells: {
+                ...ThemeFactory.default.colors.cells,
+                even: blackHex,
+                odd: "#333333",
+                center: "#EEEEEE",
+
+                centerBorder: "#DDDDDD",
+                evenBorder: "#DDDDDD",
+                oddBorder: "#DDDDDD",
+            }
+        },
+        images: {
+            pieces: {
+                ...ThemeFactory.default.images.pieces,
+                chief: `${imagesDir}/void/chief.png`,
+                gravedigger: `${imagesDir}/void/gravedigger.png`,
+                reporter: `${imagesDir}/void/reporter.png`,
+            }
+        },
+        copy: {
+            gameTitle: "Void",
+            centerCellName: "Void",
+            pieces: {
+                assassin: "Hunter",
+                chief: "Conduit",
+                corpse: "Husk",
+                diplomat: "Transporter",
+                gravedigger: "Reaper",
+                reporter: "Scientist",
+                thug: "Zealot"
+            }
+        }
     }
 
-    public static get hotdogtownTheme() : Theme {
-        return this.merge(this.getModernTheme(), this.getHotdogtownThemeFragment());
-    }
+    public static getThemes() : Map<string, Theme> {
+        const themes = [
+            ThemeFactory.default,
+            ThemeFactory.anesto,
+            ThemeFactory.hotdogtown,
+            ThemeFactory.void
+        ];
 
-    public static get voidTheme() : Theme {
-        return this.merge(this.getModernTheme(), this.getVoidThemeFragment());
-    }
-
-    public static get classicTheme() : Theme {
-        return this.merge(this.getModernTheme(), this.getClassicThemeFragment());
+        return new Map<string, Theme>(themes.map(t => [t.name, t]));
     }
 }

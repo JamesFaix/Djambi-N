@@ -1,7 +1,8 @@
-import BoardViewFactory from '../../src/boardRendering/boardViewFactory';
+import BoardViewFactory from '../../src/viewModel/board/boardViewFactory';
 import { expect } from 'chai';
-import { CellType } from '../../src/boardRendering/model';
-import Geometry from '../../src/boardRendering/geometry';
+import { CellType } from '../../src/viewModel/board/model';
+import Geometry from '../../src/viewModel/board/geometry';
+import { describe, it } from 'mocha';
 const Location = Geometry.Location;
 const Polygon = Geometry.Polygon;
 const Point = Geometry.Point;

@@ -1,53 +1,54 @@
 import * as React from 'react';
-import PageTitle from '../pageTitle';
-import { Kernel as K } from '../../kernel';
-import { Redirect } from 'react-router';
-import { User } from '../../api/model';
-import { MyGamesPageButton, FindGamesPageButton, CreateGamePageButton, RulesPageButton } from '../controls/navigationButtons';
-import Button, { ButtonKind } from '../controls/button';
-import { IconKind } from '../icons/icon';
+import { Dispatch } from 'redux';
+import { connect } from 'react-redux';
+import { GamesQuery, Game } from '../../api/model';
+import GamesSearchResultsTable from '../tables/gamesSearchResultsTable';
+import { State } from '../../store/root';
+import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
+import GamesSearchForm from '../forms/gamesSearchForm';
+import BasicPageContainer from '../sections/basicPageContainer';
+import MiscStoreFlows from '../../storeFlows/misc';
 
-export interface DashboardPageProps {
-    user : User,
-    setUser(user : User) : void
+interface DashboardPageProps {
+    gamesQuery : GamesQuery,
+    gamesResults : Game[],
+    onSearchClicked : (query: GamesQuery) => void
 }
 
-export default class DashboardPage extends React.Component<DashboardPageProps> {
-
-    private logoutOnClick() {
-        K.api
-            .logout()
-            .then(_ => {
-                this.props.setUser(null);
-            })
-            .catch(reason => {
-                alert("Logout failed because " + reason);
-            });
-    }
-
+class dashboardPage extends React.Component<DashboardPageProps>{
     render() {
-        //Go to home if not logged in
-        if (this.props.user === null) {
-            return <Redirect to={K.routes.home()}/>;
-        }
-
         return (
-            <div>
-                <PageTitle label={"Welcome, " + this.props.user.name}/>
+            <BasicPageContainer>
+                <RedirectToLoginIfNotLoggedIn/>
+                <GamesSearchForm/>
                 <br/>
-                <div className={K.classes.centerAligned}>
-                    <MyGamesPageButton/>
-                    <CreateGamePageButton/>
-                    <FindGamesPageButton/>
-                    <RulesPageButton/>
-                    <Button
-                        kind={ButtonKind.Action}
-                        icon={IconKind.Logout}
-                        onClick={() => this.logoutOnClick()}
-                        hint="Log out"
-                    />
-                </div>
-            </div>
+                <br/>
+                <GamesSearchResultsTable/>
+            </BasicPageContainer>
         );
     }
 }
+
+const mapStateToProps = (state: State) => {
+    if (state.gamesQuery){
+        return {
+            gamesQuery: state.gamesQuery.query,
+            gamesResults: state.gamesQuery.results
+        };
+    } else {
+        return {
+            gamesQuery: null,
+            gamesResults: []
+        };
+    }
+};
+
+const mapDispatchToProps = (dispatch : Dispatch) => {
+    return {
+        onSearchClicked: (query: GamesQuery) => MiscStoreFlows.queryGames(query)(dispatch)
+    };
+};
+
+const DashboardPage = connect(mapStateToProps, mapDispatchToProps)(dashboardPage);
+
+export default DashboardPage;

@@ -1,30 +1,23 @@
 export default class Routes {
+    static readonly base = "/";
+    static readonly login = "/login";
+    static readonly signup = "/signup";
+    static readonly dashboard = "/dashboard";
+    static readonly createGame = "/games/create";
+    static readonly settings = "/settings";
 
-    public createGame() { return "/games/create"; }
+    static lobby = (gameId : number) => `/games/${gameId}/lobby`;
+    static readonly lobbyPattern = "/games/:gameId/lobby";
 
-    public dashboard() { return "/dashboard"; }
+    static play = (gameId : number) => `/games/${gameId}/play`;
+    static readonly playPattern = "/games/:gameId/play";
 
-    public findGame() { return "/games/find"; }
+    static diplomacy = (gameId : number) => `/games/${gameId}/diplomacy`;
+    static readonly diplomacyPattern = "/games/:gameId/diplomacy";
 
-    public game(gameId : number) { return `/games/${gameId}`; }
+    static snapshots = (gameId : number) => `/games/${gameId}/snapshots`;
+    static readonly snapshotsPattern = "/games/:gameId/snapshots";
 
-    public gameTemplate() { return "/games/:gameId"; }
-
-    public gameInfo(gameId : number) { return `/games/${gameId}/info`; }
-
-    public gameInfoTemplate() { return "/games/:gameId/info"; }
-
-    public home() { return "/"; }
-
-    public login() { return "/login"; }
-
-    public myGames() { return "/games/my"; }
-
-    public rules() { return "https://github.com/GamesFaix/Djambi3/wiki/Rules"; }
-
-    public signup() { return "/signup"; }
-
-    public snapshots(gameId : number) { return `/games/${gameId}/snapshots`; }
-
-    public snapshotsTemplate() { return "/games/:gameId/snapshots"; }
+    static gameOver = (gameId : number) => `/games/${gameId}/results`;
+    static readonly gameOverPattern = "/games/:gameId/results";
 }

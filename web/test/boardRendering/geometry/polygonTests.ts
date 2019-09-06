@@ -1,5 +1,6 @@
 import { expect } from 'chai';
-import Geometry from '../../../src/boardRendering/geometry';
+import Geometry from '../../../src/viewModel/board/geometry';
+import { describe, it } from 'mocha';
 const P = Geometry.Polygon;
 
 describe('Polygon.boundingBox', () => {

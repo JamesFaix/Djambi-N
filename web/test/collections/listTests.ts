@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { List } from '../../src/collections';
+import { List } from '../../src/utilities/collections';
 
 describe('List.contains', () => {
     it('Returns true if array contains value', () => {

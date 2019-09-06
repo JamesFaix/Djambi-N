@@ -1,112 +1,75 @@
 import * as React from 'react';
-import CanvasCell from './canvasCell';
-import CanvasLabel from './canvasLabel';
-import CanvasPiece from './canvasPiece';
-import CanvasPolygon from './canvasPolygon';
-import Debug from '../../debug';
-import Geometry from '../../boardRendering/geometry';
-import { BoardView, CellType, CellView } from '../../boardRendering/model';
-import { Kernel as K } from '../../kernel';
-import { Layer, Stage } from 'react-konva';
-import { Point } from '../../boardRendering/model';
+import { Stage } from 'react-konva';
+import CanvasCellsLayer from './canvasCellsLayer';
+import CanvasPiecesLayer from './canvasPiecesLayer';
+import CanvasLabelsLayer from './canvasLabelsLayer';
+import CanvasBackgroundLayer from './canvasBackgroundLayer';
+import { BoardView, CellView } from '../../viewModel/board/model';
+import { PieceKind } from '../../api/model';
+import { Classes } from '../../styles/styles';
+import { Theme } from '../../themes/model';
+import { DebugSettings } from '../../debug';
+
+export interface CanvasBoardStyle {
+    width : number,
+    height : number
+    scale : number,
+    strokeWidth : number,
+    theme : Theme
+}
 
 export interface CanvasBoardProps {
+    gameId : number,
     board : BoardView,
     selectCell : (cell : CellView) => void,
-    scale : number,
-    boardStrokeWidth : number,
-    size : Point
+    style : CanvasBoardStyle,
+    pieceImages : Map<PieceKind, HTMLImageElement>,
+    debugSettings : DebugSettings
 }
 
 export default class CanvasBoard extends React.Component<CanvasBoardProps> {
-    private getPieceSize() : number {
-        return this.props.scale / this.props.board.cellCountPerSide / 2;
-    }
-
-    private getPieceLocation(cell : CellView) : Point {
-        const size = this.getPieceSize();
-        const cellCenter = Geometry.Cell.centroid(cell);
-        const offset = { x: -(size/2), y: -(size/2) };
-        return Geometry.Point.add(cellCenter, offset);
-    }
-
-    private renderBackground() {
-        return (
-            <Layer>
-                <CanvasPolygon
-                    polygon={this.props.board.polygon}
-                    strokeColor={K.theme.theme.pageStyle.borderColor}
-                    strokeWidth={this.props.boardStrokeWidth}
-                />
-            </Layer>
-        );
-    }
-
-    private renderCells() {
-        return (
-            <Layer>
-                {
-                    this.props.board.cells.map((c, i) =>
-                        <CanvasCell
-                            key={"cell" + i}
-                            cell={c}
-                            selectCell={(cell) => this.props.selectCell(cell)}
-                        />
-                    )
-                }
-            </Layer>
-        );
-    }
-
-    private renderPieces() {
-        const size = this.getPieceSize();
-        return (
-            <Layer>
-                {
-                    this.props.board.cells
-                        .filter(c => c.piece !== null)
-                        .map((c, i) =>
-                            <CanvasPiece
-                                key={"piece" + i}
-                                piece={c.piece}
-                                onClick={() => this.props.selectCell(c)}
-                                size={size}
-                                location={this.getPieceLocation(c)}
-                            />
-                        )
-                }
-            </Layer>
-        );
-    }
-
-    private renderDebugLabels() {
-        if (!Debug.showCellLabels){
-            return undefined;
-        }
-
-        return (
-            <Layer>
-                {
-                    this.props.board.cells.map((c, i) =>
-                        <CanvasLabel
-                            key={"label" + i}
-                            cell={c}
-                            onClick={() => this.props.selectCell(c)}
-                            regionCount={this.props.board.regionCount}
-                        />
-                    )
-                }
-            </Layer>
-        );
-    }
-
     render() {
+        const style = this.props.style;
+
+        const backgroundStyle = {
+            strokeWidth: style.strokeWidth,
+            strokeColor: style.theme.colors.cells.boardBorder
+        };
+
+        const piecesStyle = {
+            scale: style.scale,
+            theme: style.theme
+        };
+
         return (
-            <Stage width={this.props.size.x} height={this.props.size.y}>
-                {this.renderBackground()}
-                {this.renderCells()}
-                {this.renderPieces()}
-                {this.renderDebugLabels()}
+            <Stage
+                className={Classes.canvasBoard}
+                width={style.width}
+                height={style.height}
+            >
+                <CanvasBackgroundLayer
+                    board={this.props.board}
+                    style={backgroundStyle}
+                />
+                <CanvasCellsLayer
+                    gameId={this.props.gameId}
+                    board={this.props.board}
+                    selectCell={this.props.selectCell}
+                    theme={style.theme}
+                />
+                <CanvasPiecesLayer
+                    board={this.props.board}
+                    selectCell={this.props.selectCell}
+                    style={piecesStyle}
+                    images={this.props.pieceImages}
+                />
+                <CanvasLabelsLayer
+                    gameId={this.props.gameId}
+                    board={this.props.board}
+                    selectCell={this.props.selectCell}
+                    theme={this.props.style.theme}
+                    debugSettings={this.props.debugSettings}
+                />
             </Stage>
         );
     }

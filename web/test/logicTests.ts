@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import Logic from '../src/logic';
+import Logic from '../src/utilities/logic';
 
 describe('Logic.Xor', () => {
     it('Returns true if only A is true', () => {

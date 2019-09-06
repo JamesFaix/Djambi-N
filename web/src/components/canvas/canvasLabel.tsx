@@ -1,29 +1,32 @@
 import * as React from 'react';
-import Debug from '../../debug';
-import Geometry from '../../boardRendering/geometry';
-import { CellView } from '../../boardRendering/model';
-import { Kernel as K } from '../../kernel';
+import Geometry from '../../viewModel/board/geometry';
+import { CellView, BoardView } from '../../viewModel/board/model';
 import { Text } from 'react-konva';
+import Copy from '../../utilities/copy';
+import ThemeService from '../../themes/themeService';
+import { Theme } from '../../themes/model';
+import { DebugSettings } from '../../debug';
 
 export interface CanvasLabelProps {
+    board : BoardView,
     cell : CellView,
-    onClick : (cell : CellView) => void,
-    regionCount : number
+    onClick : () => void,
+    theme : Theme,
+    debugSettings : DebugSettings
 }
 
 export default class CanvasLabel extends React.Component<CanvasLabelProps> {
 
     render() {
-        if (!Debug.showCellLabels) {
-            return undefined;
+        const s = this.props.debugSettings;
+
+        if (!s.showCellLabels) {
+            return null;
         }
+
         const cell = this.props.cell;
-
-        let text = K.copy.getCellLabel(cell.id, this.props.regionCount);
-        if (Debug.showPieceAndCellIds && cell.piece !== null) {
-            text += "\nP " + cell.piece.id;
-        }
-
+        const text = Copy.getCellViewLabel(cell);
+        const color = ThemeService.getCellTextColor(this.props.theme, cell.type);
         const rect = Geometry.Cell.boundingBox(cell);
 
         return (
@@ -35,11 +38,11 @@ export default class CanvasLabel extends React.Component<CanvasLabelProps> {
                 text={text}
                 align={"center"}
                 verticalAlign={"middle"}
-                fill='#FFFFFF'
+                fill={color}
                 shadowColor='#000000'
                 shadowBlur={10}
                 shadowOpacity={1}
-                onClick={() => this.props.onClick(this.props.cell)}
+                onClick={() => this.props.onClick()}
             />
         );
     }
