@@ -21,7 +21,6 @@ let checkForEnv = "check-env"
 let paketRestore = "paket-restore"
 let buildApi = "build-api"
 let buildWeb = "build-web"
-let buildWeb2 = "build-web2"
 let dbReset = "db-reset"
 let genClient = "gen-client"
 let restoreWeb = "restore-web"
@@ -29,7 +28,6 @@ let buildAll = "build-all"
 
 let runApi = "run-api"
 let runWeb = "run-web"
-let runWeb2 = "run-web2"
 let runAll = "run-all"
 
 let fsLint = "fs-lint"
@@ -92,7 +90,6 @@ Target.create dbReset (dotNetRun "utils/db-reset/db-reset.fsproj")
 Target.create genClient (dotNetRun "utils/client-generator/client-generator.fsproj")
 Target.create restoreWeb (fun _ -> Npm.install (setNpmParams "web"))
 Target.create buildWeb (fun _ -> Npm.run "build" (setNpmParams "web"))
-Target.create buildWeb2 (fun _ -> Npm.run "build" (setNpmParams "web2"))
 
 Target.create fsLint (fun _ ->
     let projects = !! "**/*.fsproj"
@@ -118,7 +115,6 @@ Target.create testWebUnit (fun _ -> Npm.run "test" (setNpmParams "web"))
 
 Target.create runApi (launchConsole "api/api.host" "dotnet" ["run api.host.fsproj"])
 Target.create runWeb (launchConsole "web" "http-server" [])
-Target.create runWeb2 (launchConsole "web2" "http-server" [])
 
 Target.create buildAll ignore
 Target.create lintAll ignore
