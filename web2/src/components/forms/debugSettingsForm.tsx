@@ -5,6 +5,7 @@ import { Dispatch } from 'redux';
 import { SectionHeader } from '../controls/headers';
 import { DebugSettings } from '../../debug';
 import MiscStoreFlows from '../../storeFlows/misc';
+import HtmlInputTypes from '../htmlInputTypes';
 
 interface DebugSettingsFormProps {
     formData : DebugSettings,
@@ -23,7 +24,7 @@ class debugSettingsForm extends React.Component<DebugSettingsFormProps> {
                         <td>Show cell labels</td>
                         <td>
                             <input
-                                type="checkbox"
+                                type={HtmlInputTypes.CheckBox}
                                 checked={s.showCellLabels}
                                 onChange={e => this.onChangeShowCellLabels(e)}
                             />
@@ -33,7 +34,7 @@ class debugSettingsForm extends React.Component<DebugSettingsFormProps> {
                         <td>Show cell and piece IDs</td>
                         <td>
                             <input
-                                type="checkbox"
+                                type={HtmlInputTypes.CheckBox}
                                 checked={s.showCellAndPieceIds}
                                 onChange={e => this.onChangeShowCellAndPieceIds(e)}
                             />
@@ -43,7 +44,7 @@ class debugSettingsForm extends React.Component<DebugSettingsFormProps> {
                         <td>Log API</td>
                         <td>
                             <input
-                                type="checkbox"
+                                type={HtmlInputTypes.CheckBox}
                                 checked={s.logApi}
                                 onChange={e => this.onChangeLogApi(e)}
                             />
@@ -53,7 +54,7 @@ class debugSettingsForm extends React.Component<DebugSettingsFormProps> {
                         <td>Log SSE</td>
                         <td>
                             <input
-                                type="checkbox"
+                                type={HtmlInputTypes.CheckBox}
                                 checked={s.logSse}
                                 onChange={e => this.onChangeLogSse(e)}
                             />
@@ -63,7 +64,7 @@ class debugSettingsForm extends React.Component<DebugSettingsFormProps> {
                         <td>Log Redux</td>
                         <td>
                             <input
-                                type="checkbox"
+                                type={HtmlInputTypes.CheckBox}
                                 checked={s.logRedux}
                                 onChange={e => this.onChangeLogRedux(e)}
                             />

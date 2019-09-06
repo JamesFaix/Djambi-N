@@ -5,6 +5,7 @@ import { User, CreatePlayerRequest, PlayerKind, Game } from '../../api/model';
 import IconButton from '../controls/iconButton';
 import PlayerNoteIcon from '../controls/playerNoteIcon';
 import { Icons } from '../../utilities/icons';
+import HtmlInputTypes from '../htmlInputTypes';
 
 interface MutablePlayersTableRowProps {
     game : Game,
@@ -124,7 +125,7 @@ class AddGuestRow extends React.Component<AddGuestRowProps, AddGuestRowState> {
             <tr>
                 <td>
                     <input
-                        type="text"
+                        type={HtmlInputTypes.Text}
                         value={this.state.guestName}
                         onChange={e => this.setState({guestName: e.target.value})}
                     />

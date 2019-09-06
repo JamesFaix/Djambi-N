@@ -106,6 +106,7 @@ export class Icons {
         public static readonly signup : IconInfo = { icon: faUserPlus, title: "Sign up" };
         public static readonly snapshots : IconInfo = { icon: faCamera, title: "Snapshots" };
         public static readonly settings : IconInfo = { icon: faCog, title: "Settings" };
+        public static readonly gameOver : IconInfo = { icon: faAward, title: "Game results" };
     }
 
     public static readonly UserActions = class {

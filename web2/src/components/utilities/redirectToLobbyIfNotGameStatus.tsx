@@ -5,19 +5,22 @@ import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import MiscStoreFlows from '../../storeFlows/misc';
 
-interface RedirectToLobbyIfGameNotInProgressProps {
+interface RedirectToLobbyIfNotGameStatusProps {
     game: Game,
+    status: GameStatus,
     redirect: (game: Game) => void
 }
 
-class redirectToLobbyIfGameNotInProgress extends React.Component<RedirectToLobbyIfGameNotInProgressProps>{
+class redirectToLobbyIfNotGameStatus extends React.Component<RedirectToLobbyIfNotGameStatusProps>{
     componentDidMount() {
-        if (!this.props.game) {
+        const p = this.props;
+
+        if (!p.game) {
             return;
         }
 
-        if (this.props.game.status !== GameStatus.InProgress) {
-            this.props.redirect(this.props.game);
+        if (p.game.status !== p.status) {
+            p.redirect(p.game);
         }
     }
 
@@ -38,6 +41,5 @@ const mapDispatchToProps = (dispatch : Dispatch) => {
     };
 };
 
-const RedirectToLobbyIfGameNotInProgress = connect(mapStateToProps, mapDispatchToProps)(redirectToLobbyIfGameNotInProgress);
-
-export default RedirectToLobbyIfGameNotInProgress
+const RedirectToLobbyIfNotGameStatus = connect(mapStateToProps, mapDispatchToProps)(redirectToLobbyIfNotGameStatus);
+export default RedirectToLobbyIfNotGameStatus;

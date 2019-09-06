@@ -1,5 +1,6 @@
 import * as React from 'react';
 import CanvasTransformService from '../../viewModel/board/canvasTransformService';
+import HtmlInputTypes from '../htmlInputTypes';
 
 interface ZoomSliderProps {
     level : number,
@@ -16,7 +17,7 @@ export class ZoomSlider extends React.Component<ZoomSliderProps> {
                 id="zoom-slider"
             >
                 <input
-                    type="range"
+                    type={HtmlInputTypes.Range}
                     value={level}
                     min={cts.minZoomLevel()}
                     max={cts.maxZoomLevel()}

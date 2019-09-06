@@ -51,6 +51,7 @@ interface NavigationOptions {
     showDiplomacy : ButtonState,
     showSnapshots : ButtonState,
     showSettings : ButtonState,
+    showGameOver : ButtonState,
     gameId : number
 }
 
@@ -67,6 +68,7 @@ function getOptionsFromProps(props : NavigationSectionProps) : NavigationOptions
         showDiplomacy: ButtonState.Hidden,
         showSnapshots: ButtonState.Hidden,
         showSettings: ButtonState.Hidden,
+        showGameOver: ButtonState.Hidden,
         gameId: null
     };
 
@@ -98,7 +100,7 @@ function getOptionsFromProps(props : NavigationSectionProps) : NavigationOptions
         o.showCreateGame = ButtonState.Inactive;
     }
 
-    else if (route.startsWith("/games")) {
+    else if (route.startsWith("/games") && props.game) {
         const parts = route.split("/");
         //parts[0] is ""
         //parts[1] is "games"
@@ -117,6 +119,9 @@ function getOptionsFromProps(props : NavigationSectionProps) : NavigationOptions
         if (props.user && props.user.privileges.includes(Privilege.Snapshots)) {
             o.showSnapshots = ButtonState.Inactive;
         }
+        if (props.game.status === GameStatus.Over) {
+            o.showGameOver = ButtonState.Inactive;
+        }
 
         switch(page) {
             case "lobby": {
@@ -133,6 +138,10 @@ function getOptionsFromProps(props : NavigationSectionProps) : NavigationOptions
             }
             case "snapshots": {
                 o.showSnapshots = ButtonState.Active;
+                break;
+            }
+            case "results": {
+                o.showGameOver = ButtonState.Active;
                 break;
             }
         }
@@ -187,6 +196,11 @@ const navigationSection : React.SFC<NavigationSectionProps> = props => {
                 icon={Icons.Pages.diplomacy}
                 state={o.showDiplomacy}
                 route={Routes.diplomacy(o.gameId)}
+            />
+            <NavigationButton
+                icon={Icons.Pages.gameOver}
+                state={o.showGameOver}
+                route={Routes.gameOver(o.gameId)}
             />
             <NavigationButton
                 icon={Icons.Pages.snapshots}

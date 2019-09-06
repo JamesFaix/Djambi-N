@@ -6,9 +6,11 @@ import { SectionHeader } from '../controls/headers';
 import { Classes } from '../../styles/styles';
 import PlayerStatusIcon from '../controls/playerStatusIcon';
 import PlayerNoteIcon from '../controls/playerNoteIcon';
+import { Theme } from '../../themes/model';
 
 interface PlayersTableProps {
-    game: Game
+    game : Game,
+    theme : Theme
 }
 
 class playersTable extends React.Component<PlayersTableProps> {
@@ -23,6 +25,7 @@ class playersTable extends React.Component<PlayersTableProps> {
                             player={p}
                             game={g}
                             key={i}
+                            theme={this.props.theme}
                         />
                     )}
                 </tbody>
@@ -33,7 +36,8 @@ class playersTable extends React.Component<PlayersTableProps> {
 
 interface PlayerRowProps {
     game : Game,
-    player : Player
+    player : Player,
+    theme : Theme
 }
 
 class PlayerRow extends React.Component<PlayerRowProps> {
@@ -45,7 +49,7 @@ class PlayerRow extends React.Component<PlayerRowProps> {
                 data-player-color-id={player.colorId}
             >
                 <td>
-                    <PlayerName player={player}/>
+                    <PlayerName player={player} theme={this.props.theme}/>
                 </td>
                 <td>
                     <PlayerNoteIcon player={player} game={this.props.game}/>
@@ -59,13 +63,14 @@ class PlayerRow extends React.Component<PlayerRowProps> {
 }
 
 interface PlayerNameProps {
-    player : Player
+    player : Player,
+    theme : Theme,
 }
 
 class PlayerName extends React.Component<PlayerNameProps> {
     render(){
         const player = this.props.player;
-        const color = player.kind === PlayerKind.Neutral ? "gray" : "black";
+        const color = player.kind === PlayerKind.Neutral ? this.props.theme.colors.border : this.props.theme.colors.text;
         const hint = player.kind === PlayerKind.Neutral ? "Neutral" : "";
         return (
             <div
@@ -80,7 +85,8 @@ class PlayerName extends React.Component<PlayerNameProps> {
 
 const mapStateToProps = (state : State) => {
     return {
-        game: state.activeGame.game
+        game: state.activeGame.game,
+        theme: state.display.theme
     };
 };
 

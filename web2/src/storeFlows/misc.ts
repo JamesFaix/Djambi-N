@@ -17,9 +17,18 @@ export default class MiscStoreFlows {
     }
 
     public static navigateToGame(game : Game) : void {
-        const route = game.status === GameStatus.InProgress
-            ? Routes.play(game.id)
-            : Routes.lobby(game.id);
+        let route = "";
+        switch (game.status) {
+            case GameStatus.InProgress:
+                route = Routes.play(game.id);
+                break;
+            case GameStatus.Over:
+                route = Routes.gameOver(game.id);
+                break;
+            default:
+                route = Routes.lobby(game.id);
+                break;
+        }
         navigateTo(route);
     }
 

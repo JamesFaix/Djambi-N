@@ -10,6 +10,7 @@ import * as StoreGamesQuery from '../../store/gamesQuery';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
 import MiscStoreFlows from '../../storeFlows/misc';
+import HtmlInputTypes from '../htmlInputTypes';
 
 interface GamesSearchFormProps {
     formData : GamesQuery,
@@ -29,7 +30,7 @@ class gamesSearchForm extends React.Component<GamesSearchFormProps> {
                         <td>Description</td>
                         <td>
                             <input
-                                type="text"
+                                type={HtmlInputTypes.Text}
                                 value={this.emptyIfNull(query.descriptionContains)}
                                 onChange={e => this.onChangeDescription(e)}
                             />
@@ -47,7 +48,7 @@ class gamesSearchForm extends React.Component<GamesSearchFormProps> {
                         <td>Created by user</td>
                         <td>
                             <input
-                                type="text"
+                                type={HtmlInputTypes.Text}
                                 value={this.emptyIfNull(query.createdByUserName)}
                                 onChange={e => this.onChangeCreatedBy(e)}
                             />
@@ -65,7 +66,7 @@ class gamesSearchForm extends React.Component<GamesSearchFormProps> {
                         <td>Contains user</td>
                         <td>
                             <input
-                                type="text"
+                                type={HtmlInputTypes.Text}
                                 value={this.emptyIfNull(query.playerUserName)}
                                 onChange={e => this.onChangePlayerUserName(e)}
                             />
@@ -85,7 +86,7 @@ class gamesSearchForm extends React.Component<GamesSearchFormProps> {
                         <td>
                             <input
                                 style={{width:"50px"}}
-                                type="number"
+                                type={HtmlInputTypes.Number}
                                 min={1}
                                 value={this.emptyIfNull(query.gameId)}
                                 onChange={e => this.onChangeGameId(e)}
