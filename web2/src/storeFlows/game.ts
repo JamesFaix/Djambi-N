@@ -1,7 +1,18 @@
 import * as StoreActiveGame from '../store/activeGame';
 import { Dispatch } from 'redux';
 import * as Api from "../api/client";
-import { Game, EventsQuery, ResultsDirection, Event, Board, GameParameters, CreatePlayerRequest, PlayerStatus, GameStatus } from '../api/model';
+import {
+    Game,
+    EventsQuery,
+    ResultsDirection,
+    Event,
+    Board,
+    GameParameters,
+    CreatePlayerRequest,
+    PlayerStatus,
+    GameStatus,
+    StateAndEventResponse
+} from '../api/model';
 import Routes from '../routes';
 import { navigateTo } from '../history';
 import * as StoreBoards from '../store/boards';
@@ -86,10 +97,7 @@ export default class GameStoreFlows {
     public static endTurn(gameId: number) {
         return async function (dispatch: Dispatch) : Promise<void> {
             const resp = await Api.commitTurn(gameId);
-            dispatch(StoreActiveGame.Actions.updateGame(resp));
-            if (resp.game.status === GameStatus.Over) {
-                navigateTo(Routes.gameOver(gameId));
-            }
+            GameStoreFlows.updateInProgressGame(resp, dispatch);
         }
     }
 
@@ -103,10 +111,15 @@ export default class GameStoreFlows {
     public static changePlayerStatus(gameId: number, playerId: number, status: PlayerStatus) {
         return async function (dispatch: Dispatch) : Promise<void> {
             const resp = await Api.updatePlayerStatus(gameId, playerId, status);
-            dispatch(StoreActiveGame.Actions.updateGame(resp));
-            if (resp.game.status === GameStatus.Over) {
-                navigateTo(Routes.gameOver(gameId));
-            }
+            GameStoreFlows.updateInProgressGame(resp, dispatch);
+        }
+    }
+
+    public static updateInProgressGame(response : StateAndEventResponse, dispatch : Dispatch) : void {
+        dispatch(StoreActiveGame.Actions.updateGame(response));
+        const g = response.game;
+        if (g.status === GameStatus.Over) {
+            navigateTo(Routes.gameOver(g.id));
         }
     }
 }

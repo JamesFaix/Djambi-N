@@ -5,6 +5,7 @@ import { State, CustomAction, AppStore, getAppState } from "../store/root";
 import * as StoreActiveGame from '../store/activeGame';
 import { navigateTo } from "../history";
 import Routes from "../routes";
+import GameStoreFlows from "../storeFlows/game";
 
 class SseClient {
     private readonly source : EventSource;
@@ -53,10 +54,7 @@ class SseClient {
         const activeGameId = activeGame ? activeGame.id : null;
 
         if (update.game.id === activeGameId) {
-            this.store.dispatch(StoreActiveGame.Actions.updateGame(update));
-            if (update.game.status === GameStatus.Over) {
-                navigateTo(Routes.gameOver(update.game.id));
-            }
+            GameStoreFlows.updateInProgressGame(update, this.store.dispatch);
         } else {
             console.log(`An event occurred in game ${update.game.id}`);
             //TODO: Toast notification
