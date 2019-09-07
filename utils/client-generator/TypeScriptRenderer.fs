@@ -185,10 +185,10 @@ type TypeScriptRenderer() =
 
         let sb = StringBuilder()
         //Function declaration
-        sb.AppendLine(sprintf "\t%s(%s) : Promise<%s> {" m.Name paramList returnTypeName) |> ignore
+        sb.AppendLine(sprintf "export function %s(%s) : Promise<%s> {" m.Name paramList returnTypeName) |> ignore
 
         //Add route concatentation
-        sb.Append(sprintf "\t\tconst route = `%s" routeSections.[0]) |> ignore
+        sb.Append(sprintf "\tconst route = `%s" routeSections.[0]) |> ignore
 
         for n in [0..routeParams.Length-1] do
             let (paramName, _) = routeParams.[n]
@@ -197,15 +197,15 @@ type TypeScriptRenderer() =
         sb.AppendLine("`;") |> ignore
 
         //Add ApiClientCore call
-        sb.AppendLine(sprintf "\t\treturn ApiClientCore.sendRequest<%s, %s>(" bodyTypeName returnTypeName)
-          .Append(sprintf "\t\t\tHttpMethod.%s, route" (attribute.method.ToString())) |> ignore
+        sb.AppendLine(sprintf "\treturn ApiClientCore.sendRequest<%s, %s>(" bodyTypeName returnTypeName)
+          .Append(sprintf "\t\tHttpMethod.%s, route" (attribute.method.ToString())) |> ignore
         match bodyParam with
         | Some (n, _) -> sb.Append(sprintf ", %s" n) |> ignore
         | _ -> ()
         sb.AppendLine(");") |> ignore
 
         //Close function
-        sb.AppendLine("\t}") |> ignore
+        sb.AppendLine("}") |> ignore
         sb.ToString()
 
     let addWarningHeader (sb : StringBuilder) : Unit =
@@ -214,8 +214,7 @@ type TypeScriptRenderer() =
           .AppendLine(" * Do not manually edit.")
           .AppendLine(" */") |> ignore
 
-    let addSectionHeader (sb : StringBuilder) (section : ClientSection) (indent : bool) : Unit =
-        if indent then sb.Append("\t") |> ignore else ()
+    let addSectionHeader (sb : StringBuilder) (section : ClientSection) : Unit =
         sb.AppendLine(sprintf "//-------- %s --------" (section.ToString().ToUpper()))
           .AppendLine("")
           |> ignore
@@ -256,7 +255,7 @@ type TypeScriptRenderer() =
                 )
 
             for (section, types) in typesGroupedBySection do
-                addSectionHeader sb section false
+                addSectionHeader sb section
                 for t in types do
                     let text = renderTypeDeclaration t
                     sb.AppendLine(text) |> ignore
@@ -271,8 +270,6 @@ type TypeScriptRenderer() =
             sb.AppendLine()
               .AppendLine("import * as Model from './model';")
               .AppendLine("import {ApiClientCore, HttpMethod} from './clientCore';")
-              .AppendLine()
-              .AppendLine("export default class ApiClient {")
               .AppendLine()
               |> ignore
 
@@ -292,11 +289,10 @@ type TypeScriptRenderer() =
                 )
 
             for (section, methods) in methodsGroupedBySection do
-                addSectionHeader sb section true
+                addSectionHeader sb section
                 for m in methods do
                     let text = renderMethod m
                     sb.AppendLine(text) |> ignore
 
-            sb.AppendLine("}")
-              .ToString()
+            sb.ToString()
               .Replace("\t", "    ") // Tabs are easier to read here, but the whitespaces are preferred by linting rules
