@@ -76,21 +76,36 @@ type SelectionOptionsService() =
                     |> Seq.toList
 
     let getDropSelectionOptions(game : Game, turn : Turn) : int list =
+        //Requires a subject, destination, and target
         match turn.subjectPiece game with
         | None -> []
         | Some subject ->
             match turn.destinationCellId with
             | None -> []
             | Some _ ->
-                let pieceIndex = game.piecesIndexedByCell
-                let board = BoardModelUtility.getBoardMetadata game.parameters.regionCount
-                board.cells()
-                |> Seq.filter (fun c ->
-                    match pieceIndex.TryFind c.id with
-                    | None -> true
-                    | Some occupant -> occupant.id = subject.id)
-                |> Seq.map (fun c -> c.id)
-                |> Seq.toList
+                match turn.targetPiece game with
+                | None -> []
+                | Some target ->
+                    let pieceIndex = game.piecesIndexedByCell
+                    let board = BoardModelUtility.getBoardMetadata game.parameters.regionCount
+                    board.cells()
+                    |> Seq.filter (fun c ->
+                        match pieceIndex.TryFind c.id with
+                        //You can drop a piece in the cell you can from, because you left it
+                        //Cannot drop a piece in any other occupied cell
+                        | Some occupant -> occupant.id = subject.id
+                        | None ->
+                            //You can drop in any vacant cell except the center
+                            if not c.isCenter then true
+                            else 
+                                //If the center is vacant, you must check if the target piece could stay there
+                                let subjectStrategy = Pieces.getStrategy subject
+                                let targetKind = if subjectStrategy.killsTarget then Corpse else target.kind
+                                let targetStrategy = Pieces.getStrategyForKind targetKind
+                                targetStrategy.canStayInCenter
+                    ) 
+                    |> Seq.map (fun c -> c.id)
+                    |> Seq.toList
 
     let getVacateSelectionOptions(game : Game, turn : Turn) : int list =
         match turn.subjectPiece game with

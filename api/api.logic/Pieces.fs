@@ -103,3 +103,6 @@ module Pieces =
 
     let getStrategy (piece : Piece) : PieceStrategy =
         strategies.[piece.kind]
+
+    let getStrategyForKind (kind : PieceKind) : PieceStrategy =
+        strategies.[kind]
