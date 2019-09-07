@@ -50,14 +50,26 @@ type TurnService(eventServ : EventService,
                 match currentTurn.dropCellId with
                 | Some dropCellId ->
                     pieces.[target.id] <- pieces.[target.id].moveTo dropCellId
-                    effects.Add(Effect.PieceDropped { oldPiece = target; newCellId = dropCellId })
+                    //Changing the piece to a corpse here will ensure the returned effect list reads well to the client
+                    //It should not affect how this event is processed on the server
+                    let newPiece = 
+                        if subjectStrategy.killsTarget 
+                        then { target with cellId = dropCellId; kind = Corpse; playerId = None }
+                        else { target with cellId = dropCellId }
+                    effects.Add(Effect.PieceDropped { oldPiece = target; newPiece = newPiece })
                 | None -> ()
 
                 //Move target back to origin if subject is assassin
                 if subjectStrategy.movesTargetToOrigin
                 then
                     pieces.[target.id] <- pieces.[target.id].moveTo originCellId
-                    effects.Add(Effect.PieceDropped { oldPiece = target; newCellId = originCellId })
+                    //Changing the piece to a corpse here will ensure the returned effect list reads well to the client
+                    //It should not affect how this event is processed on the server
+                    let newPiece = 
+                        if subjectStrategy.killsTarget 
+                        then { target with cellId = originCellId; kind = Corpse; playerId = None }
+                        else { target with cellId = originCellId }
+                    effects.Add(Effect.PieceDropped { oldPiece = target; newPiece = newPiece })
 
             effects |> Seq.toList
 

@@ -47,7 +47,7 @@ type PieceAbandonedEffect =
 type PieceDroppedEffect =
     {
         oldPiece : Piece
-        newCellId : int
+        newPiece : Piece
     }
 
 [<ClientType(ClientSection.Events)>]

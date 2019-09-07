@@ -187,7 +187,8 @@ export default class Copy {
             }
             case EffectKind.PieceDropped: {
                 const f = <PieceDroppedEffect>effect.value;
-                return `${Copy.getPieceLabel(f.oldPiece, game)} was dropped at ${Copy.getCellLabel(f.newCellId, board)}.`;
+                //Get newpiece name here because the piece may have transitioned into corpsehood
+                return `${Copy.getPieceLabel(f.newPiece, game)} was dropped at ${Copy.getCellLabel(f.newPiece.cellId, board)}.`;
             }
             case EffectKind.PieceEnlisted: {
                 const f = <PieceEnlistedEffect>effect.value;

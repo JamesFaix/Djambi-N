@@ -289,7 +289,7 @@ export interface PieceAbandonedEffect {
 
 export interface PieceDroppedEffect {
     oldPiece : Piece,
-    newCellId : number
+    newPiece : Piece
 }
 
 export interface PieceEnlistedEffect {
