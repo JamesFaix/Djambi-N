@@ -46,7 +46,7 @@ type EventService(gameStartServ : GameStartService) =
         { game with
             pieces = game.pieces |> List.replaceIf
                 (fun p -> effect.oldPiece.id = p.id)
-                (fun p -> { p with cellId = effect.newCellId })
+                (fun p -> { p with cellId = effect.newPiece.cellId })
         }
 
     let applyPieceEnlistedEffect (effect : PieceEnlistedEffect) (game : Game) : Game =

@@ -171,8 +171,8 @@ type EventServiceTests() =
                 cellId = 0
             }
         let game = { TestUtilities.defaultGame with pieces = [piece]}
-        let newCellId = 3
-        let effect = Effect.PieceDropped { oldPiece = piece; newCellId = newCellId }
+        let newPiece = { piece with cellId = 3 }
+        let effect = Effect.PieceDropped { oldPiece = piece; newPiece = newPiece }
         let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
 
         //Act
@@ -184,7 +184,7 @@ type EventServiceTests() =
         newGame.pieces.Length |> shouldBe 1
 
         let newPiece = newGame.pieces.Head
-        newPiece |> shouldBe { piece with cellId = newCellId }
+        newPiece |> shouldBe { piece with cellId = newPiece.cellId }
 
     [<Fact>]
     let ``Should apply PieceEnlisted effect``() =
