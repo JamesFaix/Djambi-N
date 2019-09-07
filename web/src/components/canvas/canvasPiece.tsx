@@ -7,7 +7,6 @@ import { Theme } from '../../themes/model';
 
 export interface CanvasPieceProps {
     piece : PieceView,
-    onClick : () => void,
     size : number,
     location : Point,
     image : HTMLImageElement,
@@ -32,7 +31,6 @@ export default class CanvasPiece extends React.Component<CanvasPieceProps> {
                 shadowBlur={30}
                 shadowOffsetX={5}
                 shadowOffsetY={5}
-                onClick={() => this.props.onClick()}
             />
         );
     }

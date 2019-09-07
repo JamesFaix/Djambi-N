@@ -1,5 +1,4 @@
 import { CellView, CellType, CellState, CellHighlight } from "../viewModel/board/model";
-import Color from "../viewModel/board/color";
 import { PieceKind } from "../api/model";
 import { Dispatch } from "redux";
 import * as StoreDisplay from '../store/display';
@@ -108,49 +107,15 @@ export default class ThemeService {
     }
 
     public static getCellColor(theme : Theme, cell : CellView) : string {
-        const baseColor = ThemeService.getCellBaseColor(theme, cell.type);
-        const highlight = ThemeService.getCellHighlight(theme, cell.state);
-        if (!highlight){
-            return baseColor;
-        } else {
-            return Color.fromHex(baseColor)
-                .lighten(highlight.intensity)
-                .multiply(Color.fromHex(highlight.color))
-                .toHex();
-        }
-    }
-
-    private static getCellBaseColor(theme : Theme, type : CellType) {
         const c = theme.colors.cells;
-        switch(type){
+        if (cell.state === CellState.Selected) {
+            return c.selectedColor;
+        }
+        switch(cell.type){
             case CellType.Center: return c.center;
             case CellType.Even: return c.even;
             case CellType.Odd: return c.odd;
-            default: throw "Unsupported celltype: " + type;
-        }
-    }
-
-    private static getCellHighlight(theme : Theme, state : CellState) : CellHighlight {
-        const c = theme.colors.cells;
-        switch (state)
-        {
-            case CellState.Default:
-                return null;
-
-            case CellState.Selected:
-                return {
-                    color: c.selectedColor,
-                    intensity: c.selectedIntensity
-                };
-
-            case CellState.Selectable:
-                return {
-                    color: c.selectableColor,
-                    intensity: c.selectableIntensity
-                };
-
-            default:
-                throw "Invalid cell state: " + state;
+            default: throw "Unsupported celltype: " + cell.type;
         }
     }
 

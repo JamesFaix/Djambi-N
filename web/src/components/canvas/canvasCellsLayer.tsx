@@ -1,13 +1,12 @@
 import * as React from 'react';
 import { Layer } from 'react-konva';
 import CanvasCell from './canvasCell';
-import { CellView, BoardView } from '../../viewModel/board/model';
+import { BoardView } from '../../viewModel/board/model';
 import { Theme } from '../../themes/model';
 
 export interface CanvasCellsLayerProps {
     gameId : number,
     board : BoardView,
-    selectCell : (cell : CellView) => void,
     theme : Theme
 }
 
@@ -15,16 +14,13 @@ export default class CanvasCellsLayer extends React.Component<CanvasCellsLayerPr
     render() {
         return (
             <Layer>
-                {
-                    this.props.board.cells.map((c, i) =>
-                        <CanvasCell
-                            key={"cell" + i}
-                            cell={c}
-                            selectCell={(cell) => this.props.selectCell(cell)}
-                            theme={this.props.theme}
-                        />
-                    )
-                }
+                {this.props.board.cells.map((c, i) =>
+                    <CanvasCell
+                        key={i}
+                        cell={c}
+                        theme={this.props.theme}
+                    />
+                )}
             </Layer>
         );
     }

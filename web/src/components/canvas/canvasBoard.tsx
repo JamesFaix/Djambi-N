@@ -9,6 +9,7 @@ import { PieceKind } from '../../api/model';
 import { Classes } from '../../styles/styles';
 import { Theme } from '../../themes/model';
 import { DebugSettings } from '../../debug';
+import CanvasHighlightsLayer from './canvasHighlightsLayer';
 
 export interface CanvasBoardStyle {
     width : number,
@@ -54,21 +55,24 @@ export default class CanvasBoard extends React.Component<CanvasBoardProps> {
                 <CanvasCellsLayer
                     gameId={this.props.gameId}
                     board={this.props.board}
-                    selectCell={this.props.selectCell}
                     theme={style.theme}
                 />
                 <CanvasPiecesLayer
                     board={this.props.board}
-                    selectCell={this.props.selectCell}
                     style={piecesStyle}
                     images={this.props.pieceImages}
                 />
                 <CanvasLabelsLayer
                     gameId={this.props.gameId}
                     board={this.props.board}
-                    selectCell={this.props.selectCell}
                     theme={this.props.style.theme}
                     debugSettings={this.props.debugSettings}
+                />
+                <CanvasHighlightsLayer
+                    gameId={this.props.gameId}
+                    board={this.props.board}
+                    selectCell={this.props.selectCell}
+                    theme={style.theme}
                 />
             </Stage>
         );

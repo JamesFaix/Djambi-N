@@ -10,7 +10,6 @@ import { DebugSettings } from '../../debug';
 export interface CanvasLabelProps {
     board : BoardView,
     cell : CellView,
-    onClick : () => void,
     theme : Theme,
     debugSettings : DebugSettings
 }
@@ -42,7 +41,6 @@ export default class CanvasLabel extends React.Component<CanvasLabelProps> {
                 shadowColor='#000000'
                 shadowBlur={10}
                 shadowOpacity={1}
-                onClick={() => this.props.onClick()}
             />
         );
     }

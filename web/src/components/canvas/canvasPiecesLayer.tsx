@@ -13,7 +13,6 @@ export interface CanvasPiecesLayerStyle {
 
 export interface CanvasPiecesLayerProps {
     board : BoardView,
-    selectCell : (cell : CellView) => void,
     style : CanvasPiecesLayerStyle,
     images : Map<PieceKind, HTMLImageElement>
 }
@@ -32,9 +31,8 @@ export default class CanvasPiecesLayer extends React.Component<CanvasPiecesLayer
                             if (image) {
                                 return (
                                     <CanvasPiece
-                                        key={"piece" + i}
+                                        key={i}
                                         piece={c.piece}
-                                        onClick={() => this.props.selectCell(c)}
                                         size={size}
                                         location={this.getPieceLocation(c)}
                                         image={image}
