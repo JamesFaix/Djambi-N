@@ -21,6 +21,8 @@ type GameStartService(playerServ : PlayerService,
                 |> List.filter (fun p -> p.kind <> Neutral)
                 |> List.length = 1
             then errorTask <| HttpException(400, "Cannot start game with only one player.")
+            elif game.status <> GameStatus.Pending
+            then errorTask <| HttpException(400, "Cannot start game unless it is pending.") 
             else
                 playerServ.fillEmptyPlayerSlots game
                 |> thenMap (fun addNeutralPlayerEffects ->
