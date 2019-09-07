@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+import { describe, it } from 'mocha';
 import { List } from '../../src/utilities/collections';
 
 describe('List.contains', () => {
@@ -165,9 +166,9 @@ describe('List.mergeMatches', () => {
             "oatmeal"
         ];
         let expected = [
-            "avocado, artichoke, apple",
+            "apple, artichoke, avocado",
             "banana",
-            "oatmeal, orange"
+            "orange, oatmeal"
         ];
         let actual = List.mergeMatches(xs, areMatch, merge);
         expect(actual).to.eql(expected);
