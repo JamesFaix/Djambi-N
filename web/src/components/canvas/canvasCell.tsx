@@ -6,7 +6,6 @@ import { Theme } from '../../themes/model';
 
 export interface CanvasCellProps {
     cell : CellView,
-    selectCell : (cell : CellView) => void,
     theme : Theme
 }
 
@@ -23,7 +22,6 @@ export default class CanvasCell extends React.Component<CanvasCellProps> {
         return (
             <CanvasPolygon
                 polygon={cell.polygon}
-                onClick={() => this.props.selectCell(cell)}
                 style={{
                     fillColor: color,
                     strokeColor: borderColor,

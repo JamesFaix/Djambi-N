@@ -45,9 +45,7 @@ interface ThemeCellColors {
     boardBorder: string,
 
     selectedColor: string,
-    selectedIntensity: number,
     selectableColor: string,
-    selectableIntensity: number
 }
 
 interface ThemeImagePaths {

@@ -47,9 +47,7 @@ export default class ThemeFactory {
                 boardBorder: "black",
 
                 selectedColor: "#6AC921", //Green
-                selectedIntensity: 0.75,
                 selectableColor: "#E5E500", //Yellow
-                selectableIntensity: 0.5
             }
         },
         images: {

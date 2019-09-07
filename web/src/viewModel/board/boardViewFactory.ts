@@ -1,6 +1,5 @@
 import {
     BoardView,
-    CellState,
     CellType,
     CellView,
     Line,
@@ -137,7 +136,8 @@ export default class BoardViewFactory {
             id: cell.id,
             locations: cell.locations,
             type: this.getCellType(location),
-            state: CellState.Default,
+            isSelectable: false,
+            isSelected: false,
             piece: null,
             polygon: polygon
         };
@@ -188,11 +188,8 @@ export default class BoardViewFactory {
         }
 
         return {
-            id: a.id,
+            ...a,
             locations: a.locations.concat(b.locations),
-            type: a.type,
-            state: a.state,
-            piece: a.piece,
             polygon: this.mergePolygons([a.polygon, b.polygon])
         };
     }
@@ -257,37 +254,25 @@ export default class BoardViewFactory {
 
     public static fillEmptyBoardView(board : BoardView, game : Game) : BoardView {
         const newCells : CellView[] = board.cells.map(c => {
-            let newState = CellState.Default;
             const turn = game.currentTurn;
-
-            if (turn) {
-                if (turn.selections.find(s => s.cellId === c.id)) {
-                    newState = CellState.Selected;
-                } else if (turn.selectionOptions.find(cellId => cellId === c.id)) {
-                    newState = CellState.Selectable;
-                }
-            }
-
+            const isSelected = turn && List.exists(turn.selections, s => s.cellId === c.id);
+            const isSelectable = turn && List.exists(turn.selectionOptions, cellId => cellId === c.id);
             const piece = game.pieces.find(p => p.cellId === c.id);
             const owner = piece ? game.players.find(p => p.id === piece.playerId) : null;
             const colorId = owner ? owner.colorId : null;
             const pieceView : PieceView = piece ? { id : piece.id, kind: piece.kind, colorId: colorId } : null;
 
             return {
-                id: c.id,
-                locations: c.locations,
-                type: c.type,
-                state: newState,
+                ...c,
+                isSelected: isSelected,
+                isSelectable: isSelectable,
                 piece: pieceView,
-                polygon: c.polygon
             };
         });
 
         return {
-            regionCount : board.regionCount,
-            cellCountPerSide: board.cellCountPerSide,
+            ...board,
             cells : newCells,
-            polygon : board.polygon
         };
     }
 }

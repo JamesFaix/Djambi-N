@@ -14,21 +14,10 @@ export interface Polygon {
     vertices : Point[]
 }
 
-export enum CellState {
-    Default,
-    Selected,
-    Selectable
-}
-
 export enum CellType {
     Even,
     Odd,
     Center
-}
-
-export interface CellHighlight {
-    color : string,
-    intensity : number
 }
 
 export interface PieceView {
@@ -41,7 +30,8 @@ export interface CellView {
     id : number,
     locations : Location[],
     type : CellType,
-    state : CellState,
+    isSelected : boolean,
+    isSelectable : boolean,
     piece : PieceView,
     polygon : Polygon
 }
