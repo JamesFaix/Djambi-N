@@ -63,21 +63,7 @@ export class List {
         areMatch : (a : T, b : T) => boolean,
         merge : (a : T, b : T) => T) : T[] {
 
-        const results : T[] = [];
-
-        elements.forEach(el => {
-            //Merge with existing match if one found
-            for (let i = 0; i < results.length; i++) {
-                let r = results[i];
-                if (areMatch(el, r)) {
-                    results[i] = merge(el, r);
-                    return;
-                }
-            }
-            //Otherwise add to list
-            results.push(el);
-        });
-
-        return results;
+        return List.groupMatches(elements, areMatch)
+            .map(g => g.reduce((x, y) => merge(x,y)));
     }
 }
