@@ -1,4 +1,4 @@
-import { CellView, CellType, CellState, CellHighlight } from "../viewModel/board/model";
+import { CellView, CellType } from "../viewModel/board/model";
 import { PieceKind } from "../api/model";
 import { Dispatch } from "redux";
 import * as StoreDisplay from '../store/display';
@@ -108,7 +108,7 @@ export default class ThemeService {
 
     public static getCellColor(theme : Theme, cell : CellView) : string {
         const c = theme.colors.cells;
-        if (cell.state === CellState.Selected) {
+        if (cell.isSelected) {
             return c.selectedColor;
         }
         switch(cell.type){

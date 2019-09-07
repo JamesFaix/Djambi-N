@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Layer } from 'react-konva';
 import CanvasCellHighlight from './canvasCellHighlight';
-import { CellView, BoardView, CellState } from '../../viewModel/board/model';
+import { CellView, BoardView } from '../../viewModel/board/model';
 import { Theme } from '../../themes/model';
 import { Animation } from 'konva';
 import { AnimationFrame } from './model';
@@ -39,8 +39,7 @@ export default class CanvasHighlightsLayer extends React.Component<CanvasHighlig
     }
 
     render() {
-        const selectableCells = this.props.board.cells
-            .filter(c => c.state === CellState.Selectable);
+        const selectableCells = this.props.board.cells.filter(c => c.isSelectable);
 
         return (
             <Layer

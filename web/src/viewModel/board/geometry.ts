@@ -499,11 +499,7 @@ export default class Geometry {
 
         public static transform(c : CellView, matrix : MathJs.Matrix) : CellView {
             return {
-                id: c.id,
-                locations: c.locations,
-                type: c.type,
-                state: c.state,
-                piece: c.piece,
+                ...c,
                 polygon: Geometry.Polygon.transform(c.polygon, matrix)
             };
         }
@@ -519,8 +515,7 @@ export default class Geometry {
 
         public static transform(b : BoardView, matrix : MathJs.Matrix) : BoardView {
             return {
-                regionCount: b.regionCount,
-                cellCountPerSide: b.cellCountPerSide,
+                ...b,
                 polygon: Geometry.Polygon.transform(b.polygon, matrix),
                 cells: b.cells.map(c => Geometry.Cell.transform(c, matrix))
             };
