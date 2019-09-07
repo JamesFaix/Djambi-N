@@ -17,11 +17,12 @@ export interface CanvasPolygonProps {
 
 export default class CanvasPolygon extends React.Component<CanvasPolygonProps> {
     render() {
-        const style = this.props.style;
+        const p = this.props;
+        const style = p.style;
         return (
             <Shape
                 sceneFunc={(ctx : Context, shape : any) => {
-                    const vs = this.props.polygon.vertices;
+                    const vs = p.polygon.vertices;
                     let v = vs[0];
 
                     ctx.beginPath();
@@ -38,7 +39,7 @@ export default class CanvasPolygon extends React.Component<CanvasPolygonProps> {
                 fill={style.fillColor}
                 stroke={style.strokeColor}
                 strokeWidth={style.strokeWidth}
-                onClick={() => this.props.onClick()}
+                onClick={p.onClick ? () => p.onClick() : null}
             />
         );
     }
