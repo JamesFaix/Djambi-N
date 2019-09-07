@@ -18,7 +18,7 @@ export interface BoardSectionProps {
     board : BoardView,
     transformData : CanvasTranformData,
     zoomLevel : number,
-    pieceImages : Map<PieceKind, HTMLImageElement>,
+    pieceImages : Map<string, HTMLImageElement>,
     selectCell : (gameId: number, cell : CellView) => void,
     theme : Theme,
     debugSettings : DebugSettings

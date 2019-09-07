@@ -5,6 +5,7 @@ import * as StoreDisplay from '../store/display';
 import ThemeFactory from "./themeFactory";
 import LocalStorageService from "../utilities/localStorageService";
 import { Theme } from './model';
+import Images, { PieceImageInfo } from "../utilities/images";
 
 export default class ThemeService {
 
@@ -31,14 +32,14 @@ export default class ThemeService {
         s.setProperty("--alt-row-background-color", c.altRowBackground);
         s.setProperty("--alt-row-text-color", c.altRowText);
 
-        s.setProperty("--player-color-0", c.player0);
-        s.setProperty("--player-color-1", c.player1);
-        s.setProperty("--player-color-2", c.player2);
-        s.setProperty("--player-color-3", c.player3);
-        s.setProperty("--player-color-4", c.player4);
-        s.setProperty("--player-color-5", c.player5);
-        s.setProperty("--player-color-6", c.player6);
-        s.setProperty("--player-color-7", c.player7);
+        s.setProperty("--player-color-0", c.players.p0);
+        s.setProperty("--player-color-1", c.players.p1);
+        s.setProperty("--player-color-2", c.players.p2);
+        s.setProperty("--player-color-3", c.players.p3);
+        s.setProperty("--player-color-4", c.players.p4);
+        s.setProperty("--player-color-5", c.players.p5);
+        s.setProperty("--player-color-6", c.players.p6);
+        s.setProperty("--player-color-7", c.players.p7);
 
         s.setProperty("--font-family", theme.fonts.normalFamily);
         s.setProperty("--header-font-family", theme.fonts.headerFamily);
@@ -48,19 +49,40 @@ export default class ThemeService {
         const kinds = [
             PieceKind.Assassin,
             PieceKind.Chief,
-            PieceKind.Corpse,
             PieceKind.Diplomat,
             PieceKind.Gravedigger,
             PieceKind.Reporter,
             PieceKind.Thug
         ];
-        kinds.forEach(k => ThemeService.createPieceImage(theme, k, dispatch));
+        const maxPlayerColorId = 7;
+
+        kinds.forEach(k => {
+            for (let i=0; i<=maxPlayerColorId; i++) {
+                ThemeService.createPieceImage(theme, k, i, dispatch);
+            }
+            ThemeService.createPieceImage(theme, k, null, dispatch); //Neutral sprite for abandoned pieces
+        });
+
+        ThemeService.createPieceImage(theme, PieceKind.Corpse, null, dispatch); //Corpses are only ever neutral
     }
 
-    private static createPieceImage(theme : Theme, kind : PieceKind, dispatch : Dispatch) : HTMLImageElement {
-        const image = new (window as any).Image() as HTMLImageElement;
+    private static createPieceImage(theme : Theme, kind : PieceKind, colorId : number, dispatch : Dispatch) : HTMLImageElement {
+        let image = new (window as any).Image() as HTMLImageElement;
         image.src = ThemeService.getPieceImagePath(theme, kind);
-        image.onload = () => dispatch(StoreDisplay.Actions.pieceImageLoaded(kind, image));
+        image.onload = () => {
+
+            const dummyColor = theme.colors.players.placeholder;
+            const playerColor = ThemeService.getPlayerColor(theme, colorId);
+            image = Images.replaceColor(image, dummyColor, playerColor);
+
+            const info : PieceImageInfo = {
+                kind: kind,
+                playerColorId: colorId,
+                image: image
+            };
+
+            dispatch(StoreDisplay.Actions.pieceImageLoaded(info));
+        };
         return image;
     }
 
@@ -92,16 +114,17 @@ export default class ThemeService {
     //#region Colors
 
     public static getPlayerColor(theme : Theme, playerColorId : number) : string {
-        const c = theme.colors;
+        const c = theme.colors.players;
         switch(playerColorId) {
-            case 0: return c.player0;
-            case 1: return c.player1;
-            case 2: return c.player2;
-            case 3: return c.player3;
-            case 4: return c.player4;
-            case 5: return c.player5;
-            case 6: return c.player6;
-            case 7: return c.player7;
+            case 0: return c.p0;
+            case 1: return c.p1;
+            case 2: return c.p2;
+            case 3: return c.p3;
+            case 4: return c.p4;
+            case 5: return c.p5;
+            case 6: return c.p6;
+            case 7: return c.p7;
+            case null: return c.neutral;
             default: throw "Unsupported player color id: " + playerColorId;
         }
     }

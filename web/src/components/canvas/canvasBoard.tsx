@@ -5,7 +5,6 @@ import CanvasPiecesLayer from './canvasPiecesLayer';
 import CanvasLabelsLayer from './canvasLabelsLayer';
 import CanvasBackgroundLayer from './canvasBackgroundLayer';
 import { BoardView, CellView } from '../../viewModel/board/model';
-import { PieceKind } from '../../api/model';
 import { Classes } from '../../styles/styles';
 import { Theme } from '../../themes/model';
 import { DebugSettings } from '../../debug';
@@ -24,7 +23,7 @@ export interface CanvasBoardProps {
     board : BoardView,
     selectCell : (cell : CellView) => void,
     style : CanvasBoardStyle,
-    pieceImages : Map<PieceKind, HTMLImageElement>,
+    pieceImages : Map<string, HTMLImageElement>,
     debugSettings : DebugSettings
 }
 
@@ -35,11 +34,6 @@ export default class CanvasBoard extends React.Component<CanvasBoardProps> {
         const backgroundStyle = {
             strokeWidth: style.strokeWidth,
             strokeColor: style.theme.colors.cells.boardBorder
-        };
-
-        const piecesStyle = {
-            scale: style.scale,
-            theme: style.theme
         };
 
         return (
@@ -59,7 +53,7 @@ export default class CanvasBoard extends React.Component<CanvasBoardProps> {
                 />
                 <CanvasPiecesLayer
                     board={this.props.board}
-                    style={piecesStyle}
+                    scale={style.scale}
                     images={this.props.pieceImages}
                 />
                 <CanvasLabelsLayer

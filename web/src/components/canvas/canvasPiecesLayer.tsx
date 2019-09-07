@@ -3,18 +3,12 @@ import { Layer } from 'react-konva';
 import { CellView, BoardView, Point } from '../../viewModel/board/model';
 import CanvasPiece from './canvasPiece';
 import Geometry from '../../viewModel/board/geometry';
-import { PieceKind } from '../../api/model';
-import { Theme } from '../../themes/model';
-
-export interface CanvasPiecesLayerStyle {
-    scale : number,
-    theme : Theme
-}
+import { getPieceImageKey } from '../../utilities/images';
 
 export interface CanvasPiecesLayerProps {
     board : BoardView,
-    style : CanvasPiecesLayerStyle,
-    images : Map<PieceKind, HTMLImageElement>
+    images : Map<string, HTMLImageElement>,
+    scale : number
 }
 
 export default class CanvasPiecesLayer extends React.Component<CanvasPiecesLayerProps> {
@@ -27,7 +21,7 @@ export default class CanvasPiecesLayer extends React.Component<CanvasPiecesLayer
                     this.props.board.cells
                         .filter(c => c.piece !== null)
                         .map((c, i) => {
-                            const image = this.props.images.get(c.piece.kind);
+                            const image = this.props.images.get(getPieceImageKey(c.piece.kind, c.piece.colorId));
                             if (image) {
                                 return (
                                     <CanvasPiece
@@ -36,7 +30,6 @@ export default class CanvasPiecesLayer extends React.Component<CanvasPiecesLayer
                                         size={size}
                                         location={this.getPieceLocation(c)}
                                         image={image}
-                                        theme={this.props.style.theme}
                                     />
                                 );
                             } else {
@@ -49,7 +42,7 @@ export default class CanvasPiecesLayer extends React.Component<CanvasPiecesLayer
     }
 
     private getPieceSize() : number {
-        return this.props.style.scale / this.props.board.cellCountPerSide / 2;
+        return this.props.scale / this.props.board.cellCountPerSide / 2;
     }
 
     private getPieceLocation(cell : CellView) : Point {

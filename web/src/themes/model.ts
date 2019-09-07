@@ -17,16 +17,8 @@ interface ThemeColors {
     hoverText : string,
     hoverBackground : string,
 
-    player0 : string,
-    player1 : string,
-    player2 : string,
-    player3 : string,
-    player4 : string,
-    player5 : string,
-    player6 : string,
-    player7 : string
-
-    cells: ThemeCellColors
+    cells: ThemeCellColors,
+    players: ThemePlayerColors
 }
 
 interface ThemeCellColors {
@@ -46,6 +38,19 @@ interface ThemeCellColors {
 
     selectedColor: string,
     selectableColor: string,
+}
+
+interface ThemePlayerColors {
+    p0 : string,
+    p1 : string,
+    p2 : string,
+    p3 : string,
+    p4 : string,
+    p5 : string,
+    p6 : string,
+    p7 : string,
+    neutral : string,
+    placeholder : string //Color that is replaced on sprites by player colors
 }
 
 interface ThemeImagePaths {

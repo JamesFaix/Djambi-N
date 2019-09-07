@@ -21,33 +21,36 @@ export default class ThemeFactory {
             altRowText: "black",
             altRowBackground: "gainsboro",
 
-            player0: "blue",
-            player1: "red",
-            player2: "green",
-            player3: "orange",
-            player4: "brown",
-            player5: "teal",
-            player6: "magenta",
-            player7: "gold",
-
             cells: {
-                //Cell colors must be in hex
-                even: whiteHex,
-                odd: blackHex,
+                even: "white",
+                odd: "black",
                 center: medGrayHex,
 
                 evenBorder: null,
                 oddBorder: null,
                 centerBorder: null,
 
-                evenText: blackHex,
-                oddText: whiteHex,
-                centerText: whiteHex,
+                evenText: "black",
+                oddText: "white",
+                centerText: "white",
 
                 boardBorder: "black",
 
                 selectedColor: "#6AC921", //Green
                 selectableColor: "#E5E500", //Yellow
+            },
+
+            players: {
+                p0: "blue",
+                p1: "red",
+                p2: "green",
+                p3: "orange",
+                p4: "brown",
+                p5: "teal",
+                p6: "magenta",
+                p7: "gold",
+                placeholder: "black",
+                neutral: "#555555"
             }
         },
         images: {

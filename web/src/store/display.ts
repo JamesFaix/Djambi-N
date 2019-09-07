@@ -1,11 +1,11 @@
 import { CustomAction, DataAction } from "./root";
 import { Point } from "../viewModel/board/model";
-import { PieceKind, Piece } from "../api/model";
 import ThemeFactory from "../themes/themeFactory";
 import { Theme } from "../themes/model";
+import { PieceImageInfo, getPieceImageKey } from "../utilities/images";
 
 interface Images {
-    pieces : Map<PieceKind, HTMLImageElement>
+    pieces : Map<string, HTMLImageElement>
 }
 
 export interface State {
@@ -26,7 +26,7 @@ export const defaultState : State = {
     canvasMargin: 5,
     theme: ThemeFactory.default,
     images: {
-        pieces: new Map<PieceKind, HTMLImageElement>()
+        pieces: new Map<string, HTMLImageElement>()
     }
 };
 
@@ -67,10 +67,10 @@ export class Actions {
         };
     }
 
-    public static pieceImageLoaded(pieceKind : PieceKind, image : HTMLImageElement) {
+    public static pieceImageLoaded(info : PieceImageInfo) {
         return {
             type: ActionTypes.PieceImageLoaded,
-            data: [pieceKind, image]
+            data: info
         };
     }
 }
@@ -93,21 +93,21 @@ export function reducer(state : State, action : CustomAction) : State {
                 theme: da.data,
                 images: {
                     ...state.images,
-                    pieces: new Map<PieceKind, HTMLImageElement>()
+                    pieces: new Map<string, HTMLImageElement>()
                 }
             };
         }
         case ActionTypes.PieceImageLoaded: {
-            const da = <DataAction<[PieceKind, HTMLImageElement]>>action;
-            const [kind, image] = da.data;
+            const da = <DataAction<PieceImageInfo>>action;
             const newState = {
                 ...state,
                 images: {
                     ...state.images,
-                    pieces: new Map<PieceKind, HTMLImageElement>(state.images.pieces)
+                    pieces: new Map<string, HTMLImageElement>(state.images.pieces)
                 }
             }
-            newState.images.pieces.set(kind, image);
+            const key = getPieceImageKey(da.data.kind, da.data.playerColorId);
+            newState.images.pieces.set(key, da.data.image);
             return newState;
         }
         //BoardScroll and BoardZoom must be handled at a higher level because they update the boardview
