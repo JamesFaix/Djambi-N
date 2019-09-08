@@ -3,7 +3,7 @@ import { Layer } from 'react-konva';
 import { CellView, BoardView, Point } from '../../viewModel/board/model';
 import CanvasPiece from './canvasPiece';
 import Geometry from '../../viewModel/board/geometry';
-import { PieceKind } from '../../api/model';
+import { PieceKind, Game } from '../../api/model';
 import { Theme } from '../../themes/model';
 
 export interface CanvasPiecesLayerStyle {
@@ -12,6 +12,7 @@ export interface CanvasPiecesLayerStyle {
 }
 
 export interface CanvasPiecesLayerProps {
+    game : Game,
     board : BoardView,
     style : CanvasPiecesLayerStyle,
     images : Map<PieceKind, HTMLImageElement>
@@ -37,6 +38,7 @@ export default class CanvasPiecesLayer extends React.Component<CanvasPiecesLayer
                                         location={this.getPieceLocation(c)}
                                         image={image}
                                         theme={this.props.style.theme}
+                                        game={this.props.game}
                                     />
                                 );
                             } else {
