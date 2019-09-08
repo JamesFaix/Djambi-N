@@ -122,21 +122,24 @@ class gamesSearchForm extends React.Component<GamesSearchFormProps> {
     }
 
     private onChangeDescription(e : React.ChangeEvent<HTMLInputElement>) : void {
-        const value = e.target.value;
+        let value = e.target.value;
+        if (value === "") value = null;
         let query = {...this.props.formData};
         query.descriptionContains = value;
         this.props.onFormDataChanged(query);
     }
 
     private onChangeCreatedBy(e : React.ChangeEvent<HTMLInputElement>) : void {
-        const value = e.target.value;
+        let value = e.target.value;
+        if (value === "") value = null;
         let query = {...this.props.formData};
         query.createdByUserName = value;
         this.props.onFormDataChanged(query);
     }
 
     private onChangePlayerUserName(e : React.ChangeEvent<HTMLInputElement>) : void {
-        const value = e.target.value;
+        let value = e.target.value;
+        if (value === "") value = null;
         let query = {...this.props.formData};
         query.playerUserName = value;
         this.props.onFormDataChanged(query);
