@@ -252,6 +252,7 @@ export interface Event {
 
 export enum EventKind {
     CellSelected = "CellSelected",
+    CorrectNeutralPiecePlayerIds = "CorrectNeutralPiecePlayerIds",
     GameCanceled = "GameCanceled",
     GameParametersChanged = "GameParametersChanged",
     GameStarted = "GameStarted",
@@ -275,7 +276,8 @@ export interface GameStatusChangedEffect {
 }
 
 export interface NeutralPlayerAddedEffect {
-    name : string
+    name : string,
+    placeholderPlayerId : number
 }
 
 export interface ParametersChangedEffect {

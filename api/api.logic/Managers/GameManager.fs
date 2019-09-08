@@ -98,6 +98,16 @@ type GameManager(eventRepo : IEventRepository,
 
         member x.startGame gameId session =
             processEventAsync gameId (fun game -> gameStartServ.getGameStartEvent game session)
+            //Temporary workaround for issues with SQL transaction handling
+            |> thenBindAsync (fun resp1 -> 
+                processEventAsync gameId (fun game -> gameStartServ.getCorrectNeutralPiecePlayerIdsEvent game session)
+                |> thenMap (fun resp2 -> 
+                    {
+                        game = resp2.game
+                        event = resp1.event
+                    }
+                )
+            )
 
     interface IPlayerManager with
         member x.addPlayer gameId request session =

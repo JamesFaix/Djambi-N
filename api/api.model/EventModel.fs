@@ -21,6 +21,7 @@ type GameStatusChangedEffect =
 type NeutralPlayerAddedEffect =
     {
         name : string
+        placeholderPlayerId : int
     }
 
 [<ClientType(ClientSection.Events)>]
@@ -161,6 +162,7 @@ type EventKind =
     | TurnReset
     | CellSelected
     | PlayerStatusChanged
+    | CorrectNeutralPiecePlayerIds //Temporary workaround for issues with DB transaction handling pattern
 
 [<ClientType(ClientSection.Events)>]
 type Event =
@@ -190,15 +192,9 @@ type CreateEventRequest =
 
 module PlayerAddedEffect =
     let fromRequest (request : CreatePlayerRequest) : Effect =
-        if request.kind = PlayerKind.Neutral then
-            let f : NeutralPlayerAddedEffect = {
-                name = request.name.Value
-            }
-            Effect.NeutralPlayerAdded f
-        else
-            let f : PlayerAddedEffect = {
-                name = request.name
-                userId = request.userId.Value
-                kind = request.kind
-            }
-            Effect.PlayerAdded f
+        let f : PlayerAddedEffect = {
+            name = request.name
+            userId = request.userId.Value
+            kind = request.kind
+        }
+        Effect.PlayerAdded f

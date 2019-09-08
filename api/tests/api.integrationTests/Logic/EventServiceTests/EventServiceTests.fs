@@ -68,8 +68,8 @@ type EventServiceTests() =
     let ``Should apply NeutralPlayerAdded effect``() =
         //Arrange
         let game = { TestUtilities.defaultGame with id = 5 }
-        let playerRequest = { kind = PlayerKind.Neutral; userId = None; name = Some "p2" }
-        let effect = PlayerAddedEffect.fromRequest playerRequest
+        let f : NeutralPlayerAddedEffect = { name = "p2"; placeholderPlayerId = -1 }
+        let effect = Effect.NeutralPlayerAdded f
         let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
 
         game.players.Length |> shouldBe 0
@@ -82,11 +82,11 @@ type EventServiceTests() =
 
         newGame.players.Length |> shouldBe 1
         let p = newGame.players.Head
-        p.id |> shouldBe 0 //This is generated when the event is persisted
+        p.id |> shouldBe -1
         p.gameId |> shouldBe newGame.id
-        p.userId |> shouldBe playerRequest.userId
-        p.kind |> shouldBe playerRequest.kind
-        p.name |> shouldBe playerRequest.name.Value
+        p.userId |> shouldBe None
+        p.kind |> shouldBe Neutral
+        p.name |> shouldBe "p2"
 
         //These are assigned at game start
         p.status |> shouldBe PlayerStatus.Pending

@@ -127,3 +127,38 @@ type GameStartService(playerServ : PlayerService,
         let options = (selectionOptionsServ.getSelectableCellsFromState game) |> Result.value
         let turn = { game.currentTurn.Value with selectionOptions = options }
         { game with  currentTurn =  Some turn }
+
+    member x.getCorrectNeutralPiecePlayerIdsEvent (game : Game) (session : Session) : CreateEventRequest AsyncHttpResult =
+        let neutralPlayers = game.players |> List.filter (fun p -> p.kind = Neutral)
+        let neutralPieces = 
+            game.pieces 
+            |> List.groupBy (fun p -> p.playerId) 
+            |> List.filter(fun (pId, _) -> pId.IsSome && pId.Value < 0)
+
+        //Just zipping in arbitrary order, disregarding which placeholder IDs had been assigned to players originally
+        let zipped = 
+            Seq.zip neutralPlayers neutralPieces 
+            |> Seq.map (fun (player, (_, pieces)) -> (player, pieces))
+
+        let effects =
+            zipped
+            |> Seq.collect (fun (player, pieces) -> 
+                pieces 
+                |> Seq.map (fun p -> 
+                    let f : PieceEnlistedEffect = {
+                        oldPiece = p
+                        newPlayerId = player.id
+                    }
+                    Effect.PieceEnlisted f
+                )
+            )
+            |> Seq.toList
+
+        okTask <|
+        {
+            kind = EventKind.CorrectNeutralPiecePlayerIds
+            effects = effects
+            createdByUserId = session.user.id
+            actingPlayerId = Context.getActingPlayerId session game
+        }
+        
