@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Stage, Label, Tag, Text, Layer, Rect } from 'react-konva';
+import { Stage } from 'react-konva';
 import CanvasCellsLayer from './canvasCellsLayer';
-import CanvasBackgroundLayer from './canvasBackgroundLayer';
+import CanvasBoardOutlineLayer from './canvasBoardOutlineLayer';
 import { BoardView, CellView, Point } from '../../viewModel/board/model';
 import { PieceKind, Game } from '../../api/model';
 import { Classes } from '../../styles/styles';
@@ -9,6 +9,8 @@ import { Theme } from '../../themes/model';
 import { AnimationFrame } from './model';
 import { Animation } from 'konva';
 import { DebugSettings } from '../../debug';
+import CanvasBackgroundLayer from './canvasBackgroundLayer';
+import CanvasTooltip from './canvasTooltip';
 
 export interface CanvasBoardStyle {
     width : number,
@@ -33,7 +35,7 @@ export interface BoardTooltipData {
     visible : boolean
 }
 
-export const defaultBoardTooltipData = {
+const defaultBoardTooltipData = {
     text: "",
     position: { x: 0, y: 0 },
     visible: false
@@ -69,7 +71,7 @@ export default class CanvasBoard extends React.Component<CanvasBoardProps, Canva
     render() {
         const style = this.props.style;
 
-        const backgroundStyle = {
+        const outlineStyle = {
             strokeWidth: style.strokeWidth,
             strokeColor: style.theme.colors.cells.boardBorder
         };
@@ -80,20 +82,15 @@ export default class CanvasBoard extends React.Component<CanvasBoardProps, Canva
                 width={style.width}
                 height={style.height}
             >
-                <Layer>
-                    <Rect
-                        width={style.width}
-                        height={style.height}
-                        fill={style.theme.colors.background}
-                        onMouseEnter={() => this.props.debugSettings.showCellLabels
-                            ? this.setState({ tooltipData: defaultBoardTooltipData })
-                            : null}
-                    />
-                </Layer>
-
                 <CanvasBackgroundLayer
+                    size={{ x: style.width, y: style.height }}
+                    color={style. theme.colors.background}
+                    clearTooltip={() => this.setState({ tooltipData: defaultBoardTooltipData })}
+                    visible={this.props.debugSettings.showCellLabels}
+                />
+                <CanvasBoardOutlineLayer
                     board={this.props.board}
-                    style={backgroundStyle}
+                    style={outlineStyle}
                 />
                 <CanvasCellsLayer
                     gameId={this.props.game.id}
@@ -106,41 +103,13 @@ export default class CanvasBoard extends React.Component<CanvasBoardProps, Canva
                     setTooltip={data => this.setState({ tooltipData: data })}
                     game={this.props.game}
                 />
-                {this.renderTooltip()}
+                <CanvasTooltip
+                    visible={this.state.tooltipData.visible && this.props.debugSettings.showCellLabels}
+                    text={this.state.tooltipData.text}
+                    position={this.state.tooltipData.position}
+                    theme={style.theme}
+                />
             </Stage>
-        );
-    }
-
-    private renderTooltip() {
-        const data = this.state.tooltipData;
-        if (!data.visible || !this.props.debugSettings.showCellLabels) {
-            return null;
-        }
-
-        const colors = this.props.style.theme.colors;
-
-        return (
-            <Layer>
-                <Label
-                    x={data.position.x}
-                    y={data.position.y}
-                    opacity={1}
-                >
-                    <Tag
-                        stroke={colors.border}
-                        strokeWidth={1}
-                        fill={colors.background}
-                        shadowColor={"black"}
-                        shadowBlur={5}
-                        shadowOpacity={1}
-                    />
-                    <Text
-                        text={data.text}
-                        fill={colors.text}
-                        padding={5}
-                    />
-                </Label>
-            </Layer>
         );
     }
 }
