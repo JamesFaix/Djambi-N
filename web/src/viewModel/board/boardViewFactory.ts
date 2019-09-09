@@ -265,7 +265,7 @@ export default class BoardViewFactory {
                     id : piece.id,
                     kind: piece.kind,
                     colorId: colorId,
-                    playerName: owner.name
+                    playerName: owner ? owner.name : null
                 }
                 : null;
 

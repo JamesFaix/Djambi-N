@@ -6,7 +6,8 @@ import { Shape } from 'react-konva';
 export interface CanvasPolygonStyle {
     fillColor ?: string,
     strokeColor ?: string,
-    strokeWidth ?: number
+    strokeWidth ?: number,
+    opacity ?: number
 }
 
 export interface CanvasPolygonProps {
@@ -40,6 +41,7 @@ export default class CanvasPolygon extends React.Component<CanvasPolygonProps> {
                 stroke={style.strokeColor}
                 strokeWidth={style.strokeWidth}
                 onClick={p.onClick ? () => p.onClick() : null}
+                opacity={p.style.opacity !== undefined ? p.style.opacity : 1}
             />
         );
     }
