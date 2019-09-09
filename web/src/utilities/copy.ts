@@ -25,7 +25,7 @@ import {
     TurnCyclePlayerFellFromPowerEffect,
     TurnCyclePlayerRoseToPowerEffect
 } from "../api/model";
-import { BoardView, CellView, PieceView } from "../viewModel/board/model";
+import { CellView, PieceView } from "../viewModel/board/model";
 import ThemeService from "../themes/themeService";
 import { Theme } from "../themes/model";
 
@@ -79,7 +79,7 @@ export default class Copy {
             : Copy.locationToString(cell.locations[0]);
 
         if (this.showIds()){
-            return `${base} (${cellId})`;
+            return `${base} (#${cellId})`;
         } else {
             return base;
         }
@@ -92,10 +92,8 @@ export default class Copy {
 
         if (!this.showIds()) {
             return base;
-        } else if (!cell.piece) {
-            return `${base} (${cell.id})`;
         } else {
-            return `${base} (${cell.id})\nP${cell.piece.id}`;
+            return `${base} (#${cell.id})`;
         }
     }
 

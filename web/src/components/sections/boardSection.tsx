@@ -53,6 +53,7 @@ class boardSection extends React.Component<BoardSectionProps> {
                         board={p.board}
                         selectCell={cell => p.selectCell(p.game.id, cell)}
                         pieceImages={p.pieceImages}
+                        debugSettings={this.props.debugSettings}
                     />
                 </BoardScrollArea>
                 <BoardZoomSlider/>

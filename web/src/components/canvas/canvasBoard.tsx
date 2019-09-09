@@ -8,7 +8,7 @@ import { Classes } from '../../styles/styles';
 import { Theme } from '../../themes/model';
 import { AnimationFrame } from './model';
 import { Animation } from 'konva';
-import { stripLeadingSlash } from 'history/PathUtils';
+import { DebugSettings } from '../../debug';
 
 export interface CanvasBoardStyle {
     width : number,
@@ -24,6 +24,7 @@ export interface CanvasBoardProps {
     selectCell : (cell : CellView) => void,
     style : CanvasBoardStyle,
     pieceImages : Map<PieceKind, HTMLImageElement>,
+    debugSettings : DebugSettings
 }
 
 export interface BoardTooltipData {
@@ -84,7 +85,9 @@ export default class CanvasBoard extends React.Component<CanvasBoardProps, Canva
                         width={style.width}
                         height={style.height}
                         fill={style.theme.colors.background}
-                        onMouseEnter={() => this.setState({ tooltipData: defaultBoardTooltipData })}
+                        onMouseEnter={() => this.props.debugSettings.showCellLabels
+                            ? this.setState({ tooltipData: defaultBoardTooltipData })
+                            : null}
                     />
                 </Layer>
 
@@ -110,7 +113,7 @@ export default class CanvasBoard extends React.Component<CanvasBoardProps, Canva
 
     private renderTooltip() {
         const data = this.state.tooltipData;
-        if (!data.visible) {
+        if (!data.visible || !this.props.debugSettings.showCellLabels) {
             return null;
         }
 
