@@ -8,7 +8,6 @@ import { AnimationFrame, BoardTooltipState } from './model';
 import { Animation } from 'konva';
 
 interface Props {
-    gameId : number,
     board : BoardView,
     theme : Theme,
     selectCell : (cell : CellView) => void,

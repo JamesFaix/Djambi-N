@@ -65,7 +65,6 @@ export default class CanvasBoard extends React.Component<Props, State> {
                     style={outlineStyle}
                 />
                 <CanvasCellsLayer
-                    gameId={this.props.game.id}
                     board={this.props.board}
                     theme={style.theme}
                     selectCell={this.props.selectCell}
