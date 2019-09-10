@@ -3,26 +3,23 @@ import CanvasPolygon from './canvasPolygon';
 import { CellView } from '../../viewModel/board/model';
 import { Theme } from '../../themes/model';
 
-interface CanvasCellHighlightLayerProps {
+const CanvasCellHighlightLayer : React.SFC<{
     cell : CellView,
     theme : Theme,
     opacity : number
-}
-
-export default class CanvasCellHighlightLayer extends React.Component<CanvasCellHighlightLayerProps> {
-    render() {
-        if (!this.props.cell.isSelectable) {
-            return null;
-        }
-
-        return (
-            <CanvasPolygon
-                polygon={this.props.cell.polygon}
-                style={{
-                    fillColor: this.props.theme.colors.cells.selectableColor,
-                    opacity: this.props.opacity
-                }}
-            />
-        );
+}> = props => {
+    if (!props.cell.isSelectable) {
+        return null;
     }
+
+    return (
+        <CanvasPolygon
+            polygon={props.cell.polygon}
+            style={{
+                fillColor: props.theme.colors.cells.selectableColor,
+                opacity: props.opacity
+            }}
+        />
+    );
 }
+export default CanvasCellHighlightLayer

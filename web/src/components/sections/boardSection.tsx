@@ -1,5 +1,5 @@
 import * as React from 'react';
-import CanvasBoard, { CanvasBoardStyle } from '../canvas/canvasBoard';
+import CanvasBoard from '../canvas/canvasBoard';
 import { BoardView, CellView } from '../../viewModel/board/model';
 import { State } from '../../store/root';
 import { Dispatch } from 'redux';
@@ -33,7 +33,7 @@ class boardSection extends React.Component<BoardSectionProps> {
 
         const internalSize = CanvasTransformService.getSize(p.transformData);
 
-        const boardStyle : CanvasBoardStyle = {
+        const boardStyle = {
             width: internalSize.x,
             height: internalSize.y,
             strokeWidth: 5, //TODO: maybe put in settings somewhere

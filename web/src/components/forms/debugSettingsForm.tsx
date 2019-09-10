@@ -21,12 +21,12 @@ class debugSettingsForm extends React.Component<DebugSettingsFormProps> {
             <table>
                 <tbody>
                     <tr>
-                        <td>Show cell labels</td>
+                        <td>Show board tooltips</td>
                         <td>
                             <input
                                 type={HtmlInputTypes.CheckBox}
-                                checked={s.showCellLabels}
-                                onChange={e => this.onChangeShowCellLabels(e)}
+                                checked={s.showBoardTooltips}
+                                onChange={e => this.onChangeShowBoardTooltips(e)}
                             />
                         </td>
                     </tr>
@@ -75,7 +75,7 @@ class debugSettingsForm extends React.Component<DebugSettingsFormProps> {
         </>);
     }
 
-    private onChangeShowCellLabels(e : React.ChangeEvent<HTMLInputElement>) : void {
+    private onChangeShowBoardTooltips(e : React.ChangeEvent<HTMLInputElement>) : void {
         const value = e.target.checked;
         const formData = {
             ...this.props.formData,
