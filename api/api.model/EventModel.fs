@@ -162,7 +162,6 @@ type EventKind =
     | TurnReset
     | CellSelected
     | PlayerStatusChanged
-    | CorrectNeutralPiecePlayerIds //Temporary workaround for issues with DB transaction handling pattern
 
 [<ClientType(ClientSection.Events)>]
 type Event =

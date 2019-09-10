@@ -165,3 +165,4 @@ export function loadSnapshot(gameId : number, snapshotId : number) : Promise<{}>
     return ApiClientCore.sendRequest<{}, {}>(
         HttpMethod.Post, route);
 }
+

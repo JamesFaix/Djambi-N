@@ -73,7 +73,6 @@ let private eventKindsMap =
         7uy, EventKind.TurnReset
         8uy, EventKind.CellSelected
         9uy, EventKind.PlayerStatusChanged
-        10uy, EventKind.CorrectNeutralPiecePlayerIds
     ]
 
 let mapEventKindId (eventKindId : byte) : EventKind =

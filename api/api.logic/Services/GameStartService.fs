@@ -14,7 +14,7 @@ open Djambi.Api.Logic
 type GameStartService(playerServ : PlayerService,
                       selectionOptionsServ : SelectionOptionsService) =
 
-    member x.getGameStartEvent (game : Game) (session : Session) : CreateEventRequest AsyncHttpResult =
+    member x.getGameStartEvents (game : Game) (session : Session) : (CreateEventRequest option * CreateEventRequest) AsyncHttpResult =
         Security.ensureCreatorOrEditPendingGames session game
         |> Result.bindAsync (fun _ ->
             if game.players
@@ -26,18 +26,32 @@ type GameStartService(playerServ : PlayerService,
             else
                 playerServ.fillEmptyPlayerSlots game
                 |> thenMap (fun addNeutralPlayerEffects ->
-                    let effects =
-                        //The order is very important for effect processing. Neutral players must be created before the game start.
-                        List.append
-                            addNeutralPlayerEffects
-                            [Effect.GameStatusChanged { oldValue = GameStatus.Pending; newValue = InProgress }]
-
-                    {
+                    //Order is important. Players must exist before they can be given pieces
+                    let e1 = 
+                        match addNeutralPlayerEffects.Length with
+                        | 0 -> 
+                            None
+                        | _ ->
+                            Some {
+                                kind = EventKind.PlayerJoined
+                                effects = addNeutralPlayerEffects
+                                createdByUserId = session.user.id
+                                actingPlayerId = Context.getActingPlayerId session game                    
+                            }
+                
+                    let e2 = {
                         kind = EventKind.GameStarted
-                        effects = effects
+                        effects = [
+                            Effect.GameStatusChanged { 
+                                oldValue = GameStatus.Pending
+                                newValue = InProgress 
+                            }
+                        ]
                         createdByUserId = session.user.id
                         actingPlayerId = Context.getActingPlayerId session game
                     }
+
+                    (e1, e2)
                 )
         )
 
@@ -127,38 +141,3 @@ type GameStartService(playerServ : PlayerService,
         let options = (selectionOptionsServ.getSelectableCellsFromState game) |> Result.value
         let turn = { game.currentTurn.Value with selectionOptions = options }
         { game with  currentTurn =  Some turn }
-
-    member x.getCorrectNeutralPiecePlayerIdsEvent (game : Game) (session : Session) : CreateEventRequest AsyncHttpResult =
-        let neutralPlayers = game.players |> List.filter (fun p -> p.kind = Neutral)
-        let neutralPieces = 
-            game.pieces 
-            |> List.groupBy (fun p -> p.playerId) 
-            |> List.filter(fun (pId, _) -> pId.IsSome && pId.Value < 0)
-
-        //Just zipping in arbitrary order, disregarding which placeholder IDs had been assigned to players originally
-        let zipped = 
-            Seq.zip neutralPlayers neutralPieces 
-            |> Seq.map (fun (player, (_, pieces)) -> (player, pieces))
-
-        let effects =
-            zipped
-            |> Seq.collect (fun (player, pieces) -> 
-                pieces 
-                |> Seq.map (fun p -> 
-                    let f : PieceEnlistedEffect = {
-                        oldPiece = p
-                        newPlayerId = player.id
-                    }
-                    Effect.PieceEnlisted f
-                )
-            )
-            |> Seq.toList
-
-        okTask <|
-        {
-            kind = EventKind.CorrectNeutralPiecePlayerIds
-            effects = effects
-            createdByUserId = session.user.id
-            actingPlayerId = Context.getActingPlayerId session game
-        }
-        
