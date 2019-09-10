@@ -1,5 +1,5 @@
 export interface DebugSettings {
-    showCellLabels : boolean,
+    showBoardTooltips : boolean,
     showCellAndPieceIds : boolean,
     logApi : boolean,
     logSse : boolean,
@@ -7,7 +7,7 @@ export interface DebugSettings {
 }
 
 export const defaultDebugSettings : DebugSettings = {
-    showCellLabels : false,
+    showBoardTooltips : false,
     showCellAndPieceIds : false,
     logApi : false,
     logSse : false,

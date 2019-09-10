@@ -6,41 +6,36 @@ import { Shape } from 'react-konva';
 export interface CanvasPolygonStyle {
     fillColor ?: string,
     strokeColor ?: string,
-    strokeWidth ?: number
+    strokeWidth ?: number,
+    opacity ?: number
 }
 
-export interface CanvasPolygonProps {
+const CanvasPolygon : React.SFC<{
     polygon : Polygon,
     onClick ?: () => void,
     style: CanvasPolygonStyle
-}
+}> = props => (
+    <Shape
+        sceneFunc={(ctx : Context, shape : any) => {
+            const vs = props.polygon.vertices;
+            let v = vs[0];
 
-export default class CanvasPolygon extends React.Component<CanvasPolygonProps> {
-    render() {
-        const p = this.props;
-        const style = p.style;
-        return (
-            <Shape
-                sceneFunc={(ctx : Context, shape : any) => {
-                    const vs = p.polygon.vertices;
-                    let v = vs[0];
+            ctx.beginPath();
+            ctx.moveTo(v.x, v.y);
 
-                    ctx.beginPath();
-                    ctx.moveTo(v.x, v.y);
+            for (var i = 1; i < vs.length; i++) {
+                v = vs[i];
+                ctx.lineTo(v.x, v.y);
+            }
 
-                    for (var i = 1; i < vs.length; i++) {
-                        v = vs[i];
-                        ctx.lineTo(v.x, v.y);
-                    }
-
-                    ctx.closePath();
-                    ctx.fillStrokeShape(shape);
-                }}
-                fill={style.fillColor}
-                stroke={style.strokeColor}
-                strokeWidth={style.strokeWidth}
-                onClick={p.onClick ? () => p.onClick() : null}
-            />
-        );
-    }
-}
+            ctx.closePath();
+            ctx.fillStrokeShape(shape);
+        }}
+        fill={props.style.fillColor}
+        stroke={props.style.strokeColor}
+        strokeWidth={props.style.strokeWidth}
+        onClick={props.onClick ? () => props.onClick() : null}
+        opacity={props.style.opacity !== undefined ? props.style.opacity : 1}
+    />
+);
+export default CanvasPolygon;

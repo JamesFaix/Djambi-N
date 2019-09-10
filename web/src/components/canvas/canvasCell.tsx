@@ -1,33 +1,84 @@
 import * as React from 'react';
-import CanvasPolygon from './canvasPolygon';
 import { CellView } from '../../viewModel/board/model';
-import ThemeService from '../../themes/themeService';
 import { Theme } from '../../themes/model';
+import { Group } from 'react-konva';
+import Copy from '../../utilities/copy';
+import { KonvaEventObject } from 'konva';
+import { Game } from '../../api/model';
+import CanvasCellPieceLayer from './canvasCellPieceLayer';
+import CanvasCellHighlightLayer from './canvasCellHighlightLayer';
+import CanvasCellBackgroundLayer from './canvasCellBackgroundLayer';
+import { BoardTooltipState } from './model';
 
-export interface CanvasCellProps {
+export default class CanvasCell extends React.Component< {
     cell : CellView,
-    theme : Theme
-}
-
-export default class CanvasCell extends React.Component<CanvasCellProps> {
+    theme : Theme,
+    highlightOpacity : number,
+    selectCell : (cell : CellView) => void,
+    pieceImage : HTMLImageElement,
+    pieceSize : number,
+    showBoardTooltip : boolean,
+    setTooltip : (state : BoardTooltipState) => void,
+    game : Game
+}> {
     render() {
-        const cell = this.props.cell;
-        const theme = this.props.theme;
-        const color = ThemeService.getCellColor(theme, cell);
-        let borderColor = ThemeService.getCellBorderColor(theme, cell.type);
-        if (!borderColor) {
-            borderColor = color;
-        }
+        const c = this.props.cell;
+        const th = this.props.theme;
 
         return (
-            <CanvasPolygon
-                polygon={cell.polygon}
-                style={{
-                    fillColor: color,
-                    strokeColor: borderColor,
-                    strokeWidth: 1 //Stroke is necessary to fill gaps between polygons belonging to the same cell
-                }}
-            />
+            <Group
+                onMouseMove={e => this.updateTooltip(e)}
+                onClick={() => this.onClick()}
+            >
+                <CanvasCellBackgroundLayer
+                    cell={c}
+                    theme={th}
+                />
+                <CanvasCellHighlightLayer
+                    cell={c}
+                    theme={th}
+                    opacity={this.props.highlightOpacity}
+                />
+                <CanvasCellPieceLayer
+                    cell={c}
+                    theme={th}
+                    size={this.props.pieceSize}
+                    image={this.props.pieceImage}
+                />
+            </Group>
         );
+    }
+
+    private updateTooltip(e : KonvaEventObject<MouseEvent>) {
+        if (!this.props.showBoardTooltip) {
+            return;
+        }
+
+        const offset = 5;
+
+        const pos = {
+            x: e.evt.offsetX + offset,
+            y: e.evt.offsetY + offset
+        };
+
+        const c = this.props.cell;
+        let text = Copy.getCellViewLabel(c);
+        if (c.piece) {
+            text += "\n" + Copy.getPieceViewLabel(c.piece, this.props.game);
+        }
+
+        const data = {
+            visible: true,
+            text: text,
+            position: pos
+        };
+
+        this.props.setTooltip(data);
+    }
+
+    private onClick() {
+        if (this.props.cell.isSelectable) {
+            this.props.selectCell(this.props.cell);
+        }
     }
 }

@@ -1,11 +1,11 @@
 import * as React from 'react';
-import CanvasBoard, { CanvasBoardStyle } from '../canvas/canvasBoard';
+import CanvasBoard from '../canvas/canvasBoard';
 import { BoardView, CellView } from '../../viewModel/board/model';
 import { State } from '../../store/root';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import CanvasTransformService, { CanvasTranformData } from '../../viewModel/board/canvasTransformService';
-import { PieceKind } from '../../api/model';
+import { PieceKind, Game } from '../../api/model';
 import { Classes } from '../../styles/styles';
 import BoardScrollArea from './boardScrollArea';
 import BoardZoomSlider from '../controls/boardZoomSlider';
@@ -14,7 +14,7 @@ import { DebugSettings } from '../../debug';
 import GameStoreFlows from '../../storeFlows/game';
 
 export interface BoardSectionProps {
-    gameId : number,
+    game : Game,
     board : BoardView,
     transformData : CanvasTranformData,
     zoomLevel : number,
@@ -33,7 +33,7 @@ class boardSection extends React.Component<BoardSectionProps> {
 
         const internalSize = CanvasTransformService.getSize(p.transformData);
 
-        const boardStyle : CanvasBoardStyle = {
+        const boardStyle = {
             width: internalSize.x,
             height: internalSize.y,
             strokeWidth: 5, //TODO: maybe put in settings somewhere
@@ -49,11 +49,11 @@ class boardSection extends React.Component<BoardSectionProps> {
                 <BoardScrollArea>
                     <CanvasBoard
                         style={boardStyle}
-                        gameId={p.gameId}
+                        game={p.game}
                         board={p.board}
-                        selectCell={cell => p.selectCell(p.gameId, cell)}
+                        selectCell={cell => p.selectCell(p.game.id, cell)}
                         pieceImages={p.pieceImages}
-                        debugSettings={p.debugSettings}
+                        debugSettings={this.props.debugSettings}
                     />
                 </BoardScrollArea>
                 <BoardZoomSlider/>
@@ -67,9 +67,8 @@ const mapStateToProps = (state : State) => {
         return null;
     }
 
-    const game = state.activeGame.game;
     return {
-        gameId: game ? game.id : null,
+        game: state.activeGame.game,
         board: state.activeGame.boardView,
         zoomLevel: state.display.boardZoomLevel,
         pieceImages: state.display.images.pieces,

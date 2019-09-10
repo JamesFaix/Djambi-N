@@ -1,17 +1,17 @@
 import * as React from 'react';
 import { Stage } from 'react-konva';
 import CanvasCellsLayer from './canvasCellsLayer';
-import CanvasPiecesLayer from './canvasPiecesLayer';
-import CanvasLabelsLayer from './canvasLabelsLayer';
-import CanvasBackgroundLayer from './canvasBackgroundLayer';
+import CanvasBoardOutlineLayer from './canvasBoardOutlineLayer';
 import { BoardView, CellView } from '../../viewModel/board/model';
-import { PieceKind } from '../../api/model';
+import { PieceKind, Game } from '../../api/model';
 import { Classes } from '../../styles/styles';
 import { Theme } from '../../themes/model';
 import { DebugSettings } from '../../debug';
-import CanvasHighlightsLayer from './canvasHighlightsLayer';
+import CanvasBackgroundLayer from './canvasBackgroundLayer';
+import CanvasTooltip from './canvasTooltip';
+import { BoardTooltipState, defaultBoardTooltipState } from './model';
 
-export interface CanvasBoardStyle {
+interface CanvasBoardStyle {
     width : number,
     height : number
     scale : number,
@@ -19,8 +19,8 @@ export interface CanvasBoardStyle {
     theme : Theme
 }
 
-export interface CanvasBoardProps {
-    gameId : number,
+interface Props {
+    game : Game,
     board : BoardView,
     selectCell : (cell : CellView) => void,
     style : CanvasBoardStyle,
@@ -28,18 +28,25 @@ export interface CanvasBoardProps {
     debugSettings : DebugSettings
 }
 
-export default class CanvasBoard extends React.Component<CanvasBoardProps> {
+interface State {
+    tooltipState : BoardTooltipState
+}
+
+export default class CanvasBoard extends React.Component<Props, State> {
+    constructor(props : Props) {
+        super(props);
+        this.state = {
+            tooltipState: defaultBoardTooltipState
+        };
+    }
+
     render() {
         const style = this.props.style;
+        const ttState = this.state.tooltipState;
 
-        const backgroundStyle = {
+        const outlineStyle = {
             strokeWidth: style.strokeWidth,
             strokeColor: style.theme.colors.cells.boardBorder
-        };
-
-        const piecesStyle = {
-            scale: style.scale,
-            theme: style.theme
         };
 
         return (
@@ -49,32 +56,44 @@ export default class CanvasBoard extends React.Component<CanvasBoardProps> {
                 height={style.height}
             >
                 <CanvasBackgroundLayer
+                    size={{ x: style.width, y: style.height }}
+                    color={style. theme.colors.background}
+                    onMouseEnter={() => this.clearTooltip()}
+                />
+                <CanvasBoardOutlineLayer
                     board={this.props.board}
-                    style={backgroundStyle}
+                    style={outlineStyle}
                 />
                 <CanvasCellsLayer
-                    gameId={this.props.gameId}
+                    gameId={this.props.game.id}
                     board={this.props.board}
                     theme={style.theme}
-                />
-                <CanvasPiecesLayer
-                    board={this.props.board}
-                    style={piecesStyle}
-                    images={this.props.pieceImages}
-                />
-                <CanvasLabelsLayer
-                    gameId={this.props.gameId}
-                    board={this.props.board}
-                    theme={this.props.style.theme}
-                    debugSettings={this.props.debugSettings}
-                />
-                <CanvasHighlightsLayer
-                    gameId={this.props.gameId}
-                    board={this.props.board}
                     selectCell={this.props.selectCell}
+                    pieceImages={this.props.pieceImages}
+                    scale={style.scale}
+                    setTooltip={state => this.updateTooltip(state)}
+                    game={this.props.game}
+                    showBoardTooltip={this.props.debugSettings.showBoardTooltips}
+                />
+                <CanvasTooltip
+                    visible={ttState.visible && this.props.debugSettings.showBoardTooltips}
+                    text={ttState.text}
+                    position={ttState.position}
                     theme={style.theme}
                 />
             </Stage>
         );
+    }
+
+    private updateTooltip(state : BoardTooltipState) {
+        if (this.props.debugSettings.showBoardTooltips) {
+            this.setState({ tooltipState: state });
+        }
+    }
+
+    private clearTooltip() {
+        if (this.props.debugSettings.showBoardTooltips) {
+            this.setState({ tooltipState: defaultBoardTooltipState });
+        }
     }
 }
