@@ -1,5 +1,6 @@
 namespace Djambi.Api.Logic.Managers
 
+open System
 open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Db.Interfaces
@@ -54,13 +55,41 @@ type GameManager(eventRepo : IEventRepository,
         )
         |> thenBindAsync sendIfPublishable
 
-    let processEventAsync (gameId : int) (getCreateEventRequest : Game -> CreateEventRequest AsyncHttpResult): StateAndEventResponse AsyncHttpResult =
+    let processGameStartEventsAsync (gameId : int) (getCreateEventRequests : Game -> (CreateEventRequest option * CreateEventRequest) AsyncHttpResult): StateAndEventResponse AsyncHttpResult =
         gameRepo.getGame gameId
         |> thenBindAsync (fun game ->
-            getCreateEventRequest game
-            |> thenBindAsync (fun eventRequest ->
-                let newGame = eventServ.applyEvent game eventRequest
-                eventRepo.persistEvent (eventRequest, game, newGame)
+            getCreateEventRequests game
+            |> thenBindAsync (fun eventRequests ->
+                (*
+                    This is really kind of ugly because of how inflexible the pattern for
+                    handling SQL transactions while persisting game events is.
+                    The problem is that neutral players must be persisted to get their IDs
+                    before pieces are created, so that the pieces can be assigned owners.
+                    The solution here puts player creation in a separate transaction before the 
+                    changes to the game (pieces, status, etc) are made.
+                *)
+                let (addNeutralPlayers, startGame) = eventRequests;
+                match addNeutralPlayers with
+                | Some er -> 
+                    let newGame = eventServ.applyEvent game er
+                    eventRepo.persistEvent (er, game, newGame)
+                | None ->
+                    let dummyEvent : Event = {
+                        id = 0
+                        createdBy = {
+                            userId = 0
+                            userName = ""
+                            time = DateTime.MinValue
+                        }
+                        actingPlayerId = None
+                        kind = EventKind.PlayerJoined
+                        effects = []
+                    }
+                    okTask { game = game; event = dummyEvent }
+                |> thenBindAsync (fun resp -> 
+                    let newGame = eventServ.applyEvent resp.game startGame
+                    eventRepo.persistEvent (startGame, resp.game, newGame)                
+                )
             )
         )
         |> thenBindAsync sendIfPublishable
@@ -97,7 +126,7 @@ type GameManager(eventRepo : IEventRepository,
             processEvent gameId (fun game -> gameCrudServ.getUpdateGameParametersEvent (game, parameters) session)
 
         member x.startGame gameId session =
-            processEventAsync gameId (fun game -> gameStartServ.getGameStartEvent game session)
+            processGameStartEventsAsync gameId (fun game -> gameStartServ.getGameStartEvents game session)
 
     interface IPlayerManager with
         member x.addPlayer gameId request session =

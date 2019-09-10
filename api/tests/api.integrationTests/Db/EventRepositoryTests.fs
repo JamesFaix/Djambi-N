@@ -183,19 +183,8 @@ type EventRepositoryTests() =
             //Attempt to add 2 players with the same name
             //This will violate a unique index in SQL and fail the second player
 
-            let playerRequest =
-                {
-                    userId = None
-                    name = Some "test"
-                    kind = PlayerKind.Neutral
-                }
-
-            let effects =
-                [
-                    PlayerAddedEffect.fromRequest playerRequest
-                    PlayerAddedEffect.fromRequest playerRequest
-                ]
-            let event = TestUtilities.createEventRequest(effects) //EventKind doesn't matter
+            let e = Effect.NeutralPlayerAdded { name = "test"; placeholderPlayerId = -1 }
+            let event = TestUtilities.createEventRequest([e;e]) //EventKind doesn't matter
 
             let newGame = services.events.applyEvent game event
 
@@ -207,7 +196,7 @@ type EventRepositoryTests() =
 
             let! persistedGame = db.games.getGame game.id |> thenValue
             persistedGame.players.Length |> shouldBe 1 //Just the creator
-            persistedGame.players |> shouldNotExist (fun p -> p.name = playerRequest.name.Value)
+            persistedGame.players |> shouldNotExist (fun p -> p.name = "test")
         }
 
     [<Fact>]

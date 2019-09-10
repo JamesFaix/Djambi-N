@@ -19,7 +19,7 @@ type EventService(gameStartServ : GameStartService) =
     let applyNeutralPlayerAddedEffect (effect : NeutralPlayerAddedEffect) (game : Game) : Game =
         let player : Player =
             {
-                id = 0
+                id = effect.placeholderPlayerId
                 gameId = game.id
                 userId = None
                 kind = PlayerKind.Neutral

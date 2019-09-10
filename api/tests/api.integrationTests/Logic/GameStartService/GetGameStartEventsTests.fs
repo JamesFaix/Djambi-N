@@ -7,7 +7,7 @@ open Djambi.Api.IntegrationTests
 open Djambi.Api.Model
 open Djambi.Api.Logic
 
-type GetGameStartEventTests() =
+type GetGameStartEventsTests() =
     inherit TestsBase()
 
     let createUserSessionAndGameWith3Players() =
@@ -38,7 +38,7 @@ type GetGameStartEventTests() =
             let session = session |> TestUtilities.setSessionUserId (session.user.id+1)
 
             //Act
-            let! result = services.gameStart.getGameStartEvent game session
+            let! result = services.gameStart.getGameStartEvents game session
 
             //Assert
             result |> shouldBeError 403 Security.noPrivilegeOrCreatorErrorMessage
@@ -51,7 +51,7 @@ type GetGameStartEventTests() =
             let! (_, session, game) = createuserSessionAndGame(true) |> thenValue
 
             //Act
-            let! result = services.gameStart.getGameStartEvent game session
+            let! result = services.gameStart.getGameStartEvents game session
 
             //Assert
             result |> shouldBeError 400 "Cannot start game with only one player."
@@ -66,12 +66,15 @@ type GetGameStartEventTests() =
                                   |> TestUtilities.setSessionPrivileges [EditPendingGames]
 
             //Act
-            let! event = services.gameStart.getGameStartEvent game session |> thenValue
+            let! events = services.gameStart.getGameStartEvents game session |> thenValue
 
             //Assert
-            event.kind |> shouldBe EventKind.GameStarted
-            event.effects.Length |> shouldBe 1
-            match event.effects.[0] with
+            let (addNeutralPlayers, startGame) = events
+            addNeutralPlayers |> shouldBeNone
+
+            startGame.kind |> shouldBe EventKind.GameStarted
+            startGame.effects.Length |> shouldBe 1
+            match startGame.effects.[0] with
             | Effect.GameStatusChanged f ->
                 f.oldValue |> shouldBe GameStatus.Pending
                 f.newValue |> shouldBe GameStatus.InProgress
@@ -86,12 +89,15 @@ type GetGameStartEventTests() =
             let! (user, session, game) = createUserSessionAndGameWith3Players() |> thenValue
 
             //Act
-            let! event = services.gameStart.getGameStartEvent game session |> thenValue
+            let! events = services.gameStart.getGameStartEvents game session |> thenValue
 
             //Assert
-            event.kind |> shouldBe EventKind.GameStarted
-            event.effects.Length |> shouldBe 1
-            match event.effects.[0] with
+            let (addNeutralPlayers, startGame) = events
+            addNeutralPlayers |> shouldBeNone
+
+            startGame.kind |> shouldBe EventKind.GameStarted
+            startGame.effects.Length |> shouldBe 1
+            match startGame.effects.[0] with
             | Effect.GameStatusChanged f ->
                 f.oldValue |> shouldBe GameStatus.Pending
                 f.newValue |> shouldBe GameStatus.InProgress
@@ -116,15 +122,23 @@ type GetGameStartEventTests() =
             let! game = db.games.getGame game.id |> thenValue
 
             //Act
-            let! event = services.gameStart.getGameStartEvent game session |> thenValue
-
+            let! events = services.gameStart.getGameStartEvents game session |> thenValue
+            
             //Assert
-            event.kind |> shouldBe EventKind.GameStarted
-            event.effects.Length |> shouldBe 2
-            match (event.effects.[0], event.effects.[1]) with
-            | (Effect.NeutralPlayerAdded f1, Effect.GameStatusChanged f2) ->
-                f2.oldValue |> shouldBe GameStatus.Pending
-                f2.newValue |> shouldBe GameStatus.InProgress
+            let (addNeutralPlayers, startGame) = events
+            addNeutralPlayers |> shouldBeSome
+            addNeutralPlayers.Value.effects.Length |> shouldBe 1
+            match addNeutralPlayers.Value.effects.[0] with
+            | Effect.NeutralPlayerAdded f ->
+                f.placeholderPlayerId |> shouldBeLessThan 0
+            | _ -> failwith "Incorrect effects"
+
+            startGame.kind |> shouldBe EventKind.GameStarted
+            startGame.effects.Length |> shouldBe 1
+            match startGame.effects.[0] with
+            | Effect.GameStatusChanged f ->
+                f.oldValue |> shouldBe GameStatus.Pending
+                f.newValue |> shouldBe GameStatus.InProgress
 
             | _ -> failwith "Incorrect effects"
         }
