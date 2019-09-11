@@ -42,6 +42,9 @@ export default class Controller {
     ) : void {
         this.store = store;
         this.history = history;
+
+        Controller.Settings.loadAndApply();
+        ThemeService.loadSavedTheme(action => Controller.dispatch(action));
     }
 
     private static dispatch(action : CustomAction) {
