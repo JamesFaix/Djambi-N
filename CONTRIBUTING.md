@@ -13,6 +13,6 @@ Issues marked with the label `up-for-grabs` are smaller problems that might be g
 
 I try to keep GitHub labels, issues, and projects pretty well organized. Reviewing these should give you an idea of where the project is at and what needs to be done.
 
-More information is available on the project wiki[1].
+More information is available on the project [wiki][1].
 
 [1]: https://github.com/GamesFaix/Djambi3/wiki
