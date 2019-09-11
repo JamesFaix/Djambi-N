@@ -9,11 +9,10 @@ import GameStoreFlows from '../../storeFlows/game';
 import { Theme } from '../../themes/model';
 
 function isCurrentUser(user : User, game : Game) : boolean {
-    const playerIds = game.players
+    return game.players
         .filter(p => p.userId === user.id)
-        .map(p => p.id);
-    const currentPlayerId = game.turnCycle[0];
-    return playerIds.includes(currentPlayerId);
+        .map(p => p.id)
+        .includes(game.turnCycle[0]);
 }
 
 const ResetButton : React.SFC<{
