@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { navigateTo } from '../../history';
 import Routes from '../../routes';
 import IconButton from '../controls/iconButton';
 import { Icons, IconInfo } from '../../utilities/icons';
@@ -8,6 +7,7 @@ import { Classes } from '../../styles/styles';
 import { withRouter } from 'react-router';
 import { User, Privilege, Game, GameStatus } from '../../api/model';
 import { State } from '../../store/root';
+import Controller from '../../storeFlows/controller';
 
 enum ButtonState {
     Hidden = "HIDDEN",
@@ -29,7 +29,7 @@ const NavigationButton : React.SFC<NavigationButtonProps> = props => {
     return (
         <IconButton
             icon={props.icon}
-            onClick={() => navigateTo(props.route)}
+            onClick={() => Controller.navigateTo(props.route)}
             active={props.state === ButtonState.Active}
         />
     );

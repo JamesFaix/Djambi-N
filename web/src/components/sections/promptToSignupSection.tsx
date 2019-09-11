@@ -1,11 +1,11 @@
 import * as React from 'react';
 import Routes from '../../routes';
 import { SectionHeader } from '../controls/headers';
-import { navigateTo } from '../../history';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
+import Controller from '../../storeFlows/controller';
 
-const PromptToSignupSection : React.SFC<{}> = props => {
+const PromptToSignupSection : React.SFC<{}> = _ => {
     return (
         <div style={{textAlign:"center"}}>
             <SectionHeader text="Don't have an account yet?"/>
@@ -13,7 +13,7 @@ const PromptToSignupSection : React.SFC<{}> = props => {
             <IconButton
                 icon={Icons.Pages.signup}
                 showTitle={true}
-                onClick={() => navigateTo(Routes.signup)}
+                onClick={() => Controller.navigateTo(Routes.signup)}
             />
         </div>
     );

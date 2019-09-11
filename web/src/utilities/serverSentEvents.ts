@@ -1,10 +1,7 @@
 import Environment from "../environment";
-import { StateAndEventResponse, GameStatus } from "../api/model";
+import { StateAndEventResponse } from "../api/model";
 import { Store } from "redux";
 import { State, CustomAction, AppStore, getAppState } from "../store/root";
-import * as StoreActiveGame from '../store/activeGame';
-import { navigateTo } from "../history";
-import Routes from "../routes";
 import GameStoreFlows from "../storeFlows/game";
 
 class SseClient {

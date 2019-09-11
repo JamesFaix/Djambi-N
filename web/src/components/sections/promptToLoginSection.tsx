@@ -3,7 +3,7 @@ import Routes from '../../routes';
 import { SectionHeader } from '../controls/headers';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
-import { navigateTo } from '../../history';
+import Controller from '../../storeFlows/controller';
 
 const PromptToLoginSection : React.SFC<{}> = props => {
     return (
@@ -13,7 +13,7 @@ const PromptToLoginSection : React.SFC<{}> = props => {
             <IconButton
                 icon={Icons.Pages.login}
                 showTitle={true}
-                onClick={() => navigateTo(Routes.login)}
+                onClick={() => Controller.navigateTo(Routes.login)}
             />
         </div>
     );

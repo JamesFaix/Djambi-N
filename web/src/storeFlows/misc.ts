@@ -2,11 +2,11 @@ import { Dispatch } from "redux";
 import { GameStatus, Game, GamesQuery } from "../api/model";
 import * as Api from "../api/client";
 import Routes from "../routes";
-import { navigateTo } from '../history';
 import * as StoreGamesQuery from '../store/gamesQuery';
 import { DebugSettings, defaultDebugSettings } from "../debug";
 import LocalStorageService from "../utilities/localStorageService";
 import * as StoreSettings from '../store/settings';
+import Controller from "./controller";
 
 export default class MiscStoreFlows {
     public static queryGames(query: GamesQuery) {
@@ -29,7 +29,7 @@ export default class MiscStoreFlows {
                 route = Routes.lobby(game.id);
                 break;
         }
-        navigateTo(route);
+        Controller.navigateTo(route);
     }
 
     public static applySettings(settings : DebugSettings, dispatch : Dispatch) : void {

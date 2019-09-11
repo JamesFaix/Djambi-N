@@ -14,8 +14,8 @@ import {
     StateAndEventResponse
 } from '../api/model';
 import Routes from '../routes';
-import { navigateTo } from '../history';
 import * as StoreBoards from '../store/boards';
+import Controller from './controller';
 
 export default class GameStoreFlows {
     private static async loadGameInner(gameId : number, dispatch : Dispatch) : Promise<Game> {
@@ -69,7 +69,7 @@ export default class GameStoreFlows {
         return async function (dispatch : Dispatch) : Promise<void> {
             const game = await Api.createGame(formData);
             dispatch(StoreActiveGame.Actions.createGame(game));
-            navigateTo(Routes.lobby(game.id));
+            Controller.navigateTo(Routes.lobby(game.id));
         }
     }
 
@@ -91,7 +91,7 @@ export default class GameStoreFlows {
         return async function (dispatch: Dispatch) : Promise<void> {
             const resp = await Api.startGame(gameId);
             dispatch(StoreActiveGame.Actions.updateGame(resp));
-            navigateTo(Routes.play(gameId));
+            Controller.navigateTo(Routes.play(gameId));
         }
     }
 
@@ -127,7 +127,7 @@ export default class GameStoreFlows {
         dispatch(StoreActiveGame.Actions.updateGame(response));
         const g = response.game;
         if (g.status === GameStatus.Over) {
-            navigateTo(Routes.gameOver(g.id));
+            Controller.navigateTo(Routes.gameOver(g.id));
         }
     }
 }

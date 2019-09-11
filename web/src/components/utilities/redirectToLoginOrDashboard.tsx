@@ -3,9 +3,9 @@ import { User } from "../../api/model";
 import { State } from '../../store/root';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import { navigateTo } from '../../history';
 import Routes from '../../routes';
 import SessionStoreFlows from '../../storeFlows/session';
+import Controller from '../../storeFlows/controller';
 
 interface RedirectToLoginOrDashboardProps {
     user : User,
@@ -35,7 +35,7 @@ const mapStateToProps = (state: State) => {
 
 const mapDispatchToProps = (dispatch : Dispatch) => {
     return {
-        redirectToDashboard: () => navigateTo(Routes.dashboard),
+        redirectToDashboard: () => Controller.navigateTo(Routes.dashboard),
         restoreSessionAndRedirect: () => SessionStoreFlows.redirectToLoginOrDashboard()(dispatch)
     };
 };

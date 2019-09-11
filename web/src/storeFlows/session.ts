@@ -3,19 +3,19 @@ import { LoginRequest, CreateUserRequest, User } from "../api/model";
 import * as Api from "../api/client";
 import * as ModelFactory from "../api/modelFactory";
 import Routes from "../routes";
-import { navigateTo } from '../history';
 import * as StoreSession from '../store/session';
 import { SseClientManager } from "../utilities/serverSentEvents";
 import ThemeService from "../themes/themeService";
 import * as StoreGamesQuery from '../store/gamesQuery';
 import MiscStoreFlows from "./misc";
+import Controller from "./controller";
 
 export default class SessionStoreFlows {
     public static login(request : LoginRequest) {
         return async function (dispatch : Dispatch) : Promise<void> {
             const session = await Api.login(request);
             dispatch(StoreSession.Actions.login(session.user));
-            navigateTo(Routes.dashboard);
+            Controller.navigateTo(Routes.dashboard);
             return SessionStoreFlows.finishLoginSetup(session.user, dispatch);
         };
     }
@@ -24,7 +24,7 @@ export default class SessionStoreFlows {
         return async function (dispatch : Dispatch) : Promise<void> {
             await Api.logout();
             dispatch(StoreSession.Actions.logout());
-            navigateTo(Routes.login);
+            Controller.navigateTo(Routes.login);
             SseClientManager.disconnect();
         };
     }
@@ -43,7 +43,7 @@ export default class SessionStoreFlows {
             try {
                 const user = await Api.getCurrentUser();
                 dispatch(StoreSession.Actions.restoreSession(user));
-                navigateTo(Routes.dashboard);
+                Controller.navigateTo(Routes.dashboard);
                 return SessionStoreFlows.finishLoginSetup(user, dispatch);
             }
             catch(ex) {
@@ -68,7 +68,7 @@ export default class SessionStoreFlows {
                 if (status !== 401) {
                     throw ex;
                 }
-                navigateTo(Routes.login);
+                Controller.navigateTo(Routes.login);
             }
         };
     }
@@ -78,14 +78,14 @@ export default class SessionStoreFlows {
             try {
                 const user = await Api.getCurrentUser();
                 dispatch(StoreSession.Actions.restoreSession(user));
-                navigateTo(Routes.dashboard);
+                Controller.navigateTo(Routes.dashboard);
                 return SessionStoreFlows.finishLoginSetup(user, dispatch);
             }
             catch (ex) {
                 console.log(ex);
                 let [status, message] = ex;
                 if (status === 401) {
-                    navigateTo(Routes.login);
+                    Controller.navigateTo(Routes.login);
                 }
                 else {
                     throw ex;

@@ -5,7 +5,6 @@ import App from './components/app';
 import { createStore, applyMiddleware } from 'redux';
 import { Router } from 'react-router-dom';
 import thunk from 'redux-thunk';
-import {history} from './history';
 import "./styles/styles.less";
 import { ApiClientCore } from './api/clientCore';
 import { ApiRequest, ApiResponse, ApiError } from './api/requestModel';
@@ -13,6 +12,8 @@ import * as StoreApiClient from './store/apiClient';
 import * as StoreRoot from './store/root';
 import { SseClientManager } from './utilities/serverSentEvents';
 import Copy from './utilities/copy';
+import { createHashHistory } from 'history';
+import Controller from './storeFlows/controller';
 
 const store = createStore(
     StoreRoot.reducer,
@@ -29,6 +30,10 @@ ApiClientCore.init(
 
 SseClientManager.init(store);
 Copy.init(store);
+
+const history = createHashHistory();
+
+Controller.init(store, history);
 
 render(
     <Provider store={store}>
