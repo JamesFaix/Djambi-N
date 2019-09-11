@@ -1,4 +1,4 @@
-import { AppStore } from "./store/root";
+import { AppStore, CustomAction, State } from "./store/root";
 import { History } from "history";
 import { DebugSettings, defaultDebugSettings } from "./debug";
 import LocalStorageService from "./utilities/localStorageService";
@@ -44,37 +44,48 @@ export default class Controller {
         this.history = history;
     }
 
+    private static dispatch(action : CustomAction) {
+        Controller.dispatch(action);
+    }
+
+    private static get state() : State {
+        return Controller.store.getState();
+    }
+
     public static navigateTo(route : string) : void {
         Controller.history.push(route);
+        if (Controller.state.settings.debug.logRedux) {
+            console.log(`Navigate to ${route}`);
+        }
     }
 
     public static Settings = class {
         public static saveAndApply(settings : DebugSettings) : void {
             LocalStorageService.debugSettings = settings;
-            Controller.store.dispatch(StoreSettings.Actions.applyDebugSettings(settings));
+            Controller.dispatch(StoreSettings.Actions.applyDebugSettings(settings));
         }
 
         public static loadAndApply() : void {
             let settings = LocalStorageService.debugSettings;
             if (!settings) { settings = defaultDebugSettings; }
-            Controller.store.dispatch(StoreSettings.Actions.applyDebugSettings(settings));
+            Controller.dispatch(StoreSettings.Actions.applyDebugSettings(settings));
         }
     }
 
     public static async queryGames(query: GamesQuery) : Promise<void> {
         const games = await Api.getGames(query);
-        Controller.store.dispatch(StoreGamesQuery.Actions.queryGames(games));
+        Controller.dispatch(StoreGamesQuery.Actions.queryGames(games));
     }
 
     public static Snapshots = class {
         public static async get(gameId: number) : Promise<void> {
             const snapshots = await Api.getSnapshotsForGame(gameId);
-            Controller.store.dispatch(StoreActiveGame.Actions.loadSnapshots(snapshots))
+            Controller.dispatch(StoreActiveGame.Actions.loadSnapshots(snapshots))
         }
 
         public static async save(gameId : number, request : CreateSnapshotRequest) : Promise<void> {
             const snapshot = await Api.createSnapshot(gameId, request);
-            Controller.store.dispatch(StoreActiveGame.Actions.snapshotSaved(snapshot));
+            Controller.dispatch(StoreActiveGame.Actions.snapshotSaved(snapshot));
         }
 
         public static async load(gameId : number, snapshotId : number) : Promise<void> {
@@ -84,28 +95,28 @@ export default class Controller {
 
         public static async delete(gameId : number, snapshotId : number) : Promise<void>{
             await Api.loadSnapshot(gameId, snapshotId);
-            Controller.store.dispatch(StoreActiveGame.Actions.snapshotDeleted(snapshotId));
+            Controller.dispatch(StoreActiveGame.Actions.snapshotDeleted(snapshotId));
         }
     }
 
     public static Session = class {
         public static async login(request : LoginRequest) : Promise<void> {
             const session = await Api.login(request);
-            Controller.store.dispatch(StoreSession.Actions.login(session.user));
+            Controller.dispatch(StoreSession.Actions.login(session.user));
             Controller.navigateTo(Routes.dashboard);
             return Controller.Session.finishLoginSetup(session.user);
         }
 
         public static async logout() : Promise<void> {
             await Api.logout();
-            Controller.store.dispatch(StoreSession.Actions.logout());
+            Controller.dispatch(StoreSession.Actions.logout());
             Controller.navigateTo(Routes.login);
             SseClientManager.disconnect();
         }
 
         public static async signup(request : CreateUserRequest) : Promise<void> {
             const user = await Api.createUser(request);
-            Controller.store.dispatch(StoreSession.Actions.signup(user));
+            Controller.dispatch(StoreSession.Actions.signup(user));
             const loginRequest = ModelFactory.loginRequestFromCreateUserRequest(request);
             return Controller.Session.login(loginRequest);
         }
@@ -113,7 +124,7 @@ export default class Controller {
         public static async redirectToDashboardIfLoggedIn() : Promise<void> {
             try {
                 const user = await Api.getCurrentUser();
-                Controller.store.dispatch(StoreSession.Actions.restoreSession(user));
+                Controller.dispatch(StoreSession.Actions.restoreSession(user));
                 Controller.navigateTo(Routes.dashboard);
                 return Controller.Session.finishLoginSetup(user);
             }
@@ -128,7 +139,7 @@ export default class Controller {
         public static async redirectToLoginIfNotLoggedIn() : Promise<void> {
             try {
                 const user = await Api.getCurrentUser();
-                Controller.store.dispatch(StoreSession.Actions.restoreSession(user));
+                Controller.dispatch(StoreSession.Actions.restoreSession(user));
                 return Controller.Session.finishLoginSetup(user);
             }
             catch (ex) {
@@ -144,7 +155,7 @@ export default class Controller {
         public static async redirectToLoginOrDashboard() : Promise<void> {
             try {
                 const user = await Api.getCurrentUser();
-                Controller.store.dispatch(StoreSession.Actions.restoreSession(user));
+                Controller.dispatch(StoreSession.Actions.restoreSession(user));
                 Controller.navigateTo(Routes.dashboard);
                 return Controller.Session.finishLoginSetup(user);
             }
@@ -162,7 +173,7 @@ export default class Controller {
 
         private static finishLoginSetup(user : User) : Promise<void> {
             SseClientManager.connect();
-            ThemeService.loadSavedTheme(Controller.store.dispatch);
+            ThemeService.loadSavedTheme(Controller.dispatch);
             Controller.Settings.loadAndApply();
             return Controller.Session.queryGamesForUser(user);
         }
@@ -170,7 +181,7 @@ export default class Controller {
         private static queryGamesForUser(user: User) : Promise<void> {
             const query = ModelFactory.emptyGamesQuery();
             query.playerUserName = user.name;
-            Controller.store.dispatch(StoreGamesQuery.Actions.updateGamesQuery(query));
+            Controller.dispatch(StoreGamesQuery.Actions.updateGamesQuery(query));
             return Controller.queryGames(query);
         }
     }
@@ -178,7 +189,7 @@ export default class Controller {
     public static Game = class {
         private static async loadGameInner(gameId : number) : Promise<Game> {
             const game = await Api.getGame(gameId);
-            Controller.store.dispatch(StoreActiveGame.Actions.loadGame(game));
+            Controller.dispatch(StoreActiveGame.Actions.loadGame(game));
             return game;
         }
 
@@ -191,7 +202,7 @@ export default class Controller {
             };
 
             const history = await Api.getEvents(gameId, query);
-            Controller.store.dispatch(StoreActiveGame.Actions.loadGameHistory(history));
+            Controller.dispatch(StoreActiveGame.Actions.loadGameHistory(history));
             return history;
         }
 
@@ -203,7 +214,7 @@ export default class Controller {
 
         private static async loadBoardInner(regionCount : number) : Promise<Board> {
             const board = await Api.getBoard(regionCount);
-            Controller.store.dispatch(StoreBoards.Actions.loadBoard(board));
+            Controller.dispatch(StoreBoards.Actions.loadBoard(board));
             return board;
         }
 
@@ -219,29 +230,29 @@ export default class Controller {
 
         public static async createGame(formData : GameParameters) : Promise<void> {
             const game = await Api.createGame(formData);
-            Controller.store.dispatch(StoreActiveGame.Actions.createGame(game));
+            Controller.dispatch(StoreActiveGame.Actions.createGame(game));
             Controller.navigateTo(Routes.lobby(game.id));
         }
 
         public static async addPlayer(gameId: number, request : CreatePlayerRequest) : Promise<void> {
             const resp = await Api.addPlayer(gameId, request);
-            Controller.store.dispatch(StoreActiveGame.Actions.updateGame(resp));
+            Controller.dispatch(StoreActiveGame.Actions.updateGame(resp));
         }
 
         public static async removePlayer(gameId: number, playerId: number) : Promise<void> {
             const resp = await Api.removePlayer(gameId, playerId);
-            Controller.store.dispatch(StoreActiveGame.Actions.updateGame(resp));
+            Controller.dispatch(StoreActiveGame.Actions.updateGame(resp));
         }
 
         public static async startGame(gameId: number) : Promise<void> {
             const resp = await Api.startGame(gameId);
-            Controller.store.dispatch(StoreActiveGame.Actions.updateGame(resp));
+            Controller.dispatch(StoreActiveGame.Actions.updateGame(resp));
             Controller.navigateTo(Routes.play(gameId));
         }
 
         public static async selectCell(gameId: number, cellId : number) : Promise<void> {
             const resp = await Api.selectCell(gameId, cellId);
-            Controller.store.dispatch(StoreActiveGame.Actions.updateGame(resp));
+            Controller.dispatch(StoreActiveGame.Actions.updateGame(resp));
         }
 
         public static async endTurn(gameId: number) : Promise<void> {
@@ -251,7 +262,7 @@ export default class Controller {
 
         public static async resetTurn(gameId: number) : Promise<void> {
             const resp = await Api.resetTurn(gameId);
-            Controller.store.dispatch(StoreActiveGame.Actions.updateGame(resp));
+            Controller.dispatch(StoreActiveGame.Actions.updateGame(resp));
         }
 
         public static async changePlayerStatus(gameId: number, playerId: number, status: PlayerStatus) : Promise<void> {
@@ -260,7 +271,7 @@ export default class Controller {
         }
 
         public static updateInProgressGame(response : StateAndEventResponse) : void {
-            Controller.store.dispatch(StoreActiveGame.Actions.updateGame(response));
+            Controller.dispatch(StoreActiveGame.Actions.updateGame(response));
             const g = response.game;
             if (g.status === GameStatus.Over) {
                 Controller.navigateTo(Routes.gameOver(g.id));
@@ -270,11 +281,11 @@ export default class Controller {
 
     public static Forms = class {
         public static updateCreateGameForm(formData : GameParameters) : void {
-            Controller.store.dispatch(StoreCreateGameForm.Actions.updateCreateGameForm(formData))
+            Controller.dispatch(StoreCreateGameForm.Actions.updateCreateGameForm(formData))
         }
 
         public static updateGamesQuery(formData : GamesQuery) : void {
-            Controller.store.dispatch(StoreGamesQuery.Actions.updateGamesQuery(formData))
+            Controller.dispatch(StoreGamesQuery.Actions.updateGamesQuery(formData))
         }
     }
 }
