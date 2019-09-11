@@ -10,48 +10,44 @@ import { Point } from '../../viewModel/board/model';
 import Geometry from '../../viewModel/board/geometry';
 import CanvasTransformService from '../../viewModel/board/canvasTransformService';
 
-interface Props {
+const BoardThumbnail : React.SFC<{
     board : Board,
     size : Point,
     strokeWidth : number,
     theme : Theme
+}> = props => {
+    let bv = BoardViewFactory.createEmptyBoardView(props.board);
+    let t = CanvasTransformService.getBoardViewTransform({
+        containerSize: props.size,
+        canvasMargin: props.strokeWidth * 2,
+        contentPadding: 0,
+        regionCount: props.board.regionCount,
+        zoomLevel: 0
+    });
+    bv = Geometry.Board.transform(bv, t);
+    return (
+        <Stage
+            className={Classes.canvasBoard}
+            width={props.size.x}
+            height={props.size.y}
+        >
+            <CanvasBoardOutlineLayer
+                board={bv}
+                style={{
+                    strokeWidth: props.strokeWidth,
+                    strokeColor: props.theme.colors.cells.boardBorder
+                }}
+            />
+            <Layer>
+                {bv.cells.map((c, i) =>
+                    <CanvasCellBackgroundLayer
+                        key={i}
+                        cell={c}
+                        theme={props.theme}
+                    />
+                )}
+            </Layer>
+        </Stage>
+    );
 }
-
-export default class BoardThumbnail extends React.Component<Props> {
-    render() {
-        const p = this.props;
-        let bv = BoardViewFactory.createEmptyBoardView(p.board);
-        let t = CanvasTransformService.getBoardViewTransform({
-            containerSize: p.size,
-            canvasMargin: p.strokeWidth * 2,
-            contentPadding: 0,
-            regionCount: p.board.regionCount,
-            zoomLevel: 0
-        });
-        bv = Geometry.Board.transform(bv, t);
-        return (
-            <Stage
-                className={Classes.canvasBoard}
-                width={p.size.x}
-                height={p.size.y}
-            >
-                <CanvasBoardOutlineLayer
-                    board={bv}
-                    style={{
-                        strokeWidth: p.strokeWidth,
-                        strokeColor: p.theme.colors.cells.boardBorder
-                    }}
-                />
-                <Layer>
-                    {bv.cells.map((c, i) =>
-                        <CanvasCellBackgroundLayer
-                            key={i}
-                            cell={c}
-                            theme={p.theme}
-                        />
-                    )}
-                </Layer>
-            </Stage>
-        );
-    }
-}
+export default BoardThumbnail;
