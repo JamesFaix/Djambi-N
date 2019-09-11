@@ -187,8 +187,8 @@ export default class Controller {
     }
 
     public static Game = class {
-
         private static async loadGameInner(gameId : number) : Promise<Game> {
+            Controller.dispatch(StoreActiveGame.Actions.clearGame());
             const game = await Api.getGame(gameId);
             Controller.dispatch(StoreActiveGame.Actions.loadGame(game));
             return game;
