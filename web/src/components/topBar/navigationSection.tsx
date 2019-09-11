@@ -1,39 +1,12 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { navigateTo } from '../../history';
 import Routes from '../../routes';
-import IconButton from '../controls/iconButton';
-import { Icons, IconInfo } from '../../utilities/icons';
+import { Icons } from '../../utilities/icons';
 import { Classes } from '../../styles/styles';
 import { withRouter } from 'react-router';
 import { User, Privilege, Game, GameStatus } from '../../api/model';
 import { State } from '../../store/root';
-
-enum ButtonState {
-    Hidden = "HIDDEN",
-    Active = "ACTIVE",
-    Inactive = "INACTIVE"
-}
-
-interface NavigationButtonProps {
-    route : string,
-    state : ButtonState,
-    icon : IconInfo
-}
-
-const NavigationButton : React.SFC<NavigationButtonProps> = props => {
-    if (props.state === ButtonState.Hidden) {
-        return null;
-    }
-
-    return (
-        <IconButton
-            icon={props.icon}
-            onClick={() => navigateTo(props.route)}
-            active={props.state === ButtonState.Active}
-        />
-    );
-};
+import NavigationButton, { ButtonState } from './navigationButton';
 
 interface NavigationSectionProps {
     location : any,
@@ -225,7 +198,7 @@ const navigationSection : React.SFC<NavigationSectionProps> = props => {
 const mapStateToProps = (state : State) => {
     return {
         user: state.session.user,
-        game: state.activeGame.game
+        game: state.activeGame.game,
     };
 }
 

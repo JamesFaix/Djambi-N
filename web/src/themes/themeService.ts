@@ -5,12 +5,13 @@ import * as StoreDisplay from '../store/display';
 import ThemeFactory from "./themeFactory";
 import LocalStorageService from "../utilities/localStorageService";
 import { Theme } from './model';
+import { CustomAction } from "../store/root";
 
 export default class ThemeService {
 
     //#region Theme initialization
 
-    public static changeTheme(themeName : string, dispatch : Dispatch) : void {
+    public static changeTheme(themeName : string, dispatch : (action : CustomAction) => void) : void {
         LocalStorageService.themeName = themeName;
         const theme = ThemeFactory.getThemes().get(themeName);
         dispatch(StoreDisplay.Actions.changeTheme(theme));
@@ -44,7 +45,7 @@ export default class ThemeService {
         s.setProperty("--header-font-family", theme.fonts.headerFamily);
     }
 
-    private static loadThemeImages(theme : Theme, dispatch : Dispatch) : void {
+    private static loadThemeImages(theme : Theme, dispatch : (action : CustomAction) => void) : void {
         const kinds = [
             PieceKind.Assassin,
             PieceKind.Chief,
@@ -57,7 +58,7 @@ export default class ThemeService {
         kinds.forEach(k => ThemeService.createPieceImage(theme, k, dispatch));
     }
 
-    private static createPieceImage(theme : Theme, kind : PieceKind, dispatch : Dispatch) : HTMLImageElement {
+    private static createPieceImage(theme : Theme, kind : PieceKind, dispatch : (action : CustomAction) => void) : HTMLImageElement {
         const image = new (window as any).Image() as HTMLImageElement;
         image.src = ThemeService.getPieceImagePath(theme, kind);
         image.onload = () => dispatch(StoreDisplay.Actions.pieceImageLoaded(kind, image));
@@ -80,7 +81,7 @@ export default class ThemeService {
 
     //#endregion
 
-    public static loadSavedTheme(dispatch : Dispatch) : void {
+    public static loadSavedTheme(dispatch : (action : CustomAction) => void) : void {
         return ThemeService.changeTheme(ThemeService.getSavedThemeName(), dispatch);
     }
 

@@ -2,11 +2,10 @@ import * as React from 'react';
 import { User } from '../../api/model';
 import { State } from '../../store/root';
 import { connect } from 'react-redux';
-import { Dispatch } from 'redux';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
 import { Classes } from '../../styles/styles';
-import SessionStoreFlows from '../../storeFlows/session';
+import Controller from '../../controller';
 
 interface UserSectionProps {
     user : User,
@@ -46,16 +45,10 @@ const loggedInUserSection : React.SFC<UserSectionProps> = props => {
 
 const mapStateToProps = (state : State) => {
     return {
-        user: state.session.user
+        user: state.session.user,
+        onLogoutClicked: () => Controller.Session.logout()
     };
 };
 
-const mapDispatchToProps = (dispatch : Dispatch) => {
-    return {
-        onLogoutClicked: () => SessionStoreFlows.logout()(dispatch)
-    };
-}
-
-const UserSection = connect(mapStateToProps, mapDispatchToProps)(userSection);
-
+const UserSection = connect(mapStateToProps)(userSection);
 export default UserSection;

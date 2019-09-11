@@ -1,11 +1,9 @@
 import * as React from 'react';
 import { User } from "../../api/model";
 import { State } from '../../store/root';
-import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import { navigateTo } from '../../history';
 import Routes from '../../routes';
-import SessionStoreFlows from '../../storeFlows/session';
+import Controller from '../../controller';
 
 interface RedirectToLoginOrDashboardProps {
     user : User,
@@ -29,17 +27,11 @@ class redirectToLoginOrDashboard extends React.Component<RedirectToLoginOrDashbo
 
 const mapStateToProps = (state: State) => {
     return {
-        user: state.session.user
+        user: state.session.user,
+        redirectToDashboard: () => Controller.navigateTo(Routes.dashboard),
+        restoreSessionAndRedirect: () => Controller.Session.redirectToLoginOrDashboard()
     };
 };
 
-const mapDispatchToProps = (dispatch : Dispatch) => {
-    return {
-        redirectToDashboard: () => navigateTo(Routes.dashboard),
-        restoreSessionAndRedirect: () => SessionStoreFlows.redirectToLoginOrDashboard()(dispatch)
-    };
-};
-
-const RedirectToLoginOrDashboard = connect(mapStateToProps, mapDispatchToProps)(redirectToLoginOrDashboard);
-
+const RedirectToLoginOrDashboard = connect(mapStateToProps)(redirectToLoginOrDashboard);
 export default RedirectToLoginOrDashboard

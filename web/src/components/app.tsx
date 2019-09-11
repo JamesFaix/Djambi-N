@@ -15,6 +15,7 @@ import { Classes } from '../styles/styles';
 import SnapshotsPage from './pages/snapshotsPage';
 import SettingsPage from './pages/settingsPage';
 import GameOverPage from './pages/gameOverPage';
+import GameRedirectPage from './pages/gameRedirectPage';
 
 const App : React.SFC<{}> = _ => {
     return (
@@ -59,6 +60,10 @@ const App : React.SFC<{}> = _ => {
                 <Route
                     path={Routes.gameOverPattern}
                     component={GameOverPage}
+                />
+                <Route
+                    path={Routes.gamePattern}
+                    component={GameRedirectPage}
                 />
                 <Route
                     path={Routes.settings}

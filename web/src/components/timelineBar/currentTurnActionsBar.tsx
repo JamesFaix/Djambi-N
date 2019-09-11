@@ -1,12 +1,11 @@
 import * as React from 'react';
-import { Dispatch } from 'redux';
 import { State } from '../../store/root';
 import { connect } from 'react-redux';
 import { Game, User, TurnStatus } from '../../api/model';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
-import GameStoreFlows from '../../storeFlows/game';
 import { Theme } from '../../themes/model';
+import Controller from '../../controller';
 
 function isCurrentUser(user : User, game : Game) : boolean {
     return game.players
@@ -88,16 +87,11 @@ const mapStateToProps = (state : State) => {
     return {
         user: state.session.user,
         game: state.activeGame.game,
-        theme: state.display.theme
+        theme: state.display.theme,
+        endTurn: (gameId : number) => Controller.Game.endTurn(gameId),
+        resetTurn: (gameId : number) => Controller.Game.resetTurn(gameId)
     };
 }
 
-const mapDispatchToProps = (dispatch : Dispatch) => {
-    return {
-        endTurn: (gameId : number) => GameStoreFlows.endTurn(gameId)(dispatch),
-        resetTurn: (gameId : number) => GameStoreFlows.resetTurn(gameId)(dispatch)
-    };
-}
-
-const CurrentTurnActionsBar = connect(mapStateToProps, mapDispatchToProps)(currentTurnActionsBar);
+const CurrentTurnActionsBar = connect(mapStateToProps)(currentTurnActionsBar);
 export default CurrentTurnActionsBar;

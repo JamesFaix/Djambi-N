@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { GamesQuery, Game } from '../../api/model';
 import GamesSearchResultsTable from '../tables/gamesSearchResultsTable';
@@ -7,7 +6,7 @@ import { State } from '../../store/root';
 import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
 import GamesSearchForm from '../forms/gamesSearchForm';
 import BasicPageContainer from '../sections/basicPageContainer';
-import MiscStoreFlows from '../../storeFlows/misc';
+import Controller from '../../controller';
 
 interface DashboardPageProps {
     gamesQuery : GamesQuery,
@@ -30,25 +29,12 @@ class dashboardPage extends React.Component<DashboardPageProps>{
 }
 
 const mapStateToProps = (state: State) => {
-    if (state.gamesQuery){
-        return {
-            gamesQuery: state.gamesQuery.query,
-            gamesResults: state.gamesQuery.results
-        };
-    } else {
-        return {
-            gamesQuery: null,
-            gamesResults: []
-        };
+    return {
+        gamesQuery: state.gamesQuery ? state.gamesQuery.query : null,
+        gamesResults: state.gamesQuery ? state.gamesQuery.results : [],
+        onSearchClicked: (query: GamesQuery) => Controller.queryGames(query)
     }
 };
 
-const mapDispatchToProps = (dispatch : Dispatch) => {
-    return {
-        onSearchClicked: (query: GamesQuery) => MiscStoreFlows.queryGames(query)(dispatch)
-    };
-};
-
-const DashboardPage = connect(mapStateToProps, mapDispatchToProps)(dashboardPage);
-
+const DashboardPage = connect(mapStateToProps)(dashboardPage);
 export default DashboardPage;

@@ -2,11 +2,10 @@ import * as React from 'react';
 import { Game, User, CreatePlayerRequest } from '../../api/model';
 import * as LobbySeats from '../../viewModel/lobbySeats';
 import { State } from '../../store/root';
-import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import MutablePlayersTableRow from './mutablePlayersTableRow';
 import { SectionHeader } from '../controls/headers';
-import GameStoreFlows from '../../storeFlows/game';
+import Controller from '../../controller';
 
 interface MutablePlayersTableProps {
     user : User,
@@ -45,17 +44,12 @@ class mutablePlayersTable extends React.Component<MutablePlayersTableProps> {
 const mapStateToProps = (state : State) => {
     return {
         game: state.activeGame.game,
-        user: state.session.user
+        user: state.session.user,
+        addPlayer: (gameId: number, request: CreatePlayerRequest) => Controller.Game.addPlayer(gameId, request),
+        removePlayer: (gameId: number, playerId: number) => Controller.Game.removePlayer(gameId, playerId)
     }
 };
 
-const mapDispatchToProps = (dispatch : Dispatch) => {
-    return {
-        addPlayer: (gameId: number, request: CreatePlayerRequest) => GameStoreFlows.addPlayer(gameId, request)(dispatch),
-        removePlayer: (gameId: number, playerId: number) => GameStoreFlows.removePlayer(gameId, playerId)(dispatch)
-    }
-};
-
-const MutablePlayersTable = connect(mapStateToProps, mapDispatchToProps)(mutablePlayersTable);
+const MutablePlayersTable = connect(mapStateToProps)(mutablePlayersTable);
 
 export default MutablePlayersTable;
