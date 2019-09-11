@@ -187,6 +187,7 @@ export default class Controller {
     }
 
     public static Game = class {
+
         private static async loadGameInner(gameId : number) : Promise<Game> {
             const game = await Api.getGame(gameId);
             Controller.dispatch(StoreActiveGame.Actions.loadGame(game));
@@ -213,8 +214,11 @@ export default class Controller {
         }
 
         private static async loadBoardInner(regionCount : number) : Promise<Board> {
-            const board = await Api.getBoard(regionCount);
-            Controller.dispatch(StoreBoards.Actions.loadBoard(board));
+            let board = Controller.state.boards.boards.get(regionCount);
+            if (!board) {
+                board = await Api.getBoard(regionCount);
+                Controller.dispatch(StoreBoards.Actions.loadBoard(board));
+            }
             return board;
         }
 
