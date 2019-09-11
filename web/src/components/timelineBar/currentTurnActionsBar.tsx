@@ -6,68 +6,89 @@ import { Game, User, TurnStatus } from '../../api/model';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
 import GameStoreFlows from '../../storeFlows/game';
+import { Theme } from '../../themes/model';
 
-interface CurrentTurnActionsBarProps {
+function isCurrentUser(user : User, game : Game) : boolean {
+    return game.players
+        .filter(p => p.userId === user.id)
+        .map(p => p.id)
+        .includes(game.turnCycle[0]);
+}
+
+const ResetButton : React.SFC<{
+    game : Game,
+    user : User,
+    theme : Theme,
+    onClick : () => void
+}> = props => {
+    const disabled = !isCurrentUser(props.user, props.game) ||
+        props.game.currentTurn.selections.length === 0;
+
+    return (
+        <IconButton
+            icon={Icons.PlayerActions.resetTurn}
+            onClick={() => props.onClick()}
+            style={{
+                backgroundColor: disabled ? null : props.theme.colors.negativeButtonBackground,
+                flex: 1
+            }}
+            disabled={disabled}
+        />
+    );
+};
+
+const CommitButton : React.SFC<{
+    game : Game,
+    user : User,
+    theme : Theme,
+    onClick : () => void
+}> = props => {
+    const disabled = !isCurrentUser(props.user, props.game) ||
+        props.game.currentTurn.status !== TurnStatus.AwaitingCommit;
+
+    return (
+        <IconButton
+            icon={Icons.PlayerActions.endTurn}
+            onClick={() => props.onClick()}
+            style={{
+                backgroundColor: disabled ? null : props.theme.colors.positiveButtonBackground,
+                flex: 1
+            }}
+            disabled={disabled}
+        />
+    );
+};
+
+const currentTurnActionsBar : React.SFC<{
     user : User,
     game : Game,
     endTurn : (gameId : number) => void,
-    resetTurn : (gameId : number) => void
-}
-
-class currentTurnActionsBar extends React.Component<CurrentTurnActionsBarProps> {
-    render() {
-        return (
-            <div>
-                {this.renderEndButton()}
-                {this.renderResetButton()}
-            </div>
-        );
-    }
-
-    private isCurrentUsersTurn() : boolean {
-        const userId = this.props.user.id;
-        const playerIds = this.props.game.players
-            .filter(p => p.userId === userId)
-            .map(p => p.id);
-        const currentPlayerId = this.props.game.turnCycle[0];
-        return playerIds.includes(currentPlayerId);
-    }
-
-    private renderResetButton(){
-        if (!this.isCurrentUsersTurn() ||
-            this.props.game.currentTurn.selections.length === 0
-        ) {
-            return null;
-        }
-
-        return (
-            <IconButton
-                icon={Icons.PlayerActions.resetTurn}
-                onClick={() => this.props.resetTurn(this.props.game.id)}
-            />
-        );
-    }
-
-    private renderEndButton() {
-        if (!this.isCurrentUsersTurn() ||
-            this.props.game.currentTurn.status !== TurnStatus.AwaitingCommit
-        ) {
-            return null;
-        }
-
-        return (
-            <IconButton
-                icon={Icons.PlayerActions.endTurn}
-                onClick={() => this.props.endTurn(this.props.game.id)}
-            />
-        );
-    }
-}
+    resetTurn : (gameId : number) => void,
+    theme : Theme
+}> = props => (
+    <div style={{
+        display: "flex"
+    }}>
+        <CommitButton
+            game={props.game}
+            user={props.user}
+            theme={props.theme}
+            onClick={() => props.endTurn(props.game.id)}
+        />
+        <ResetButton
+            game={props.game}
+            user={props.user}
+            theme={props.theme}
+            onClick={() => props.resetTurn(props.game.id)}
+        />
+    </div>
+);
 
 const mapStateToProps = (state : State) => {
     return {
         user: state.session.user,
-        game: state.activeGame.game
+        game: state.activeGame.game,
+        theme: state.display.theme
     };
 }
 
