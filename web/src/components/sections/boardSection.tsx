@@ -11,7 +11,7 @@ import BoardScrollArea from './boardScrollArea';
 import BoardZoomSlider from '../controls/boardZoomSlider';
 import { Theme } from '../../themes/model';
 import { DebugSettings } from '../../debug';
-import GameStoreFlows from '../../storeFlows/game';
+import Controller from '../../controller';
 
 export interface BoardSectionProps {
     game : Game,
@@ -84,9 +84,9 @@ const mapStateToProps = (state : State) => {
     };
 }
 
-const mapDispatchToProps = (dispatch: Dispatch) => {
+const mapDispatchToProps = (_ : Dispatch) => {
     return {
-        selectCell: (gameId : number, cell : CellView) => GameStoreFlows.selectCell(gameId, cell.id)(dispatch)
+        selectCell: (gameId : number, cell : CellView) => Controller.Game.selectCell(gameId, cell.id)
     };
 }
 

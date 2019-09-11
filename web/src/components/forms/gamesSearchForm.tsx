@@ -10,7 +10,7 @@ import * as StoreGamesQuery from '../../store/gamesQuery';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
 import HtmlInputTypes from '../htmlInputTypes';
-import Controller from '../../storeFlows/controller';
+import Controller from '../../controller';
 
 interface GamesSearchFormProps {
     formData : GamesQuery,

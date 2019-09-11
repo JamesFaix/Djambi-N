@@ -7,9 +7,9 @@ import { SectionHeader } from '../controls/headers';
 import * as StoreCreateGameForm from '../../store/createGameForm';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
-import GameStoreFlows from '../../storeFlows/game';
 import HtmlInputTypes from '../htmlInputTypes';
 import BoardSelectionBar from '../sections/boardSelectionBar';
+import Controller from '../../controller';
 
 interface CreateGameFormProps {
     formData : GameParameters,
@@ -106,7 +106,7 @@ const mapStateToProps = (state : State) => {
 const mapDispatchToProps = (dispatch : Dispatch) => {
     return {
         onFormDataChanged: (formData: GameParameters) => dispatch(StoreCreateGameForm.Actions.updateCreateGameForm(formData)),
-        submit: (formData: GameParameters) => GameStoreFlows.createGame(formData)(dispatch)
+        submit: (formData: GameParameters) => Controller.Game.createGame(formData)
     };
 };
 

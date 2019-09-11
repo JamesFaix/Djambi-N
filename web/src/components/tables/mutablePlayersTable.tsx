@@ -6,7 +6,7 @@ import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import MutablePlayersTableRow from './mutablePlayersTableRow';
 import { SectionHeader } from '../controls/headers';
-import GameStoreFlows from '../../storeFlows/game';
+import Controller from '../../controller';
 
 interface MutablePlayersTableProps {
     user : User,
@@ -49,10 +49,10 @@ const mapStateToProps = (state : State) => {
     }
 };
 
-const mapDispatchToProps = (dispatch : Dispatch) => {
+const mapDispatchToProps = (_ : Dispatch) => {
     return {
-        addPlayer: (gameId: number, request: CreatePlayerRequest) => GameStoreFlows.addPlayer(gameId, request)(dispatch),
-        removePlayer: (gameId: number, playerId: number) => GameStoreFlows.removePlayer(gameId, playerId)(dispatch)
+        addPlayer: (gameId: number, request: CreatePlayerRequest) => Controller.Game.addPlayer(gameId, request),
+        removePlayer: (gameId: number, playerId: number) => Controller.Game.removePlayer(gameId, playerId)
     }
 };
 

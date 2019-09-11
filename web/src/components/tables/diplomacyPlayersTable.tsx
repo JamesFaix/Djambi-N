@@ -9,7 +9,7 @@ import PlayerStatusIcon from '../controls/playerStatusIcon';
 import PlayerNoteIcon from '../controls/playerNoteIcon';
 import { SectionHeader } from '../controls/headers';
 import { Icons } from '../../utilities/icons';
-import GameStoreFlows from '../../storeFlows/game';
+import Controller from '../../controller';
 
 interface DiplomacyPageProps {
     user : User,
@@ -134,7 +134,7 @@ const mapStateToProps = (state : State) => {
 const mapDispatchToProps = (dispatch : Dispatch) => {
     return {
         changePlayerStatus: (gameId : number, playerId : number, status : PlayerStatus) =>
-            GameStoreFlows.changePlayerStatus(gameId, playerId, status)(dispatch)
+            Controller.Game.changePlayerStatus(gameId, playerId, status)
     };
 }
 

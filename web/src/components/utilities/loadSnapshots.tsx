@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import Controller from '../../storeFlows/controller';
+import Controller from '../../controller';
 
 interface LoadSnapshotsProps {
     gameId : number,

@@ -11,7 +11,7 @@ import PlayersTable from '../tables/playersTable';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
 import BasicPageContainer from '../sections/basicPageContainer';
-import GameStoreFlows from '../../storeFlows/game';
+import Controller from '../../controller';
 
 interface LobbyPageProps {
     user : User,
@@ -74,9 +74,9 @@ const mapStateToProps = (state : State) => {
     };
 };
 
-const mapDispatchToProps = (dispatch : Dispatch) => {
+const mapDispatchToProps = (_ : Dispatch) => {
     return {
-        onStartGameClicked: (gameId : number) => GameStoreFlows.startGame(gameId)(dispatch)
+        onStartGameClicked: (gameId : number) => Controller.Game.startGame(gameId)
     };
 }
 

@@ -3,7 +3,7 @@ import { User } from "../../api/model";
 import { State } from '../../store/root';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import Controller from '../../storeFlows/controller';
+import Controller from '../../controller';
 
 interface RedirectToDashboardIfLoggedInProps {
     user : User,

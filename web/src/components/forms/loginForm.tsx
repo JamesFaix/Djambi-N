@@ -6,7 +6,7 @@ import { SectionHeader } from '../controls/headers';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
 import HtmlInputTypes from '../htmlInputTypes';
-import Controller from '../../storeFlows/controller';
+import Controller from '../../controller';
 
 interface LoginFormProps {
     submit: (formData: LoginRequest) => void

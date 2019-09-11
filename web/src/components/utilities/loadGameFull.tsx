@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import GameStoreFlows from '../../storeFlows/game';
+import Controller from '../../controller';
 
 interface LoadGameFullProps {
     gameId : number,
@@ -18,9 +18,9 @@ class loadGameFull extends React.Component<LoadGameFullProps> {
     }
 }
 
-const mapDispatchToProps = (dispatch : Dispatch) => {
+const mapDispatchToProps = (_ : Dispatch) => {
     return {
-        loadGameFull : (gameId : number) => GameStoreFlows.loadGameFull(gameId)(dispatch)
+        loadGameFull : (gameId : number) => Controller.Game.loadGameFull(gameId)
     };
 }
 

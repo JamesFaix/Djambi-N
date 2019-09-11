@@ -5,8 +5,8 @@ import { connect } from 'react-redux';
 import { Game, User, TurnStatus } from '../../api/model';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
-import GameStoreFlows from '../../storeFlows/game';
 import { Theme } from '../../themes/model';
+import Controller from '../../controller';
 
 function isCurrentUser(user : User, game : Game) : boolean {
     return game.players
@@ -92,10 +92,10 @@ const mapStateToProps = (state : State) => {
     };
 }
 
-const mapDispatchToProps = (dispatch : Dispatch) => {
+const mapDispatchToProps = (_ : Dispatch) => {
     return {
-        endTurn: (gameId : number) => GameStoreFlows.endTurn(gameId)(dispatch),
-        resetTurn: (gameId : number) => GameStoreFlows.resetTurn(gameId)(dispatch)
+        endTurn: (gameId : number) => Controller.Game.endTurn(gameId),
+        resetTurn: (gameId : number) => Controller.Game.resetTurn(gameId)
     };
 }
 

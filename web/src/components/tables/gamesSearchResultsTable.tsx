@@ -8,7 +8,7 @@ import { Classes } from '../../styles/styles';
 import IconBox from '../controls/iconBox';
 import { Icons } from '../../utilities/icons';
 import Copy from '../../utilities/copy';
-import Controller from '../../storeFlows/controller';
+import Controller from '../../controller';
 import Routes from '../../routes';
 
 interface GamesSearchResultsTableProps {

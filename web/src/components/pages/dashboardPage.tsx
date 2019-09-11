@@ -7,7 +7,7 @@ import { State } from '../../store/root';
 import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
 import GamesSearchForm from '../forms/gamesSearchForm';
 import BasicPageContainer from '../sections/basicPageContainer';
-import Controller from '../../storeFlows/controller';
+import Controller from '../../controller';
 
 interface DashboardPageProps {
     gamesQuery : GamesQuery,

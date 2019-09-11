@@ -6,7 +6,7 @@ import { Dispatch } from 'redux';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
 import { Classes } from '../../styles/styles';
-import Controller from '../../storeFlows/controller';
+import Controller from '../../controller';
 
 interface UserSectionProps {
     user : User,

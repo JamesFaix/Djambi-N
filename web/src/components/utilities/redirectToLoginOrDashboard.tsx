@@ -4,7 +4,7 @@ import { State } from '../../store/root';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import Routes from '../../routes';
-import Controller from '../../storeFlows/controller';
+import Controller from '../../controller';
 
 interface RedirectToLoginOrDashboardProps {
     user : User,

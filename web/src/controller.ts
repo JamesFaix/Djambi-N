@@ -1,18 +1,34 @@
-import { AppStore } from "../store/root";
+import { AppStore } from "./store/root";
 import { History } from "history";
-import { DebugSettings, defaultDebugSettings } from "../debug";
-import LocalStorageService from "../utilities/localStorageService";
-import * as StoreSettings from '../store/settings';
-import * as StoreGamesQuery from '../store/gamesQuery';
-import * as StoreActiveGame from '../store/activeGame';
-import * as StoreSession from '../store/session';
-import * as Api from '../api/client';
-import { GamesQuery, CreateSnapshotRequest, LoginRequest, CreateUserRequest, User } from "../api/model";
-import GameStoreFlows from "./game";
-import { SseClientManager } from "../utilities/serverSentEvents";
-import ThemeService from "../themes/themeService";
-import Routes from "../routes";
-import * as ModelFactory from "../api/modelFactory";
+import { DebugSettings, defaultDebugSettings } from "./debug";
+import LocalStorageService from "./utilities/localStorageService";
+import * as StoreSettings from './store/settings';
+import * as StoreGamesQuery from './store/gamesQuery';
+import * as StoreActiveGame from './store/activeGame';
+import * as StoreSession from './store/session';
+import * as StoreBoards from './store/boards';
+import * as Api from './api/client';
+import {
+    GamesQuery,
+    CreateSnapshotRequest,
+    LoginRequest,
+    CreateUserRequest,
+    User,
+    EventsQuery,
+    GameParameters,
+    CreatePlayerRequest,
+    StateAndEventResponse,
+    GameStatus,
+    Game,
+    ResultsDirection,
+    Event,
+    Board,
+    PlayerStatus
+} from "./api/model";
+import { SseClientManager } from "./utilities/serverSentEvents";
+import ThemeService from "./themes/themeService";
+import Routes from "./routes";
+import * as ModelFactory from "./api/modelFactory";
 
 //Encapsulates dispatching Redux actions and other side effects
 export default class Controller {
@@ -62,7 +78,7 @@ export default class Controller {
 
         public static async load(gameId : number, snapshotId : number) : Promise<void> {
             await Api.loadSnapshot(gameId, snapshotId);
-            return GameStoreFlows.loadGameFull(gameId)(Controller.store.dispatch);
+            return Controller.Game.loadGameFull(gameId);
         }
 
         public static async delete(gameId : number, snapshotId : number) : Promise<void>{
@@ -158,4 +174,96 @@ export default class Controller {
         }
     }
 
+    public static Game = class {
+        private static async loadGameInner(gameId : number) : Promise<Game> {
+            const game = await Api.getGame(gameId);
+            Controller.store.dispatch(StoreActiveGame.Actions.loadGame(game));
+            return game;
+        }
+
+        private static async loadHistoryInner(gameId : number) : Promise<Event[]> {
+            const query : EventsQuery = {
+                maxResults : null,
+                direction : ResultsDirection.Descending,
+                thresholdTime : null,
+                thresholdEventId : null
+            };
+
+            const history = await Api.getEvents(gameId, query);
+            Controller.store.dispatch(StoreActiveGame.Actions.loadGameHistory(history));
+            return history;
+        }
+
+        public static async loadAllBoards() : Promise<void> {
+            for (let i=3; i<=8; i++){
+                await Controller.Game.loadBoardInner(i);
+            }
+        }
+
+        private static async loadBoardInner(regionCount : number) : Promise<Board> {
+            const board = await Api.getBoard(regionCount);
+            Controller.store.dispatch(StoreBoards.Actions.loadBoard(board));
+            return board;
+        }
+
+        public static async loadGame(gameId: number) : Promise<void> {
+            await Controller.Game.loadGameInner(gameId);
+        }
+
+        public static async loadGameFull(gameId : number) : Promise<void> {
+            const game = await Controller.Game.loadGameInner(gameId);
+            await Controller.Game.loadHistoryInner(gameId);
+            await Controller.Game.loadBoardInner(game.parameters.regionCount);
+        }
+
+        public static async createGame(formData : GameParameters) : Promise<void> {
+            const game = await Api.createGame(formData);
+            Controller.store.dispatch(StoreActiveGame.Actions.createGame(game));
+            Controller.navigateTo(Routes.lobby(game.id));
+        }
+
+        public static async addPlayer(gameId: number, request : CreatePlayerRequest) : Promise<void> {
+            const resp = await Api.addPlayer(gameId, request);
+            Controller.store.dispatch(StoreActiveGame.Actions.updateGame(resp));
+        }
+
+        public static async removePlayer(gameId: number, playerId: number) : Promise<void> {
+            const resp = await Api.removePlayer(gameId, playerId);
+            Controller.store.dispatch(StoreActiveGame.Actions.updateGame(resp));
+        }
+
+        public static async startGame(gameId: number) : Promise<void> {
+            const resp = await Api.startGame(gameId);
+            Controller.store.dispatch(StoreActiveGame.Actions.updateGame(resp));
+            Controller.navigateTo(Routes.play(gameId));
+        }
+
+        public static async selectCell(gameId: number, cellId : number) : Promise<void> {
+            const resp = await Api.selectCell(gameId, cellId);
+            Controller.store.dispatch(StoreActiveGame.Actions.updateGame(resp));
+        }
+
+        public static async endTurn(gameId: number) : Promise<void> {
+            const resp = await Api.commitTurn(gameId);
+            Controller.Game.updateInProgressGame(resp);
+        }
+
+        public static async resetTurn(gameId: number) : Promise<void> {
+            const resp = await Api.resetTurn(gameId);
+            Controller.store.dispatch(StoreActiveGame.Actions.updateGame(resp));
+        }
+
+        public static async changePlayerStatus(gameId: number, playerId: number, status: PlayerStatus) : Promise<void> {
+            const resp = await Api.updatePlayerStatus(gameId, playerId, status);
+            Controller.Game.updateInProgressGame(resp);
+        }
+
+        public static updateInProgressGame(response : StateAndEventResponse) : void {
+            Controller.store.dispatch(StoreActiveGame.Actions.updateGame(response));
+            const g = response.game;
+            if (g.status === GameStatus.Over) {
+                Controller.navigateTo(Routes.gameOver(g.id));
+            }
+        }
+    }
 }

@@ -6,7 +6,7 @@ import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
 import { Dispatch } from 'redux';
 import { State } from '../../store/root';
-import Controller from '../../storeFlows/controller';
+import Controller from '../../controller';
 
 interface SnapshotRowProps {
     gameId : number,

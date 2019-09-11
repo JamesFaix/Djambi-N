@@ -7,7 +7,7 @@ import { Classes } from '../../styles/styles';
 import { withRouter } from 'react-router';
 import { User, Privilege, Game, GameStatus } from '../../api/model';
 import { State } from '../../store/root';
-import Controller from '../../storeFlows/controller';
+import Controller from '../../controller';
 
 enum ButtonState {
     Hidden = "HIDDEN",
