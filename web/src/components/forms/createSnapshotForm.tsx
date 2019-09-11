@@ -6,8 +6,8 @@ import { SectionHeader } from '../controls/headers';
 import IconButton from '../controls/iconButton';
 import { CreateSnapshotRequest } from '../../api/model';
 import { Icons } from '../../utilities/icons';
-import SnapshotStoreFlows from '../../storeFlows/snapshots';
 import HtmlInputTypes from '../htmlInputTypes';
+import Controller from '../../storeFlows/controller';
 
 interface CreateSnapshotFormProps {
     gameId : number,
@@ -72,9 +72,9 @@ const mapStateToProps = (state : State) => {
     };
 }
 
-const mapDispatchToProps = (dispatch : Dispatch) => {
+const mapDispatchToProps = (_ : Dispatch) => {
     return {
-        createSnapshot: (gameId : number, request : CreateSnapshotRequest) => SnapshotStoreFlows.saveSnapshot(gameId, request)(dispatch)
+        createSnapshot: (gameId : number, request : CreateSnapshotRequest) => Controller.Snapshots.save(gameId, request)
     };
 }
 

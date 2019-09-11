@@ -4,8 +4,10 @@ import { DebugSettings, defaultDebugSettings } from "../debug";
 import LocalStorageService from "../utilities/localStorageService";
 import * as StoreSettings from '../store/settings';
 import * as StoreGamesQuery from '../store/gamesQuery';
+import * as StoreActiveGame from '../store/activeGame';
 import * as Api from '../api/client';
-import { GamesQuery } from "../api/model";
+import { GamesQuery, CreateSnapshotRequest } from "../api/model";
+import GameStoreFlows from "./game";
 
 //Encapsulates dispatching Redux actions and other side effects
 export default class Controller {
@@ -21,7 +23,7 @@ export default class Controller {
     }
 
     public static navigateTo(route : string) : void {
-        this.history.push(route);
+        Controller.history.push(route);
     }
 
     //#region Settings
@@ -41,6 +43,28 @@ export default class Controller {
 
     public static async queryGames(query: GamesQuery) : Promise<void> {
         const games = await Api.getGames(query);
-        this.store.dispatch(StoreGamesQuery.Actions.queryGames(games));
+        Controller.store.dispatch(StoreGamesQuery.Actions.queryGames(games));
+    }
+
+    public static Snapshots = class {
+        public static async get(gameId: number) : Promise<void> {
+            const snapshots = await Api.getSnapshotsForGame(gameId);
+            Controller.store.dispatch(StoreActiveGame.Actions.loadSnapshots(snapshots))
+        }
+
+        public static async save(gameId : number, request : CreateSnapshotRequest) : Promise<void> {
+            const snapshot = await Api.createSnapshot(gameId, request);
+            Controller.store.dispatch(StoreActiveGame.Actions.snapshotSaved(snapshot));
+        }
+
+        public static async load(gameId : number, snapshotId : number) : Promise<void> {
+            await Api.loadSnapshot(gameId, snapshotId);
+            return GameStoreFlows.loadGameFull(gameId)(Controller.store.dispatch);
+        }
+
+        public static async delete(gameId : number, snapshotId : number) : Promise<void>{
+            await Api.loadSnapshot(gameId, snapshotId);
+            Controller.store.dispatch(StoreActiveGame.Actions.snapshotDeleted(snapshotId));
+        }
     }
 }

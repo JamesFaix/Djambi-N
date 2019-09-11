@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import SnapshotStoreFlows from '../../storeFlows/snapshots';
+import Controller from '../../storeFlows/controller';
 
 interface LoadSnapshotsProps {
     gameId : number,
@@ -18,9 +18,9 @@ class loadSnapshots extends React.Component<LoadSnapshotsProps> {
     }
 }
 
-const mapDispatchToProps = (dispatch : Dispatch) => {
+const mapDispatchToProps = (_ : Dispatch) => {
     return {
-        getSnapshots : (gameId : number) => SnapshotStoreFlows.getSnapshots(gameId)(dispatch)
+        getSnapshots : (gameId : number) => Controller.Snapshots.get(gameId)
     };
 }
 
