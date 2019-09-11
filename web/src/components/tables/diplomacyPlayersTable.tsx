@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { State } from '../../store/root';
-import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { User, Game, Player, PlayerStatus } from '../../api/model';
 import { Classes } from '../../styles/styles';
@@ -9,7 +8,7 @@ import PlayerStatusIcon from '../controls/playerStatusIcon';
 import PlayerNoteIcon from '../controls/playerNoteIcon';
 import { SectionHeader } from '../controls/headers';
 import { Icons } from '../../utilities/icons';
-import GameStoreFlows from '../../storeFlows/game';
+import Controller from '../../controller';
 
 interface DiplomacyPageProps {
     user : User,
@@ -127,16 +126,11 @@ const PlayerDiplomacyActionButtons : React.SFC<PlayerDiplomacyActionButtonsProps
 const mapStateToProps = (state : State) => {
     return {
         user: state.session.user,
-        game: state.activeGame.game
-    };
-}
-
-const mapDispatchToProps = (dispatch : Dispatch) => {
-    return {
+        game: state.activeGame.game,
         changePlayerStatus: (gameId : number, playerId : number, status : PlayerStatus) =>
-            GameStoreFlows.changePlayerStatus(gameId, playerId, status)(dispatch)
+            Controller.Game.changePlayerStatus(gameId, playerId, status)
     };
 }
 
-const DiplomacyPlayersTable = connect(mapStateToProps, mapDispatchToProps)(diplomacyPlayersTable);
+const DiplomacyPlayersTable = connect(mapStateToProps)(diplomacyPlayersTable);
 export default DiplomacyPlayersTable;

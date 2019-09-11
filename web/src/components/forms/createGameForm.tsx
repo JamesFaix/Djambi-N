@@ -1,15 +1,13 @@
 import * as React from 'react';
 import { State } from '../../store/root';
 import { connect } from 'react-redux';
-import { Dispatch } from 'redux';
 import { GameParameters } from '../../api/model';
 import { SectionHeader } from '../controls/headers';
-import * as StoreCreateGameForm from '../../store/createGameForm';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
-import GameStoreFlows from '../../storeFlows/game';
 import HtmlInputTypes from '../htmlInputTypes';
 import BoardSelectionBar from '../sections/boardSelectionBar';
+import Controller from '../../controller';
 
 interface CreateGameFormProps {
     formData : GameParameters,
@@ -99,17 +97,11 @@ class createGameForm extends React.Component<CreateGameFormProps> {
 
 const mapStateToProps = (state : State) => {
     return {
-        formData: state.createGameForm.parameters
+        formData: state.createGameForm.parameters,
+        onFormDataChanged: (formData: GameParameters) => Controller.Forms.updateCreateGameForm(formData),
+        submit: (formData: GameParameters) => Controller.Game.createGame(formData)
     };
 };
 
-const mapDispatchToProps = (dispatch : Dispatch) => {
-    return {
-        onFormDataChanged: (formData: GameParameters) => dispatch(StoreCreateGameForm.Actions.updateCreateGameForm(formData)),
-        submit: (formData: GameParameters) => GameStoreFlows.createGame(formData)(dispatch)
-    };
-};
-
-const CreateGameForm = connect(mapStateToProps, mapDispatchToProps)(createGameForm);
-
+const CreateGameForm = connect(mapStateToProps)(createGameForm);
 export default CreateGameForm;

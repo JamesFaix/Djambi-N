@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Dispatch } from 'redux';
 import { LoginRequest } from '../../api/model';
 import { SectionHeader } from '../controls/headers';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
-import SessionStoreFlows from '../../storeFlows/session';
 import HtmlInputTypes from '../htmlInputTypes';
+import Controller from '../../controller';
+import { State } from '../../store/root';
 
 interface LoginFormProps {
     submit: (formData: LoginRequest) => void
@@ -72,12 +72,12 @@ class loginForm extends React.Component<LoginFormProps, LoginFormState> {
     }
 }
 
-const mapDispatchToProps = (dispatch : Dispatch) => {
+const mapStateToProps = (_ : State) => {
     return {
-        submit: (formData : LoginRequest) => SessionStoreFlows.login(formData)(dispatch)
+        submit: (formData : LoginRequest) => Controller.Session.login(formData)
     };
 };
 
-const LoginForm = connect(null, mapDispatchToProps)(loginForm);
+const LoginForm = connect(mapStateToProps)(loginForm);
 
 export default LoginForm;

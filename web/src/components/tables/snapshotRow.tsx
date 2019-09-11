@@ -4,9 +4,8 @@ import { SnapshotInfo } from '../../api/model';
 import { dateToString } from '../../utilities/dates';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
-import { Dispatch } from 'redux';
 import { State } from '../../store/root';
-import SnapshotStoreFlows from '../../storeFlows/snapshots';
+import Controller from '../../controller';
 
 interface SnapshotRowProps {
     gameId : number,
@@ -53,16 +52,11 @@ const snapshotRow : React.SFC<SnapshotRowProps> = props => {
 
 const mapStateToProps = (state : State) => {
     return {
-        gameId: state.activeGame.game ? state.activeGame.game.id : null
+        gameId: state.activeGame.game ? state.activeGame.game.id : null,
+        load: (gameId : number, snapshotId : number) => Controller.Snapshots.load(gameId, snapshotId),
+        delete: (gameId : number, snapshotId : number) => Controller.Snapshots.delete(gameId, snapshotId),
     };
 }
 
-const mapDispatchToProps = (dispatch : Dispatch) => {
-    return {
-        load: (gameId : number, snapshotId : number) => SnapshotStoreFlows.loadSnapshot(gameId, snapshotId)(dispatch),
-        delete: (gameId : number, snapshotId : number) => SnapshotStoreFlows.deleteSnapshot(gameId, snapshotId)(dispatch),
-    };
-}
-
-const SnapshotRow = connect(mapStateToProps, mapDispatchToProps)(snapshotRow);
+const SnapshotRow = connect(mapStateToProps)(snapshotRow);
 export default SnapshotRow;
