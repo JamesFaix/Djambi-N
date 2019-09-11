@@ -100,30 +100,41 @@ function getOptionsFromProps(props : NavigationSectionProps) : NavigationOptions
         o.showCreateGame = ButtonState.Inactive;
     }
 
-    else if (route.startsWith("/games") && props.game) {
+    let gameId : number = null;
+    let gamePage : string = null;
+
+    if (route.startsWith("/games")) {
         const parts = route.split("/");
         //parts[0] is ""
         //parts[1] is "games"
-        const gameId = parts[2];
-        const page = parts[3];
+        gameId = Number(parts[2]);
+        gamePage = parts[3];
+    } else if (props.game) {
+        gameId = props.game.id
+    }
 
-        o.gameId = Number(gameId);
+    if (gameId) {
+        o.gameId = gameId;
         o.showHome = ButtonState.Inactive;
         o.showSettings = ButtonState.Inactive;
         o.showLobby = ButtonState.Inactive;
 
-        if(props.game && props.game.status === GameStatus.InProgress) {
-            o.showPlay = ButtonState.Inactive;
-            o.showDiplomacy = ButtonState.Inactive;
+        if(props.game) {
+            switch (props.game.status) {
+                case GameStatus.InProgress:
+                    o.showPlay = ButtonState.Inactive;
+                    o.showDiplomacy = ButtonState.Inactive;
+                    break;
+                case GameStatus.Over:
+                    o.showGameOver = ButtonState.Inactive;
+                    break;
+            }
         }
         if (props.user && props.user.privileges.includes(Privilege.Snapshots)) {
             o.showSnapshots = ButtonState.Inactive;
         }
-        if (props.game.status === GameStatus.Over) {
-            o.showGameOver = ButtonState.Inactive;
-        }
 
-        switch(page) {
+        switch(gamePage) {
             case "lobby": {
                 o.showLobby = ButtonState.Active;
                 break;
