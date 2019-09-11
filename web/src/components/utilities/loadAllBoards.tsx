@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import Controller from '../../controller';
+import { State } from '../../store/root';
 
 class loadAllBoards extends React.Component<{
     loadBoards : () => void
@@ -15,11 +15,11 @@ class loadAllBoards extends React.Component<{
     }
 }
 
-const mapDispatchToProps = (_ : Dispatch) => {
+const mapStateToProps = (_ : State) => {
     return {
         loadBoards: () => Controller.Game.loadAllBoards()
     };
 }
 
-const LoadAllBoards = connect(null, mapDispatchToProps)(loadAllBoards);
+const LoadAllBoards = connect(mapStateToProps)(loadAllBoards);
 export default LoadAllBoards;

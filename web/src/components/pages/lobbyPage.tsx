@@ -2,7 +2,6 @@ import * as React from 'react';
 import GameParametersTable from '../tables/gameParametersTable';
 import MutablePlayersTable from '../tables/mutablePlayersTable';
 import { Game, GameStatus, User } from '../../api/model';
-import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { State } from '../../store/root';
 import LoadGame from '../utilities/loadGame';
@@ -70,16 +69,10 @@ class lobbyPage extends React.Component<LobbyPageProps> {
 const mapStateToProps = (state : State) => {
     return {
         game: state.activeGame.game,
-        user: state.session.user
+        user: state.session.user,
+        onStartGameClicked: (gameId : number) => Controller.Game.startGame(gameId)
     };
 };
 
-const mapDispatchToProps = (_ : Dispatch) => {
-    return {
-        onStartGameClicked: (gameId : number) => Controller.Game.startGame(gameId)
-    };
-}
-
-const LobbyPage = connect(mapStateToProps, mapDispatchToProps)(lobbyPage);
-
+const LobbyPage = connect(mapStateToProps)(lobbyPage);
 export default LobbyPage;

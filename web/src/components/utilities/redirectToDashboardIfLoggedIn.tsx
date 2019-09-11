@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { User } from "../../api/model";
 import { State } from '../../store/root';
-import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import Controller from '../../controller';
 
@@ -24,16 +23,10 @@ class redirectToDashboardIfLoggedIn extends React.Component<RedirectToDashboardI
 
 const mapStateToProps = (state: State) => {
     return {
-        user: state.session.user
-    };
-};
-
-const mapDispatchToProps = (_ : Dispatch) => {
-    return {
+        user: state.session.user,
         restoreSessionAndRedirect: () => Controller.Session.redirectToDashboardIfLoggedIn()
     };
 };
 
-const RedirectToDashboardIfLoggedIn = connect(mapStateToProps, mapDispatchToProps)(redirectToDashboardIfLoggedIn);
-
+const RedirectToDashboardIfLoggedIn = connect(mapStateToProps)(redirectToDashboardIfLoggedIn);
 export default RedirectToDashboardIfLoggedIn

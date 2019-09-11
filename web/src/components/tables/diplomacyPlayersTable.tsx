@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { State } from '../../store/root';
-import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { User, Game, Player, PlayerStatus } from '../../api/model';
 import { Classes } from '../../styles/styles';
@@ -127,16 +126,11 @@ const PlayerDiplomacyActionButtons : React.SFC<PlayerDiplomacyActionButtonsProps
 const mapStateToProps = (state : State) => {
     return {
         user: state.session.user,
-        game: state.activeGame.game
-    };
-}
-
-const mapDispatchToProps = (dispatch : Dispatch) => {
-    return {
+        game: state.activeGame.game,
         changePlayerStatus: (gameId : number, playerId : number, status : PlayerStatus) =>
             Controller.Game.changePlayerStatus(gameId, playerId, status)
     };
 }
 
-const DiplomacyPlayersTable = connect(mapStateToProps, mapDispatchToProps)(diplomacyPlayersTable);
+const DiplomacyPlayersTable = connect(mapStateToProps)(diplomacyPlayersTable);
 export default DiplomacyPlayersTable;

@@ -4,7 +4,6 @@ import { SnapshotInfo } from '../../api/model';
 import { dateToString } from '../../utilities/dates';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
-import { Dispatch } from 'redux';
 import { State } from '../../store/root';
 import Controller from '../../controller';
 
@@ -53,17 +52,11 @@ const snapshotRow : React.SFC<SnapshotRowProps> = props => {
 
 const mapStateToProps = (state : State) => {
     return {
-        gameId: state.activeGame.game ? state.activeGame.game.id : null
+        gameId: state.activeGame.game ? state.activeGame.game.id : null,
+        load: (gameId : number, snapshotId : number) => Controller.Snapshots.load(gameId, snapshotId),
+        delete: (gameId : number, snapshotId : number) => Controller.Snapshots.delete(gameId, snapshotId),
     };
 }
 
-const mapDispatchToProps = (_ : Dispatch) => {
-    const ctrl = Controller.Snapshots;
-    return {
-        load: (gameId : number, snapshotId : number) => ctrl.load(gameId, snapshotId),
-        delete: (gameId : number, snapshotId : number) => ctrl.delete(gameId, snapshotId),
-    };
-}
-
-const SnapshotRow = connect(mapStateToProps, mapDispatchToProps)(snapshotRow);
+const SnapshotRow = connect(mapStateToProps)(snapshotRow);
 export default SnapshotRow;

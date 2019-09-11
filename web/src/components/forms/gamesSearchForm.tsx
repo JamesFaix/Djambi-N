@@ -4,9 +4,7 @@ import { State } from '../../store/root';
 import { connect } from 'react-redux';
 import TristateDropdown from '../controls/tristateDropdown';
 import EnumDropdown from '../controls/enumDropdown';
-import { Dispatch } from 'redux';
 import { SectionHeader } from '../controls/headers';
-import * as StoreGamesQuery from '../../store/gamesQuery';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
 import HtmlInputTypes from '../htmlInputTypes';
@@ -169,16 +167,10 @@ class gamesSearchForm extends React.Component<GamesSearchFormProps> {
 const mapStateToProps = (state : State) => {
     return {
         formData: state.gamesQuery.query,
-    };
-};
-
-const mapDispatchToProps = (dispatch : Dispatch) => {
-    return {
-        onFormDataChanged: (formData: GamesQuery) => dispatch(StoreGamesQuery.Actions.updateGamesQuery(formData)),
+        onFormDataChanged: (formData: GamesQuery) => Controller.Forms.updateGamesQuery(formData),
         submit: (formData: GamesQuery) => Controller.queryGames(formData)
     };
 };
 
-const GamesSearchForm = connect(mapStateToProps, mapDispatchToProps)(gamesSearchForm);
-
+const GamesSearchForm = connect(mapStateToProps)(gamesSearchForm);
 export default GamesSearchForm;

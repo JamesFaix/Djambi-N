@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { State } from '../../store/root';
 import { connect } from 'react-redux';
-import { Dispatch } from 'redux';
 import { SectionHeader } from '../controls/headers';
 import IconButton from '../controls/iconButton';
 import { CreateSnapshotRequest } from '../../api/model';
@@ -68,15 +67,10 @@ class createSnapshotForm extends React.Component<CreateSnapshotFormProps, Create
 const mapStateToProps = (state : State) => {
     const g = state.activeGame.game;
     return {
-        gameId: g ? g.id : null
-    };
-}
-
-const mapDispatchToProps = (_ : Dispatch) => {
-    return {
+        gameId: g ? g.id : null,
         createSnapshot: (gameId : number, request : CreateSnapshotRequest) => Controller.Snapshots.save(gameId, request)
     };
 }
 
-const CreateSnapshotForm = connect(mapStateToProps, mapDispatchToProps)(createSnapshotForm);
+const CreateSnapshotForm = connect(mapStateToProps)(createSnapshotForm);
 export default CreateSnapshotForm;

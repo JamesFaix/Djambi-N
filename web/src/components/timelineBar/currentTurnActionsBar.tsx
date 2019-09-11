@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Dispatch } from 'redux';
 import { State } from '../../store/root';
 import { connect } from 'react-redux';
 import { Game, User, TurnStatus } from '../../api/model';
@@ -88,16 +87,11 @@ const mapStateToProps = (state : State) => {
     return {
         user: state.session.user,
         game: state.activeGame.game,
-        theme: state.display.theme
-    };
-}
-
-const mapDispatchToProps = (_ : Dispatch) => {
-    return {
+        theme: state.display.theme,
         endTurn: (gameId : number) => Controller.Game.endTurn(gameId),
         resetTurn: (gameId : number) => Controller.Game.resetTurn(gameId)
     };
 }
 
-const CurrentTurnActionsBar = connect(mapStateToProps, mapDispatchToProps)(currentTurnActionsBar);
+const CurrentTurnActionsBar = connect(mapStateToProps)(currentTurnActionsBar);
 export default CurrentTurnActionsBar;

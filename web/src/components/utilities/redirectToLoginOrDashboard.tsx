@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { User } from "../../api/model";
 import { State } from '../../store/root';
-import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import Routes from '../../routes';
 import Controller from '../../controller';
@@ -28,17 +27,11 @@ class redirectToLoginOrDashboard extends React.Component<RedirectToLoginOrDashbo
 
 const mapStateToProps = (state: State) => {
     return {
-        user: state.session.user
-    };
-};
-
-const mapDispatchToProps = (_ : Dispatch) => {
-    return {
+        user: state.session.user,
         redirectToDashboard: () => Controller.navigateTo(Routes.dashboard),
         restoreSessionAndRedirect: () => Controller.Session.redirectToLoginOrDashboard()
     };
 };
 
-const RedirectToLoginOrDashboard = connect(mapStateToProps, mapDispatchToProps)(redirectToLoginOrDashboard);
-
+const RedirectToLoginOrDashboard = connect(mapStateToProps)(redirectToLoginOrDashboard);
 export default RedirectToLoginOrDashboard

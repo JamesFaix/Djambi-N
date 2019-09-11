@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Game, GameStatus } from "../../api/model";
 import { State } from '../../store/root';
-import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import Controller from '../../controller';
 import Routes from '../../routes';
@@ -32,15 +31,10 @@ class redirectToLobbyIfNotGameStatus extends React.Component<RedirectToLobbyIfNo
 
 const mapStateToProps = (state: State) => {
     return {
-        game: state.activeGame.game
-    };
-};
-
-const mapDispatchToProps = (_ : Dispatch) => {
-    return {
+        game: state.activeGame.game,
         redirect: (game: Game) => Controller.navigateTo(Routes.game(game.id))
     };
 };
 
-const RedirectToLobbyIfNotGameStatus = connect(mapStateToProps, mapDispatchToProps)(redirectToLobbyIfNotGameStatus);
+const RedirectToLobbyIfNotGameStatus = connect(mapStateToProps)(redirectToLobbyIfNotGameStatus);
 export default RedirectToLobbyIfNotGameStatus;

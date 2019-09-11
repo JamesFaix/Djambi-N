@@ -2,7 +2,6 @@ import * as React from 'react';
 import CanvasBoard from '../canvas/canvasBoard';
 import { BoardView, CellView } from '../../viewModel/board/model';
 import { State } from '../../store/root';
-import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import CanvasTransformService, { CanvasTranformData } from '../../viewModel/board/canvasTransformService';
 import { PieceKind, Game } from '../../api/model';
@@ -80,15 +79,10 @@ const mapStateToProps = (state : State) => {
             regionCount: state.activeGame.game.parameters.regionCount
         },
         theme: state.display.theme,
-        debugSettings: state.settings.debug
-    };
-}
-
-const mapDispatchToProps = (_ : Dispatch) => {
-    return {
+        debugSettings: state.settings.debug,
         selectCell: (gameId : number, cell : CellView) => Controller.Game.selectCell(gameId, cell.id)
     };
 }
 
-const BoardSection = connect(mapStateToProps, mapDispatchToProps)(boardSection);
+const BoardSection = connect(mapStateToProps)(boardSection);
 export default BoardSection;

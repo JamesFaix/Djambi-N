@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Game } from '../../api/model';
 import { State } from '../../store/root';
-import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import Controller from '../../controller';
 
@@ -27,16 +26,10 @@ class loadGame extends React.Component<LoadGameProps> {
 
 const mapStateToProps = (state : State) => {
     return {
-        activeGame: state.activeGame.game
+        activeGame: state.activeGame.game,
+        loadGame: (gameId : number) => Controller.Game.loadGame(gameId)
     };
 };
 
-const mapDispatchToProps = (_ : Dispatch) => {
-    return {
-        loadGame: (gameId : number) => Controller.Game.loadGame(gameId)
-    };
-}
-
-const LoadGame = connect(mapStateToProps, mapDispatchToProps)(loadGame);
-
+const LoadGame = connect(mapStateToProps)(loadGame);
 export default LoadGame;

@@ -5,7 +5,6 @@ import { SectionHeader } from '../controls/headers';
 import { DebugSettings } from '../../debug';
 import HtmlInputTypes from '../htmlInputTypes';
 import Controller from '../../controller';
-import { Dispatch } from 'redux';
 
 interface DebugSettingsFormProps {
     formData : DebugSettings,
@@ -123,15 +122,10 @@ class debugSettingsForm extends React.Component<DebugSettingsFormProps> {
 
 const mapStateToProps = (state : State) => {
     return {
-        formData: state.settings.debug
-    };
-};
-
-const mapDispatchToProps = (_ : Dispatch) => {
-    return {
+        formData: state.settings.debug,
         onFormDataChanged: (formData: DebugSettings) => Controller.Settings.saveAndApply(formData),
     };
 };
 
-const DebugSettingsForm = connect(mapStateToProps, mapDispatchToProps)(debugSettingsForm);
+const DebugSettingsForm = connect(mapStateToProps)(debugSettingsForm);
 export default DebugSettingsForm;

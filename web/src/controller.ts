@@ -7,6 +7,7 @@ import * as StoreGamesQuery from './store/gamesQuery';
 import * as StoreActiveGame from './store/activeGame';
 import * as StoreSession from './store/session';
 import * as StoreBoards from './store/boards';
+import * as StoreCreateGameForm from './store/createGameForm';
 import * as Api from './api/client';
 import {
     GamesQuery,
@@ -264,6 +265,16 @@ export default class Controller {
             if (g.status === GameStatus.Over) {
                 Controller.navigateTo(Routes.gameOver(g.id));
             }
+        }
+    }
+
+    public static Forms = class {
+        public static updateCreateGameForm(formData : GameParameters) : void {
+            Controller.store.dispatch(StoreCreateGameForm.Actions.updateCreateGameForm(formData))
+        }
+
+        public static updateGamesQuery(formData : GamesQuery) : void {
+            Controller.store.dispatch(StoreGamesQuery.Actions.updateGamesQuery(formData))
         }
     }
 }

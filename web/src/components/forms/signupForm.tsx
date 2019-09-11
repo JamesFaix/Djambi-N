@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Dispatch } from 'redux';
 import { CreateUserRequest } from '../../api/model';
 import { SectionHeader } from '../controls/headers';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
 import HtmlInputTypes from '../htmlInputTypes';
 import Controller from '../../controller';
+import { State } from '../../store/root';
 
 interface SignupFormProps {
     submit: (formData: CreateUserRequest) => void
@@ -74,12 +74,12 @@ class signupForm extends React.Component<SignupFormProps, SignupFormState> {
     }
 }
 
-const mapDispatchToProps = (_ : Dispatch) => {
+const mapStateToProps = (_ : State) => {
     return {
         submit: (request: CreateUserRequest) => Controller.Session.signup(request)
     };
 };
 
-const SignupForm = connect(null, mapDispatchToProps)(signupForm);
+const SignupForm = connect(mapStateToProps)(signupForm);
 
 export default SignupForm;

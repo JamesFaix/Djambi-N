@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import Controller from '../../controller';
+import { State } from '../../store/root';
 
 interface LoadSnapshotsProps {
     gameId : number,
@@ -18,11 +18,11 @@ class loadSnapshots extends React.Component<LoadSnapshotsProps> {
     }
 }
 
-const mapDispatchToProps = (_ : Dispatch) => {
+const mapStateToProps = (_ : State) => {
     return {
         getSnapshots : (gameId : number) => Controller.Snapshots.get(gameId)
     };
 }
 
-const LoadSnapshots = connect(null, mapDispatchToProps)(loadSnapshots);
+const LoadSnapshots = connect(mapStateToProps)(loadSnapshots);
 export default LoadSnapshots;

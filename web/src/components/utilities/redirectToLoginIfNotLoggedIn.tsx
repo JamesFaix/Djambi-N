@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { User } from "../../api/model";
 import { State } from '../../store/root';
-import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import Controller from '../../controller';
 
@@ -24,16 +23,10 @@ class redirectToLoginIfNotLoggedIn extends React.Component<RedirectToLoginIfNotL
 
 const mapStateToProps = (state: State) => {
     return {
-        user: state.session.user
-    };
-};
-
-const mapDispatchToProps = (_ : Dispatch) => {
-    return {
+        user: state.session.user,
         restoreSessionOrRedirect: () => Controller.Session.redirectToLoginIfNotLoggedIn()
     };
 };
 
-const RedirectToLoginIfNotLoggedIn = connect(mapStateToProps, mapDispatchToProps)(redirectToLoginIfNotLoggedIn);
-
+const RedirectToLoginIfNotLoggedIn = connect(mapStateToProps)(redirectToLoginIfNotLoggedIn);
 export default RedirectToLoginIfNotLoggedIn;
