@@ -129,7 +129,7 @@ const mapStateToProps = (state : State) => {
 
 const mapDispatchToProps = (_ : Dispatch) => {
     return {
-        onFormDataChanged: (formData: DebugSettings) => Controller.applySettings(formData),
+        onFormDataChanged: (formData: DebugSettings) => Controller.Settings.saveAndApply(formData),
     };
 };
 

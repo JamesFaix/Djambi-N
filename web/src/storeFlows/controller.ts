@@ -26,20 +26,18 @@ export default class Controller {
         Controller.history.push(route);
     }
 
-    //#region Settings
+    public static Settings = class {
+        public static saveAndApply(settings : DebugSettings) : void {
+            LocalStorageService.debugSettings = settings;
+            Controller.store.dispatch(StoreSettings.Actions.applyDebugSettings(settings));
+        }
 
-    public static applySettings(settings : DebugSettings) : void {
-        LocalStorageService.debugSettings = settings;
-        this.store.dispatch(StoreSettings.Actions.applyDebugSettings(settings));
+        public static loadAndApply() : void {
+            let settings = LocalStorageService.debugSettings;
+            if (!settings) { settings = defaultDebugSettings; }
+            Controller.store.dispatch(StoreSettings.Actions.applyDebugSettings(settings));
+        }
     }
-
-    public static loadSavedSettings() : void {
-        let settings = LocalStorageService.debugSettings;
-        if (!settings) { settings = defaultDebugSettings; }
-        this.store.dispatch(StoreSettings.Actions.applyDebugSettings(settings));
-    }
-
-    //#endregion
 
     public static async queryGames(query: GamesQuery) : Promise<void> {
         const games = await Api.getGames(query);
@@ -67,4 +65,6 @@ export default class Controller {
             Controller.store.dispatch(StoreActiveGame.Actions.snapshotDeleted(snapshotId));
         }
     }
+
+
 }

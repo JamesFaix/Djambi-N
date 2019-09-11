@@ -96,7 +96,7 @@ export default class SessionStoreFlows {
     private static finishLoginSetup(user : User, dispatch : Dispatch) : Promise<void> {
         SseClientManager.connect();
         ThemeService.loadSavedTheme(dispatch);
-        Controller.loadSavedSettings();
+        Controller.Settings.loadAndApply();
         return SessionStoreFlows.queryGamesForUser(user, dispatch);
     }
 
