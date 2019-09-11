@@ -9,6 +9,7 @@ import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
 import GameStoreFlows from '../../storeFlows/game';
 import HtmlInputTypes from '../htmlInputTypes';
+import BoardSelectionBar from '../sections/boardSelectionBar';
 
 interface CreateGameFormProps {
     formData : GameParameters,
@@ -19,21 +20,14 @@ interface CreateGameFormProps {
 class createGameForm extends React.Component<CreateGameFormProps> {
     render() {
         return (<>
+            <SectionHeader text="Board type"/>
+            <BoardSelectionBar
+                selectBoard={(regionCount : number) => this.onChangeRegionCount(regionCount)}
+            />
+            <br/>
             <SectionHeader text="Game settings"/>
             <table>
                 <tbody>
-                    <tr>
-                        <td>Region count</td>
-                        <td>
-                            <input
-                                type={HtmlInputTypes.Number}
-                                min={3}
-                                max={8}
-                                value={this.props.formData.regionCount}
-                                onChange={e => this.onChangeRegionCount(e)}
-                            />
-                        </td>
-                    </tr>
                     <tr>
                         <td>Allow guests</td>
                         <td>
@@ -75,10 +69,9 @@ class createGameForm extends React.Component<CreateGameFormProps> {
         </>);
     }
 
-    private onChangeRegionCount(e : React.ChangeEvent<HTMLInputElement>) : void {
-        const value = parseInt(e.target.value);
+    private onChangeRegionCount(regionCount : number) : void {
         let formData = {...this.props.formData};
-        formData.regionCount = value;
+        formData.regionCount = regionCount;
         this.props.onFormDataChanged(formData);
     }
 

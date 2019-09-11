@@ -37,6 +37,14 @@ export default class GameStoreFlows {
         return history;
     }
 
+    public static loadAllBoards() {
+        return async function(dispatch : Dispatch) : Promise<void> {
+            for (let i=3; i<=8; i++){
+                await GameStoreFlows.loadBoardInner(i, dispatch);
+            }
+        };
+    }
+
     private static async loadBoardInner(regionCount : number, dispatch : Dispatch) : Promise<Board> {
         const board = await Api.getBoard(regionCount);
         dispatch(StoreBoards.Actions.loadBoard(board));
