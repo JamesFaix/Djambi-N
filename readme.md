@@ -11,5 +11,8 @@ Points 1 and 2 are the premise of [Djambi][1], by Jean Anesto. Djambi-N adds poi
 
 For help or more information, see the [wiki][2].
 
+[Contribution guidlines][3]
+
 [1]: https://en.wikipedia.org/wiki/Djambi
 [2]: https://github.com/GamesFaix/Djambi3/wiki
+[3]: CONTRIBUTING.md
