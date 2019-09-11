@@ -20,6 +20,8 @@ export default class ThemeFactory {
             hoverBackground: "black",
             altRowText: "black",
             altRowBackground: "gainsboro",
+            positiveButtonBackground: "green",
+            negativeButtonBackground: "red",
 
             player0: "blue",
             player1: "red",
