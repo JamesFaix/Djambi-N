@@ -7,8 +7,9 @@ import IconButton from '../controls/iconButton';
 import { Classes } from '../../styles/styles';
 import IconBox from '../controls/iconBox';
 import { Icons } from '../../utilities/icons';
-import MiscStoreFlows from '../../storeFlows/misc';
 import Copy from '../../utilities/copy';
+import Controller from '../../storeFlows/controller';
+import Routes from '../../routes';
 
 interface GamesSearchResultsTableProps {
     games : Game[]
@@ -56,7 +57,7 @@ const GameRow : React.SFC<GameRowProps> = props => {
             <td>
                 <IconButton
                     icon={Icons.UserActions.loadGame}
-                    onClick={() => MiscStoreFlows.navigateToGame(game)}
+                    onClick={() => Controller.navigateTo(Routes.game(game.id))}
                 />
             </td>
             <td className={Classes.centered}>
