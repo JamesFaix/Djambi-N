@@ -67,3 +67,11 @@ export class List {
             .map(g => g.reduce((x, y) => merge(x,y)));
     }
 }
+
+export class MapUtil {
+    public static add<TKey, TValue>(xs : Map<TKey, TValue>, key : TKey, value : TValue) : Map<TKey, TValue> {
+        const m = new Map<TKey, TValue>(xs);
+        m.set(key, value);
+        return m;
+    }
+}

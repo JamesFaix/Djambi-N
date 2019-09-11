@@ -13,6 +13,7 @@ import Geometry from '../viewModel/board/geometry';
 import { Point } from '../viewModel/board/model';
 import GameHistory from '../viewModel/gameHistory';
 import * as Settings from './settings';
+import { MapUtil } from '../utilities/collections';
 
 export interface State {
     session: Session.State,
@@ -103,16 +104,14 @@ function loadGameReducer(state: State, action: CustomAction) : State {
 }
 
 function loadBoardReducer(state: State, action: CustomAction) : State {
-    console.log("loadBoardReducer");
     const da = <DataAction<Board>>action;
     const newState : State = {
         ...state,
         boards: {
             ...state.boards,
-            boards: new Map<number, Board>(state.boards.boards)
+            boards: MapUtil.add(state.boards.boards, da.data.regionCount, da.data)
         }
     };
-    newState.boards.boards.set(da.data.regionCount, da.data);
     //There won't be an active game if boards are being loaded for thumbnails
     if (state.activeGame.game) {
         updateBoardView(newState, state.activeGame.game);
