@@ -5,8 +5,8 @@ import { CreateUserRequest } from '../../api/model';
 import { SectionHeader } from '../controls/headers';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
-import SessionStoreFlows from '../../storeFlows/session';
 import HtmlInputTypes from '../htmlInputTypes';
+import Controller from '../../storeFlows/controller';
 
 interface SignupFormProps {
     submit: (formData: CreateUserRequest) => void
@@ -74,9 +74,9 @@ class signupForm extends React.Component<SignupFormProps, SignupFormState> {
     }
 }
 
-const mapDispatchToProps = (dispatch : Dispatch) => {
+const mapDispatchToProps = (_ : Dispatch) => {
     return {
-        submit: (request: CreateUserRequest) => SessionStoreFlows.signup(request)(dispatch)
+        submit: (request: CreateUserRequest) => Controller.Session.signup(request)
     };
 };
 

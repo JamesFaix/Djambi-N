@@ -6,7 +6,7 @@ import { Dispatch } from 'redux';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
 import { Classes } from '../../styles/styles';
-import SessionStoreFlows from '../../storeFlows/session';
+import Controller from '../../storeFlows/controller';
 
 interface UserSectionProps {
     user : User,
@@ -50,9 +50,9 @@ const mapStateToProps = (state : State) => {
     };
 };
 
-const mapDispatchToProps = (dispatch : Dispatch) => {
+const mapDispatchToProps = (_ : Dispatch) => {
     return {
-        onLogoutClicked: () => SessionStoreFlows.logout()(dispatch)
+        onLogoutClicked: () => Controller.Session.logout()
     };
 }
 

@@ -3,7 +3,7 @@ import { User } from "../../api/model";
 import { State } from '../../store/root';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import SessionStoreFlows from '../../storeFlows/session';
+import Controller from '../../storeFlows/controller';
 
 interface RedirectToDashboardIfLoggedInProps {
     user : User,
@@ -28,9 +28,9 @@ const mapStateToProps = (state: State) => {
     };
 };
 
-const mapDispatchToProps = (dispatch : Dispatch) => {
+const mapDispatchToProps = (_ : Dispatch) => {
     return {
-        restoreSessionAndRedirect: () => SessionStoreFlows.redirectToDashboardIfLoggedIn()(dispatch)
+        restoreSessionAndRedirect: () => Controller.Session.redirectToDashboardIfLoggedIn()
     };
 };
 

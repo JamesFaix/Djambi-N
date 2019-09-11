@@ -5,8 +5,8 @@ import { LoginRequest } from '../../api/model';
 import { SectionHeader } from '../controls/headers';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
-import SessionStoreFlows from '../../storeFlows/session';
 import HtmlInputTypes from '../htmlInputTypes';
+import Controller from '../../storeFlows/controller';
 
 interface LoginFormProps {
     submit: (formData: LoginRequest) => void
@@ -72,9 +72,9 @@ class loginForm extends React.Component<LoginFormProps, LoginFormState> {
     }
 }
 
-const mapDispatchToProps = (dispatch : Dispatch) => {
+const mapDispatchToProps = (_ : Dispatch) => {
     return {
-        submit: (formData : LoginRequest) => SessionStoreFlows.login(formData)(dispatch)
+        submit: (formData : LoginRequest) => Controller.Session.login(formData)
     };
 };
 

@@ -4,7 +4,6 @@ import { State } from '../../store/root';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import Routes from '../../routes';
-import SessionStoreFlows from '../../storeFlows/session';
 import Controller from '../../storeFlows/controller';
 
 interface RedirectToLoginOrDashboardProps {
@@ -33,10 +32,10 @@ const mapStateToProps = (state: State) => {
     };
 };
 
-const mapDispatchToProps = (dispatch : Dispatch) => {
+const mapDispatchToProps = (_ : Dispatch) => {
     return {
         redirectToDashboard: () => Controller.navigateTo(Routes.dashboard),
-        restoreSessionAndRedirect: () => SessionStoreFlows.redirectToLoginOrDashboard()(dispatch)
+        restoreSessionAndRedirect: () => Controller.Session.redirectToLoginOrDashboard()
     };
 };
 
