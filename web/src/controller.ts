@@ -45,7 +45,7 @@ export default class Controller {
     }
 
     private static dispatch(action : CustomAction) {
-        Controller.dispatch(action);
+        Controller.store.dispatch(action);
     }
 
     private static get state() : State {

@@ -11,18 +11,19 @@ import Controller from '../../controller';
 const gameRedirectPage : React.SFC<{
     game : Game
 }> = props => {
+    const routeGameId = Number((props as any).match.params.gameId);
+
     React.useEffect(() => {
-        if (props.game) {
-            const url = getUrl(props.game.id, props.game.status);
+        if (props.game && props.game.id === routeGameId) {
+            const url = getUrl(routeGameId, props.game.status);
             Controller.navigateTo(url);
         }
     });
 
-    const gameId = (props as any).match.params.gameId;
     return (
         <BasicPageContainer>
             <RedirectToLoginIfNotLoggedIn/>
-            <LoadGame gameId={gameId}/>
+            <LoadGame gameId={routeGameId}/>
     </BasicPageContainer>
     );
 }
