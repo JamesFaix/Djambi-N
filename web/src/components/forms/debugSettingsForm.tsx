@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { State } from '../../store/root';
 import { connect } from 'react-redux';
-import { Dispatch } from 'redux';
 import { SectionHeader } from '../controls/headers';
 import { DebugSettings } from '../../debug';
-import MiscStoreFlows from '../../storeFlows/misc';
 import HtmlInputTypes from '../htmlInputTypes';
+import Controller from '../../storeFlows/controller';
+import { Dispatch } from 'redux';
 
 interface DebugSettingsFormProps {
     formData : DebugSettings,
@@ -127,9 +127,9 @@ const mapStateToProps = (state : State) => {
     };
 };
 
-const mapDispatchToProps = (dispatch : Dispatch) => {
+const mapDispatchToProps = (_ : Dispatch) => {
     return {
-        onFormDataChanged: (formData: DebugSettings) => MiscStoreFlows.applySettings(formData, dispatch),
+        onFormDataChanged: (formData: DebugSettings) => Controller.applySettings(formData),
     };
 };
 

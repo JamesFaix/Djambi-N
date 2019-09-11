@@ -7,7 +7,6 @@ import * as StoreSession from '../store/session';
 import { SseClientManager } from "../utilities/serverSentEvents";
 import ThemeService from "../themes/themeService";
 import * as StoreGamesQuery from '../store/gamesQuery';
-import MiscStoreFlows from "./misc";
 import Controller from "./controller";
 
 export default class SessionStoreFlows {
@@ -97,7 +96,7 @@ export default class SessionStoreFlows {
     private static finishLoginSetup(user : User, dispatch : Dispatch) : Promise<void> {
         SseClientManager.connect();
         ThemeService.loadSavedTheme(dispatch);
-        MiscStoreFlows.loadSavedSettings(dispatch);
+        Controller.loadSavedSettings();
         return SessionStoreFlows.queryGamesForUser(user, dispatch);
     }
 
@@ -105,6 +104,6 @@ export default class SessionStoreFlows {
         const query = ModelFactory.emptyGamesQuery();
         query.playerUserName = user.name;
         dispatch(StoreGamesQuery.Actions.updateGamesQuery(query));
-        return MiscStoreFlows.queryGames(query)(dispatch)
+        return Controller.queryGames(query);
     }
 }

@@ -9,8 +9,8 @@ import { SectionHeader } from '../controls/headers';
 import * as StoreGamesQuery from '../../store/gamesQuery';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
-import MiscStoreFlows from '../../storeFlows/misc';
 import HtmlInputTypes from '../htmlInputTypes';
+import Controller from '../../storeFlows/controller';
 
 interface GamesSearchFormProps {
     formData : GamesQuery,
@@ -175,7 +175,7 @@ const mapStateToProps = (state : State) => {
 const mapDispatchToProps = (dispatch : Dispatch) => {
     return {
         onFormDataChanged: (formData: GamesQuery) => dispatch(StoreGamesQuery.Actions.updateGamesQuery(formData)),
-        submit: (formData: GamesQuery) => MiscStoreFlows.queryGames(formData)(dispatch)
+        submit: (formData: GamesQuery) => Controller.queryGames(formData)
     };
 };
 
