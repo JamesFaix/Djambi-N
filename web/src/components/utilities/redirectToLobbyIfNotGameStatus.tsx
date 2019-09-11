@@ -3,7 +3,8 @@ import { Game, GameStatus } from "../../api/model";
 import { State } from '../../store/root';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import MiscStoreFlows from '../../storeFlows/misc';
+import Controller from '../../storeFlows/controller';
+import Routes from '../../routes';
 
 interface RedirectToLobbyIfNotGameStatusProps {
     game: Game,
@@ -35,9 +36,9 @@ const mapStateToProps = (state: State) => {
     };
 };
 
-const mapDispatchToProps = (dispatch : Dispatch) => {
+const mapDispatchToProps = (_ : Dispatch) => {
     return {
-        redirect: (game: Game) => MiscStoreFlows.navigateToGame(game)
+        redirect: (game: Game) => Controller.navigateTo(Routes.game(game.id))
     };
 };
 
