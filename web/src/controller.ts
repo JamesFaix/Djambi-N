@@ -8,6 +8,7 @@ import * as StoreActiveGame from './store/activeGame';
 import * as StoreSession from './store/session';
 import * as StoreBoards from './store/boards';
 import * as StoreCreateGameForm from './store/createGameForm';
+import * as StoreDisplay from './store/display';
 import * as Api from './api/client';
 import {
     GamesQuery,
@@ -24,12 +25,15 @@ import {
     ResultsDirection,
     Event,
     Board,
-    PlayerStatus
+    PlayerStatus,
+    PieceKind
 } from "./api/model";
 import { SseClientManager } from "./utilities/serverSentEvents";
 import ThemeService from "./themes/themeService";
 import Routes from "./routes";
 import * as ModelFactory from "./api/modelFactory";
+import { Theme } from "./themes/model";
+import ThemeFactory from "./themes/themeFactory";
 
 //Encapsulates dispatching Redux actions and other side effects
 export default class Controller {
@@ -44,7 +48,7 @@ export default class Controller {
         this.history = history;
 
         Controller.Settings.loadAndApply();
-        ThemeService.loadSavedTheme(action => Controller.dispatch(action));
+        Controller.Display.loadSavedTheme();
     }
 
     private static dispatch(action : CustomAction) {
@@ -176,7 +180,7 @@ export default class Controller {
 
         private static finishLoginSetup(user : User) : Promise<void> {
             SseClientManager.connect();
-            ThemeService.loadSavedTheme(Controller.dispatch);
+            Controller.Display.loadSavedTheme();
             Controller.Settings.loadAndApply();
             return Controller.Session.queryGamesForUser(user);
         }
@@ -293,6 +297,68 @@ export default class Controller {
 
         public static updateGamesQuery(formData : GamesQuery) : void {
             Controller.dispatch(StoreGamesQuery.Actions.updateGamesQuery(formData))
+        }
+    }
+
+    public static Display = class {
+        public static changeTheme(themeName : string) : void {
+            LocalStorageService.themeName = themeName;
+            const theme = ThemeFactory.getThemes().get(themeName);
+            Controller.dispatch(StoreDisplay.Actions.changeTheme(theme));
+            Controller.Display.applyToCss(theme);
+            Controller.Display.loadThemeImages(theme);
+        }
+
+        private static applyToCss(theme : Theme) : void {
+            const s = document.documentElement.style;
+            const c  = theme.colors;
+
+            s.setProperty("--background-color", c.background);
+            s.setProperty("--text-color", c.text);
+            s.setProperty("--header-text-color", c.headerText);
+            s.setProperty("--border-color", c.border);
+            s.setProperty("--hover-text-color", c.hoverText);
+            s.setProperty("--hover-background-color", c.hoverBackground);
+            s.setProperty("--alt-row-background-color", c.altRowBackground);
+            s.setProperty("--alt-row-text-color", c.altRowText);
+
+            s.setProperty("--player-color-0", c.player0);
+            s.setProperty("--player-color-1", c.player1);
+            s.setProperty("--player-color-2", c.player2);
+            s.setProperty("--player-color-3", c.player3);
+            s.setProperty("--player-color-4", c.player4);
+            s.setProperty("--player-color-5", c.player5);
+            s.setProperty("--player-color-6", c.player6);
+            s.setProperty("--player-color-7", c.player7);
+
+            s.setProperty("--font-family", theme.fonts.normalFamily);
+            s.setProperty("--header-font-family", theme.fonts.headerFamily);
+        }
+
+        private static loadThemeImages(theme : Theme) : void {
+            const kinds = [
+                PieceKind.Assassin,
+                PieceKind.Chief,
+                PieceKind.Corpse,
+                PieceKind.Diplomat,
+                PieceKind.Gravedigger,
+                PieceKind.Reporter,
+                PieceKind.Thug
+            ];
+            kinds.forEach(k => Controller.Display.createPieceImage(theme, k));
+        }
+
+        private static createPieceImage(theme : Theme, kind : PieceKind) : HTMLImageElement {
+            const image = new (window as any).Image() as HTMLImageElement;
+            image.src = ThemeService.getPieceImagePath(theme, kind);
+            image.onload = () => Controller.dispatch(StoreDisplay.Actions.pieceImageLoaded(kind, image));
+            return image;
+        }
+
+        public static loadSavedTheme() : void {
+            let name = LocalStorageService.themeName;
+            name = name ? name : ThemeFactory.default.name;
+            return Controller.Display.changeTheme(name);
         }
     }
 }
