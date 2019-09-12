@@ -303,6 +303,11 @@ export default class Controller {
     public static Display = class {
         public static changeTheme(themeName : string) : void {
             LocalStorageService.themeName = themeName;
+            const currentTheme = Controller.state.display.theme;
+            if (currentTheme && currentTheme.name === themeName) {
+                return;
+            }
+
             const theme = ThemeFactory.getThemes().get(themeName);
             Controller.dispatch(StoreDisplay.Actions.changeTheme(theme));
             Controller.Display.applyToCss(theme);
@@ -349,9 +354,12 @@ export default class Controller {
         }
 
         private static createPieceImage(theme : Theme, kind : PieceKind) : HTMLImageElement {
-            const image = new (window as any).Image() as HTMLImageElement;
-            image.src = ThemeService.getPieceImagePath(theme, kind);
-            image.onload = () => Controller.dispatch(StoreDisplay.Actions.pieceImageLoaded(kind, image));
+            let image = Controller.state.display.images.pieces.get(kind);
+            if (!image) {
+                image = new (window as any).Image() as HTMLImageElement;
+                image.src = ThemeService.getPieceImagePath(theme, kind);
+                image.onload = () => Controller.dispatch(StoreDisplay.Actions.pieceImageLoaded(kind, image));
+            }
             return image;
         }
 
