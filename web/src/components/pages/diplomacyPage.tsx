@@ -1,19 +1,24 @@
 import * as React from 'react';
-import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
 import DiplomacyPlayersTable from '../tables/diplomacyPlayersTable';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Icons } from '../../utilities/icons';
 import BasicPageContainer from '../sections/basicPageContainer';
-import { GameStatus } from '../../api/model';
-import RedirectToLobbyIfNotGameStatus from '../utilities/redirectToLobbyIfNotGameStatus';
+import { GameStatus, Game, User } from '../../api/model';
+import ControllerEffects from '../../controllerEffects';
+import { State } from '../../store/root';
+import { connect } from 'react-redux';
 
-const DiplomacyPage : React.SFC<{}> = _ => {
+const diplomacyPage : React.SFC<{
+    user : User,
+    game : Game
+}> = props => {
     const i = Icons.PlayerActions;
+
+    ControllerEffects.redirectToLoginIfNotLoggedIn(props.user);
+    ControllerEffects.redirectToLobbyIfNotGameStatus(props.game, GameStatus.InProgress);
 
     return (
         <BasicPageContainer>
-            <RedirectToLoginIfNotLoggedIn/>
-            <RedirectToLobbyIfNotGameStatus status={GameStatus.InProgress}/>
             <DiplomacyPlayersTable/>
             <br/>
             <p>
@@ -29,4 +34,13 @@ const DiplomacyPage : React.SFC<{}> = _ => {
     </BasicPageContainer>
     );
 }
+
+const mapStateToProps = (state : State) => {
+    return {
+        user : state.session.user,
+        game : state.activeGame.game
+    };
+}
+
+const DiplomacyPage = connect(mapStateToProps)(diplomacyPage);
 export default DiplomacyPage;

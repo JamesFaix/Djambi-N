@@ -1,6 +1,5 @@
 import * as React from 'react';
 import BasicPageContainer from '../sections/basicPageContainer';
-import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
 import { State } from '../../store/root';
 import { connect } from 'react-redux';
 import ThemeFactory from '../../themes/themeFactory';
@@ -9,22 +8,30 @@ import { SectionHeader } from '../controls/headers';
 import { Theme } from '../../themes/model';
 import DebugSettingsForm from '../forms/debugSettingsForm';
 import Controller from '../../controller';
+import ControllerEffects from '../../controllerEffects';
+import { User } from '../../api/model';
 
-interface SettingsPageProps {
+const settingsPage : React.SFC<{
+    user : User,
+}> = props => {
+    ControllerEffects.redirectToLoginIfNotLoggedIn(props.user);
+    return(
+        <BasicPageContainer>
+            <SectionHeader text="Settings"/>
+            <ThemeSection/>
+            <DebugSettingsForm/>
+        </BasicPageContainer>
+    );
 }
 
-export default class SettingsPage extends React.Component<SettingsPageProps> {
-    render(){
-        return(
-            <BasicPageContainer>
-                <RedirectToLoginIfNotLoggedIn/>
-                <SectionHeader text="Settings"/>
-                <ThemeSection/>
-                <DebugSettingsForm/>
-            </BasicPageContainer>
-        );
-    }
+const mapStateToProps = (state : State) => {
+    return {
+        user : state.session.user
+    };
 }
+
+const SettingsPage = connect(mapStateToProps)(settingsPage);
+export default SettingsPage;
 
 interface ThemeSectionProps {
     theme : Theme,
@@ -60,11 +67,11 @@ class themeSection extends React.Component<ThemeSectionProps> {
     }
 }
 
-const mapStateToProps = (state : State) => {
+const mapStateToProps1 = (state : State) => {
     return {
         theme: state.display.theme,
         selectTheme: (themeName : string) => Controller.Display.changeTheme(themeName)
     };
 }
 
-const ThemeSection = connect(mapStateToProps)(themeSection);
+const ThemeSection = connect(mapStateToProps1)(themeSection);

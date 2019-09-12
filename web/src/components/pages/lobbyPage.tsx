@@ -5,65 +5,78 @@ import { Game, GameStatus, User } from '../../api/model';
 import { connect } from 'react-redux';
 import { State } from '../../store/root';
 import LoadGame from '../utilities/loadGame';
-import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
 import PlayersTable from '../tables/playersTable';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
 import BasicPageContainer from '../sections/basicPageContainer';
 import Controller from '../../controller';
+import ControllerEffects from '../../controllerEffects';
 
-interface LobbyPageProps {
+const lobbyPage : React.SFC<{
     user : User,
     game : Game,
     onStartGameClicked: (gameId: number) => void
+}> = props => {
+    const gameId = (props as any).match.params.gameId;
+    ControllerEffects.redirectToLoginIfNotLoggedIn(props.user);
+    return (
+        <BasicPageContainer>
+            <LoadGame gameId={gameId}/>
+            <PageBody
+                game={props.game}
+                user={props.user}
+                startGame={gameId => props.onStartGameClicked(gameId)}
+            />
+        </BasicPageContainer>
+    );
 }
 
-class lobbyPage extends React.Component<LobbyPageProps> {
-    render() {
-        const gameId = (this.props as any).match.params.gameId;
-        const g = this.props.game;
-        return (
-            <BasicPageContainer>
-                <RedirectToLoginIfNotLoggedIn/>
-                <LoadGame gameId={gameId}/>
-                {g ? this.renderBody() : null}
-            </BasicPageContainer>
-        );
-    }
+const PageBody : React.SFC<{
+    game : Game,
+    user : User,
+    startGame : (gameId : number) => void
+}> = props => {
+    if (!props.game) { return null; }
 
-    private renderBody() {
-        return (<>
-            <GameParametersTable/>
-            <br/>
-            <br/>
-            {
-                this.props.game.status === GameStatus.Pending
-                    ? <MutablePlayersTable/>
-                    : <PlayersTable/>
-            }
-            <br/>
-            <br/>
-            {this.renderStartButton()}
-        </>);
-    }
+    return (<>
+        <GameParametersTable/>
+        <br/>
+        <br/>
+        {
+            props.game.status === GameStatus.Pending
+                ? <MutablePlayersTable/>
+                : <PlayersTable/>
+        }
+        <br/>
+        <br/>
+        <StartButton
+            game={props.game}
+            user={props.user}
+            startGame={gameId => props.startGame(gameId)}
+        />
+    </>);
+}
 
-    private renderStartButton() {
-        const g = this.props.game;
-        const u = this.props.user;
+const StartButton : React.SFC<{
+    game : Game,
+    user : User,
+    startGame : (gameId : number) => void
+}> = props => {
+    const g = props.game;
+    const u = props.user;
 
-        const canStart = g && u &&
-            g.createdBy.userId === u.id &&
-            g.status === GameStatus.Pending &&
-            g.players.length > 1;
+    const canStart = g && u &&
+        g.createdBy.userId === u.id &&
+        g.status === GameStatus.Pending &&
+        g.players.length > 1;
 
-        return canStart ?
-            <IconButton
-                icon={Icons.UserActions.startGame}
-                showTitle={true}
-                onClick={() => this.props.onStartGameClicked(g.id)}
-            />
-        : null;
-    }
+    return canStart ?
+        <IconButton
+            icon={Icons.UserActions.startGame}
+            showTitle={true}
+            onClick={() => props.startGame(g.id)}
+        />
+    : null;
 }
 
 const mapStateToProps = (state : State) => {

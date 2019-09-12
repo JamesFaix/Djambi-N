@@ -1,35 +1,34 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { GamesQuery, Game } from '../../api/model';
+import { GamesQuery, Game, User } from '../../api/model';
 import GamesSearchResultsTable from '../tables/gamesSearchResultsTable';
 import { State } from '../../store/root';
-import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
 import GamesSearchForm from '../forms/gamesSearchForm';
 import BasicPageContainer from '../sections/basicPageContainer';
 import Controller from '../../controller';
+import ControllerEffects from '../../controllerEffects';
 
-interface DashboardPageProps {
+const dashboardPage : React.SFC<{
+    user : User,
     gamesQuery : GamesQuery,
     gamesResults : Game[],
     onSearchClicked : (query: GamesQuery) => void
-}
+}> = props => {
+    ControllerEffects.redirectToLoginIfNotLoggedIn(props.user);
 
-class dashboardPage extends React.Component<DashboardPageProps>{
-    render() {
-        return (
-            <BasicPageContainer>
-                <RedirectToLoginIfNotLoggedIn/>
-                <GamesSearchForm/>
-                <br/>
-                <br/>
-                <GamesSearchResultsTable/>
-            </BasicPageContainer>
-        );
-    }
+    return (
+        <BasicPageContainer>
+            <GamesSearchForm/>
+            <br/>
+            <br/>
+            <GamesSearchResultsTable/>
+        </BasicPageContainer>
+    );
 }
 
 const mapStateToProps = (state: State) => {
     return {
+        user : state.session.user,
         gamesQuery: state.gamesQuery ? state.gamesQuery.query : null,
         gamesResults: state.gamesQuery ? state.gamesQuery.results : [],
         onSearchClicked: (query: GamesQuery) => Controller.queryGames(query)

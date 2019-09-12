@@ -1,49 +1,30 @@
 import * as React from 'react';
-import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
 import BasicPageContainer from '../sections/basicPageContainer';
-import { GameStatus, Game } from '../../api/model';
+import { Game, User } from '../../api/model';
 import LoadGame from '../utilities/loadGame';
 import { State } from '../../store/root';
 import { connect } from 'react-redux';
-import Routes from '../../routes';
-import Controller from '../../controller';
+import ControllerEffects from '../../controllerEffects';
 
 const gameRedirectPage : React.SFC<{
+    user : User,
     game : Game
 }> = props => {
     const routeGameId = Number((props as any).match.params.gameId);
 
-    React.useEffect(() => {
-        if (props.game && props.game.id === routeGameId) {
-            const url = getUrl(routeGameId, props.game.status);
-            Controller.navigateTo(url);
-        }
-    });
+    ControllerEffects.redirectToLoginIfNotLoggedIn(props.user);
+    ControllerEffects.redirectToGame(routeGameId, props.game);
 
     return (
         <BasicPageContainer>
-            <RedirectToLoginIfNotLoggedIn/>
             <LoadGame gameId={routeGameId}/>
-    </BasicPageContainer>
+        </BasicPageContainer>
     );
-}
-
-function getUrl(gameId : number, status : GameStatus) : string {
-    switch (status) {
-        case GameStatus.Canceled:
-        case GameStatus.Pending:
-            return Routes.lobby(gameId);
-        case GameStatus.Over:
-            return Routes.gameOver(gameId);
-        case GameStatus.InProgress:
-            return Routes.play(gameId);
-        default:
-            return null;
-    }
 }
 
 const mapStateToProps = (state : State) => {
     return {
+        user: state.session.user,
         game: state.activeGame.game
     };
 }
