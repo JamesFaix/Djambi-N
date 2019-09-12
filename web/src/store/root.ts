@@ -77,7 +77,7 @@ export function reducer(state: State, action : CustomAction) : State {
 function reducerInner(state: State, action : CustomAction) : State {
     switch (action.type) {
         case Session.ActionTypes.Logout:
-            return defaultState; //Logout clears all state
+            return logoutReducer(state, action);
         case ActiveGame.ActionTypes.LoadGame:
             return loadGameReducer(state, action);
         case Boards.ActionTypes.LoadBoard:
@@ -172,4 +172,20 @@ function boardScrollReducer(state: State, action: CustomAction) : State {
     newState.display.boardScrollPercent = da.data;
     updateBoardView(newState, state.activeGame.game);
     return newState;
+}
+
+function logoutReducer(state: State, action: CustomAction) : State {
+    return {
+        ...defaultState,
+        boards: state.boards,
+        display: {
+            ...defaultState.display,
+            images: {
+                ...defaultState.display.images,
+                pieces: state.display.images.pieces
+            },
+            theme: state.display.theme
+        },
+        settings: state.settings
+    };
 }
