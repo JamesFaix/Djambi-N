@@ -4,12 +4,11 @@ import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLogge
 import { State } from '../../store/root';
 import { connect } from 'react-redux';
 import ThemeFactory from '../../themes/themeFactory';
-import { Dispatch } from 'redux';
 import Dropdown from '../controls/dropdown';
 import { SectionHeader } from '../controls/headers';
-import ThemeService from '../../themes/themeService';
 import { Theme } from '../../themes/model';
 import DebugSettingsForm from '../forms/debugSettingsForm';
+import Controller from '../../controller';
 
 interface SettingsPageProps {
 }
@@ -63,14 +62,9 @@ class themeSection extends React.Component<ThemeSectionProps> {
 
 const mapStateToProps = (state : State) => {
     return {
-        theme: state.display.theme
+        theme: state.display.theme,
+        selectTheme: (themeName : string) => Controller.Display.changeTheme(themeName)
     };
 }
 
-const mapDispatchToProps = (dispatch : Dispatch) => {
-    return {
-        selectTheme: (themeName : string) => ThemeService.changeTheme(themeName, dispatch)
-    };
-}
-
-const ThemeSection = connect(mapStateToProps, mapDispatchToProps)(themeSection);
+const ThemeSection = connect(mapStateToProps)(themeSection);

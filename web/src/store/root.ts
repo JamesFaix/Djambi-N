@@ -13,6 +13,7 @@ import Geometry from '../viewModel/board/geometry';
 import { Point } from '../viewModel/board/model';
 import GameHistory from '../viewModel/gameHistory';
 import * as Settings from './settings';
+import { MapUtil } from '../utilities/collections';
 
 export interface State {
     session: Session.State,
@@ -76,7 +77,7 @@ export function reducer(state: State, action : CustomAction) : State {
 function reducerInner(state: State, action : CustomAction) : State {
     switch (action.type) {
         case Session.ActionTypes.Logout:
-            return defaultState; //Logout clears all state
+            return logoutReducer(state, action);
         case ActiveGame.ActionTypes.LoadGame:
             return loadGameReducer(state, action);
         case Boards.ActionTypes.LoadBoard:
@@ -103,16 +104,14 @@ function loadGameReducer(state: State, action: CustomAction) : State {
 }
 
 function loadBoardReducer(state: State, action: CustomAction) : State {
-    console.log("loadBoardReducer");
     const da = <DataAction<Board>>action;
     const newState : State = {
         ...state,
         boards: {
             ...state.boards,
-            boards: new Map<number, Board>(state.boards.boards)
+            boards: MapUtil.add(state.boards.boards, da.data.regionCount, da.data)
         }
     };
-    newState.boards.boards.set(da.data.regionCount, da.data);
     //There won't be an active game if boards are being loaded for thumbnails
     if (state.activeGame.game) {
         updateBoardView(newState, state.activeGame.game);
@@ -173,4 +172,20 @@ function boardScrollReducer(state: State, action: CustomAction) : State {
     newState.display.boardScrollPercent = da.data;
     updateBoardView(newState, state.activeGame.game);
     return newState;
+}
+
+function logoutReducer(state: State, action: CustomAction) : State {
+    return {
+        ...defaultState,
+        boards: state.boards,
+        display: {
+            ...defaultState.display,
+            images: {
+                ...defaultState.display.images,
+                pieces: state.display.images.pieces
+            },
+            theme: state.display.theme
+        },
+        settings: state.settings
+    };
 }
