@@ -7,7 +7,7 @@ import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
 import HtmlInputTypes from '../htmlInputTypes';
 import BoardSelectionBar from '../sections/boardSelectionBar';
-import Controller from '../../controller';
+import Controller from '../../controllers/controller';
 
 interface CreateGameFormProps {
     formData : GameParameters,

@@ -5,7 +5,7 @@ import { dateToString } from '../../utilities/dates';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
 import { State } from '../../store/root';
-import Controller from '../../controller';
+import Controller from '../../controllers/controller';
 
 interface SnapshotRowProps {
     gameId : number,

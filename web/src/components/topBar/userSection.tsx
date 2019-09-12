@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
 import { Classes } from '../../styles/styles';
-import Controller from '../../controller';
+import Controller from '../../controllers/controller';
 
 interface UserSectionProps {
     user : User,

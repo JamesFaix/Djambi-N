@@ -8,7 +8,7 @@ import Dropdown from '../controls/dropdown';
 import { SectionHeader } from '../controls/headers';
 import { Theme } from '../../themes/model';
 import DebugSettingsForm from '../forms/debugSettingsForm';
-import Controller from '../../controller';
+import Controller from '../../controllers/controller';
 
 interface SettingsPageProps {
 }

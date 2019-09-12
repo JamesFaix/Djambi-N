@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Game, GameStatus } from "../../api/model";
 import { State } from '../../store/root';
 import { connect } from 'react-redux';
-import Controller from '../../controller';
+import Controller from '../../controllers/controller';
 import Routes from '../../routes';
 
 interface RedirectToLobbyIfNotGameStatusProps {

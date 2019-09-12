@@ -8,7 +8,7 @@ import PlayerStatusIcon from '../controls/playerStatusIcon';
 import PlayerNoteIcon from '../controls/playerNoteIcon';
 import { SectionHeader } from '../controls/headers';
 import { Icons } from '../../utilities/icons';
-import Controller from '../../controller';
+import Controller from '../../controllers/controller';
 
 interface DiplomacyPageProps {
     user : User,

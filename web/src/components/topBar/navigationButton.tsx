@@ -1,7 +1,7 @@
 import * as React from 'react';
 import IconButton from '../controls/iconButton';
 import { IconInfo } from '../../utilities/icons';
-import Controller from '../../controller';
+import Controller from '../../controllers/controller';
 
 export enum ButtonState {
     Hidden = "HIDDEN",

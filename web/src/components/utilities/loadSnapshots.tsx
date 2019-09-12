@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import Controller from '../../controller';
+import Controller from '../../controllers/controller';
 import { State } from '../../store/root';
 
 interface LoadSnapshotsProps {

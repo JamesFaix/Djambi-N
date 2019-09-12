@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { SectionHeader } from '../controls/headers';
 import { DebugSettings } from '../../debug';
 import HtmlInputTypes from '../htmlInputTypes';
-import Controller from '../../controller';
+import Controller from '../../controllers/controller';
 
 interface DebugSettingsFormProps {
     formData : DebugSettings,

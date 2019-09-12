@@ -10,7 +10,7 @@ import BoardScrollArea from './boardScrollArea';
 import BoardZoomSlider from '../controls/boardZoomSlider';
 import { Theme } from '../../themes/model';
 import { DebugSettings } from '../../debug';
-import Controller from '../../controller';
+import Controller from '../../controllers/controller';
 
 export interface BoardSectionProps {
     game : Game,

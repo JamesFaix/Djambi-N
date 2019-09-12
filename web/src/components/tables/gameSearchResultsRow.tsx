@@ -5,7 +5,7 @@ import { Classes } from '../../styles/styles';
 import IconBox from '../controls/iconBox';
 import { Icons } from '../../utilities/icons';
 import Copy from '../../utilities/copy';
-import Controller from '../../controller';
+import Controller from '../../controllers/controller';
 import Routes from '../../routes';
 
 const GameSearchResultsRow : React.SFC<{

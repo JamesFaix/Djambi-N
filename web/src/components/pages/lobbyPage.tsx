@@ -10,7 +10,7 @@ import PlayersTable from '../tables/playersTable';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
 import BasicPageContainer from '../sections/basicPageContainer';
-import Controller from '../../controller';
+import Controller from '../../controllers/controller';
 
 interface LobbyPageProps {
     user : User,

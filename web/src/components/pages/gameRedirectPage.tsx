@@ -6,7 +6,7 @@ import LoadGame from '../utilities/loadGame';
 import { State } from '../../store/root';
 import { connect } from 'react-redux';
 import Routes from '../../routes';
-import Controller from '../../controller';
+import Controller from '../../controllers/controller';
 
 const gameRedirectPage : React.SFC<{
     game : Game

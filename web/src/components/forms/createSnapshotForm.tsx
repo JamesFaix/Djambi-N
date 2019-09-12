@@ -6,7 +6,7 @@ import IconButton from '../controls/iconButton';
 import { CreateSnapshotRequest } from '../../api/model';
 import { Icons } from '../../utilities/icons';
 import HtmlInputTypes from '../htmlInputTypes';
-import Controller from '../../controller';
+import Controller from '../../controllers/controller';
 
 interface CreateSnapshotFormProps {
     gameId : number,

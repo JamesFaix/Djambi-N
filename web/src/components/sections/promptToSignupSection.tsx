@@ -3,7 +3,7 @@ import Routes from '../../routes';
 import { SectionHeader } from '../controls/headers';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
-import Controller from '../../controller';
+import Controller from '../../controllers/controller';
 
 const PromptToSignupSection : React.SFC<{}> = _ => {
     return (

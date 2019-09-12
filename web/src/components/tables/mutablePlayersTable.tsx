@@ -5,7 +5,7 @@ import { State } from '../../store/root';
 import { connect } from 'react-redux';
 import MutablePlayersTableRow from './mutablePlayersTableRow';
 import { SectionHeader } from '../controls/headers';
-import Controller from '../../controller';
+import Controller from '../../controllers/controller';
 
 interface MutablePlayersTableProps {
     user : User,

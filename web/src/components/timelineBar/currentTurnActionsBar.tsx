@@ -5,7 +5,7 @@ import { Game, User, TurnStatus } from '../../api/model';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
 import { Theme } from '../../themes/model';
-import Controller from '../../controller';
+import Controller from '../../controllers/controller';
 
 function isCurrentUser(user : User, game : Game) : boolean {
     return game.players
