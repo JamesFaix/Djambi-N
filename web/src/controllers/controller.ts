@@ -285,7 +285,7 @@ export default class Controller {
             Controller.dispatch(StoreActiveGame.Actions.updateGame(response));
             const g = response.game;
             if (g.status === GameStatus.Over) {
-                Controller.navigateTo(Routes.gameOver(g.id));
+                Controller.navigateTo(Routes.gameResults(g.id));
             }
         }
     }

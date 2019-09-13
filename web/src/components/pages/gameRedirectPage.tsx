@@ -34,7 +34,7 @@ function getUrl(gameId : number, status : GameStatus) : string {
         case GameStatus.Pending:
             return Routes.lobby(gameId);
         case GameStatus.Over:
-            return Routes.gameOver(gameId);
+            return Routes.gameResults(gameId);
         case GameStatus.InProgress:
             return Routes.play(gameId);
         default:

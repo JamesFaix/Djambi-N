@@ -212,7 +212,7 @@ const navigationSection : React.SFC<NavigationSectionProps> = props => {
             <NavigationButton
                 icon={Icons.Pages.gameOver}
                 state={o.showGameOver}
-                route={Routes.gameOver(o.gameId)}
+                route={Routes.gameResults(o.gameId)}
             />
             <NavigationButton
                 icon={Icons.Pages.snapshots}
