@@ -30,11 +30,13 @@ const CreateGamePage : React.SFC<{}> = _ => {
 }
 export default CreateGamePage;
 
+const selectFormData = () => useSelector((state : AppState) => state.createGameForm.parameters);
+
 const BoardSelectionBar : React.SFC<{}> = _ => {
     const types = [3, 4, 5, 6, 7, 8];
     const size = 100;
     const border = 5;
-    const formData = useSelector((state : AppState) => state.createGameForm.parameters);
+    const formData = selectFormData();
     return (
         <div style={{
             display: "flex",
@@ -93,7 +95,7 @@ const BoardSelector : React.SFC<{
 };
 
 const GameSettingsForm : React.SFC<{}> = _ => {
-    const formData = useSelector((state : AppState) => state.createGameForm.parameters);
+    const formData = selectFormData();
     const onUpdate = Controller.Forms.updateCreateGameForm;
     return (<>
         <table>
@@ -134,7 +136,7 @@ const GameSettingsForm : React.SFC<{}> = _ => {
 }
 
 const SubmitButton : React.SFC<{}> = _ => {
-    const formData = useSelector((state : AppState) => state.createGameForm.parameters);
+    const formData = selectFormData();
     return (
         <IconButton
             icon={Icons.UserActions.createGame}
