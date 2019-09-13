@@ -3,9 +3,9 @@ import { GameStatus } from '../../api/model';
 import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
 import TimelineBar from '../timelineBar/timelineBar';
 import LoadGameFull from '../utilities/loadGameFull';
-import BoardSection from '../sections/boardSection';
 import PlayPageContainer from '../sections/playPageContainer';
 import RedirectToLobbyIfNotGameStatus from '../utilities/redirectToLobbyIfNotGameStatus';
+import { BoardSection } from './playPageBoardSection';
 
 const PlayPage : React.SFC<{}> = props => {
     const routeGameId = (props as any).match.params.gameId;
