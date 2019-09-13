@@ -1,6 +1,6 @@
 import * as React from 'react';
 import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
-import BasicPageContainer from '../sections/basicPageContainer';
+import BasicPageContainer from '../containers/basicPageContainer';
 import LoadSnapshots from '../utilities/loadSnapshots';
 import { SectionHeader } from '../controls/headers';
 import IconButton from '../controls/iconButton';

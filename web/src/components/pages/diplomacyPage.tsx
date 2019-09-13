@@ -2,7 +2,7 @@ import * as React from 'react';
 import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Icons } from '../../utilities/icons';
-import BasicPageContainer from '../sections/basicPageContainer';
+import BasicPageContainer from '../containers/basicPageContainer';
 import { GameStatus } from '../../api/model';
 import RedirectToLobbyIfNotGameStatus from '../utilities/redirectToLobbyIfNotGameStatus';
 import { Player, PlayerStatus } from '../../api/model';

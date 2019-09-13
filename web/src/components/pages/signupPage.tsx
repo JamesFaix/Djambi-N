@@ -5,7 +5,7 @@ import { Icons } from '../../utilities/icons';
 import HtmlInputTypes from '../htmlInputTypes';
 import Controller from '../../controllers/controller';
 import RedirectToDashboardIfLoggedIn from '../utilities/redirectToDashboardIfLoggedIn';
-import BasicPageContainer from '../sections/basicPageContainer';
+import BasicPageContainer from '../containers/basicPageContainer';
 import Routes from '../../routes';
 
 export default class SignupPage extends React.Component<{}>{

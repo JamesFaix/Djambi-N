@@ -3,7 +3,7 @@ import { GameStatus } from '../../api/model';
 import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
 import TimelineBar from '../timelineBar/timelineBar';
 import LoadGameFull from '../utilities/loadGameFull';
-import PlayPageContainer from '../sections/playPageContainer';
+import PlayPageContainer from '../containers/playPageContainer';
 import RedirectToLobbyIfNotGameStatus from '../utilities/redirectToLobbyIfNotGameStatus';
 import { BoardSection } from './playPageBoardSection';
 

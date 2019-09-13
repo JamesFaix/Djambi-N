@@ -4,7 +4,7 @@ import LoadGame from '../utilities/loadGame';
 import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
-import BasicPageContainer from '../sections/basicPageContainer';
+import BasicPageContainer from '../containers/basicPageContainer';
 import Controller from '../../controllers/controller';
 import Selectors from '../../selectors';
 import { SectionHeader } from '../controls/headers';

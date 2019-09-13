@@ -1,5 +1,5 @@
 import * as React from 'react';
-import BasicPageContainer from '../sections/basicPageContainer';
+import BasicPageContainer from '../containers/basicPageContainer';
 import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
 import ThemeFactory from '../../themes/themeFactory';
 import Dropdown from '../controls/dropdown';

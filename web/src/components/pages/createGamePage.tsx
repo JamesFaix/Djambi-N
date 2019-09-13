@@ -1,6 +1,6 @@
 import * as React from 'react';
 import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
-import BasicPageContainer from '../sections/basicPageContainer';
+import BasicPageContainer from '../containers/basicPageContainer';
 import LoadAllBoards from '../utilities/loadAllBoards';
 import { State as AppState } from '../../store/root';
 import { useSelector } from 'react-redux';

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
-import BasicPageContainer from '../sections/basicPageContainer';
+import BasicPageContainer from '../containers/basicPageContainer';
 import { SectionHeader } from '../controls/headers';
 import { Game, PlayerStatus, GameStatus } from '../../api/model';
 import RedirectToLobbyIfNotGameStatus from '../utilities/redirectToLobbyIfNotGameStatus';

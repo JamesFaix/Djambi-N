@@ -1,6 +1,6 @@
 import * as React from 'react';
 import RedirectToDashboardIfLoggedIn from '../utilities/redirectToDashboardIfLoggedIn';
-import BasicPageContainer from '../sections/basicPageContainer';
+import BasicPageContainer from '../containers/basicPageContainer';
 import { SectionHeader } from '../controls/headers';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';

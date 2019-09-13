@@ -5,7 +5,7 @@ import GamesSearchResultsTable from '../tables/gamesSearchResultsTable';
 import { State } from '../../store/root';
 import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
 import GamesSearchForm from '../forms/gamesSearchForm';
-import BasicPageContainer from '../sections/basicPageContainer';
+import BasicPageContainer from '../containers/basicPageContainer';
 import Controller from '../../controllers/controller';
 
 interface DashboardPageProps {
