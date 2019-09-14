@@ -12,7 +12,7 @@ import { Classes } from '../../styles/styles';
 import Copy from '../../utilities/copy';
 import PlayerStatusIcon from '../controls/playerStatusIcon';
 import PlayerNoteIcon from '../controls/playerNoteIcon';
-import MutablePlayersTable from './lobbyPageMutablePlayersTable';
+import MutablePlayersTable from '../pageSections/lobbyPageMutablePlayersTable';
 
 const LobbyPage : React.SFC<{}> = props => {
     const routeGameId = (props as any).match.params.gameId;

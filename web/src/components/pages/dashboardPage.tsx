@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { useSelector } from 'react-redux';
-import GamesSearchResultsTable from '../tables/gamesSearchResultsTable';
+import GamesSearchResultsTable from '../pageSections/gamesSearchResultsTable';
 import { State as AppState } from '../../store/root';
 import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
-import GamesSearchForm from '../forms/gamesSearchForm';
+import GamesSearchForm from '../pageSections/gamesSearchForm';
 import BasicPageContainer from '../containers/basicPageContainer';
 
 const DashboardPage : React.SFC<{}> = _ => {

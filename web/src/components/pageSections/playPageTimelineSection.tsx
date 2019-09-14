@@ -4,7 +4,7 @@ import { TimelineHeader } from '../controls/headers';
 import { Icons } from '../../utilities/icons';
 import Selectors from '../../selectors';
 import { Player } from '../../api/model';
-import CurrentTurnSection from '../pages/playPageCurrentTurnSection';
+import CurrentTurnSection from './playPageCurrentTurnSection';
 import GameHistorySection from './playPageHistorySection';
 
 const TimelineBar : React.SFC<{}> = _ => {
