@@ -10,6 +10,7 @@ import Controller from '../../controllers/controller';
 
 const navigationSection : React.SFC<{ location : any }> = props => {
     const route : string = props.location.pathname;
+    console.log(route);
     const game = Selectors.game();
     const user = Selectors.user();
     const o = getOptions(route, game, user);
@@ -133,7 +134,7 @@ function getOptions(route : string, game : Game, user : User) : NavigationOption
 }
 
 function getContextType(route : string, game : Game) : ContextType {
-    if (route === "login" || route === "signup") {
+    if (route === Routes.login || route === Routes.signup) {
         return ContextType.LoggedOut;
     }
     else if (route.startsWith("/games") || game) {

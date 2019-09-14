@@ -97,11 +97,7 @@ const GamesSearchForm : React.SFC<{}> = _ => {
 };
 
 function emptyIfNull(value : any) : string {
-    if (value === null) {
-        return "";
-    } else {
-        return value + "";
-    }
+    return value === null ? "" : value;
 }
 
 function nullIfEmpty(value : string) : string {

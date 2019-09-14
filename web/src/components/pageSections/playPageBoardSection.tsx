@@ -15,11 +15,13 @@ import { ZoomSlider } from '../controls/zoomSlider';
 export const BoardSection : React.SFC<{}> = _ => {
     const game = Selectors.game();
     const board = useSelector((state : AppState) => state.activeGame.boardView);
-
-    if (!game || !board) { return null; }
-
     const display = useSelector((state : AppState) => state.display);
     const debugSettings = useSelector((state : AppState) => state.settings.debug);
+    const dispatch = useDispatch();
+
+    //React will blow up if you don't call the same hooks in the same order during each render
+    //so no early termination until all hooks are used
+    if (!game || !board) { return null; }
 
     const transformData : CanvasTranformData = {
         containerSize: display.boardContainerSize,
@@ -29,8 +31,6 @@ export const BoardSection : React.SFC<{}> = _ => {
         regionCount: game.parameters.regionCount
     };
     const internalSize = CanvasTransformService.getSize(transformData);
-
-    const dispatch = useDispatch();
 
     return (
         <div
