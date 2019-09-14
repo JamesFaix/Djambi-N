@@ -139,11 +139,17 @@ function getOptions(route : string, game : Game, user : User) : NavigationOption
     return o;
 }
 
+function isGamePage(route : string) : boolean {
+    const parts = route.split("/");
+    //[ "", "games", "{id}" "{page}" ]
+    return parts.length === 4 && parts[1] === "games"
+}
+
 function getContextType(route : string, game : Game) : ContextType {
     if (route === Routes.login || route === Routes.signup) {
         return ContextType.LoggedOut;
     }
-    else if (route.startsWith("/games") || game) {
+    else if (isGamePage(route) || game) {
         return ContextType.LoggedInWithActiveGame;
     }
     else {
@@ -209,9 +215,8 @@ function markCurrentPageActive(route : string, o : NavigationOptions) : void {
             o.showSearch = ButtonState.Active;
             return;
     }
-    if (route.startsWith("/games")) {
-        const parts = route.split("/");
-        const gamePage = parts[3]; //[ "", "games", "{id}" "{page}" ]
+    if (isGamePage(route)) {
+        const gamePage = route.split("/")[3]; //[ "", "games", "{id}" "{page}" ]
         switch(gamePage) {
             case "lobby":
                 o.showLobby = ButtonState.Active;
