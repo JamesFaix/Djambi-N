@@ -145,9 +145,12 @@ export default class Controller {
 
         public static async redirectToLoginIfNotLoggedIn() : Promise<void> {
             try {
-                const user = await Api.getCurrentUser();
-                Controller.dispatch(StoreSession.Actions.restoreSession(user));
-                return Controller.Session.finishLoginSetup(user);
+                let user = Controller.state.session.user;
+                if (!user) {
+                    const user = await Api.getCurrentUser();
+                    Controller.dispatch(StoreSession.Actions.restoreSession(user));
+                    await Controller.Session.finishLoginSetup(user);
+                }
             }
             catch (ex) {
                 console.log(ex);
