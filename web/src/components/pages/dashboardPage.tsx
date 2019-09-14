@@ -1,40 +1,21 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { GamesQuery, Game } from '../../api/model';
+import { useSelector } from 'react-redux';
 import GamesSearchResultsTable from '../tables/gamesSearchResultsTable';
-import { State } from '../../store/root';
+import { State as AppState } from '../../store/root';
 import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
 import GamesSearchForm from '../forms/gamesSearchForm';
 import BasicPageContainer from '../containers/basicPageContainer';
-import Controller from '../../controllers/controller';
 
-interface DashboardPageProps {
-    gamesQuery : GamesQuery,
-    gamesResults : Game[],
-    onSearchClicked : (query: GamesQuery) => void
+const DashboardPage : React.SFC<{}> = _ => {
+    const games = useSelector((state : AppState) => state.gamesQuery.results);
+    return (
+        <BasicPageContainer>
+            <RedirectToLoginIfNotLoggedIn/>
+            <GamesSearchForm/>
+            <br/>
+            <br/>
+            <GamesSearchResultsTable games={games}/>
+        </BasicPageContainer>
+    );
 }
-
-class dashboardPage extends React.Component<DashboardPageProps>{
-    render() {
-        return (
-            <BasicPageContainer>
-                <RedirectToLoginIfNotLoggedIn/>
-                <GamesSearchForm/>
-                <br/>
-                <br/>
-                <GamesSearchResultsTable/>
-            </BasicPageContainer>
-        );
-    }
-}
-
-const mapStateToProps = (state: State) => {
-    return {
-        gamesQuery: state.gamesQuery ? state.gamesQuery.query : null,
-        gamesResults: state.gamesQuery ? state.gamesQuery.results : [],
-        onSearchClicked: (query: GamesQuery) => Controller.queryGames(query)
-    }
-};
-
-const DashboardPage = connect(mapStateToProps)(dashboardPage);
 export default DashboardPage;
