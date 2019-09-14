@@ -23,7 +23,8 @@ export enum CellType {
 export interface PieceView {
     id : number,
     kind : PieceKind,
-    colorId : number
+    colorId : number,
+    playerName : string
 }
 
 export interface CellView {

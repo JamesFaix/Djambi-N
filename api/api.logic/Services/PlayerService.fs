@@ -116,5 +116,13 @@ type PlayerService(gameRepo : IGameRepository) =
         else
             gameRepo.getNeutralPlayerNames()
             |> thenMap getNeutralPlayerNamesToUse
-            |> thenMap (Seq.map (PlayerAddedEffect.fromRequest << CreatePlayerRequest.neutral))
+            |> thenMap (Seq.mapi (fun i name -> 
+                let placeholderPlayerId = -(i+1) //Use negative numbers to avoid conflicts
+                let f : NeutralPlayerAddedEffect = 
+                    {
+                        name = name
+                        placeholderPlayerId = placeholderPlayerId
+                    }
+                Effect.NeutralPlayerAdded f
+            ))
             |> thenMap Seq.toList

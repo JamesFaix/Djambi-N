@@ -3,6 +3,7 @@ import { Point } from "../viewModel/board/model";
 import ThemeFactory from "../themes/themeFactory";
 import { Theme } from "../themes/model";
 import { PieceImageInfo, getPieceImageKey } from "../utilities/images";
+import { MapUtil } from "../utilities/collections";
 
 interface Images {
     pieces : Map<string, HTMLImageElement>
@@ -99,16 +100,14 @@ export function reducer(state : State, action : CustomAction) : State {
         }
         case ActionTypes.PieceImageLoaded: {
             const da = <DataAction<PieceImageInfo>>action;
-            const newState = {
+            const key = getPieceImageKey(da.data.kind, da.data.playerColorId);
+            return {
                 ...state,
                 images: {
                     ...state.images,
-                    pieces: new Map<string, HTMLImageElement>(state.images.pieces)
+                    pieces: MapUtil.add(state.images.pieces, key, da.data.image)
                 }
             }
-            const key = getPieceImageKey(da.data.kind, da.data.playerColorId);
-            newState.images.pieces.set(key, da.data.image);
-            return newState;
         }
         //BoardScroll and BoardZoom must be handled at a higher level because they update the boardview
         default:

@@ -14,7 +14,7 @@ open Djambi.Api.Logic
 type GameStartService(playerServ : PlayerService,
                       selectionOptionsServ : SelectionOptionsService) =
 
-    member x.getGameStartEvent (game : Game) (session : Session) : CreateEventRequest AsyncHttpResult =
+    member x.getGameStartEvents (game : Game) (session : Session) : (CreateEventRequest option * CreateEventRequest) AsyncHttpResult =
         Security.ensureCreatorOrEditPendingGames session game
         |> Result.bindAsync (fun _ ->
             if game.players
@@ -26,18 +26,32 @@ type GameStartService(playerServ : PlayerService,
             else
                 playerServ.fillEmptyPlayerSlots game
                 |> thenMap (fun addNeutralPlayerEffects ->
-                    let effects =
-                        //The order is very important for effect processing. Neutral players must be created before the game start.
-                        List.append
-                            addNeutralPlayerEffects
-                            [Effect.GameStatusChanged { oldValue = GameStatus.Pending; newValue = InProgress }]
-
-                    {
+                    //Order is important. Players must exist before they can be given pieces
+                    let e1 = 
+                        match addNeutralPlayerEffects.Length with
+                        | 0 -> 
+                            None
+                        | _ ->
+                            Some {
+                                kind = EventKind.PlayerJoined
+                                effects = addNeutralPlayerEffects
+                                createdByUserId = session.user.id
+                                actingPlayerId = Context.getActingPlayerId session game                    
+                            }
+                
+                    let e2 = {
                         kind = EventKind.GameStarted
-                        effects = effects
+                        effects = [
+                            Effect.GameStatusChanged { 
+                                oldValue = GameStatus.Pending
+                                newValue = InProgress 
+                            }
+                        ]
                         createdByUserId = session.user.id
                         actingPlayerId = Context.getActingPlayerId session game
                     }
+
+                    (e1, e2)
                 )
         )
 

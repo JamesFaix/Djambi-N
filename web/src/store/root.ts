@@ -1,4 +1,4 @@
-import * as GamesQuery from './gamesQuery';
+import * as Search from './search';
 import * as CreateGameForm from './createGameForm';
 import * as Display from './display';
 import * as Session from './session';
@@ -13,11 +13,12 @@ import Geometry from '../viewModel/board/geometry';
 import { Point } from '../viewModel/board/model';
 import GameHistory from '../viewModel/gameHistory';
 import * as Settings from './settings';
+import { MapUtil } from '../utilities/collections';
 
 export interface State {
     session: Session.State,
     activeGame : ActiveGame.State,
-    gamesQuery : GamesQuery.State,
+    search : Search.State,
     createGameForm : CreateGameForm.State,
     boards : Boards.State,
     display : Display.State,
@@ -28,7 +29,7 @@ export interface State {
 export const defaultState : State = {
     session: Session.defaultState,
     activeGame: ActiveGame.defaultState,
-    gamesQuery: GamesQuery.defaultState,
+    search: Search.defaultState,
     createGameForm: CreateGameForm.defaultState,
     boards: Boards.defaultState,
     display: Display.defaultState,
@@ -56,7 +57,7 @@ const combinedReducer : Reducer<State, CustomAction> = combineReducers({
     boards: Boards.reducer,
     createGameForm : CreateGameForm.reducer,
     display: Display.reducer,
-    gamesQuery: GamesQuery.reducer,
+    search: Search.reducer,
     session: Session.reducer,
     settings: Settings.reducer
 });
@@ -76,7 +77,7 @@ export function reducer(state: State, action : CustomAction) : State {
 function reducerInner(state: State, action : CustomAction) : State {
     switch (action.type) {
         case Session.ActionTypes.Logout:
-            return defaultState; //Logout clears all state
+            return logoutReducer(state, action);
         case ActiveGame.ActionTypes.LoadGame:
             return loadGameReducer(state, action);
         case Boards.ActionTypes.LoadBoard:
@@ -104,12 +105,17 @@ function loadGameReducer(state: State, action: CustomAction) : State {
 
 function loadBoardReducer(state: State, action: CustomAction) : State {
     const da = <DataAction<Board>>action;
-    const newState = {...state};
-    newState.boards = {...state.boards};
-    const boards = new Map<number, Board>(state.boards.boards);
-    boards.set(da.data.regionCount, da.data);
-    newState.boards.boards = boards;
-    updateBoardView(newState, state.activeGame.game);
+    const newState : State = {
+        ...state,
+        boards: {
+            ...state.boards,
+            boards: MapUtil.add(state.boards.boards, da.data.regionCount, da.data)
+        }
+    };
+    //There won't be an active game if boards are being loaded for thumbnails
+    if (state.activeGame.game) {
+        updateBoardView(newState, state.activeGame.game);
+    }
     return newState;
 }
 
@@ -166,4 +172,20 @@ function boardScrollReducer(state: State, action: CustomAction) : State {
     newState.display.boardScrollPercent = da.data;
     updateBoardView(newState, state.activeGame.game);
     return newState;
+}
+
+function logoutReducer(state: State, action: CustomAction) : State {
+    return {
+        ...defaultState,
+        boards: state.boards,
+        display: {
+            ...defaultState.display,
+            images: {
+                ...defaultState.display.images,
+                pieces: state.display.images.pieces
+            },
+            theme: state.display.theme
+        },
+        settings: state.settings
+    };
 }

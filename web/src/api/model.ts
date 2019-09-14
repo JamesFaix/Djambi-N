@@ -275,7 +275,8 @@ export interface GameStatusChangedEffect {
 }
 
 export interface NeutralPlayerAddedEffect {
-    name : string
+    name : string,
+    placeholderPlayerId : number
 }
 
 export interface ParametersChangedEffect {

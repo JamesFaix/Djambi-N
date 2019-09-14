@@ -1,39 +1,23 @@
 import * as React from 'react';
-import { Game, GameStatus } from '../../api/model';
-import { State } from '../../store/root';
-import { connect } from 'react-redux';
-import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
-import TimelineBar from '../timelineBar/timelineBar';
-import LoadGameFull from '../utilities/loadGameFull';
-import BoardSection from '../sections/boardSection';
-import PlayPageContainer from '../sections/playPageContainer';
-import RedirectToLobbyIfNotGameStatus from '../utilities/redirectToLobbyIfNotGameStatus';
+import { GameStatus } from '../../api/model';
+import PlayPageContainer from '../containers/playPageContainer';
+import { BoardSection } from '../pageSections/playPageBoardSection';
+import TimelineBar from '../pageSections/playPageTimelineSection';
+import Controller from '../../controllers/controller';
 
-interface PlayPageProps {
-    game : Game,
+const PlayPage : React.SFC<{}> = props => {
+    const routeGameId = (props as any).match.params.gameId;
+
+    React.useEffect(() => {
+        Controller.Session.redirectToLoginIfNotLoggedIn()
+        .then(() => Controller.Game.loadGameFull(routeGameId))
+        .then(() => Controller.Game.redirectToLobbyIfGameNotStatus(GameStatus.InProgress));
+    });
+    return (
+        <PlayPageContainer>
+            <BoardSection/>
+            <TimelineBar/>
+        </PlayPageContainer>
+    );
 }
-
-class playPage extends React.Component<PlayPageProps> {
-    render() {
-        const gameId = (this.props as any).match.params.gameId;
-        return (
-            <PlayPageContainer>
-                <RedirectToLoginIfNotLoggedIn/>
-                <RedirectToLobbyIfNotGameStatus status={GameStatus.InProgress}/>
-                <LoadGameFull gameId={gameId}/>
-                <BoardSection/>
-                <TimelineBar/>
-            </PlayPageContainer>
-        );
-    }
-}
-
-const mapStateToProps = (state : State) => {
-    return {
-        game: state.activeGame.game,
-    };
-}
-
-const PlayPage = connect(mapStateToProps)(playPage);
-
 export default PlayPage;

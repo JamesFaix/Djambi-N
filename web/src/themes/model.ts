@@ -17,6 +17,9 @@ interface ThemeColors {
     hoverText : string,
     hoverBackground : string,
 
+    positiveButtonBackground : string,
+    negativeButtonBackground : string,
+
     cells: ThemeCellColors,
     players: ThemePlayerColors
 }
