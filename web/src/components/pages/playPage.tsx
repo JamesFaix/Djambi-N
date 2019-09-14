@@ -1,39 +1,22 @@
 import * as React from 'react';
-import { Game, GameStatus } from '../../api/model';
-import { State } from '../../store/root';
-import { connect } from 'react-redux';
+import { GameStatus } from '../../api/model';
 import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
-import TimelineBar from '../timelineBar/timelineBar';
-import LoadGameFull from '../utilities/loadGameFull';
-import BoardSection from '../sections/boardSection';
-import PlayPageContainer from '../sections/playPageContainer';
+import PlayPageContainer from '../containers/playPageContainer';
 import RedirectToLobbyIfNotGameStatus from '../utilities/redirectToLobbyIfNotGameStatus';
+import { BoardSection } from '../pageSections/playPageBoardSection';
+import LoadGameFull from '../utilities/loadGameFull';
+import TimelineBar from '../pageSections/playPageTimelineSection';
 
-interface PlayPageProps {
-    game : Game,
+const PlayPage : React.SFC<{}> = props => {
+    const routeGameId = (props as any).match.params.gameId;
+    return (
+        <PlayPageContainer>
+            <RedirectToLoginIfNotLoggedIn/>
+            <RedirectToLobbyIfNotGameStatus status={GameStatus.InProgress}/>
+            <LoadGameFull gameId={routeGameId}/>
+            <BoardSection/>
+            <TimelineBar/>
+        </PlayPageContainer>
+    );
 }
-
-class playPage extends React.Component<PlayPageProps> {
-    render() {
-        const gameId = (this.props as any).match.params.gameId;
-        return (
-            <PlayPageContainer>
-                <RedirectToLoginIfNotLoggedIn/>
-                <RedirectToLobbyIfNotGameStatus status={GameStatus.InProgress}/>
-                <LoadGameFull gameId={gameId}/>
-                <BoardSection/>
-                <TimelineBar/>
-            </PlayPageContainer>
-        );
-    }
-}
-
-const mapStateToProps = (state : State) => {
-    return {
-        game: state.activeGame.game,
-    };
-}
-
-const PlayPage = connect(mapStateToProps)(playPage);
-
 export default PlayPage;

@@ -1,15 +1,15 @@
-import { AppStore, CustomAction, State } from "./store/root";
+import { AppStore, CustomAction, State } from "../store/root";
 import { History } from "history";
-import { DebugSettings, defaultDebugSettings } from "./debug";
-import LocalStorageService from "./utilities/localStorageService";
-import * as StoreSettings from './store/settings';
-import * as StoreGamesQuery from './store/gamesQuery';
-import * as StoreActiveGame from './store/activeGame';
-import * as StoreSession from './store/session';
-import * as StoreBoards from './store/boards';
-import * as StoreCreateGameForm from './store/createGameForm';
-import * as StoreDisplay from './store/display';
-import * as Api from './api/client';
+import { DebugSettings, defaultDebugSettings } from "../debug";
+import LocalStorageService from "../utilities/localStorageService";
+import * as StoreSettings from '../store/settings';
+import * as StoreGamesQuery from '../store/gamesQuery';
+import * as StoreActiveGame from '../store/activeGame';
+import * as StoreSession from '../store/session';
+import * as StoreBoards from '../store/boards';
+import * as StoreCreateGameForm from '../store/createGameForm';
+import * as StoreDisplay from '../store/display';
+import * as Api from '../api/client';
 import {
     GamesQuery,
     CreateSnapshotRequest,
@@ -27,13 +27,13 @@ import {
     Board,
     PlayerStatus,
     PieceKind
-} from "./api/model";
-import { SseClientManager } from "./utilities/serverSentEvents";
-import ThemeService from "./themes/themeService";
-import Routes from "./routes";
-import * as ModelFactory from "./api/modelFactory";
-import { Theme } from "./themes/model";
-import ThemeFactory from "./themes/themeFactory";
+} from "../api/model";
+import { SseClientManager } from "../utilities/serverSentEvents";
+import ThemeService from "../themes/themeService";
+import Routes from "../routes";
+import * as ModelFactory from "../api/modelFactory";
+import { Theme } from "../themes/model";
+import ThemeFactory from "../themes/themeFactory";
 
 //Encapsulates dispatching Redux actions and other side effects
 export default class Controller {
@@ -285,7 +285,7 @@ export default class Controller {
             Controller.dispatch(StoreActiveGame.Actions.updateGame(response));
             const g = response.game;
             if (g.status === GameStatus.Over) {
-                Controller.navigateTo(Routes.gameOver(g.id));
+                Controller.navigateTo(Routes.gameResults(g.id));
             }
         }
     }

@@ -1,16 +1,42 @@
 import * as React from 'react';
 import { Game } from '../../api/model';
-import IconButton from '../controls/iconButton';
+import { SectionHeader } from '../controls/headers';
 import { Classes } from '../../styles/styles';
-import IconBox from '../controls/iconBox';
+import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
-import Copy from '../../utilities/copy';
-import Controller from '../../controller';
+import Controller from '../../controllers/controller';
 import Routes from '../../routes';
+import IconBox from '../controls/iconBox';
+import Copy from '../../utilities/copy';
 
-const GameSearchResultsRow : React.SFC<{
-    game : Game
-}> = props => {
+const GamesSearchResultsTable : React.SFC<{ games : Game[] }> = props => {
+    return (<>
+        <SectionHeader text="Results"/>
+        <table className={Classes.stripedTable}>
+            <tbody>
+                <tr>
+                    <th></th>
+                    <th>ID</th>
+                    <th>Description</th>
+                    <th>Created by</th>
+                    <th>Status</th>
+                    <th># Players</th>
+                    <th># Regions</th>
+                    <th>Is public</th>
+                    <th>Allow guests</th>
+                </tr>
+                {props.games
+                    .map((g, i) =>
+                        <GameSearchResultsRow key={i} game={g}/>
+                    )
+                }
+            </tbody>
+        </table>
+    </>);
+}
+export default GamesSearchResultsTable;
+
+const GameSearchResultsRow : React.SFC<{ game : Game }> = props => {
     const game = props.game;
     return (
         <tr>
@@ -47,4 +73,3 @@ const GameSearchResultsRow : React.SFC<{
         </tr>
     );
 }
-export default GameSearchResultsRow;

@@ -2,7 +2,7 @@ import Environment from "../environment";
 import { StateAndEventResponse } from "../api/model";
 import { Store } from "redux";
 import { State, CustomAction, AppStore, getAppState } from "../store/root";
-import Controller from "../controller";
+import Controller from "../controllers/controller";
 
 class SseClient {
     private readonly source : EventSource;

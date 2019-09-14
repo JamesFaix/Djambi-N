@@ -1,70 +1,114 @@
 import * as React from 'react';
-import BasicPageContainer from '../sections/basicPageContainer';
+import BasicPageContainer from '../containers/basicPageContainer';
 import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
-import { State } from '../../store/root';
-import { connect } from 'react-redux';
 import ThemeFactory from '../../themes/themeFactory';
 import Dropdown from '../controls/dropdown';
 import { SectionHeader } from '../controls/headers';
 import { Theme } from '../../themes/model';
-import DebugSettingsForm from '../forms/debugSettingsForm';
-import Controller from '../../controller';
+import Controller from '../../controllers/controller';
+import Selectors from '../../selectors';
+import { useSelector } from 'react-redux';
+import HtmlInputTypes from '../htmlInputTypes';
+import { State as AppState } from '../../store/root';
 
-interface SettingsPageProps {
+const SettingsPage : React.SFC<{}> = _ => {
+    return(
+        <BasicPageContainer>
+            <RedirectToLoginIfNotLoggedIn/>
+            <SectionHeader text="Settings"/>
+            <ThemeSelector/>
+            <DebugSettingsForm/>
+        </BasicPageContainer>
+    );
+}
+export default SettingsPage;
+
+const ThemeSelector : React.SFC<{}> = _ => {
+    const themes = ThemeFactory.getThemes();
+    const items = Array.from(themes, ([key, value]) => {
+        return { label: key, value: value };
+    });
+
+    return (<>
+        <table>
+            <tbody>
+                <tr>
+                    <td>
+                        Theme
+                    </td>
+                    <td>
+                        <Dropdown
+                            name="theme"
+                            items={items}
+                            onChange={(_: string, value : Theme) => Controller.Display.changeTheme(value.name) }
+                            currentValue={Selectors.theme()}
+                        />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </>);
 }
 
-export default class SettingsPage extends React.Component<SettingsPageProps> {
-    render(){
-        return(
-            <BasicPageContainer>
-                <RedirectToLoginIfNotLoggedIn/>
-                <SectionHeader text="Settings"/>
-                <ThemeSection/>
-                <DebugSettingsForm/>
-            </BasicPageContainer>
-        );
-    }
+const DebugSettingsForm : React.SFC<{}> = _ => {
+    const onUpdate = Controller.Settings.saveAndApply;
+    const formData = useSelector((state : AppState) => state.settings.debug);
+
+    return (<>
+        <SectionHeader text="Debug settings"/>
+        <table>
+            <tbody>
+                <tr>
+                    <td>Show board tooltips</td>
+                    <td>
+                        <input
+                            type={HtmlInputTypes.CheckBox}
+                            checked={formData.showBoardTooltips}
+                            onChange={e => onUpdate({ ...formData, showBoardTooltips: e.target.checked })}
+                        />
+                    </td>
+                </tr>
+                <tr>
+                    <td>Show cell and piece IDs</td>
+                    <td>
+                        <input
+                            type={HtmlInputTypes.CheckBox}
+                            checked={formData.showCellAndPieceIds}
+                            onChange={e => onUpdate({ ...formData, showCellAndPieceIds: e.target.checked })}
+                        />
+                    </td>
+                </tr>
+                <tr>
+                    <td>Log API</td>
+                    <td>
+                        <input
+                            type={HtmlInputTypes.CheckBox}
+                            checked={formData.logApi}
+                            onChange={e => onUpdate({ ...formData, logApi: e.target.checked })}
+                        />
+                    </td>
+                </tr>
+                <tr>
+                    <td>Log SSE</td>
+                    <td>
+                        <input
+                            type={HtmlInputTypes.CheckBox}
+                            checked={formData.logSse}
+                            onChange={e => onUpdate({ ...formData, logSse: e.target.checked })}
+                        />
+                    </td>
+                </tr>
+                <tr>
+                    <td>Log Redux</td>
+                    <td>
+                        <input
+                            type={HtmlInputTypes.CheckBox}
+                            checked={formData.logRedux}
+                            onChange={e => onUpdate({ ...formData, logRedux: e.target.checked })}
+                        />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </>);
 }
-
-interface ThemeSectionProps {
-    theme : Theme,
-    selectTheme : (themeName : string) => void
-}
-
-class themeSection extends React.Component<ThemeSectionProps> {
-    render() {
-        const themes = ThemeFactory.getThemes();
-        const items = Array.from(themes, ([key, value]) => {
-            return { label: key, value: value };
-        });
-
-        return (<>
-            <table>
-                <tbody>
-                    <tr>
-                        <td>
-                            Theme
-                        </td>
-                        <td>
-                            <Dropdown
-                                name="theme"
-                                items={items}
-                                onChange={(_: string, value : Theme) => this.props.selectTheme(value.name) }
-                                currentValue={this.props.theme}
-                            />
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </>);
-    }
-}
-
-const mapStateToProps = (state : State) => {
-    return {
-        theme: state.display.theme,
-        selectTheme: (themeName : string) => Controller.Display.changeTheme(themeName)
-    };
-}
-
-const ThemeSection = connect(mapStateToProps)(themeSection);

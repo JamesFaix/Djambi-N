@@ -21,6 +21,6 @@ export default class Routes {
     static snapshots = (gameId : number) => `${Routes.game(gameId)}/snapshots`;
     static readonly snapshotsPattern = `${Routes.gamePattern}/snapshots`;
 
-    static gameOver = (gameId : number) => `${Routes.game(gameId)}/results`;
-    static readonly gameOverPattern = `${Routes.gamePattern}/results`;
+    static gameResults = (gameId : number) => `${Routes.game(gameId)}/results`;
+    static readonly gameResultsPattern = `${Routes.gamePattern}/results`;
 }

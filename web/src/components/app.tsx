@@ -14,8 +14,8 @@ import DiplomacyPage from './pages/diplomacyPage';
 import { Classes } from '../styles/styles';
 import SnapshotsPage from './pages/snapshotsPage';
 import SettingsPage from './pages/settingsPage';
-import GameOverPage from './pages/gameOverPage';
 import GameRedirectPage from './pages/gameRedirectPage';
+import GameResultsPage from './pages/gameResultsPage';
 
 const App : React.SFC<{}> = _ => {
     return (
@@ -58,8 +58,8 @@ const App : React.SFC<{}> = _ => {
                     component={SnapshotsPage}
                 />
                 <Route
-                    path={Routes.gameOverPattern}
-                    component={GameOverPage}
+                    path={Routes.gameResultsPattern}
+                    component={GameResultsPage}
                 />
                 <Route
                     path={Routes.gamePattern}

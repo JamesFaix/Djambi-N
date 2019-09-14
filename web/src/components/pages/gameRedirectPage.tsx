@@ -1,21 +1,19 @@
 import * as React from 'react';
 import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
-import BasicPageContainer from '../sections/basicPageContainer';
+import BasicPageContainer from '../containers/basicPageContainer';
 import { GameStatus, Game } from '../../api/model';
 import LoadGame from '../utilities/loadGame';
-import { State } from '../../store/root';
-import { connect } from 'react-redux';
 import Routes from '../../routes';
-import Controller from '../../controller';
+import Controller from '../../controllers/controller';
+import Selectors from '../../selectors';
 
-const gameRedirectPage : React.SFC<{
-    game : Game
-}> = props => {
+const GameRedirectPage : React.SFC<{}> = props => {
     const routeGameId = Number((props as any).match.params.gameId);
+    const game = Selectors.game();
 
     React.useEffect(() => {
-        if (props.game && props.game.id === routeGameId) {
-            const url = getUrl(routeGameId, props.game.status);
+        if (game && game.id === routeGameId) {
+            const url = getGameUrl(routeGameId, game.status);
             Controller.navigateTo(url);
         }
     });
@@ -24,29 +22,21 @@ const gameRedirectPage : React.SFC<{
         <BasicPageContainer>
             <RedirectToLoginIfNotLoggedIn/>
             <LoadGame gameId={routeGameId}/>
-    </BasicPageContainer>
+        </BasicPageContainer>
     );
 }
+export default GameRedirectPage;
 
-function getUrl(gameId : number, status : GameStatus) : string {
+function getGameUrl(gameId : number, status : GameStatus) : string {
     switch (status) {
         case GameStatus.Canceled:
         case GameStatus.Pending:
             return Routes.lobby(gameId);
         case GameStatus.Over:
-            return Routes.gameOver(gameId);
+            return Routes.gameResults(gameId);
         case GameStatus.InProgress:
             return Routes.play(gameId);
         default:
             return null;
     }
 }
-
-const mapStateToProps = (state : State) => {
-    return {
-        game: state.activeGame.game
-    };
-}
-
-const GameRedirectPage = connect(mapStateToProps)(gameRedirectPage);
-export default GameRedirectPage;

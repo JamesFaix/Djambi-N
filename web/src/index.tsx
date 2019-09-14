@@ -13,7 +13,7 @@ import * as StoreRoot from './store/root';
 import { SseClientManager } from './utilities/serverSentEvents';
 import Copy from './utilities/copy';
 import { createHashHistory } from 'history';
-import Controller from './controller';
+import Controller from './controllers/controller';
 
 const store = createStore(
     StoreRoot.reducer,
