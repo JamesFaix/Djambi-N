@@ -8,7 +8,6 @@ import DashboardPage from './pages/dashboardPage';
 import { Switch } from 'react-router-dom';
 import LobbyPage from './pages/lobbyPage';
 import CreateGamePage from './pages/createGamePage';
-import RedirectToLoginOrDashboard from './utilities/redirectToLoginOrDashboard';
 import PlayPage from './pages/playPage';
 import DiplomacyPage from './pages/diplomacyPage';
 import { Classes } from '../styles/styles';
@@ -16,6 +15,7 @@ import SnapshotsPage from './pages/snapshotsPage';
 import SettingsPage from './pages/settingsPage';
 import GameRedirectPage from './pages/gameRedirectPage';
 import GameResultsPage from './pages/gameResultsPage';
+import HomePage from './pages/homePage';
 
 const App : React.SFC<{}> = _ => {
     return (
@@ -71,7 +71,7 @@ const App : React.SFC<{}> = _ => {
                 />
                 <Route
                     path={Routes.base}
-                    component={RedirectToLoginOrDashboard}
+                    component={HomePage}
                 />
             </Switch>
         </div>

@@ -4,22 +4,22 @@ import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
 import HtmlInputTypes from '../htmlInputTypes';
 import Controller from '../../controllers/controller';
-import RedirectToDashboardIfLoggedIn from '../utilities/redirectToDashboardIfLoggedIn';
 import BasicPageContainer from '../containers/basicPageContainer';
 import Routes from '../../routes';
 
-export default class SignupPage extends React.Component<{}>{
-    render() {
-        return (
-            <BasicPageContainer>
-                <RedirectToDashboardIfLoggedIn/>
-                <SignupForm/>
-                <br/>
-                <PromptToLoginSection/>
-            </BasicPageContainer>
-        );
-    }
-}
+const SignupPage : React.SFC<{}> = _ => {
+    React.useEffect(() => {
+        Controller.Session.redirectToDashboardIfLoggedIn();
+    })
+    return (
+        <BasicPageContainer>
+            <SignupForm/>
+            <br/>
+            <PromptToLoginSection/>
+        </BasicPageContainer>
+    );
+};
+export default SignupPage;
 
 const SignupForm : React.SFC<{}> = _ => {
     const [username, setUsername] = React.useState("");
