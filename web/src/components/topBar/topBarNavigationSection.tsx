@@ -181,6 +181,23 @@ function enableGamePageButtonsBasedOnState(game : Game, user : User, o : Navigat
 }
 
 function markCurrentPageActive(route : string, o : NavigationOptions) : void {
+    switch (route) {
+        case Routes.login:
+            o.showLogin = ButtonState.Active;
+            return;
+        case(Routes.signup):
+            o.showSignup = ButtonState.Active;
+            return;
+        case(Routes.dashboard) :
+            o.showHome = ButtonState.Active;
+            return;
+        case(Routes.createGame) :
+            o.showCreateGame = ButtonState.Active;
+            return;
+        case(Routes.settings) :
+            o.showSettings = ButtonState.Active;
+            return;
+    }
     if (route.startsWith("/games")) {
         const parts = route.split("/");
         const gamePage = parts[3]; //[ "", "games", "{id}" "{page}" ]
@@ -201,32 +218,15 @@ function markCurrentPageActive(route : string, o : NavigationOptions) : void {
                 o.showGameOver = ButtonState.Active;
                 break;
         }
-    } else {
-        switch (route) {
-            case Routes.login:
-                o.showLogin = ButtonState.Active;
-                break;
-            case(Routes.signup):
-                o.showSignup = ButtonState.Active;
-                break;
-            case(Routes.dashboard) :
-                o.showHome = ButtonState.Active;
-                break;
-            case(Routes.createGame) :
-                o.showCreateGame = ButtonState.Active;
-                break;
-            case(Routes.settings) :
-                o.showSettings = ButtonState.Active;
-                break;
-        }
     }
 }
 
 function getGameId(route : string, game : Game, o : NavigationOptions) : void {
     let gameId : number = null;
-    if (route.startsWith("/games")) {
-        const parts = route.split("/");
-        gameId = Number(parts[2]); //[ "", "games", "{id}" "{page}" ]
+    const parts = route.split("/");  //[ "", "games", "{id}" "{page}" ]
+    if (parts.length === 4 // Create game page starts with 'games' but is only 3 parts
+        && parts[1] === "games") {
+        gameId = Number(parts[2]);
     } else if (game) {
         gameId = game.id
     }

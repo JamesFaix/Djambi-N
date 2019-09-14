@@ -1,5 +1,9 @@
 import Environment from '../environment';
-import { ApiRequest, ApiResponse, ApiError } from './requestModel';
+import { ApiRequest } from './requestModel';
+import { AppStore } from '../store/root';
+import * as StoreApiClient from '../store/apiClient';
+import Controller from '../controllers/controller';
+import Routes from '../routes';
 
 export enum HttpMethod {
     Get = "GET",
@@ -14,25 +18,14 @@ function generateQuickGuid() {
 }
 
 export class ApiClientCore {
-    private static onRequest : (request: ApiRequest) => void;
-    private static onResponse : (response: ApiResponse) => void;
-    private static onError : (error: ApiError) => void;
-    private static shouldLog : () => boolean;
+    private static store : AppStore;
 
-    public static init(
-        onRequest : (request: ApiRequest) => void,
-        onResponse : (response : ApiResponse) => void,
-        onError : (error : ApiError) => void,
-        shouldLog : () => boolean,
-    ) : void {
-        if (!onRequest || !onResponse || !onError || !shouldLog) {
-            throw "Must initialize all callbacks at once.";
-        }
+    public static init(store : AppStore) : void {
+        ApiClientCore.store = store;
+    }
 
-        this.onRequest = onRequest;
-        this.onResponse = onResponse;
-        this.onError = onError;
-        this.shouldLog = shouldLog;
+    private static shouldLog() : boolean {
+        return this.store && this.store.getState().settings.debug.logApi;
     }
 
     public static sendRequest<TBody, TResponse>(
@@ -58,24 +51,43 @@ export class ApiClientCore {
         }
 
         let request : ApiRequest;
-        if (this.onRequest) {
+        if (this.store) {
             request = {
                 id: generateQuickGuid(),
                 url: url,
                 method: method.toString(),
                 body: body
             };
-            this.onRequest(request);
+            const act = StoreApiClient.Actions.apiRequest(request);
+            this.store.dispatch(act);
         }
 
         return fetch(url, fetchParams)
             .then(response => {
-                if (!response.ok){
-                    if (this.onError){
-                        this.onError({
+                if (response.ok) {
+                    if (this.store) {
+                        const act = StoreApiClient.Actions.apiResponse({
+                            requestId: request.id,
+                            body: response
+                        });
+                        this.store.dispatch(act);
+                    }
+
+                    if (this.shouldLog()) {
+                        console.log(endpointDescription + " succeeded");
+                    }
+                    return response.json();
+                } else {
+                    if (this.store){
+                        const act = StoreApiClient.Actions.apiError({
                             requestId: request.id,
                             message: ""
                         });
+                        this.store.dispatch(act);
+                    }
+
+                    if (response.status === 401 && route !== '/users/current') {
+                        Controller.Session.onUnauthorized();
                     }
 
                     return response.json()
@@ -85,18 +97,6 @@ export class ApiClientCore {
                             }
                             throw [response.status, errorMessage];
                         });
-                } else {
-                    if (this.onResponse) {
-                        this.onResponse({
-                            requestId: request.id,
-                            body: response
-                        });
-                    }
-
-                    if (this.shouldLog()) {
-                        console.log(endpointDescription + " succeeded");
-                    }
-                    return response.json();
                 }
             });
     }
