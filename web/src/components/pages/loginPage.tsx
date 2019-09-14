@@ -1,5 +1,4 @@
 import * as React from 'react';
-import RedirectToDashboardIfLoggedIn from '../utilities/redirectToDashboardIfLoggedIn';
 import BasicPageContainer from '../containers/basicPageContainer';
 import { SectionHeader } from '../controls/headers';
 import IconButton from '../controls/iconButton';
@@ -9,9 +8,11 @@ import Controller from '../../controllers/controller';
 import Routes from '../../routes';
 
 const LoginPage : React.SFC<{}> = _ => {
+    React.useEffect(() => {
+        Controller.Session.redirectToDashboardIfLoggedIn();
+    })
     return (
         <BasicPageContainer>
-            <RedirectToDashboardIfLoggedIn/>
             <SectionHeader text="Log in"/>
             <LoginForm/>
             <br/>

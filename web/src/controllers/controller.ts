@@ -130,10 +130,13 @@ export default class Controller {
 
         public static async redirectToDashboardIfLoggedIn() : Promise<void> {
             try {
-                const user = await Api.getCurrentUser();
-                Controller.dispatch(StoreSession.Actions.restoreSession(user));
+                let user = Controller.state.session.user;
+                if (!user) {
+                    user = await Api.getCurrentUser();
+                    Controller.dispatch(StoreSession.Actions.restoreSession(user));
+                }
                 Controller.navigateTo(Routes.dashboard);
-                return Controller.Session.finishLoginSetup(user);
+                await Controller.Session.finishLoginSetup(user);
             }
             catch(ex) {
                 let [status, message] = ex;
@@ -147,10 +150,10 @@ export default class Controller {
             try {
                 let user = Controller.state.session.user;
                 if (!user) {
-                    const user = await Api.getCurrentUser();
+                    user = await Api.getCurrentUser();
                     Controller.dispatch(StoreSession.Actions.restoreSession(user));
-                    await Controller.Session.finishLoginSetup(user);
                 }
+                await Controller.Session.finishLoginSetup(user);
             }
             catch (ex) {
                 console.log(ex);
@@ -164,8 +167,11 @@ export default class Controller {
 
         public static async redirectToLoginOrDashboard() : Promise<void> {
             try {
-                const user = await Api.getCurrentUser();
-                Controller.dispatch(StoreSession.Actions.restoreSession(user));
+                let user = Controller.state.session.user;
+                if (!user) {
+                    user = await Api.getCurrentUser();
+                    Controller.dispatch(StoreSession.Actions.restoreSession(user));
+                }
                 Controller.navigateTo(Routes.dashboard);
                 return Controller.Session.finishLoginSetup(user);
             }
