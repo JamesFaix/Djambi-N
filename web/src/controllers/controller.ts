@@ -3,7 +3,7 @@ import { History } from "history";
 import { DebugSettings, defaultDebugSettings } from "../debug";
 import LocalStorageService from "../utilities/localStorageService";
 import * as StoreSettings from '../store/settings';
-import * as StoreGamesQuery from '../store/gamesQuery';
+import * as StoreGamesQuery from '../store/search';
 import * as StoreActiveGame from '../store/activeGame';
 import * as StoreSession from '../store/session';
 import * as StoreBoards from '../store/boards';
@@ -81,9 +81,18 @@ export default class Controller {
         }
     }
 
-    public static async queryGames(query: GamesQuery) : Promise<void> {
-        const games = await Api.getGames(query);
-        Controller.dispatch(StoreGamesQuery.Actions.queryGames(games));
+    public static Search = class {
+        public static async searchGames(query: GamesQuery) : Promise<void> {
+            const games = await Api.getGames(query);
+            Controller.dispatch(StoreGamesQuery.Actions.loadSearchResults(games));
+        }
+
+        public static async loadRecentGames(user : User) : Promise<void> {
+            const query = ModelFactory.emptyGamesQuery();
+            query.playerUserName = user.name;
+            const games = await Api.getGames(query);
+            Controller.dispatch(StoreGamesQuery.Actions.loadRecentGames(games));
+        }
     }
 
     public static Snapshots = class {
@@ -176,14 +185,7 @@ export default class Controller {
             SseClientManager.connect();
             Controller.Display.loadSavedTheme();
             Controller.Settings.loadAndApply();
-            return Controller.Session.queryGamesForUser(user);
-        }
-
-        private static queryGamesForUser(user: User) : Promise<void> {
-            const query = ModelFactory.emptyGamesQuery();
-            query.playerUserName = user.name;
-            Controller.dispatch(StoreGamesQuery.Actions.updateGamesQuery(query));
-            return Controller.queryGames(query);
+            return Controller.Search.loadRecentGames(user);
         }
     }
 

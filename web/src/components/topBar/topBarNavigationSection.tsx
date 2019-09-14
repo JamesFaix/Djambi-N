@@ -44,6 +44,11 @@ const navigationSection : React.SFC<{ location : any }> = props => {
                 route={Routes.createGame}
             />
             <NavigationButton
+                icon={Icons.Pages.search}
+                state={o.showSearch}
+                route={Routes.searchGames}
+            />
+            <NavigationButton
                 icon={Icons.Pages.lobby}
                 state={o.showLobby}
                 route={Routes.lobby(o.gameId)}
@@ -94,6 +99,7 @@ interface NavigationOptions {
     showSnapshots : ButtonState,
     showSettings : ButtonState,
     showGameOver : ButtonState,
+    showSearch : ButtonState,
     gameId : number
 }
 
@@ -108,6 +114,7 @@ const defaultOptions : NavigationOptions = {
     showSnapshots: ButtonState.Hidden,
     showSettings: ButtonState.Hidden,
     showGameOver: ButtonState.Hidden,
+    showSearch: ButtonState.Hidden,
     gameId: null
 }
 
@@ -154,6 +161,7 @@ function applyDefaultsForContext(type : ContextType, o : NavigationOptions) : vo
             o.showHome = ButtonState.Inactive;
             o.showCreateGame = ButtonState.Inactive;
             o.showSettings = ButtonState.Inactive;
+            o.showSearch = ButtonState.Inactive;
         }
 
         if (type === ContextType.LoggedInWithActiveGame) {
@@ -185,17 +193,20 @@ function markCurrentPageActive(route : string, o : NavigationOptions) : void {
         case Routes.login:
             o.showLogin = ButtonState.Active;
             return;
-        case(Routes.signup):
+        case Routes.signup:
             o.showSignup = ButtonState.Active;
             return;
-        case(Routes.dashboard) :
+        case Routes.dashboard:
             o.showHome = ButtonState.Active;
             return;
-        case(Routes.createGame) :
+        case Routes.createGame:
             o.showCreateGame = ButtonState.Active;
             return;
-        case(Routes.settings) :
+        case Routes.settings:
             o.showSettings = ButtonState.Active;
+            return;
+        case Routes.searchGames:
+            o.showSearch = ButtonState.Active;
             return;
     }
     if (route.startsWith("/games")) {
