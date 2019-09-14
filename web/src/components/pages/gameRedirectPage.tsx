@@ -1,29 +1,21 @@
 import * as React from 'react';
-import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
-import BasicPageContainer from '../containers/basicPageContainer';
-import { GameStatus, Game } from '../../api/model';
-import LoadGame from '../utilities/loadGame';
+import { GameStatus } from '../../api/model';
 import Routes from '../../routes';
 import Controller from '../../controllers/controller';
-import Selectors from '../../selectors';
 
 const GameRedirectPage : React.SFC<{}> = props => {
     const routeGameId = Number((props as any).match.params.gameId);
-    const game = Selectors.game();
 
     React.useEffect(() => {
-        if (game && game.id === routeGameId) {
-            const url = getGameUrl(routeGameId, game.status);
+        Controller.Session.redirectToLoginIfNotLoggedIn()
+        .then(() => Controller.Game.loadGameIfNotLoaded(routeGameId))
+        .then(game => {
+            const url = getGameUrl(game.id, game.status);
             Controller.navigateTo(url);
-        }
+        });
     });
 
-    return (
-        <BasicPageContainer>
-            <RedirectToLoginIfNotLoggedIn/>
-            <LoadGame gameId={routeGameId}/>
-        </BasicPageContainer>
-    );
+    return null;
 }
 export default GameRedirectPage;
 
