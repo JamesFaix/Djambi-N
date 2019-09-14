@@ -181,6 +181,23 @@ function enableGamePageButtonsBasedOnState(game : Game, user : User, o : Navigat
 }
 
 function markCurrentPageActive(route : string, o : NavigationOptions) : void {
+    switch (route) {
+        case Routes.login:
+            o.showLogin = ButtonState.Active;
+            return;
+        case(Routes.signup):
+            o.showSignup = ButtonState.Active;
+            return;
+        case(Routes.dashboard) :
+            o.showHome = ButtonState.Active;
+            return;
+        case(Routes.createGame) :
+            o.showCreateGame = ButtonState.Active;
+            return;
+        case(Routes.settings) :
+            o.showSettings = ButtonState.Active;
+            return;
+    }
     if (route.startsWith("/games")) {
         const parts = route.split("/");
         const gamePage = parts[3]; //[ "", "games", "{id}" "{page}" ]
@@ -199,24 +216,6 @@ function markCurrentPageActive(route : string, o : NavigationOptions) : void {
                 break;
             case "results":
                 o.showGameOver = ButtonState.Active;
-                break;
-        }
-    } else {
-        switch (route) {
-            case Routes.login:
-                o.showLogin = ButtonState.Active;
-                break;
-            case(Routes.signup):
-                o.showSignup = ButtonState.Active;
-                break;
-            case(Routes.dashboard) :
-                o.showHome = ButtonState.Active;
-                break;
-            case(Routes.createGame) :
-                o.showCreateGame = ButtonState.Active;
-                break;
-            case(Routes.settings) :
-                o.showSettings = ButtonState.Active;
                 break;
         }
     }
