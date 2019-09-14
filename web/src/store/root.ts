@@ -1,4 +1,4 @@
-import * as GamesQuery from './gamesQuery';
+import * as Search from './search';
 import * as CreateGameForm from './createGameForm';
 import * as Display from './display';
 import * as Session from './session';
@@ -18,7 +18,7 @@ import { MapUtil } from '../utilities/collections';
 export interface State {
     session: Session.State,
     activeGame : ActiveGame.State,
-    gamesQuery : GamesQuery.State,
+    search : Search.State,
     createGameForm : CreateGameForm.State,
     boards : Boards.State,
     display : Display.State,
@@ -29,7 +29,7 @@ export interface State {
 export const defaultState : State = {
     session: Session.defaultState,
     activeGame: ActiveGame.defaultState,
-    gamesQuery: GamesQuery.defaultState,
+    search: Search.defaultState,
     createGameForm: CreateGameForm.defaultState,
     boards: Boards.defaultState,
     display: Display.defaultState,
@@ -57,7 +57,7 @@ const combinedReducer : Reducer<State, CustomAction> = combineReducers({
     boards: Boards.reducer,
     createGameForm : CreateGameForm.reducer,
     display: Display.reducer,
-    gamesQuery: GamesQuery.reducer,
+    search: Search.reducer,
     session: Session.reducer,
     settings: Settings.reducer
 });

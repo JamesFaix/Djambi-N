@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Game } from '../../api/model';
-import { SectionHeader } from '../controls/headers';
 import { Classes } from '../../styles/styles';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
@@ -10,8 +9,7 @@ import IconBox from '../controls/iconBox';
 import Copy from '../../utilities/copy';
 
 const GamesSearchResultsTable : React.SFC<{ games : Game[] }> = props => {
-    return (<>
-        <SectionHeader text="Results"/>
+    return (
         <table className={Classes.stripedTable}>
             <tbody>
                 <tr>
@@ -32,7 +30,7 @@ const GamesSearchResultsTable : React.SFC<{ games : Game[] }> = props => {
                 }
             </tbody>
         </table>
-    </>);
+    );
 }
 export default GamesSearchResultsTable;
 

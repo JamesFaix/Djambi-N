@@ -11,7 +11,7 @@ import HtmlInputTypes from '../htmlInputTypes';
 import Controller from '../../controllers/controller';
 
 const GamesSearchForm : React.SFC<{}> = _ => {
-    const query = useSelector((state : AppState) => state.gamesQuery.query);
+    const query = useSelector((state : AppState) => state.search.query);
     const onUpdate = Controller.Forms.updateGamesQuery;
 
     return (<>
@@ -91,7 +91,7 @@ const GamesSearchForm : React.SFC<{}> = _ => {
         <IconButton
             icon={Icons.UserActions.search}
             showTitle={true}
-            onClick={() => Controller.queryGames(query)}
+            onClick={() => Controller.Search.searchGames(query)}
         />
     </>);
 };
