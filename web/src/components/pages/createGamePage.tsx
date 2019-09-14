@@ -1,7 +1,5 @@
 import * as React from 'react';
-import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
 import BasicPageContainer from '../containers/basicPageContainer';
-import LoadAllBoards from '../utilities/loadAllBoards';
 import { State as AppState } from '../../store/root';
 import { useSelector } from 'react-redux';
 import { SectionHeader } from '../controls/headers';
@@ -14,10 +12,12 @@ import BoardThumbnail from '../canvas/boardThumbnail';
 import Selectors from '../../selectors';
 
 const CreateGamePage : React.SFC<{}> = _ => {
+    React.useEffect(() => {
+        Controller.Session.redirectToLoginIfNotLoggedIn()
+        .then(() => Controller.Game.loadAllBoards());
+    });
     return (
         <BasicPageContainer>
-            <RedirectToLoginIfNotLoggedIn/>
-            <LoadAllBoards/>
             <SectionHeader text="Board type"/>
             <BoardSelectionBar/>
             <br/>

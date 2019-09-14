@@ -239,6 +239,14 @@ export default class Controller {
             await Controller.Game.loadBoardInner(game.parameters.regionCount);
         }
 
+        public static async loadGameIfNotLoaded(routeGameId : number) : Promise<Game> {
+            let game = Controller.state.activeGame.game;
+            if (!game || game.id !== routeGameId) {
+                game = await Controller.Game.loadGameInner(routeGameId);
+            }
+            return game;
+        }
+
         public static async createGame(formData : GameParameters) : Promise<void> {
             const game = await Api.createGame(formData);
             Controller.dispatch(StoreActiveGame.Actions.createGame(game));
