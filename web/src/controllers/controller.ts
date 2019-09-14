@@ -34,6 +34,8 @@ import Routes from "../routes";
 import * as ModelFactory from "../api/modelFactory";
 import { Theme } from "../themes/model";
 import ThemeFactory from "../themes/themeFactory";
+import { isNumber } from "util";
+import ApiUtil from "../api/util";
 
 //Encapsulates dispatching Redux actions and other side effects
 export default class Controller {
@@ -116,6 +118,10 @@ export default class Controller {
 
         public static async logout() : Promise<void> {
             await Api.logout();
+            Controller.Session.onUnauthorized();
+        }
+
+        public static onUnauthorized() : void {
             Controller.dispatch(StoreSession.Actions.logout());
             Controller.navigateTo(Routes.login);
             SseClientManager.disconnect();
@@ -128,63 +134,42 @@ export default class Controller {
             return Controller.Session.login(loginRequest);
         }
 
-        public static async redirectToDashboardIfLoggedIn() : Promise<void> {
-            try {
-                let user = Controller.state.session.user;
-                if (!user) {
+        private static async getUser() : Promise<User> {
+            let user = Controller.state.session.user;
+            if (!user) {
+                try {
                     user = await Api.getCurrentUser();
                     Controller.dispatch(StoreSession.Actions.restoreSession(user));
+                    await Controller.Session.finishLoginSetup(user);
                 }
-                Controller.navigateTo(Routes.dashboard);
-                await Controller.Session.finishLoginSetup(user);
+                catch (ex) {
+                    const [status, _] = ApiUtil.destructureError(ex);
+                    if (status !== 401) {
+                        throw ex;
+                    }
+                }
             }
-            catch(ex) {
-                let [status, message] = ex;
-                if (status !== 401) {
-                    throw ex;
-                }
+            return user;
+        }
+
+        public static async redirectToDashboardIfLoggedIn() : Promise<void> {
+            const user = await Controller.Session.getUser();
+            if (user) {
+                Controller.navigateTo(Routes.dashboard);
             }
         }
 
         public static async redirectToLoginIfNotLoggedIn() : Promise<void> {
-            try {
-                let user = Controller.state.session.user;
-                if (!user) {
-                    user = await Api.getCurrentUser();
-                    Controller.dispatch(StoreSession.Actions.restoreSession(user));
-                }
-                await Controller.Session.finishLoginSetup(user);
-            }
-            catch (ex) {
-                console.log(ex);
-                let [status, message] = ex;
-                if (status !== 401) {
-                    throw ex;
-                }
+            const user = await Controller.Session.getUser();
+            if (!user) {
                 Controller.navigateTo(Routes.login);
             }
         }
 
         public static async redirectToLoginOrDashboard() : Promise<void> {
-            try {
-                let user = Controller.state.session.user;
-                if (!user) {
-                    user = await Api.getCurrentUser();
-                    Controller.dispatch(StoreSession.Actions.restoreSession(user));
-                }
-                Controller.navigateTo(Routes.dashboard);
-                return Controller.Session.finishLoginSetup(user);
-            }
-            catch (ex) {
-                console.log(ex);
-                let [status, message] = ex;
-                if (status === 401) {
-                    Controller.navigateTo(Routes.login);
-                }
-                else {
-                    throw ex;
-                }
-            }
+            const user = await Controller.Session.getUser();
+            const route = user ? Routes.dashboard : Routes.login;
+            Controller.navigateTo(route);
         }
 
         private static finishLoginSetup(user : User) : Promise<void> {
@@ -250,7 +235,7 @@ export default class Controller {
 
         public static async loadGameIfNotLoaded(routeGameId : number) : Promise<Game> {
             let game = Controller.state.activeGame.game;
-            if (!game || game.id !== routeGameId) {
+            if (!game || (game.id !== routeGameId && isNumber(routeGameId))) {
                 game = await Controller.Game.loadGameInner(routeGameId);
             }
             return game;

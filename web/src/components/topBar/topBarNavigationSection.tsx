@@ -224,9 +224,10 @@ function markCurrentPageActive(route : string, o : NavigationOptions) : void {
 
 function getGameId(route : string, game : Game, o : NavigationOptions) : void {
     let gameId : number = null;
-    if (route.startsWith("/games")) {
-        const parts = route.split("/");
-        gameId = Number(parts[2]); //[ "", "games", "{id}" "{page}" ]
+    const parts = route.split("/");  //[ "", "games", "{id}" "{page}" ]
+    if (parts.length === 4 // Create game page starts with 'games' but is only 3 parts
+        && parts[1] === "games") {
+        gameId = Number(parts[2]);
     } else if (game) {
         gameId = game.id
     }

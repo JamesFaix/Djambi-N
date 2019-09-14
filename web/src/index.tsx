@@ -7,8 +7,6 @@ import { Router } from 'react-router-dom';
 import thunk from 'redux-thunk';
 import "./styles/styles.less";
 import { ApiClientCore } from './api/clientCore';
-import { ApiRequest, ApiResponse, ApiError } from './api/requestModel';
-import * as StoreApiClient from './store/apiClient';
 import * as StoreRoot from './store/root';
 import { SseClientManager } from './utilities/serverSentEvents';
 import Copy from './utilities/copy';
@@ -20,19 +18,11 @@ const store = createStore(
     StoreRoot.defaultState,
     applyMiddleware(thunk)
 );
-
-ApiClientCore.init(
-    (request: ApiRequest) => store.dispatch(StoreApiClient.Actions.apiRequest(request)),
-    (response: ApiResponse) => store.dispatch(StoreApiClient.Actions.apiResponse(response)),
-    (error: ApiError) => store.dispatch(StoreApiClient.Actions.apiError(error)),
-    () => StoreRoot.getAppState(store).settings.debug.logApi
-);
-
-SseClientManager.init(store);
-Copy.init(store);
-
 const history = createHashHistory();
 
+ApiClientCore.init(store);
+SseClientManager.init(store);
+Copy.init(store);
 Controller.init(store, history);
 
 render(
