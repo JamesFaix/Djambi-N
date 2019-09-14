@@ -1,7 +1,5 @@
 import * as React from 'react';
-import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
 import BasicPageContainer from '../containers/basicPageContainer';
-import LoadSnapshots from '../utilities/loadSnapshots';
 import { SectionHeader } from '../controls/headers';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
@@ -14,22 +12,24 @@ import { Classes } from '../../styles/styles';
 import { SnapshotInfo } from '../../api/model';
 import { dateToString } from '../../utilities/dates';
 
-export default class SnapshotsPage extends React.Component<{}>{
-    render() {
-        const gameId = (this.props as any).match.params.gameId;
-        return (
-            <BasicPageContainer>
-                <RedirectToLoginIfNotLoggedIn/>
-                <LoadSnapshots gameId={gameId}/>
-                <SectionHeader text="Game snapshots"/>
-                <SnapshotsTable/>
-                <br/>
-                <br/>
-                <CreateSnapshotForm/>
-            </BasicPageContainer>
-        );
-    }
+const SnapshotsPage : React.SFC<{}> = props => {
+    const routeGameId = (props as any).match.params.gameId;
+    React.useEffect(() => {
+        Controller.Session.redirectToLoginIfNotLoggedIn()
+        .then(() => Controller.Game.loadGameIfNotLoaded(routeGameId))
+        .then(() => Controller.Snapshots.get(routeGameId));
+    });
+    return (
+        <BasicPageContainer>
+            <SectionHeader text="Game snapshots"/>
+            <SnapshotsTable/>
+            <br/>
+            <br/>
+            <CreateSnapshotForm/>
+        </BasicPageContainer>
+    );
 }
+export default SnapshotsPage;
 
 const SnapshotsTable : React.SFC<{}> = _ => {
     const snapshots = useSelector((state : AppState) => state.activeGame.snapshots);

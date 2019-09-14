@@ -1,20 +1,22 @@
 import * as React from 'react';
-import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
 import BasicPageContainer from '../containers/basicPageContainer';
 import { SectionHeader } from '../controls/headers';
 import { Game, PlayerStatus, GameStatus } from '../../api/model';
-import RedirectToLobbyIfNotGameStatus from '../utilities/redirectToLobbyIfNotGameStatus';
-import LoadGame from '../utilities/loadGame';
 import Selectors from '../../selectors';
+import Controller from '../../controllers/controller';
 
 const GameResultsPage : React.SFC<{}> = props => {
-    const gameId = (props as any).match.params.gameId;
+    const routeGameId = (props as any).match.params.gameId;
     const game = Selectors.game();
+
+    React.useEffect(() => {
+        Controller.Session.redirectToLoginIfNotLoggedIn()
+        .then(() => Controller.Game.loadGameIfNotLoaded(routeGameId))
+        .then(() => Controller.Game.redirectToLobbyIfGameNotStatus(GameStatus.Over));
+    });
+
     return (
         <BasicPageContainer>
-            <RedirectToLoginIfNotLoggedIn/>
-            <RedirectToLobbyIfNotGameStatus status={GameStatus.Over}/>
-            <LoadGame gameId={gameId}/>
             <SectionHeader text="Game over"/>
             <p>{getGameOverText(game)}</p>
         </BasicPageContainer>

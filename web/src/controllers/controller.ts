@@ -130,10 +130,13 @@ export default class Controller {
 
         public static async redirectToDashboardIfLoggedIn() : Promise<void> {
             try {
-                const user = await Api.getCurrentUser();
-                Controller.dispatch(StoreSession.Actions.restoreSession(user));
+                let user = Controller.state.session.user;
+                if (!user) {
+                    user = await Api.getCurrentUser();
+                    Controller.dispatch(StoreSession.Actions.restoreSession(user));
+                }
                 Controller.navigateTo(Routes.dashboard);
-                return Controller.Session.finishLoginSetup(user);
+                await Controller.Session.finishLoginSetup(user);
             }
             catch(ex) {
                 let [status, message] = ex;
@@ -145,9 +148,12 @@ export default class Controller {
 
         public static async redirectToLoginIfNotLoggedIn() : Promise<void> {
             try {
-                const user = await Api.getCurrentUser();
-                Controller.dispatch(StoreSession.Actions.restoreSession(user));
-                return Controller.Session.finishLoginSetup(user);
+                let user = Controller.state.session.user;
+                if (!user) {
+                    user = await Api.getCurrentUser();
+                    Controller.dispatch(StoreSession.Actions.restoreSession(user));
+                }
+                await Controller.Session.finishLoginSetup(user);
             }
             catch (ex) {
                 console.log(ex);
@@ -161,8 +167,11 @@ export default class Controller {
 
         public static async redirectToLoginOrDashboard() : Promise<void> {
             try {
-                const user = await Api.getCurrentUser();
-                Controller.dispatch(StoreSession.Actions.restoreSession(user));
+                let user = Controller.state.session.user;
+                if (!user) {
+                    user = await Api.getCurrentUser();
+                    Controller.dispatch(StoreSession.Actions.restoreSession(user));
+                }
                 Controller.navigateTo(Routes.dashboard);
                 return Controller.Session.finishLoginSetup(user);
             }
@@ -237,6 +246,21 @@ export default class Controller {
             const game = await Controller.Game.loadGameInner(gameId);
             await Controller.Game.loadHistoryInner(gameId);
             await Controller.Game.loadBoardInner(game.parameters.regionCount);
+        }
+
+        public static async loadGameIfNotLoaded(routeGameId : number) : Promise<Game> {
+            let game = Controller.state.activeGame.game;
+            if (!game || game.id !== routeGameId) {
+                game = await Controller.Game.loadGameInner(routeGameId);
+            }
+            return game;
+        }
+
+        public static async redirectToLobbyIfGameNotStatus(status : GameStatus) : Promise<void> {
+            const game = Controller.state.activeGame.game;
+            if (game.status !== status) {
+                Controller.navigateTo(Routes.lobby(game.id));
+            }
         }
 
         public static async createGame(formData : GameParameters) : Promise<void> {

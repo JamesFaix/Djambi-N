@@ -1,6 +1,5 @@
 import * as React from 'react';
 import BasicPageContainer from '../containers/basicPageContainer';
-import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
 import ThemeFactory from '../../themes/themeFactory';
 import Dropdown from '../controls/dropdown';
 import { SectionHeader } from '../controls/headers';
@@ -12,9 +11,12 @@ import HtmlInputTypes from '../htmlInputTypes';
 import { State as AppState } from '../../store/root';
 
 const SettingsPage : React.SFC<{}> = _ => {
+    React.useEffect(() => {
+        Controller.Session.redirectToLoginIfNotLoggedIn();
+    });
+
     return(
         <BasicPageContainer>
-            <RedirectToLoginIfNotLoggedIn/>
             <SectionHeader text="Settings"/>
             <ThemeSelector/>
             <DebugSettingsForm/>
