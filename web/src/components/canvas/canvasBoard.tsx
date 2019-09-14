@@ -3,7 +3,7 @@ import { Stage } from 'react-konva';
 import CanvasCellsLayer from './canvasCellsLayer';
 import CanvasBoardOutlineLayer from './canvasBoardOutlineLayer';
 import { BoardView, CellView } from '../../viewModel/board/model';
-import { PieceKind, Game } from '../../api/model';
+import { Game } from '../../api/model';
 import { Classes } from '../../styles/styles';
 import { Theme } from '../../themes/model';
 import { DebugSettings } from '../../debug';
@@ -24,7 +24,7 @@ interface Props {
     board : BoardView,
     selectCell : (cell : CellView) => void,
     style : CanvasBoardStyle,
-    pieceImages : Map<PieceKind, HTMLImageElement>,
+    pieceImages : Map<string, HTMLImageElement>,
     debugSettings : DebugSettings
 }
 

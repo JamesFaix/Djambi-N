@@ -36,6 +36,7 @@ import { Theme } from "../themes/model";
 import ThemeFactory from "../themes/themeFactory";
 import { isNumber } from "util";
 import ApiUtil from "../api/util";
+import Images, { PieceImageInfo } from "../utilities/images";
 
 //Encapsulates dispatching Redux actions and other side effects
 export default class Controller {
@@ -338,14 +339,14 @@ export default class Controller {
             s.setProperty("--alt-row-background-color", c.altRowBackground);
             s.setProperty("--alt-row-text-color", c.altRowText);
 
-            s.setProperty("--player-color-0", c.player0);
-            s.setProperty("--player-color-1", c.player1);
-            s.setProperty("--player-color-2", c.player2);
-            s.setProperty("--player-color-3", c.player3);
-            s.setProperty("--player-color-4", c.player4);
-            s.setProperty("--player-color-5", c.player5);
-            s.setProperty("--player-color-6", c.player6);
-            s.setProperty("--player-color-7", c.player7);
+            s.setProperty("--player-color-0", c.players.p0);
+            s.setProperty("--player-color-1", c.players.p1);
+            s.setProperty("--player-color-2", c.players.p2);
+            s.setProperty("--player-color-3", c.players.p3);
+            s.setProperty("--player-color-4", c.players.p4);
+            s.setProperty("--player-color-5", c.players.p5);
+            s.setProperty("--player-color-6", c.players.p6);
+            s.setProperty("--player-color-7", c.players.p7);
 
             s.setProperty("--font-family", theme.fonts.normalFamily);
             s.setProperty("--header-font-family", theme.fonts.headerFamily);
@@ -355,21 +356,41 @@ export default class Controller {
             const kinds = [
                 PieceKind.Assassin,
                 PieceKind.Chief,
-                PieceKind.Corpse,
                 PieceKind.Diplomat,
                 PieceKind.Gravedigger,
                 PieceKind.Reporter,
                 PieceKind.Thug
             ];
-            kinds.forEach(k => Controller.Display.createPieceImage(theme, k));
+            const maxPlayerColorId = 7;
+
+            kinds.forEach(k => {
+                for (let colorId=0; colorId<=maxPlayerColorId; colorId++) {
+                    Controller.Display.createPieceImage(theme, k, colorId);
+                }
+                Controller.Display.createPieceImage(theme, k, null); //Neutral sprite for abandoned pieces
+            });
+
+            Controller.Display.createPieceImage(theme, PieceKind.Corpse, null); //Corpses are only ever neutral
         }
 
-        private static createPieceImage(theme : Theme, kind : PieceKind) : HTMLImageElement {
+        private static createPieceImage(theme : Theme, kind : PieceKind, colorId : number) : HTMLImageElement {
             let image = Controller.state.display.images.pieces.get(kind);
             if (!image) {
                 image = new (window as any).Image() as HTMLImageElement;
                 image.src = ThemeService.getPieceImagePath(theme, kind);
-                image.onload = () => Controller.dispatch(StoreDisplay.Actions.pieceImageLoaded(kind, image));
+                image.onload = () => {
+                    const dummyColor = theme.colors.players.placeholder;
+                    const playerColor = ThemeService.getPlayerColor(theme, colorId);
+                    image = Images.replaceColor(image, dummyColor, playerColor);
+
+                    const info : PieceImageInfo = {
+                        kind: kind,
+                        playerColorId: colorId,
+                        image: image
+                    };
+
+                    Controller.dispatch(StoreDisplay.Actions.pieceImageLoaded(info));
+                }
             }
             return image;
         }

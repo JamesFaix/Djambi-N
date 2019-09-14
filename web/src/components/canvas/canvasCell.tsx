@@ -41,7 +41,6 @@ export default class CanvasCell extends React.Component< {
                 />
                 <CanvasCellPieceLayer
                     cell={c}
-                    theme={th}
                     size={this.props.pieceSize}
                     image={this.props.pieceImage}
                 />

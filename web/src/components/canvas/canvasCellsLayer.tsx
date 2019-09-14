@@ -1,17 +1,18 @@
 import * as React from 'react';
 import { Layer } from 'react-konva';
 import CanvasCell from './canvasCell';
-import { BoardView, CellView } from '../../viewModel/board/model';
+import { BoardView, CellView, PieceView } from '../../viewModel/board/model';
 import { Theme } from '../../themes/model';
-import { PieceKind, Game } from '../../api/model';
+import { Game } from '../../api/model';
 import { AnimationFrame, BoardTooltipState } from './model';
 import { Animation } from 'konva';
+import { getPieceImageKey } from '../../utilities/images';
 
 interface Props {
     board : BoardView,
     theme : Theme,
     selectCell : (cell : CellView) => void,
-    pieceImages : Map<PieceKind, HTMLImageElement>,
+    pieceImages : Map<string, HTMLImageElement>,
     scale : number,
     setTooltip : (state : BoardTooltipState) => void,
     game : Game,
@@ -43,7 +44,6 @@ export default class CanvasCellsLayer extends React.Component<Props, State> {
 
     render() {
         const pieceSize = this.props.scale / this.props.board.cellCountPerSide / 2;
-
         return (
             <Layer>
                 {this.props.board.cells.map((c, i) =>
@@ -54,7 +54,7 @@ export default class CanvasCellsLayer extends React.Component<Props, State> {
                         highlightOpacity={c.isSelectable ? this.state.highlightOpacity : 0}
                         selectCell={cell => this.props.selectCell(cell)}
                         pieceSize={pieceSize}
-                        pieceImage={c.piece ? this.props.pieceImages.get(c.piece.kind) : null}
+                        pieceImage={this.getPieceImage(c.piece)}
                         setTooltip={data => this.props.setTooltip(data)}
                         game={this.props.game}
                         showBoardTooltip={this.props.showBoardTooltip}
@@ -62,5 +62,11 @@ export default class CanvasCellsLayer extends React.Component<Props, State> {
                 )}
             </Layer>
         );
+    }
+
+    private getPieceImage(piece : PieceView) {
+        if (!piece) { return null; }
+        const key = getPieceImageKey(piece.kind, piece.colorId);
+        return this.props.pieceImages.get(key);
     }
 }

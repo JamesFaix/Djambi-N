@@ -1,11 +1,8 @@
 import { CellView, CellType } from "../viewModel/board/model";
 import { PieceKind } from "../api/model";
-import { Dispatch } from "redux";
-import * as StoreDisplay from '../store/display';
 import { Theme } from './model';
 
 export default class ThemeService {
-
     public static getPieceImagePath(theme : Theme, kind : PieceKind) : string {
         const i = theme.images.pieces;
         switch (kind) {
@@ -23,16 +20,17 @@ export default class ThemeService {
     //#region Colors
 
     public static getPlayerColor(theme : Theme, playerColorId : number) : string {
-        const c = theme.colors;
+        const c = theme.colors.players;
         switch(playerColorId) {
-            case 0: return c.player0;
-            case 1: return c.player1;
-            case 2: return c.player2;
-            case 3: return c.player3;
-            case 4: return c.player4;
-            case 5: return c.player5;
-            case 6: return c.player6;
-            case 7: return c.player7;
+            case 0: return c.p0;
+            case 1: return c.p1;
+            case 2: return c.p2;
+            case 3: return c.p3;
+            case 4: return c.p4;
+            case 5: return c.p5;
+            case 6: return c.p6;
+            case 7: return c.p7;
+            case null: return c.neutral;
             default: throw "Unsupported player color id: " + playerColorId;
         }
     }

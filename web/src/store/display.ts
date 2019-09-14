@@ -1,12 +1,12 @@
 import { CustomAction, DataAction } from "./root";
 import { Point } from "../viewModel/board/model";
-import { PieceKind, Piece } from "../api/model";
 import ThemeFactory from "../themes/themeFactory";
 import { Theme } from "../themes/model";
+import { PieceImageInfo, getPieceImageKey } from "../utilities/images";
 import { MapUtil } from "../utilities/collections";
 
 interface Images {
-    pieces : Map<PieceKind, HTMLImageElement>
+    pieces : Map<string, HTMLImageElement>
 }
 
 export interface State {
@@ -27,7 +27,7 @@ export const defaultState : State = {
     canvasMargin: 5,
     theme: ThemeFactory.default,
     images: {
-        pieces: new Map<PieceKind, HTMLImageElement>()
+        pieces: new Map<string, HTMLImageElement>()
     }
 };
 
@@ -68,10 +68,10 @@ export class Actions {
         };
     }
 
-    public static pieceImageLoaded(pieceKind : PieceKind, image : HTMLImageElement) {
+    public static pieceImageLoaded(info : PieceImageInfo) {
         return {
             type: ActionTypes.PieceImageLoaded,
-            data: [pieceKind, image]
+            data: info
         };
     }
 }
@@ -94,20 +94,20 @@ export function reducer(state : State, action : CustomAction) : State {
                 theme: da.data,
                 images: {
                     ...state.images,
-                    pieces: new Map<PieceKind, HTMLImageElement>()
+                    pieces: new Map<string, HTMLImageElement>()
                 }
             };
         }
         case ActionTypes.PieceImageLoaded: {
-            const da = <DataAction<[PieceKind, HTMLImageElement]>>action;
-            const [kind, image] = da.data;
+            const da = <DataAction<PieceImageInfo>>action;
+            const key = getPieceImageKey(da.data.kind, da.data.playerColorId);
             return {
                 ...state,
                 images: {
                     ...state.images,
-                    pieces: MapUtil.add(state.images.pieces, kind, image)
+                    pieces: MapUtil.add(state.images.pieces, key, da.data.image)
                 }
-            };
+            }
         }
         //BoardScroll and BoardZoom must be handled at a higher level because they update the boardview
         default:
