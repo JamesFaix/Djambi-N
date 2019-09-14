@@ -10,7 +10,6 @@ import Controller from '../../controllers/controller';
 
 const navigationSection : React.SFC<{ location : any }> = props => {
     const route : string = props.location.pathname;
-    console.log(route);
     const game = Selectors.game();
     const user = Selectors.user();
     const o = getOptions(route, game, user);

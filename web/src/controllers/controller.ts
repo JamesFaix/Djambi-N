@@ -250,6 +250,13 @@ export default class Controller {
             return game;
         }
 
+        public static async redirectToLobbyIfGameNotStatus(status : GameStatus) : Promise<void> {
+            const game = Controller.state.activeGame.game;
+            if (game.status !== status) {
+                Controller.navigateTo(Routes.lobby(game.id));
+            }
+        }
+
         public static async createGame(formData : GameParameters) : Promise<void> {
             const game = await Api.createGame(formData);
             Controller.dispatch(StoreActiveGame.Actions.createGame(game));
