@@ -1,7 +1,5 @@
 import * as React from 'react';
 import { GameStatus, Player, PlayerKind } from '../../api/model';
-import LoadGame from '../utilities/loadGame';
-import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
 import BasicPageContainer from '../containers/basicPageContainer';
@@ -17,31 +15,31 @@ import MutablePlayersTable from '../pageSections/lobbyPageMutablePlayersTable';
 const LobbyPage : React.SFC<{}> = props => {
     const routeGameId = (props as any).match.params.gameId;
     const game = Selectors.game();
+
+    React.useEffect(() => {
+        Controller.Session.redirectToLoginIfNotLoggedIn()
+        .then(() => Controller.Game.loadGameIfNotLoaded(routeGameId));
+    })
+
+    //Early termination must be after all hooks
+    if (!game) { return null; }
+
     return (
         <BasicPageContainer>
-            <RedirectToLoginIfNotLoggedIn/>
-            <LoadGame gameId={routeGameId}/>
-            {game ? <PageBody/> : null}
+            <GameParametersTable/>
+            <br/>
+            <br/>
+            {game.status === GameStatus.Pending
+                ? <MutablePlayersTable/>
+                : <PlayersTable/>
+            }
+            <br/>
+            <br/>
+            <StartButton/>
         </BasicPageContainer>
     );
 }
 export default LobbyPage;
-
-const PageBody : React.SFC<{}> = _ => {
-    const game = Selectors.game();
-    return (<>
-        <GameParametersTable/>
-        <br/>
-        <br/>
-        {game.status === GameStatus.Pending
-            ? <MutablePlayersTable/>
-            : <PlayersTable/>
-        }
-        <br/>
-        <br/>
-        <StartButton/>
-    </>);
-};
 
 const GameParametersTable : React.SFC<{}> = props => {
     const game = Selectors.game();
