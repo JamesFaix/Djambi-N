@@ -1,7 +1,6 @@
 import * as MathJs from 'mathjs';
 import Geometry from './geometry';
-import { Point } from './model';
-import { Canvas } from 'konva';
+import { Point, BoardView } from './model';
 
 export interface CanvasTranformData {
     containerSize : Point,
@@ -44,6 +43,13 @@ export default class CanvasTransformService{
     }
 
     //------
+
+    public static getBoardPieceScale(board : BoardView) : number {
+        const size = CanvasTransformService.getBoardPolygonBaseSize(board.regionCount);
+        const sizeAvg = (size.x + size.y) / 2;
+        const reduced = Math.sqrt(Math.max(1, sizeAvg));
+        return reduced / (board.cellCountPerSide * 2);
+    }
 
     private static getBoardPolygonBaseSize(regionCount : number) : Point {
         return Geometry.RegularPolygon.sideToSizeRatios(regionCount);
