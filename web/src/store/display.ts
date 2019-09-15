@@ -80,13 +80,6 @@ export function reducer(state : State, action : CustomAction) : State {
     if (!state) { state = {...defaultState}; }
 
     switch (action.type){
-        case ActionTypes.BoardAreaResize: {
-            const da = <DataAction<Point>>action;
-            return {
-                ...state,
-                boardContainerSize: da.data
-            };
-        }
         case ActionTypes.ChangeTheme: {
             const da = <DataAction<Theme>>action;
             return {
@@ -109,7 +102,7 @@ export function reducer(state : State, action : CustomAction) : State {
                 }
             }
         }
-        //BoardScroll and BoardZoom must be handled at a higher level because they update the boardview
+        //BoardScroll, BoardResize and BoardZoom must be handled at a higher level because they update the boardview
         default:
             return state;
     }

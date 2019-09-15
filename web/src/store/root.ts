@@ -88,6 +88,8 @@ function reducerInner(state: State, action : CustomAction) : State {
             return boardZoomReducer(state, action);
         case Display.ActionTypes.BoardScroll:
             return boardScrollReducer(state, action);
+        case Display.ActionTypes.BoardAreaResize:
+            return boardResizeReducer(state, action);
         default:
             return combinedReducer(state, action);
     }
@@ -170,6 +172,19 @@ function boardScrollReducer(state: State, action: CustomAction) : State {
     const newState = {...state};
     newState.display = {...state.display};
     newState.display.boardScrollPercent = da.data;
+    updateBoardView(newState, state.activeGame.game);
+    return newState;
+}
+
+function boardResizeReducer(state : State, action : CustomAction) : State {
+    const da = <DataAction<Point>>action;
+    const newState = {
+        ...state,
+        display: {
+            ...state.display,
+            boardContainerSize: da.data
+        }
+    };
     updateBoardView(newState, state.activeGame.game);
     return newState;
 }
