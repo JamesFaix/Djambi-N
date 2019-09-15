@@ -26,8 +26,8 @@ export default class Images {
 
         for (let i=0; i<d.length; i+=4) { //4 for RGBA
             if (d[i] === oldRgb.r &&
-                d[i+1] === oldRgb.b &&
-                d[i+2] === oldRgb.g) {
+                d[i+1] === oldRgb.g &&
+                d[i+2] === oldRgb.b) {
                 d[i] = newRgb.r;
                 d[i+1] = newRgb.g;
                 d[i+2] = newRgb.b;
