@@ -321,8 +321,19 @@ export default class Controller {
             if (currentTheme && currentTheme.name === themeName) {
                 return;
             }
+            else {
+                Controller.Display.setThemeInner(themeName);
+            }
+        }
 
-            const theme = ThemeFactory.getThemes().get(themeName);
+        public static loadSavedTheme() : void {
+            let name = LocalStorageService.themeName;
+            name = name ? name : ThemeFactory.default.name;
+            Controller.Display.setThemeInner(name);
+        }
+
+        private static setThemeInner(name : string) : void {
+            const theme = ThemeFactory.getThemes().get(name);
             Controller.dispatch(StoreDisplay.Actions.changeTheme(theme));
             Controller.Display.applyToCss(theme);
             Controller.Display.loadThemeImages(theme);
@@ -395,12 +406,6 @@ export default class Controller {
                 }
             }
             return image;
-        }
-
-        public static loadSavedTheme() : void {
-            let name = LocalStorageService.themeName;
-            name = name ? name : ThemeFactory.default.name;
-            return Controller.Display.changeTheme(name);
         }
 
         public static resizeBoardArea(size : Point) : void {

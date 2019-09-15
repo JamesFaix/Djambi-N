@@ -51,7 +51,7 @@ export default class ThemeFactory {
                 p5: "teal",
                 p6: "magenta",
                 p7: "gold",
-                placeholder: "black",
+                placeholder: "#CCCC33",
                 neutral: "#555555"
             }
         },
