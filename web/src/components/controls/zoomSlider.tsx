@@ -12,6 +12,7 @@ export class ZoomSlider extends React.Component<ZoomSliderProps> {
         const level = this.props.level;
         const cts = CanvasTransformService;
         const scale = cts.getZoomScaleFactor(level);
+        const percent = (scale * 100).toFixed(0);
         return (
             <div
                 id="zoom-slider"
@@ -23,7 +24,7 @@ export class ZoomSlider extends React.Component<ZoomSliderProps> {
                     max={cts.maxZoomLevel()}
                     onChange={e => this.onSliderChanged(e)}
                 />
-                {`Zoom ${scale * 100}%`}
+                {`Zoom ${percent}%`}
             </div>
         );
     }
