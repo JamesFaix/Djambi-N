@@ -260,7 +260,14 @@ export default class BoardViewFactory {
             const piece = game.pieces.find(p => p.cellId === c.id);
             const owner = piece ? game.players.find(p => p.id === piece.playerId) : null;
             const colorId = owner ? owner.colorId : null;
-            const pieceView : PieceView = piece ? { id : piece.id, kind: piece.kind, colorId: colorId } : null;
+            const pieceView : PieceView = piece
+                ? {
+                    id : piece.id,
+                    kind: piece.kind,
+                    colorId: colorId,
+                    playerName: owner ? owner.name : null
+                }
+                : null;
 
             return {
                 ...c,

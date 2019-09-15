@@ -1,54 +1,21 @@
 import * as React from 'react';
-import { Dispatch } from 'redux';
-import { connect } from 'react-redux';
-import { GamesQuery, Game } from '../../api/model';
-import GamesSearchResultsTable from '../tables/gamesSearchResultsTable';
-import { State } from '../../store/root';
-import RedirectToLoginIfNotLoggedIn from '../utilities/redirectToLoginIfNotLoggedIn';
-import GamesSearchForm from '../forms/gamesSearchForm';
-import BasicPageContainer from '../sections/basicPageContainer';
-import MiscStoreFlows from '../../storeFlows/misc';
+import { useSelector } from 'react-redux';
+import GamesSearchResultsTable from '../pageSections/gamesSearchResultsTable';
+import { State as AppState } from '../../store/root';
+import BasicPageContainer from '../containers/basicPageContainer';
+import Controller from '../../controllers/controller';
+import { SectionHeader } from '../controls/headers';
 
-interface DashboardPageProps {
-    gamesQuery : GamesQuery,
-    gamesResults : Game[],
-    onSearchClicked : (query: GamesQuery) => void
+const DashboardPage : React.SFC<{}> = _ => {
+    const games = useSelector((state : AppState) => state.search.recent);
+    React.useEffect(() => {
+        Controller.Session.redirectToLoginIfNotLoggedIn();
+    });
+    return (
+        <BasicPageContainer>
+            <SectionHeader text="Recent games"/>
+            <GamesSearchResultsTable games={games}/>
+        </BasicPageContainer>
+    );
 }
-
-class dashboardPage extends React.Component<DashboardPageProps>{
-    render() {
-        return (
-            <BasicPageContainer>
-                <RedirectToLoginIfNotLoggedIn/>
-                <GamesSearchForm/>
-                <br/>
-                <br/>
-                <GamesSearchResultsTable/>
-            </BasicPageContainer>
-        );
-    }
-}
-
-const mapStateToProps = (state: State) => {
-    if (state.gamesQuery){
-        return {
-            gamesQuery: state.gamesQuery.query,
-            gamesResults: state.gamesQuery.results
-        };
-    } else {
-        return {
-            gamesQuery: null,
-            gamesResults: []
-        };
-    }
-};
-
-const mapDispatchToProps = (dispatch : Dispatch) => {
-    return {
-        onSearchClicked: (query: GamesQuery) => MiscStoreFlows.queryGames(query)(dispatch)
-    };
-};
-
-const DashboardPage = connect(mapStateToProps, mapDispatchToProps)(dashboardPage);
-
 export default DashboardPage;

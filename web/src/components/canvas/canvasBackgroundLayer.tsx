@@ -1,22 +1,19 @@
 import * as React from 'react';
-import { Layer } from 'react-konva';
-import { BoardView } from '../../viewModel/board/model';
-import CanvasPolygon, { CanvasPolygonStyle } from './canvasPolygon';
+import { Layer, Rect } from 'react-konva';
+import { Point } from '../../viewModel/board/model';
 
-export interface CanvasBackgroundLayerProps {
-    board : BoardView,
-    style : CanvasPolygonStyle
-}
-
-export default class CanvasBackgroundLayer extends React.Component<CanvasBackgroundLayerProps> {
-    render() {
-        return (
-            <Layer>
-                <CanvasPolygon
-                    polygon={this.props.board.polygon}
-                    style={this.props.style}
-                />
-            </Layer>
-        );
-    }
-}
+const CanvasBackgroundLayer : React.SFC<{
+    size : Point,
+    color : string,
+    onMouseEnter : () => void
+}> = props => (
+    <Layer>
+        <Rect
+            width={props.size.x}
+            height={props.size.y}
+            fill={props.color}
+            onMouseEnter={() => props.onMouseEnter()}
+        />
+    </Layer>
+);
+export default CanvasBackgroundLayer

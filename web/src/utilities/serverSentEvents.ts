@@ -1,11 +1,8 @@
 import Environment from "../environment";
-import { StateAndEventResponse, GameStatus } from "../api/model";
+import { StateAndEventResponse } from "../api/model";
 import { Store } from "redux";
 import { State, CustomAction, AppStore, getAppState } from "../store/root";
-import * as StoreActiveGame from '../store/activeGame';
-import { navigateTo } from "../history";
-import Routes from "../routes";
-import GameStoreFlows from "../storeFlows/game";
+import Controller from "../controllers/controller";
 
 class SseClient {
     private readonly source : EventSource;
@@ -54,7 +51,7 @@ class SseClient {
         const activeGameId = activeGame ? activeGame.id : null;
 
         if (update.game.id === activeGameId) {
-            GameStoreFlows.updateInProgressGame(update, this.store.dispatch);
+            Controller.Game.updateInProgressGame(update);
         } else {
             console.log(`An event occurred in game ${update.game.id}`);
             //TODO: Toast notification

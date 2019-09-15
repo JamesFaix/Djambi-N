@@ -76,6 +76,12 @@ button[data-active="true"] {
     color: var(--hover-text-color);
 }
 
+button[disabled] {
+    .buttonMixin;
+    background-color: transparent;
+    color: var(--border-color);
+}
+
 p {
     margin-block-start: 0;
     margin-block-end: 0;

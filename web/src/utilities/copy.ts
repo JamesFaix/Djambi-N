@@ -25,7 +25,7 @@ import {
     TurnCyclePlayerFellFromPowerEffect,
     TurnCyclePlayerRoseToPowerEffect
 } from "../api/model";
-import { BoardView, CellView } from "../viewModel/board/model";
+import { CellView, PieceView } from "../viewModel/board/model";
 import ThemeService from "../themes/themeService";
 import { Theme } from "../themes/model";
 
@@ -79,7 +79,7 @@ export default class Copy {
             : Copy.locationToString(cell.locations[0]);
 
         if (this.showIds()){
-            return `${base} (${cellId})`;
+            return `${base} (#${cellId})`;
         } else {
             return base;
         }
@@ -92,10 +92,8 @@ export default class Copy {
 
         if (!this.showIds()) {
             return base;
-        } else if (!cell.piece) {
-            return `${base} (${cell.id})`;
         } else {
-            return `${base} (${cell.id})\nP${cell.piece.id}`;
+            return `${base} (#${cell.id})`;
         }
     }
 
@@ -109,6 +107,24 @@ export default class Copy {
         const player = game.players.find(p => p.id === piece.playerId);
         const base = player
             ? `${player.name}'s ${kindName}`
+            : `Neutral ${kindName}`;
+
+        if (this.showIds()){
+            return `${base} (#${piece.id})`;
+        } else {
+            return base;
+        }
+    }
+
+    public static getPieceViewLabel(piece : PieceView, game : Game) {
+        const kindName = ThemeService.getPieceName(this.getTheme(), piece.kind);
+
+        if (piece.kind === PieceKind.Corpse) {
+            return kindName;
+        }
+
+        const base = piece.playerName
+            ? `${piece.playerName}'s ${kindName}`
             : `Neutral ${kindName}`;
 
         if (this.showIds()){
