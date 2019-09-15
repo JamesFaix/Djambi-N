@@ -1,6 +1,6 @@
 import * as React from 'react';
 import CanvasBoard from '../canvas/canvasBoard';
-import { State as AppState, CustomAction } from '../../store/root';
+import { State as AppState } from '../../store/root';
 import { useSelector, useDispatch } from 'react-redux';
 import CanvasTransformService, { CanvasTranformData } from '../../viewModel/board/canvasTransformService';
 import { Classes } from '../../styles/styles';
@@ -11,15 +11,28 @@ import Geometry from '../../viewModel/board/geometry';
 import * as StoreDisplay from '../../store/display';
 import { ZoomSlider } from '../controls/zoomSlider';
 import { Dispatch } from 'redux';
+import { Point } from '../../viewModel/board/model';
 
 export const BoardSection : React.SFC<{}> = _ => {
-    const scrollbars = React.useRef(null);
+    const scrollbarsRef : React.MutableRefObject<Scrollbars> = React.useRef(null);
     const game = Selectors.game();
     const board = useSelector((state : AppState) => state.activeGame.boardView);
     const display = useSelector((state : AppState) => state.display);
     const debugSettings = useSelector((state : AppState) => state.settings.debug);
     const dispatch = useDispatch();
-  //  React.useEffect(() => onLoad(display, dispatch));
+
+    React.useEffect(() => {
+        window.removeEventListener("resize", null);
+        window.addEventListener("resize", () => {
+            const scrollbars = scrollbarsRef.current;
+            if (!scrollbars) { return; }
+            const size : Point = {
+                x: scrollbars.getClientWidth(),
+                y: scrollbars.getClientHeight()
+            };
+            Controller.Display.resizeBoardArea(size);
+        });
+    });
 
     //React will blow up if you don't call the same hooks in the same order during each render
     //so no early termination until all hooks are used
@@ -33,13 +46,14 @@ export const BoardSection : React.SFC<{}> = _ => {
         regionCount: game.parameters.regionCount
     };
     const internalSize = CanvasTransformService.getSize(transformData);
+
     return (
         <div
             id="board-section"
             className={Classes.boardSection}
         >
             <Scrollbars
-                ref={scrollbars}
+                ref={scrollbarsRef}
                 onScrollFrame={e => onScroll(e, dispatch)}
                 id="board-scroll-area"
             >
@@ -60,15 +74,10 @@ export const BoardSection : React.SFC<{}> = _ => {
             </Scrollbars>
             <ZoomSlider
                 level={display.boardZoomLevel}
-                changeLevel={level => onZoom(level, display, scrollbars, dispatch)}
+                changeLevel={level => onZoom(level, display, scrollbarsRef.current, dispatch)}
             />
         </div>
     );
-}
-
-function onLoad(display : StoreDisplay.State, dispatch : Dispatch) {
-    dispatch(StoreDisplay.Actions.boardScroll(display.boardScrollPercent));
-    dispatch(StoreDisplay.Actions.boardZoom(display.boardZoomLevel));
 }
 
 function onScroll(e : positionValues, dispatch : Dispatch) {
@@ -80,7 +89,7 @@ function onScroll(e : positionValues, dispatch : Dispatch) {
     dispatch(StoreDisplay.Actions.boardScroll(scrollPercent));
 }
 
-function onZoom(level : number, display : StoreDisplay.State, scrollbars : any, dispatch : Dispatch) {
+function onZoom(level : number, display : StoreDisplay.State, scrollbars : Scrollbars, dispatch : Dispatch) {
     const oldLevel = display.boardZoomLevel;
     const newState : any = { zoomLevel : level };
 
@@ -91,14 +100,12 @@ function onZoom(level : number, display : StoreDisplay.State, scrollbars : any, 
 
     dispatch(StoreDisplay.Actions.boardZoom(level));
 
-    const sb = scrollbars.current;
-
-    const scrollContainerSize = { x: sb.getClientWidth(), y: sb.getClientHeight() };
+    const scrollContainerSize = { x: scrollbars.getClientWidth(), y: scrollbars.getClientHeight() };
     const scrollableAreaSize = Geometry.Point.subtract(display.boardContainerSize, scrollContainerSize);
 
     const scrollPercent = display.boardScrollPercent;
     const scrollPosition = Geometry.Point.multiply(scrollPercent, scrollableAreaSize);
 
-    sb.scrollLeft(scrollPosition.x);
-    sb.scrollTop(scrollPosition.y);
+    scrollbars.scrollLeft(scrollPosition.x);
+    scrollbars.scrollTop(scrollPosition.y);
 }

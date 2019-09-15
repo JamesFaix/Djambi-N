@@ -55,6 +55,13 @@ export default class Geometry {
             return this.distance(a, b) < threshold;
         }
 
+        public static max(a : Point, b : Point) : Point {
+            return {
+                x: Math.max(a.x, b.x),
+                y: Math.max(a.y, b.y)
+            };
+        }
+
         public static multiply(a : Point, b : Point) : Point {
             return {
                 x: a.x * b.x,

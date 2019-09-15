@@ -37,6 +37,8 @@ import ThemeFactory from "../themes/themeFactory";
 import { isNumber } from "util";
 import ApiUtil from "../api/util";
 import Images, { PieceImageInfo } from "../utilities/images";
+import Geometry from "../viewModel/board/geometry";
+import { Point } from "../viewModel/board/model";
 
 //Encapsulates dispatching Redux actions and other side effects
 export default class Controller {
@@ -399,6 +401,12 @@ export default class Controller {
             let name = LocalStorageService.themeName;
             name = name ? name : ThemeFactory.default.name;
             return Controller.Display.changeTheme(name);
+        }
+
+        public static resizeBoardArea(size : Point) : void {
+            const current = Controller.state.display.boardContainerSize;
+            if (Geometry.Point.isCloseTo(size, current, 0.000001)) { return; }
+            Controller.dispatch(StoreDisplay.Actions.boardAreaResize(size));
         }
     }
 }

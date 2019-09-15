@@ -1,6 +1,7 @@
 import * as MathJs from 'mathjs';
 import Geometry from './geometry';
 import { Point } from './model';
+import { Canvas } from 'konva';
 
 export interface CanvasTranformData {
     containerSize : Point,
@@ -44,44 +45,31 @@ export default class CanvasTransformService{
 
     //------
 
-    private static getCanvasContentAreaSizeWithNoZoom(containerSize : Point, canvasMargin : number) : Point {
-        return Geometry.Point.subtractScalar(containerSize, 2 * canvasMargin);
-    }
-
     private static getBoardPolygonBaseSize(regionCount : number) : Point {
         return Geometry.RegularPolygon.sideToSizeRatios(regionCount);
     }
 
-    private static getTotalMarginSize(canvasMargin : number, contentPadding : number) : Point {
-        const n = 2 * (canvasMargin + contentPadding);
-        return { x: n, y: n };
-    }
-
-    private static getBoardSize(data : CanvasTranformData) : Point {
-        let size = CanvasTransformService.getBoardPolygonBaseSize(data.regionCount);
-        size = Geometry.Point.multiplyScalar(size, CanvasTransformService.getScale(data));
-        size = Geometry.Point.add(size, this.getTotalMarginSize(data.canvasMargin, data.contentPadding));
-        return size;
+    private static getTotalMargin(data : CanvasTranformData) : number {
+        return 2 * (data.canvasMargin + data.contentPadding);
     }
 
     public static getSize(data : CanvasTranformData) : Point {
-        const boardSize = CanvasTransformService.getBoardSize(data);
-        return {
-            x: Math.max(boardSize.x, data.containerSize.x),
-            y: Math.max(boardSize.y, data.containerSize.y)
-        };
+        let size = CanvasTransformService.getBoardPolygonBaseSize(data.regionCount);
+        size = Geometry.Point.multiplyScalar(size, CanvasTransformService.getScale(data));
+        const totalMargin = CanvasTransformService.getTotalMargin(data);
+        size = Geometry.Point.add(size, { x: totalMargin, y: totalMargin });
+        size = Geometry.Point.max(size, data.containerSize);
+        return size;
     }
 
     //--- Scale
 
     public static getScale(data : CanvasTranformData) : number {
-        return CanvasTransformService.getContainerSizeScaleFactor(
-            data.containerSize,
-            data.canvasMargin,
-            data.contentPadding,
-            data.regionCount
-        )
-            * CanvasTransformService.getZoomScaleFactor(data.zoomLevel);
+        const contentAreaSizeWithNoZoom = Geometry.Point.subtractScalar(data.containerSize, CanvasTransformService.getTotalMargin(data));
+        const boardBaseSize = CanvasTransformService.getBoardPolygonBaseSize(data.regionCount);
+        const containerSizeScaleFactor = Geometry.Rectangle.largestScaleWithinBox(boardBaseSize, contentAreaSizeWithNoZoom);
+        const zoomScaleFactor = CanvasTransformService.getZoomScaleFactor(data.zoomLevel);
+        return containerSizeScaleFactor * zoomScaleFactor;
     }
 
     public static getZoomScaleFactor(zoomLevel : number) : number {
@@ -117,18 +105,6 @@ export default class CanvasTransformService{
     public static minZoomLevel() { return -5; }
 
     public static maxZoomLevel() { return 14; }
-
-    private static getContainerSizeScaleFactor(
-        containerSize : Point,
-        canvasMargin : number,
-        contentPadding : number,
-        regionCount : number
-    ) : number {
-        let contentAreaSize = CanvasTransformService.getCanvasContentAreaSizeWithNoZoom(containerSize, canvasMargin);
-        contentAreaSize = Geometry.Point.subtractScalar(contentAreaSize, 2 * contentPadding);
-        const boardBaseSize = CanvasTransformService.getBoardPolygonBaseSize(regionCount);
-        return Geometry.Rectangle.largestScaleWithinBox(boardBaseSize, contentAreaSize);
-    }
 
     //------
 }
