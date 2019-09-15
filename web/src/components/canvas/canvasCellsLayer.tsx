@@ -7,6 +7,7 @@ import { Game } from '../../api/model';
 import { AnimationFrame, BoardTooltipState } from './model';
 import { Animation } from 'konva';
 import { getPieceImageKey } from '../../utilities/images';
+import CanvasTransformService from '../../viewModel/board/canvasTransformService';
 
 interface Props {
     board : BoardView,
@@ -43,7 +44,7 @@ export default class CanvasCellsLayer extends React.Component<Props, State> {
     }
 
     render() {
-        const pieceSize = this.props.scale / this.props.board.cellCountPerSide / 2;
+        const pieceSize = this.props.scale * CanvasTransformService.getBoardPieceScale(this.props.board);
         return (
             <Layer>
                 {this.props.board.cells.map((c, i) =>
