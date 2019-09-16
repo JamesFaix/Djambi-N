@@ -44,6 +44,7 @@ const SignupForm : React.SFC<{}> = _ => {
                                 value={username}
                                 onChange={e => setUsername(e.target.value)}
                                 autoComplete="username"
+                                autoFocus
                             >
                             </input>
                         </td>
