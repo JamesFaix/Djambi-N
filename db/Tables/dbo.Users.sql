@@ -1,7 +1,7 @@
 CREATE TABLE [dbo].[Users](
 	[UserId]                   [int] IDENTITY(1,1) NOT NULL,
-	[Name]                     [nvarchar](50) NOT NULL,
-	[Password]                 [nvarchar](50) NULL,
+	[Name]                     [nvarchar](20) NOT NULL,
+	[Password]                 [nvarchar](20) NULL,
 	[CreatedOn]                [datetime2](7) NOT NULL,
 	[FailedLoginAttempts]      [tinyint] NOT NULL,
 	[LastFailedLoginAttemptOn] [datetime2] NULL

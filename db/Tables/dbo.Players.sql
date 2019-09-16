@@ -4,7 +4,7 @@ CREATE TABLE [dbo].[Players]
     [GameId]             INT NOT NULL,
     [UserId]             INT NULL,
     [PlayerKindId]       TINYINT NOT NULL,
-    [Name]               NVARCHAR (50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+    [Name]               NVARCHAR (20) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
     [PlayerStatusId]     TINYINT,
     [ColorId]            TINYINT NULL,
     [StartingRegion]     TINYINT NULL,

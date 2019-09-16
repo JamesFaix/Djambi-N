@@ -6,14 +6,22 @@ open Djambi.Api.Logic
 open Djambi.Api.Model
 open Djambi.Api.Logic.Interfaces
 open Djambi.Api.Db.Interfaces
+open System.Text.RegularExpressions
 
 type SnapshotManager(eventRepo : IEventRepository,
                      gameRepo : IGameRepository,
                      snapshotRepo : ISnapshotRepository) =
+    let validSnapshotDescriptionRegex = Regex(""".{0,100}""")
+
     interface ISnapshotManager with
 
         member x.createSnapshot gameId request session =
             Security.ensureHas Privilege.Snapshots session
+            |> Result.bind (fun _ -> 
+                if not <| validSnapshotDescriptionRegex.IsMatch request.description
+                then Error <| HttpException(422, "Snapshot descriptions cannot exceed 100 characters.")
+                else Ok ()
+            )
             |> Result.bindAsync (fun _ ->
                 gameRepo.getGame gameId
                 |> thenBindAsync (fun game ->
