@@ -6,9 +6,13 @@ import GamesSearchForm from '../pageSections/gamesSearchForm';
 import BasicPageContainer from '../containers/basicPageContainer';
 import Controller from '../../controllers/controller';
 import { SectionHeader } from '../controls/headers';
+import { List } from '../../utilities/collections';
 
 const GamesSearchPage : React.SFC<{}> = _ => {
-    const games = useSelector((state : AppState) => state.search.results);
+    const games = useSelector((state : AppState) => {
+        const results = state.search.results;
+        return List.sortBy(results, g => g.id, true);
+    });
     React.useEffect(() => {
         Controller.Session.redirectToLoginIfNotLoggedIn();
     });
