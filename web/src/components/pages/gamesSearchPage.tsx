@@ -14,6 +14,7 @@ const GamesSearchPage : React.SFC<{}> = _ => {
     });
     return (
         <BasicPageContainer>
+            <SectionHeader text="Search games"/>
             <GamesSearchForm/>
             <br/>
             <br/>
