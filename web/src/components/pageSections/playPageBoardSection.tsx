@@ -9,9 +9,10 @@ import Selectors from '../../selectors';
 import Scrollbars, { positionValues } from 'react-custom-scrollbars';
 import Geometry from '../../viewModel/board/geometry';
 import * as StoreDisplay from '../../store/display';
-import { ZoomSlider } from '../controls/zoomSlider';
 import { Dispatch } from 'redux';
 import { Point } from '../../viewModel/board/model';
+import IconButton from '../controls/iconButton';
+import { Icons } from '../../utilities/icons';
 
 export const BoardSection : React.SFC<{}> = _ => {
     const scrollbarsRef : React.MutableRefObject<Scrollbars> = React.useRef(null);
@@ -74,11 +75,55 @@ export const BoardSection : React.SFC<{}> = _ => {
             </Scrollbars>
             <ZoomSlider
                 level={display.boardZoomLevel}
-                changeLevel={level => onZoom(level, display, scrollbarsRef.current, dispatch)}
+                changeLevel={change => onZoom(change, display, scrollbarsRef.current, dispatch)}
             />
         </div>
     );
 }
+
+const ZoomSlider : React.SFC<{
+    level : number,
+    changeLevel : (change : number) => void
+}> = props => {
+    const level = props.level;
+    const cts = CanvasTransformService;
+    const scale = cts.getZoomScaleFactor(level);
+    const percent = (scale * 100).toFixed(0) + "%";
+    const theme = Selectors.theme();
+    return (
+        <div
+            id="zoom-slider"
+            style={{
+                background: theme.colors.background,
+                border: theme.colors.border,
+                borderWidth: "thin",
+                borderStyle: "solid",
+
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+
+                position: "absolute",
+                left: 0
+            }}
+        >
+            Zoom
+            <div style={{
+
+            }}>
+                <IconButton
+                    icon={Icons.UserActions.zoomOut}
+                    onClick={() => props.changeLevel(-1)}
+                />
+                <IconButton
+                    icon={Icons.UserActions.zoomIn}
+                    onClick={() => props.changeLevel(1)}
+                />
+            </div>
+            {percent}
+        </div>
+    );
+};
 
 function onScroll(e : positionValues, dispatch : Dispatch) {
     const scrollContainerSize = { x: e.clientWidth, y: e.clientHeight };
@@ -89,16 +134,20 @@ function onScroll(e : positionValues, dispatch : Dispatch) {
     dispatch(StoreDisplay.Actions.boardScroll(scrollPercent));
 }
 
-function onZoom(level : number, display : StoreDisplay.State, scrollbars : Scrollbars, dispatch : Dispatch) {
+function onZoom(change : number, display : StoreDisplay.State, scrollbars : Scrollbars, dispatch : Dispatch) {
     const oldLevel = display.boardZoomLevel;
-    const newState : any = { zoomLevel : level };
+    let newLevel = oldLevel + change;
+    newLevel = Math.min(CanvasTransformService.maxZoomLevel(), newLevel);
+    newLevel = Math.max(CanvasTransformService.minZoomLevel(), newLevel);
+    if (oldLevel === newLevel) { return; }
+    const newState : any = { zoomLevel : newLevel };
 
     //If going from a negative level (where the whole board is visible) to a positive one, start zoom focus at center
     if (oldLevel <= 0) {
         newState.scrollPercent = { x: 0.5, y: 0.5 };
     }
 
-    dispatch(StoreDisplay.Actions.boardZoom(level));
+    dispatch(StoreDisplay.Actions.boardZoom(newLevel));
 
     const scrollContainerSize = { x: scrollbars.getClientWidth(), y: scrollbars.getClientHeight() };
     const scrollableAreaSize = Geometry.Point.subtract(display.boardContainerSize, scrollContainerSize);
