@@ -3,7 +3,7 @@ import BasicPageContainer from '../containers/basicPageContainer';
 import { State as AppState } from '../../store/root';
 import { useSelector } from 'react-redux';
 import { SectionHeader } from '../controls/headers';
-import IconButton from '../controls/iconButton';
+import { IconSubmitButton } from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
 import HtmlInputTypes from '../htmlInputTypes';
 import Controller from '../../controllers/controller';
@@ -23,8 +23,6 @@ const CreateGamePage : React.SFC<{}> = _ => {
             <br/>
             <SectionHeader text="Game settings"/>
             <GameSettingsForm/>
-            <br/>
-            <SubmitButton/>
         </BasicPageContainer>
     );
 }
@@ -97,51 +95,50 @@ const BoardSelector : React.SFC<{
 const GameSettingsForm : React.SFC<{}> = _ => {
     const formData = selectFormData();
     const onUpdate = Controller.Forms.updateCreateGameForm;
-    return (<>
-        <table>
-            <tbody>
-                <tr>
-                    <td>Allow guests</td>
-                    <td>
-                        <input
-                            type={HtmlInputTypes.CheckBox}
-                            checked={formData.allowGuests}
-                            onChange={e => onUpdate({ ...formData, allowGuests: e.target.checked })}
-                        />
-                    </td>
-                </tr>
-                <tr>
-                    <td>Public</td>
-                    <td>
-                        <input
-                            type={HtmlInputTypes.CheckBox}
-                            checked={formData.isPublic}
-                            onChange={e => onUpdate({ ...formData, isPublic: e.target.checked })}
-                        />
-                    </td>
-                </tr>
-                <tr>
-                    <td>Description</td>
-                    <td>
-                        <input
-                            type={HtmlInputTypes.Text}
-                            value={formData.description}
-                            onChange={e => onUpdate({ ...formData, description: e.target.value })}
-                        />
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </>);
-}
-
-const SubmitButton : React.SFC<{}> = _ => {
-    const formData = selectFormData();
     return (
-        <IconButton
-            icon={Icons.UserActions.createGame}
-            showTitle={true}
-            onClick={() => Controller.Game.createGame(formData)}
-        />
+        <form
+            onSubmit={() => Controller.Game.createGame(formData)}
+        >
+            <table>
+                <tbody>
+                    <tr>
+                        <td>Allow guests</td>
+                        <td>
+                            <input
+                                type={HtmlInputTypes.CheckBox}
+                                checked={formData.allowGuests}
+                                onChange={e => onUpdate({ ...formData, allowGuests: e.target.checked })}
+                            />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Public</td>
+                        <td>
+                            <input
+                                type={HtmlInputTypes.CheckBox}
+                                checked={formData.isPublic}
+                                onChange={e => onUpdate({ ...formData, isPublic: e.target.checked })}
+                            />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Description</td>
+                        <td>
+                            <input
+                                type={HtmlInputTypes.Text}
+                                value={formData.description}
+                                onChange={e => onUpdate({ ...formData, description: e.target.value })}
+                                autoFocus
+                            />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <br/>
+            <IconSubmitButton
+                icon={Icons.UserActions.createGame}
+                showTitle={true}
+            />
+        </form>
     );
 }
