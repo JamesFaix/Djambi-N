@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { SectionHeader } from '../controls/headers';
-import IconButton from '../controls/iconButton';
+import IconButton, { IconSubmitButton } from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
 import HtmlInputTypes from '../htmlInputTypes';
 import Controller from '../../controllers/controller';
@@ -13,6 +13,7 @@ const SignupPage : React.SFC<{}> = _ => {
     })
     return (
         <BasicPageContainer>
+            <SectionHeader text="Enter new account info"/>
             <SignupForm/>
             <br/>
             <PromptToLoginSection/>
@@ -25,43 +26,49 @@ const SignupForm : React.SFC<{}> = _ => {
     const [username, setUsername] = React.useState("");
     const [password, setPassword] = React.useState("");
 
-    return (<>
-        <SectionHeader text="Enter new account info"/>
-        <table>
-            <tbody>
-                <tr>
-                    <td>Username</td>
-                    <td>
-                        <input
-                            type={HtmlInputTypes.Text}
-                            value={username}
-                            onChange={e => setUsername(e.target.value)}
-                        >
-                        </input>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Password</td>
-                    <td>
-                        <input
-                            type={HtmlInputTypes.Password}
-                            value={password}
-                            onChange={e => setPassword(e.target.value)}
-                        >
-                        </input>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <div>
+    return (
+        <form
+            style={{
+                display: "flex",
+                flexDirection: "column"
+            }}
+            onSubmit={() => Controller.Session.signup({ name: username, password: password })}
+        >
+            <table>
+                <tbody>
+                    <tr>
+                        <td>Username</td>
+                        <td>
+                            <input
+                                type={HtmlInputTypes.Text}
+                                value={username}
+                                onChange={e => setUsername(e.target.value)}
+                                autoComplete="username"
+                            >
+                            </input>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Password</td>
+                        <td>
+                            <input
+                                type={HtmlInputTypes.Password}
+                                value={password}
+                                onChange={e => setPassword(e.target.value)}
+                                autoComplete="new-password"
+                            >
+                            </input>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
             <br/>
-            <IconButton
+            <IconSubmitButton
                 icon={Icons.UserActions.signup}
                 showTitle={true}
-                onClick={() => Controller.Session.signup({ name: username, password: password })}
             />
-        </div>
-    </>);
+        </form>
+    );
 }
 
 const PromptToLoginSection : React.SFC<{}> = props => {
