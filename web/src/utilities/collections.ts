@@ -66,6 +66,25 @@ export class List {
         return List.groupMatches(elements, areMatch)
             .map(g => g.reduce((x, y) => merge(x,y)));
     }
+
+    public static sortBy<TElement, TKey>(
+        elements : TElement[],
+        getKey : (value:TElement) => TKey,
+        descending : boolean = false) : TElement[] {
+
+        function compareKeys(kA : TKey, kB : TKey) : number {
+            if (kA < kB) {
+                return descending ? 1 : -1;
+            } else if (kA > kB) {
+                return descending ? -1 : 1;
+            } else {
+                return 0;
+            }
+        }
+
+        return elements.sort((a, b) =>
+            compareKeys(getKey(a), getKey(b)));
+    }
 }
 
 export class MapUtil {
