@@ -93,4 +93,10 @@ export class MapUtil {
         m.set(key, value);
         return m;
     }
+
+    public static remove<TKey, TValue>(xs : Map<TKey, TValue>, key : TKey) : Map<TKey, TValue> {
+        const m = new Map<TKey, TValue>(xs);
+        m.delete(key);
+        return m;
+    }
 }

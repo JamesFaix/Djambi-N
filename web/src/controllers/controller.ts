@@ -9,6 +9,7 @@ import * as StoreSession from '../store/session';
 import * as StoreBoards from '../store/boards';
 import * as StoreCreateGameForm from '../store/createGameForm';
 import * as StoreDisplay from '../store/display';
+import * as StoreErrors from '../store/errors';
 import * as Api from '../api/client';
 import {
     GamesQuery,
@@ -39,6 +40,7 @@ import ApiUtil from "../api/util";
 import Images, { PieceImageInfo } from "../utilities/images";
 import Geometry from "../viewModel/board/geometry";
 import { Point } from "../viewModel/board/model";
+import { generateQuickGuid } from "../utilities/guids";
 
 //Encapsulates dispatching Redux actions and other side effects
 export default class Controller {
@@ -413,5 +415,17 @@ export default class Controller {
             if (Geometry.Point.isCloseTo(size, current, 0.000001)) { return; }
             Controller.dispatch(StoreDisplay.Actions.boardAreaResize(size));
         }
+    }
+
+    public static logError(message : string) {
+        const key = generateQuickGuid();
+        const act1 = StoreErrors.Actions.error(key, message);
+        const act2 = StoreErrors.Actions.errorExpired(key);
+        const errorDisplaySeconds = 5;
+
+        Controller.dispatch(act1);
+        setTimeout(
+            () => Controller.dispatch(act2),
+            errorDisplaySeconds * 1000);
     }
 }
