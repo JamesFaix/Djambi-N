@@ -28,10 +28,6 @@ const LoginForm : React.SFC<{}> = _ => {
 
     return (
         <form
-            style={{
-                display: "flex",
-                flexDirection: "column"
-            }}
             onSubmit={() => Controller.Session.login({ username: username, password: password })}
         >
             <table>
