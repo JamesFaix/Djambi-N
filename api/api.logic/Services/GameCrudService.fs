@@ -6,14 +6,11 @@ open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Db.Interfaces
 open Djambi.Api.Model
 open Djambi.Api.Logic
-open System.Text.RegularExpressions
 
 type GameCrudService(gameRepo : IGameRepository) =
-    let validGameDescriptionRegex = Regex(""".{0,100}""")
-
     member x.createGame (parameters : GameParameters) (session : Session) : Game AsyncHttpResult =
         match parameters.description with
-        | Some x when not <| validGameDescriptionRegex.IsMatch x ->
+        | Some x when not <| Validation.isValidGameDescription x ->
             errorTask <| HttpException(422, "Game descriptions cannot exceed 100 characters.")
         | _ -> 
             let self = session.user

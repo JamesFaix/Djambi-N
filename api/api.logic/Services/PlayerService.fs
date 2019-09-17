@@ -8,11 +8,8 @@ open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Db.Interfaces
 open Djambi.Api.Model
 open Djambi.Api.Logic
-open System.Text.RegularExpressions
 
 type PlayerService(gameRepo : IGameRepository) =
-    let validPlayerNameRegex = Regex("""[A-Za-z0-9_-]{1,20}""")
-
     member x.getAddPlayerEvent (game : Game, request : CreatePlayerRequest) (session : Session) : CreateEventRequest HttpResult =
         let self = session.user
         if game.status <> GameStatus.Pending
@@ -44,7 +41,7 @@ type PlayerService(gameRepo : IGameRepository) =
                 then Error <| HttpException(400, "Must provide name when adding a guest player.")
                 elif not (self.has EditPendingGames) && request.userId.Value <> self.id
                 then Error <| HttpException(403, "Cannot add guests for other users to a game.")
-                elif not <| validPlayerNameRegex.IsMatch request.name.Value
+                elif not <| Validation.isValidPlayerName request.name.Value
                 then Error <| HttpException(422, "Player names must contain only lettes A-Z, numbers 0-9, _, or -, and must be 1 to 20 characters.")
                 else Ok ()
 
