@@ -1,10 +1,12 @@
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { State as AppState } from '../../store/root';
-import BasicPageContainer from '../containers/basicPageContainer';
 import Selectors from '../../selectors';
 import { NotificationInfo, NotificationType } from '../../store/notifications';
 import { Theme } from '../../themes/model';
+import { Classes } from '../../styles/styles';
+import BasicPageMargin from '../containers/basicPageMargin';
+import BasicPageContentContainer from '../containers/basicPageContentContainer';
 
 const NotificationsSection : React.SFC<{}> = _ => {
     const notifications = useSelector((state : AppState) => state.notifications.items);
@@ -14,11 +16,22 @@ const NotificationsSection : React.SFC<{}> = _ => {
     }
 
     return (
-        <BasicPageContainer>
-            {notifications.map((n, i) =>
-                <NotificationRow key={i} notification={n}/>)
-            }
-        </BasicPageContainer>
+        <div
+            className={Classes.basicPageContainer}
+            style={{
+                position: "absolute",
+                bottom: 0,
+                width: "100%"
+            }}
+        >
+            <BasicPageMargin/>
+            <BasicPageContentContainer>
+                {notifications.map((n, i) =>
+                    <NotificationRow key={i} notification={n}/>)
+                }
+            </BasicPageContentContainer>
+            <BasicPageMargin/>
+        </div>
     );
 }
 export default NotificationsSection;
