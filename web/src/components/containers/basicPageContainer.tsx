@@ -10,9 +10,9 @@ const BasicPageContainer : React.SFC<{}> = props => {
             className={Classes.basicPageContainer}
         >
             <BasicPageMargin/>
-                <BasicPageContentContainer>
-                    {props.children}
-                </BasicPageContentContainer>
+            <BasicPageContentContainer>
+                {props.children}
+            </BasicPageContentContainer>
             <BasicPageMargin/>
         </div>
     )

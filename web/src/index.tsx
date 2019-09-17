@@ -21,7 +21,7 @@ const store = createStore(
 const history = createHashHistory();
 
 ApiClientCore.init(store);
-SseClientManager.init(store);
+SseClientManager.init(() => store.getState().settings.debug.logSse);
 Copy.init(store);
 Controller.init(store, history);
 

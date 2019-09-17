@@ -1,6 +1,7 @@
 import { CellView, CellType } from "../viewModel/board/model";
 import { PieceKind } from "../api/model";
 import { Theme } from './model';
+import { NotificationType } from "../store/notifications";
 
 export default class ThemeService {
     public static getPieceImagePath(theme : Theme, kind : PieceKind) : string {
@@ -87,4 +88,15 @@ export default class ThemeService {
     }
 
     //#endregion
+
+    public static getNotificationBackground(theme : Theme, type : NotificationType) : string {
+        switch (type) {
+            case NotificationType.Error:
+                return theme.colors.errorBackground;
+            case NotificationType.Info:
+                return theme.colors.infoBackground;
+            default:
+                return theme.colors.background;
+        }
+    }
 }

@@ -3,18 +3,14 @@ import { ApiRequest } from './requestModel';
 import { AppStore } from '../store/root';
 import * as StoreApiClient from '../store/apiClient';
 import Controller from '../controllers/controller';
-import Routes from '../routes';
+import { generateQuickGuid } from '../utilities/guids';
+import { NotificationType } from '../store/notifications';
 
 export enum HttpMethod {
     Get = "GET",
     Put = "PUT",
     Post = "POST",
     Delete = "DELETE"
-}
-
-function generateQuickGuid() {
-    return Math.random().toString(36).substring(2, 15) +
-        Math.random().toString(36).substring(2, 15);
 }
 
 export class ApiClientCore {
@@ -95,7 +91,8 @@ export class ApiClientCore {
                             if (this.shouldLog()) {
                                 console.log(endpointDescription + " failed (" + errorMessage + ")");
                             }
-                            throw [response.status, errorMessage];
+                            Controller.addNotification(NotificationType.Error, errorMessage);
+                            throw [response.status, errorMessage]; //Rethrow so other promises chained to this don't execute
                         });
                 }
             });

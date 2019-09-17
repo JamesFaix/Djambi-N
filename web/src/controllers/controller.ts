@@ -9,6 +9,7 @@ import * as StoreSession from '../store/session';
 import * as StoreBoards from '../store/boards';
 import * as StoreCreateGameForm from '../store/createGameForm';
 import * as StoreDisplay from '../store/display';
+import * as StoreNotifications from '../store/notifications';
 import * as Api from '../api/client';
 import {
     GamesQuery,
@@ -39,6 +40,8 @@ import ApiUtil from "../api/util";
 import Images, { PieceImageInfo } from "../utilities/images";
 import Geometry from "../viewModel/board/geometry";
 import { Point } from "../viewModel/board/model";
+import { generateQuickGuid } from "../utilities/guids";
+import Copy from "../utilities/copy";
 
 //Encapsulates dispatching Redux actions and other side effects
 export default class Controller {
@@ -302,6 +305,28 @@ export default class Controller {
                 Controller.navigateTo(Routes.gameResults(g.id));
             }
         }
+
+        public static onGameUpdateReceived(response : StateAndEventResponse) : void {
+            const currentGame = Controller.state.activeGame.game;
+            const isCurrentGame = currentGame && currentGame.id === response.game.id;
+            if (isCurrentGame) {
+                Controller.Game.updateInProgressGame(response);
+            }
+            const message = Controller.Game.getGameUpdateNotificationMessage(response, isCurrentGame);
+            Controller.addNotification(StoreNotifications.NotificationType.Info, message);
+        }
+
+        private static getGameUpdateNotificationMessage(response : StateAndEventResponse, isCurrentGame : boolean) : string {
+            const eventDesc = Copy.getEventDescription(response.event, response.game);
+            if (isCurrentGame) {
+                return eventDesc;
+            } else {
+                const game = response.game;
+                const gameDesc = game.parameters.description;
+                const gameLabel = gameDesc ? gameDesc : `Game ${game.id}`
+                return `In ${gameLabel}, ${eventDesc}`;
+            }
+        }
     }
 
     public static Forms = class {
@@ -413,5 +438,26 @@ export default class Controller {
             if (Geometry.Point.isCloseTo(size, current, 0.000001)) { return; }
             Controller.dispatch(StoreDisplay.Actions.boardAreaResize(size));
         }
+    }
+
+    public static addNotification(type : StoreNotifications.NotificationType, message : string) : void {
+        const info : StoreNotifications.NotificationInfo = {
+            id: generateQuickGuid(),
+            message: message,
+            type: type
+        };
+
+        const add = StoreNotifications.Actions.addNotification(info);
+        Controller.dispatch(add);
+
+        const displayMs = Controller.state.settings.debug.showNotificationsSeconds * 1000;
+        setTimeout(
+            () => Controller.removeNotification(info.id),
+            displayMs);
+    }
+
+    public static removeNotification(id : string) : void {
+        const remove = StoreNotifications.Actions.removeNotification(id);
+        Controller.dispatch(remove);
     }
 }

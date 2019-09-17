@@ -9,22 +9,26 @@ open Djambi.Api.Logic
 
 type GameCrudService(gameRepo : IGameRepository) =
     member x.createGame (parameters : GameParameters) (session : Session) : Game AsyncHttpResult =
-        let self = session.user
-        let gameRequest : CreateGameRequest =
-            {
-                parameters = parameters
-                createdByUserId = self.id
-            }
+        match parameters.description with
+        | Some x when not <| Validation.isValidGameDescription x ->
+            errorTask <| HttpException(422, "Game descriptions cannot exceed 100 characters.")
+        | _ -> 
+            let self = session.user
+            let gameRequest : CreateGameRequest =
+                {
+                    parameters = parameters
+                    createdByUserId = self.id
+                }
 
-        let playerRequest : CreatePlayerRequest =
-            {
-                kind = PlayerKind.User
-                userId = Some self.id
-                name = None
-            }
+            let playerRequest : CreatePlayerRequest =
+                {
+                    kind = PlayerKind.User
+                    userId = Some self.id
+                    name = None
+                }
 
-        gameRepo.createGameAndAddPlayer (gameRequest, playerRequest)
-        |> thenBindAsync gameRepo.getGame
+            gameRepo.createGameAndAddPlayer (gameRequest, playerRequest)
+            |> thenBindAsync gameRepo.getGame
 
     member x.getUpdateGameParametersEvent (game : Game, parameters : GameParameters) (session : Session) : CreateEventRequest HttpResult =
         if game.status <> GameStatus.Pending

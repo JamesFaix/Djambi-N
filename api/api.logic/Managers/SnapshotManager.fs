@@ -14,6 +14,11 @@ type SnapshotManager(eventRepo : IEventRepository,
 
         member x.createSnapshot gameId request session =
             Security.ensureHas Privilege.Snapshots session
+            |> Result.bind (fun _ -> 
+                if not <| Validation.isValidSnapshotDescription request.description
+                then Error <| HttpException(422, "Snapshot descriptions cannot exceed 100 characters.")
+                else Ok ()
+            )
             |> Result.bindAsync (fun _ ->
                 gameRepo.getGame gameId
                 |> thenBindAsync (fun game ->

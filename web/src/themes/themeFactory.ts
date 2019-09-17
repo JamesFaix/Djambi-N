@@ -53,7 +53,10 @@ export default class ThemeFactory {
                 p7: "gold",
                 placeholder: "#CCCC33",
                 neutral: "#555555"
-            }
+            },
+
+            infoBackground: "palegoldenrod",
+            errorBackground: "lightcoral"
         },
         images: {
             pieces: {

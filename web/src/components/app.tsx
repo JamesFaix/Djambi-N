@@ -17,6 +17,7 @@ import GameRedirectPage from './pages/gameRedirectPage';
 import GameResultsPage from './pages/gameResultsPage';
 import HomePage from './pages/homePage';
 import GamesSearchPage from './pages/gamesSearchPage';
+import NotificationsSection from './pageSections/notificationsSection';
 
 const App : React.SFC<{}> = _ => {
     return (
@@ -79,6 +80,7 @@ const App : React.SFC<{}> = _ => {
                     component={HomePage}
                 />
             </Switch>
+            <NotificationsSection/>
         </div>
     );
 };
