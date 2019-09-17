@@ -5,7 +5,7 @@ import * as Session from './session';
 import * as ActiveGame from './activeGame';
 import * as Boards from './boards';
 import * as ApiClient from './apiClient';
-import * as Errors from './errors';
+import * as Notifications from './notifications';
 import { combineReducers, Reducer, Store } from 'redux';
 import { Game, Board, StateAndEventResponse } from '../api/model';
 import CanvasTransformService, { CanvasTranformData } from '../viewModel/board/canvasTransformService';
@@ -25,7 +25,7 @@ export interface State {
     display : Display.State,
     apiClient : ApiClient.State,
     settings : Settings.State,
-    errors : Errors.State
+    notifications : Notifications.State
 }
 
 export const defaultState : State = {
@@ -37,7 +37,7 @@ export const defaultState : State = {
     display: Display.defaultState,
     apiClient: ApiClient.defaultState,
     settings: Settings.defaultState,
-    errors: Errors.defaultState
+    notifications: Notifications.defaultState
 }
 
 export interface CustomAction {
@@ -63,7 +63,7 @@ const combinedReducer : Reducer<State, CustomAction> = combineReducers({
     search: Search.reducer,
     session: Session.reducer,
     settings: Settings.reducer,
-    errors: Errors.reducer
+    notifications: Notifications.reducer
 });
 
 export function reducer(state: State, action : CustomAction) : State {

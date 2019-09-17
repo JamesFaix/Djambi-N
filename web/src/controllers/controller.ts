@@ -9,7 +9,7 @@ import * as StoreSession from '../store/session';
 import * as StoreBoards from '../store/boards';
 import * as StoreCreateGameForm from '../store/createGameForm';
 import * as StoreDisplay from '../store/display';
-import * as StoreErrors from '../store/errors';
+import * as StoreNotifications from '../store/notifications';
 import * as Api from '../api/client';
 import {
     GamesQuery,
@@ -41,6 +41,7 @@ import Images, { PieceImageInfo } from "../utilities/images";
 import Geometry from "../viewModel/board/geometry";
 import { Point } from "../viewModel/board/model";
 import { generateQuickGuid } from "../utilities/guids";
+import Copy from "../utilities/copy";
 
 //Encapsulates dispatching Redux actions and other side effects
 export default class Controller {
@@ -304,6 +305,31 @@ export default class Controller {
                 Controller.navigateTo(Routes.gameResults(g.id));
             }
         }
+
+        public static onGameUpdateReceived(response : StateAndEventResponse) : void {
+            const currentGame = Controller.state.activeGame.game;
+            const isForCurrentGame = currentGame && currentGame.id === response.game.id;
+
+            function getMessage(resp : StateAndEventResponse, isCurrentGame : boolean) {
+                const eventDesc = Copy.getEventDescription(resp.event, resp.game);
+
+                if (isCurrentGame) {
+                    return eventDesc;
+                } else {
+                    const game = resp.game;
+                    const gameDesc = game.parameters.description;
+                    const gameLabel = gameDesc ? gameDesc : `Game ${game.id}`
+                    return `In ${gameLabel}, ${eventDesc}`;
+                }
+            }
+
+            if (isForCurrentGame) {
+                Controller.Game.updateInProgressGame(response);
+            }
+
+            const message = getMessage(response, isForCurrentGame);
+            Controller.addNotification(StoreNotifications.NotificationType.Info, message);
+        }
     }
 
     public static Forms = class {
@@ -417,15 +443,19 @@ export default class Controller {
         }
     }
 
-    public static logError(message : string) {
-        const key = generateQuickGuid();
-        const act1 = StoreErrors.Actions.error(key, message);
-        const act2 = StoreErrors.Actions.errorExpired(key);
-        const errorDisplaySeconds = 5;
+    public static addNotification(type : StoreNotifications.NotificationType, message : string) {
+        const info : StoreNotifications.NotificationInfo = {
+            id: generateQuickGuid(),
+            message: message,
+            type: type
+        };
+        const add = StoreNotifications.Actions.addNotification(info);
+        const remove = StoreNotifications.Actions.removeNotification(info.id);
 
-        Controller.dispatch(act1);
+        const errorDisplaySeconds = 5;
+        Controller.dispatch(add);
         setTimeout(
-            () => Controller.dispatch(act2),
+            () => Controller.dispatch(remove),
             errorDisplaySeconds * 1000);
     }
 }

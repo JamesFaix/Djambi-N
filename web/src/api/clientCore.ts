@@ -4,6 +4,7 @@ import { AppStore } from '../store/root';
 import * as StoreApiClient from '../store/apiClient';
 import Controller from '../controllers/controller';
 import { generateQuickGuid } from '../utilities/guids';
+import { NotificationType } from '../store/notifications';
 
 export enum HttpMethod {
     Get = "GET",
@@ -90,8 +91,8 @@ export class ApiClientCore {
                             if (this.shouldLog()) {
                                 console.log(endpointDescription + " failed (" + errorMessage + ")");
                             }
-                            Controller.logError(errorMessage);
-                            throw [response.status, errorMessage];
+                            Controller.addNotification(NotificationType.Error, errorMessage);
+                            throw [response.status, errorMessage]; //Rethrow so other promises chained to this don't execute
                         });
                 }
             });

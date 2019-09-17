@@ -1,38 +1,53 @@
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { State as AppState } from '../../store/root';
-import BasicPageContentContainer from '../containers/basicPageContentContainer';
 import BasicPageContainer from '../containers/basicPageContainer';
 import Selectors from '../../selectors';
+import { NotificationInfo, NotificationType } from '../../store/notifications';
+import { Theme } from '../../themes/model';
 
 const NotificationsSection : React.SFC<{}> = _ => {
-    const errors = useSelector((state : AppState) => [...state.errors.errors.values()]);
+    const notifications = useSelector((state : AppState) => state.notifications.items);
 
-    if (errors.length === 0) {
+    if (notifications.length === 0) {
         return null;
     }
 
     return (
         <BasicPageContainer>
-            {errors.map((e, i) => <NotificationRow key={i} message={e}/>)}
+            {notifications.map((n, i) =>
+                <NotificationRow key={i} notification={n}/>)
+            }
         </BasicPageContainer>
     );
 }
 export default NotificationsSection;
 
-const NotificationRow : React.SFC<{ message : string }> = props => {
+const NotificationRow : React.SFC<{ notification : NotificationInfo }> = props => {
     const theme = Selectors.theme();
+    const n = props.notification;
     return (
         <div style={{
             border: theme.colors.border,
             borderWidth: "thin",
             borderStyle: "solid",
-            color: "red",
-            background: theme.colors.background,
-            padding: "10px"
+            color: theme.colors.text,
+            background: getBackgroundColor(n, theme),
+            padding: "10px",
+            opacity: 0.75
         }}
         >
-            {props.message}
+            {n.message}
         </div>
     )
+}
+
+function getBackgroundColor(notification : NotificationInfo, theme : Theme) : string {
+    switch (notification.type) {
+        case NotificationType.Error:
+            return "lightcoral";
+        case NotificationType.Info:
+        default:
+            return theme.colors.background;
+    }
 }

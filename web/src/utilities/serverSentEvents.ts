@@ -41,21 +41,9 @@ class SseClient {
         if (this.shouldLog()) {
             console.log("SSE Message");
         }
-
         const updateJson = e.data as string;
         const update = JSON.parse(updateJson) as StateAndEventResponse;
-
-        const state = this.store.getState();
-
-        const activeGame = state.activeGame.game;
-        const activeGameId = activeGame ? activeGame.id : null;
-
-        if (update.game.id === activeGameId) {
-            Controller.Game.updateInProgressGame(update);
-        } else {
-            console.log(`An event occurred in game ${update.game.id}`);
-            //TODO: Toast notification
-        }
+        Controller.Game.onGameUpdateReceived(update);
     }
 
     private onError(e : Event) {
