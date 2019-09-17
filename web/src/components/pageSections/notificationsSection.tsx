@@ -47,7 +47,6 @@ const NotificationRow : React.SFC<{ notification : NotificationInfo }> = props =
             color: theme.colors.text,
             background: getBackgroundColor(n, theme),
             padding: "10px",
-            opacity: 0.75
         }}
         >
             {n.message}
@@ -60,6 +59,7 @@ function getBackgroundColor(notification : NotificationInfo, theme : Theme) : st
         case NotificationType.Error:
             return "lightcoral";
         case NotificationType.Info:
+            return "palegoldenrod";
         default:
             return theme.colors.background;
     }
