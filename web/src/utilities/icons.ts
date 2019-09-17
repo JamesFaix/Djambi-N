@@ -30,7 +30,8 @@ import {
     faTrashAlt,
     faCog,
     faPlusSquare,
-    faMinusSquare
+    faMinusSquare,
+    faTimesCircle
 } from "@fortawesome/free-solid-svg-icons";
 import { PlayerStatus, GameStatus } from "../api/model";
 
@@ -126,6 +127,7 @@ export class Icons {
         public static readonly loadGame : IconInfo = { icon: faDoorOpen, title: "Load game" };
         public static readonly zoomIn : IconInfo = { icon: faPlusSquare, title: "Zoom in"};
         public static readonly zoomOut : IconInfo = { icon: faMinusSquare, title: "Zoom out"};
+        public static readonly dismiss : IconInfo = { icon: faTimesCircle, title: "Dismiss"};
     }
 
     public static readonly PlayerActions = class {

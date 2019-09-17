@@ -110,6 +110,18 @@ const DebugSettingsForm : React.SFC<{}> = _ => {
                         />
                     </td>
                 </tr>
+                <tr>
+                    <td>Seconds to display notifications</td>
+                    <td>
+                        <input
+                            type={HtmlInputTypes.Number}
+                            value={formData.showNotificationsSeconds}
+                            onChange={e => onUpdate({ ...formData, showNotificationsSeconds: Number(e.target.value) })}
+                            min={0}
+                            max={300} //5min
+                        />
+                    </td>
+                </tr>
             </tbody>
         </table>
     </>);

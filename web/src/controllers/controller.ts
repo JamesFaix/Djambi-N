@@ -308,27 +308,24 @@ export default class Controller {
 
         public static onGameUpdateReceived(response : StateAndEventResponse) : void {
             const currentGame = Controller.state.activeGame.game;
-            const isForCurrentGame = currentGame && currentGame.id === response.game.id;
-
-            function getMessage(resp : StateAndEventResponse, isCurrentGame : boolean) {
-                const eventDesc = Copy.getEventDescription(resp.event, resp.game);
-
-                if (isCurrentGame) {
-                    return eventDesc;
-                } else {
-                    const game = resp.game;
-                    const gameDesc = game.parameters.description;
-                    const gameLabel = gameDesc ? gameDesc : `Game ${game.id}`
-                    return `In ${gameLabel}, ${eventDesc}`;
-                }
-            }
-
-            if (isForCurrentGame) {
+            const isCurrentGame = currentGame && currentGame.id === response.game.id;
+            if (isCurrentGame) {
                 Controller.Game.updateInProgressGame(response);
             }
-
-            const message = getMessage(response, isForCurrentGame);
+            const message = Controller.Game.getGameUpdateNotificationMessage(response, isCurrentGame);
             Controller.addNotification(StoreNotifications.NotificationType.Info, message);
+        }
+
+        private static getGameUpdateNotificationMessage(response : StateAndEventResponse, isCurrentGame : boolean) : string {
+            const eventDesc = Copy.getEventDescription(response.event, response.game);
+            if (isCurrentGame) {
+                return eventDesc;
+            } else {
+                const game = response.game;
+                const gameDesc = game.parameters.description;
+                const gameLabel = gameDesc ? gameDesc : `Game ${game.id}`
+                return `In ${gameLabel}, ${eventDesc}`;
+            }
         }
     }
 
@@ -443,19 +440,24 @@ export default class Controller {
         }
     }
 
-    public static addNotification(type : StoreNotifications.NotificationType, message : string) {
+    public static addNotification(type : StoreNotifications.NotificationType, message : string) : void {
         const info : StoreNotifications.NotificationInfo = {
             id: generateQuickGuid(),
             message: message,
             type: type
         };
-        const add = StoreNotifications.Actions.addNotification(info);
-        const remove = StoreNotifications.Actions.removeNotification(info.id);
 
-        const errorDisplaySeconds = 5;
+        const add = StoreNotifications.Actions.addNotification(info);
         Controller.dispatch(add);
+
+        const displayMs = Controller.state.settings.debug.showNotificationsSeconds * 1000;
         setTimeout(
-            () => Controller.dispatch(remove),
-            errorDisplaySeconds * 1000);
+            () => Controller.removeNotification(info.id),
+            displayMs);
+    }
+
+    public static removeNotification(id : string) : void {
+        const remove = StoreNotifications.Actions.removeNotification(id);
+        Controller.dispatch(remove);
     }
 }

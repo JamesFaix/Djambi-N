@@ -21,7 +21,10 @@ interface ThemeColors {
     negativeButtonBackground : string,
 
     cells: ThemeCellColors,
-    players: ThemePlayerColors
+    players: ThemePlayerColors,
+
+    infoBackground : string,
+    errorBackground : string
 }
 
 interface ThemeCellColors {
