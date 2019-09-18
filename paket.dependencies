@@ -5,6 +5,7 @@ nuget Dapper 1.50.5
 nuget Giraffe 1.1.0
 nuget Microsoft.AspNetCore.Cors >= 2.0.0
 nuget Microsoft.AspNetCore.Server.Kestrel >= 2.0.0
+nuget Microsoft.AspNetCore.StaticFiles 2.2.0
 nuget Microsoft.Extensions.Configuration 2.2.0
 nuget Microsoft.Extensions.Configuration.Json 2.2.0
 nuget Microsoft.Extensions.Logging.Console >= 2.0.0
