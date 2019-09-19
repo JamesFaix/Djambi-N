@@ -6,6 +6,7 @@ open System.Threading.Tasks
 open Giraffe
 open Microsoft.AspNetCore.Http
 open Newtonsoft.Json
+open Serilog
 open Djambi.Api.Common
 open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
@@ -16,7 +17,8 @@ open Djambi.Api.Model.SessionModel
 type HttpHandler = HttpFunc -> HttpContext -> HttpContext option Task
 
 type HttpUtility(cookieDomain : string,
-                 sessionServ : ISessionService) =
+                 sessionServ : ISessionService,
+                 log : ILogger) =
 
     let converters =
         [|
@@ -59,7 +61,8 @@ type HttpUtility(cookieDomain : string,
     member x.handle<'a> (func : HttpContext -> 'a AsyncHttpResult) : HttpHandler =
 
         fun (next : HttpFunc) (ctx : HttpContext) ->
-            Console.WriteLine(printf "%s %s" ctx.Request.Method (ctx.Request.Path.ToString()))
+            let route = sprintf "%s %s" ctx.Request.Method (ctx.Request.Path.ToString())
+            log.Information(sprintf "API Req: %s" route)
             task {
                 try
                     let! result = func ctx
@@ -81,6 +84,13 @@ type HttpUtility(cookieDomain : string,
                     ctx.SetStatusCode 500
                     return! json ex.Message next ctx
             }
+            |> Task.map(fun x -> 
+                match x with 
+                | Some c ->
+                    log.Information(sprintf "API Rsp: %s %i" route c.Response.StatusCode)
+                | _ -> ()
+                x
+            )
 
     member x.getSessionOptionFromContext (ctx : HttpContext) : Session option AsyncHttpResult =
         let token = ctx.Request.Cookies.Item(x.cookieName)

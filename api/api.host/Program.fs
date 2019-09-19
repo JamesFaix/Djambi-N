@@ -5,10 +5,11 @@ open System.IO
 open System.Linq
 open Giraffe
 open Microsoft.AspNetCore.Builder
-open Microsoft.Extensions.Configuration
 open Microsoft.AspNetCore.Cors.Infrastructure
-open Microsoft.Extensions.DependencyInjection
 open Microsoft.AspNetCore.Hosting
+open Microsoft.Extensions.Configuration
+open Microsoft.Extensions.DependencyInjection
+open Microsoft.Extensions.FileProviders
 open Microsoft.Extensions.Logging
 open Newtonsoft.Json
 open Djambi.Api.Common.Json
@@ -16,21 +17,17 @@ open Djambi.Api.Db
 open Djambi.Api.Logic
 open Djambi.Api.Web
 open Djambi.Utilities
-open Microsoft.AspNetCore.Builder
-open Microsoft.Extensions.FileProviders
-open Microsoft.AspNetCore.Http
+open Serilog
 
-// ---------------------------------
-// Error handler
-// ---------------------------------
+let log = 
+    LoggerConfiguration()
+        .WriteTo.File("test.log")
+        .WriteTo.Console()
+        .CreateLogger()
 
-let errorHandler (ex : Exception) (logger : ILogger) =
-    logger.LogError(EventId(), ex, "An unhandled exception has occurred while executing the request.")
+let errorHandler (ex : Exception) (logger : Microsoft.Extensions.Logging.ILogger) =
+    logger.LogError(ex, "An unhandled exception has occurred while executing the request.")
     clearResponse >=> setStatusCode 500 >=> text ex.Message
-
-// ---------------------------------
-// Config and Main
-// ---------------------------------
 
 let env = Environment.load(5)
 let config = ConfigurationBuilder()
@@ -56,7 +53,7 @@ let configureNewtonsoft () =
     let settings = JsonSerializerSettings()
     settings.Converters <- converters.ToList()
     JsonConvert.DefaultSettings <- (fun () -> settings)
-
+    
 let configureFileServer(app : IApplicationBuilder) : IApplicationBuilder =
     app.UseDefaultFiles()
         .UseWhen(
@@ -72,8 +69,7 @@ let configureFileServer(app : IApplicationBuilder) : IApplicationBuilder =
                     path.StartsWith("/node_modules")
 
                 if isPublic then
-                    let msg = sprintf "GET %s" path
-                    Console.WriteLine msg
+                    log.Information(sprintf "File: GET %s" path)
 
                 isPublic
             ),
@@ -85,20 +81,23 @@ let configureFileServer(app : IApplicationBuilder) : IApplicationBuilder =
             )
         )
 
+let apiHandler =
+    let connStr = config.GetConnectionString("Main")
+                        .Replace("{sqlAddress}", env.sqlAddress)
+
+    let dbRoot = DbRoot(connStr)
+    let servRoot = ServiceRoot(dbRoot, log)
+    let manRoot = ManagerRoot(dbRoot, servRoot)
+    let webRoot = WebRoot(env.cookieDomain, manRoot, servRoot, log)
+    let routing = RoutingTable(webRoot)
+
+    routing.getHandler
+
 let configureApp (app : IApplicationBuilder) =
     //This will only provide custom serialization of responses to clients.
     //Custom deserialization of request bodies does not work that same way in this framework.
     //See HttpUtility for deserialization.
     configureNewtonsoft()
-
-    let connStr = config.GetConnectionString("Main")
-                        .Replace("{sqlAddress}", env.sqlAddress)
-
-    let dbRoot = DbRoot(connStr)
-    let servRoot = ServiceRoot(dbRoot)
-    let manRoot = ManagerRoot(dbRoot, servRoot)
-    let webRoot = WebRoot(env.cookieDomain, manRoot, servRoot)
-    let routing = RoutingTable(webRoot)
 
     configureFileServer(app)
         .UseGiraffeErrorHandler(errorHandler)
@@ -106,16 +105,11 @@ let configureApp (app : IApplicationBuilder) =
         //| true  -> app.UseDeveloperExceptionPage()
         //| false -> app.UseGiraffeErrorHandler errorHandler)
         .UseCors(configureCors)
-        .UseGiraffe(routing.getHandler)
-
+        .UseGiraffe(apiHandler)
 
 let configureServices (services : IServiceCollection) =
     services.AddCors()    |> ignore
     services.AddGiraffe() |> ignore
-
-let configureLogging (builder : ILoggingBuilder) =
-    let filter (l : LogLevel) = l.Equals LogLevel.Error
-    builder.AddFilter(filter).AddConsole().AddDebug() |> ignore
 
 [<EntryPoint>]
 let main _ =
@@ -128,7 +122,6 @@ let main _ =
         .UseWebRoot(webRoot)
         .ConfigureServices(configureServices)
         .Configure(Action<IApplicationBuilder> configureApp)
-        .ConfigureLogging(configureLogging)
         .Build()
         .Run()
     0

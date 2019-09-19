@@ -1,20 +1,20 @@
 namespace Djambi.Api.Logic.Services
 
-open System
 open System.Collections.Concurrent
+open Serilog
 open Djambi.Api.Common.Control
 open Djambi.Api.Logic.Interfaces
 
-type NotificationService() =
+type NotificationService(log : ILogger) =
     let subscribers = new ConcurrentDictionary<int, ISubscriber>()
 
     interface INotificationService with
         member x.add subscriber =
-            Console.WriteLine(printf "User %i subscribed to notifications" subscriber.userId)
+            log.Information(sprintf "SSE: User %i subscribed to notifications" subscriber.userId)
             subscribers.[subscriber.userId] <- subscriber
 
         member x.remove userId =
-            Console.WriteLine(printf "User %i unsubscribed from notifications" userId)
+            log.Information(sprintf "SSE: User %i unsubscribed from notifications" userId)
             subscribers.TryRemove userId
             |> ignore
 

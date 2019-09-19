@@ -1,20 +1,21 @@
 namespace Djambi.Api.Web.Controllers
 
+open System
+open System.Threading.Tasks
+open FSharp.Control.Tasks
 open Microsoft.AspNetCore.Http
 open Microsoft.Extensions.Primitives
+open Serilog
 open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Logic.Interfaces
-open Djambi.Api.Model
 open Djambi.Api.Web
 open Djambi.Api.Web.Interfaces
 open Djambi.Api.Web.Sse
-open FSharp.Control.Tasks
-open System.Threading.Tasks
-open System
 
 type NotificationController(u : HttpUtility,
-                            notificationService : INotificationService) =
+                            notificationService : INotificationService,
+                            log : ILogger) =
 
     let contentType = "text/event-stream"
     let checkForCloseDelay = TimeSpan.FromSeconds(3.0)
@@ -34,7 +35,7 @@ type NotificationController(u : HttpUtility,
                     ctx.Response.Body.Flush()
 
                     let userId = session.user.id
-                    let subscriber = SseSubscriber(userId, ctx.Response)
+                    let subscriber = SseSubscriber(userId, ctx.Response, log)
 
                     notificationService.add subscriber
 

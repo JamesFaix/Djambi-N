@@ -1,5 +1,6 @@
 namespace Djambi.Api.Web
 
+open Serilog
 open Djambi.Api.Logic.Interfaces
 open Djambi.Api.Web
 open Djambi.Api.Web.Controllers
@@ -7,12 +8,13 @@ open Djambi.Api.Web.Interfaces
 
 type WebRoot(cookieDomain : string,
              managers : IManagerRoot,
-             services : IServiceRoot) =
-    let _util = HttpUtility(cookieDomain, services.sessions)
+             services : IServiceRoot,
+             log : ILogger) =
+    let _util = HttpUtility(cookieDomain, services.sessions, log)
     let _boards = BoardController(managers.boards, _util)
     let _events = EventController(managers.events, _util)
     let _games = GameController(managers.games, _util)
-    let _notifications = NotificationController(_util, services.notifications)
+    let _notifications = NotificationController(_util, services.notifications, log)
     let _players = PlayerController(_util, managers.players)
     let _sessions = SessionController(_util, managers.sessions)
     let _snapshots = SnapshotController(_util, managers.snapshots)

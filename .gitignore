@@ -10,3 +10,4 @@ paket-files
 .paket/paket.bootstrapper.exe
 .ionide/symbolCache.db
 *.user
+*.log
