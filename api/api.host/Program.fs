@@ -12,12 +12,12 @@ open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.FileProviders
 open Microsoft.Extensions.Logging
 open Newtonsoft.Json
+open Serilog
 open Djambi.Api.Common.Json
 open Djambi.Api.Db
 open Djambi.Api.Logic
 open Djambi.Api.Web
 open Djambi.Utilities
-open Serilog
 
 let log = 
     LoggerConfiguration()
@@ -30,9 +30,13 @@ let errorHandler (ex : Exception) (logger : Microsoft.Extensions.Logging.ILogger
     clearResponse >=> setStatusCode 500 >=> text ex.Message
 
 let env = Environment.load(5)
-let config = ConfigurationBuilder()
-                 .AddJsonFile("appsettings.json", false, true)
-                 .Build()
+let config = 
+    ConfigurationBuilder()
+        .AddJsonFile("appsettings.json", false, true)
+        .Build()
+
+let enableWebServer = config.GetValue<bool>("AppSettings:EnableWebServer")
+let enableWebServerDevelopmentMode = config.GetValue<bool>("AppSettings:EnableWebServerDevelopmentMode")
 
 let configureCors (builder : CorsPolicyBuilder) =
     builder.WithOrigins(env.webAddress)
@@ -54,32 +58,33 @@ let configureNewtonsoft () =
     settings.Converters <- converters.ToList()
     JsonConvert.DefaultSettings <- (fun () -> settings)
     
-let configureFileServer(app : IApplicationBuilder) : IApplicationBuilder =
-    app.UseDefaultFiles()
-        .UseWhen(
-            (fun ctx ->
-                let path = ctx.Request.Path.ToString()
-                let isPublic =
-                    path.StartsWith("/resources") ||
-                    path.StartsWith("/dist") ||
-                    path = "/index.html" ||
+let configureWebServer(app : IApplicationBuilder) : IApplicationBuilder =
+    app.UseWhen(
+        (fun ctx ->
+            let path = ctx.Request.Path.ToString()
+            let mutable isPublic =
+                path.StartsWith("/resources") ||
+                path.StartsWith("/dist") ||
+                path = "/index.html"
 
-                    //This has to be allowed in development because of the React development packages.
-                    //TODO: Disable this in release configuration
-                    path.StartsWith("/node_modules")
+            if enableWebServerDevelopmentMode then
+                //This has to be allowed in development because of the React development packages.
+                //TODO: Disable this in release configuration
+                isPublic <- isPublic || path.StartsWith("/node_modules")
 
-                if isPublic then
-                    log.Information(sprintf "File: GET %s" path)
 
-                isPublic
-            ),
-            (fun a ->
-                let clientPath = Path.Combine(env.root, "web")
-                let sfOptions = StaticFileOptions()
-                sfOptions.FileProvider <- new PhysicalFileProvider(clientPath)
-                a.UseStaticFiles(sfOptions) |> ignore
-            )
+            if isPublic then
+                log.Information(sprintf "File: GET %s" path)
+
+            isPublic
+        ),
+        (fun a ->
+            let clientPath = Path.Combine(env.root, "web")
+            let sfOptions = StaticFileOptions()
+            sfOptions.FileProvider <- new PhysicalFileProvider(clientPath)
+            a.UseStaticFiles(sfOptions) |> ignore
         )
+    )
 
 let apiHandler =
     let connStr = config.GetConnectionString("Main")
@@ -97,13 +102,11 @@ let configureApp (app : IApplicationBuilder) =
     //This will only provide custom serialization of responses to clients.
     //Custom deserialization of request bodies does not work that same way in this framework.
     //See HttpUtility for deserialization.
+
     configureNewtonsoft()
 
-    configureFileServer(app)
+    (if enableWebServer then configureWebServer app else app)
         .UseGiraffeErrorHandler(errorHandler)
-        //(match env.IsDevelopment() with
-        //| true  -> app.UseDeveloperExceptionPage()
-        //| false -> app.UseGiraffeErrorHandler errorHandler)
         .UseCors(configureCors)
         .UseGiraffe(apiHandler)
 
@@ -113,13 +116,15 @@ let configureServices (services : IServiceCollection) =
 
 [<EntryPoint>]
 let main _ =
-    let webRoot = Path.Combine(env.root, "web")
+    let builder = 
+        WebHostBuilder()
+            .UseConfiguration(config)
+            .UseUrls(env.apiAddress)
+            .UseKestrel()
 
-    WebHostBuilder()
-        .UseConfiguration(config)
-        .UseUrls(env.apiAddress)
-        .UseKestrel()
-        .UseWebRoot(webRoot)
+    (if enableWebServer 
+    then builder.UseWebRoot(Path.Combine(env.root, "web"))
+    else builder)
         .ConfigureServices(configureServices)
         .Configure(Action<IApplicationBuilder> configureApp)
         .Build()
