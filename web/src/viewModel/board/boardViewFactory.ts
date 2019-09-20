@@ -261,7 +261,9 @@ export default class BoardViewFactory {
             const currentUserPlayerIds = game.players.filter(p => p.userId === user.id).map(p => p.id);
             const isCurrentUsersTurn = currentUserPlayerIds.includes(currentPlayerId);
 
-            const isSelected = turn && List.exists(turn.selections, s => s.cellId === c.id);
+            const isSelected = turn &&
+                isCurrentUsersTurn &&
+                List.exists(turn.selections, s => s.cellId === c.id);
             const isSelectable = turn &&
                 isCurrentUsersTurn &&
                 List.exists(turn.selectionOptions, cellId => cellId === c.id);
