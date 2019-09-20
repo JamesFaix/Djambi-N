@@ -1,14 +1,15 @@
 namespace Djambi.Api.Logic
 
+open Serilog
 open Djambi.Api.Db.Interfaces
 open Djambi.Api.Logic.Interfaces
 open Djambi.Api.Logic.Managers
 open Djambi.Api.Logic.Services
 
-type ServiceRoot(db : IDbRoot) =
+type ServiceRoot(db : IDbRoot, log : ILogger) =
     let _boards = BoardService()
     let _gameCrud = GameCrudService(db.games)
-    let _notifications = NotificationService()
+    let _notifications = NotificationService(log)
     let _players = PlayerService(db.games)
     let _selectionOptions = SelectionOptionsService()
     let _sessions = SessionService(db.sessions, db.users)

@@ -3,6 +3,7 @@ namespace Djambi.Api.Web.Sse
 open System
 open FSharp.Control.Tasks
 open Microsoft.AspNetCore.Http
+open Serilog
 open Djambi.Api.Common.Json
 open Djambi.Api.Logic.Interfaces
 open Djambi.Api.Model
@@ -15,7 +16,8 @@ type SseEvent =
     }
 
 type SseSubscriber(userId : int,
-                   httpResponse : HttpResponse) =
+                   httpResponse : HttpResponse,
+                   log : ILogger) =
 
     let writeField (name : string, value : string) =
         task {
@@ -49,5 +51,5 @@ type SseSubscriber(userId : int,
     interface ISubscriber with
         member x.userId = userId
         member x.send response =
-            Console.WriteLine(printf "Sending event to User %i" userId)
-            response |> mapReponseToSseEvent |> writeSseEvent 
+            log.Information(sprintf "SSE: Sending event to User %i" userId)
+            response |> mapReponseToSseEvent |> writeSseEvent

@@ -18,6 +18,7 @@ let all = "all"
 
 let checkForEnv = "check-env"
 
+let paketInstall = "paket-install"
 let paketRestore = "paket-restore"
 let buildApi = "build-api"
 let buildWeb = "build-web"
@@ -83,6 +84,10 @@ Target.create checkForEnv (fun _ ->
 
 Target.create paketRestore (fun _ ->
     Process.Start(".paket/paket.exe", "restore")
+    |> ignore
+)
+Target.create paketInstall (fun _ ->
+    Process.Start(".paket/paket.exe", "install")
     |> ignore
 )
 Target.create buildApi (dotnetBuild "api/api.host/api.host.fsproj")

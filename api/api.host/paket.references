@@ -1,8 +1,12 @@
+FSharp.Core
+Giraffe
 Microsoft.AspNetCore.Cors
 Microsoft.AspNetCore.Server.Kestrel
+Microsoft.AspNetCore.StaticFiles
 Microsoft.Extensions.Configuration.Json
 Microsoft.Extensions.Logging.Console
 Microsoft.Extensions.Logging.Debug
-Giraffe
 Newtonsoft.Json
-FSharp.Core
+Serilog
+Serilog.Sinks.Console
+Serilog.Sinks.File
