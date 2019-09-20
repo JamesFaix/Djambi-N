@@ -15,7 +15,7 @@ nuget Newtonsoft.Json 11.0.2
 nuget NUnit 3.11.0
 nuget NUnit3TestAdapter 3.10.0
 nuget Serilog 2.8.0
-nuget Serilog.Sinks.COnsole 3.1.1
+nuget Serilog.Sinks.Console 3.1.1
 nuget Serilog.Sinks.File 4.0.0
 nuget TaskBuilder.fs 2.1.0
 nuget xunit 2.3.1
