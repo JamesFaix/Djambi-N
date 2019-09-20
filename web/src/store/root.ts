@@ -147,7 +147,7 @@ function updateBoardView(state : State, game : Game) : void {
     }
 
     let bv = BoardViewFactory.createEmptyBoardView(board);
-    bv = BoardViewFactory.fillEmptyBoardView(bv, game);
+    bv = BoardViewFactory.fillEmptyBoardView(bv, game, state.session.user);
     const data : CanvasTranformData = {
         containerSize: state.display.boardContainerSize,
         canvasMargin: state.display.canvasMargin,

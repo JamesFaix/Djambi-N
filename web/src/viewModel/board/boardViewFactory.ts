@@ -11,7 +11,8 @@ import Geometry from "./geometry";
 import {
     Board,
     Location,
-    Game
+    Game,
+    User
 } from "../../api/model";
 import { List } from "../../utilities/collections";
 const Point = Geometry.Point;
@@ -252,11 +253,20 @@ export default class BoardViewFactory {
         return CellType.Even;
     }
 
-    public static fillEmptyBoardView(board : BoardView, game : Game) : BoardView {
+    public static fillEmptyBoardView(board : BoardView, game : Game, user : User) : BoardView {
         const newCells : CellView[] = board.cells.map(c => {
             const turn = game.currentTurn;
-            const isSelected = turn && List.exists(turn.selections, s => s.cellId === c.id);
-            const isSelectable = turn && List.exists(turn.selectionOptions, cellId => cellId === c.id);
+
+            const currentPlayerId = game.turnCycle[0];
+            const currentUserPlayerIds = game.players.filter(p => p.userId === user.id).map(p => p.id);
+            const isCurrentUsersTurn = currentUserPlayerIds.includes(currentPlayerId);
+
+            const isSelected = turn &&
+                isCurrentUsersTurn &&
+                List.exists(turn.selections, s => s.cellId === c.id);
+            const isSelectable = turn &&
+                isCurrentUsersTurn &&
+                List.exists(turn.selectionOptions, cellId => cellId === c.id);
             const piece = game.pieces.find(p => p.cellId === c.id);
             const owner = piece ? game.players.find(p => p.id === piece.playerId) : null;
             const colorId = owner ? owner.colorId : null;
