@@ -19,17 +19,22 @@ open Djambi.Api.Logic
 open Djambi.Api.Web
 open Djambi.Utilities
 
+let env = Environment.load(5)
+
 let log = 
+    let logPath = Path.Combine(env.root, "logs/server.log")
     LoggerConfiguration()
-        .WriteTo.File("test.log")
+        .WriteTo.File(logPath)
         .WriteTo.Console()
         .CreateLogger()
 
+log.Information("Starting server...")
+
 let errorHandler (ex : Exception) (logger : Microsoft.Extensions.Logging.ILogger) =
     logger.LogError(ex, "An unhandled exception has occurred while executing the request.")
+    log.Error(ex, "An unexpected error occurred.")
     clearResponse >=> setStatusCode 500 >=> text ex.Message
 
-let env = Environment.load(5)
 let config = 
     ConfigurationBuilder()
         .AddJsonFile("appsettings.json", false, true)
@@ -37,6 +42,10 @@ let config =
 
 let enableWebServer = config.GetValue<bool>("AppSettings:EnableWebServer")
 let enableWebServerDevelopmentMode = config.GetValue<bool>("AppSettings:EnableWebServerDevelopmentMode")
+let webRoot = Path.Combine(env.root, "web")
+
+if enableWebServer then
+    log.Information(sprintf "Web root path: %s" webRoot)
 
 let configureCors (builder : CorsPolicyBuilder) =
     builder.WithOrigins(env.webAddress)
@@ -59,19 +68,21 @@ let configureNewtonsoft () =
     JsonConvert.DefaultSettings <- (fun () -> settings)
     
 let configureWebServer(app : IApplicationBuilder) : IApplicationBuilder =
+    let isDefault (path : string) =
+        path = "/" || path = "/index.html"
+
     app.UseWhen(
         (fun ctx ->
             let path = ctx.Request.Path.ToString()
             let mutable isPublic =
                 path.StartsWith("/resources") ||
                 path.StartsWith("/dist") ||
-                path = "/index.html"
+                isDefault path
 
             if enableWebServerDevelopmentMode then
                 //This has to be allowed in development because of the React development packages.
                 //TODO: Disable this in release configuration
                 isPublic <- isPublic || path.StartsWith("/node_modules")
-
 
             if isPublic then
                 log.Information(sprintf "File: GET %s" path)
@@ -79,10 +90,12 @@ let configureWebServer(app : IApplicationBuilder) : IApplicationBuilder =
             isPublic
         ),
         (fun a ->
-            let clientPath = Path.Combine(env.root, "web")
             let sfOptions = StaticFileOptions()
-            sfOptions.FileProvider <- new PhysicalFileProvider(clientPath)
-            a.UseStaticFiles(sfOptions) |> ignore
+            sfOptions.FileProvider <- new PhysicalFileProvider(webRoot)
+            
+            a.UseDefaultFiles()
+                .UseStaticFiles(sfOptions) 
+                |> ignore
         )
     )
 
@@ -98,6 +111,10 @@ let apiHandler =
 
     routing.getHandler
 
+let configureServices (services : IServiceCollection) =
+    services.AddCors()    |> ignore
+    services.AddGiraffe() |> ignore
+
 let configureApp (app : IApplicationBuilder) =
     //This will only provide custom serialization of responses to clients.
     //Custom deserialization of request bodies does not work that same way in this framework.
@@ -110,21 +127,16 @@ let configureApp (app : IApplicationBuilder) =
         .UseCors(configureCors)
         .UseGiraffe(apiHandler)
 
-let configureServices (services : IServiceCollection) =
-    services.AddCors()    |> ignore
-    services.AddGiraffe() |> ignore
+    log.Information("Server started.")
 
 [<EntryPoint>]
 let main _ =
-    let builder = 
-        WebHostBuilder()
-            .UseConfiguration(config)
-            .UseUrls(env.apiAddress)
-            .UseKestrel()
-
-    (if enableWebServer 
-    then builder.UseWebRoot(Path.Combine(env.root, "web"))
-    else builder)
+    (WebHostBuilder()
+        .UseConfiguration(config)
+        .UseUrls(env.apiAddress)
+        .UseKestrel()
+        |> (fun b -> if enableWebServer then b.UseWebRoot(webRoot) else b)
+    )
         .ConfigureServices(configureServices)
         .Configure(Action<IApplicationBuilder> configureApp)
         .Build()
