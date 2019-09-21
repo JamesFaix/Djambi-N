@@ -3,6 +3,7 @@ namespace Djambi.Api.Logic.Services
 open System.Collections.Concurrent
 open Serilog
 open Djambi.Api.Common.Control
+open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Logic.Interfaces
 
 type NotificationService(log : ILogger) =
@@ -10,13 +11,17 @@ type NotificationService(log : ILogger) =
 
     interface INotificationService with
         member x.add subscriber =
-            log.Information(sprintf "SSE: User %i subscribed to notifications" subscriber.userId)
+            log.Information(sprintf "Notifications: User %i subscribed to notifications using %s" subscriber.userId (subscriber.GetType().Name))
             subscribers.[subscriber.userId] <- subscriber
 
         member x.remove userId =
-            log.Information(sprintf "SSE: User %i unsubscribed from notifications" userId)
-            subscribers.TryRemove userId
-            |> ignore
+            log.Information(sprintf "Notifications: User %i unsubscribed from notifications" userId)
+            match subscribers.TryGetValue userId with
+            | (true, s) -> 
+                s.Dispose()
+                subscribers.TryRemove userId
+                |> ignore
+            | _ -> ()
 
         member x.send response =
             let creatorId = response.event.createdBy.userId
@@ -33,5 +38,11 @@ type NotificationService(log : ILogger) =
 
             subscribers.Values
             |> Seq.filter (fun s -> otherUserIds |> List.contains s.userId)
-            |> Seq.map (fun s -> s.send response)
+            |> Seq.map (fun s -> 
+                s.send response
+                |> thenBindErrorAsync 500 (fun err ->
+                    (x :> INotificationService).remove s.userId
+                    okTask ()
+                )
+            )
             |> AsyncHttpResult.whenAll

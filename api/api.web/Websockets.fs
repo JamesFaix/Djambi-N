@@ -29,14 +29,18 @@ type WebsocketSubscriber(userId : int,
         let segment = new ArraySegment<byte>(buffer)
 
         if socket.State = WebSocketState.Open then            
-            socket.SendAsync(segment, WebSocketMessageType.Text, true, CancellationToken.None)
-            |> Task.toGeneric
-            |> Task.map (fun _ -> Ok ())
-        else
-            okTask () //Should close socket
+            try 
+                socket.SendAsync(segment, WebSocketMessageType.Text, true, CancellationToken.None)
+                |> Task.toGeneric
+                |> Task.map (fun _ -> Ok ())
+            with 
+            | _ -> errorTask <| HttpException(500, "Socket error")
+        else errorTask <| HttpException(500, "Socket closed")
     
     interface ISubscriber with
         member x.userId = userId
         member x.send response =
             log.Information(sprintf "WS: Sending event to User %i" userId)
             response |> mapResponseToWebsocketMessage |> writeMessage
+        member x.Dispose() =
+            socket.Dispose()

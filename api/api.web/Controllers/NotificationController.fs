@@ -35,7 +35,7 @@ type NotificationController(u : HttpUtility,
             ctx.Response.Body.Flush()
 
             let userId = session.user.id
-            let subscriber = SseSubscriber(userId, ctx.Response, log)
+            let subscriber = new SseSubscriber(userId, ctx.Response, log)
 
             notificationService.add subscriber
 
@@ -58,7 +58,7 @@ type NotificationController(u : HttpUtility,
             |> Task.bind (fun socket -> 
 
                 let userId = session.user.id
-                let subscriber = WebsocketSubscriber(userId, socket, log)
+                let subscriber = new WebsocketSubscriber(userId, socket, log)
                 notificationService.add subscriber
                 
                 let buffer : byte[] = Array.zeroCreate 4096

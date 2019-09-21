@@ -53,3 +53,5 @@ type SseSubscriber(userId : int,
         member x.send response =
             log.Information(sprintf "SSE: Sending event to User %i" userId)
             response |> mapReponseToSseEvent |> writeSseEvent
+        member x.Dispose() =
+            ()
