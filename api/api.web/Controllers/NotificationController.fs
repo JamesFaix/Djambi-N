@@ -1,6 +1,7 @@
 namespace Djambi.Api.Web.Controllers
 
 open System
+open System.Threading
 open System.Threading.Tasks
 open FSharp.Control.Tasks
 open Microsoft.AspNetCore.Http
@@ -12,6 +13,7 @@ open Djambi.Api.Logic.Interfaces
 open Djambi.Api.Web
 open Djambi.Api.Web.Interfaces
 open Djambi.Api.Web.Sse
+open Djambi.Api.Web.Websockets
 
 type NotificationController(u : HttpUtility,
                             notificationService : INotificationService,
@@ -24,10 +26,10 @@ type NotificationController(u : HttpUtility,
          if (ctx.Request.Headers.["Accept"] <> StringValues(contentType))
          then Error <| HttpException(400, sprintf "Accept header must be '%s'." contentType)
          else Ok ()
-
+         
     interface INotificationsController with
-        member x.getNotificationsForCurrentUser =
-            let func (ctx : HttpContext) =
+        member x.connectSse =
+            let f (ctx : HttpContext) : unit AsyncHttpResult =
                 checkAcceptHeader ctx
                 |> Result.bindAsync (fun _ -> u.getSessionFromContext ctx)
                 |> thenMap (fun session ->
@@ -35,7 +37,7 @@ type NotificationController(u : HttpUtility,
                     ctx.Response.Body.Flush()
 
                     let userId = session.user.id
-                    let subscriber = SseSubscriber(userId, ctx.Response, log)
+                    let subscriber = new SseSubscriber(userId, ctx.Response, log)
 
                     notificationService.add subscriber
 
@@ -50,4 +52,26 @@ type NotificationController(u : HttpUtility,
                         return Ok ()
                     }
                 )
-            u.handle func
+            u.handle f
+
+        member x.connectWebSockets =
+            let f (ctx : HttpContext) : unit AsyncHttpResult = 
+                if not ctx.WebSockets.IsWebSocketRequest
+                then
+                    errorTask <| HttpException(400, "This endpoint requires a websocket request.")
+                else
+                    u.getSessionFromContext ctx
+                    |> thenBindAsync (fun session -> 
+                        ctx.WebSockets.AcceptWebSocketAsync()
+                        |> Task.bind (fun socket -> 
+
+                            let userId = session.user.id
+                            let subscriber = new WebsocketSubscriber(userId, socket, log)
+                            notificationService.add subscriber
+                
+                            let buffer : byte[] = Array.zeroCreate 4096
+                            socket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None)
+                        )
+                        |> Task.map (fun _ -> Ok ())
+                    )
+            u.handle f

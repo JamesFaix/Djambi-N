@@ -94,4 +94,7 @@ module Djambi.Api.Logic.Interfaces.Routes
  let snapshotLoadFormat = create2<int, int>(snapshotLoad)
 
  [<Literal>]
- let notificationsForCurrentUser = "/notifications"
+ let notificationsSse = "/notifications/sse"
+
+ [<Literal>]
+ let notificationsWebSockets = "/notifications/ws"

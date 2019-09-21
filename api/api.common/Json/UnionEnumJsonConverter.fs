@@ -26,7 +26,9 @@ type UnionEnumJsonConverter() =
                         t : Type,
                         existingValue : obj,
                         serializer : JsonSerializer) : obj =
-        let text = reader.Value.ToString()
-        let cases = FSharpType.GetUnionCases t
-        let case = cases |> Seq.find (fun c -> c.Name = text)
-        FSharpValue.MakeUnion(case, [||])
+        if reader.Value = null then null
+        else
+            let text = reader.Value.ToString()
+            let cases = FSharpType.GetUnionCases t
+            let case = cases |> Seq.find (fun c -> c.Name = text)
+            FSharpValue.MakeUnion(case, [||])

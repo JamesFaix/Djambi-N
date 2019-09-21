@@ -1,10 +1,12 @@
 namespace Djambi.Api.Logic.Interfaces
 
+open System
 open Djambi.Api.Common.Control
 open Djambi.Api.Model
 open Djambi.ClientGenerator.Annotations
 
 type ISubscriber =
+    inherit IDisposable
     abstract member userId : int
     abstract member send : response:StateAndEventResponse -> unit AsyncHttpResult
 

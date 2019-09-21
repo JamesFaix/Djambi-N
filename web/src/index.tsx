@@ -8,10 +8,10 @@ import thunk from 'redux-thunk';
 import "./styles/styles.less";
 import { ApiClientCore } from './api/clientCore';
 import * as StoreRoot from './store/root';
-import { SseClientManager } from './utilities/serverSentEvents';
 import Copy from './utilities/copy';
 import { createHashHistory } from 'history';
 import Controller from './controllers/controller';
+import NotificationsService, { NotificationStrategyType } from './notifications/notifications';
 
 const store = createStore(
     StoreRoot.reducer,
@@ -21,9 +21,12 @@ const store = createStore(
 const history = createHashHistory();
 
 ApiClientCore.init(store);
-SseClientManager.init(() => store.getState().settings.debug.logSse);
 Copy.init(store);
 Controller.init(store, history);
+
+NotificationsService.init(
+    NotificationStrategyType.WebSockets,
+    () => store.getState().settings.debug.logSse);
 
 render(
     <Provider store={store}>

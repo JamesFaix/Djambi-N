@@ -4,6 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Websockets.fs" />
     <Compile Include="HttpUtility.fs" />
     <Compile Include="ServerSideEvents.fs" />
     <Compile Include="Controllers\BoardController.fs" />
