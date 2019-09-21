@@ -17,7 +17,8 @@ type IGameController =
     abstract member startGame : gameId:int -> HttpHandler
 
 type INotificationsController =
-    abstract member getNotificationsForCurrentUser : HttpHandler
+    abstract member connectWebSockets : HttpHandler
+    abstract member connectSse : HttpHandler
 
 type IPlayerController =
     abstract member addPlayer : gameId:int -> HttpHandler

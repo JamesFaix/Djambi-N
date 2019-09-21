@@ -52,7 +52,7 @@ type RoutingTable (web : IWebRoot) =
                     POST >=> routef Routes.snapshotLoadFormat web.snapshots.loadSnapshot
 
                 //Notifications
-                    GET >=> route Routes.notificationsForCurrentUser >=> web.notifications.getNotificationsForCurrentUser
-                    CONNECT >=> route Routes.notificationsForCurrentUser >=> web.notifications.getNotificationsForCurrentUser
+                    GET >=> route Routes.notificationsSse >=> web.notifications.connectSse
+                    CONNECT >=> route Routes.notificationsWebSockets >=> web.notifications.connectWebSockets
                 ])
             setStatusCode 404 >=> text "Not Found" ]
