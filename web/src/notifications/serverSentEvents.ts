@@ -2,15 +2,14 @@ import Environment from "../environment";
 import { StateAndEventResponse } from "../api/model";
 import Controller from "../controllers/controller";
 import { NotificationType } from "../store/notifications";
+import { NotificationStrategy, LogSink } from "./notifications";
 
 class SseClient {
     private readonly source : EventSource;
-    private readonly shouldLog : () => boolean;
+    private readonly log : LogSink;
 
-    constructor(
-        shouldLog : () => boolean
-    ) {
-        this.shouldLog = shouldLog;
+    constructor(log : LogSink) {
+        this.log = log;
 
         const s = new EventSource(
             Environment.apiAddress() + "/notifications/sse",
@@ -27,15 +26,11 @@ class SseClient {
     }
 
     private onOpen(e : Event) {
-        if (this.shouldLog()) {
-            console.log("SSE Open");
-        }
+        this.log("SSE Open");
     }
 
     private onMessage(e : MessageEvent) {
-        if (this.shouldLog()) {
-            console.log("SSE Message");
-        }
+        this.log("SSE Message");
         const updateJson = e.data as string;
         const update = JSON.parse(updateJson) as StateAndEventResponse;
         Controller.Game.onGameUpdateReceived(update);
@@ -43,49 +38,30 @@ class SseClient {
 
     private onError(e : Event) {
         Controller.addNotification(NotificationType.Error, "Server-sent event error");
-        if (this.shouldLog()) {
-            console.log("SSE Error");
-            console.log(e);
-        }
+        this.log("SSE Error");
     }
 }
 
-export class SseClientManager {
-    private static client : SseClient = null;
-    private static isInit : boolean = false;
-    private static shouldLog : () => boolean;
+export class ServerSentEventsStrategy implements NotificationStrategy {
+    private client : SseClient = null;
+    private readonly log : LogSink;
 
-    public static init(
-        shouldLog : () => boolean
-    ) : void {
-        if (this.isInit) {
-            throw "Cannot initialize more than once.";
-        }
-
-        this.isInit = true;
-        this.shouldLog = shouldLog;
+    constructor(log : LogSink){
+        this.log = log;
     }
 
-    public static connect() {
-        if (!this.isInit) {
-            throw "Cannot connect if not initilaized.";
-        }
-
-        if (SseClientManager.client) {
+    public connect() {
+        if (this.client) {
             this.disconnect();
         }
 
-        this.client = new SseClient(this.shouldLog);
+        this.client = new SseClient(this.log);
     }
 
-    public static disconnect() {
-        if (!this.isInit) {
-            throw "Cannot disconnect if not initilaized.";
-        }
-
-        if (SseClientManager.client) {
-            SseClientManager.client.dispose();
-            SseClientManager.client = null;
+    public disconnect() {
+        if (this.client) {
+            this.client.dispose();
+            this.client = null;
         }
     }
 }

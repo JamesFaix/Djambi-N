@@ -53,6 +53,6 @@ type RoutingTable (web : IWebRoot) =
 
                 //Notifications
                     GET >=> route Routes.notificationsSse >=> web.notifications.connectSse
-                    CONNECT >=> route Routes.notificationsWebSockets >=> web.notifications.connectWebSockets
+                    GET >=> route Routes.notificationsWebSockets >=> web.notifications.connectWebSockets
                 ])
             setStatusCode 404 >=> text "Not Found" ]

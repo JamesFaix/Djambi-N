@@ -1,16 +1,14 @@
 import Environment from "../environment";
 import { StateAndEventResponse } from "../api/model";
 import Controller from "../controllers/controller";
-import { NotificationStrategy } from "./notifications";
+import { NotificationStrategy, LogSink } from "./notifications";
 
 class WebSocketClient {
     private readonly socket : WebSocket;
-    private readonly shouldLog : () => boolean;
+    private readonly log : LogSink;
 
-    constructor(
-        shouldLog : () => boolean
-    ) {
-        this.shouldLog = shouldLog;
+    constructor(log : LogSink) {
+        this.log = log;
 
         const url = `${Environment.apiAddress()}/notifications/ws`
             .replace("http:", "ws:");
@@ -21,35 +19,32 @@ class WebSocketClient {
         this.socket = s;
     }
 
+    public dispose() : void {
+        this.socket.close();
+    }
+
     private onOpen() {
-        if (this.shouldLog()) {
-            console.log("WebSocket open");
-        }
+        this.log("WebSocket open");
     }
 
     private onMessage(e : MessageEvent) {
-        if (this.shouldLog()) {
-            console.log("WebSocket message");
-        }
-
+        this.log("WebSocket message");
         const updateJson = e.data as string;
         const update = JSON.parse(updateJson) as StateAndEventResponse;
         Controller.Game.onGameUpdateReceived(update);
     }
 
     private onClose() {
-        if (this.shouldLog()) {
-            console.log("WebSocket close");
-        }
+        this.log("WebSocket closed");
     }
 }
 
-export class WebSocketStrategy implements NotificationStrategy {
+export class WebSocketsStrategy implements NotificationStrategy {
     private client : WebSocketClient = null;
-    private shouldLog : () => boolean;
+    private readonly log : LogSink;
 
-    constructor(shouldLog) {
-        this.shouldLog = shouldLog;
+    constructor(log : LogSink) {
+        this.log = log;
     }
 
     public connect() {
@@ -57,12 +52,12 @@ export class WebSocketStrategy implements NotificationStrategy {
             this.disconnect();
         }
 
-        this.client = new WebSocketClient(this.shouldLog);
+        this.client = new WebSocketClient(this.log);
     }
 
     public disconnect() {
         if (this.client) {
-       //     WebSocketClientManager.client.dispose();
+            this.client.dispose();
             this.client = null;
         }
     }

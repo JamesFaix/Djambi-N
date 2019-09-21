@@ -11,7 +11,7 @@ import * as StoreRoot from './store/root';
 import Copy from './utilities/copy';
 import { createHashHistory } from 'history';
 import Controller from './controllers/controller';
-import NotificationsService from './notifications/notifications';
+import NotificationsService, { NotificationStrategyType } from './notifications/notifications';
 
 const store = createStore(
     StoreRoot.reducer,
@@ -21,9 +21,12 @@ const store = createStore(
 const history = createHashHistory();
 
 ApiClientCore.init(store);
-NotificationsService.init(() => store.getState().settings.debug.logSse);
 Copy.init(store);
 Controller.init(store, history);
+
+NotificationsService.init(
+    NotificationStrategyType.WebSockets,
+    () => store.getState().settings.debug.logSse);
 
 render(
     <Provider store={store}>
