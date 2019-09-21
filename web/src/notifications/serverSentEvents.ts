@@ -13,7 +13,7 @@ class SseClient {
         this.shouldLog = shouldLog;
 
         const s = new EventSource(
-            Environment.apiAddress() + "/notifications",
+            Environment.apiAddress() + "/notifications/sse",
             { withCredentials: true }
         );
         s.onopen = e => this.onOpen(e);

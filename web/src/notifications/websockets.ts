@@ -1,6 +1,7 @@
 import Environment from "../environment";
 import { StateAndEventResponse } from "../api/model";
 import Controller from "../controllers/controller";
+import { NotificationStrategy } from "./notifications";
 
 class WebSocketClient {
     private readonly socket : WebSocket;
@@ -11,7 +12,7 @@ class WebSocketClient {
     ) {
         this.shouldLog = shouldLog;
 
-        const url = `${Environment.apiAddress()}/notifications`
+        const url = `${Environment.apiAddress()}/notifications/ws`
             .replace("http:", "ws:");
         const s = new WebSocket(url);
         s.onopen = () => this.onOpen();
@@ -43,42 +44,26 @@ class WebSocketClient {
     }
 }
 
-export class WebSocketClientManager {
-    private static client : WebSocketClient = null;
-    private static isInit : boolean = false;
-    private static shouldLog : () => boolean;
+export class WebSocketStrategy implements NotificationStrategy {
+    private client : WebSocketClient = null;
+    private shouldLog : () => boolean;
 
-    public static init(
-        shouldLog : () => boolean
-    ) : void {
-        if (this.isInit) {
-            throw "Cannot initialize more than once.";
-        }
-
-        this.isInit = true;
+    constructor(shouldLog) {
         this.shouldLog = shouldLog;
     }
 
-    public static connect() {
-        if (!this.isInit) {
-            throw "Cannot connect if not initilaized.";
-        }
-
-        if (WebSocketClientManager.client) {
+    public connect() {
+        if (this.client) {
             this.disconnect();
         }
 
         this.client = new WebSocketClient(this.shouldLog);
     }
 
-    public static disconnect() {
-        if (!this.isInit) {
-            throw "Cannot disconnect if not initilaized.";
-        }
-
-        if (WebSocketClientManager.client) {
+    public disconnect() {
+        if (this.client) {
        //     WebSocketClientManager.client.dispose();
-            WebSocketClientManager.client = null;
+            this.client = null;
         }
     }
 }
