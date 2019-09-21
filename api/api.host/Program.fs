@@ -125,6 +125,7 @@ let configureApp (app : IApplicationBuilder) =
     (if enableWebServer then configureWebServer app else app)
         .UseGiraffeErrorHandler(errorHandler)
         .UseCors(configureCors)
+        .UseWebSockets()
         .UseGiraffe(apiHandler)
 
     log.Information("Server started.")

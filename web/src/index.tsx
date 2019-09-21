@@ -12,6 +12,7 @@ import { SseClientManager } from './utilities/serverSentEvents';
 import Copy from './utilities/copy';
 import { createHashHistory } from 'history';
 import Controller from './controllers/controller';
+import { WebSocketClientManager } from './utilities/websockets';
 
 const store = createStore(
     StoreRoot.reducer,
@@ -21,7 +22,7 @@ const store = createStore(
 const history = createHashHistory();
 
 ApiClientCore.init(store);
-SseClientManager.init(() => store.getState().settings.debug.logSse);
+WebSocketClientManager.init(() => store.getState().settings.debug.logSse);
 Copy.init(store);
 Controller.init(store, history);
 

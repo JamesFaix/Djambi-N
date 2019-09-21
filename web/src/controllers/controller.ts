@@ -42,6 +42,7 @@ import Geometry from "../viewModel/board/geometry";
 import { Point } from "../viewModel/board/model";
 import { generateQuickGuid } from "../utilities/guids";
 import Copy from "../utilities/copy";
+import { WebSocketClientManager } from "../utilities/websockets";
 
 //Encapsulates dispatching Redux actions and other side effects
 export default class Controller {
@@ -139,7 +140,8 @@ export default class Controller {
         public static onUnauthorized() : void {
             Controller.dispatch(StoreSession.Actions.logout());
             Controller.navigateTo(Routes.login);
-            SseClientManager.disconnect();
+//            SseClientManager.disconnect();
+            WebSocketClientManager.disconnect();
         }
 
         public static async signup(request : CreateUserRequest) : Promise<void> {
@@ -188,7 +190,8 @@ export default class Controller {
         }
 
         private static finishLoginSetup(user : User) : Promise<void> {
-            SseClientManager.connect();
+//            SseClientManager.connect();
+            WebSocketClientManager.connect();
             Controller.Display.loadSavedTheme();
             Controller.Settings.loadAndApply();
             return Controller.Search.loadRecentGames(user);

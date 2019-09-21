@@ -53,5 +53,6 @@ type RoutingTable (web : IWebRoot) =
 
                 //Notifications
                     GET >=> route Routes.notificationsForCurrentUser >=> web.notifications.getNotificationsForCurrentUser
+                    CONNECT >=> route Routes.notificationsForCurrentUser >=> web.notifications.getNotificationsForCurrentUser
                 ])
             setStatusCode 404 >=> text "Not Found" ]
