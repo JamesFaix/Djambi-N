@@ -50,7 +50,7 @@ type IGameManager =
 
 type ISearchManager =
     [<ClientFunction(HttpMethod.Post, Routes.searchGames, ClientSection.Search)>]
-    abstract member searchGames : query:GamesQuery -> session:Session -> Game list AsyncHttpResult
+    abstract member searchGames : query:GamesQuery -> session:Session -> SearchGame list AsyncHttpResult
 
 type IPlayerManager =
     [<ClientFunction(HttpMethod.Post, Routes.players, ClientSection.Player)>]

@@ -117,7 +117,7 @@ module Commands =
             .param("IsPublic", isPublic)
             .param("AllowGuests", allowGuests)
             .param("GameStatusId", gameStatusId)
-            .returnsMany<GameSqlModel>()
+            .returnsMany<SearchGameSqlModel>()
 
     let getPlayers (gameIds : Int32ListTvp, playerId : int option) =
         proc("Players_Get")

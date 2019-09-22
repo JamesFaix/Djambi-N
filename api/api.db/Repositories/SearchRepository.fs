@@ -9,4 +9,4 @@ type SearchRepository(ctxProvider : CommandContextProvider) =
         member x.searchGames query =
             Commands2.searchGames query
             |> Command.execute ctxProvider
-            |> thenMap (List.map Mapping.mapGameResponse)
+            |> thenMap (List.map Mapping.mapSearchGameResponse)

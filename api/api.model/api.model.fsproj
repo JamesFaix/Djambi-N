@@ -11,6 +11,7 @@
     <Compile Include="GameRequestModel.fs" />
     <Compile Include="EventModel.fs" />
     <Compile Include="SnapshotModel.fs" />
+    <Compile Include="SearchModel.fs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\utils\client-generator.annotations\client-generator.annotations.fsproj" />
