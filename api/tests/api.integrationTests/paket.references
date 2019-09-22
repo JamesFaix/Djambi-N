@@ -1,5 +1,6 @@
+FSharp.Core
 Microsoft.Extensions.Configuration.Json
 Microsoft.NET.Test.Sdk
+Serilog
 xunit
 xunit.runner.visualstudio
-FSharp.Core

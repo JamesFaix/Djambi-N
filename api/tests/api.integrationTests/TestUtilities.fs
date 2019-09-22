@@ -5,6 +5,7 @@ open System
 open System.Linq
 open FSharp.Control.Tasks
 open Microsoft.Extensions.Configuration
+open Serilog
 open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Db
@@ -24,14 +25,25 @@ let connectionString =
     config.GetConnectionString("Main")
             .Replace("{sqlAddress}", env.sqlAddress)
 
+let log = LoggerConfiguration().CreateLogger()
 let db = DbRoot(connectionString) :> IDbRoot
-let services = ServiceRoot(db)
+let services = ServiceRoot(db, log)
 let managers = ManagerRoot(db, services) :> IManagerRoot
+
+let random = Random()
+let randomAlphanumericString (length : int) : string =
+    let chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+    let charsLen = chars.Length
+    let randomChars = 
+        [|for i in 0..length-1 -> 
+            chars.[random.Next(charsLen)]
+        |]
+    String(randomChars)
 
 let getCreateUserRequest() : CreateUserRequest =
     {
-        name = "Test_" + Guid.NewGuid().ToString()
-        password = Guid.NewGuid().ToString()
+        name = "Test_" + (randomAlphanumericString 15)
+        password = randomAlphanumericString 20
     }
 
 let getLoginRequest(userRequest : CreateUserRequest) : LoginRequest =
