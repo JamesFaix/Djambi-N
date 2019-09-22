@@ -75,10 +75,10 @@ type GetGamesTests() =
             //Arrange
             let! (user1, _, game1) = TestUtilities.createuserSessionAndGame(false) |> thenValue
             let! (user2, _, game2) = TestUtilities.createuserSessionAndGame(false) |> thenValue
-            let adminSession = getSessionForUser 3 |> TestUtilities.setSessionPrivileges [EditPendingGames; ViewGames]
+            let adminSession = getSessionForUser user1.id |> TestUtilities.setSessionPrivileges [EditPendingGames; ViewGames]
 
             let playerRequest = { getCreatePlayerRequest with userId = Some user2.id }
-            let! _ = managers.players.addPlayer game1.id playerRequest adminSession
+            let! _ = managers.players.addPlayer game1.id playerRequest adminSession |> thenValue
 
             let query = { GamesQuery.empty with playerUserName = Some user2.name }
 
