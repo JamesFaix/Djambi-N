@@ -103,6 +103,22 @@ module Commands =
             .param("GameStatusId", gameStatusId)
             //Open for Commands2 to close
 
+    let searchGames(descriptionContains : string option,
+                    createdByUserName : string option,
+                    playerUserName : string option,
+                    isPublic : bool option,
+                    allowGuests : bool option,
+                    gameStatusId : byte option) =
+        proc("Games_Search")
+            .forEntity("Game")
+            .param("DescriptionContains", descriptionContains)
+            .param("CreatedByUserName", createdByUserName)
+            .param("PlayerUserName", playerUserName)
+            .param("IsPublic", isPublic)
+            .param("AllowGuests", allowGuests)
+            .param("GameStatusId", gameStatusId)
+            .returnsMany<GameSqlModel>()
+
     let getPlayers (gameIds : Int32ListTvp, playerId : int option) =
         proc("Players_Get")
             .forEntity("Player")
@@ -293,6 +309,14 @@ module Commands2 =
                                      query.allowGuests,
                                      query.status |> Option.map mapGameStatusToId)
         cmd.returnsMany<GameSqlModel>()
+
+    let searchGames (query : GamesQuery) =
+        Commands.searchGames (query.descriptionContains,
+                              query.createdByUserName,
+                              query.playerUserName,
+                              query.isPublic,
+                              query.allowGuests,
+                              query.status |> Option.map mapGameStatusToId)
 
     let getGame (gameId : int) =
         let cmd = Commands.getGames (Some gameId, None, None, None, None, None, None)

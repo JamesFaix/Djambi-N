@@ -20,6 +20,7 @@ type ServiceRoot(db : IDbRoot, log : ILogger) =
     let _playerStatusChanges = PlayerStatusChangeService(_events, _indirectEffects)
     let _selections = SelectionService(_selectionOptions)
     let _turns = TurnService(_events, _indirectEffects, _selectionOptions)
+    let _security = SecurityService()
 
     member x.boards = _boards
     member x.events = _events
@@ -29,6 +30,7 @@ type ServiceRoot(db : IDbRoot, log : ILogger) =
     member x.notifications = _notifications
     member x.players = _players
     member x.playerStatusChanges = _playerStatusChanges
+    member x.security = _security
     member x.selectionOptions = _selectionOptions
     member x.selections = _selections
     member x.sessions = _sessions
@@ -50,13 +52,16 @@ type ManagerRoot(db : IDbRoot, services : ServiceRoot) =
                              services.players,
                              services.playerStatusChanges,
                              services.selections,
-                             services.turns)
+                             services.turns,
+                             services.security)
+    let _search = SearchManager(db.search, services.security)
     let _sessions = SessionManager(services.sessions)
     let _snapshots = SnapshotManager(db.events, db.games, db.snapshots)
     let _users = UserManager(services.users)
 
     member x.boards = _boards
     member x.games = _games
+    member x.search = _search
     member x.sessions = _sessions
     member x.snapshots = _snapshots
     member x.users = _users
@@ -66,6 +71,7 @@ type ManagerRoot(db : IDbRoot, services : ServiceRoot) =
         member x.events = x.games :> IEventManager
         member x.games = x.games :> IGameManager
         member x.players = x.games :> IPlayerManager
+        member x.search = x.search :> ISearchManager
         member x.sessions = x.sessions :> ISessionManager
         member x.snapshots = x.snapshots :> ISnapshotManager
         member x.turns = x.games :> ITurnManager

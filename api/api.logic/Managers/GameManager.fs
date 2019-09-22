@@ -18,13 +18,8 @@ type GameManager(eventRepo : IEventRepository,
                  playerServ : PlayerService,
                  playerStatusChangeServ : PlayerStatusChangeService,
                  selectionServ : SelectionService,
-                 turnServ : TurnService) =
-
-    let isGameViewableByActiveUser (session : Session) (game : Game) : bool =
-        let self = session.user
-        game.parameters.isPublic
-        || game.createdBy.userId = self.id
-        || game.players |> List.exists(fun p -> p.userId = Some self.id)
+                 turnServ : TurnService,
+                 securityServ : SecurityService) =
 
     let isPublishable (event : Event) : bool =
         match event.kind with
@@ -106,14 +101,14 @@ type GameManager(eventRepo : IEventRepository,
             |> thenMap (fun games ->
                 if session.user.has ViewGames
                 then games
-                else games |> List.filter (isGameViewableByActiveUser session)
+                else games |> List.filter (securityServ.isGameViewableByActiveUser session)
             )
 
         //TODO: Requires integration tests
         member x.getGame gameId session =
             gameRepo.getGame gameId
             |> thenBind (fun game ->
-                if isGameViewableByActiveUser session game
+                if securityServ.isGameViewableByActiveUser session game
                 then Ok <| game
                 else Error <| HttpException(404, "Game not found.")
             )

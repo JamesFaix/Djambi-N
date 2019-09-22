@@ -98,3 +98,6 @@ module Djambi.Api.Logic.Interfaces.Routes
 
  [<Literal>]
  let notificationsWebSockets = "/notifications/ws"
+
+ [<Literal>]
+ let searchGames = "/search/games"

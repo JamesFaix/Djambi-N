@@ -12,6 +12,7 @@
     <Compile Include="ModelExtensions\BoardModelExtensions.fs" />
     <Compile Include="ModelExtensions\BoardModelUtility.fs" />
     <Compile Include="ModelExtensions\GameModelExtensions.fs" />
+    <Compile Include="Services\SecurityService.fs" />
     <Compile Include="Services\NotificationService.fs" />
     <Compile Include="Services\UserService.fs" />
     <Compile Include="Services\SessionService.fs" />
@@ -25,6 +26,7 @@
     <Compile Include="Services\IndirectEffectsService.fs" />
     <Compile Include="Services\TurnService.fs" />
     <Compile Include="Services\PlayerStatusChangeService.fs" />
+    <Compile Include="Managers\SearchManager.fs" />
     <Compile Include="Managers\BoardManager.fs" />
     <Compile Include="Managers\GameManager.fs" />
     <Compile Include="Managers\SessionManager.fs" />
@@ -32,6 +34,7 @@
     <Compile Include="Managers\UserManager.fs" />
     <Compile Include="LogicRoot.fs" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\api.common\api.common.fsproj" />
     <ProjectReference Include="..\api.db.interfaces\api.db.interfaces.fsproj" />

@@ -17,6 +17,9 @@ type IGameRepository =
     abstract member getNeutralPlayerNames : unit -> string list AsyncHttpResult
     abstract member createGameAndAddPlayer : gameRequest:CreateGameRequest * playerRequest:CreatePlayerRequest -> int AsyncHttpResult
 
+type ISearchRepository =
+    abstract member searchGames : query:GamesQuery -> Game list AsyncHttpResult
+
 type ISessionRepository =
     abstract member getSession : query:SessionQuery -> Session AsyncHttpResult
     abstract member createSession : request:CreateSessionRequest -> Session AsyncHttpResult
@@ -40,6 +43,7 @@ type IUserRepository =
 type IDbRoot =
     abstract member events : IEventRepository
     abstract member games : IGameRepository
+    abstract member search : ISearchRepository
     abstract member sessions : ISessionRepository
     abstract member snapshots : ISnapshotRepository
     abstract member users : IUserRepository

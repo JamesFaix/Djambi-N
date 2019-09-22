@@ -45,6 +45,9 @@ type RoutingTable (web : IWebRoot) =
                 //Events
                     POST >=> routef Routes.eventsQueryFormat web.events.getEvents
 
+                //Search
+                    POST >=> route Routes.searchGames >=> web.search.searchGames
+
                 //Snapshots
                     POST >=> routef Routes.snapshotsFormat web.snapshots.createSnapshot
                     GET >=> routef Routes.snapshotsFormat web.snapshots.getSnapshotsForGame
