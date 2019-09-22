@@ -20,6 +20,12 @@ type GameManager(eventRepo : IEventRepository,
                  selectionServ : SelectionService,
                  turnServ : TurnService) =
 
+    let isGameViewableByActiveUser (session : Session) (game : Game) : bool =
+        let self = session.user
+        game.parameters.isPublic
+        || game.createdBy.userId = self.id
+        || game.players |> List.exists(fun p -> p.userId = Some self.id)
+
     let isPublishable (event : Event) : bool =
         match event.kind with
         | EventKind.GameCanceled
@@ -31,12 +37,6 @@ type GameManager(eventRepo : IEventRepository,
         | EventKind.TurnCommitted
             -> true
         | _ -> false
-
-    let isGameViewableByActiveUser (session : Session) (game : Game) : bool =
-        let self = session.user
-        game.parameters.isPublic
-        || game.createdBy.userId = self.id
-        || game.players |> List.exists(fun p -> p.userId = Some self.id)
 
     let sendIfPublishable (response : StateAndEventResponse) : StateAndEventResponse AsyncHttpResult =
         if isPublishable response.event

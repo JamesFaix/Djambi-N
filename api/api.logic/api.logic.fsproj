@@ -33,7 +33,6 @@
     <Compile Include="Managers\UserManager.fs" />
     <Compile Include="LogicRoot.fs" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\api.common\api.common.fsproj" />
     <ProjectReference Include="..\api.db.interfaces\api.db.interfaces.fsproj" />
