@@ -18,7 +18,7 @@ type IGameRepository =
     abstract member createGameAndAddPlayer : gameRequest:CreateGameRequest * playerRequest:CreatePlayerRequest -> int AsyncHttpResult
 
 type ISearchRepository =
-    abstract member searchGames : query:GamesQuery -> SearchGame list AsyncHttpResult
+    abstract member searchGames : query:GamesQuery * currentUserId:int -> SearchGame list AsyncHttpResult
 
 type ISessionRepository =
     abstract member getSession : query:SessionQuery -> Session AsyncHttpResult

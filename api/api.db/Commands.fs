@@ -103,22 +103,6 @@ module Commands =
             .param("GameStatusId", gameStatusId)
             //Open for Commands2 to close
 
-    let searchGames(descriptionContains : string option,
-                    createdByUserName : string option,
-                    playerUserName : string option,
-                    isPublic : bool option,
-                    allowGuests : bool option,
-                    gameStatusId : byte option) =
-        proc("Games_Search")
-            .forEntity("Game")
-            .param("DescriptionContains", descriptionContains)
-            .param("CreatedByUserName", createdByUserName)
-            .param("PlayerUserName", playerUserName)
-            .param("IsPublic", isPublic)
-            .param("AllowGuests", allowGuests)
-            .param("GameStatusId", gameStatusId)
-            .returnsMany<SearchGameSqlModel>()
-
     let getPlayers (gameIds : Int32ListTvp, playerId : int option) =
         proc("Players_Get")
             .forEntity("Player")
@@ -209,6 +193,26 @@ module Commands =
         proc("Players_GetNeutralNames")
             .forEntity("Neutral player names")
             .returnsMany<string>()
+
+    //--- Search ---
+
+    let searchGames(currentUserId : int,
+                    descriptionContains : string option,
+                    createdByUserName : string option,
+                    playerUserName : string option,
+                    isPublic : bool option,
+                    allowGuests : bool option,
+                    gameStatusId : byte option) =
+        proc("Games_Search")
+            .forEntity("Game")
+            .param("CurrentUserId", currentUserId)
+            .param("DescriptionContains", descriptionContains)
+            .param("CreatedByUserName", createdByUserName)
+            .param("PlayerUserName", playerUserName)
+            .param("IsPublic", isPublic)
+            .param("AllowGuests", allowGuests)
+            .param("GameStatusId", gameStatusId)
+            .returnsMany<SearchGameSqlModel>()
 
     //--- Events ---
 
@@ -310,8 +314,9 @@ module Commands2 =
                                      query.status |> Option.map mapGameStatusToId)
         cmd.returnsMany<GameSqlModel>()
 
-    let searchGames (query : GamesQuery) =
-        Commands.searchGames (query.descriptionContains,
+    let searchGames (query : GamesQuery, currentUserId : int) =
+        Commands.searchGames (currentUserId,
+                              query.descriptionContains,
                               query.createdByUserName,
                               query.playerUserName,
                               query.isPublic,
