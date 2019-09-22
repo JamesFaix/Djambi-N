@@ -26,7 +26,6 @@ type RoutingTable (web : IWebRoot) =
                     GET >=> routef Routes.pathsFormat web.boards.getCellPaths
 
                 //Game lobby
-                    POST >=> route Routes.gamesQuery >=> web.games.getGames
                     POST >=> route Routes.games >=> web.games.createGame
                     GET >=> routef Routes.gameFormat web.games.getGame
                     PUT >=> routef Routes.gameParametersFormat web.games.updateGameParameters

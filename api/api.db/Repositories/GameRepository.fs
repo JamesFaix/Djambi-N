@@ -8,12 +8,6 @@ open Djambi.Api.Model
 open System
 
 type GameRepository(ctxProvider : CommandContextProvider) =
-
-    let getGamesWithoutPlayers (query : GamesQuery) : Game List AsyncHttpResult =
-        Commands2.getGames query
-        |> Command.execute ctxProvider
-        |> thenMap (List.map Mapping.mapGameResponse)
-
     let getGameWithoutPlayers (gameId : int) : Game AsyncHttpResult =
         Commands2.getGame gameId
         |> Command.execute ctxProvider
@@ -47,38 +41,18 @@ type GameRepository(ctxProvider : CommandContextProvider) =
                 |> thenMap (fun players -> { game with players = players })
             )
 
-        member x.getGames query =
-            getGamesWithoutPlayers query
-            |> thenBindAsync (fun games ->
-                match games with
-                | [] -> okTask []
-                | _ ->
-                    getPlayersForGames (games |> List.map (fun g -> g.id))
-                    |> thenMap (fun players ->
-                        let playersByGame = players |> List.groupBy (fun p -> p.gameId)
-                        games
-                        |> List.map (fun g ->
-                            let playersOpt = playersByGame |> List.tryFind (fun (gameId, _) -> gameId = g.id)
-                            let ps = match playersOpt with
-                                     | Some (_, players) -> players
-                                     | _ -> []
-                            { g with players = ps}
-                        )
-                    )
-            )
-
-        [<Obsolete>]
+        [<Obsolete("Only used for tests")>]
         member x.createGame request =
             Commands2.createGame request
             |> Command.execute ctxProvider
 
-        [<Obsolete>]
+        [<Obsolete("Only used for tests")>]
         member x.addPlayer (gameId, request) =
             Commands2.addPendingPlayer (gameId, request)
             |> Command.execute ctxProvider
             |> thenBindAsync (fun pId -> getPlayer (gameId, pId))
 
-        [<Obsolete>]
+        [<Obsolete("Only used for tests")>]
         member x.removePlayer (gameId, playerId) =
             Commands.removePlayer (gameId, playerId)
             |> Command.execute ctxProvider

@@ -1,4 +1,4 @@
-namespace Djambi.Api.IntegrationTests.Logic.GameManager
+﻿namespace Djambi.Api.IntegrationTests.Logic.SearchManager
 
 open FSharp.Control.Tasks
 open Xunit
@@ -8,11 +8,11 @@ open Djambi.Api.IntegrationTests
 open Djambi.Api.Model
 open Djambi.Api.Db.Repositories
 
-type GetGamesTests() =
+type SearchGamesTests() =
     inherit TestsBase()
 
     [<Fact>]
-    let ``Get games should filter on createdByUserName``() =
+    let ``Search games should filter on createdByUserName``() =
         task {
             //Arrange
             let! (user1, _, game1) = TestUtilities.createuserSessionAndGame(false) |> thenValue
@@ -21,7 +21,7 @@ type GetGamesTests() =
             let query = { GamesQuery.empty with createdByUserName = Some user1.name }
 
             //Act
-            let! result = managers.games.getGames query adminSession
+            let! result = managers.search.searchGames query adminSession
                           |> AsyncHttpResult.thenValue
 
             //Assert
@@ -30,7 +30,7 @@ type GetGamesTests() =
         }
 
     [<Fact>]
-    let ``Get games should filter on allowGuests``() =
+    let ``Search games should filter on allowGuests``() =
         task {
             //Arrange
             let! (_, _, game1) = TestUtilities.createuserSessionAndGame(false) |> thenValue
@@ -40,7 +40,7 @@ type GetGamesTests() =
             let query = { GamesQuery.empty with allowGuests = Some true }
 
             //Act
-            let! result = managers.games.getGames query adminSession
+            let! result = managers.search.searchGames query adminSession
                           |> AsyncHttpResult.thenValue
 
             //Assert
@@ -49,7 +49,7 @@ type GetGamesTests() =
         }
 
     [<Fact>]
-    let ``Get games should filter on isPublic``() =
+    let ``Search games should filter on isPublic``() =
         task {
             //Arrange
 
@@ -61,7 +61,7 @@ type GetGamesTests() =
             let query = { GamesQuery.empty with isPublic = Some true }
 
             //Act
-            let! result = managers.games.getGames query adminSession
+            let! result = managers.search.searchGames query adminSession
                           |> AsyncHttpResult.thenValue
 
             //Assert
@@ -70,7 +70,7 @@ type GetGamesTests() =
         }
 
     [<Fact>]
-    let ``Get games should filter on playerUserName``() =
+    let ``Search games should filter on playerUserName``() =
         task {
             //Arrange
             let! (user1, _, game1) = TestUtilities.createuserSessionAndGame(false) |> thenValue
@@ -83,7 +83,7 @@ type GetGamesTests() =
             let query = { GamesQuery.empty with playerUserName = Some user2.name }
 
             //Act
-            let! result = managers.games.getGames query adminSession
+            let! result = managers.search.searchGames query adminSession
                           |> AsyncHttpResult.thenValue
 
             //Assert
@@ -92,7 +92,7 @@ type GetGamesTests() =
         }
 
     [<Fact>]
-    let ``Get games should filter on status``() =
+    let ``Search games should filter on status``() =
         task {
             //Arrange
             let! (_, _, game1) = TestUtilities.createuserSessionAndGame(false) |> thenValue
@@ -104,7 +104,7 @@ type GetGamesTests() =
             let query = { GamesQuery.empty with status = Some GameStatus.Pending }
 
             //Act
-            let! result = managers.games.getGames query adminSession
+            let! result = managers.search.searchGames query adminSession
                           |> AsyncHttpResult.thenValue
 
             //Assert
@@ -113,7 +113,7 @@ type GetGamesTests() =
         }
 
     [<Fact>]
-    let ``Get games should filter non-public games current user is not in, if no ViewGames privilege``() =
+    let ``Search games should filter non-public games current user is not in, if no ViewGames privilege``() =
         task {
             //Arrange
             let! (_, session1, game1) = TestUtilities.createuserSessionAndGame(true) |> thenValue
@@ -127,7 +127,7 @@ type GetGamesTests() =
             let query = GamesQuery.empty
 
             //Act
-            let! result = managers.games.getGames query session1
+            let! result = managers.search.searchGames query session1
                           |> AsyncHttpResult.thenValue
 
             //Assert

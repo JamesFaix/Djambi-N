@@ -101,14 +101,6 @@ type GameManager(eventRepo : IEventRepository,
             |> thenBindAsync (fun _ -> eventRepo.getEvents (gameId, query))
 
     interface IGameManager with
-        member x.getGames query session =
-            gameRepo.getGames query
-            |> thenMap (fun games ->
-                if session.user.has ViewGames
-                then games
-                else games |> List.filter (isGameViewableByActiveUser session)
-            )
-
         //TODO: Requires integration tests
         member x.getGame gameId session =
             gameRepo.getGame gameId

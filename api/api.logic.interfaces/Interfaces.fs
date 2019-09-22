@@ -33,9 +33,6 @@ type IEventManager =
     abstract member getEvents : gameId:int * query:EventsQuery -> session:Session -> Event list AsyncHttpResult
 
 type IGameManager =
-    [<ClientFunction(HttpMethod.Post, Routes.gamesQuery, ClientSection.Game)>]
-    abstract member getGames : query:GamesQuery -> session:Session -> Game list AsyncHttpResult
-
     [<ClientFunction(HttpMethod.Get, Routes.game, ClientSection.Game)>]
     abstract member getGame : gameId:int -> session:Session -> Game AsyncHttpResult
 

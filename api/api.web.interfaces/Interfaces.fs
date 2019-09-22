@@ -10,7 +10,6 @@ type IEventController =
     abstract member getEvents : gameId:int -> HttpHandler
 
 type IGameController =
-    abstract member getGames : HttpHandler
     abstract member getGame : gameId:int -> HttpHandler
     abstract member createGame : HttpHandler
     abstract member updateGameParameters : gameId:int -> HttpHandler

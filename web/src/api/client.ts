@@ -74,12 +74,6 @@ export function getGame(gameId : number) : Promise<Model.Game> {
         HttpMethod.Get, route);
 }
 
-export function getGames(query : Model.GamesQuery) : Promise<Model.Game[]> {
-    const route = `/games/query`;
-    return ApiClientCore.sendRequest<Model.GamesQuery, Model.Game[]>(
-        HttpMethod.Post, route, query);
-}
-
 export function startGame(gameId : number) : Promise<Model.StateAndEventResponse> {
     const route = `/games/${gameId}/start-request`;
     return ApiClientCore.sendRequest<{}, Model.StateAndEventResponse>(

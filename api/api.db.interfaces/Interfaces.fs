@@ -10,7 +10,6 @@ type IEventRepository =
 
 type IGameRepository =
     abstract member getGame : gameId:int -> Game AsyncHttpResult
-    abstract member getGames : query:GamesQuery -> Game list AsyncHttpResult
     abstract member createGame : request:CreateGameRequest -> int AsyncHttpResult
     abstract member addPlayer : gameId:int * request:CreatePlayerRequest -> Player AsyncHttpResult
     abstract member removePlayer : gameID:int * playerId:int -> unit AsyncHttpResult
