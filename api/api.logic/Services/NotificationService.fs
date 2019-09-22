@@ -29,23 +29,25 @@ type NotificationService(log : ILogger) =
 
             let otherPlayersUserIds =
                 response.game.players
-                |> Seq.filter (fun p ->
-                    p.userId.IsSome &&
-                    p.userId.Value <> creatorId
+                |> Seq.choose (fun p ->
+                    match p.userId with
+                    | Some uId when uId <> creatorId -> Some uId
+                    | _ -> None
                 )
-                |> Seq.map (fun p -> p.userId.Value)
-                |> Seq.distinct
-                |> Seq.toList
 
             let removedPlayersUserIds = 
                 response.event.effects 
-                |> List.choose (fun f -> 
+                |> Seq.choose (fun f -> 
                     match f with 
                     | Effect.PlayerRemoved f1 -> f1.oldPlayer.userId 
                     | _ -> None 
                 )
 
-            let userIds = List.append otherPlayersUserIds removedPlayersUserIds
+            let userIds =
+                otherPlayersUserIds
+                |> Seq.append removedPlayersUserIds
+                |> Seq.distinct
+                |> Seq.toList
 
             subscribers.Values
             |> Seq.filter (fun s -> userIds |> List.contains s.userId)
