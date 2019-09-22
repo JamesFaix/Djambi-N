@@ -167,7 +167,6 @@ let mapSearchGameResponse(sqlModel : SearchGameSqlModel) : SearchGame =
                 allowGuests = sqlModel.allowGuests
             }
         lastEventOn = sqlModel.lastEventOn
-        currentPlayerName = sqlModel.currentPlayerName |> Option.ofReference
     }
     
 let mapEventResponse (sqlModel : EventSqlModel) : Event =

@@ -1,4 +1,5 @@
 CREATE PROCEDURE [dbo].[Games_Search]
+	@CurrentUserId INT,
 	@DescriptionContains NVARCHAR(100),
 	@CreatedByUserName NVARCHAR(50),
 	@PlayerUserName NVARCHAR(50),
@@ -18,19 +19,19 @@ BEGIN
 		g.CreatedOn,
 		g.AllowGuests,
 		g.IsPublic,
-		g.TurnCycleJson,
-		g.PiecesJson,
-		g.CurrentTurnJson
+		e.CreatedOn as LastEventOn
     FROM Games g
-			INNER JOIN Users u
-				ON g.CreatedByUserId = u.UserId
+		INNER JOIN Users u
+			ON g.CreatedByUserId = u.UserId
+		INNER JOIN VLatestEvents e
+			ON g.GameId = e.GameId
 
 	WHERE (@DescriptionContains IS NULL OR g.[Description] LIKE '%' + @DescriptionContains + '%')
 		AND (@CreatedByUserName IS NULL
 			OR EXISTS(
 				SELECT 1
 				FROM Users u
-				WHERE u.Name = @CreatedByUserName
+				WHERE u.Name LIKE '%' + @CreatedByUserName + '%'
 					AND u.UserId = g.CreatedByUserId
 			)
 		)
@@ -41,7 +42,7 @@ BEGIN
 					INNER JOIN Users u
 						ON p.UserId = u.UserId
 				WHERE p.GameId = g.GameId
-					AND u.Name = @PlayerUserName
+					AND u.Name LIKE '%' + @PlayerUserName + '%'
 			)
 		)
 		AND (@IsPublic IS NULL OR @IsPublic = g.IsPublic)

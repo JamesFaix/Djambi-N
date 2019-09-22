@@ -72,7 +72,7 @@ type SearchGameSqlModel =
         allowGuests : bool
         //State
         lastEventOn : DateTime
-        currentPlayerName : string
+        //TODO: Add current player name
     }
 
 [<CLIMutable>]
