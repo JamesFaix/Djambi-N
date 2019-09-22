@@ -100,7 +100,7 @@ type EventService(gameStartServ : GameStartService) =
 
     let applyPlayerRemovedEffect (effect : PlayerRemovedEffect) (game : Game) : Game =
         { game with
-            players = game.players |> List.filter (fun p -> p.id <> effect.playerId)
+            players = game.players |> List.filter (fun p -> p.id <> effect.oldPlayer.id)
         }
 
     let applyPlayerStatusChangedEffect (effect : PlayerStatusChangedEffect) (game : Game) : Game =

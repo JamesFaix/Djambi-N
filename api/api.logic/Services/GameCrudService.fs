@@ -52,15 +52,14 @@ type GameCrudService(gameRepo : IGameRepository) =
                     |> Seq.filter (fun p -> p.kind = PlayerKind.Guest)
                 else Seq.empty
 
-            let removedPlayerIds =
+            let removedPlayers =
                 truncatedPlayers
                 |> Seq.append ejectedGuests
-                |> Seq.map (fun p -> p.id)
-                |> Seq.distinct
-                |> Seq.toList
+                |> Seq.groupBy (fun p -> p.id)
+                |> Seq.map (fun (_, elements) -> elements |> Seq.head)
 
-            for pId in removedPlayerIds do
-                effects.Add(Effect.PlayerRemoved({playerId = pId}))
+            for player in removedPlayers do
+                effects.Add(Effect.PlayerRemoved({oldPlayer = player}))
 
             {
                 kind = EventKind.GameParametersChanged

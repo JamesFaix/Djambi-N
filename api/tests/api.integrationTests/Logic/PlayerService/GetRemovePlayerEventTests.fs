@@ -104,7 +104,7 @@ type GetRemovePlayerEventTests() =
             event.effects.Length |> shouldBe 1
             match event.effects.[0] with
             | Effect.PlayerRemoved f ->
-                f.playerId |> shouldBe player.id
+                f.oldPlayer.id |> shouldBe player.id
 
             | _ -> failwith "Incorrect effects"
         }
@@ -133,7 +133,7 @@ type GetRemovePlayerEventTests() =
             event.effects.Length |> shouldBe 1
             match event.effects.[0] with
             | Effect.PlayerRemoved f ->
-                f.playerId |> shouldBe player.id
+                f.oldPlayer.id |> shouldBe player.id
 
             | _ -> failwith "Incorrect effects"
         }
@@ -162,7 +162,7 @@ type GetRemovePlayerEventTests() =
             event.effects.Length |> shouldBe 1
             match event.effects.[0] with
             | Effect.PlayerRemoved f ->
-                f.playerId |> shouldBe player.id
+                f.oldPlayer.id |> shouldBe player.id
 
             | _ -> failwith "Incorrect effects"
         }
@@ -198,8 +198,8 @@ type GetRemovePlayerEventTests() =
             event.effects.Length |> shouldBe 2
             match (event.effects.[0], event.effects.[1]) with
             | (Effect.PlayerRemoved f1, Effect.PlayerRemoved f2) ->
-                f1.playerId |> shouldBe userPlayer.id
-                f2.playerId |> shouldBe guestPlayer.id
+                f1.oldPlayer.id |> shouldBe userPlayer.id
+                f2.oldPlayer.id |> shouldBe guestPlayer.id
 
             | _ -> failwith "Incorrect effects"
         }
@@ -236,7 +236,7 @@ type GetRemovePlayerEventTests() =
             event.effects.Length |> shouldBe 1
             match event.effects.[0] with
             | Effect.PlayerRemoved f ->
-                f.playerId |> shouldBe guestPlayer.id
+                f.oldPlayer.id |> shouldBe guestPlayer.id
 
             | _ -> failwith "Incorrect effects"
         }
@@ -256,7 +256,7 @@ type GetRemovePlayerEventTests() =
             event.effects.Length |> shouldBe 2
             match (event.effects.[0], event.effects.[1]) with
             | (Effect.PlayerRemoved f1, Effect.GameStatusChanged f2) ->
-                f1.playerId |> shouldBe creator.id
+                f1.oldPlayer.id |> shouldBe creator.id
 
                 f2.oldValue |> shouldBe GameStatus.Pending
                 f2.newValue |> shouldBe GameStatus.Canceled

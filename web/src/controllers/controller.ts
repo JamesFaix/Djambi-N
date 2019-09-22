@@ -131,6 +131,18 @@ export default class Controller {
             return Controller.Session.finishLoginSetup(session.user);
         }
 
+        public static async signup(request : CreateUserRequest) : Promise<void> {
+            const user = await Api.createUser(request);
+            Controller.dispatch(StoreSession.Actions.signup(user));
+            const loginRequest = ModelFactory.loginRequestFromCreateUserRequest(request);
+            return Controller.Session.login(loginRequest);
+        }
+
+        private static finishLoginSetup(user : User) : Promise<void> {
+            NotificationsService.connect();
+            return Controller.Search.loadRecentGames(user);
+        }
+
         public static async logout() : Promise<void> {
             await Api.logout();
             Controller.Session.onUnauthorized();
@@ -140,13 +152,6 @@ export default class Controller {
             Controller.dispatch(StoreSession.Actions.logout());
             Controller.navigateTo(Routes.login);
             NotificationsService.disconnect();
-        }
-
-        public static async signup(request : CreateUserRequest) : Promise<void> {
-            const user = await Api.createUser(request);
-            Controller.dispatch(StoreSession.Actions.signup(user));
-            const loginRequest = ModelFactory.loginRequestFromCreateUserRequest(request);
-            return Controller.Session.login(loginRequest);
         }
 
         private static async getUser() : Promise<User> {
@@ -185,13 +190,6 @@ export default class Controller {
             const user = await Controller.Session.getUser();
             const route = user ? Routes.dashboard : Routes.login;
             Controller.navigateTo(route);
-        }
-
-        private static finishLoginSetup(user : User) : Promise<void> {
-            NotificationsService.connect();
-            Controller.Display.loadSavedTheme();
-            Controller.Settings.loadAndApply();
-            return Controller.Search.loadRecentGames(user);
         }
     }
 

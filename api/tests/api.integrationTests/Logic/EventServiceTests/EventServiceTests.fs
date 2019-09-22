@@ -398,7 +398,7 @@ type EventServiceTests() =
                 }
             ]
         let game = { TestUtilities.defaultGame with players = players}
-        let effect = Effect.PlayerRemoved { playerId = 1 }
+        let effect = Effect.PlayerRemoved { oldPlayer = players.[0] }
         let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
 
         //Act

@@ -323,7 +323,7 @@ export interface PlayerOutOfMovesEffect {
 }
 
 export interface PlayerRemovedEffect {
-    playerId : number
+    oldPlayer : Player
 }
 
 export interface PlayerStatusChangedEffect {

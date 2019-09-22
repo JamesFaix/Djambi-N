@@ -74,17 +74,18 @@ type PlayerService(gameRepo : IGameRepository) =
                     else
                         let effects = new ArrayList<Effect>()
 
-                        let playerIdsToRemove =
+                        let playersToRemove =
                             match player.kind with
                             | User ->
                                 game.players
                                 |> List.filter (fun p -> p.userId = player.userId)
-                                |> List.map (fun p -> p.id)
-                            | Guest -> [playerId]
+                            | Guest -> 
+                                game.players
+                                |> List.filter (fun p -> p.id = playerId)
                             | _ -> [] //Already eliminated this case in validation above
 
-                        for pId in playerIdsToRemove do
-                            effects.Add(Effect.PlayerRemoved { playerId = pId })
+                        for p in playersToRemove do
+                            effects.Add(Effect.PlayerRemoved { oldPlayer = p })
 
                         //Cancel game if creator quit
                         if game.createdBy.userId = player.userId.Value

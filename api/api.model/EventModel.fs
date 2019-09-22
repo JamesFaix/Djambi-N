@@ -88,7 +88,7 @@ type PlayerOutOfMovesEffect =
 [<ClientType(ClientSection.Events)>]
 type PlayerRemovedEffect =
     {
-        playerId : int
+        oldPlayer : Player
     }
 
 [<ClientType(ClientSection.Events)>]
