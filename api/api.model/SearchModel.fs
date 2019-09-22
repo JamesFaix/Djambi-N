@@ -37,5 +37,6 @@ type SearchGame = {
     createdBy : CreationSource
     status : GameStatus
     lastEventOn : DateTime
+    playerCount : int
     //TODO: Add current player name
 }

@@ -166,3 +166,11 @@ export function loadSnapshot(gameId : number, snapshotId : number) : Promise<{}>
         HttpMethod.Post, route);
 }
 
+//-------- SEARCH --------
+
+export function searchGames(query : Model.GamesQuery) : Promise<Model.SearchGame[]> {
+    const route = `/search/games`;
+    return ApiClientCore.sendRequest<Model.GamesQuery, Model.SearchGame[]>(
+        HttpMethod.Post, route, query);
+}
+

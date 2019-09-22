@@ -72,6 +72,7 @@ type SearchGameSqlModel =
         allowGuests : bool
         //State
         lastEventOn : DateTime
+        playerCount : int
         //TODO: Add current player name
     }
 

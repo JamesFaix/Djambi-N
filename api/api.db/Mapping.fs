@@ -167,6 +167,7 @@ let mapSearchGameResponse(sqlModel : SearchGameSqlModel) : SearchGame =
                 allowGuests = sqlModel.allowGuests
             }
         lastEventOn = sqlModel.lastEventOn
+        playerCount = sqlModel.playerCount
     }
     
 let mapEventResponse (sqlModel : EventSqlModel) : Event =

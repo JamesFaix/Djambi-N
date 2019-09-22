@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Game } from '../../api/model';
+import { SearchGame } from '../../api/model';
 import { Classes } from '../../styles/styles';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
@@ -8,7 +8,7 @@ import Routes from '../../routes';
 import IconBox from '../controls/iconBox';
 import Copy from '../../utilities/copy';
 
-const GamesSearchResultsTable : React.SFC<{ games : Game[] }> = props => {
+const GamesSearchResultsTable : React.SFC<{ games : SearchGame[] }> = props => {
     return (
         <table className={Classes.stripedTable}>
             <tbody>
@@ -34,7 +34,7 @@ const GamesSearchResultsTable : React.SFC<{ games : Game[] }> = props => {
 }
 export default GamesSearchResultsTable;
 
-const GameSearchResultsRow : React.SFC<{ game : Game }> = props => {
+const GameSearchResultsRow : React.SFC<{ game : SearchGame }> = props => {
     const game = props.game;
     return (
         <tr>
@@ -57,7 +57,7 @@ const GameSearchResultsRow : React.SFC<{ game : Game }> = props => {
                 <IconBox icon={Icons.gameStatus(game.status)}/>
             </td>
             <td className={Classes.centered}>
-                {game.players.length}
+                {game.playerCount}
             </td>
             <td className={Classes.centered}>
                 {game.parameters.regionCount}

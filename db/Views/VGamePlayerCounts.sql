@@ -1,0 +1,14 @@
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE VIEW [dbo].[GamePlayerCounts]
+AS
+
+SELECT GameID, COUNT(GameID) AS PlayerCount
+FROM Players
+GROUP BY GameID
+
+GO

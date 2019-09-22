@@ -91,16 +91,6 @@ export enum GameStatus {
     Pending = "Pending",
 }
 
-export interface GamesQuery {
-    gameId : number,
-    descriptionContains : string,
-    createdByUserName : string,
-    playerUserName : string,
-    isPublic : boolean,
-    allowGuests : boolean,
-    status : GameStatus
-}
-
 export interface Piece {
     id : number,
     kind : PieceKind,
@@ -370,6 +360,27 @@ export interface SnapshotInfo {
     id : number,
     createdBy : CreationSource,
     description : string
+}
+
+//-------- SEARCH --------
+
+export interface GamesQuery {
+    gameId : number,
+    descriptionContains : string,
+    createdByUserName : string,
+    playerUserName : string,
+    isPublic : boolean,
+    allowGuests : boolean,
+    status : GameStatus
+}
+
+export interface SearchGame {
+    id : number,
+    parameters : GameParameters,
+    createdBy : CreationSource,
+    status : GameStatus,
+    lastEventOn : Date,
+    playerCount : number
 }
 
 //-------- MISC --------
