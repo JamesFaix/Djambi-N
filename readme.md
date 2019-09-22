@@ -1,5 +1,5 @@
 # Djambi-N
-<img src="screenshot.png">
+<img src="screenshot.gif">
 
 Djambi-N is like Chess, except
 
