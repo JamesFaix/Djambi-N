@@ -5,6 +5,7 @@ open Serilog
 open Djambi.Api.Common.Control
 open Djambi.Api.Common.Control.AsyncHttpResult
 open Djambi.Api.Logic.Interfaces
+open Djambi.Api.Model
 
 type NotificationService(log : ILogger) =
     let subscribers = new ConcurrentDictionary<int, ISubscriber>()
@@ -26,7 +27,7 @@ type NotificationService(log : ILogger) =
         member x.send response =
             let creatorId = response.event.createdBy.userId
 
-            let otherUserIds =
+            let otherPlayersUserIds =
                 response.game.players
                 |> Seq.filter (fun p ->
                     p.userId.IsSome &&
@@ -36,8 +37,18 @@ type NotificationService(log : ILogger) =
                 |> Seq.distinct
                 |> Seq.toList
 
+            let removedPlayersUserIds = 
+                response.event.effects 
+                |> List.choose (fun f -> 
+                    match f with 
+                    | Effect.PlayerRemoved f1 -> f1.oldPlayer.userId 
+                    | _ -> None 
+                )
+
+            let userIds = List.append otherPlayersUserIds removedPlayersUserIds
+
             subscribers.Values
-            |> Seq.filter (fun s -> otherUserIds |> List.contains s.userId)
+            |> Seq.filter (fun s -> userIds |> List.contains s.userId)
             |> Seq.map (fun s -> 
                 s.send response
                 |> thenBindErrorAsync 500 (fun err ->
