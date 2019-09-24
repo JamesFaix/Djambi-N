@@ -11,9 +11,7 @@ export default class DateService {
     public static dateFromDatepickerString(str : string) : Date {
         const datetime = `${str}T00:00:00.000`;
         const ms = Moment(datetime).utc().valueOf();
-        const d = new Date(ms);
-        console.log(`dateFromString(${str}) is ${d}`)
-        return d;
+        return new Date(ms);
     }
 
     public static dateToDatepickerString(d : Date, isStartDate : boolean) : string {
