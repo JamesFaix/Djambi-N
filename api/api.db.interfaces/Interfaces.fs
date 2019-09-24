@@ -10,12 +10,14 @@ type IEventRepository =
 
 type IGameRepository =
     abstract member getGame : gameId:int -> Game AsyncHttpResult
-    abstract member getGames : query:GamesQuery -> Game list AsyncHttpResult
     abstract member createGame : request:CreateGameRequest -> int AsyncHttpResult
     abstract member addPlayer : gameId:int * request:CreatePlayerRequest -> Player AsyncHttpResult
     abstract member removePlayer : gameID:int * playerId:int -> unit AsyncHttpResult
     abstract member getNeutralPlayerNames : unit -> string list AsyncHttpResult
     abstract member createGameAndAddPlayer : gameRequest:CreateGameRequest * playerRequest:CreatePlayerRequest -> int AsyncHttpResult
+
+type ISearchRepository =
+    abstract member searchGames : query:GamesQuery * currentUserId:int -> SearchGame list AsyncHttpResult
 
 type ISessionRepository =
     abstract member getSession : query:SessionQuery -> Session AsyncHttpResult
@@ -40,6 +42,7 @@ type IUserRepository =
 type IDbRoot =
     abstract member events : IEventRepository
     abstract member games : IGameRepository
+    abstract member search : ISearchRepository
     abstract member sessions : ISessionRepository
     abstract member snapshots : ISnapshotRepository
     abstract member users : IUserRepository

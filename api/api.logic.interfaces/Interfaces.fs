@@ -33,9 +33,6 @@ type IEventManager =
     abstract member getEvents : gameId:int * query:EventsQuery -> session:Session -> Event list AsyncHttpResult
 
 type IGameManager =
-    [<ClientFunction(HttpMethod.Post, Routes.gamesQuery, ClientSection.Game)>]
-    abstract member getGames : query:GamesQuery -> session:Session -> Game list AsyncHttpResult
-
     [<ClientFunction(HttpMethod.Get, Routes.game, ClientSection.Game)>]
     abstract member getGame : gameId:int -> session:Session -> Game AsyncHttpResult
 
@@ -47,6 +44,10 @@ type IGameManager =
 
     [<ClientFunction(HttpMethod.Post, Routes.startGame, ClientSection.Game)>]
     abstract member startGame : gameId:int -> session:Session -> StateAndEventResponse AsyncHttpResult
+
+type ISearchManager =
+    [<ClientFunction(HttpMethod.Post, Routes.searchGames, ClientSection.Search)>]
+    abstract member searchGames : query:GamesQuery -> session:Session -> SearchGame list AsyncHttpResult
 
 type IPlayerManager =
     [<ClientFunction(HttpMethod.Post, Routes.players, ClientSection.Player)>]
@@ -110,6 +111,7 @@ type IManagerRoot =
     abstract member events : IEventManager
     abstract member games : IGameManager
     abstract member players : IPlayerManager
+    abstract member search : ISearchManager
     abstract member sessions : ISessionManager
     abstract member snapshots : ISnapshotManager
     abstract member turns : ITurnManager

@@ -44,32 +44,6 @@ type PlayerStatusChangeRequest =
     }
 
 [<CLIMutable>]
-[<ClientType(ClientSection.Game)>]
-type GamesQuery =
-    {
-        gameId : int option
-        descriptionContains : string option
-        createdByUserName : string option
-        playerUserName : string option
-        isPublic : bool option
-        allowGuests : bool option
-        status : GameStatus option
-    }
-
-module GamesQuery =
-
-    let empty : GamesQuery =
-        {
-            gameId = None
-            descriptionContains = None
-            createdByUserName = None
-            playerUserName = None
-            isPublic = None
-            allowGuests = None
-            status = None
-        }
-
-[<CLIMutable>]
 [<ClientType(ClientSection.Turn)>]
 type SelectionRequest =
     {

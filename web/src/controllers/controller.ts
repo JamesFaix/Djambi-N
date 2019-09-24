@@ -89,14 +89,14 @@ export default class Controller {
 
     public static Search = class {
         public static async searchGames(query: GamesQuery) : Promise<void> {
-            const games = await Api.getGames(query);
+            const games = await Api.searchGames(query);
             Controller.dispatch(StoreGamesQuery.Actions.loadSearchResults(games));
         }
 
         public static async loadRecentGames(user : User) : Promise<void> {
             const query = ModelFactory.emptyGamesQuery();
             query.playerUserName = user.name;
-            const games = await Api.getGames(query);
+            const games = await Api.searchGames(query);
             Controller.dispatch(StoreGamesQuery.Actions.loadRecentGames(games));
         }
     }

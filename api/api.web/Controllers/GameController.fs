@@ -9,12 +9,6 @@ open Djambi.Api.Logic.Interfaces
 type GameController(gameMan : IGameManager,
                     u : HttpUtility) =
     interface IGameController with
-        member x.getGames =
-            let func ctx =
-                u.getSessionAndModelFromContext<GamesQuery> ctx
-                |> thenBindAsync (fun (jsonModel, session) -> gameMan.getGames jsonModel session)
-            u.handle func
-
         member x.getGame gameId =
             let func ctx =
                 u.getSessionFromContext ctx

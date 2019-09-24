@@ -17,7 +17,8 @@ type ClientSection =
     | Turn = 6
     | Events = 7
     | Snapshots = 8
-    | Misc = 9
+    | Search = 9
+    | Misc = 10
 
 [<AllowNullLiteral>] //Needed because some Reflection methods return null values for attributes that aren't found
 [<AttributeUsage(

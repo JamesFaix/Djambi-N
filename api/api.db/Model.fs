@@ -58,6 +58,25 @@ type GameSqlModel =
     }
 
 [<CLIMutable>]
+type SearchGameSqlModel =
+    {
+        gameId : int
+        createdOn : DateTime
+        createdByUserId : int
+        createdByUserName : string
+        gameStatusId : byte
+        //Game parameters
+        description : string
+        regionCount : int
+        isPublic : bool
+        allowGuests : bool
+        //State
+        lastEventOn : DateTime
+        playerCount : int
+        //TODO: Add current player name
+    }
+
+[<CLIMutable>]
 type EventSqlModel =
     {
         eventId : int

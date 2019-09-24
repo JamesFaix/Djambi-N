@@ -10,11 +10,13 @@ type IEventController =
     abstract member getEvents : gameId:int -> HttpHandler
 
 type IGameController =
-    abstract member getGames : HttpHandler
     abstract member getGame : gameId:int -> HttpHandler
     abstract member createGame : HttpHandler
     abstract member updateGameParameters : gameId:int -> HttpHandler
     abstract member startGame : gameId:int -> HttpHandler
+
+type ISearchController =
+    abstract member searchGames : HttpHandler
 
 type INotificationsController =
     abstract member connectWebSockets : HttpHandler
@@ -52,6 +54,7 @@ type IWebRoot =
     abstract member games : IGameController
     abstract member notifications : INotificationsController
     abstract member players : IPlayerController
+    abstract member search : ISearchController
     abstract member sessions : ISessionController
     abstract member snapshots : ISnapshotController
     abstract member turns : ITurnController

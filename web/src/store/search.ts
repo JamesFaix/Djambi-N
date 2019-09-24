@@ -1,11 +1,11 @@
 import { CustomAction, DataAction } from "./root";
-import { Game, GamesQuery } from "../api/model";
+import { GamesQuery, SearchGame } from "../api/model";
 import * as ModelFactory from '../api/modelFactory';
 
 export interface State {
     query : GamesQuery,
-    results : Game[],
-    recent : Game[]
+    results : SearchGame[],
+    recent : SearchGame[]
 }
 
 export const defaultState : State = {
@@ -28,14 +28,14 @@ export class Actions {
         };
     }
 
-    public static loadSearchResults(games : Game[]) {
+    public static loadSearchResults(games : SearchGame[]) {
         return {
             type: ActionTypes.LoadSearchResults,
             data: games
         }
     }
 
-    public static loadRecentGames(games : Game[]) {
+    public static loadRecentGames(games : SearchGame[]) {
         return {
             type: ActionTypes.LoadRecentGames,
             data: games
@@ -55,14 +55,14 @@ export function reducer(state : State, action : CustomAction) : State {
             };
         }
         case ActionTypes.LoadSearchResults: {
-            const da = <DataAction<Game[]>>action;
+            const da = <DataAction<SearchGame[]>>action;
             return {
                 ...state,
                 results: da.data
             };
         }
         case ActionTypes.LoadRecentGames: {
-            const da = <DataAction<Game[]>>action;
+            const da = <DataAction<SearchGame[]>>action;
             return {
                 ...state,
                 recent: da.data

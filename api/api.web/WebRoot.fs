@@ -16,6 +16,7 @@ type WebRoot(cookieDomain : string,
     let _games = GameController(managers.games, _util)
     let _notifications = NotificationController(_util, services.notifications, log)
     let _players = PlayerController(_util, managers.players)
+    let _search = SearchController(managers.search, _util)
     let _sessions = SessionController(_util, managers.sessions)
     let _snapshots = SnapshotController(_util, managers.snapshots)
     let _turns = TurnController(_util, managers.turns)
@@ -27,6 +28,7 @@ type WebRoot(cookieDomain : string,
     member x.games = _games
     member x.notifications = _notifications
     member x.players = _players
+    member x.search = _search
     member x.sessions = _sessions
     member x.snapshots = _snapshots
     member x.turns = _turns
@@ -38,6 +40,7 @@ type WebRoot(cookieDomain : string,
         member x.games = x.games :> IGameController
         member x.notifications = x.notifications :> INotificationsController
         member x.players = x.players :> IPlayerController
+        member x.search = x.search :> ISearchController
         member x.sessions = x.sessions :> ISessionController
         member x.snapshots = x.snapshots :> ISnapshotController
         member x.turns = x.turns :> ITurnController

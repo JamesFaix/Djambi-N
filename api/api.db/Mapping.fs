@@ -149,7 +149,27 @@ let mapGameResponse(sqlModel : GameSqlModel) : Game =
         turnCycle = JsonUtility.deserializeList sqlModel.turnCycleJson
         currentTurn = JsonUtility.deserializeOption sqlModel.currentTurnJson
     }
-
+    
+let mapSearchGameResponse(sqlModel : SearchGameSqlModel) : SearchGame =
+    {
+        id = sqlModel.gameId
+        status = sqlModel.gameStatusId |> mapGameStatusId
+        createdBy = {
+            userId = sqlModel.createdByUserId
+            userName = sqlModel.createdByUserName
+            time = sqlModel.createdOn
+        }
+        parameters =
+            {
+                regionCount = sqlModel.regionCount
+                description = sqlModel.description |> Option.ofReference
+                isPublic = sqlModel.isPublic
+                allowGuests = sqlModel.allowGuests
+            }
+        lastEventOn = sqlModel.lastEventOn
+        playerCount = sqlModel.playerCount
+    }
+    
 let mapEventResponse (sqlModel : EventSqlModel) : Event =
     {
         id = sqlModel.eventId

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Game } from '../../api/model';
+import { SearchGame } from '../../api/model';
 import { Classes } from '../../styles/styles';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
@@ -7,8 +7,9 @@ import Controller from '../../controllers/controller';
 import Routes from '../../routes';
 import IconBox from '../controls/iconBox';
 import Copy from '../../utilities/copy';
+import { dateToString } from '../../utilities/dates';
 
-const GamesSearchResultsTable : React.SFC<{ games : Game[] }> = props => {
+const GamesSearchResultsTable : React.SFC<{ games : SearchGame[] }> = props => {
     return (
         <table className={Classes.stripedTable}>
             <tbody>
@@ -16,7 +17,9 @@ const GamesSearchResultsTable : React.SFC<{ games : Game[] }> = props => {
                     <th></th>
                     <th>ID</th>
                     <th>Description</th>
+                    <th>Last event at</th>
                     <th>Created by</th>
+                    <th>Created at</th>
                     <th>Status</th>
                     <th># Players</th>
                     <th># Regions</th>
@@ -34,7 +37,7 @@ const GamesSearchResultsTable : React.SFC<{ games : Game[] }> = props => {
 }
 export default GamesSearchResultsTable;
 
-const GameSearchResultsRow : React.SFC<{ game : Game }> = props => {
+const GameSearchResultsRow : React.SFC<{ game : SearchGame }> = props => {
     const game = props.game;
     return (
         <tr>
@@ -51,13 +54,19 @@ const GameSearchResultsRow : React.SFC<{ game : Game }> = props => {
                 {game.parameters.description}
             </td>
             <td>
+                {dateToString(game.lastEventOn)}
+            </td>
+            <td>
                 {game.createdBy.userName}
+            </td>
+            <td>
+                {dateToString(game.createdBy.time)}
             </td>
             <td className={Classes.centered}>
                 <IconBox icon={Icons.gameStatus(game.status)}/>
             </td>
             <td className={Classes.centered}>
-                {game.players.length}
+                {game.playerCount}
             </td>
             <td className={Classes.centered}>
                 {game.parameters.regionCount}

@@ -37,24 +37,7 @@ type GameRepositoryTests() =
             Assert.Equal(gameId, game.id)
             Assert.Equal(request.parameters, game.parameters)
         }
-
-    [<Fact>]
-    let ``Get games should work``() =
-        //Arrange
-        let userId = 1
-        let request = getCreateGameRequest(userId)
-        task {
-            let! gameId = db.games.createGame request |> thenValue
-            let query = GamesQuery.empty
-
-            //Act
-            let! games = db.games.getGames query |> thenValue
-
-            //Assert
-            let exists = games |> List.exists (fun l -> l.id = gameId)
-            Assert.True(exists)
-        }
-
+        
     [<Fact>]
     let ``Add user player should work``() =
         //Arrange
