@@ -190,7 +190,7 @@ module Commands =
                     playerUserName : string option,
                     isPublic : bool option,
                     allowGuests : bool option,
-                    gameStatusId : byte option,
+                    gameStatusIds : Int32ListTvp,
                     createdBefore : DateTime option,
                     createdAfter : DateTime option,
                     lastEventBefore : DateTime option,
@@ -203,7 +203,7 @@ module Commands =
             .param("PlayerUserName", playerUserName)
             .param("IsPublic", isPublic)
             .param("AllowGuests", allowGuests)
-            .param("GameStatusId", gameStatusId)
+            .param("GameStatusIds", gameStatusIds)
             .param("CreatedBefore", createdBefore)
             .param("CreatedAfter", createdAfter)
             .param("LastEventBefore", lastEventBefore)
@@ -307,7 +307,7 @@ module Commands2 =
                               query.playerUserName,
                               query.isPublic,
                               query.allowGuests,
-                              query.status |> Option.map mapGameStatusToId,
+                              Int32ListTvp(query.statuses |> List.map (mapGameStatusToId >> int)),
                               query.createdBefore,
                               query.createdAfter,
                               query.lastEventBefore,

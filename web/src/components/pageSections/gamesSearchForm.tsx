@@ -70,8 +70,8 @@ const GamesSearchForm : React.SFC<{}> = _ => {
                         <td>
                             <EnumDropdown
                                 name={"Status"}
-                                value={query.status}
-                                onChange={(_, value) => onUpdate({ ...query, status: value })}
+                                value={query.statuses.length > 0 ? query.statuses[0] : null}
+                                onChange={(_, value) => onUpdate({ ...query, statuses: [value] })}
                                 enum={GameStatus}
                             />
                         </td>
@@ -90,7 +90,7 @@ const GamesSearchForm : React.SFC<{}> = _ => {
                             <DatePicker
                                 value={query.createdBefore}
                                 onUpdate={d => onUpdate({ ...query, createdBefore: d })}
-                                isStartDate={true}
+                                isStartDate={false}
                             />
                         </td>
                     </tr>
@@ -108,7 +108,7 @@ const GamesSearchForm : React.SFC<{}> = _ => {
                             <DatePicker
                                 value={query.lastEventBefore}
                                 onUpdate={d => onUpdate({ ...query, lastEventBefore: d })}
-                                isStartDate={true}
+                                isStartDate={false}
                             />
                     </td>
                     </tr>

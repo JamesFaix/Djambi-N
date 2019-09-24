@@ -8,7 +8,7 @@ export function emptyGamesQuery() : GamesQuery {
         playerUserName: null,
         isPublic: null,
         allowGuests: null,
-        status: null,
+        statuses: [],
         createdBefore: null,
         createdAfter: null,
         lastEventBefore: null,

@@ -14,7 +14,7 @@ type GamesQuery =
         playerUserName : string option
         isPublic : bool option
         allowGuests : bool option
-        status : GameStatus option
+        statuses : GameStatus list
         createdBefore : DateTime option
         createdAfter : DateTime option
         lastEventBefore : DateTime option
@@ -31,7 +31,7 @@ module GamesQuery =
             playerUserName = None
             isPublic = None
             allowGuests = None
-            status = None
+            statuses = []
             createdBefore = None
             createdAfter = None
             lastEventBefore = None
