@@ -190,7 +190,11 @@ module Commands =
                     playerUserName : string option,
                     isPublic : bool option,
                     allowGuests : bool option,
-                    gameStatusId : byte option) =
+                    gameStatusId : byte option,
+                    createdBefore : DateTime option,
+                    createdAfter : DateTime option,
+                    lastEventBefore : DateTime option,
+                    lastEventAfter : DateTime option) =
         proc("Games_Search")
             .forEntity("Game")
             .param("CurrentUserId", currentUserId)
@@ -200,6 +204,10 @@ module Commands =
             .param("IsPublic", isPublic)
             .param("AllowGuests", allowGuests)
             .param("GameStatusId", gameStatusId)
+            .param("CreatedBefore", createdBefore)
+            .param("CreatedAfter", createdAfter)
+            .param("LastEventBefore", lastEventBefore)
+            .param("LastEventAfter", lastEventAfter)
             .returnsMany<SearchGameSqlModel>()
 
     //--- Events ---
@@ -299,7 +307,11 @@ module Commands2 =
                               query.playerUserName,
                               query.isPublic,
                               query.allowGuests,
-                              query.status |> Option.map mapGameStatusToId)
+                              query.status |> Option.map mapGameStatusToId,
+                              query.createdBefore,
+                              query.createdAfter,
+                              query.lastEventBefore,
+                              query.lastEventAfter)
 
     let getPlayersForGame (gameId : int) =
         let cmd = Commands.getPlayers (gameId, None)

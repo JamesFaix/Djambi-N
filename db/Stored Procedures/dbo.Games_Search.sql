@@ -5,7 +5,11 @@ CREATE PROCEDURE [dbo].[Games_Search]
 	@PlayerUserName NVARCHAR(50),
 	@IsPublic BIT,
 	@AllowGuests BIT,
-	@GameStatusId TINYINT
+	@GameStatusId TINYINT,
+	@CreatedBefore DATETIME2,
+	@CreatedAfter DATETIME2,
+	@LastEventBefore DATETIME2,
+	@LastEventAfter DATETIME2
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -54,4 +58,8 @@ BEGIN
 		AND (@IsPublic IS NULL OR @IsPublic = g.IsPublic)
 		AND (@AllowGuests IS NULL OR @AllowGuests = g.AllowGuests)
 		AND (@GameStatusId IS NULL OR @GameStatusId = g.GameStatusId)
+		AND (@CreatedBefore IS NULL OR @CreatedBefore > g.CreatedOn)
+		AND (@CreatedAfter IS NULL OR @CreatedAfter < g.CreatedOn)
+		AND (@LastEventBefore IS NULL OR @LastEventBefore > e.CreatedOn)
+		AND (@LastEventAfter IS NULL OR @LastEventAfter < e.CreatedOn)
 END

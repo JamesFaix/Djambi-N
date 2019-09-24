@@ -8,6 +8,7 @@ import { IconSubmitButton } from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
 import HtmlInputTypes from '../htmlInputTypes';
 import Controller from '../../controllers/controller';
+import { dateFromDatepickerString, dateToDatepickerString, DateService } from '../../utilities/dates';
 
 const GamesSearchForm : React.SFC<{}> = _ => {
     const query = useSelector((state : AppState) => state.search.query);
@@ -72,6 +73,50 @@ const GamesSearchForm : React.SFC<{}> = _ => {
                                 value={query.status}
                                 onChange={(_, value) => onUpdate({ ...query, status: value })}
                                 enum={GameStatus}
+                            />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Created between</td>
+                        <td>
+                            <input
+                                type="Date"
+                                value={dateToDatepickerString(query.createdAfter, true)}
+                                onChange={e => onUpdate({ ...query, createdAfter: dateFromDatepickerString(e.target.value) })}
+                                min={DateService.minDate()}
+                                max={DateService.maxDate()}
+                            />
+                        </td>
+                        <td>and</td>
+                        <td>
+                            <input
+                                type="Date"
+                                value={dateToDatepickerString(query.createdBefore, false)}
+                                onChange={e => onUpdate({ ...query, createdBefore: dateFromDatepickerString(e.target.value) })}
+                                min={DateService.minDate()}
+                                max={DateService.maxDate()}
+                            />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Last event between</td>
+                        <td>
+                            <input
+                                type="Date"
+                                value={dateToDatepickerString(query.lastEventAfter, true)}
+                                onChange={e => onUpdate({ ...query, lastEventAfter: dateFromDatepickerString(e.target.value) })}
+                                min={DateService.minDate()}
+                                max={DateService.maxDate()}
+                            />
+                        </td>
+                        <td>and</td>
+                        <td>
+                            <input
+                                type="Date"
+                                value={dateToDatepickerString(query.lastEventBefore, false)}
+                                onChange={e => onUpdate({ ...query, lastEventBefore: dateFromDatepickerString(e.target.value) })}
+                                min={DateService.minDate()}
+                                max={DateService.maxDate()}
                             />
                         </td>
                     </tr>
