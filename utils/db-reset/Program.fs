@@ -85,6 +85,7 @@ let getFilesInOrder : string seq =
 
         let folders = [
             "Types\\User-defined Data Types"
+            "Views"
             "Stored Procedures"
             "Data"
         ]
@@ -92,21 +93,12 @@ let getFilesInOrder : string seq =
         yield! folders |> Seq.collect getFiles
     }
 
-let createAdminUser() : unit =
-    printfn "Creating admin user"
-
-    let cmd = sprintf "EXEC Users_Create %s, %s" env.adminUsername env.adminPassword
-
-    executeCommand djambiConnectionString cmd
-
 [<EntryPoint>]
 let main argv =
     dropAndCreateDb()
 
     for f in getFilesInOrder do
         loadFile f
-
-    createAdminUser()
 
     printfn "Done"
     0

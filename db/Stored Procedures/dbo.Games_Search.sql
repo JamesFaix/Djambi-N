@@ -19,17 +19,20 @@ BEGIN
 		g.CreatedOn,
 		g.AllowGuests,
 		g.IsPublic,
-		e.CreatedOn as LastEventOn,
+		ISNULL(e.CreatedOn, g.CreatedOn) as LastEventOn,
 		gpc.PlayerCount
     FROM Games g
 		INNER JOIN Users u
 			ON g.CreatedByUserId = u.UserId
-		INNER JOIN VLatestEvents e
+		LEFT JOIN VLatestEvents e
 			ON g.GameId = e.GameId
 		INNER JOIN VGamePlayerCounts gpc
 			ON g.GameId = gpc.GameId
+		INNER JOIN VUserViewableGames uvg
+			ON g.GameId = uvg.GameId
 
-	WHERE (@DescriptionContains IS NULL OR g.[Description] LIKE '%' + @DescriptionContains + '%')
+	WHERE uvg.UserId = @CurrentUserId
+		AND (@DescriptionContains IS NULL OR g.[Description] LIKE '%' + @DescriptionContains + '%')
 		AND (@CreatedByUserName IS NULL
 			OR EXISTS(
 				SELECT 1

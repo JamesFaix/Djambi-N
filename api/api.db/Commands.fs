@@ -85,28 +85,16 @@ module Commands =
 
     //--- Games & Players ---
 
-    let getGames (gameId : int option,
-                  descriptionContains : string option,
-                  createdByUserName : string option,
-                  playerUserName : string option,
-                  isPublic : bool option,
-                  allowGuests : bool option,
-                  gameStatusId : byte option) =
+    let getGame (gameId : int) =
         proc("Games_Get")
             .forEntity("Game")
             .param("GameId", gameId)
-            .param("DescriptionContains", descriptionContains)
-            .param("CreatedByUserName", createdByUserName)
-            .param("PlayerUserName", playerUserName)
-            .param("IsPublic", isPublic)
-            .param("AllowGuests", allowGuests)
-            .param("GameStatusId", gameStatusId)
-            //Open for Commands2 to close
+            .returnsSingle<GameSqlModel>()
 
-    let getPlayers (gameIds : Int32ListTvp, playerId : int option) =
+    let getPlayers (gameId : int, playerId : int option) =
         proc("Players_Get")
             .forEntity("Player")
-            .param("GameIds", gameIds)
+            .param("GameId", gameId)
             .param("PlayerId", playerId)
             //Open for Commands2 to close
 
@@ -304,16 +292,6 @@ module Commands2 =
     let createSession (request : CreateSessionRequest) =
         Commands.createSession (request.userId, request.token, request.expiresOn)
 
-    let getGames (query : GamesQuery) =
-        let cmd = Commands.getGames (query.gameId,
-                                     query.descriptionContains,
-                                     query.createdByUserName,
-                                     query.playerUserName,
-                                     query.isPublic,
-                                     query.allowGuests,
-                                     query.status |> Option.map mapGameStatusToId)
-        cmd.returnsMany<GameSqlModel>()
-
     let searchGames (query : GamesQuery, currentUserId : int) =
         Commands.searchGames (currentUserId,
                               query.descriptionContains,
@@ -323,16 +301,12 @@ module Commands2 =
                               query.allowGuests,
                               query.status |> Option.map mapGameStatusToId)
 
-    let getGame (gameId : int) =
-        let cmd = Commands.getGames (Some gameId, None, None, None, None, None, None)
-        cmd.returnsSingle<GameSqlModel>()
-
-    let getPlayers (gameIds : int list) =
-        let cmd = Commands.getPlayers (Int32ListTvp(gameIds), None)
+    let getPlayersForGame (gameId : int) =
+        let cmd = Commands.getPlayers (gameId, None)
         cmd.returnsMany<PlayerSqlModel>()
 
     let getPlayer (gameId : int, playerId : int) =
-        let cmd = Commands.getPlayers (Int32ListTvp([gameId]), Some playerId)
+        let cmd = Commands.getPlayers (gameId, Some playerId)
         cmd.returnsSingle<PlayerSqlModel>()
 
     let createGame (request : CreateGameRequest) =

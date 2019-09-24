@@ -9,12 +9,12 @@ open System
 
 type GameRepository(ctxProvider : CommandContextProvider) =
     let getGameWithoutPlayers (gameId : int) : Game AsyncHttpResult =
-        Commands2.getGame gameId
+        Commands.getGame gameId
         |> Command.execute ctxProvider
         |> thenMap Mapping.mapGameResponse
 
-    let getPlayersForGames (gameIds : int list) : Player List AsyncHttpResult =
-        Commands2.getPlayers gameIds
+    let getPlayersForGame (gameId : int) : Player List AsyncHttpResult =
+        Commands2.getPlayersForGame gameId
         |> Command.execute ctxProvider
         |> thenMap (List.map Mapping.mapPlayerResponse)
 
@@ -37,7 +37,7 @@ type GameRepository(ctxProvider : CommandContextProvider) =
         member x.getGame gameId =
             getGameWithoutPlayers gameId
             |> thenBindAsync (fun game ->
-                getPlayersForGames [gameId]
+                getPlayersForGame gameId
                 |> thenMap (fun players -> { game with players = players })
             )
 

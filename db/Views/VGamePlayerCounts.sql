@@ -4,11 +4,18 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE VIEW [dbo].[GamePlayerCounts]
+CREATE VIEW [dbo].[VGamePlayerCounts]
 AS
 
-SELECT GameID, COUNT(GameID) AS PlayerCount
-FROM Players
-GROUP BY GameID
+WITH PlayerCounts AS (
+	SELECT GameID, COUNT(PlayerID) AS PlayerCount
+	FROM Players
+	GROUP BY GameID
+)
 
+SELECT g.GameId,
+	ISNULL(pc.PlayerCount, 0) AS PlayerCount
+FROM Games g
+	LEFT JOIN PlayerCounts pc
+		ON g.GameId = pc.GameId
 GO

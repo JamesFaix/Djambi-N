@@ -12,14 +12,16 @@ type SearchRepositoryTests() =
     [<Fact>]
     let ``Search games should work``() =
         //Arrange
-        let userId = 1
-        let request = getCreateGameRequest(userId)
         task {
-            let! gameId = db.games.createGame request |> thenValue
+            let userRequest = getCreateUserRequest()
+            let! user = db.users.createUser userRequest |> thenValue
+
+            let gameRequest = getCreateGameRequest(user.id)
+            let! gameId = db.games.createGame gameRequest |> thenValue
             let query = GamesQuery.empty
 
             //Act
-            let! games = db.search.searchGames (query, userId) |> thenValue
+            let! games = db.search.searchGames (query, user.id) |> thenValue
 
             //Assert
             let exists = games |> List.exists (fun l -> l.id = gameId)
