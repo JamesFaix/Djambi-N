@@ -79,46 +79,38 @@ const GamesSearchForm : React.SFC<{}> = _ => {
                     <tr>
                         <td>Created between</td>
                         <td>
-                            <input
-                                type="Date"
-                                value={DateService.dateToDatepickerString(query.createdAfter, true)}
-                                onChange={e => onUpdate({ ...query, createdAfter: DateService.dateFromDatepickerString(e.target.value) })}
-                                min={DateService.minDate()}
-                                max={DateService.maxDate()}
+                            <DatePicker
+                                value={query.createdAfter}
+                                onUpdate={d => onUpdate({ ...query, createdAfter: d })}
+                                isStartDate={true}
                             />
                         </td>
                         <td>and</td>
                         <td>
-                            <input
-                                type="Date"
-                                value={DateService.dateToDatepickerString(query.createdBefore, false)}
-                                onChange={e => onUpdate({ ...query, createdBefore: DateService.dateFromDatepickerString(e.target.value) })}
-                                min={DateService.minDate()}
-                                max={DateService.maxDate()}
+                            <DatePicker
+                                value={query.createdBefore}
+                                onUpdate={d => onUpdate({ ...query, createdBefore: d })}
+                                isStartDate={true}
                             />
                         </td>
                     </tr>
                     <tr>
                         <td>Last event between</td>
                         <td>
-                            <input
-                                type="Date"
-                                value={DateService.dateToDatepickerString(query.lastEventAfter, true)}
-                                onChange={e => onUpdate({ ...query, lastEventAfter: DateService.dateFromDatepickerString(e.target.value) })}
-                                min={DateService.minDate()}
-                                max={DateService.maxDate()}
+                            <DatePicker
+                                value={query.lastEventAfter}
+                                onUpdate={d => onUpdate({ ...query, lastEventAfter: d })}
+                                isStartDate={true}
                             />
                         </td>
                         <td>and</td>
                         <td>
-                            <input
-                                type="Date"
-                                value={DateService.dateToDatepickerString(query.lastEventBefore, false)}
-                                onChange={e => onUpdate({ ...query, lastEventBefore: DateService.dateFromDatepickerString(e.target.value) })}
-                                min={DateService.minDate()}
-                                max={DateService.maxDate()}
+                            <DatePicker
+                                value={query.lastEventBefore}
+                                onUpdate={d => onUpdate({ ...query, lastEventBefore: d })}
+                                isStartDate={true}
                             />
-                        </td>
+                    </td>
                     </tr>
                     <tr>
                         <td>GameId</td>
@@ -142,6 +134,7 @@ const GamesSearchForm : React.SFC<{}> = _ => {
         </form>
     );
 };
+export default GamesSearchForm;
 
 function emptyIfNull(value : any) : string {
     return value === null ? "" : value;
@@ -151,4 +144,18 @@ function nullIfEmpty(value : string) : string {
     return value === "" ? null : value;
 }
 
-export default GamesSearchForm;
+const DatePicker : React.SFC<{
+    value: Date,
+    onUpdate: (d:Date) => void,
+    isStartDate : boolean
+}> = props => {
+    return (
+        <input
+            type={HtmlInputTypes.Date}
+            value={DateService.dateToDatepickerString(props.value, props.isStartDate)}
+            onChange={e => props.onUpdate(DateService.dateFromDatepickerString(e.target.value))}
+            min={DateService.minDate()}
+            max={DateService.maxDate()}
+        />
+    );
+}
