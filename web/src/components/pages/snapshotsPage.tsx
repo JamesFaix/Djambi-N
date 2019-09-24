@@ -10,7 +10,7 @@ import { State as AppState } from '../../store/root';
 import { useSelector } from 'react-redux';
 import { Classes } from '../../styles/styles';
 import { SnapshotInfo } from '../../api/model';
-import { dateToString } from '../../utilities/dates';
+import DateService from '../../utilities/dates';
 
 const SnapshotsPage : React.SFC<{}> = props => {
     const routeGameId = (props as any).match.params.gameId;
@@ -75,7 +75,7 @@ const SnapshotRow : React.SFC<{
                 {s.description}
             </td>
             <td>
-                {dateToString(s.createdBy.time)}
+                {DateService.dateToString(s.createdBy.time)}
             </td>
             <td>
                 {s.createdBy.userName}

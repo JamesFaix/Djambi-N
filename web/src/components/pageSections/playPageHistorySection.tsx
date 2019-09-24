@@ -9,7 +9,7 @@ import Scrollbars from 'react-custom-scrollbars';
 import Selectors from '../../selectors';
 import GameHistory from '../../viewModel/gameHistory';
 import Copy from '../../utilities/copy';
-import { dateToString } from '../../utilities/dates';
+import DateService from '../../utilities/dates';
 
 const GameHistorySection : React.SFC<{}> = _ => {
     const history = useSelector((state : AppState) => state.activeGame.history);
@@ -36,7 +36,7 @@ const GameHistoryEventBox : React.SFC<{ event : Event }> = props => {
 
     const p = game.players.find(p => p.id === e.actingPlayerId);
 
-    const dateText = dateToString(e.createdBy.time);
+    const dateText = DateService.dateToString(e.createdBy.time);
 
     return (
         <div
