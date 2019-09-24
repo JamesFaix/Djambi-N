@@ -2,13 +2,17 @@ import { GamesQuery, LoginRequest, CreateUserRequest, GameParameters } from "./m
 
 export function emptyGamesQuery() : GamesQuery {
     return {
-        gameId : null,
-        descriptionContains : null,
-        createdByUserName : null,
-        playerUserName : null,
-        isPublic : null,
-        allowGuests : null,
-        status : null
+        gameId: null,
+        descriptionContains: null,
+        createdByUserName: null,
+        playerUserName: null,
+        isPublic: null,
+        allowGuests: null,
+        status: null,
+        createdBefore: null,
+        createdAfter: null,
+        lastEventBefore: null,
+        lastEventAfter: null
     };
 }
 

@@ -371,7 +371,11 @@ export interface GamesQuery {
     playerUserName : string,
     isPublic : boolean,
     allowGuests : boolean,
-    status : GameStatus
+    status : GameStatus,
+    createdBefore : Date,
+    createdAfter : Date,
+    lastEventBefore : Date,
+    lastEventAfter : Date
 }
 
 export interface SearchGame {

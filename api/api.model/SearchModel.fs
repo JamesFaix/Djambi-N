@@ -15,6 +15,10 @@ type GamesQuery =
         isPublic : bool option
         allowGuests : bool option
         status : GameStatus option
+        createdBefore : DateTime option
+        createdAfter : DateTime option
+        lastEventBefore : DateTime option
+        lastEventAfter : DateTime option
     }
 
 module GamesQuery =
@@ -28,6 +32,10 @@ module GamesQuery =
             isPublic = None
             allowGuests = None
             status = None
+            createdBefore = None
+            createdAfter = None
+            lastEventBefore = None
+            lastEventAfter = None
         }
 
 [<ClientType(ClientSection.Search)>]

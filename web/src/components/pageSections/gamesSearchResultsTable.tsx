@@ -7,7 +7,7 @@ import Controller from '../../controllers/controller';
 import Routes from '../../routes';
 import IconBox from '../controls/iconBox';
 import Copy from '../../utilities/copy';
-import { dateToString } from '../../utilities/dates';
+import DateService from '../../utilities/dates';
 
 const GamesSearchResultsTable : React.SFC<{ games : SearchGame[] }> = props => {
     return (
@@ -54,13 +54,13 @@ const GameSearchResultsRow : React.SFC<{ game : SearchGame }> = props => {
                 {game.parameters.description}
             </td>
             <td>
-                {dateToString(game.lastEventOn)}
+                {DateService.dateToString(game.lastEventOn)}
             </td>
             <td>
                 {game.createdBy.userName}
             </td>
             <td>
-                {dateToString(game.createdBy.time)}
+                {DateService.dateToString(game.createdBy.time)}
             </td>
             <td className={Classes.centered}>
                 <IconBox icon={Icons.gameStatus(game.status)}/>

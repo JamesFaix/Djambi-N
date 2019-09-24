@@ -1,7 +1,7 @@
 source https://api.nuget.org/v3/index.json
 
 nuget Dapper 1.50.5
-nuget FSharp.Core 4.5.0
+nuget FSharp.Core 4.6.0
 nuget Giraffe 1.1.0
 nuget Microsoft.AspNetCore.Cors >= 2.0.0
 nuget Microsoft.AspNetCore.Server.Kestrel >= 2.0.0

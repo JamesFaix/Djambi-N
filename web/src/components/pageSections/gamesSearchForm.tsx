@@ -8,6 +8,7 @@ import { IconSubmitButton } from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
 import HtmlInputTypes from '../htmlInputTypes';
 import Controller from '../../controllers/controller';
+import DateService from '../../utilities/dates';
 
 const GamesSearchForm : React.SFC<{}> = _ => {
     const query = useSelector((state : AppState) => state.search.query);
@@ -76,6 +77,42 @@ const GamesSearchForm : React.SFC<{}> = _ => {
                         </td>
                     </tr>
                     <tr>
+                        <td>Created between</td>
+                        <td>
+                            <DatePicker
+                                value={query.createdAfter}
+                                onUpdate={d => onUpdate({ ...query, createdAfter: d })}
+                                isStartDate={true}
+                            />
+                        </td>
+                        <td>and</td>
+                        <td>
+                            <DatePicker
+                                value={query.createdBefore}
+                                onUpdate={d => onUpdate({ ...query, createdBefore: d })}
+                                isStartDate={true}
+                            />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Last event between</td>
+                        <td>
+                            <DatePicker
+                                value={query.lastEventAfter}
+                                onUpdate={d => onUpdate({ ...query, lastEventAfter: d })}
+                                isStartDate={true}
+                            />
+                        </td>
+                        <td>and</td>
+                        <td>
+                            <DatePicker
+                                value={query.lastEventBefore}
+                                onUpdate={d => onUpdate({ ...query, lastEventBefore: d })}
+                                isStartDate={true}
+                            />
+                    </td>
+                    </tr>
+                    <tr>
                         <td>GameId</td>
                         <td>
                             <input
@@ -97,6 +134,7 @@ const GamesSearchForm : React.SFC<{}> = _ => {
         </form>
     );
 };
+export default GamesSearchForm;
 
 function emptyIfNull(value : any) : string {
     return value === null ? "" : value;
@@ -106,4 +144,18 @@ function nullIfEmpty(value : string) : string {
     return value === "" ? null : value;
 }
 
-export default GamesSearchForm;
+const DatePicker : React.SFC<{
+    value: Date,
+    onUpdate: (d:Date) => void,
+    isStartDate : boolean
+}> = props => {
+    return (
+        <input
+            type={HtmlInputTypes.Date}
+            value={DateService.dateToDatepickerString(props.value, props.isStartDate)}
+            onChange={e => props.onUpdate(DateService.dateFromDatepickerString(e.target.value))}
+            min={DateService.minDate()}
+            max={DateService.maxDate()}
+        />
+    );
+}
