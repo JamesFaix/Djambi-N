@@ -5,7 +5,7 @@ export interface DropdownItem<T> {
     label : string
 }
 
-interface DropdownProps<T> {
+export interface DropdownProps<T> {
     name : string,
     items : DropdownItem<T>[],
     onChange(name : string, item : T) : void,
@@ -48,12 +48,4 @@ export default class Dropdown<T> extends React.Component<DropdownProps<T>> {
             </select>
         );
     }
-}
-
-interface MultiDropdownProps<T> {
-    name : string,
-    items : DropdownItem<T>[],
-    onChange(name : string, items : T[]) : void,
-    currentValues : T[],
-    style ?: React.CSSProperties
 }
