@@ -21,6 +21,16 @@ const GamesSearchForm : React.SFC<{}> = _ => {
             <table>
                 <tbody>
                     <tr>
+                        <td>GameId</td>
+                        <td>
+                            <input
+                                style={{width:"50px"}}
+                                type={HtmlInputTypes.Number}
+                                min={1}
+                                value={emptyIfNull(query.gameId)}
+                                onChange={e => onUpdate({ ...query, gameId: parseInt(e.target.value) })}
+                            />
+                        </td>
                         <td>Description</td>
                         <td>
                             <input
@@ -30,22 +40,14 @@ const GamesSearchForm : React.SFC<{}> = _ => {
                                 autoFocus
                             />
                         </td>
+                    </tr>
+                    <tr>
                         <td>Is public</td>
                         <td>
                             <TristateDropdown
                                 name={"IsPublic"}
                                 value={query.isPublic}
                                 onChange={(_, value) => onUpdate({ ...query, isPublic: value })}
-                            />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Created by user</td>
-                        <td>
-                            <input
-                                type={HtmlInputTypes.Text}
-                                value={emptyIfNull(query.createdByUserName)}
-                                onChange={e => onUpdate({ ...query, createdByUserName: nullIfEmpty(e.target.value) })}
                             />
                         </td>
                         <td>Allow guests</td>
@@ -58,6 +60,14 @@ const GamesSearchForm : React.SFC<{}> = _ => {
                         </td>
                     </tr>
                     <tr>
+                        <td>Created by user</td>
+                        <td>
+                            <input
+                                type={HtmlInputTypes.Text}
+                                value={emptyIfNull(query.createdByUserName)}
+                                onChange={e => onUpdate({ ...query, createdByUserName: nullIfEmpty(e.target.value) })}
+                            />
+                        </td>
                         <td>Contains user</td>
                         <td>
                             <input
@@ -66,6 +76,8 @@ const GamesSearchForm : React.SFC<{}> = _ => {
                                 onChange={e => onUpdate({ ...query, playerUserName: nullIfEmpty(e.target.value) })}
                             />
                         </td>
+                    </tr>
+                    <tr>
                         <td>Status</td>
                         <td>
                             <EnumDropdown
@@ -109,18 +121,6 @@ const GamesSearchForm : React.SFC<{}> = _ => {
                                 value={query.lastEventBefore}
                                 onUpdate={d => onUpdate({ ...query, lastEventBefore: d })}
                                 isStartDate={false}
-                            />
-                    </td>
-                    </tr>
-                    <tr>
-                        <td>GameId</td>
-                        <td>
-                            <input
-                                style={{width:"50px"}}
-                                type={HtmlInputTypes.Number}
-                                min={1}
-                                value={emptyIfNull(query.gameId)}
-                                onChange={e => onUpdate({ ...query, gameId: parseInt(e.target.value) })}
                             />
                         </td>
                     </tr>
