@@ -3,7 +3,7 @@ import { GameStatus } from '../../api/model';
 import { State as AppState } from '../../store/root';
 import { useSelector } from 'react-redux';
 import TristateDropdown from '../controls/tristateDropdown';
-import { EnumMultiDropdown } from '../controls/enumDropdown';
+import EnumDropdown from '../controls/enumDropdown';
 import { IconSubmitButton } from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
 import HtmlInputTypes from '../htmlInputTypes';
@@ -68,10 +68,10 @@ const GamesSearchForm : React.SFC<{}> = _ => {
                         </td>
                         <td>Status</td>
                         <td>
-                            <EnumMultiDropdown
+                            <EnumDropdown
                                 name={"Status"}
-                                values={query.statuses}
-                                onChange={(_, values) => onUpdate({ ...query, statuses: values })}
+                                value={query.statuses.length > 0 ? query.statuses[0] : null}
+                                onChange={(_, value) => onUpdate({ ...query, statuses: [value] })}
                                 enum={GameStatus}
                             />
                         </td>
