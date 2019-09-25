@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Dropdown, { DropdownItem } from './dropdown';
 
-export interface EnumDropdownProps<TEnum> {
+interface EnumDropdownProps<TEnum> {
     name : string,
     onChange(name : string, value : TEnum) : void,
     value : TEnum,
