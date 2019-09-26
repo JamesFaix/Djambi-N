@@ -101,7 +101,7 @@ type SearchGamesTests() =
 
             let! _ = (db.games :?> GameRepository).updateGame({ game1 with status = GameStatus.Canceled });
 
-            let query = { GamesQuery.empty with status = Some GameStatus.Pending }
+            let query = { GamesQuery.empty with statuses = [GameStatus.Pending] }
 
             //Act
             let! result = managers.search.searchGames query session

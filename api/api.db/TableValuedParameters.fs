@@ -22,7 +22,7 @@ type TvpBase<'a>(xs : 'a seq) =
         p.ParameterName <- name
         p.SqlDbType <- SqlDbType.Structured
         p.Value <- table
-        p.TypeName <- table.TableName
+        p.TypeName <- if table = null then null else table.TableName
         cmd.Parameters.Add(p) |> ignore
         ()
 

@@ -5,7 +5,7 @@ CREATE PROCEDURE [dbo].[Games_Search]
 	@PlayerUserName NVARCHAR(50),
 	@IsPublic BIT,
 	@AllowGuests BIT,
-	@GameStatusId TINYINT,
+	@GameStatusIds Int32List READONLY,
 	@CreatedBefore DATETIME2,
 	@CreatedAfter DATETIME2,
 	@LastEventBefore DATETIME2,
@@ -13,6 +13,8 @@ CREATE PROCEDURE [dbo].[Games_Search]
 AS
 BEGIN
 	SET NOCOUNT ON;
+
+	DECLARE @AnyStatusFilter BIT = IIF(EXISTS(SELECT 1 FROM @GameStatusIds), 1, 0)
 
 	SELECT g.GameId,
 		g.GameStatusId,
@@ -34,6 +36,8 @@ BEGIN
 			ON g.GameId = gpc.GameId
 		INNER JOIN VUserViewableGames uvg
 			ON g.GameId = uvg.GameId
+		LEFT JOIN @GameStatusIds gsids
+			ON gsids.N = g.GameStatusId
 
 	WHERE uvg.UserId = @CurrentUserId
 		AND (@DescriptionContains IS NULL OR g.[Description] LIKE '%' + @DescriptionContains + '%')
@@ -57,7 +61,7 @@ BEGIN
 		)
 		AND (@IsPublic IS NULL OR @IsPublic = g.IsPublic)
 		AND (@AllowGuests IS NULL OR @AllowGuests = g.AllowGuests)
-		AND (@GameStatusId IS NULL OR @GameStatusId = g.GameStatusId)
+		AND (@AnyStatusFilter = 0 OR gsids.N IS NOT NULL)
 		AND (@CreatedBefore IS NULL OR @CreatedBefore > g.CreatedOn)
 		AND (@CreatedAfter IS NULL OR @CreatedAfter < g.CreatedOn)
 		AND (@LastEventBefore IS NULL OR @LastEventBefore > e.CreatedOn)
