@@ -31,6 +31,7 @@ const GamesSearchForm : React.SFC<{}> = _ => {
                     <TextInput
                         value={emptyIfNull(query.descriptionContains)}
                         onChange={x => onUpdate({ ...query, descriptionContains: nullIfEmpty(x) })}
+                        autoFocus
                     />
                 </FormField>
             </FormRow>
@@ -68,69 +69,25 @@ const GamesSearchForm : React.SFC<{}> = _ => {
                 <FormField label="Pending">
                     <Checkbox
                         value={query.statuses.includes(GameStatus.Pending)}
-                        onChange={x => {
-                            const s = GameStatus.Pending;
-                            let statuses = [ ...query.statuses ];
-                            if (x) {
-                                if (!statuses.includes(s)) {
-                                    statuses.push(s);
-                                }
-                            } else {
-                                statuses = statuses.filter(x => x !== s);
-                            }
-                            onUpdate({ ...query, statuses: statuses })
-                        }}
+                        onChange={x => onUpdate({ ...query, statuses: getStatuses(x, GameStatus.Pending, query.statuses)})}
                     />
                 </FormField>
                 <FormField label="In progress">
                     <Checkbox
                         value={query.statuses.includes(GameStatus.InProgress)}
-                        onChange={x => {
-                            const s = GameStatus.InProgress;
-                            let statuses = [ ...query.statuses ];
-                            if (x) {
-                                if (!statuses.includes(s)) {
-                                    statuses.push(s);
-                                }
-                            } else {
-                                statuses = statuses.filter(x => x !== s);
-                            }
-                            onUpdate({ ...query, statuses: statuses })
-                        }}
+                        onChange={x => onUpdate({ ...query, statuses: getStatuses(x, GameStatus.InProgress, query.statuses)})}
                     />
                 </FormField>
                 <FormField label="Over">
                     <Checkbox
                         value={query.statuses.includes(GameStatus.Over)}
-                        onChange={x => {
-                            const s = GameStatus.Over;
-                            let statuses = [ ...query.statuses ];
-                            if (x) {
-                                if (!statuses.includes(s)) {
-                                    statuses.push(s);
-                                }
-                            } else {
-                                statuses = statuses.filter(x => x !== s);
-                            }
-                            onUpdate({ ...query, statuses: statuses })
-                        }}
+                        onChange={x => onUpdate({ ...query, statuses: getStatuses(x, GameStatus.Over, query.statuses)})}
                     />
                 </FormField>
                 <FormField label="Canceled">
                     <Checkbox
                         value={query.statuses.includes(GameStatus.Canceled)}
-                        onChange={x => {
-                            const s = GameStatus.Canceled;
-                            let statuses = [ ...query.statuses ];
-                            if (x) {
-                                if (!statuses.includes(s)) {
-                                    statuses.push(s);
-                                }
-                            } else {
-                                statuses = statuses.filter(x => x !== s);
-                            }
-                            onUpdate({ ...query, statuses: statuses })
-                        }}
+                        onChange={x => onUpdate({ ...query, statuses: getStatuses(x, GameStatus.Canceled, query.statuses)})}
                     />
                 </FormField>
             </FormRow>
@@ -161,6 +118,19 @@ const GamesSearchForm : React.SFC<{}> = _ => {
     );
 };
 export default GamesSearchForm;
+
+function getStatuses(checked : boolean, affectedStatus : GameStatus, currentStatuses : GameStatus[])
+{
+    if (checked) {
+        if (currentStatuses.includes(affectedStatus)) {
+            return currentStatuses;
+        } else {
+            return currentStatuses.concat([affectedStatus]);
+        }
+    } else {
+        return currentStatuses.filter(x => x !== affectedStatus);
+    }
+}
 
 function emptyIfNull(value : any) : string {
     return value === null ? "" : value;

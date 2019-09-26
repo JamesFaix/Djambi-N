@@ -16,8 +16,8 @@ function emptyIfNull (x : any) : any {
 }
 
 interface InputBaseProps<T> {
-    value : T,
-    onChange : (value:T) => void,
+    value ?: T,
+    onChange ?: (value:T) => void,
     style ?: React.CSSProperties,
     autoFocus ?: boolean
 }
@@ -37,7 +37,7 @@ export const Checkbox : React.SFC<CheckBoxProps> = props => {
 }
 
 interface TextInputProps extends InputBaseProps<string> {
-    autoComplete : string
+    autoComplete ?: string
 }
 
 export const TextInput : React.SFC<TextInputProps> = props => {
