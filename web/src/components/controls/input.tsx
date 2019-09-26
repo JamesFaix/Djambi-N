@@ -15,35 +15,37 @@ function emptyIfNull (x : any) : any {
     return x === null ? "" : x;
 }
 
-export const Checkbox : React.SFC<{
-    value ?: boolean,
-    onChange ?: (value : boolean) => void,
+interface InputBaseProps<T> {
+    value : T,
+    onChange : (value:T) => void,
     style ?: React.CSSProperties,
     autoFocus ?: boolean
-}> = props => {
+}
+
+interface CheckBoxProps extends InputBaseProps<boolean> {}
+
+export const Checkbox : React.SFC<CheckBoxProps> = props => {
     return (
         <input
             type={HtmlInputTypes.CheckBox}
             checked={props.value}
-            onChange={e => props.onChange(e.target.checked)}
+            onChange={e => props.onChange ? props.onChange(e.target.checked) : null}
             style={props.style}
             autoFocus={props.autoFocus}
         />
     );
 }
 
-export const TextInput : React.SFC<{
-    value ?: string,
-    onChange ?: (value : string) => void
-    style ?: React.CSSProperties,
-    autoFocus ?: boolean,
-    autoComplete ?: string
-}> = props => {
+interface TextInputProps extends InputBaseProps<string> {
+    autoComplete : string
+}
+
+export const TextInput : React.SFC<TextInputProps> = props => {
     return (
         <input
             type={HtmlInputTypes.Text}
             value={emptyIfNull(props.value)}
-            onChange={e => props.onChange(e.target.value)}
+            onChange={e => props.onChange ? props.onChange(e.target.value) : null}
             style={props.style}
             autoFocus={props.autoFocus}
             autoComplete={props.autoComplete}
@@ -51,19 +53,17 @@ export const TextInput : React.SFC<{
     )
 }
 
-export const NumberInput : React.SFC<{
-    value ?: number,
-    onChange ?: (value : number) => void,
+interface NumberInputProps extends InputBaseProps<number> {
     min ?: number,
     max ?: number
-    style ?: React.CSSProperties,
-    autoFocus ?: boolean
-}> = props => {
+}
+
+export const NumberInput : React.SFC<NumberInputProps> = props => {
     return (
         <input
             type={HtmlInputTypes.Number}
             value={emptyIfNull(props.value)}
-            onChange={e => props.onChange(Number(e.target.value))}
+            onChange={e => props.onChange ? props.onChange(Number(e.target.value)) : null}
             min={props.min}
             max={props.max}
             style={props.style}
@@ -72,19 +72,17 @@ export const NumberInput : React.SFC<{
     )
 }
 
-export const DatePicker : React.SFC<{
-    value ?: Date,
-    onChange ?: (value : Date) => void,
+interface DatePickerProps extends InputBaseProps<Date> {
     min ?: Date,
-    max ?: Date,
-    style ?: React.CSSProperties,
-    autoFocus ?: boolean
-}> = props => {
+    max ?: Date
+}
+
+export const DatePicker : React.SFC<DatePickerProps> = props => {
     return (
         <input
             type={HtmlInputTypes.Date}
             value={DateService.dateToDatepickerString(props.value)}
-            onChange={e => props.onChange(DateService.dateFromDatepickerString(e.target.value))}
+            onChange={e => props.onChange ? props.onChange(DateService.dateFromDatepickerString(e.target.value)) : null}
             min={props.min ? DateService.dateToDatepickerString(props.min) : undefined}
             max={props.max ? DateService.dateToDatepickerString(props.max) : undefined}
             style={props.style}
