@@ -17,115 +17,152 @@ const GamesSearchForm : React.SFC<{}> = _ => {
     return (
         <form
             onSubmit={() => Controller.Search.searchGames(query)}
+            className="form"
         >
-            <table>
-                <tbody>
-                    <tr>
-                        <td>GameId</td>
-                        <td>
-                            <input
-                                style={{width:"50px"}}
-                                type={HtmlInputTypes.Number}
-                                min={1}
-                                value={emptyIfNull(query.gameId)}
-                                onChange={e => onUpdate({ ...query, gameId: parseInt(e.target.value) })}
-                            />
-                        </td>
-                        <td>Description</td>
-                        <td>
-                            <input
-                                type={HtmlInputTypes.Text}
-                                value={emptyIfNull(query.descriptionContains)}
-                                onChange={e => onUpdate({ ...query, descriptionContains: nullIfEmpty(e.target.value) })}
-                                autoFocus
-                            />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Is public</td>
-                        <td>
-                            <TristateDropdown
-                                name={"IsPublic"}
-                                value={query.isPublic}
-                                onChange={(_, value) => onUpdate({ ...query, isPublic: value })}
-                            />
-                        </td>
-                        <td>Allow guests</td>
-                        <td>
-                            <TristateDropdown
-                                name={"AllowGuests"}
-                                value={query.allowGuests}
-                                onChange={(_, value) => onUpdate({ ...query, allowGuests: value })}
-                            />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Created by user</td>
-                        <td>
-                            <input
-                                type={HtmlInputTypes.Text}
-                                value={emptyIfNull(query.createdByUserName)}
-                                onChange={e => onUpdate({ ...query, createdByUserName: nullIfEmpty(e.target.value) })}
-                            />
-                        </td>
-                        <td>Contains user</td>
-                        <td>
-                            <input
-                                type={HtmlInputTypes.Text}
-                                value={emptyIfNull(query.playerUserName)}
-                                onChange={e => onUpdate({ ...query, playerUserName: nullIfEmpty(e.target.value) })}
-                            />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Status</td>
-                        <td>
-                            <EnumDropdown
-                                name={"Status"}
-                                value={query.statuses.length > 0 ? query.statuses[0] : null}
-                                onChange={(_, value) => onUpdate({ ...query, statuses: [value] })}
-                                enum={GameStatus}
-                            />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Created between</td>
-                        <td>
-                            <DatePicker
-                                value={query.createdAfter}
-                                onUpdate={d => onUpdate({ ...query, createdAfter: d })}
-                                isStartDate={true}
-                            />
-                        </td>
-                        <td>and</td>
-                        <td>
-                            <DatePicker
-                                value={query.createdBefore}
-                                onUpdate={d => onUpdate({ ...query, createdBefore: d })}
-                                isStartDate={false}
-                            />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Last event between</td>
-                        <td>
-                            <DatePicker
-                                value={query.lastEventAfter}
-                                onUpdate={d => onUpdate({ ...query, lastEventAfter: d })}
-                                isStartDate={true}
-                            />
-                        </td>
-                        <td>and</td>
-                        <td>
-                            <DatePicker
-                                value={query.lastEventBefore}
-                                onUpdate={d => onUpdate({ ...query, lastEventBefore: d })}
-                                isStartDate={false}
-                            />
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <div className="formRow">
+                <div className="formField">
+                    <div className="formElement">
+                        GameId
+                    </div>
+                    <div className="formElement">
+                        <input
+                            style={{width:"50px"}}
+                            type={HtmlInputTypes.Number}
+                            min={1}
+                            value={emptyIfNull(query.gameId)}
+                            onChange={e => onUpdate({ ...query, gameId: parseInt(e.target.value) })}
+                        />
+                    </div>
+                </div>
+                <div className="formField">
+                    <div className="formElement">
+                        Description
+                    </div>
+                    <div className="formElement">
+                        <input
+                            type={HtmlInputTypes.Text}
+                            value={emptyIfNull(query.descriptionContains)}
+                            onChange={e => onUpdate({ ...query, descriptionContains: nullIfEmpty(e.target.value) })}
+                            autoFocus
+                        />
+                    </div>
+                </div>
+            </div>
+            <div className="formRow">
+                <div className="formField">
+                    <div className="formElement">
+                        Is public
+                    </div>
+                    <div className="formElement">
+                        <TristateDropdown
+                            name={"IsPublic"}
+                            value={query.isPublic}
+                            onChange={(_, value) => onUpdate({ ...query, isPublic: value })}
+                        />
+                    </div>
+                </div>
+                <div className="formField">
+                    <div className="formElement">
+                        Allow guests
+                    </div>
+                    <div className="formElement">
+                        <TristateDropdown
+                            name={"AllowGuests"}
+                            value={query.allowGuests}
+                            onChange={(_, value) => onUpdate({ ...query, allowGuests: value })}
+                        />
+                    </div>
+                </div>
+            </div>
+            <div className="formRow">
+                <div className="formField">
+                    <div className="formElement">
+                        Created by user
+                    </div>
+                    <div className="formElement">
+                        <input
+                            type={HtmlInputTypes.Text}
+                            value={emptyIfNull(query.createdByUserName)}
+                            onChange={e => onUpdate({ ...query, createdByUserName: nullIfEmpty(e.target.value) })}
+                        />
+                    </div>
+                </div>
+                <div className="formField">
+                    <div className="formElement">
+                        Contains user
+                    </div>
+                    <div className="formElement">
+                        <input
+                            type={HtmlInputTypes.Text}
+                            value={emptyIfNull(query.playerUserName)}
+                            onChange={e => onUpdate({ ...query, playerUserName: nullIfEmpty(e.target.value) })}
+                        />
+                    </div>
+                </div>
+            </div>
+            <div className="formRow">
+                <div className="formField">
+                    <div className="formElement">
+                        Status
+                    </div>
+                    <div className="formElement">
+                        <EnumDropdown
+                            name={"Status"}
+                            value={query.statuses.length > 0 ? query.statuses[0] : null}
+                            onChange={(_, value) => onUpdate({ ...query, statuses: [value] })}
+                            enum={GameStatus}
+                        />
+                    </div>
+                </div>
+            </div>
+            <div className="formRow">
+                <div className="formField">
+                    <div className="formElement">
+                        Created between
+                    </div>
+                    <div className="formElement">
+                        <DatePicker
+                            value={query.createdAfter}
+                            onUpdate={d => onUpdate({ ...query, createdAfter: d })}
+                            isStartDate={true}
+                        />
+                    </div>
+                    <div className="formElement">
+                        and
+                    </div>
+                    <div className="formElement">
+                        <DatePicker
+                            value={query.createdBefore}
+                            onUpdate={d => onUpdate({ ...query, createdBefore: d })}
+                            isStartDate={false}
+                        />
+                    </div>
+                </div>
+            </div>
+            <div className="formRow">
+                <div className="formField">
+                    <div className="formElement">
+                        Last event between
+                    </div>
+                    <div className="formElement">
+                        <DatePicker
+                            value={query.lastEventAfter}
+                            onUpdate={d => onUpdate({ ...query, lastEventAfter: d })}
+                            isStartDate={true}
+                        />
+                    </div>
+                    <div className="formElement">
+                        and
+                    </div>
+                    <div className="formElement">
+                        <DatePicker
+                            value={query.lastEventBefore}
+                            onUpdate={d => onUpdate({ ...query, lastEventBefore: d })}
+                            isStartDate={false}
+                        />
+                    </div>
+                </div>
+            </div>
             <br/>
             <IconSubmitButton
                 icon={Icons.UserActions.search}
