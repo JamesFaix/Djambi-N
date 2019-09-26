@@ -7,8 +7,8 @@ import Controller from '../../controllers/controller';
 import PlayerNoteIcon from '../controls/playerNoteIcon';
 import * as LobbySeats from '../../viewModel/lobbySeats';
 import { Seat } from '../../viewModel/lobbySeats';
-import HtmlInputTypes from '../htmlInputTypes';
 import { PlayerKind } from "../../api/model";
+import { TextInput } from "../controls/input";
 
 const MutablePlayersTable : React.SFC<{}> = _ => {
     const game = Selectors.game();
@@ -76,10 +76,9 @@ const AddGuestRow : React.SFC<{}> = _ => {
     return (
         <tr>
             <td>
-                <input
-                    type={HtmlInputTypes.Text}
+                <TextInput
                     value={name}
-                    onChange={e => setName(e.target.value)}
+                    onChange={x => setName(x)}
                 />
             </td>
             <td></td>

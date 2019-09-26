@@ -7,8 +7,8 @@ import { Theme } from '../../themes/model';
 import Controller from '../../controllers/controller';
 import Selectors from '../../selectors';
 import { useSelector } from 'react-redux';
-import HtmlInputTypes from '../htmlInputTypes';
 import { State as AppState } from '../../store/root';
+import { Checkbox, NumberInput } from '../controls/input';
 
 const SettingsPage : React.SFC<{}> = _ => {
     React.useEffect(() => {
@@ -63,60 +63,54 @@ const DebugSettingsForm : React.SFC<{}> = _ => {
                 <tr>
                     <td>Show board tooltips</td>
                     <td>
-                        <input
-                            type={HtmlInputTypes.CheckBox}
-                            checked={formData.showBoardTooltips}
-                            onChange={e => onUpdate({ ...formData, showBoardTooltips: e.target.checked })}
+                        <Checkbox
+                            value={formData.showBoardTooltips}
+                            onChange={x => onUpdate({ ...formData, showBoardTooltips: x })}
                         />
                     </td>
                 </tr>
                 <tr>
                     <td>Show cell and piece IDs</td>
                     <td>
-                        <input
-                            type={HtmlInputTypes.CheckBox}
-                            checked={formData.showCellAndPieceIds}
-                            onChange={e => onUpdate({ ...formData, showCellAndPieceIds: e.target.checked })}
+                        <Checkbox
+                            value={formData.showCellAndPieceIds}
+                            onChange={x => onUpdate({ ...formData, showCellAndPieceIds: x })}
                         />
                     </td>
                 </tr>
                 <tr>
                     <td>Log API</td>
                     <td>
-                        <input
-                            type={HtmlInputTypes.CheckBox}
-                            checked={formData.logApi}
-                            onChange={e => onUpdate({ ...formData, logApi: e.target.checked })}
+                        <Checkbox
+                            value={formData.logApi}
+                            onChange={x => onUpdate({ ...formData, logApi: x })}
                         />
                     </td>
                 </tr>
                 <tr>
                     <td>Log SSE</td>
                     <td>
-                        <input
-                            type={HtmlInputTypes.CheckBox}
-                            checked={formData.logSse}
-                            onChange={e => onUpdate({ ...formData, logSse: e.target.checked })}
+                        <Checkbox
+                            value={formData.logSse}
+                            onChange={x => onUpdate({ ...formData, logSse: x })}
                         />
                     </td>
                 </tr>
                 <tr>
                     <td>Log Redux</td>
                     <td>
-                        <input
-                            type={HtmlInputTypes.CheckBox}
-                            checked={formData.logRedux}
-                            onChange={e => onUpdate({ ...formData, logRedux: e.target.checked })}
+                        <Checkbox
+                            value={formData.logRedux}
+                            onChange={x => onUpdate({ ...formData, logRedux: x })}
                         />
                     </td>
                 </tr>
                 <tr>
                     <td>Seconds to display notifications</td>
                     <td>
-                        <input
-                            type={HtmlInputTypes.Number}
+                        <NumberInput
                             value={formData.showNotificationsSeconds}
-                            onChange={e => onUpdate({ ...formData, showNotificationsSeconds: Number(e.target.value) })}
+                            onChange={x => onUpdate({ ...formData, showNotificationsSeconds: x })}
                             min={0}
                             max={300} //5min
                         />
