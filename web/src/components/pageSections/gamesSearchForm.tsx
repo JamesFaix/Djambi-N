@@ -103,14 +103,87 @@ const GamesSearchForm : React.SFC<{}> = _ => {
             <div className="formRow">
                 <div className="formField">
                     <div className="formElement">
-                        Status
+                        Pending
                     </div>
                     <div className="formElement">
-                        <EnumDropdown
-                            name={"Status"}
-                            value={query.statuses.length > 0 ? query.statuses[0] : null}
-                            onChange={(_, value) => onUpdate({ ...query, statuses: [value] })}
-                            enum={GameStatus}
+                        <input
+                            type={HtmlInputTypes.CheckBox}
+                            checked={query.statuses.includes(GameStatus.Pending)}
+                            onChange={e => {
+                                const s = GameStatus.Pending;
+                                let statuses = [ ...query.statuses ];
+                                if (e.target.checked) {
+                                    if (!statuses.includes(s)) {
+                                        statuses.push(s);
+                                    }
+                                } else {
+                                    statuses = statuses.filter(x => x !== s);
+                                }
+                                onUpdate({ ...query, statuses: statuses })
+                            }}
+                        />
+                    </div>
+                    <div className="formElement">
+                        In Progress
+                    </div>
+                    <div className="formElement">
+                        <input
+                            type={HtmlInputTypes.CheckBox}
+                            checked={query.statuses.includes(GameStatus.InProgress)}
+                            onChange={e => {
+                                const s = GameStatus.InProgress;
+                                let statuses = [ ...query.statuses ];
+                                if (e.target.checked) {
+                                    if (!statuses.includes(s)) {
+                                        statuses.push(s);
+                                    }
+                                } else {
+                                    statuses = statuses.filter(x => x !== s);
+                                }
+                                onUpdate({ ...query, statuses: statuses })
+                            }}
+                        />
+                    </div>
+                    <div className="formElement">
+                        Over
+                    </div>
+                    <div className="formElement">
+                        <input
+                            type={HtmlInputTypes.CheckBox}
+                            checked={query.statuses.includes(GameStatus.Over)}
+                            onChange={e => {
+                                const s = GameStatus.Over;
+                                let statuses = [ ...query.statuses ];
+                                if (e.target.checked) {
+                                    if (!statuses.includes(s)) {
+                                        statuses.push(s);
+                                    }
+                                } else {
+                                    statuses = statuses.filter(x => x !== s);
+                                }
+                                onUpdate({ ...query, statuses: statuses })
+                            }}
+                        />
+                    </div>
+                    <div className="formElement">
+                        Canceled
+                    </div>
+                    <div className="formElement">
+                        <input
+                            type={HtmlInputTypes.CheckBox}
+                            checked={query.statuses.includes(GameStatus.Canceled)}
+                            onChange={e => {
+                                const s = GameStatus.Canceled;
+                                let statuses = [ ...query.statuses ];
+                                if (e.target.checked) {
+                                    if (!statuses.includes(s)) {
+                                        statuses.push(s);
+                                    }
+                                } else {
+                                    statuses = statuses.filter(x => x !== s);
+                                }
+                                onUpdate({ ...query, statuses: statuses })
+                            }}
                         />
                     </div>
                 </div>
