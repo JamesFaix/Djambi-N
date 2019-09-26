@@ -1,4 +1,4 @@
-import { GamesQuery, LoginRequest, CreateUserRequest, GameParameters } from "./model";
+import { GamesQuery, LoginRequest, CreateUserRequest, GameParameters, GameStatus } from "./model";
 
 export function emptyGamesQuery() : GamesQuery {
     return {
@@ -8,7 +8,7 @@ export function emptyGamesQuery() : GamesQuery {
         playerUserName: null,
         isPublic: null,
         allowGuests: null,
-        statuses: [],
+        statuses: [ GameStatus.Pending, GameStatus.InProgress ],
         createdBefore: null,
         createdAfter: null,
         lastEventBefore: null,

@@ -123,6 +123,8 @@ const GamesSearchForm : React.SFC<{}> = _ => {
                             }}
                         />
                     </div>
+                </div>
+                <div className="formField">
                     <div className="formElement">
                         In Progress
                     </div>
@@ -144,6 +146,8 @@ const GamesSearchForm : React.SFC<{}> = _ => {
                             }}
                         />
                     </div>
+                </div>
+                <div className="formField">
                     <div className="formElement">
                         Over
                     </div>
@@ -165,6 +169,8 @@ const GamesSearchForm : React.SFC<{}> = _ => {
                             }}
                         />
                     </div>
+                </div>
+                <div className="formField">
                     <div className="formElement">
                         Canceled
                     </div>
