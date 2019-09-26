@@ -5,11 +5,11 @@ import { useSelector } from 'react-redux';
 import { SectionHeader } from '../controls/headers';
 import { IconSubmitButton } from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
-import HtmlInputTypes from '../htmlInputTypes';
 import Controller from '../../controllers/controller';
 import { Board } from '../../api/model';
 import BoardThumbnail from '../canvas/boardThumbnail';
 import Selectors from '../../selectors';
+import { Checkbox, TextInput } from '../controls/input';
 
 const CreateGamePage : React.SFC<{}> = _ => {
     React.useEffect(() => {
@@ -107,30 +107,27 @@ const GameSettingsForm : React.SFC<{}> = _ => {
                     <tr>
                         <td>Allow guests</td>
                         <td>
-                            <input
-                                type={HtmlInputTypes.CheckBox}
-                                checked={formData.allowGuests}
-                                onChange={e => onUpdate({ ...formData, allowGuests: e.target.checked })}
+                            <Checkbox
+                                value={formData.allowGuests}
+                                onChange={x => onUpdate({ ...formData, allowGuests: x })}
                             />
                         </td>
                     </tr>
                     <tr>
                         <td>Public</td>
                         <td>
-                            <input
-                                type={HtmlInputTypes.CheckBox}
-                                checked={formData.isPublic}
-                                onChange={e => onUpdate({ ...formData, isPublic: e.target.checked })}
+                            <Checkbox
+                                value={formData.isPublic}
+                                onChange={x => onUpdate({ ...formData, isPublic: x })}
                             />
                         </td>
                     </tr>
                     <tr>
                         <td>Description</td>
                         <td>
-                            <input
-                                type={HtmlInputTypes.Text}
+                            <TextInput
                                 value={formData.description}
-                                onChange={e => onUpdate({ ...formData, description: e.target.value })}
+                                onChange={x => onUpdate({ ...formData, description: x })}
                                 autoFocus
                             />
                         </td>

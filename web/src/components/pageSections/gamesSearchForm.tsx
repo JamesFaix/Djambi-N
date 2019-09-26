@@ -5,9 +5,9 @@ import { useSelector } from 'react-redux';
 import TristateDropdown from '../controls/tristateDropdown';
 import { IconSubmitButton } from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
-import HtmlInputTypes from '../htmlInputTypes';
 import Controller from '../../controllers/controller';
 import DateService from '../../utilities/dates';
+import { NumberInput, TextInput, Checkbox, DatePicker } from '../controls/input';
 
 const GamesSearchForm : React.SFC<{}> = _ => {
     const query = useSelector((state : AppState) => state.search.query);
@@ -23,19 +23,17 @@ const GamesSearchForm : React.SFC<{}> = _ => {
         >
             <FormRow>
                 <FormField label="ID">
-                    <input
-                        style={{width:"50px"}}
-                        type={HtmlInputTypes.Number}
+                    <NumberInput
+                        value={query.gameId}
+                        onChange={x => onUpdate({ ...query, gameId: x })}
                         min={1}
-                        value={emptyIfNull(query.gameId)}
-                        onChange={e => onUpdate({ ...query, gameId: parseInt(e.target.value) })}
+                        style={{width:"50px"}}
                     />
                 </FormField>
                 <FormField label="Description">
-                    <input
-                        type={HtmlInputTypes.Text}
+                    <TextInput
                         value={emptyIfNull(query.descriptionContains)}
-                        onChange={e => onUpdate({ ...query, descriptionContains: nullIfEmpty(e.target.value) })}
+                        onChange={x => onUpdate({ ...query, descriptionContains: nullIfEmpty(x) })}
                         autoFocus
                     />
                 </FormField>
@@ -58,91 +56,41 @@ const GamesSearchForm : React.SFC<{}> = _ => {
             </FormRow>
             <FormRow>
                 <FormField label="Created by user">
-                    <input
-                        type={HtmlInputTypes.Text}
+                    <TextInput
                         value={emptyIfNull(query.createdByUserName)}
-                        onChange={e => onUpdate({ ...query, createdByUserName: nullIfEmpty(e.target.value) })}
+                        onChange={x => onUpdate({ ...query, createdByUserName: nullIfEmpty(x) })}
                     />
                 </FormField>
                 <FormField label="Contains user">
-                    <input
-                        type={HtmlInputTypes.Text}
+                    <TextInput
                         value={emptyIfNull(query.playerUserName)}
-                        onChange={e => onUpdate({ ...query, playerUserName: nullIfEmpty(e.target.value) })}
+                        onChange={x => onUpdate({ ...query, playerUserName: nullIfEmpty(x) })}
                     />
                 </FormField>
             </FormRow>
             <FormRow>
                 <FormField label="Pending">
-                    <input
-                        type={HtmlInputTypes.CheckBox}
-                        checked={query.statuses.includes(GameStatus.Pending)}
-                        onChange={e => {
-                            const s = GameStatus.Pending;
-                            let statuses = [ ...query.statuses ];
-                            if (e.target.checked) {
-                                if (!statuses.includes(s)) {
-                                    statuses.push(s);
-                                }
-                            } else {
-                                statuses = statuses.filter(x => x !== s);
-                            }
-                            onUpdate({ ...query, statuses: statuses })
-                        }}
+                    <Checkbox
+                        value={query.statuses.includes(GameStatus.Pending)}
+                        onChange={x => onUpdate({ ...query, statuses: getStatuses(x, GameStatus.Pending, query.statuses)})}
                     />
                 </FormField>
                 <FormField label="In progress">
-                    <input
-                        type={HtmlInputTypes.CheckBox}
-                        checked={query.statuses.includes(GameStatus.InProgress)}
-                        onChange={e => {
-                            const s = GameStatus.InProgress;
-                            let statuses = [ ...query.statuses ];
-                            if (e.target.checked) {
-                                if (!statuses.includes(s)) {
-                                    statuses.push(s);
-                                }
-                            } else {
-                                statuses = statuses.filter(x => x !== s);
-                            }
-                            onUpdate({ ...query, statuses: statuses })
-                        }}
+                    <Checkbox
+                        value={query.statuses.includes(GameStatus.InProgress)}
+                        onChange={x => onUpdate({ ...query, statuses: getStatuses(x, GameStatus.InProgress, query.statuses)})}
                     />
                 </FormField>
                 <FormField label="Over">
-                    <input
-                        type={HtmlInputTypes.CheckBox}
-                        checked={query.statuses.includes(GameStatus.Over)}
-                        onChange={e => {
-                            const s = GameStatus.Over;
-                            let statuses = [ ...query.statuses ];
-                            if (e.target.checked) {
-                                if (!statuses.includes(s)) {
-                                    statuses.push(s);
-                                }
-                            } else {
-                                statuses = statuses.filter(x => x !== s);
-                            }
-                            onUpdate({ ...query, statuses: statuses })
-                        }}
+                    <Checkbox
+                        value={query.statuses.includes(GameStatus.Over)}
+                        onChange={x => onUpdate({ ...query, statuses: getStatuses(x, GameStatus.Over, query.statuses)})}
                     />
                 </FormField>
                 <FormField label="Canceled">
-                    <input
-                        type={HtmlInputTypes.CheckBox}
-                        checked={query.statuses.includes(GameStatus.Canceled)}
-                        onChange={e => {
-                            const s = GameStatus.Canceled;
-                            let statuses = [ ...query.statuses ];
-                            if (e.target.checked) {
-                                if (!statuses.includes(s)) {
-                                    statuses.push(s);
-                                }
-                            } else {
-                                statuses = statuses.filter(x => x !== s);
-                            }
-                            onUpdate({ ...query, statuses: statuses })
-                        }}
+                    <Checkbox
+                        value={query.statuses.includes(GameStatus.Canceled)}
+                        onChange={x => onUpdate({ ...query, statuses: getStatuses(x, GameStatus.Canceled, query.statuses)})}
                     />
                 </FormField>
             </FormRow>
@@ -174,6 +122,19 @@ const GamesSearchForm : React.SFC<{}> = _ => {
 };
 export default GamesSearchForm;
 
+function getStatuses(checked : boolean, affectedStatus : GameStatus, currentStatuses : GameStatus[])
+{
+    if (checked) {
+        if (currentStatuses.includes(affectedStatus)) {
+            return currentStatuses;
+        } else {
+            return currentStatuses.concat([affectedStatus]);
+        }
+    } else {
+        return currentStatuses.filter(x => x !== affectedStatus);
+    }
+}
+
 function emptyIfNull(value : any) : string {
     return value === null ? "" : value;
 }
@@ -182,21 +143,6 @@ function nullIfEmpty(value : string) : string {
     return value === "" ? null : value;
 }
 
-const DatePicker : React.SFC<{
-    value: Date,
-    onUpdate: (d:Date) => void,
-    isStartDate : boolean
-}> = props => {
-    return (
-        <input
-            type={HtmlInputTypes.Date}
-            value={DateService.dateToDatepickerString(props.value, props.isStartDate)}
-            onChange={e => props.onUpdate(DateService.dateFromDatepickerString(e.target.value))}
-            min={DateService.minDate()}
-            max={DateService.maxDate()}
-        />
-    );
-}
 
 const FormField : React.SFC<{
     label : string
@@ -235,9 +181,10 @@ const DateSpanField : React.SFC<{
             </div>
             <div className="formElement">
                 <DatePicker
-                    value={props.startValue}
-                    onUpdate={props.onStartChange}
-                    isStartDate={true}
+                    value={props.startValue ? props.startValue : DateService.minDate()}
+                    onChange={props.onStartChange}
+                    min={DateService.minDate()}
+                    max={DateService.maxDate()}
                 />
             </div>
             <div className="formElement">
@@ -245,9 +192,10 @@ const DateSpanField : React.SFC<{
             </div>
             <div className="formElement">
                 <DatePicker
-                    value={props.endValue}
-                    onUpdate={props.onEndChange}
-                    isStartDate={false}
+                    value={props.endValue ? props.endValue : DateService.maxDate()}
+                    onChange={props.onEndChange}
+                    min={DateService.minDate()}
+                    max={DateService.maxDate()}
                 />
             </div>
         </div>
