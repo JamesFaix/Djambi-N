@@ -5,7 +5,7 @@ import { Icons } from '../../utilities/icons';
 import Controller from '../../controllers/controller';
 import BasicPageContainer from '../containers/basicPageContainer';
 import Routes from '../../routes';
-import { TextInput } from '../controls/input';
+import { TextInput, PasswordInput } from '../controls/input';
 
 const SignupPage : React.SFC<{}> = _ => {
     React.useEffect(() => {
@@ -49,7 +49,7 @@ const SignupForm : React.SFC<{}> = _ => {
                     <tr>
                         <td>Password</td>
                         <td>
-                            <TextInput
+                            <PasswordInput
                                 value={password}
                                 onChange={x => setPassword(x)}
                                 autoComplete="new-password"
