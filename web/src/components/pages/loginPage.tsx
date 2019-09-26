@@ -3,9 +3,9 @@ import BasicPageContainer from '../containers/basicPageContainer';
 import { SectionHeader } from '../controls/headers';
 import IconButton, { IconSubmitButton } from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
-import HtmlInputTypes from '../htmlInputTypes';
 import Controller from '../../controllers/controller';
 import Routes from '../../routes';
+import { TextInput } from '../controls/input';
 
 const LoginPage : React.SFC<{}> = _ => {
     React.useEffect(() => {
@@ -35,26 +35,22 @@ const LoginForm : React.SFC<{}> = _ => {
                     <tr>
                         <td>Username</td>
                         <td>
-                            <input
-                                type={HtmlInputTypes.Text}
+                            <TextInput
                                 value={username}
-                                onChange={e => setUsername(e.target.value)}
+                                onChange={x => setUsername(x)}
                                 autoComplete="username"
                                 autoFocus
-                            >
-                            </input>
+                            />
                         </td>
                     </tr>
                     <tr>
                         <td>Password</td>
                         <td>
-                            <input
-                                type={HtmlInputTypes.Password}
+                            <TextInput
                                 value={password}
-                                onChange={e => setPassword(e.target.value)}
+                                onChange={x => setPassword(x)}
                                 autoComplete="current-password"
-                            >
-                            </input>
+                            />
                         </td>
                     </tr>
                 </tbody>

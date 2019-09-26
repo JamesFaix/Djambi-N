@@ -3,7 +3,6 @@ import BasicPageContainer from '../containers/basicPageContainer';
 import { SectionHeader } from '../controls/headers';
 import IconButton from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
-import HtmlInputTypes from '../htmlInputTypes';
 import Controller from '../../controllers/controller';
 import Selectors from '../../selectors';
 import { State as AppState } from '../../store/root';
@@ -11,6 +10,7 @@ import { useSelector } from 'react-redux';
 import { Classes } from '../../styles/styles';
 import { SnapshotInfo } from '../../api/model';
 import DateService from '../../utilities/dates';
+import { TextInput } from '../controls/input';
 
 const SnapshotsPage : React.SFC<{}> = props => {
     const routeGameId = (props as any).match.params.gameId;
@@ -108,9 +108,8 @@ const CreateSnapshotForm : React.SFC<{}> = _ => {
                 <tr>
                     <td>Description</td>
                     <td>
-                        <input
-                            type={HtmlInputTypes.Text}
-                            onChange={e => setDescription(e.target.value)}
+                        <TextInput
+                            onChange={x => setDescription(x)}
                         />
                     </td>
                 </tr>
