@@ -1,5 +1,5 @@
 import * as React from 'react';
-import DateService from '../../utilities/dates';
+import Moment from 'moment';
 
 export enum HtmlInputTypes {
     Text = "text",
@@ -72,6 +72,20 @@ export const NumberInput : React.SFC<NumberInputProps> = props => {
     )
 }
 
+
+function dateFromDatepickerString(str : string) : Date {
+    const datetime = `${str}T00:00:00.000`;
+    const ms = Moment(datetime).utc().valueOf();
+    return new Date(ms);
+}
+
+function dateToDatepickerString(d : Date) : string {
+    return Moment
+        .utc(d)
+        .local()
+        .format("YYYY-MM-DD");
+}
+
 interface DatePickerProps extends InputBaseProps<Date> {
     min ?: Date,
     max ?: Date
@@ -81,10 +95,10 @@ export const DatePicker : React.SFC<DatePickerProps> = props => {
     return (
         <input
             type={HtmlInputTypes.Date}
-            value={DateService.dateToDatepickerString(props.value)}
-            onChange={e => props.onChange ? props.onChange(DateService.dateFromDatepickerString(e.target.value)) : null}
-            min={props.min ? DateService.dateToDatepickerString(props.min) : undefined}
-            max={props.max ? DateService.dateToDatepickerString(props.max) : undefined}
+            value={dateToDatepickerString(props.value)}
+            onChange={e => props.onChange ? props.onChange(dateFromDatepickerString(e.target.value)) : null}
+            min={props.min ? dateToDatepickerString(props.min) : undefined}
+            max={props.max ? dateToDatepickerString(props.max) : undefined}
             style={props.style}
             autoFocus={props.autoFocus}
         />
