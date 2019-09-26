@@ -28,7 +28,10 @@ const SignupForm : React.SFC<{}> = _ => {
 
     return (
         <form
-            onSubmit={() => Controller.Session.signup({ name: username, password: password })}
+            onSubmit={e => {
+                e.preventDefault();
+                Controller.Session.signup({ name: username, password: password });
+            }}
         >
             <table>
                 <tbody>
