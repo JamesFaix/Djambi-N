@@ -15,7 +15,10 @@ const GamesSearchForm : React.SFC<{}> = _ => {
 
     return (
         <form
-            onSubmit={() => Controller.Search.searchGames(query)}
+            onSubmit={e => {
+                e.preventDefault();
+                Controller.Search.searchGames(query);
+            }}
             className="form"
         >
             <FormRow>

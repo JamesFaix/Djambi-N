@@ -5,7 +5,7 @@ import IconButton, { IconSubmitButton } from '../controls/iconButton';
 import { Icons } from '../../utilities/icons';
 import Controller from '../../controllers/controller';
 import Routes from '../../routes';
-import { TextInput } from '../controls/input';
+import { TextInput, PasswordInput } from '../controls/input';
 
 const LoginPage : React.SFC<{}> = _ => {
     React.useEffect(() => {
@@ -28,7 +28,10 @@ const LoginForm : React.SFC<{}> = _ => {
 
     return (
         <form
-            onSubmit={() => Controller.Session.login({ username: username, password: password })}
+            onSubmit={e => {
+                e.preventDefault();
+                Controller.Session.login({ username: username, password: password });
+            }}
         >
             <table>
                 <tbody>
@@ -46,7 +49,7 @@ const LoginForm : React.SFC<{}> = _ => {
                     <tr>
                         <td>Password</td>
                         <td>
-                            <TextInput
+                            <PasswordInput
                                 value={password}
                                 onChange={x => setPassword(x)}
                                 autoComplete="current-password"

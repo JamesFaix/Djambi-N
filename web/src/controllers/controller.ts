@@ -149,8 +149,22 @@ export default class Controller {
         }
 
         public static onUnauthorized() : void {
-            Controller.dispatch(StoreSession.Actions.logout());
+            /*
+             * The order here is very important!
+             *
+             * If you dispatch an action that removes the user from the store before redirecting to the login page,
+             *   1. The state change will trigger a page render before the redirect is processed.
+             *   2. The render will trigger a call to the API to check for an open session.
+             *   3. The call will return a 401 because you just logged out.
+             *   4. The 401 response will trigger a 2nd redirect to login.
+             *   5. The login page renders (both of them) will trigger a 2nd and 3rd API call to check for a session.
+             *   6. Both of those requests will return 401.
+             *   7. The user sees 3 "Not logged in" notifications instead of 1.
+             *
+             * So redirect first, and then update the state.
+             */
             Controller.navigateTo(Routes.login);
+            Controller.dispatch(StoreSession.Actions.logout());
             NotificationsService.disconnect();
         }
 

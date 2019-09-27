@@ -97,7 +97,10 @@ const GameSettingsForm : React.SFC<{}> = _ => {
     const onUpdate = Controller.Forms.updateCreateGameForm;
     return (
         <form
-            onSubmit={() => Controller.Game.createGame(formData)}
+            onSubmit={e => {
+                e.preventDefault();
+                Controller.Game.createGame(formData);
+            }}
         >
             <table>
                 <tbody>

@@ -50,7 +50,20 @@ export const TextInput : React.SFC<TextInputProps> = props => {
             autoFocus={props.autoFocus}
             autoComplete={props.autoComplete}
         />
-    )
+    );
+}
+
+export const PasswordInput : React.SFC<TextInputProps> = props => {
+    return (
+        <input
+            type={HtmlInputTypes.Password}
+            value={emptyIfNull(props.value)}
+            onChange={e => props.onChange ? props.onChange(e.target.value) : null}
+            style={props.style}
+            autoFocus={props.autoFocus}
+            autoComplete={props.autoComplete}
+        />
+    );
 }
 
 interface NumberInputProps extends InputBaseProps<number> {
