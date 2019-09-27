@@ -42,6 +42,7 @@ import { Point } from "../viewModel/board/model";
 import { generateQuickGuid } from "../utilities/guids";
 import Copy from "../utilities/copy";
 import NotificationsService from "../notifications/notifications";
+import Moment from "moment";
 
 //Encapsulates dispatching Redux actions and other side effects
 export default class Controller {
@@ -94,7 +95,12 @@ export default class Controller {
         }
 
         public static async loadRecentGames(user : User) : Promise<void> {
-            const query = ModelFactory.emptyGamesQuery();
+            const query : GamesQuery = {
+                ...ModelFactory.emptyGamesQuery(),
+                containsMe: true,
+                lastEventAfter: Moment(new Date()).utc().add(-7, "days").toDate()
+            };
+
             query.playerUserName = user.name;
             const games = await Api.searchGames(query);
             Controller.dispatch(StoreGamesQuery.Actions.loadRecentGames(games));

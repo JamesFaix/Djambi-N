@@ -53,7 +53,7 @@ const GamesSearchForm : React.SFC<{}> = _ => {
                 </FormField>
                 <FormField label="I'm a player">
                     <TristateDropdown
-                        value={query.allowGuests}
+                        value={query.containsMe}
                         onChange={x => onUpdate({ ...query, containsMe: x })}
                     />
                 </FormField>
