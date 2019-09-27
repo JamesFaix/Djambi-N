@@ -23,7 +23,9 @@ import {
     PieceVacatedEffect,
     PlayerOutOfMovesEffect,
     TurnCyclePlayerFellFromPowerEffect,
-    TurnCyclePlayerRoseToPowerEffect
+    TurnCyclePlayerRoseToPowerEffect,
+    PlayerAddedEffect,
+    PlayerRemovedEffect
 } from "../api/model";
 import { CellView, PieceView } from "../viewModel/board/model";
 import ThemeService from "../themes/themeService";
@@ -268,7 +270,7 @@ export default class Copy {
             case EventKind.TurnCommitted:
                 return `${agent} took a turn`;
 
-            case EventKind.PlayerStatusChanged:
+            case EventKind.PlayerStatusChanged: {
                 const f = event.effects.find(x => x.kind === EffectKind.PlayerStatusChanged);
                 const s = (<PlayerStatusChangedEffect>f.value).newStatus;
                 switch (s) {
@@ -281,6 +283,23 @@ export default class Copy {
                     default:
                         throw "Unsupported player status: " + s;
                 }
+            }
+
+            case EventKind.PlayerJoined: {
+                const f = event.effects.find(x => x.kind === EffectKind.PlayerAdded);
+                const name = (<PlayerAddedEffect>f.value).name;
+                return `${name} joined the game`;
+            }
+
+            case EventKind.PlayerRemoved: {
+                const fs = event.effects.filter(x => x.kind === EffectKind.PlayerRemoved);
+                const names = fs.map(f => (<PlayerRemovedEffect>f.value).oldPlayer.name);
+                if (names.length === 1) {
+                    return `${names[0]} left the game`;
+                } else {
+                    return `${names.join(', ')} left the game`;
+                }
+            }
 
             default:
                 throw "Unsupported event kind: " + event.kind;
