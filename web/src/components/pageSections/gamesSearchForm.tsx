@@ -41,16 +41,20 @@ const GamesSearchForm : React.SFC<{}> = _ => {
             <FormRow>
                 <FormField label="Is public">
                     <TristateDropdown
-                        name={"IsPublic"}
                         value={query.isPublic}
-                        onChange={(_, value) => onUpdate({ ...query, isPublic: value })}
+                        onChange={x => onUpdate({ ...query, isPublic: x })}
                     />
                 </FormField>
                 <FormField label="Allow guests">
                     <TristateDropdown
-                        name={"AllowGuests"}
                         value={query.allowGuests}
-                        onChange={(_, value) => onUpdate({ ...query, allowGuests: value })}
+                        onChange={x => onUpdate({ ...query, allowGuests: x })}
+                    />
+                </FormField>
+                <FormField label="I'm a player">
+                    <TristateDropdown
+                        value={query.containsMe}
+                        onChange={x => onUpdate({ ...query, containsMe: x })}
                     />
                 </FormField>
             </FormRow>
@@ -61,7 +65,7 @@ const GamesSearchForm : React.SFC<{}> = _ => {
                         onChange={x => onUpdate({ ...query, createdByUserName: nullIfEmpty(x) })}
                     />
                 </FormField>
-                <FormField label="Contains user">
+                <FormField label="Contains player">
                     <TextInput
                         value={emptyIfNull(query.playerUserName)}
                         onChange={x => onUpdate({ ...query, playerUserName: nullIfEmpty(x) })}

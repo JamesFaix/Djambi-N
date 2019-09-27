@@ -188,6 +188,7 @@ module Commands =
                     descriptionContains : string option,
                     createdByUserName : string option,
                     playerUserName : string option,
+                    containsMe : bool option,
                     isPublic : bool option,
                     allowGuests : bool option,
                     gameStatusIds : Int32ListTvp,
@@ -201,6 +202,7 @@ module Commands =
             .param("DescriptionContains", descriptionContains)
             .param("CreatedByUserName", createdByUserName)
             .param("PlayerUserName", playerUserName)
+            .param("ContainsMe", containsMe)
             .param("IsPublic", isPublic)
             .param("AllowGuests", allowGuests)
             .param("GameStatusIds", gameStatusIds)
@@ -305,6 +307,7 @@ module Commands2 =
                               query.descriptionContains,
                               query.createdByUserName,
                               query.playerUserName,
+                              query.containsMe,
                               query.isPublic,
                               query.allowGuests,
                               Int32ListTvp(query.statuses |> List.map (mapGameStatusToId >> int)),

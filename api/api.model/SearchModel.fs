@@ -12,6 +12,7 @@ type GamesQuery =
         descriptionContains : string option
         createdByUserName : string option
         playerUserName : string option
+        containsMe : bool option
         isPublic : bool option
         allowGuests : bool option
         statuses : GameStatus list
@@ -29,6 +30,7 @@ module GamesQuery =
             descriptionContains = None
             createdByUserName = None
             playerUserName = None
+            containsMe = None
             isPublic = None
             allowGuests = None
             statuses = []
@@ -46,5 +48,6 @@ type SearchGame = {
     status : GameStatus
     lastEventOn : DateTime
     playerCount : int
+    containsMe : bool
     //TODO: Add current player name
 }

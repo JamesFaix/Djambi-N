@@ -3,7 +3,6 @@ import BasicPageContainer from '../containers/basicPageContainer';
 import ThemeFactory from '../../themes/themeFactory';
 import Dropdown from '../controls/dropdown';
 import { SectionHeader } from '../controls/headers';
-import { Theme } from '../../themes/model';
 import Controller from '../../controllers/controller';
 import Selectors from '../../selectors';
 import { useSelector } from 'react-redux';
@@ -40,9 +39,8 @@ const ThemeSelector : React.SFC<{}> = _ => {
                     </td>
                     <td>
                         <Dropdown
-                            name="theme"
                             items={items}
-                            onChange={(_: string, value : Theme) => Controller.Display.changeTheme(value.name) }
+                            onChange={x => Controller.Display.changeTheme(x.name) }
                             currentValue={Selectors.theme()}
                         />
                     </td>

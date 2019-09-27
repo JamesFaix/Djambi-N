@@ -168,6 +168,7 @@ let mapSearchGameResponse(sqlModel : SearchGameSqlModel) : SearchGame =
             }
         lastEventOn = sqlModel.lastEventOn
         playerCount = sqlModel.playerCount
+        containsMe = sqlModel.containsMe
     }
     
 let mapEventResponse (sqlModel : EventSqlModel) : Event =

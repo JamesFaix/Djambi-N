@@ -64,6 +64,7 @@ type SearchGameSqlModel =
         createdOn : DateTime
         createdByUserId : int
         createdByUserName : string
+        containsMe : bool
         gameStatusId : byte
         //Game parameters
         description : string

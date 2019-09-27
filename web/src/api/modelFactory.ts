@@ -6,6 +6,7 @@ export function emptyGamesQuery() : GamesQuery {
         descriptionContains: null,
         createdByUserName: null,
         playerUserName: null,
+        containsMe: false, //Default for search is games w/o you, default for dashboard is games w/ you
         isPublic: null,
         allowGuests: null,
         statuses: [ GameStatus.Pending, GameStatus.InProgress ],

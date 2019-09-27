@@ -6,9 +6,8 @@ export interface DropdownItem<T> {
 }
 
 export interface DropdownProps<T> {
-    name : string,
     items : DropdownItem<T>[],
-    onChange(name : string, item : T) : void,
+    onChange(item : T) : void,
     currentValue : T,
     style ?: React.CSSProperties
 }
@@ -26,13 +25,12 @@ export default class Dropdown<T> extends React.Component<DropdownProps<T>> {
     private onChange(event : React.ChangeEvent<HTMLSelectElement>) {
         const label = event.target.value;
         const value = this.getValueOfLabel(label);
-        this.props.onChange(this.props.name, value);
+        this.props.onChange(value);
     }
 
     render() {
         return (
             <select
-                name={this.props.name}
                 onChange={e => this.onChange(e)}
                 value={this.getLabelOfValue(this.props.currentValue)}
                 style={this.props.style}

@@ -3,6 +3,7 @@ CREATE PROCEDURE [dbo].[Games_Search]
 	@DescriptionContains NVARCHAR(100),
 	@CreatedByUserName NVARCHAR(50),
 	@PlayerUserName NVARCHAR(50),
+	@ContainsMe BIT,
 	@IsPublic BIT,
 	@AllowGuests BIT,
 	@GameStatusIds Int32List READONLY,
@@ -26,7 +27,8 @@ BEGIN
 		g.AllowGuests,
 		g.IsPublic,
 		ISNULL(e.CreatedOn, g.CreatedOn) as LastEventOn,
-		gpc.PlayerCount
+		gpc.PlayerCount,
+		IIF(gu.UserId IS NOT NULL, 1, 0) as ContainsMe
     FROM Games g
 		INNER JOIN Users u
 			ON g.CreatedByUserId = u.UserId
@@ -38,17 +40,13 @@ BEGIN
 			ON g.GameId = uvg.GameId
 		LEFT JOIN @GameStatusIds gsids
 			ON gsids.N = g.GameStatusId
+		LEFT JOIN VGameUsers gu
+			ON g.GameId = gu.GameId
+			AND gu.UserId = @CurrentUserId
 
 	WHERE uvg.UserId = @CurrentUserId
 		AND (@DescriptionContains IS NULL OR g.[Description] LIKE '%' + @DescriptionContains + '%')
-		AND (@CreatedByUserName IS NULL
-			OR EXISTS(
-				SELECT 1
-				FROM Users u
-				WHERE u.Name LIKE '%' + @CreatedByUserName + '%'
-					AND u.UserId = g.CreatedByUserId
-			)
-		)
+		AND (@CreatedByUserName IS NULL OR u.Name LIKE '%' + @CreatedByUserName + '%')
 		AND (@PlayerUserName IS NULL
 			OR EXISTS(
 				SELECT 1
@@ -59,6 +57,7 @@ BEGIN
 					AND u.Name LIKE '%' + @PlayerUserName + '%'
 			)
 		)
+		AND (@ContainsMe IS NULL OR @ContainsMe = IIF(gu.UserId IS NOT NULL, 1, 0))
 		AND (@IsPublic IS NULL OR @IsPublic = g.IsPublic)
 		AND (@AllowGuests IS NULL OR @AllowGuests = g.AllowGuests)
 		AND (@AnyStatusFilter = 0 OR gsids.N IS NOT NULL)
