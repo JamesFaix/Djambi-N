@@ -2,8 +2,7 @@ import * as React from 'react';
 import Dropdown, { DropdownItem } from './dropdown';
 
 export interface EnumDropdownProps<TEnum> {
-    name : string,
-    onChange(name : string, value : TEnum) : void,
+    onChange(value : TEnum) : void,
     value : TEnum,
     enum : object,
     getLabel ?: (value : TEnum) => string,
@@ -42,8 +41,7 @@ export default class EnumDropdown<TEnum> extends React.Component<EnumDropdownPro
     render() {
         return (
             <Dropdown
-                name={this.props.name}
-                onChange={(name, value) => this.props.onChange(name, value)}
+                onChange={this.props.onChange}
                 currentValue={this.props.value}
                 items={this.getItems()}
                 style={this.props.style}

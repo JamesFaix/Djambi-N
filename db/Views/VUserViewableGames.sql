@@ -29,17 +29,11 @@ PublicOrPrivilegeGames AS (
 	WHERE g.IsPublic = 1
 		OR u.HasViewGamesPrivilege = 1
         OR g.CreatedByUserId = u.UserId
-),
-
-PlayerGames AS (
-	SELECT p.GameId, p.UserId
-	FROM Players p
-	WHERE p.UserId IS NOT NULL
 )
 
 SELECT GameId, UserId FROM PublicOrPrivilegeGames
 UNION (
-	SELECT GameId, UserId FROM PlayerGames
+	SELECT GameId, UserId FROM VGameUsers
 )
 
 GO

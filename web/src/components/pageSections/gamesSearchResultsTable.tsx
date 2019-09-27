@@ -25,6 +25,7 @@ const GamesSearchResultsTable : React.SFC<{ games : SearchGame[] }> = props => {
                     <th># Regions</th>
                     <th>Is public</th>
                     <th>Allow guests</th>
+                    <th>I'm a player</th>
                 </tr>
                 {props.games
                     .map((g, i) =>
@@ -76,6 +77,9 @@ const GameSearchResultsRow : React.SFC<{ game : SearchGame }> = props => {
             </td>
             <td className={Classes.centered}>
                 {Copy.boolToYesOrNo(game.parameters.allowGuests)}
+            </td>
+            <td className={Classes.centered}>
+                {Copy.boolToYesOrNo(game.containsMe)}
             </td>
         </tr>
     );

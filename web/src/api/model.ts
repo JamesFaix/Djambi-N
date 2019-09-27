@@ -369,6 +369,7 @@ export interface GamesQuery {
     descriptionContains : string,
     createdByUserName : string,
     playerUserName : string,
+    containsMe : boolean,
     isPublic : boolean,
     allowGuests : boolean,
     statuses : GameStatus[],
@@ -384,7 +385,8 @@ export interface SearchGame {
     createdBy : CreationSource,
     status : GameStatus,
     lastEventOn : Date,
-    playerCount : number
+    playerCount : number,
+    containsMe : boolean
 }
 
 //-------- MISC --------

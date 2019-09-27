@@ -1,0 +1,16 @@
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE VIEW [dbo].[VGameUsers]
+AS
+
+SELECT DISTINCT g.GameId, p.UserId
+FROM Games g
+    INNER JOIN Players p
+        ON g.GameId = p.GameId
+WHERE p.UserId IS NOT NULL
+
+GO
