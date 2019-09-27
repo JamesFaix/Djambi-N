@@ -317,11 +317,36 @@ export default class Controller {
         }
 
         public static updateInProgressGame(response : StateAndEventResponse) : void {
-            Controller.dispatch(StoreActiveGame.Actions.updateGame(response));
-            const g = response.game;
-            if (g.status === GameStatus.Over) {
-                Controller.navigateTo(Routes.gameResults(g.id));
+            const oldStatus = Controller.state.activeGame.game.status;
+            const newStatus = response.game.status;
+            const gameId = response.game.id;
+
+            /*
+             * Order is important here.
+             *
+             * If you change the state before redirecting, the state change could
+             * trigger a render, which could trigger a redirect based on the state.
+             */
+
+            switch(newStatus) {
+                case oldStatus:
+                    //No change
+                    break;
+                case GameStatus.InProgress:
+                    Controller.navigateTo(Routes.play(gameId));
+                    break;
+                case GameStatus.Over:
+                    Controller.navigateTo(Routes.gameResults(gameId));
+                    break;
+                case GameStatus.Canceled:
+                    Controller.navigateTo(Routes.dashboard);
+                    break;
+                default:
+                    //No redirect required
+                    break;
             }
+
+            Controller.dispatch(StoreActiveGame.Actions.updateGame(response));
         }
 
         public static onGameUpdateReceived(response : StateAndEventResponse) : void {
