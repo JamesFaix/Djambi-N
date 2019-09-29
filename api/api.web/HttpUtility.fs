@@ -3,6 +3,7 @@ namespace Djambi.Api.Web
 open System
 open System.IO
 open System.Threading.Tasks
+open FSharp.Control.Tasks
 open Giraffe
 open Microsoft.AspNetCore.Http
 open Newtonsoft.Json
