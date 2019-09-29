@@ -1,0 +1,13 @@
+.dockerignore
+dockerfile
+.vs
+**/bin/
+**/obj/
+**/node_modules/
+/logs
+/ops
+/screenshot.gif
+**/*.md
+**/*.psd
+**/*.FSharpLint
+**/packages/
