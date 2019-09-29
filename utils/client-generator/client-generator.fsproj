@@ -14,11 +14,13 @@
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.0.0" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\api\api.common\api.common.fsproj" />
     <ProjectReference Include="..\..\api\api.logic.interfaces\api.logic.interfaces.fsproj" />
     <ProjectReference Include="..\..\api\api.model\api.model.fsproj" />
     <ProjectReference Include="..\client-generator.annotations\client-generator.annotations.fsproj" />
     <ProjectReference Include="..\environment\environment.fsproj" />
   </ItemGroup>
-  <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>
