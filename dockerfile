@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build-env
+FROM mcr.microsoft.com/dotnet/core/sdk:3.0 AS build-env
 WORKDIR /app
 
 COPY . ./
@@ -8,7 +8,8 @@ WORKDIR /app/api/api.host
 RUN dotnet publish -c Release -o out
 
 # Build runtime image
-FROM mcr.microsoft.com/dotnet/core/aspnet:2.2
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.0
 WORKDIR /app
-COPY --from=build-env /app/api/api.host/out/ .
-ENTRYPOINT ["dotnet", "Djambi.Api.dll"]
+COPY --from=build-env /app/api/api.host/out/ ./api/api.host/bin/Release/out/
+COPY --from=build-env /app/environment.json ./
+ENTRYPOINT ["dotnet", "api/api.host/bin/Release/out/Djambi.Api.dll"]
