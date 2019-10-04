@@ -17,12 +17,15 @@ open Djambi.Api.Common.Json
 open Djambi.Api.Db
 open Djambi.Api.Logic
 open Djambi.Api.Web
-open Djambi.Utilities
 
-let env = Environment.load(5)
+let config = 
+    ConfigurationBuilder()
+        .AddJsonFile("appsettings.json", false)
+        .AddEnvironmentVariables("DJAMBI_")
+        .Build()
 
 let log = 
-    let logPath = Path.Combine(env.root, "logs/server.log")
+    let logPath = Path.Combine(config.["logsDir"], "server.log")
     LoggerConfiguration()
         .WriteTo.File(logPath)
         .WriteTo.Console()
@@ -35,20 +38,15 @@ let errorHandler (ex : Exception) (logger : Microsoft.Extensions.Logging.ILogger
     log.Error(ex, "An unexpected error occurred.")
     clearResponse >=> setStatusCode 500 >=> text ex.Message
 
-let config = 
-    ConfigurationBuilder()
-        .AddJsonFile("appsettings.json", false, true)
-        .Build()
-
 let enableWebServer = config.GetValue<bool>("AppSettings:EnableWebServer")
 let enableWebServerDevelopmentMode = config.GetValue<bool>("AppSettings:EnableWebServerDevelopmentMode")
-let webRoot = Path.Combine(env.root, "web")
+let webRoot = config.["webRoot"]
 
 if enableWebServer then
     log.Information(sprintf "Web root path: %s" webRoot)
 
 let configureCors (builder : CorsPolicyBuilder) =
-    builder.WithOrigins(env.webAddress)
+    builder.WithOrigins(config.["webAddress"])
            .AllowAnyMethod()
            .AllowAnyHeader()
            .AllowCredentials()
@@ -101,12 +99,12 @@ let configureWebServer(app : IApplicationBuilder) : IApplicationBuilder =
 
 let apiHandler =
     let connStr = config.GetConnectionString("Main")
-                        .Replace("{sqlAddress}", env.sqlAddress)
+                        .Replace("{sqlAddress}", config.["sqlAddress"])
 
     let dbRoot = DbRoot(connStr)
     let servRoot = ServiceRoot(dbRoot, log)
     let manRoot = ManagerRoot(dbRoot, servRoot)
-    let webRoot = WebRoot(env.cookieDomain, manRoot, servRoot, log)
+    let webRoot = WebRoot(config.["cookieDomain"], manRoot, servRoot, log)
     let routing = RoutingTable(webRoot)
 
     routing.getHandler
@@ -134,7 +132,7 @@ let configureApp (app : IApplicationBuilder) =
 let main _ =
     (WebHostBuilder()
         .UseConfiguration(config)
-        .UseUrls(env.apiAddress)
+        .UseUrls(config.["apiAddress"])
         .UseKestrel()
         |> (fun b -> if enableWebServer then b.UseWebRoot(webRoot) else b)
     )
