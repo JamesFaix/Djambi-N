@@ -9,10 +9,10 @@
     <EnableDefaultContentItems>false</EnableDefaultContentItems>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="launchSettings.json" />
     <Content Include="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Properties\launchSettings.json" />
     <Compile Include="RoutingTable.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
