@@ -3,7 +3,9 @@
     "Local": {
       "commandName": "Project",
       "environmentVariables": {
-        "DJAMBI_sqlAddress": "localhost"
+        "DJAMBI_sqlRoot": "C:\\Git\\Djambi3\\db",
+        "DJAMBI_masterConnectionString": "Data Source=localhost;Initial Catalog=master;Integrated Security=True;",
+        "DJAMBI_djambiConnectionString": "Data Source=localhost;Initial Catalog=djambi;Integrated Security=True;"
       }
     }
   }
