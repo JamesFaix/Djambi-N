@@ -2,11 +2,14 @@ module Djambi.Api.ContractTests.SetupUtility
 
 open System.Threading.Tasks
 open FSharp.Control.Tasks
+open Microsoft.Extensions.Configuration
 open Djambi.Api.WebClient
-open Djambi.Utilities
 open Djambi.Api.Model
 
-let env = Environment.load(6)
+let config =
+    ConfigurationBuilder()
+        .AddEnvironmentVariables("DJAMBI_")
+        .Build()
 
 let createUserAndSignIn () : (User * string) Task =
     task {
@@ -22,8 +25,8 @@ let loginAsAdmin () : string Task =
     task {
         let request : LoginRequest =
             {
-                username = env.adminUsername
-                password = env.adminPassword
+                username = config.["adminUsername"]
+                password = config.["adminPassword"]
             }
         let! sessionResponse = SessionClient.createSession request
         return sessionResponse.getToken().Value
