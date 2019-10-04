@@ -13,17 +13,16 @@ open Djambi.Api.Db.Interfaces
 open Djambi.Api.Logic
 open Djambi.Api.Logic.Interfaces
 open Djambi.Api.Model
-open Djambi.Utilities
 
-let private env = Environment.load(6)
 let private config =
     ConfigurationBuilder()
         .AddJsonFile("appsettings.json", false)
+        .AddEnvironmentVariables("DJAMBI_")
         .Build()
 
 let connectionString =
     config.GetConnectionString("Main")
-            .Replace("{sqlAddress}", env.sqlAddress)
+            .Replace("{sqlAddress}", config.["sqlAddress"])
 
 let log = LoggerConfiguration().CreateLogger()
 let db = DbRoot(connectionString) :> IDbRoot
