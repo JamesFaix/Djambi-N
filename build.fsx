@@ -16,10 +16,6 @@ open System.IO
 let defaultTarget = "default"
 let all = "all"
 
-let checkForEnv = "check-env"
-
-let paketInstall = "paket-install"
-let paketRestore = "paket-restore"
 let buildApi = "build-api"
 let buildWeb = "build-web"
 let dbReset = "db-reset"
@@ -76,20 +72,6 @@ let launchConsole (dir : string) (command : string) (args : string list) (_ : Ta
     psi.UseShellExecute <- true
     Process.Start psi |> ignore
 
-Target.create checkForEnv (fun _ ->
-    let path = sprintf "%s/environment.json" __SOURCE_DIRECTORY__
-    if not (File.Exists path)
-    then failwith "environment.json file not found. A template can be found in the wiki."
-)
-
-Target.create paketRestore (fun _ ->
-    Process.Start(".paket/paket.exe", "restore")
-    |> ignore
-)
-Target.create paketInstall (fun _ ->
-    Process.Start(".paket/paket.exe", "install")
-    |> ignore
-)
 Target.create buildApi (dotnetBuild "api/api.host/api.host.fsproj")
 Target.create dbReset (dotNetRun "utils/db-reset/db-reset.fsproj")
 Target.create genClient (dotNetRun "utils/client-generator/client-generator.fsproj")
@@ -131,14 +113,6 @@ Target.create all ignore
 
 open Fake.Core.TargetOperators
 
-checkForEnv ==> dbReset
-checkForEnv ==> buildApi
-checkForEnv ==> genClient
-
-paketRestore ?=> dbReset
-paketRestore ?=> buildApi
-paketRestore ?=> genClient
-
 dbReset ?=> buildApi
 buildApi ?=> genClient
 genClient ?=> buildWeb
@@ -158,7 +132,6 @@ testWebUnit ?=> runWeb
 
 buildAll <==
     [
-        paketRestore
         dbReset
         buildApi
         genClient
