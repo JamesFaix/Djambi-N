@@ -8,12 +8,10 @@ open Dapper
 
 open Microsoft.Extensions.Configuration
 
-open Djambi.Utilities
-
-let private env = Environment.load(5);
 let private config =
     ConfigurationBuilder()
         .AddJsonFile("appsettings.json", false)
+        .AddEnvironmentVariables("DJAMBI_")
         .Build()
 
 let private getSqlDirectory =
@@ -24,7 +22,7 @@ let private getSqlDirectory =
     Path.Combine(asmDir, relativeDir)
 
 let private getConnectionString name =
-    config.GetConnectionString(name).Replace("{sqlAddress}", env.sqlAddress)
+    config.GetConnectionString(name).Replace("{sqlAddress}", config.["sqlAddress"])
 
 let private masterConnectionString = getConnectionString "master"
 let private djambiConnectionString = getConnectionString "djambi"

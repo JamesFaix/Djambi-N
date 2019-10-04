@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Local": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DJAMBI_sqlAddress": "localhost"
+      }
+    }
+  }
+}
