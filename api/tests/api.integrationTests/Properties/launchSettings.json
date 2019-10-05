@@ -3,7 +3,7 @@
     "Local": {
       "commandName": "Project",
       "environmentVariables": {
-        "sqlAddress": "localhost"
+        "djambiConnectionString": "Data Source=localhost;Initial Catalog=Djambi;Integrated Security=True;"
       }
     }
   }

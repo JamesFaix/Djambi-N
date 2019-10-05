@@ -16,13 +16,10 @@ open Djambi.Api.Model
 
 let private config =
     ConfigurationBuilder()
-        .AddJsonFile("appsettings.json", false)
         .AddEnvironmentVariables("DJAMBI_")
         .Build()
 
-let connectionString =
-    config.GetConnectionString("Main")
-            .Replace("{sqlAddress}", config.["sqlAddress"])
+let connectionString = config.["djambiConnectionString"]
 
 let log = LoggerConfiguration().CreateLogger()
 let db = DbRoot(connectionString) :> IDbRoot
