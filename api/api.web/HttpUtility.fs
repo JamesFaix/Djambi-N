@@ -31,10 +31,12 @@ type HttpUtility(cookieDomain : string,
 
     let readJsonBody (ctx : HttpContext) : 'a AsyncHttpResult =
         try
-            use reader = new StreamReader(ctx.Request.Body)
-            let json = reader.ReadToEnd()
-            let value = JsonConvert.DeserializeObject<'a>(json, converters)
-            okTask value
+            task {
+                use reader = new StreamReader(ctx.Request.Body)
+                let! json = reader.ReadToEndAsync()
+                let value = JsonConvert.DeserializeObject<'a>(json, converters)
+                return Ok value            
+            }
         with
         | ex -> errorTask <| HttpException(400, ex.Message)
 
