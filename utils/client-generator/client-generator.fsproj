@@ -9,11 +9,13 @@
     <Content Include="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Properties\launchSettings.json" />
     <Compile Include="IRenderer.fs" />
     <Compile Include="TypeScriptRenderer.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="3.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.0.0" />
   </ItemGroup>
   <ItemGroup>
@@ -21,6 +23,5 @@
     <ProjectReference Include="..\..\api\api.logic.interfaces\api.logic.interfaces.fsproj" />
     <ProjectReference Include="..\..\api\api.model\api.model.fsproj" />
     <ProjectReference Include="..\client-generator.annotations\client-generator.annotations.fsproj" />
-    <ProjectReference Include="..\environment\environment.fsproj" />
   </ItemGroup>
 </Project>
