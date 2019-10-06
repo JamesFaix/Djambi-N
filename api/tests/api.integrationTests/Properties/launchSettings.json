@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Local": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "djambiConnectionString": "Data Source=localhost;Initial Catalog=Djambi;Integrated Security=True;"
+      }
+    }
+  }
+}
