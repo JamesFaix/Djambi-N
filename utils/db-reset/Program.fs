@@ -54,7 +54,7 @@ let getFilesInOrder : string seq =
             "UserPrivileges"
         ]
 
-        yield! tables |> Seq.map (fun name -> sprintf "Tables\\dbo.%s.sql" name)
+        yield! tables |> Seq.map (fun name -> Path.Combine("Tables", sprintf "dbo.%s.sql" name))
 
         let getFiles folder =
             Path.Combine(options.sqlRoot, folder)
@@ -62,7 +62,7 @@ let getFilesInOrder : string seq =
             |> Seq.map (fun path -> Path.Combine(folder, Path.GetFileName(path)))
 
         let folders = [
-            "Types\\User-defined Data Types"
+            Path.Combine("Types", "User-defined Data Types")
             "Views"
             "Stored Procedures"
             "Data"
