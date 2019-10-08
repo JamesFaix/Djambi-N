@@ -24,5 +24,4 @@ RUN dotnet publish "api.host.fsproj" -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENV DJAMBI_apiAddress="http://*:5100"
 ENTRYPOINT ["dotnet", "Djambi.Api.dll"]

@@ -1,0 +1,24 @@
+version: '3'
+services:
+  db:
+    build:
+      context: .
+      dockerfile: db/Dockerfile
+  api:
+    build:
+      context: .
+      dockerfile: api/api.host/Dockerfile
+    ports:
+      - "5100:5100"
+    environment:
+      - DJAMBI_apiAddress=http://*:5100
+      - "DJAMBI_djambiConnectionString=Data Source=db;Initial Catalog=djambi;User Id=SA;Password=GR3@Tpassword;"
+      - DJAMBI_webAddress=http://localhost:8080
+      - DJAMBI_logsDir=
+      - DJAMBI_cookieDomain=localhost
+  web:
+    build:
+      context: .
+      dockerfile: web/Dockerfile
+    ports:
+      - "8080:8080"

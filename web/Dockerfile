@@ -7,6 +7,7 @@ COPY ["web/package*.json", "./"]
 RUN npm install
 
 COPY ["web/", "."]
+ENV DJAMBI_apiAddress="http://localhost:5100"
 RUN npm run build
 
 FROM base as final
