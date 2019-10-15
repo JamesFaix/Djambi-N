@@ -33,6 +33,11 @@ const navigationSection : React.SFC<{ location : any }> = props => {
                 state={o.showHome}
                 route={Routes.dashboard}
             />
+            <IconButton
+                icon={Icons.Pages.rules}
+                onClick={() => window.open(Routes.rules, "_blank")}
+                active={o.showRules === ButtonState.Active}
+            />
             <NavigationButton
                 icon={Icons.Pages.settings}
                 state={o.showSettings}
@@ -92,6 +97,7 @@ interface NavigationOptions {
     showLogin : ButtonState,
     showSignup : ButtonState,
     showHome : ButtonState,
+    showRules : ButtonState,
     showCreateGame : ButtonState,
     showLobby : ButtonState,
     showPlay : ButtonState,
@@ -107,6 +113,7 @@ const defaultOptions : NavigationOptions = {
     showLogin: ButtonState.Hidden,
     showSignup: ButtonState.Hidden,
     showHome: ButtonState.Hidden,
+    showRules: ButtonState.Hidden,
     showCreateGame: ButtonState.Hidden,
     showLobby: ButtonState.Hidden,
     showPlay: ButtonState.Hidden,
@@ -158,6 +165,9 @@ function getContextType(route : string, game : Game) : ContextType {
 }
 
 function applyDefaultsForContext(type : ContextType, o : NavigationOptions) : void {
+    o.showSettings = ButtonState.Inactive;
+    o.showRules = ButtonState.Inactive;
+
     if (type === ContextType.LoggedOut) {
         o.showSignup = ButtonState.Inactive;
         o.showLogin = ButtonState.Inactive;
@@ -166,7 +176,6 @@ function applyDefaultsForContext(type : ContextType, o : NavigationOptions) : vo
             type === ContextType.LoggedInWithNoActiveGame) {
             o.showHome = ButtonState.Inactive;
             o.showCreateGame = ButtonState.Inactive;
-            o.showSettings = ButtonState.Inactive;
             o.showSearch = ButtonState.Inactive;
         }
 

@@ -31,7 +31,8 @@ import {
     faCog,
     faPlusSquare,
     faMinusSquare,
-    faTimesCircle
+    faTimesCircle,
+    faBook
 } from "@fortawesome/free-solid-svg-icons";
 import { PlayerStatus, GameStatus } from "../api/model";
 
@@ -111,6 +112,7 @@ export class Icons {
         public static readonly settings : IconInfo = { icon: faCog, title: "Settings" };
         public static readonly gameOver : IconInfo = { icon: faAward, title: "Game results" };
         public static readonly search : IconInfo = { icon: faSearch, title: "Search" };
+        public static readonly rules : IconInfo = { icon: faBook, title: "Rules" };
     }
 
     public static readonly UserActions = class {
