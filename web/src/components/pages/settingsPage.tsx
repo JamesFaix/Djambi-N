@@ -10,10 +10,6 @@ import { State as AppState } from '../../store/root';
 import { Checkbox, NumberInput } from '../controls/input';
 
 const SettingsPage : React.SFC<{}> = _ => {
-    React.useEffect(() => {
-        Controller.Session.redirectToLoginIfNotLoggedIn();
-    });
-
     return(
         <BasicPageContainer>
             <SectionHeader text="Settings"/>
