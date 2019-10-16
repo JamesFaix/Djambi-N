@@ -276,6 +276,7 @@ export default class Copy {
                 switch (s) {
                     case PlayerStatus.AcceptsDraw:
                         return `${agent} will accept a draw`;
+                    case PlayerStatus.WillConcede:
                     case PlayerStatus.Conceded:
                         return `${agent} conceded`
                     case PlayerStatus.Alive:

@@ -4,6 +4,8 @@ services:
     build:
       context: .
       dockerfile: db/Dockerfile
+    ports:
+      - "1434:1433"
   api:
     build:
       context: .
