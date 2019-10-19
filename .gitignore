@@ -11,3 +11,4 @@ paket-files
 .ionide/symbolCache.db
 *.user
 *.log
+*.zip
