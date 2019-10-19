@@ -13,6 +13,7 @@ open Djambi.Api.Model
 type IndirectEffectsService(eventServ : EventService,
                             selectionOptionsServ : SelectionOptionsService) =
 
+    //TODO: may have bug
     let removeSequentialDuplicates(turnCycle : int list) : int list =
         if turnCycle.Length = 1 then turnCycle
         else
