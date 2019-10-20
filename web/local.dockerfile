@@ -1,4 +1,4 @@
-FROM node:10 as base
+FROM node:10-alpine as base
 
 FROM base as build
 WORKDIR /app
@@ -7,8 +7,7 @@ COPY ["web/package*.json", "./"]
 RUN npm install
 
 COPY ["web/", "."]
-ENV DJAMBI_apiAddress="http://localhost:5100"
-RUN npm run build
+RUN npm run build-local
 
 FROM base as final
 WORKDIR /app
