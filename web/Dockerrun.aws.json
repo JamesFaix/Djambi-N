@@ -1,0 +1,12 @@
+{
+    "AWSEBDockerrunVersion": "1",
+    "Image": {
+        "Name": "798135284442.dkr.ecr.us-east-1.amazonaws.com/djambi-web:latest",
+        "Update": "true"
+    },
+    "Ports": [
+        {
+            "ContainerPort": "8081"
+        }
+    ]
+}

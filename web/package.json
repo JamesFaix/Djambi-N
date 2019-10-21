@@ -36,7 +36,8 @@
         "sprintf-js": "^1.1.2"
     },
     "scripts": {
-        "build": "webpack --env.API_URL=http://localhost:5100",
+        "build-local": "webpack --env.API_URL=http://localhost:5100",
+        "build-aws-dev": "webpack --env.API_URL=http://djambi-api-dev.us-east-1.elasticbeanstalk.com",
         "start": "webpack && http-server",
         "test": "mocha --require ts-node/register test/**/*.ts"
     },
