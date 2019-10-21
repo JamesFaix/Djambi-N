@@ -29,6 +29,7 @@ export default class CanvasCell extends React.Component< {
             <Group
                 onMouseMove={e => this.updateTooltip(e)}
                 onClick={() => this.onClick()}
+                onTap={() => this.onClick()} //For mobile browser support
             >
                 <CanvasCellBackgroundLayer
                     cell={c}

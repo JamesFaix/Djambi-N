@@ -12,7 +12,6 @@ export interface CanvasPolygonStyle {
 
 const CanvasPolygon : React.SFC<{
     polygon : Polygon,
-    onClick ?: () => void,
     style: CanvasPolygonStyle
 }> = props => (
     <Shape
@@ -34,7 +33,6 @@ const CanvasPolygon : React.SFC<{
         fill={props.style.fillColor}
         stroke={props.style.strokeColor}
         strokeWidth={props.style.strokeWidth}
-        onClick={props.onClick ? () => props.onClick() : null}
         opacity={props.style.opacity !== undefined ? props.style.opacity : 1}
     />
 );
