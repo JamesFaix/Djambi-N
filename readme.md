@@ -1,6 +1,6 @@
-# Void
+# Djambi-N
 
-Void is an online multiplayer strategy board game in curved space.
+Djambi-N is an online multiplayer strategy board game in curved space.
 <div style="display:flex">
   <img src="https://github.com/JamesFaix/Djambi3/wiki/images/3board.png" width=100>
   <img src="https://github.com/JamesFaix/Djambi3/wiki/images/4board.png" width=100/>
