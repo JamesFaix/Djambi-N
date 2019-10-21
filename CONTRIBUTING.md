@@ -6,7 +6,7 @@ Here are a few roles where I think the most help is needed:
 - Front-end development (JavaScript, TypeScript, React, Redux, HTML, CSS)
 - Graphic design (Sprites, color palettes, CSS)
 - Back-end development (F#, SQL)
-- Production deployment (not sure what technologies will be used here yet)
+- Production deployment (Docker, AWS ECR, Elastic Beanstalk, AWS RDS)
 - Testing (Play the game to find bugs and frustrating parts of gameplay)
 
 Issues marked with the label `up-for-grabs` are smaller problems that might be good for a new contributor to tackle. If you are new and something else looks interesting, that's fine. Try it out!
