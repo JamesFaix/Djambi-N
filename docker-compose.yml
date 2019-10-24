@@ -21,6 +21,6 @@ services:
   web:
     build:
       context: .
-      dockerfile: web/local.dockerfile
+      dockerfile: web/Dockerfile
     ports:
       - "8080:8080"
