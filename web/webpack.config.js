@@ -1,6 +1,6 @@
 const webpack = require('webpack');
 
-module.exports = env => {
+module.exports = () => {
     return {
         entry: "./src/index.tsx",
         output: {
@@ -46,7 +46,7 @@ module.exports = env => {
         plugins: [
             new webpack.DefinePlugin({
               'process.env':{
-                API_URL: JSON.stringify(env.API_URL)
+                API_URL: JSON.stringify(process.env.DJAMBI_apiAddress)
               }
             })
         ]
