@@ -9,7 +9,7 @@ services:
   api:
     build:
       context: .
-      dockerfile: api/api.host/Dockerfile
+      dockerfile: api/Dockerfile
     ports:
       - "5100:5100"
     environment:
