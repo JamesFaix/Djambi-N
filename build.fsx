@@ -101,7 +101,7 @@ Target.create testApiInt (dotNetTest "api/tests/api.integrationTests/api.integra
 Target.create testWebUnit (fun _ -> Npm.run "test" (setNpmParams "web"))
 
 Target.create runApi (launchConsole "api/api.host" "dotnet" ["run api.host.fsproj"])
-Target.create runWeb (launchConsole "web" "http-server" [])
+Target.create runWeb (launchConsole "web/dist/dev" "http-server" [])
 
 Target.create buildAll ignore
 Target.create lintAll ignore

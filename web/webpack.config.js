@@ -1,13 +1,17 @@
 const webpack = require('webpack');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = () => {
+    const isProd = process.env.NODE_ENV === "production";
+
     return {
         entry: "./src/index.tsx",
         output: {
             filename: "bundle.js",
-            path: __dirname + "/dist"
+            path: getOutputDirectory(isProd)
         },
-        devtool: "source-map",
+        mode: process.env.NODE_ENV,
+        devtool: getDevTool(isProd),
         resolve: {
             extensions: [".ts", ".tsx", ".js", ".json"]
         },
@@ -39,16 +43,34 @@ module.exports = () => {
                 }
             ]
         },
-        externals: {
-            "react": "React",
-            "react-dom": "ReactDOM"
-        },
         plugins: [
             new webpack.DefinePlugin({
               'process.env':{
-                API_URL: JSON.stringify(process.env.DJAMBI_apiAddress)
+                API_URL: JSON.stringify(process.env.DJAMBI_apiAddress),
+                NODE_ENV: JSON.stringify(process.env.NODE_ENV)
               }
-            })
+            }),
+            new CopyWebpackPlugin([
+                {
+                    from: "index.html",
+                    to: "index.html"
+                },
+                {
+                    from: "resources",
+                    to: "resources",
+                    ignore: [ "**/*.psd" ]
+                }
+            ])
         ]
     };
 };
+
+function getOutputDirectory(isProd) {
+    return isProd
+        ? `${__dirname}/dist/prod`
+        : `${__dirname}/dist/dev`;
+}
+
+function getDevTool(isProd) {
+    return isProd ? undefined : "source-map";
+}
