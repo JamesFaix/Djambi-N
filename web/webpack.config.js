@@ -2,13 +2,15 @@ const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = () => {
+    const isProd = process.env.NODE_ENV === "production";
+
     return {
         entry: "./src/index.tsx",
         output: {
             filename: "bundle.js",
-            path: __dirname + "/dist"
+            path: getOutputDirectory(isProd)
         },
-        devtool: "source-map",
+        devtool: getDevTool(isProd),
         resolve: {
             extensions: [".ts", ".tsx", ".js", ".json"]
         },
@@ -50,25 +52,46 @@ module.exports = () => {
                 API_URL: JSON.stringify(process.env.DJAMBI_apiAddress)
               }
             }),
-            new CopyWebpackPlugin([
-                {
-                    from: "index.html",
-                    to: "index.html"
-                },
-                {
-                    from: "resources",
-                    to: "resources",
-                    ignore: [ "**/*.psd" ]
-                },
-                {
-                    from: "node_modules/react/umd/react.development.js",
-                    to: "node_modules/react/umd/react.development.js"
-                },
-                {
-                    from: "node_modules/react-dom/umd/react-dom.development.js",
-                    to: "node_modules/react-dom/umd/react-dom.development.js"
-                }
-            ])
+            new CopyWebpackPlugin(getCopyPatterns(isProd))
         ]
     };
 };
+
+function getOutputDirectory(isProd) {
+    return isProd
+        ? `${__dirname}/dist/prod`
+        : `${__dirname}/dist/dev`;
+}
+
+function getDevTool(isProd) {
+    return isProd ? undefined : "source-map";
+}
+
+function getCopyPatterns(isProd) {
+    let patterns = [
+        {
+            from: "index.html",
+            to: "index.html"
+        },
+        {
+            from: "resources",
+            to: "resources",
+            ignore: [ "**/*.psd" ]
+        }
+    ];
+
+    if (!isProd) {
+        patterns = patterns.concat([
+            {
+                from: "node_modules/react/umd/react.development.js",
+                to: "node_modules/react/umd/react.development.js"
+            },
+            {
+                from: "node_modules/react-dom/umd/react-dom.development.js",
+                to: "node_modules/react-dom/umd/react-dom.development.js"
+            }
+        ]);
+    }
+
+    return patterns;
+}
