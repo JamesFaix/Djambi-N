@@ -19,7 +19,7 @@ RUN npm run build
 FROM base as final
 WORKDIR /app
 
-COPY --from=build ["app/dist", "./"]
+COPY --from=build ["app/dist/dev", "./"]
 
 # Start web server
 RUN npm install http-server -g

@@ -10,6 +10,7 @@ module.exports = () => {
             filename: "bundle.js",
             path: getOutputDirectory(isProd)
         },
+        mode: process.env.NODE_ENV,
         devtool: getDevTool(isProd),
         resolve: {
             extensions: [".ts", ".tsx", ".js", ".json"]
@@ -42,17 +43,24 @@ module.exports = () => {
                 }
             ]
         },
-        externals: {
-            "react": "React",
-            "react-dom": "ReactDOM"
-        },
         plugins: [
             new webpack.DefinePlugin({
               'process.env':{
-                API_URL: JSON.stringify(process.env.DJAMBI_apiAddress)
+                API_URL: JSON.stringify(process.env.DJAMBI_apiAddress),
+                NODE_ENV: JSON.stringify(process.env.NODE_ENV)
               }
             }),
-            new CopyWebpackPlugin(getCopyPatterns(isProd))
+            new CopyWebpackPlugin([
+                {
+                    from: "index.html",
+                    to: "index.html"
+                },
+                {
+                    from: "resources",
+                    to: "resources",
+                    ignore: [ "**/*.psd" ]
+                }
+            ])
         ]
     };
 };
@@ -65,33 +73,4 @@ function getOutputDirectory(isProd) {
 
 function getDevTool(isProd) {
     return isProd ? undefined : "source-map";
-}
-
-function getCopyPatterns(isProd) {
-    let patterns = [
-        {
-            from: "index.html",
-            to: "index.html"
-        },
-        {
-            from: "resources",
-            to: "resources",
-            ignore: [ "**/*.psd" ]
-        }
-    ];
-
-    if (!isProd) {
-        patterns = patterns.concat([
-            {
-                from: "node_modules/react/umd/react.development.js",
-                to: "node_modules/react/umd/react.development.js"
-            },
-            {
-                from: "node_modules/react-dom/umd/react-dom.development.js",
-                to: "node_modules/react-dom/umd/react-dom.development.js"
-            }
-        ]);
-    }
-
-    return patterns;
 }
