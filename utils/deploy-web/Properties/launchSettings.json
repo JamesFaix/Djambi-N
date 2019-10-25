@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "deploy-web": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "AWS_PROFILE": "dev"
+      }
+    }
+  }
+}
