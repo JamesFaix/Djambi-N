@@ -46,7 +46,7 @@ module.exports = () => {
         plugins: [
             new webpack.DefinePlugin({
               'process.env':{
-                API_URL: JSON.stringify(process.env.DJAMBI_apiAddress),
+                API_URL: JSON.stringify(process.env.APEX_apiAddress),
                 NODE_ENV: JSON.stringify(process.env.NODE_ENV)
               }
             }),
