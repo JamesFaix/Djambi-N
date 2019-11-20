@@ -12,25 +12,25 @@ export default class ThemeFactory {
     public static readonly default : Theme = {
         name: "Default",
         colors: {
-            background: "white",
-            text: "black",
-            headerText: "black",
-            border: "gainsboro",
-            hoverText: "white",
-            hoverBackground: "black",
-            altRowText: "black",
-            altRowBackground: "gainsboro",
+            background: darkGrayHex,
+            text: lightGrayHex,
+            headerText: lightGrayHex,
+            border: lightGrayHex,
+            hoverBackground: lightGrayHex,
+            hoverText: darkGrayHex,
+            altRowBackground: "#333333",
+            altRowText: lightGrayHex,
             positiveButtonBackground: "mediumseagreen",
             negativeButtonBackground: "indianred",
 
             cells: {
-                even: "white",
-                odd: "black",
-                center: medGrayHex,
+                even: blackHex,
+                odd: "#333333",
+                center: "#EEEEEE",
 
-                evenBorder: null,
-                oddBorder: null,
-                centerBorder: null,
+                centerBorder: "#DDDDDD",
+                evenBorder: "#DDDDDD",
+                oddBorder: "#DDDDDD",
 
                 evenText: "black",
                 oddText: "white",
@@ -70,15 +70,15 @@ export default class ThemeFactory {
             }
         },
         copy: {
-            gameTitle: "Djambi-N",
-            centerCellName: "Seat",
+            gameTitle: "Apex",
+            centerCellName: "Apex",
             pieces: {
-                assassin: "Assassin",
-                chief: "Chief",
+                assassin: "Hunter",
+                chief: "Conduit",
                 corpse: "Corpse",
                 diplomat: "Diplomat",
-                gravedigger: "Gravedigger",
-                reporter: "Reporter",
+                gravedigger: "Reaper",
+                reporter: "Scientist",
                 thug: "Thug"
             }
         },
@@ -179,49 +179,41 @@ export default class ThemeFactory {
         }
     }
 
-    public static readonly void : Theme = {
+    public static readonly chess : Theme = {
         ...ThemeFactory.default,
-        name: "Void",
+        name: "Chess",
         colors: {
             ...ThemeFactory.default.colors,
-            background: darkGrayHex,
-            text: lightGrayHex,
-            headerText: lightGrayHex,
-            border: lightGrayHex,
-            hoverBackground: lightGrayHex,
-            hoverText: darkGrayHex,
-            altRowBackground: "#333333",
-            altRowText: lightGrayHex,
+            background: "white",
+            text: "black",
+            headerText: "black",
+            border: "gainsboro",
+            hoverText: "white",
+            hoverBackground: "black",
+            altRowText: "black",
+            altRowBackground: "gainsboro",
+
             cells: {
                 ...ThemeFactory.default.colors.cells,
-                even: blackHex,
-                odd: "#333333",
-                center: "#EEEEEE",
+                even: "white",
+                odd: "black",
+                center: medGrayHex,
 
-                centerBorder: "#DDDDDD",
-                evenBorder: "#DDDDDD",
-                oddBorder: "#DDDDDD",
-            }
+                evenBorder: null,
+                oddBorder: null,
+                centerBorder: null,
+            },
         },
         images: {
             pieces: {
                 ...ThemeFactory.default.images.pieces,
-                chief: `${imagesDir}/void/chief.png`,
-                gravedigger: `${imagesDir}/void/gravedigger.png`,
-                reporter: `${imagesDir}/void/reporter.png`,
-            }
-        },
-        copy: {
-            gameTitle: "Void",
-            centerCellName: "Void",
-            pieces: {
-                assassin: "Hunter",
-                chief: "Conduit",
-                corpse: "Husk",
-                diplomat: "Transporter",
-                gravedigger: "Reaper",
-                reporter: "Scientist",
-                thug: "Zealot"
+                assassin: `${imagesDir}/chess/assassin.png`,
+                chief: `${imagesDir}/chess/chief.png`,
+                corpse: `${imagesDir}/chess/corpse.png`,
+                diplomat: `${imagesDir}/chess/diplomat.png`,
+                gravedigger: `${imagesDir}/chess/gravedigger.png`,
+                reporter: `${imagesDir}/chess/reporter.png`,
+                thug: `${imagesDir}/chess/thug.png`
             }
         }
     }
@@ -231,7 +223,7 @@ export default class ThemeFactory {
             ThemeFactory.default,
             ThemeFactory.anesto,
             ThemeFactory.hotdogtown,
-            ThemeFactory.void
+            ThemeFactory.chess
         ];
 
         return new Map<string, Theme>(themes.map(t => [t.name, t]));
