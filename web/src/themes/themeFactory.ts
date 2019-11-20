@@ -60,12 +60,12 @@ export default class ThemeFactory {
         },
         images: {
             pieces: {
-                assassin: `${imagesDir}/default/assassin.png`,
-                chief: `${imagesDir}/default/chief.png`,
+                hunter: `${imagesDir}/default/hunter.png`,
+                conduit: `${imagesDir}/default/conduit.png`,
                 corpse: `${imagesDir}/default/corpse.png`,
                 diplomat: `${imagesDir}/default/diplomat.png`,
-                gravedigger: `${imagesDir}/default/gravedigger.png`,
-                reporter: `${imagesDir}/default/reporter.png`,
+                reaper: `${imagesDir}/default/reaper.png`,
+                scientist: `${imagesDir}/default/scientist.png`,
                 thug: `${imagesDir}/default/thug.png`
             }
         },
@@ -73,12 +73,12 @@ export default class ThemeFactory {
             gameTitle: "Apex",
             centerCellName: "Apex",
             pieces: {
-                assassin: "Hunter",
-                chief: "Conduit",
+                hunter: "Hunter",
+                conduit: "Conduit",
                 corpse: "Corpse",
                 diplomat: "Diplomat",
-                gravedigger: "Reaper",
-                reporter: "Scientist",
+                reaper: "Reaper",
+                scientist: "Scientist",
                 thug: "Thug"
             }
         },
@@ -138,12 +138,12 @@ export default class ThemeFactory {
         },
         images: {
             pieces: {
-                assassin: `${imagesDir}/anesto/assassin.png`,
-                chief: `${imagesDir}/anesto/chief.png`,
+                hunter: `${imagesDir}/anesto/hunter.png`,
+                conduit: `${imagesDir}/anesto/conduit.png`,
                 corpse: `${imagesDir}/anesto/corpse.png`,
                 diplomat: `${imagesDir}/anesto/diplomat.png`,
-                gravedigger: `${imagesDir}/anesto/gravedigger.png`,
-                reporter: `${imagesDir}/anesto/reporter.png`,
+                reaper: `${imagesDir}/anesto/reaper.png`,
+                scientist: `${imagesDir}/anesto/scientist.png`,
                 thug: `${imagesDir}/anesto/thug.png`
             }
         },
@@ -153,8 +153,8 @@ export default class ThemeFactory {
             pieces: {
                 ...ThemeFactory.default.copy.pieces,
                 diplomat: "Provocateur",
-                gravedigger: "Necromobile",
-                reporter: "Journalist",
+                reaper: "Necromobile",
+                scientist: "Journalist",
                 thug: "Militant"
             }
         },
@@ -178,12 +178,12 @@ export default class ThemeFactory {
         },
         images: {
             pieces: {
-                assassin: `${imagesDir}/hotdogtown/assassin.png`,
-                chief: `${imagesDir}/hotdogtown/chief.png`,
+                hunter: `${imagesDir}/hotdogtown/hunter.png`,
+                conduit: `${imagesDir}/hotdogtown/conduit.png`,
                 corpse: `${imagesDir}/hotdogtown/corpse.png`,
                 diplomat: `${imagesDir}/hotdogtown/diplomat.png`,
-                gravedigger: `${imagesDir}/hotdogtown/gravedigger.png`,
-                reporter: `${imagesDir}/hotdogtown/reporter.png`,
+                reaper: `${imagesDir}/hotdogtown/reaper.png`,
+                scientist: `${imagesDir}/hotdogtown/scientist.png`,
                 thug: `${imagesDir}/hotdogtown/thug.png`
             }
         },
@@ -191,12 +191,12 @@ export default class ThemeFactory {
             gameTitle: "Hotdogtown",
             centerCellName: "Booth",
             pieces: {
-                assassin: "Fork",
-                chief: "Ketchup",
+                hunter: "Fork",
+                conduit: "Ketchup",
                 corpse: "Hotdog",
                 diplomat: "Hugger",
-                gravedigger: "Eater",
-                reporter: "Fart",
+                reaper: "Eater",
+                scientist: "Fart",
                 thug: "Fries"
             }
         },

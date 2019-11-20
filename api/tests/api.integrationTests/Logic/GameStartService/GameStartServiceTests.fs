@@ -56,11 +56,11 @@ type GameStartServiceTests() =
             Assert.Equal(game.parameters.regionCount, groupByPlayer.Length)
 
             for (_, grp) in groupByPlayer do
-                Assert.Single<Piece>(grp, (fun p -> p.kind = Chief)) |> ignore
+                Assert.Single<Piece>(grp, (fun p -> p.kind = Conduit)) |> ignore
                 Assert.Single<Piece>(grp, (fun p -> p.kind = Diplomat)) |> ignore
-                Assert.Single<Piece>(grp, (fun p -> p.kind = Reporter)) |> ignore
-                Assert.Single<Piece>(grp, (fun p -> p.kind = Gravedigger)) |> ignore
-                Assert.Single<Piece>(grp, (fun p -> p.kind = Assassin)) |> ignore
+                Assert.Single<Piece>(grp, (fun p -> p.kind = Scientist)) |> ignore
+                Assert.Single<Piece>(grp, (fun p -> p.kind = Reaper)) |> ignore
+                Assert.Single<Piece>(grp, (fun p -> p.kind = Hunter)) |> ignore
                 Assert.Equal(4, grp |> List.filter (fun p -> p.kind = Thug) |> List.length)
         }
 

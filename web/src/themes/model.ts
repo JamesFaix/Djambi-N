@@ -64,12 +64,12 @@ interface ThemeImagePaths {
 }
 
 interface ThemePieceImagePaths {
-    assassin : string,
-    chief : string,
+    hunter : string,
+    conduit : string,
     corpse : string,
     diplomat : string,
-    gravedigger : string,
-    reporter : string,
+    reaper : string,
+    scientist : string,
     thug : string
 }
 
@@ -80,12 +80,12 @@ interface ThemeCopy {
 }
 
 interface ThemePieceNames {
-    assassin : string,
-    chief : string,
+    hunter : string,
+    conduit : string,
     corpse : string,
     diplomat : string,
-    gravedigger : string,
-    reporter : string,
+    reaper : string,
+    scientist : string,
     thug : string
 }
 

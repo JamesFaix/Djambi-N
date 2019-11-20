@@ -59,7 +59,7 @@ type TurnService(eventServ : EventService,
                     effects.Add(Effect.PieceDropped { oldPiece = target; newPiece = newPiece })
                 | None -> ()
 
-                //Move target back to origin if subject is assassin
+                //Move target back to origin if subject is hunter
                 if subjectStrategy.movesTargetToOrigin
                 then
                     pieces.[target.id] <- pieces.[target.id].moveTo originCellId

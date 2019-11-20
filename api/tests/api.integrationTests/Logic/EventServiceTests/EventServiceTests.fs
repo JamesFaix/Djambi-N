@@ -130,14 +130,14 @@ type EventServiceTests() =
             [
                 {
                     id = 1
-                    kind = PieceKind.Assassin
+                    kind = PieceKind.Hunter
                     playerId = Some 0
                     originalPlayerId = 0
                     cellId = 0
                 }
                 {
                     id = 2
-                    kind = PieceKind.Assassin
+                    kind = PieceKind.Hunter
                     playerId = Some 0
                     originalPlayerId = 0
                     cellId = 0
@@ -164,7 +164,7 @@ type EventServiceTests() =
         let piece : Piece =
             {
                 id = 1
-                kind = PieceKind.Assassin
+                kind = PieceKind.Hunter
                 playerId = Some 0
                 originalPlayerId = 0
                 cellId = 0
@@ -192,14 +192,14 @@ type EventServiceTests() =
             [
                 {
                     id = 1
-                    kind = PieceKind.Assassin
+                    kind = PieceKind.Hunter
                     playerId = Some 0
                     originalPlayerId = 0
                     cellId = 0
                 }
                 {
                     id = 2
-                    kind = PieceKind.Assassin
+                    kind = PieceKind.Hunter
                     playerId = Some 0
                     originalPlayerId = 0
                     cellId = 0
@@ -227,7 +227,7 @@ type EventServiceTests() =
         let piece : Piece =
             {
                 id = 1
-                kind = PieceKind.Assassin
+                kind = PieceKind.Hunter
                 playerId = Some 0
                 originalPlayerId = 0
                 cellId = 0
@@ -256,7 +256,7 @@ type EventServiceTests() =
         let piece : Piece =
             {
                 id = 1
-                kind = PieceKind.Assassin
+                kind = PieceKind.Hunter
                 playerId = Some 0
                 originalPlayerId = 0
                 cellId = 0
@@ -283,7 +283,7 @@ type EventServiceTests() =
         let piece : Piece =
             {
                 id = 1
-                kind = PieceKind.Assassin
+                kind = PieceKind.Hunter
                 playerId = Some 0
                 originalPlayerId = 0
                 cellId = 0

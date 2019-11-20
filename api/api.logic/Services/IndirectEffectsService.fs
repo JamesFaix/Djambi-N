@@ -115,7 +115,7 @@ type IndirectEffectsService(eventServ : EventService,
                 && not destination.isCenter
                 && hasPower updatedGame subjectPlayerId
             then
-                //If chief subject leaves power, remove bonus turns
+                //If conduit subject leaves power, remove bonus turns
                 let newTurns = removeBonusTurnsForPlayer subjectPlayerId turns
                 effects.Add(Effect.TurnCyclePlayerFellFromPower { playerId = subjectPlayerId; oldValue = turns; newValue = newTurns })
                 turns <- newTurns
@@ -123,7 +123,7 @@ type IndirectEffectsService(eventServ : EventService,
                 && destination.isCenter
                 && powerCanBeHad updatedGame
             then
-                //If chief subject rises to power, add bonus turns
+                //If conduit subject rises to power, add bonus turns
                 let newTurns = addBonusTurnsForPlayer subjectPlayerId turns
                 effects.Add(Effect.TurnCyclePlayerRoseToPower { playerId = subjectPlayerId; oldValue = turns; newValue = newTurns })
                 turns <- newTurns
@@ -138,7 +138,7 @@ type IndirectEffectsService(eventServ : EventService,
                 && subjectStrategy.canDropTarget
                 && targetStrategy.canStayInCenter
             then
-                //If chief target is moved out of power and not killed, remove bonus turns
+                //If conduit target is moved out of power and not killed, remove bonus turns
                 if destination.isCenter
                     && not drop.isCenter
                     && hasPower updatedGame subjectPlayerId
@@ -146,7 +146,7 @@ type IndirectEffectsService(eventServ : EventService,
                     let newTurns = removeBonusTurnsForPlayer subjectPlayerId turns
                     effects.Add(Effect.TurnCyclePlayerFellFromPower { playerId = subjectPlayerId; oldValue = turns; newValue = newTurns })
                     turns <- newTurns
-                //If chief target is dropped in power and not killed, add bonus turns
+                //If conduit target is dropped in power and not killed, add bonus turns
                 elif not destination.isCenter
                     && drop.isCenter
                     && powerCanBeHad updatedGame
@@ -259,7 +259,7 @@ type IndirectEffectsService(eventServ : EventService,
                 Change player status
                 Remove player from turn cycle
                 Enlist pieces controlled by player
-            Enlist pieces if killing neutral Chief (option)
+            Enlist pieces if killing neutral Conduit (option)
             Player rises/falls from power (option)
 
             Victory (option)
@@ -278,7 +278,7 @@ type IndirectEffectsService(eventServ : EventService,
         let subject = (turn.subjectPiece game).Value
         let subjectStrategy = Pieces.getStrategy subject
 
-        let killChiefEffects =
+        let killConduitEffects =
             match turn.targetPiece game with
             | Some target ->
                 let targetStrategy = Pieces.getStrategy target
@@ -292,8 +292,8 @@ type IndirectEffectsService(eventServ : EventService,
                 else []
             | _ -> []
 
-        effects.AddRange killChiefEffects
-        let updatedGame = eventServ.applyEffects killChiefEffects updatedGame
+        effects.AddRange killConduitEffects
+        let updatedGame = eventServ.applyEffects killConduitEffects updatedGame
 
         let riseFallEffects = getRiseOrFallFromPowerEffects (game, updatedGame)
         effects.AddRange riseFallEffects

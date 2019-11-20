@@ -106,11 +106,11 @@ type GameStartService(playerServ : PlayerService,
                 }
             let n = Constants.regionSize - 1
             [
-                getPiece(startingId, Chief, n,n)
-                getPiece(startingId+1, Reporter, n,n-1)
-                getPiece(startingId+2, Assassin, n-1,n)
+                getPiece(startingId, Conduit, n,n)
+                getPiece(startingId+1, Scientist, n,n-1)
+                getPiece(startingId+2, Hunter, n-1,n)
                 getPiece(startingId+3, Diplomat, n-1,n-1)
-                getPiece(startingId+4, Gravedigger, n-2,n-2)
+                getPiece(startingId+4, Reaper, n-2,n-2)
                 getPiece(startingId+5, Thug, n-2,n-1)
                 getPiece(startingId+6, Thug, n-2,n)
                 getPiece(startingId+7, Thug, n-1,n-2)

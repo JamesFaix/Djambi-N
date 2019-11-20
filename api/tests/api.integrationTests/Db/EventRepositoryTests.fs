@@ -158,7 +158,7 @@ type EventRepositoryTests() =
                     pieces = [
                         {
                             id = 0
-                            kind = PieceKind.Assassin
+                            kind = PieceKind.Hunter
                             cellId = 0
                             playerId = None
                             originalPlayerId = 0

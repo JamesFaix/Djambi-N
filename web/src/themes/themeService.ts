@@ -7,12 +7,12 @@ export default class ThemeService {
     public static getPieceImagePath(theme : Theme, kind : PieceKind) : string {
         const i = theme.images.pieces;
         switch (kind) {
-            case PieceKind.Assassin: return i.assassin;
-            case PieceKind.Chief: return i.chief;
+            case PieceKind.Hunter: return i.hunter;
+            case PieceKind.Conduit: return i.conduit;
             case PieceKind.Corpse: return i.corpse;
             case PieceKind.Diplomat: return i.diplomat;
-            case PieceKind.Gravedigger: return i.gravedigger;
-            case PieceKind.Reporter: return i.reporter;
+            case PieceKind.Reaper: return i.reaper;
+            case PieceKind.Scientist: return i.scientist;
             case PieceKind.Thug: return i.thug;
             default: throw "Invalid piece kind: " + kind;
         }
@@ -76,12 +76,12 @@ export default class ThemeService {
     public static getPieceName(theme : Theme, kind : PieceKind) : string {
         const c = theme.copy.pieces;
         switch (kind) {
-            case PieceKind.Assassin: return c.assassin;
-            case PieceKind.Chief: return c.chief;
+            case PieceKind.Hunter: return c.hunter;
+            case PieceKind.Conduit: return c.conduit;
             case PieceKind.Corpse: return c.corpse;
             case PieceKind.Diplomat: return c.diplomat;
-            case PieceKind.Gravedigger: return c.gravedigger;
-            case PieceKind.Reporter: return c.reporter;
+            case PieceKind.Reaper: return c.reaper;
+            case PieceKind.Scientist: return c.scientist;
             case PieceKind.Thug: return c.thug;
             default: throw "Invalid piece kind: " + kind;
         }

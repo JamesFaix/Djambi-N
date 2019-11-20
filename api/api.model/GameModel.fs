@@ -35,12 +35,12 @@ type Player =
 
 [<ClientType(ClientSection.Game)>]
 type PieceKind =
-    | Chief
+    | Conduit
     | Thug
-    | Reporter
-    | Assassin
+    | Scientist
+    | Hunter
     | Diplomat
-    | Gravedigger
+    | Reaper
     | Corpse
 
 [<ClientType(ClientSection.Game)>]

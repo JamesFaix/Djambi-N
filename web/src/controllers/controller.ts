@@ -435,11 +435,11 @@ export default class Controller {
 
         private static loadThemeImages(theme : Theme) : void {
             const kinds = [
-                PieceKind.Assassin,
-                PieceKind.Chief,
+                PieceKind.Hunter,
+                PieceKind.Conduit,
                 PieceKind.Diplomat,
-                PieceKind.Gravedigger,
-                PieceKind.Reporter,
+                PieceKind.Reaper,
+                PieceKind.Scientist,
                 PieceKind.Thug
             ];
             const maxPlayerColorId = 7;
