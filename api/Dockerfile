@@ -10,4 +10,4 @@ RUN dotnet publish "api/api.host/api.host.fsproj" -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=build /app/publish .
-ENTRYPOINT ["dotnet", "Djambi.Api.dll"]
+ENTRYPOINT ["dotnet", "api.host.dll"]
