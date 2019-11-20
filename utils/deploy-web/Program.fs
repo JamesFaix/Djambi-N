@@ -5,7 +5,7 @@ open Amazon.S3.Transfer
 
 [<EntryPoint>]
 let main _ =
-    let bucket = "apex"
+    let bucket = "apex-web"
 
     let currentDir = Directory.GetCurrentDirectory()
     let root = Path.Combine(currentDir, "..", "..", "..", "..", "..")
