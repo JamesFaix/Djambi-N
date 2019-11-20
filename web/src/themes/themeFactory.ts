@@ -88,6 +88,33 @@ export default class ThemeFactory {
         }
     };
 
+    public static readonly chess : Theme = {
+        ...ThemeFactory.default,
+        name: "Chess",
+        colors: {
+            ...ThemeFactory.default.colors,
+            background: "white",
+            text: "black",
+            headerText: "black",
+            border: "gainsboro",
+            hoverText: "white",
+            hoverBackground: "black",
+            altRowText: "black",
+            altRowBackground: "gainsboro",
+
+            cells: {
+                ...ThemeFactory.default.colors.cells,
+                even: "white",
+                odd: "black",
+                center: medGrayHex,
+
+                evenBorder: null,
+                oddBorder: null,
+                centerBorder: null,
+            },
+        }
+    }
+
     public static readonly anesto : Theme = {
         name: "Anesto",
         colors: {
@@ -179,51 +206,12 @@ export default class ThemeFactory {
         }
     }
 
-    public static readonly chess : Theme = {
-        ...ThemeFactory.default,
-        name: "Chess",
-        colors: {
-            ...ThemeFactory.default.colors,
-            background: "white",
-            text: "black",
-            headerText: "black",
-            border: "gainsboro",
-            hoverText: "white",
-            hoverBackground: "black",
-            altRowText: "black",
-            altRowBackground: "gainsboro",
-
-            cells: {
-                ...ThemeFactory.default.colors.cells,
-                even: "white",
-                odd: "black",
-                center: medGrayHex,
-
-                evenBorder: null,
-                oddBorder: null,
-                centerBorder: null,
-            },
-        },
-        images: {
-            pieces: {
-                ...ThemeFactory.default.images.pieces,
-                assassin: `${imagesDir}/chess/assassin.png`,
-                chief: `${imagesDir}/chess/chief.png`,
-                corpse: `${imagesDir}/chess/corpse.png`,
-                diplomat: `${imagesDir}/chess/diplomat.png`,
-                gravedigger: `${imagesDir}/chess/gravedigger.png`,
-                reporter: `${imagesDir}/chess/reporter.png`,
-                thug: `${imagesDir}/chess/thug.png`
-            }
-        }
-    }
-
     public static getThemes() : Map<string, Theme> {
         const themes = [
             ThemeFactory.default,
+            ThemeFactory.chess,
             ThemeFactory.anesto,
-            ThemeFactory.hotdogtown,
-            ThemeFactory.chess
+            ThemeFactory.hotdogtown
         ];
 
         return new Map<string, Theme>(themes.map(t => [t.name, t]));
