@@ -56,6 +56,15 @@ let getFilesInOrder : string seq =
 
         yield! tables |> Seq.map (fun name -> Path.Combine("Tables", sprintf "dbo.%s.sql" name))
 
+        let views = [
+            "VGamePlayerCounts"
+            "VGameUsers"
+            "VLatestEvents"
+            "VUserViewableGames"
+        ]
+
+        yield! views |> Seq.map (fun name -> Path.Combine("Views", sprintf "%s.sql" name))
+
         let getFiles folder =
             Path.Combine(options.sqlRoot, folder)
             |> Directory.EnumerateFiles
@@ -63,7 +72,6 @@ let getFilesInOrder : string seq =
 
         let folders = [
             Path.Combine("Types", "User-defined Data Types")
-            "Views"
             "Stored Procedures"
             "Data"
         ]
