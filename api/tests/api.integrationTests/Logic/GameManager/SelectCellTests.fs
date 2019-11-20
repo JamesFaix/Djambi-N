@@ -1,13 +1,13 @@
-namespace Djambi.Api.IntegrationTests.Logic.GameManager
+namespace Apex.Api.IntegrationTests.Logic.GameManager
 
 open System
 open FSharp.Control.Tasks
 open Xunit
-open Djambi.Api.Common.Control
-open Djambi.Api.Common.Control.AsyncHttpResult
-open Djambi.Api.IntegrationTests
-open Djambi.Api.Logic
-open Djambi.Api.Model
+open Apex.Api.Common.Control
+open Apex.Api.Common.Control.AsyncHttpResult
+open Apex.Api.IntegrationTests
+open Apex.Api.Logic
+open Apex.Api.Model
 
 type SelectCellTests() =
     inherit TestsBase()

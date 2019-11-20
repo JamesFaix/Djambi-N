@@ -1,4 +1,4 @@
-module Djambi.Api.ContractTests.GameTests
+module Apex.Api.ContractTests.GameTests
 
 //TODO: Get game state should work
 

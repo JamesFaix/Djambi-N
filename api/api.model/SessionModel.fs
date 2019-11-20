@@ -1,9 +1,9 @@
 [<AutoOpen>]
-module Djambi.Api.Model.SessionModel
+module Apex.Api.Model.SessionModel
 
 open System
-open Djambi.Api.Model
-open Djambi.ClientGenerator.Annotations
+open Apex.Api.Model
+open Apex.ClientGenerator.Annotations
 
 [<ClientType(ClientSection.Session)>]
 type Session =

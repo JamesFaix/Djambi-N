@@ -1,6 +1,6 @@
-module Djambi.Api.Logic.Context
+module Apex.Api.Logic.Context
 
-open Djambi.Api.Model
+open Apex.Api.Model
 
 let getActingPlayerId (session : Session) (game : Game) =
     //Before the game starts, acting players are obvious or can be determined by userID.

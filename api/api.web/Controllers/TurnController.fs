@@ -1,9 +1,9 @@
-namespace Djambi.Api.Web.Controllers
+namespace Apex.Api.Web.Controllers
 
-open Djambi.Api.Common.Control.AsyncHttpResult
-open Djambi.Api.Web.Interfaces
-open Djambi.Api.Web
-open Djambi.Api.Logic.Interfaces
+open Apex.Api.Common.Control.AsyncHttpResult
+open Apex.Api.Web.Interfaces
+open Apex.Api.Web
+open Apex.Api.Logic.Interfaces
 
 type TurnController(u : HttpUtility,
                     turnMan : ITurnManager) =

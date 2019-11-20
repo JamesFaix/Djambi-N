@@ -1,8 +1,8 @@
-module Djambi.Api.WebClient.UserClient
+module Apex.Api.WebClient.UserClient
 
-open Djambi.Api.Model
-open Djambi.Api.WebClient.Model
-open Djambi.Api.WebClient.WebUtility
+open Apex.Api.Model
+open Apex.Api.WebClient.Model
+open Apex.Api.WebClient.WebUtility
 
 let createUser (request : CreateUserRequest) : User AsyncResponse =
     sendRequest(POST, "/users",

@@ -1,4 +1,4 @@
-namespace Djambi.Api.Web.Interfaces
+namespace Apex.Api.Web.Interfaces
 
 open Giraffe
 

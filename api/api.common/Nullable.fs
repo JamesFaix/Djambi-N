@@ -1,4 +1,4 @@
-module Djambi.Api.Common.Nullable
+module Apex.Api.Common.Nullable
 
 open System
 

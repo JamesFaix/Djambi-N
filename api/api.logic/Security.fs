@@ -1,7 +1,7 @@
-module Djambi.Api.Logic.Security
+module Apex.Api.Logic.Security
 
-open Djambi.Api.Common.Control
-open Djambi.Api.Model
+open Apex.Api.Common.Control
+open Apex.Api.Model
 
 let noPrivilegeErrorMessage = "You do not have the required privilege to complete the requested action."
 

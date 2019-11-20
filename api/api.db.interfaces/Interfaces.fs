@@ -1,8 +1,8 @@
-namespace Djambi.Api.Db.Interfaces
+namespace Apex.Api.Db.Interfaces
 
 open System
-open Djambi.Api.Common.Control
-open Djambi.Api.Model
+open Apex.Api.Common.Control
+open Apex.Api.Model
 
 type IEventRepository =
     abstract member getEvents : gameId:int * query:EventsQuery -> Event list AsyncHttpResult

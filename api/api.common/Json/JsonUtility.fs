@@ -1,5 +1,5 @@
 [<AutoOpen>]
-module Djambi.Api.Common.Json.JsonUtility
+module Apex.Api.Common.Json.JsonUtility
 
 open Newtonsoft.Json
 

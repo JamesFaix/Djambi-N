@@ -1,11 +1,11 @@
-namespace Djambi.Api.Common.Json
+namespace Apex.Api.Common.Json
 
 open System
 open System.IO
 open FSharp.Reflection
 open Newtonsoft.Json
 open Newtonsoft.Json.Linq
-open Djambi.Api.Common.Collections
+open Apex.Api.Common.Collections
 
 type SingleFieldUnionJsonConverter() =
     inherit JsonConverter()

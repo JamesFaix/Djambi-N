@@ -1,10 +1,10 @@
-namespace Djambi.Api.Logic.Services
+namespace Apex.Api.Logic.Services
 
-open Djambi.Api.Common.Control
-open Djambi.Api.Common.Control.AsyncHttpResult
-open Djambi.Api.Logic.ModelExtensions
-open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
-open Djambi.Api.Model
+open Apex.Api.Common.Control
+open Apex.Api.Common.Control.AsyncHttpResult
+open Apex.Api.Logic.ModelExtensions
+open Apex.Api.Logic.ModelExtensions.BoardModelExtensions
+open Apex.Api.Model
 
 type BoardService() =
     member x.getBoard (regionCount : int) (session : Session) : Board AsyncHttpResult =

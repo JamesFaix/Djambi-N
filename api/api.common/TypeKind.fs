@@ -1,4 +1,4 @@
-namespace Djambi.Api.Common
+namespace Apex.Api.Common
 
 open System
 open FSharp.Reflection

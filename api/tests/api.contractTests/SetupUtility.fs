@@ -1,10 +1,10 @@
-module Djambi.Api.ContractTests.SetupUtility
+module Apex.Api.ContractTests.SetupUtility
 
 open System.Threading.Tasks
 open FSharp.Control.Tasks
 open Microsoft.Extensions.Configuration
-open Djambi.Api.WebClient
-open Djambi.Api.Model
+open Apex.Api.WebClient
+open Apex.Api.Model
 
 let config =
     ConfigurationBuilder()

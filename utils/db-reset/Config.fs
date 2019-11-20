@@ -1,4 +1,4 @@
-﻿module Djambi.Utilities.DbReset.Config
+﻿module Apex.Utilities.DbReset.Config
 
 open Microsoft.Extensions.Configuration
 

@@ -1,15 +1,15 @@
-namespace Djambi.Api.Logic.Services
+namespace Apex.Api.Logic.Services
 
 open System.Linq
-open Djambi.Api.Common
-open Djambi.Api.Common.Collections
-open Djambi.Api.Common.Control
-open Djambi.Api.Common.Control.AsyncHttpResult
-open Djambi.Api.Logic.ModelExtensions
-open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
-open Djambi.Api.Logic.Services
-open Djambi.Api.Model
-open Djambi.Api.Logic
+open Apex.Api.Common
+open Apex.Api.Common.Collections
+open Apex.Api.Common.Control
+open Apex.Api.Common.Control.AsyncHttpResult
+open Apex.Api.Logic.ModelExtensions
+open Apex.Api.Logic.ModelExtensions.BoardModelExtensions
+open Apex.Api.Logic.Services
+open Apex.Api.Model
+open Apex.Api.Logic
 
 type GameStartService(playerServ : PlayerService,
                       selectionOptionsServ : SelectionOptionsService) =

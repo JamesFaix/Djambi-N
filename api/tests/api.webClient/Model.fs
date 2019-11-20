@@ -1,10 +1,10 @@
 [<AutoOpen>]
-module Djambi.Api.WebClient.Model
+module Apex.Api.WebClient.Model
 
 open System.Net
 open System.Text.RegularExpressions
 open System.Threading.Tasks
-open Djambi.Api.Common.Control
+open Apex.Api.Common.Control
 
 type Response<'a> =
     {

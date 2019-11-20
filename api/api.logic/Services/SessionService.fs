@@ -1,11 +1,11 @@
-namespace Djambi.Api.Logic.Services
+namespace Apex.Api.Logic.Services
 
 open System
-open Djambi.Api.Common.Control
-open Djambi.Api.Common.Control.AsyncHttpResult
-open Djambi.Api.Db.Interfaces
-open Djambi.Api.Model
-open Djambi.Api.Logic.Interfaces
+open Apex.Api.Common.Control
+open Apex.Api.Common.Control.AsyncHttpResult
+open Apex.Api.Db.Interfaces
+open Apex.Api.Model
+open Apex.Api.Logic.Interfaces
 
 type SessionService(sessionRepo : ISessionRepository,
                     userRepo : IUserRepository) =

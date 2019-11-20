@@ -1,4 +1,4 @@
-﻿module Djambi.Api.Logic.Validation
+﻿module Apex.Api.Logic.Validation
 
 open System.Text.RegularExpressions
 

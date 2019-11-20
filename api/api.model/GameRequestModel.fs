@@ -1,8 +1,8 @@
 [<AutoOpen>]
-module Djambi.Api.Model.GameRequestModel
+module Apex.Api.Model.GameRequestModel
 
 open System
-open Djambi.ClientGenerator.Annotations
+open Apex.ClientGenerator.Annotations
 
 [<CLIMutable>]
 [<ClientType(ClientSection.Player)>]

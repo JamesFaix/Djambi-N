@@ -1,7 +1,7 @@
-namespace Djambi.Api.Logic.ModelExtensions
+namespace Apex.Api.Logic.ModelExtensions
 
-open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
-open Djambi.Api.Model
+open Apex.Api.Logic.ModelExtensions.BoardModelExtensions
+open Apex.Api.Model
 
 module GameModelExtensions =
 

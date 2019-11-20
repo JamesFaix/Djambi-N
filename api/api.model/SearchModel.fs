@@ -1,8 +1,8 @@
 ﻿[<AutoOpen>]
-module Djambi.Api.Model.SearchModel
+module Apex.Api.Model.SearchModel
 
 open System
-open Djambi.ClientGenerator.Annotations
+open Apex.ClientGenerator.Annotations
 
 [<CLIMutable>]
 [<ClientType(ClientSection.Search)>]

@@ -1,4 +1,4 @@
-﻿module Djambi.Api.Host.Config
+﻿module Apex.Api.Host.Config
 
 open Microsoft.Extensions.Configuration
 

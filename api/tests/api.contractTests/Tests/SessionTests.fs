@@ -1,10 +1,10 @@
-module Djambi.Api.ContractTests.SessionTests
+module Apex.Api.ContractTests.SessionTests
 
 open System.Net
 open System.Threading.Tasks
 open FSharp.Control.Tasks
 open NUnit.Framework
-open Djambi.Api.WebClient
+open Apex.Api.WebClient
 
 [<Test>]
 let ``Create session should work``() =

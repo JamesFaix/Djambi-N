@@ -1,10 +1,10 @@
-namespace Djambi.Api.IntegrationTests.Logic.Services.Users
+namespace Apex.Api.IntegrationTests.Logic.Services.Users
 
 open FSharp.Control.Tasks
 open Xunit
-open Djambi.Api.Common.Control
-open Djambi.Api.IntegrationTests
-open Djambi.Api.Model
+open Apex.Api.Common.Control
+open Apex.Api.IntegrationTests
+open Apex.Api.Model
 
 type CreateUserTests() =
     inherit TestsBase()

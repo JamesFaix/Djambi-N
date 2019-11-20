@@ -1,9 +1,9 @@
-namespace Djambi.Api.Logic.Interfaces
+namespace Apex.Api.Logic.Interfaces
 
 open System
-open Djambi.Api.Common.Control
-open Djambi.Api.Model
-open Djambi.ClientGenerator.Annotations
+open Apex.Api.Common.Control
+open Apex.Api.Model
+open Apex.ClientGenerator.Annotations
 
 type ISubscriber =
     inherit IDisposable

@@ -1,9 +1,9 @@
-namespace Djambi.Api.Host
+namespace Apex.Api.Host
 
 open Giraffe
 open Microsoft.AspNetCore.Http
-open Djambi.Api.Web.Interfaces
-open Djambi.Api.Logic.Interfaces
+open Apex.Api.Web.Interfaces
+open Apex.Api.Logic.Interfaces
 
 type RoutingTable (web : IWebRoot) =
     member x.getHandler : HttpFunc -> HttpContext -> HttpFuncResult =

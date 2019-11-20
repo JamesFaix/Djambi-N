@@ -1,9 +1,9 @@
-module Djambi.Api.Db.Mapping
+module Apex.Api.Db.Mapping
 
-open Djambi.Api.Common
-open Djambi.Api.Common.Json
-open Djambi.Api.Db.Model
-open Djambi.Api.Model
+open Apex.Api.Common
+open Apex.Api.Common.Json
+open Apex.Api.Db.Model
+open Apex.Api.Model
 
 let private findRight<'a, 'b when 'a : equality> (map : ('a * 'b) list) (key : 'a) : 'b =
     let result = map |> List.tryFind(fun (a, _) -> a = key)

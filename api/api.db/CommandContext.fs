@@ -1,4 +1,4 @@
-namespace Djambi.Api.Db
+namespace Apex.Api.Db
 
 open System.Data
 open System.Data.SqlClient

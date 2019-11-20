@@ -1,4 +1,4 @@
-﻿namespace Djambi.Api.Web.Websockets
+﻿namespace Apex.Api.Web.Websockets
 
 open System
 open System.Net.WebSockets
@@ -6,10 +6,10 @@ open System.Text
 open System.Threading
 open Newtonsoft.Json
 open Serilog
-open Djambi.Api.Common.Control
-open Djambi.Api.Common.Control.AsyncHttpResult
-open Djambi.Api.Logic.Interfaces
-open Djambi.Api.Model
+open Apex.Api.Common.Control
+open Apex.Api.Common.Control.AsyncHttpResult
+open Apex.Api.Logic.Interfaces
+open Apex.Api.Model
 
 type WebSocketMessage = 
     {

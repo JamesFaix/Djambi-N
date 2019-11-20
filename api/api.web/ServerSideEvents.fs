@@ -1,12 +1,12 @@
-namespace Djambi.Api.Web.Sse
+namespace Apex.Api.Web.Sse
 
 open System
 open FSharp.Control.Tasks
 open Microsoft.AspNetCore.Http
 open Serilog
-open Djambi.Api.Common.Json
-open Djambi.Api.Logic.Interfaces
-open Djambi.Api.Model
+open Apex.Api.Common.Json
+open Apex.Api.Logic.Interfaces
+open Apex.Api.Model
 
 type SseEvent =
     {

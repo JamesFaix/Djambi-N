@@ -1,8 +1,8 @@
-module Djambi.Api.WebClient.GameClient
+module Apex.Api.WebClient.GameClient
 
-open Djambi.Api.WebClient.Model
-open Djambi.Api.WebClient.WebUtility
-open Djambi.Api.Model
+open Apex.Api.WebClient.Model
+open Apex.Api.WebClient.WebUtility
+open Apex.Api.Model
 
 let createGame (parameters : GameParameters, token : string) : Game AsyncResponse =
     sendRequest(POST, "/games",

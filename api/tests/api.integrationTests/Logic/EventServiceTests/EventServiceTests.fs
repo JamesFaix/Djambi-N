@@ -1,8 +1,8 @@
-namespace Djambi.Api.IntegrationTests.Logic.Services.EventsTests
+namespace Apex.Api.IntegrationTests.Logic.Services.EventsTests
 
 open Xunit
-open Djambi.Api.IntegrationTests
-open Djambi.Api.Model
+open Apex.Api.IntegrationTests
+open Apex.Api.Model
 
 //TODO: Move to unit test project
 

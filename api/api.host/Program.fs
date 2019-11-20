@@ -1,4 +1,4 @@
-module Djambi.Api.Host.App
+module Apex.Api.Host.App
 
 open System
 open System.IO
@@ -12,12 +12,12 @@ open Microsoft.Extensions.FileProviders
 open Microsoft.Extensions.Logging
 open Newtonsoft.Json
 open Serilog
-open Djambi.Api.Common.Json
-open Djambi.Api.Db
-open Djambi.Api.Logic
-open Djambi.Api.Web
+open Apex.Api.Common.Json
+open Apex.Api.Db
+open Apex.Api.Logic
+open Apex.Api.Web
 
-let options = Djambi.Api.Host.Config.options
+let options = Apex.Api.Host.Config.options
 
 let log = 
     let logPath = Path.Combine(options.logsDir, "server.log")

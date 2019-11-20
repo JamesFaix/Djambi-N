@@ -1,8 +1,8 @@
 [<AutoOpen>]
-module Djambi.Api.IntegrationTests.Assertions
+module Apex.Api.IntegrationTests.Assertions
 
 open Xunit
-open Djambi.Api.Common.Control
+open Apex.Api.Common.Control
 
 let shouldBe<'a> (expected : 'a) (actual : 'a) =
     Assert.Equal(expected, actual)

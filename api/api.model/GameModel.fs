@@ -1,7 +1,7 @@
 [<AutoOpen>]
-module Djambi.Api.Model.GameModel
+module Apex.Api.Model.GameModel
 
-open Djambi.ClientGenerator.Annotations
+open Apex.ClientGenerator.Annotations
 
 [<ClientType(ClientSection.Player)>]
 type PlayerKind =

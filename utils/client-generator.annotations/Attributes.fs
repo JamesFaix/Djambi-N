@@ -1,4 +1,4 @@
-namespace Djambi.ClientGenerator.Annotations
+namespace Apex.ClientGenerator.Annotations
 
 open System
 

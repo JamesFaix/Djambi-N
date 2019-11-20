@@ -1,11 +1,11 @@
-namespace Djambi.Api.Logic.Services
+namespace Apex.Api.Logic.Services
 
 open System.Collections.Concurrent
 open Serilog
-open Djambi.Api.Common.Control
-open Djambi.Api.Common.Control.AsyncHttpResult
-open Djambi.Api.Logic.Interfaces
-open Djambi.Api.Model
+open Apex.Api.Common.Control
+open Apex.Api.Common.Control.AsyncHttpResult
+open Apex.Api.Logic.Interfaces
+open Apex.Api.Model
 
 type NotificationService(log : ILogger) =
     let subscribers = new ConcurrentDictionary<int, ISubscriber>()

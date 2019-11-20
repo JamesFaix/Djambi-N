@@ -1,7 +1,7 @@
-namespace Djambi.Api.Logic.Services
+namespace Apex.Api.Logic.Services
 
-open Djambi.Api.Model
-open Djambi.Api.Common.Collections
+open Apex.Api.Model
+open Apex.Api.Common.Collections
 
 type EventService(gameStartServ : GameStartService) =
 

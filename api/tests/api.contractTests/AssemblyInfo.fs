@@ -1,4 +1,4 @@
-module Djambi.Api.ContractTests.AssemblyInfo
+module Apex.Api.ContractTests.AssemblyInfo
 
 open NUnit.Framework
 

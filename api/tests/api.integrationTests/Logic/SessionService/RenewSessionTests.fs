@@ -1,9 +1,9 @@
-namespace Djambi.Api.IntegrationTests.Logic.Services.Sessions
+namespace Apex.Api.IntegrationTests.Logic.Services.Sessions
 
 open FSharp.Control.Tasks
 open Xunit
-open Djambi.Api.Common.Control
-open Djambi.Api.IntegrationTests
+open Apex.Api.Common.Control
+open Apex.Api.IntegrationTests
 
 type RenewSessionTests() =
     inherit TestsBase()

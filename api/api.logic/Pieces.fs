@@ -1,8 +1,8 @@
-namespace Djambi.Api.Logic
+namespace Apex.Api.Logic
 
 open System
 open System.Collections.Generic
-open Djambi.Api.Model.GameModel
+open Apex.Api.Model.GameModel
 
 type PieceStrategy() =
     abstract member moveMaxDistance : int

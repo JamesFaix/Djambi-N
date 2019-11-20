@@ -1,11 +1,11 @@
-namespace Djambi.Api.Logic.Managers
+namespace Apex.Api.Logic.Managers
 
-open Djambi.Api.Common.Control
-open Djambi.Api.Common.Control.AsyncHttpResult
-open Djambi.Api.Logic
-open Djambi.Api.Model
-open Djambi.Api.Logic.Interfaces
-open Djambi.Api.Db.Interfaces
+open Apex.Api.Common.Control
+open Apex.Api.Common.Control.AsyncHttpResult
+open Apex.Api.Logic
+open Apex.Api.Model
+open Apex.Api.Logic.Interfaces
+open Apex.Api.Db.Interfaces
 
 type SnapshotManager(eventRepo : IEventRepository,
                      gameRepo : IGameRepository,

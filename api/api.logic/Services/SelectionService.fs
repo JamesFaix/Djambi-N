@@ -1,13 +1,13 @@
-namespace Djambi.Api.Logic.Services
+namespace Apex.Api.Logic.Services
 
-open Djambi.Api.Common.Collections
-open Djambi.Api.Common.Control
-open Djambi.Api.Logic
-open Djambi.Api.Logic.ModelExtensions
-open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
-open Djambi.Api.Logic.ModelExtensions.GameModelExtensions
-open Djambi.Api.Logic.Services
-open Djambi.Api.Model
+open Apex.Api.Common.Collections
+open Apex.Api.Common.Control
+open Apex.Api.Logic
+open Apex.Api.Logic.ModelExtensions
+open Apex.Api.Logic.ModelExtensions.BoardModelExtensions
+open Apex.Api.Logic.ModelExtensions.GameModelExtensions
+open Apex.Api.Logic.Services
+open Apex.Api.Model
 
 type SelectionService(selectionOptionsServ : SelectionOptionsService) =
 

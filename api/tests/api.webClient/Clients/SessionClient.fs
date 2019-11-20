@@ -1,8 +1,8 @@
-module Djambi.Api.WebClient.SessionClient
+module Apex.Api.WebClient.SessionClient
 
-open Djambi.Api.Model
-open Djambi.Api.WebClient.Model
-open Djambi.Api.WebClient.WebUtility
+open Apex.Api.Model
+open Apex.Api.WebClient.Model
+open Apex.Api.WebClient.WebUtility
 
 let createSession (request : LoginRequest) : Unit AsyncResponse =
     sendRequest(POST, "/sessions",

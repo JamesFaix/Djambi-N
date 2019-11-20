@@ -3,7 +3,7 @@ open System.Data.SqlClient
 open System.IO
 open System.Text.RegularExpressions
 open Dapper
-open Djambi.Utilities.DbReset
+open Apex.Utilities.DbReset
 
 let options = Config.options
 

@@ -1,10 +1,10 @@
-module Djambi.Api.ContractTests.UserTests
+module Apex.Api.ContractTests.UserTests
 
 open System.Net
 open System.Threading.Tasks
 open FSharp.Control.Tasks
 open NUnit.Framework
-open Djambi.Api.WebClient
+open Apex.Api.WebClient
 
 [<Test>]
 let ``Create user should work`` () =
