@@ -11,13 +11,13 @@ type AppOptions = {
     cookieDomain : string
     enableWebServer : bool
     enableWebServerDevelopmentMode : bool
-    djambiConnectionString : string
+    apexConnectionString : string
 }
 
 let config = 
     ConfigurationBuilder()
         .AddJsonFile("appsettings.json", false)
-        .AddEnvironmentVariables("DJAMBI_")
+        .AddEnvironmentVariables("APEX_")
         .Build()
         
 let options = {
@@ -28,7 +28,7 @@ let options = {
     cookieDomain = ""
     enableWebServer = false
     enableWebServerDevelopmentMode = false
-    djambiConnectionString = ""
+    apexConnectionString = ""
 }
         
 do 

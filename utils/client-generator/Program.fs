@@ -45,13 +45,13 @@ let renderFunctions (renderers : IRenderer list, config : IConfigurationRoot) : 
 [<EntryPoint>]
 let main argv =
 
-    printfn "Djambi API Client Generator"
+    printfn "Apex API Client Generator"
     printfn "---------------------------"
 
     let config = 
         ConfigurationBuilder()
             .AddJsonFile("appsettings.json", false)
-            .AddEnvironmentVariables("DJAMBI_")
+            .AddEnvironmentVariables("APEX_")
             .Build()
 
     let renderers =

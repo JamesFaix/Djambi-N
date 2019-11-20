@@ -3,7 +3,7 @@
     "Local": {
       "commandName": "Project",
       "environmentVariables": {
-        "djambiConnectionString": "Data Source=localhost;Initial Catalog=Djambi;Integrated Security=True;"
+        "apexConnectionString": "Data Source=localhost;Initial Catalog=Apex;Integrated Security=True;"
       }
     }
   }

@@ -14,10 +14,10 @@ let private executeCommand (cnStr : string)(command : string) : unit =
 
 let private dropAndCreateDb() : unit =
     printfn "Dropping and creating database"
-    let sql = "IF EXISTS(SELECT * FROM sys.databases WHERE name='Djambi')
-               DROP DATABASE Djambi;
-               CREATE DATABASE Djambi;
-               ALTER DATABASE Djambi SET COMPATIBILITY_LEVEL = 120" //120 = SQL Server 2014
+    let sql = "IF EXISTS(SELECT * FROM sys.databases WHERE name='Apex')
+               DROP DATABASE Apex;
+               CREATE DATABASE Apex;
+               ALTER DATABASE Apex SET COMPATIBILITY_LEVEL = 120" //120 = SQL Server 2014
     executeCommand options.masterConnectionString sql
 
 let private loadFile (relativePath : string) : unit =
@@ -27,7 +27,7 @@ let private loadFile (relativePath : string) : unit =
     let commands = Regex.Split(text, "\s+GO")
                    |> Seq.filter (String.IsNullOrEmpty >> not)
     for c in commands do
-        executeCommand options.djambiConnectionString c
+        executeCommand options.apexConnectionString c
 
 let getFilesInOrder : string seq =
     seq {

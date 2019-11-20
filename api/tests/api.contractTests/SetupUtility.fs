@@ -8,7 +8,7 @@ open Apex.Api.Model
 
 let config =
     ConfigurationBuilder()
-        .AddEnvironmentVariables("DJAMBI_")
+        .AddEnvironmentVariables("APEX_")
         .Build()
 
 let createUserAndSignIn () : (User * string) Task =

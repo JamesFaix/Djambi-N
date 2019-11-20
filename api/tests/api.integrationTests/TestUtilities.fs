@@ -16,10 +16,10 @@ open Apex.Api.Model
 
 let private config =
     ConfigurationBuilder()
-        .AddEnvironmentVariables("DJAMBI_")
+        .AddEnvironmentVariables("APEX_")
         .Build()
 
-let connectionString = config.["djambiConnectionString"]
+let connectionString = config.["apexConnectionString"]
 
 let log = LoggerConfiguration().CreateLogger()
 let db = DbRoot(connectionString) :> IDbRoot

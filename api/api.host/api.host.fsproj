@@ -3,7 +3,6 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <DebugType>portable</DebugType>
-    <AssemblyName>Djambi.Api</AssemblyName>
     <OutputType>Exe</OutputType>
     <RuntimeFrameworkVersion>3.0.0</RuntimeFrameworkVersion>
     <EnableDefaultContentItems>false</EnableDefaultContentItems>

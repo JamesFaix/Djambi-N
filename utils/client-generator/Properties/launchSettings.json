@@ -3,7 +3,7 @@
     "Local": {
       "commandName": "Project",
       "environmentVariables": {
-        "DJAMBI_repositoryRoot": "C:\\Git\\Djambi3\\"
+        "APEX_repositoryRoot": "C:\\Git\\Apex\\"
       }
     }
   }

@@ -47,7 +47,7 @@ type HttpUtility(cookieDomain : string,
             |> thenBindAsync (fun body -> okTask (body, value))
         )
 
-    member x.cookieName = "DjambiSession"
+    member x.cookieName = "ApexSession"
 
     member x.appendCookie (ctx : HttpContext) (token : string, expiration : DateTime) =
         let cookieOptions = CookieOptions()

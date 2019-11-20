@@ -89,7 +89,7 @@ let configureWebServer(app : IApplicationBuilder) : IApplicationBuilder =
     )
 
 let apiHandler =
-    let dbRoot = DbRoot(options.djambiConnectionString)
+    let dbRoot = DbRoot(options.apexConnectionString)
     let servRoot = ServiceRoot(dbRoot, log)
     let manRoot = ManagerRoot(dbRoot, servRoot)
     let webRoot = WebRoot(options.cookieDomain, manRoot, servRoot, log)

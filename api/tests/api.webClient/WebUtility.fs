@@ -20,7 +20,7 @@ let converters =
 
 let config = 
     ConfigurationBuilder()
-        .AddEnvironmentVariables("DJAMBI_")
+        .AddEnvironmentVariables("APEX_")
         .Build()
 
 let apiAddress = config.["apiAddress"]
@@ -42,7 +42,7 @@ let sendRequest<'a, 'b> (httpVerb : string,
 
     if token.IsSome
     then
-        request.Headers.Add("Cookie", "DjambiSession=" + token.Value)
+        request.Headers.Add("Cookie", "ApexSession=" + token.Value)
 
     if body.IsSome
     then
