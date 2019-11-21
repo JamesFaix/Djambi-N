@@ -120,6 +120,13 @@ export default class ThemeFactory {
         colors: {
             ...ThemeFactory.default.colors,
             background: "oldlace",
+            text: "black",
+            headerText: "black",
+            border: "gainsboro",
+            hoverText: "white",
+            hoverBackground: "black",
+            altRowText: "black",
+            altRowBackground: "gainsboro",
             cells: {
                 ...ThemeFactory.default.colors.cells,
                 //Cell colors must be in hex
@@ -168,8 +175,14 @@ export default class ThemeFactory {
         name: "Hotdogtown",
         colors: {
             ...ThemeFactory.default.colors,
-            headerText: "indianred",
             background: "lemonchiffon",
+            text: "black",
+            headerText: "indianred",
+            border: "gainsboro",
+            hoverText: "white",
+            hoverBackground: "black",
+            altRowText: "black",
+            altRowBackground: "gainsboro",
             cells: {
                 ...ThemeFactory.default.colors.cells,
                 odd: "#00FFFF", //cyan
