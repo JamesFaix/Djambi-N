@@ -1,8 +1,8 @@
-namespace Djambi.Api.Db
+namespace Apex.Api.Db
 
 open System
-open Djambi.Api.Db.Command
-open Djambi.Api.Db.Model
+open Apex.Api.Db.Command
+open Apex.Api.Db.Model
 
 ///<summary>
 /// This module contains factory methods for SQL commands.
@@ -284,9 +284,9 @@ module Commands =
 ///</summary>
 module Commands2 =
 
-    open Djambi.Api.Common.Json.JsonUtility
-    open Djambi.Api.Db.Mapping
-    open Djambi.Api.Model
+    open Apex.Api.Common.Json.JsonUtility
+    open Apex.Api.Db.Mapping
+    open Apex.Api.Model
 
     let createUser (request : CreateUserRequest) =
         Commands.createUser (request.name, request.password)

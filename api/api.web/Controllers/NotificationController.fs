@@ -1,4 +1,4 @@
-namespace Djambi.Api.Web.Controllers
+namespace Apex.Api.Web.Controllers
 
 open System
 open System.Threading
@@ -7,13 +7,13 @@ open FSharp.Control.Tasks
 open Microsoft.AspNetCore.Http
 open Microsoft.Extensions.Primitives
 open Serilog
-open Djambi.Api.Common.Control
-open Djambi.Api.Common.Control.AsyncHttpResult
-open Djambi.Api.Logic.Interfaces
-open Djambi.Api.Web
-open Djambi.Api.Web.Interfaces
-open Djambi.Api.Web.Sse
-open Djambi.Api.Web.Websockets
+open Apex.Api.Common.Control
+open Apex.Api.Common.Control.AsyncHttpResult
+open Apex.Api.Logic.Interfaces
+open Apex.Api.Web
+open Apex.Api.Web.Interfaces
+open Apex.Api.Web.Sse
+open Apex.Api.Web.Websockets
 
 type NotificationController(u : HttpUtility,
                             notificationService : INotificationService,

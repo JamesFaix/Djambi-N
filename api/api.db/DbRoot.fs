@@ -1,7 +1,7 @@
-namespace Djambi.Api.Db
+namespace Apex.Api.Db
 
-open Djambi.Api.Db.Repositories
-open Djambi.Api.Db.Interfaces
+open Apex.Api.Db.Repositories
+open Apex.Api.Db.Interfaces
 
 type DbRoot(connectionString : string) =
     let ctxProvider = CommandContextProvider(connectionString)

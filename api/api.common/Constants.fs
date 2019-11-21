@@ -1,4 +1,4 @@
-module Djambi.Api.Common.Constants
+module Apex.Api.Common.Constants
 
 let minRegions = 3
 

@@ -1,8 +1,8 @@
-module Djambi.Api.Common.Enum
+module Apex.Api.Common.Enum
 
 open System
 open FSharp.Reflection
-open Djambi.Api.Common.Control
+open Apex.Api.Common.Control
 
 let inline getValues<'a>() : 'a list =
     (Enum.GetValues(typeof<'a>) :?> ('a []))

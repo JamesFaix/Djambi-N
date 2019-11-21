@@ -1,8 +1,8 @@
 [<AutoOpen>]
-module Djambi.Api.ContractTests.RequestFactory
+module Apex.Api.ContractTests.RequestFactory
 
 open System
-open Djambi.Api.Model
+open Apex.Api.Model
 
 let createUserRequest() : CreateUserRequest =
     {

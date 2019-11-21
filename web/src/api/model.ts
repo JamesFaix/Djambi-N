@@ -100,12 +100,12 @@ export interface Piece {
 }
 
 export enum PieceKind {
-    Assassin = "Assassin",
-    Chief = "Chief",
+    Conduit = "Conduit",
     Corpse = "Corpse",
     Diplomat = "Diplomat",
-    Gravedigger = "Gravedigger",
-    Reporter = "Reporter",
+    Hunter = "Hunter",
+    Reaper = "Reaper",
+    Scientist = "Scientist",
     Thug = "Thug",
 }
 

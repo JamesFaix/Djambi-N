@@ -1,11 +1,11 @@
-namespace Djambi.Api.Db
+namespace Apex.Api.Db
 
 open System
 open System.Data
 open System.Data.SqlClient
 open Dapper
-open Djambi.Api.Model
-open Djambi.Api.Common.Json
+open Apex.Api.Model
+open Apex.Api.Common.Json
 
 //See https://medium.com/dapper-net/sql-server-specific-features-2773d894a6ae
 

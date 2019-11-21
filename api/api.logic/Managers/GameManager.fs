@@ -1,13 +1,13 @@
-namespace Djambi.Api.Logic.Managers
+namespace Apex.Api.Logic.Managers
 
 open System
-open Djambi.Api.Common.Control
-open Djambi.Api.Common.Control.AsyncHttpResult
-open Djambi.Api.Db.Interfaces
-open Djambi.Api.Logic
-open Djambi.Api.Logic.Interfaces
-open Djambi.Api.Logic.Services
-open Djambi.Api.Model
+open Apex.Api.Common.Control
+open Apex.Api.Common.Control.AsyncHttpResult
+open Apex.Api.Db.Interfaces
+open Apex.Api.Logic
+open Apex.Api.Logic.Interfaces
+open Apex.Api.Logic.Services
+open Apex.Api.Model
 
 type GameManager(eventRepo : IEventRepository,
                  eventServ : EventService,

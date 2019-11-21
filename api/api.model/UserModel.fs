@@ -1,8 +1,8 @@
 [<AutoOpen>]
-module Djambi.Api.Model.UserModel
+module Apex.Api.Model.UserModel
 
 open System
-open Djambi.ClientGenerator.Annotations
+open Apex.ClientGenerator.Annotations
 
 [<ClientType(ClientSection.User)>]
 type Privilege =

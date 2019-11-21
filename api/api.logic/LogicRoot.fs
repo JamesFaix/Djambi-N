@@ -1,10 +1,10 @@
-namespace Djambi.Api.Logic
+namespace Apex.Api.Logic
 
 open Serilog
-open Djambi.Api.Db.Interfaces
-open Djambi.Api.Logic.Interfaces
-open Djambi.Api.Logic.Managers
-open Djambi.Api.Logic.Services
+open Apex.Api.Db.Interfaces
+open Apex.Api.Logic.Interfaces
+open Apex.Api.Logic.Managers
+open Apex.Api.Logic.Services
 
 type ServiceRoot(db : IDbRoot, log : ILogger) =
     let _boards = BoardService()

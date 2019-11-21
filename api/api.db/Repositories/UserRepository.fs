@@ -1,10 +1,10 @@
-namespace Djambi.Api.Db.Repositories
+namespace Apex.Api.Db.Repositories
 
-open Djambi.Api.Common.Control
-open Djambi.Api.Common.Control.AsyncHttpResult
-open Djambi.Api.Db
-open Djambi.Api.Db.Interfaces
-open Djambi.Api.Model
+open Apex.Api.Common.Control
+open Apex.Api.Common.Control.AsyncHttpResult
+open Apex.Api.Db
+open Apex.Api.Db.Interfaces
+open Apex.Api.Model
 
 type UserRepository(ctxProvider : CommandContextProvider) =
 

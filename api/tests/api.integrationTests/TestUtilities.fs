@@ -1,25 +1,25 @@
 [<AutoOpen>]
-module Djambi.Api.IntegrationTests.TestUtilities
+module Apex.Api.IntegrationTests.TestUtilities
 
 open System
 open System.Linq
 open FSharp.Control.Tasks
 open Microsoft.Extensions.Configuration
 open Serilog
-open Djambi.Api.Common.Control
-open Djambi.Api.Common.Control.AsyncHttpResult
-open Djambi.Api.Db
-open Djambi.Api.Db.Interfaces
-open Djambi.Api.Logic
-open Djambi.Api.Logic.Interfaces
-open Djambi.Api.Model
+open Apex.Api.Common.Control
+open Apex.Api.Common.Control.AsyncHttpResult
+open Apex.Api.Db
+open Apex.Api.Db.Interfaces
+open Apex.Api.Logic
+open Apex.Api.Logic.Interfaces
+open Apex.Api.Model
 
 let private config =
     ConfigurationBuilder()
-        .AddEnvironmentVariables("DJAMBI_")
+        .AddEnvironmentVariables("APEX_")
         .Build()
 
-let connectionString = config.["djambiConnectionString"]
+let connectionString = config.["apexConnectionString"]
 
 let log = LoggerConfiguration().CreateLogger()
 let db = DbRoot(connectionString) :> IDbRoot

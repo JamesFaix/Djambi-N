@@ -1,7 +1,7 @@
-module Djambi.Api.Db.Model
+module Apex.Api.Db.Model
 
 open System
-open Djambi.Api.Model
+open Apex.Api.Model
 
 [<CLIMutable>]
 type UserSqlModel =

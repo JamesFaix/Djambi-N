@@ -1,7 +1,7 @@
-﻿namespace Djambi.Api.Logic.Managers
+﻿namespace Apex.Api.Logic.Managers
 
-open Djambi.Api.Db.Interfaces
-open Djambi.Api.Logic.Interfaces
+open Apex.Api.Db.Interfaces
+open Apex.Api.Logic.Interfaces
 
 type SearchManager(searchRepo : ISearchRepository) =
     interface ISearchManager with        

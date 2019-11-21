@@ -1,4 +1,4 @@
-namespace Djambi.ClientGenerator
+namespace Apex.ClientGenerator
 
 open System
 open System.Reflection

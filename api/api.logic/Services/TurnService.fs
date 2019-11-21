@@ -1,12 +1,12 @@
-namespace Djambi.Api.Logic.Services
+namespace Apex.Api.Logic.Services
 
 open System.Linq
-open Djambi.Api.Common.Collections
-open Djambi.Api.Common.Control
-open Djambi.Api.Logic
-open Djambi.Api.Logic.ModelExtensions.GameModelExtensions
-open Djambi.Api.Logic.Services
-open Djambi.Api.Model
+open Apex.Api.Common.Collections
+open Apex.Api.Common.Control
+open Apex.Api.Logic
+open Apex.Api.Logic.ModelExtensions.GameModelExtensions
+open Apex.Api.Logic.Services
+open Apex.Api.Model
 
 type TurnService(eventServ : EventService,
                  indirectEffectsServ : IndirectEffectsService,
@@ -59,7 +59,7 @@ type TurnService(eventServ : EventService,
                     effects.Add(Effect.PieceDropped { oldPiece = target; newPiece = newPiece })
                 | None -> ()
 
-                //Move target back to origin if subject is assassin
+                //Move target back to origin if subject is hunter
                 if subjectStrategy.movesTargetToOrigin
                 then
                     pieces.[target.id] <- pieces.[target.id].moveTo originCellId

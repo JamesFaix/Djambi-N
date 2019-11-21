@@ -1,8 +1,8 @@
-﻿namespace Djambi.Api.Db.Repositories
+﻿namespace Apex.Api.Db.Repositories
 
-open Djambi.Api.Common.Control.AsyncHttpResult
-open Djambi.Api.Db
-open Djambi.Api.Db.Interfaces
+open Apex.Api.Common.Control.AsyncHttpResult
+open Apex.Api.Db
+open Apex.Api.Db.Interfaces
 
 type SearchRepository(ctxProvider : CommandContextProvider) =
     interface ISearchRepository with

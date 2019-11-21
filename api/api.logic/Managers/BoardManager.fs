@@ -1,7 +1,7 @@
-namespace Djambi.Api.Logic.Managers
+namespace Apex.Api.Logic.Managers
 
-open Djambi.Api.Logic.Services
-open Djambi.Api.Logic.Interfaces
+open Apex.Api.Logic.Services
+open Apex.Api.Logic.Interfaces
 
 type BoardManager(boardServ : BoardService) =
     interface IBoardManager with

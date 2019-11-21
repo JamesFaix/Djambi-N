@@ -1,10 +1,10 @@
 [<AutoOpen>]
-module Djambi.Api.ContractTests.Assertions
+module Apex.Api.ContractTests.Assertions
 
 open System.Net
 open NUnit.Framework
-open Djambi.Api.Common.Control
-open Djambi.Api.WebClient
+open Apex.Api.Common.Control
+open Apex.Api.WebClient
 
 let shouldBe<'a> (expected : 'a) (actual : 'a) =
     Assert.AreEqual(expected, actual)

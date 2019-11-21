@@ -1,11 +1,11 @@
-namespace Djambi.Api.Db
+namespace Apex.Api.Db
 
 open System
 open System.Data
 open FSharp.Reflection
 open Dapper
-open Djambi.Api.Common
-open Djambi.Api.Common.Control
+open Apex.Api.Common
+open Apex.Api.Common.Control
 
 /// <summary>
 /// Represents a SQL command with no return type.
@@ -111,7 +111,7 @@ module CommandProcessor =
     open System.Text.RegularExpressions
     open System.Threading.Tasks
     open FSharp.Control.Tasks
-    open Djambi.Api.Common.Control.AsyncHttpResult
+    open Apex.Api.Common.Control.AsyncHttpResult
 
     let private getEntityName (entityName : string option) =
         match entityName with Some x -> x | None -> "?"

@@ -1,9 +1,9 @@
-namespace Djambi.Api.Logic.Managers
+namespace Apex.Api.Logic.Managers
 
-open Djambi.Api.Common.Control.AsyncHttpResult
-open Djambi.Api.Logic.Services
-open Djambi.Api.Model
-open Djambi.Api.Logic.Interfaces
+open Apex.Api.Common.Control.AsyncHttpResult
+open Apex.Api.Logic.Services
+open Apex.Api.Model
+open Apex.Api.Logic.Interfaces
 
 type UserManager(userServ : UserService) =
     interface IUserManager with

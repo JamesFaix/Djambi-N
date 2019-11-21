@@ -1,4 +1,4 @@
-namespace Djambi.Api.IntegrationTests
+namespace Apex.Api.IntegrationTests
 
 type TestsBase() =
     do ()

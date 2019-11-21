@@ -1,4 +1,4 @@
-﻿module Djambi.Utilities.DbReset.Config
+﻿module Apex.Utilities.DbReset.Config
 
 open Microsoft.Extensions.Configuration
 
@@ -6,18 +6,18 @@ open Microsoft.Extensions.Configuration
 type AppOptions = {
     sqlRoot : string
     masterConnectionString : string
-    djambiConnectionString : string
+    apexConnectionString : string
 }
 
 let private config =
     ConfigurationBuilder()
-        .AddEnvironmentVariables("DJAMBI_")
+        .AddEnvironmentVariables("APEX_")
         .Build()
 
 let options = {
     sqlRoot = ""
     masterConnectionString = ""
-    djambiConnectionString = ""
+    apexConnectionString = ""
 }
 
 do 

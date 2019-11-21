@@ -1,8 +1,8 @@
-namespace Djambi.Api.Logic
+namespace Apex.Api.Logic
 
 open System
 open System.Collections.Generic
-open Djambi.Api.Model.GameModel
+open Apex.Api.Model.GameModel
 
 type PieceStrategy() =
     abstract member moveMaxDistance : int
@@ -29,7 +29,7 @@ type PieceStrategy() =
     default x.killsControllingPlayerWhenKilled = false
     default x.isAlive = true
 
-type AssassinStrategy() =
+type HunterStrategy() =
     inherit PieceStrategy() with
         override x.canTargetWithMove = true
         override x.canTargetPiece (subject : Piece) (target : Piece) =
@@ -39,7 +39,7 @@ type AssassinStrategy() =
         override x.movesTargetToOrigin = true
         override x.killsTarget = true
 
-type ChiefStrategy() =
+type ConduitStrategy() =
     inherit PieceStrategy() with
         override x.canTargetWithMove = true
         override x.canTargetPiece (subject : Piece) (target : Piece) =
@@ -64,7 +64,7 @@ type DiplomatStrategy() =
         override x.canEnterCenterToEvictPiece = true
         override x.canDropTarget = true
 
-type GravediggerStrategy() =
+type ReaperStrategy() =
     inherit PieceStrategy() with
         override x.canTargetWithMove = true
         override x.canTargetPiece (subject : Piece) (target : Piece) =
@@ -72,7 +72,7 @@ type GravediggerStrategy() =
         override x.canEnterCenterToEvictPiece = true
         override x.canDropTarget = true
 
-type ReporterStrategy() =
+type ScientistStrategy() =
     inherit PieceStrategy() with
         override x.canTargetAfterMove = true
         override x.canTargetPiece (subject : Piece) (target : Piece) =
@@ -93,12 +93,12 @@ type ThugStrategy() =
 module Pieces =
 
     let private strategies = Dictionary<PieceKind, PieceStrategy>()
-    strategies.Add(Assassin, AssassinStrategy())
-    strategies.Add(Chief, ChiefStrategy())
+    strategies.Add(Hunter, HunterStrategy())
+    strategies.Add(Conduit, ConduitStrategy())
     strategies.Add(Corpse, CorpseStrategy())
     strategies.Add(Diplomat, DiplomatStrategy())
-    strategies.Add(Gravedigger, GravediggerStrategy())
-    strategies.Add(Reporter, ReporterStrategy())
+    strategies.Add(Reaper, ReaperStrategy())
+    strategies.Add(Scientist, ScientistStrategy())
     strategies.Add(Thug, ThugStrategy())
 
     let getStrategy (piece : Piece) : PieceStrategy =

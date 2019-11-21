@@ -1,4 +1,4 @@
-module Djambi.Api.WebClient.WebUtility
+module Apex.Api.WebClient.WebUtility
 
 open System.IO
 open System.Linq
@@ -7,8 +7,8 @@ open System.Threading.Tasks
 open FSharp.Control.Tasks
 open Microsoft.Extensions.Configuration
 open Newtonsoft.Json
-open Djambi.Api.WebClient.Model
-open Djambi.Api.Common.Json
+open Apex.Api.WebClient.Model
+open Apex.Api.Common.Json
 
 let converters =
     [|
@@ -20,7 +20,7 @@ let converters =
 
 let config = 
     ConfigurationBuilder()
-        .AddEnvironmentVariables("DJAMBI_")
+        .AddEnvironmentVariables("APEX_")
         .Build()
 
 let apiAddress = config.["apiAddress"]
@@ -42,7 +42,7 @@ let sendRequest<'a, 'b> (httpVerb : string,
 
     if token.IsSome
     then
-        request.Headers.Add("Cookie", "DjambiSession=" + token.Value)
+        request.Headers.Add("Cookie", "ApexSession=" + token.Value)
 
     if body.IsSome
     then

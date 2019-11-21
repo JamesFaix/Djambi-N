@@ -1,10 +1,10 @@
-namespace Djambi.Api.Web
+namespace Apex.Api.Web
 
 open Serilog
-open Djambi.Api.Logic.Interfaces
-open Djambi.Api.Web
-open Djambi.Api.Web.Controllers
-open Djambi.Api.Web.Interfaces
+open Apex.Api.Logic.Interfaces
+open Apex.Api.Web
+open Apex.Api.Web.Controllers
+open Apex.Api.Web.Interfaces
 
 type WebRoot(cookieDomain : string,
              managers : IManagerRoot,

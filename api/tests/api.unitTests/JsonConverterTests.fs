@@ -1,9 +1,9 @@
-module Djambi.Api.UnitTests.JsonConverterTests
+module Apex.Api.UnitTests.JsonConverterTests
 
 open Newtonsoft.Json
 open Xunit
-open Djambi.Api.Common.Json
-open Djambi.Api.Model
+open Apex.Api.Common.Json
+open Apex.Api.Model
 
 //---Option---
 

@@ -1,11 +1,11 @@
-namespace Djambi.Api.IntegrationTests.Logic.GameStartService
+namespace Apex.Api.IntegrationTests.Logic.GameStartService
 
 open FSharp.Control.Tasks
 open Xunit
-open Djambi.Api.Common.Control.AsyncHttpResult
-open Djambi.Api.IntegrationTests
-open Djambi.Api.Model
-open Djambi.Api.Logic
+open Apex.Api.Common.Control.AsyncHttpResult
+open Apex.Api.IntegrationTests
+open Apex.Api.Model
+open Apex.Api.Logic
 
 type GetGameStartEventsTests() =
     inherit TestsBase()

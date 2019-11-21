@@ -1,4 +1,4 @@
-namespace Djambi.Api.Web
+namespace Apex.Api.Web
 
 open System
 open System.IO
@@ -8,12 +8,12 @@ open Giraffe
 open Microsoft.AspNetCore.Http
 open Newtonsoft.Json
 open Serilog
-open Djambi.Api.Common
-open Djambi.Api.Common.Control
-open Djambi.Api.Common.Control.AsyncHttpResult
-open Djambi.Api.Common.Json
-open Djambi.Api.Logic.Interfaces
-open Djambi.Api.Model.SessionModel
+open Apex.Api.Common
+open Apex.Api.Common.Control
+open Apex.Api.Common.Control.AsyncHttpResult
+open Apex.Api.Common.Json
+open Apex.Api.Logic.Interfaces
+open Apex.Api.Model.SessionModel
 
 type HttpHandler = HttpFunc -> HttpContext -> HttpContext option Task
 
@@ -47,7 +47,7 @@ type HttpUtility(cookieDomain : string,
             |> thenBindAsync (fun body -> okTask (body, value))
         )
 
-    member x.cookieName = "DjambiSession"
+    member x.cookieName = "ApexSession"
 
     member x.appendCookie (ctx : HttpContext) (token : string, expiration : DateTime) =
         let cookieOptions = CookieOptions()

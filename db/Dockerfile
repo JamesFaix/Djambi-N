@@ -12,6 +12,6 @@ FROM base AS final
 WORKDIR /app
 COPY ["db/", "db/"]
 COPY --from=build /app/publish .
-ENV DJAMBI_masterConnectionString="Data Source=localhost;Initial Catalog=master;User Id=SA;Password=GR3@Tpassword;"
-ENV DJAMBI_djambiConnectionString="Data Source=localhost;Initial Catalog=djambi;User Id=SA;Password=GR3@Tpassword;"
-ENV DJAMBI_sqlRoot="db"
+ENV APEX_masterConnectionString="Data Source=localhost;Initial Catalog=master;User Id=SA;Password=GR3@Tpassword;"
+ENV APEX_apexConnectionString="Data Source=localhost;Initial Catalog=Apex;User Id=SA;Password=GR3@Tpassword;"
+ENV APEX_sqlRoot="db"

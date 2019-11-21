@@ -1,6 +1,6 @@
-module Djambi.Api.Logic.Errors
+module Apex.Api.Logic.Errors
 
-open Djambi.Api.Common.Control
+open Apex.Api.Common.Control
 
 let noPieceInCell<'a>() : HttpResult<'a> =
     Error <| HttpException(400, "No piece in the selected cell.")

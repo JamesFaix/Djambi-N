@@ -1,10 +1,10 @@
 [<AutoOpen>]
-module Djambi.Api.WebClient.Model
+module Apex.Api.WebClient.Model
 
 open System.Net
 open System.Text.RegularExpressions
 open System.Threading.Tasks
-open Djambi.Api.Common.Control
+open Apex.Api.Common.Control
 
 type Response<'a> =
     {
@@ -19,7 +19,7 @@ type Response<'a> with
         | false -> None
         | _ ->
             let cookie = this.headers.["Set-Cookie"]
-            let m = Regex.Match(cookie, "^DjambiSession=(.*?);");
+            let m = Regex.Match(cookie, "^ApexSession=(.*?);");
             match m.Groups.Count with
             | 0 -> None
             | _ -> Some m.Groups.[1].Value

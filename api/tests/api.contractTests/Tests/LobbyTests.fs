@@ -1,11 +1,11 @@
-module Djambi.Api.ContractTests.LobbyTests
+module Apex.Api.ContractTests.LobbyTests
 
 open System.Net
 open System.Threading.Tasks
 open FSharp.Control.Tasks
 open NUnit.Framework
-open Djambi.Api.WebClient
-open Djambi.Api.Model
+open Apex.Api.WebClient
+open Apex.Api.Model
 
 [<Test>]
 let ``Create game should work``() =

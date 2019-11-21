@@ -15,4 +15,4 @@ I try to keep GitHub labels, issues, and projects pretty well organized. Reviewi
 
 More information is available on the project [wiki][1].
 
-[1]: https://github.com/GamesFaix/Djambi3/wiki
+[1]: https://github.com/JamesFaix/Apex/wiki

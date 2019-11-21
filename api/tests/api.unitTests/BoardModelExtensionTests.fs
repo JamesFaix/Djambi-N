@@ -1,9 +1,9 @@
-module Djambi.Api.UnitTests.BoardModelExtensionTests
+module Apex.Api.UnitTests.BoardModelExtensionTests
 
 open Xunit
-open Djambi.Api.Common
-open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
-open Djambi.Api.Model.BoardModel
+open Apex.Api.Common
+open Apex.Api.Logic.ModelExtensions.BoardModelExtensions
+open Apex.Api.Model.BoardModel
 
 [<Theory>]
 [<InlineData(Directions.Up, 2, RadialDirections.Clockwise, Directions.Right)>]

@@ -1,13 +1,13 @@
-module Djambi.ClientGenerator.Program
+module Apex.ClientGenerator.Program
 
 open System.IO
 open System.Reflection
 open Microsoft.Extensions.Configuration
-open Djambi.ClientGenerator.Annotations
+open Apex.ClientGenerator.Annotations
 
 let renderModel (renderers : IRenderer list, config : IConfigurationRoot) : Unit =
     printfn "Loading model assembly..."
-    let assembly = typeof<Djambi.Api.Model.BoardModel.Board>.Assembly
+    let assembly = typeof<Apex.Api.Model.BoardModel.Board>.Assembly
 
     let types =
         assembly.GetTypes()
@@ -25,7 +25,7 @@ let renderModel (renderers : IRenderer list, config : IConfigurationRoot) : Unit
 
 let renderFunctions (renderers : IRenderer list, config : IConfigurationRoot) : Unit =
     printfn "Loading functions assembly..."
-    let assembly = typeof<Djambi.Api.Logic.Interfaces.IManagerRoot>.Assembly
+    let assembly = typeof<Apex.Api.Logic.Interfaces.IManagerRoot>.Assembly
 
     let methods =
         assembly.GetTypes()
@@ -45,13 +45,13 @@ let renderFunctions (renderers : IRenderer list, config : IConfigurationRoot) : 
 [<EntryPoint>]
 let main argv =
 
-    printfn "Djambi API Client Generator"
+    printfn "Apex API Client Generator"
     printfn "---------------------------"
 
     let config = 
         ConfigurationBuilder()
             .AddJsonFile("appsettings.json", false)
-            .AddEnvironmentVariables("DJAMBI_")
+            .AddEnvironmentVariables("APEX_")
             .Build()
 
     let renderers =

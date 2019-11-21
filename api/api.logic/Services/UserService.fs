@@ -1,10 +1,10 @@
-namespace Djambi.Api.Logic.Services
+namespace Apex.Api.Logic.Services
 
-open Djambi.Api.Common.Control
-open Djambi.Api.Common.Control.AsyncHttpResult
-open Djambi.Api.Db.Interfaces
-open Djambi.Api.Logic
-open Djambi.Api.Model
+open Apex.Api.Common.Control
+open Apex.Api.Common.Control.AsyncHttpResult
+open Apex.Api.Db.Interfaces
+open Apex.Api.Logic
+open Apex.Api.Model
 
 type UserService(userRepo : IUserRepository) =
     member x.createUser (request : CreateUserRequest) (session : Session option) : UserDetails AsyncHttpResult =

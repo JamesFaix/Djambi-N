@@ -7,7 +7,7 @@ Contains utilities that can be used at all layers of the application.
 Contains modules for communicating with SQL.
 
 - **Model** module contains data types that correspond to result set rows from different SQL queries.
-- **Mapping** module contains logic for mapping from `Djambi.Api.Db.Model` namespace and the `Djambi.Api.Model` namespace.
+- **Mapping** module contains logic for mapping from `Apex.Api.Db.Model` namespace and the `Apex.Api.Model` namespace.
 - **Repository** modules contain the logic for executing SQL commands. 
 
 # api.host

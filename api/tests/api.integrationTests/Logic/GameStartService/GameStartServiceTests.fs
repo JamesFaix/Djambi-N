@@ -1,12 +1,12 @@
-namespace Djambi.Api.IntegrationTests.Logic.GameStartService
+namespace Apex.Api.IntegrationTests.Logic.GameStartService
 
 open FSharp.Control.Tasks
 open Xunit
-open Djambi.Api.Common
-open Djambi.Api.Common.Control.AsyncHttpResult
-open Djambi.Api.IntegrationTests
-open Djambi.Api.Logic.ModelExtensions
-open Djambi.Api.Model
+open Apex.Api.Common
+open Apex.Api.Common.Control.AsyncHttpResult
+open Apex.Api.IntegrationTests
+open Apex.Api.Logic.ModelExtensions
+open Apex.Api.Model
 
 type GameStartServiceTests() =
     inherit TestsBase()
@@ -56,11 +56,11 @@ type GameStartServiceTests() =
             Assert.Equal(game.parameters.regionCount, groupByPlayer.Length)
 
             for (_, grp) in groupByPlayer do
-                Assert.Single<Piece>(grp, (fun p -> p.kind = Chief)) |> ignore
+                Assert.Single<Piece>(grp, (fun p -> p.kind = Conduit)) |> ignore
                 Assert.Single<Piece>(grp, (fun p -> p.kind = Diplomat)) |> ignore
-                Assert.Single<Piece>(grp, (fun p -> p.kind = Reporter)) |> ignore
-                Assert.Single<Piece>(grp, (fun p -> p.kind = Gravedigger)) |> ignore
-                Assert.Single<Piece>(grp, (fun p -> p.kind = Assassin)) |> ignore
+                Assert.Single<Piece>(grp, (fun p -> p.kind = Scientist)) |> ignore
+                Assert.Single<Piece>(grp, (fun p -> p.kind = Reaper)) |> ignore
+                Assert.Single<Piece>(grp, (fun p -> p.kind = Hunter)) |> ignore
                 Assert.Equal(4, grp |> List.filter (fun p -> p.kind = Thug) |> List.length)
         }
 

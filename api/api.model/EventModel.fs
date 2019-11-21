@@ -1,7 +1,7 @@
 [<AutoOpen>]
-module Djambi.Api.Model.EventModel
+module Apex.Api.Model.EventModel
 
-open Djambi.ClientGenerator.Annotations
+open Apex.ClientGenerator.Annotations
 
 [<ClientType(ClientSection.Events)>]
 type CurrentTurnChangedEffect =

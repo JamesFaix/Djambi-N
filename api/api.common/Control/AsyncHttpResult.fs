@@ -1,9 +1,9 @@
-namespace Djambi.Api.Common.Control
+namespace Apex.Api.Common.Control
 
 open System
 open System.Threading.Tasks
 open FSharp.Control.Tasks
-open Djambi.Api.Common.Collections
+open Apex.Api.Common.Collections
 
 type HttpResult<'a> = Result<'a, HttpException>
 

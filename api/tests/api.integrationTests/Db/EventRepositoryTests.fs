@@ -1,10 +1,10 @@
-namespace Djambi.Api.IntegrationTests.Db
+namespace Apex.Api.IntegrationTests.Db
 
 open FSharp.Control.Tasks
 open Xunit
-open Djambi.Api.Common.Control.AsyncHttpResult
-open Djambi.Api.IntegrationTests
-open Djambi.Api.Model
+open Apex.Api.Common.Control.AsyncHttpResult
+open Apex.Api.IntegrationTests
+open Apex.Api.Model
 
 type EventRepositoryTests() =
     inherit TestsBase()
@@ -158,7 +158,7 @@ type EventRepositoryTests() =
                     pieces = [
                         {
                             id = 0
-                            kind = PieceKind.Assassin
+                            kind = PieceKind.Hunter
                             cellId = 0
                             playerId = None
                             originalPlayerId = 0

@@ -1,7 +1,7 @@
 [<AutoOpen>]
-module Djambi.Api.Model.GameModel
+module Apex.Api.Model.GameModel
 
-open Djambi.ClientGenerator.Annotations
+open Apex.ClientGenerator.Annotations
 
 [<ClientType(ClientSection.Player)>]
 type PlayerKind =
@@ -35,12 +35,12 @@ type Player =
 
 [<ClientType(ClientSection.Game)>]
 type PieceKind =
-    | Chief
+    | Conduit
     | Thug
-    | Reporter
-    | Assassin
+    | Scientist
+    | Hunter
     | Diplomat
-    | Gravedigger
+    | Reaper
     | Corpse
 
 [<ClientType(ClientSection.Game)>]

@@ -1,7 +1,7 @@
 [<AutoOpen>]
-module Djambi.Api.Model.BoardModel
+module Apex.Api.Model.BoardModel
 
-open Djambi.ClientGenerator.Annotations
+open Apex.ClientGenerator.Annotations
 
 type Directions =
     | Up = 1

@@ -1,7 +1,7 @@
 [<AutoOpen>]
-module Djambi.Api.Model.SnapshotModel
+module Apex.Api.Model.SnapshotModel
 
-open Djambi.ClientGenerator.Annotations
+open Apex.ClientGenerator.Annotations
 
 type Snapshot =
     {
