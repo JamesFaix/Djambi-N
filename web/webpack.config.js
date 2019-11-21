@@ -1,8 +1,9 @@
 const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
-module.exports = () => {
-    const isProd = process.env.NODE_ENV === "production";
+module.exports = env => {
+    console.log(env);
+    const isProd = env.NODE_ENV === "production";
 
     return {
         entry: "./src/index.tsx",
@@ -46,8 +47,8 @@ module.exports = () => {
         plugins: [
             new webpack.DefinePlugin({
               'process.env':{
-                API_URL: JSON.stringify(process.env.APEX_apiAddress),
-                NODE_ENV: JSON.stringify(process.env.NODE_ENV)
+                API_URL: JSON.stringify(env.APEX_apiAddress),
+                NODE_ENV: JSON.stringify(env.NODE_ENV)
               }
             }),
             new CopyWebpackPlugin([
