@@ -1,6 +1,6 @@
 $s3_bucket = "apex-game-web"
 $profile = "dev"
-$api_address = "apex-api-dev.us-east-1.elasticbeanstalk.com"
+$api_address = "http://apex-api-dev.us-east-1.elasticbeanstalk.com"
 $here = (Get-Location).Path -replace "\\", "/"
 $web_output = $here + "/web/dist/prod/"
 $cloudfront_distro = "EKHPVA69D4CE9"
