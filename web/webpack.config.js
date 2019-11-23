@@ -57,6 +57,10 @@ module.exports = env => {
                     to: "index.html"
                 },
                 {
+                    from: "manifest.json",
+                    to: "manifest.json"
+                },
+                {
                     from: "resources",
                     to: "resources",
                     ignore: [ "**/*.psd" ]
