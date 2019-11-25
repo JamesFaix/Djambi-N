@@ -15,9 +15,6 @@ webpack `
 cd ..
 
 # Upload to S3
-$files = System::
-
-
 $files = Get-ChildItem $web_output -Recurse -File | Where-Object { $_.FullName -like $upload_path_filter }
 ForEach($f in $files) {
     $absolute_path = $f.FullName -replace "\\", "/"
