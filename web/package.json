@@ -36,7 +36,7 @@
         "sprintf-js": "^1.1.2"
     },
     "scripts": {
-        "build": "webpack",
+        "build": "webpack --env.APEX_apiAddress=http://localhost:5100",
         "start": "webpack && http-server",
         "test": "mocha --require ts-node/register test/**/*.ts"
     },
