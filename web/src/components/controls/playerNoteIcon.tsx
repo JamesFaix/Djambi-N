@@ -4,55 +4,44 @@ import * as LobbySeats from '../../viewModel/lobbySeats';
 import IconBox from './iconBox';
 import { Icons } from '../../utilities/icons';
 import ThemeService from '../../themes/themeService';
-import { State } from '../../store/root';
-import { connect } from 'react-redux';
-import { Theme } from '../../themes/model';
+import Selectors from '../../selectors';
 
-interface PlayerNoteIconProps {
+const PlayerNoteIcon : React.SFC<{
     player : Player,
-    game : Game,
-    theme : Theme
-}
-
-class playerNoteIcon extends React.Component<PlayerNoteIconProps> {
-    render() {
-        if (!this.props.player){
-            return null;
-        }
-
-        const isGuest = this.props.player.kind === PlayerKind.Guest;
-        if (!isGuest) {
-            return null;
-        }
-
-        const hostPlayer = this.props.game.players
-            .find(p => p.userId === this.props.player.userId
-                && p.kind === PlayerKind.User);
-
-        const color = hostPlayer.colorId
-            ? ThemeService.getPlayerColor(this.props.theme, hostPlayer.colorId)
-            : "black";
-        const note = LobbySeats.getPlayerNote(this.props.player, this.props.game);
-
-        const info = {
-            title: note,
-            icon: Icons.PlayerNotes.guest
-        };
-
-        return (
-            <IconBox
-                icon={info}
-                color={color}
-            />
-        );
+    game : Game
+}> = props => {
+    if (!props.player){
+        return null;
     }
-}
 
-const mapStateToProps = (state : State) => {
-    return {
-        theme: state.display.theme
+    const isGuest = props.player.kind === PlayerKind.Guest;
+    if (!isGuest) {
+        return null;
+    }
+
+    const hostPlayer = props.game.players
+        .find(p => p.userId === props.player.userId
+            && p.kind === PlayerKind.User);
+
+    const theme = Selectors.theme();
+
+    const color = hostPlayer.colorId
+        ? ThemeService.getPlayerColor(theme, hostPlayer.colorId)
+        : theme.colors.text;
+
+    const note = LobbySeats.getPlayerNote(props.player, props.game);
+
+    const info = {
+        title: note,
+        icon: Icons.PlayerNotes.guest
     };
+
+    return (
+        <IconBox
+            icon={info}
+            color={color}
+        />
+    );
 }
 
-const PlayerNoteIcon = connect(mapStateToProps)(playerNoteIcon);
 export default PlayerNoteIcon;
