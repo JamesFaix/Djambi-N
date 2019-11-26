@@ -90,6 +90,7 @@ interface ThemePieceNames {
 }
 
 interface ThemeFonts {
+    titleFamily : string,
     headerFamily : string,
     normalFamily : string
 }
