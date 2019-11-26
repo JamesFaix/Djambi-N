@@ -81,6 +81,10 @@ const BoardSelector : React.SFC<{
                     size={{ x: props.size, y: props.size }}
                     strokeWidth={props.borderSize}
                     theme={Selectors.theme()}
+
+                    // It seems like the button's on click should be all that is required,
+                    // but on mobile browsers, tapping on the canvas will not count as a button click without using Konva events.
+                    onClick={props.onClick}
                 />
             </button>
             <div style={{

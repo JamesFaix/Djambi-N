@@ -431,6 +431,7 @@ export default class Controller {
 
             s.setProperty("--font-family", theme.fonts.normalFamily);
             s.setProperty("--header-font-family", theme.fonts.headerFamily);
+            s.setProperty("--title-font-family", theme.fonts.titleFamily);
         }
 
         private static loadThemeImages(theme : Theme) : void {

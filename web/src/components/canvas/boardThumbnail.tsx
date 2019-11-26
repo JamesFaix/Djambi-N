@@ -14,7 +14,8 @@ const BoardThumbnail : React.SFC<{
     board : Board,
     size : Point,
     strokeWidth : number,
-    theme : Theme
+    theme : Theme,
+    onClick : () => void
 }> = props => {
     let bv = BoardViewFactory.createEmptyBoardView(props.board);
     let t = CanvasTransformService.getBoardViewTransform({
@@ -30,6 +31,8 @@ const BoardThumbnail : React.SFC<{
             className={Classes.canvasBoard}
             width={props.size.x}
             height={props.size.y}
+            onClick={props.onClick}
+            onTap={props.onClick}
         >
             <CanvasBoardOutlineLayer
                 board={bv}

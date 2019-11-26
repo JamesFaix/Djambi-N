@@ -23,13 +23,18 @@ export default TopBar;
 
 const TitleSection : React.SFC<{}> = _ => {
     const theme = Selectors.theme();
+    const text = theme.copy.gameTitle
+        .toUpperCase()
+        .split('')
+        .join(' ');
+
     return (
         <div
             id={"title-section"}
             className={Classes.topBarTitle}
         >
             <h1>
-                {theme.copy.gameTitle}
+                {text}
             </h1>
         </div>
     );
