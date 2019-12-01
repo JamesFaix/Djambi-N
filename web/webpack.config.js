@@ -44,6 +44,9 @@ module.exports = env => {
                 }
             ]
         },
+        optimization: {
+            minimize: isProd
+        },
         plugins: [
             new webpack.DefinePlugin({
               'process.env':{
