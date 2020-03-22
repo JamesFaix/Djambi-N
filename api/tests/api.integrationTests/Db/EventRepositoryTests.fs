@@ -5,6 +5,8 @@ open Xunit
 open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.IntegrationTests
 open Apex.Api.Model
+open Apex.Api.Db.Interfaces
+open Apex.Api.Logic.Interfaces
 
 type EventRepositoryTests() =
     inherit TestsBase()
@@ -31,7 +33,7 @@ type EventRepositoryTests() =
             let newGame = { game with players = [player] }
 
             //Act
-            let! resp = db.events.persistEvent (TestUtilities.emptyEventRequest, game, newGame) |> thenValue
+            let! resp = (eventRepo :> IEventRepository).persistEvent (TestUtilities.emptyEventRequest, game, newGame) |> thenValue
 
             //Assert
             let persistedGame = resp.game
@@ -58,13 +60,13 @@ type EventRepositoryTests() =
                     name = Some "p2"
                 }
 
-            let! _ = db.games.addPlayer(game.id, playerRequest) |> thenValue
-            let! game = db.games.getGame game.id |> thenValue
+            let! _ = (gameRepo :> IGameRepository).addPlayer(game.id, playerRequest) |> thenValue
+            let! game = (gameRepo :> IGameRepository).getGame game.id |> thenValue
 
             let newGame = { game with players = [] }
 
             //Act
-            let! resp = db.events.persistEvent (TestUtilities.emptyEventRequest, game, newGame) |> thenValue
+            let! resp = (eventRepo :> IEventRepository).persistEvent (TestUtilities.emptyEventRequest, game, newGame) |> thenValue
 
             //Assert
             let persistedGame = resp.game
@@ -87,8 +89,8 @@ type EventRepositoryTests() =
                     name = Some "p2"
                 }
 
-            let! _ = db.games.addPlayer(game.id, p2Request) |> thenValue
-            let! game = db.games.getGame game.id |> thenValue
+            let! _ = (gameRepo :> IGameRepository).addPlayer(game.id, p2Request) |> thenValue
+            let! game = (gameRepo :> IGameRepository).getGame game.id |> thenValue
 
             let oldP2 = game.players.[1]
             oldP2.status |> shouldBe PlayerStatus.Pending
@@ -113,7 +115,7 @@ type EventRepositoryTests() =
                 }
 
             //Act
-            let! resp = db.events.persistEvent (TestUtilities.emptyEventRequest, game, newGame) |> thenValue
+            let! resp = (eventRepo :> IEventRepository).persistEvent (TestUtilities.emptyEventRequest, game, newGame) |> thenValue
 
             //Assert
             let persistedGame = resp.game
@@ -167,7 +169,7 @@ type EventRepositoryTests() =
                 }
 
             //Act
-            let! resp = db.events.persistEvent (TestUtilities.emptyEventRequest, game, newGame) |> thenValue
+            let! resp = (eventRepo :> IEventRepository).persistEvent (TestUtilities.emptyEventRequest, game, newGame) |> thenValue
 
             //Assert
             let persistedGame = resp.game
@@ -186,15 +188,15 @@ type EventRepositoryTests() =
             let e = Effect.NeutralPlayerAdded { name = "test"; placeholderPlayerId = -1 }
             let event = TestUtilities.createEventRequest([e;e]) //EventKind doesn't matter
 
-            let newGame = services.events.applyEvent game event
+            let newGame = eventServ.applyEvent game event
 
             //Act
-            let! result = db.events.persistEvent (TestUtilities.emptyEventRequest, game, newGame)
+            let! result = (eventRepo :> IEventRepository).persistEvent (TestUtilities.emptyEventRequest, game, newGame)
 
             //Assert
             result |> shouldBeError 409 "Conflict when attempting to write Event."
 
-            let! persistedGame = db.games.getGame game.id |> thenValue
+            let! persistedGame = (gameRepo :> IGameRepository).getGame game.id |> thenValue
             persistedGame.players.Length |> shouldBe 1 //Just the creator
             persistedGame.players |> shouldNotExist (fun p -> p.name = "test")
         }
@@ -214,8 +216,8 @@ type EventRepositoryTests() =
 
             let p3Request = { p2Request with name = Some "p3" }
 
-            let! _ = managers.players.addPlayer game.id p2Request session |> thenValue
-            let! _ = managers.players.addPlayer game.id p3Request session |> thenValue
+            let! _ = (gameMan :> IPlayerManager).addPlayer game.id p2Request session |> thenValue
+            let! _ = (gameMan :> IPlayerManager).addPlayer game.id p3Request session |> thenValue
 
             let query : EventsQuery =
                 {
@@ -226,7 +228,7 @@ type EventRepositoryTests() =
                 }
 
             //Act
-            let! events = db.events.getEvents (game.id, query) |> thenValue
+            let! events = (eventRepo :> IEventRepository).getEvents (game.id, query) |> thenValue
 
             //Assert
             events.Length |> shouldBe 2

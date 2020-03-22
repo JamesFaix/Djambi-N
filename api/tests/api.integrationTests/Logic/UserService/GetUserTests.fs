@@ -1,4 +1,4 @@
-namespace Apex.Api.IntegrationTests.Logic.Services.Users
+namespace Apex.Api.IntegrationTests.Logic.userServ
 
 open System
 open FSharp.Control.Tasks
@@ -16,13 +16,13 @@ type GetUserTests() =
         task {
             //Arrange
             let request = getCreateUserRequest()
-            let! user = services.users.createUser request None
+            let! user = userServ.createUser request None
                         |> AsyncHttpResult.thenValue
 
             let session = getSessionForUser 1 |> TestUtilities.setSessionPrivileges [EditUsers]
 
             //Act
-            let! userResponse = services.users.getUser user.id session
+            let! userResponse = userServ.getUser user.id session
                                 |> AsyncHttpResult.thenValue
 
             //Assert
@@ -35,13 +35,13 @@ type GetUserTests() =
         task {
             //Arrange
             let request = getCreateUserRequest()
-            let! user = services.users.createUser request None
+            let! user = userServ.createUser request None
                         |> AsyncHttpResult.thenValue
 
             let session = getSessionForUser 1 |> TestUtilities.setSessionPrivileges []
 
             //Act
-            let! error = services.users.getUser user.id session
+            let! error = userServ.getUser user.id session
 
             //Assert
             error |> shouldBeError 403 Security.noPrivilegeOrSelfErrorMessage
@@ -55,7 +55,7 @@ type GetUserTests() =
             let session = getSessionForUser 1 |> TestUtilities.setSessionPrivileges [EditUsers]
 
             //Act
-            let! error = services.users.getUser Int32.MinValue session
+            let! error = userServ.getUser Int32.MinValue session
 
             //Assert
             error |> shouldBeError 404 "User not found."

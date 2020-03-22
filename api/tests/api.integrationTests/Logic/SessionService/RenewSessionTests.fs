@@ -1,4 +1,4 @@
-namespace Apex.Api.IntegrationTests.Logic.Services.Sessions
+namespace Apex.Api.IntegrationTests.Logic.sessionServ
 
 open FSharp.Control.Tasks
 open Xunit
@@ -13,15 +13,15 @@ type RenewSessionTests() =
         task {
             //Arrange
             let userRequest = getCreateUserRequest()
-            let! _ = services.users.createUser userRequest None
+            let! _ = userServ.createUser userRequest None
                      |> AsyncHttpResult.thenValue
 
             let request = getLoginRequest userRequest
 
-            let! session = services.sessions.openSession request
+            let! session = sessionServ.openSession request
                            |> AsyncHttpResult.thenValue
             //Act
-            let! sessionResponse = services.sessions.renewSession session.token
+            let! sessionResponse = sessionServ.renewSession session.token
                                   |> AsyncHttpResult.thenValue
 
             //Assert
@@ -35,7 +35,7 @@ type RenewSessionTests() =
             //Arrange
 
             //Act
-            let! result = services.sessions.renewSession "does not exist"
+            let! result = sessionServ.renewSession "does not exist"
 
             //Assert
             result |> shouldBeError 404 "Session not found."
@@ -46,17 +46,17 @@ type RenewSessionTests() =
         task {
             //Arrange
             let userRequest = getCreateUserRequest()
-            let! _ = services.users.createUser userRequest None
+            let! _ = userServ.createUser userRequest None
                      |> AsyncHttpResult.thenValue
 
             let loginRequest = getLoginRequest userRequest
-            let! session = services.sessions.openSession loginRequest
+            let! session = sessionServ.openSession loginRequest
                            |> AsyncHttpResult.thenValue
 
-            let! _ = services.sessions.closeSession session
+            let! _ = sessionServ.closeSession session
 
             //Act
-            let! result = services.sessions.renewSession session.token
+            let! result = sessionServ.renewSession session.token
 
             //Assert
             result |> shouldBeError 404 "Session not found."

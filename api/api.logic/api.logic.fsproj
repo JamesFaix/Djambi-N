@@ -31,7 +31,6 @@
     <Compile Include="Managers\SessionManager.fs" />
     <Compile Include="Managers\SnapshotManager.fs" />
     <Compile Include="Managers\UserManager.fs" />
-    <Compile Include="LogicRoot.fs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Serilog" Version="2.8.0" />

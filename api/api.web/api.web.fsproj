@@ -17,7 +17,6 @@
     <Compile Include="Controllers\SnapshotController.fs" />
     <Compile Include="Controllers\TurnController.fs" />
     <Compile Include="Controllers\UserController.fs" />
-    <Compile Include="WebRoot.fs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Giraffe" Version="4.0.0" />

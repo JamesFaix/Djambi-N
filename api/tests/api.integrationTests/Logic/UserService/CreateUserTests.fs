@@ -1,4 +1,4 @@
-namespace Apex.Api.IntegrationTests.Logic.Services.Users
+namespace Apex.Api.IntegrationTests.Logic.userServ
 
 open FSharp.Control.Tasks
 open Xunit
@@ -16,7 +16,7 @@ type CreateUserTests() =
             let request = getCreateUserRequest()
 
             //Act
-            let! user = services.users.createUser request None
+            let! user = userServ.createUser request None
                         |> AsyncHttpResult.thenValue
 
             //Assert
@@ -29,10 +29,10 @@ type CreateUserTests() =
         task {
             //Arrange
             let request = getCreateUserRequest()
-            let! _ = services.users.createUser request None
+            let! _ = userServ.createUser request None
 
             //Act
-            let! error = services.users.createUser request None
+            let! error = userServ.createUser request None
 
             //Assert
             error |> shouldBeError 409 "Conflict when attempting to write User."
@@ -46,7 +46,7 @@ type CreateUserTests() =
             let session = getSessionForUser 1 |> TestUtilities.setSessionPrivileges []
 
             //Act
-            let! error = services.users.createUser request (Some session)
+            let! error = userServ.createUser request (Some session)
 
             //Assert
             error |> shouldBeError 403 "Cannot create user if logged in."
@@ -60,7 +60,7 @@ type CreateUserTests() =
             let session = getSessionForUser 1 |> TestUtilities.setSessionPrivileges [EditUsers]
 
             //Act
-            let! user = services.users.createUser request (Some session)
+            let! user = userServ.createUser request (Some session)
                         |> AsyncHttpResult.thenValue
 
             //Assert

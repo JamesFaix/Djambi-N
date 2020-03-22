@@ -101,18 +101,3 @@ type IUserManager =
 
     [<ClientFunction(HttpMethod.Get, Routes.currentUser, ClientSection.User)>]
     abstract member getCurrentUser : session:Session -> User AsyncHttpResult
-
-type IServiceRoot =
-    abstract member notifications : INotificationService
-    abstract member sessions : ISessionService
-
-type IManagerRoot =
-    abstract member boards : IBoardManager
-    abstract member events : IEventManager
-    abstract member games : IGameManager
-    abstract member players : IPlayerManager
-    abstract member search : ISearchManager
-    abstract member sessions : ISessionManager
-    abstract member snapshots : ISnapshotManager
-    abstract member turns : ITurnManager
-    abstract member users : IUserManager

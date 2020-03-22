@@ -5,6 +5,7 @@ open Xunit
 open Apex.Api.Common.Control
 open Apex.Api.IntegrationTests
 open Apex.Api.Model
+open Apex.Api.Logic.Interfaces
 
 type CreateGameTests() =
     inherit TestsBase()
@@ -17,7 +18,7 @@ type CreateGameTests() =
             let session = getSessionForUser 1
 
             //Act
-            let! game = managers.games.createGame parameters session
+            let! game = (gameMan :> IGameManager).createGame parameters session
                         |> AsyncHttpResult.thenValue
 
             //Assert
@@ -37,7 +38,7 @@ type CreateGameTests() =
             let session = getSessionForUser 1
 
             //Act
-            let! game = managers.games.createGame parameters session
+            let! game = (gameMan :> IGameManager).createGame parameters session
                         |> AsyncHttpResult.thenValue
 
             //Assert

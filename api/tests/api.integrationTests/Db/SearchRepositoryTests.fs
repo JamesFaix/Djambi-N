@@ -5,6 +5,7 @@ open Xunit
 open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.IntegrationTests
 open Apex.Api.Model
+open Apex.Api.Db.Interfaces
 
 type SearchRepositoryTests() =
     inherit TestsBase()
@@ -14,14 +15,14 @@ type SearchRepositoryTests() =
         //Arrange
         task {
             let userRequest = getCreateUserRequest()
-            let! user = db.users.createUser userRequest |> thenValue
+            let! user = (userRepo :> IUserRepository).createUser userRequest |> thenValue
 
             let gameRequest = getCreateGameRequest(user.id)
-            let! gameId = db.games.createGame gameRequest |> thenValue
+            let! gameId = (gameRepo :> IGameRepository).createGame gameRequest |> thenValue
             let query = GamesQuery.empty
 
             //Act
-            let! games = db.search.searchGames (query, user.id) |> thenValue
+            let! games = (searchRepo :> ISearchRepository).searchGames (query, user.id) |> thenValue
 
             //Assert
             let exists = games |> List.exists (fun l -> l.id = gameId)

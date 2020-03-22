@@ -1,4 +1,4 @@
-namespace Apex.Api.IntegrationTests.Logic.Services.Sessions
+namespace Apex.Api.IntegrationTests.Logic.sessionServ
 
 open FSharp.Control.Tasks
 open Xunit
@@ -13,15 +13,15 @@ type GetSessionTests() =
         task {
             //Arrange
             let userRequest = getCreateUserRequest()
-            let! _ = services.users.createUser userRequest None
+            let! _ = userServ.createUser userRequest None
                      |> AsyncHttpResult.thenValue
 
             let request = getLoginRequest userRequest
 
-            let! session = services.sessions.openSession request
+            let! session = sessionServ.openSession request
                            |> AsyncHttpResult.thenValue
             //Act
-            let! sessionResponse = services.sessions.getSession session.token
+            let! sessionResponse = sessionServ.getSession session.token
                                   |> AsyncHttpResult.thenValue
 
             //Assert
@@ -34,7 +34,7 @@ type GetSessionTests() =
             //Arrange
 
             //Act
-            let! result = services.sessions.getSession "does not exist"
+            let! result = sessionServ.getSession "does not exist"
 
             //Assert
             result |> shouldBeError 404 "Session not found."
@@ -45,17 +45,17 @@ type GetSessionTests() =
         task {
             //Arrange
             let userRequest = getCreateUserRequest()
-            let! _ = services.users.createUser userRequest None
+            let! _ = userServ.createUser userRequest None
                      |> AsyncHttpResult.thenValue
 
             let loginRequest = getLoginRequest userRequest
-            let! session = services.sessions.openSession loginRequest
+            let! session = sessionServ.openSession loginRequest
                            |> AsyncHttpResult.thenValue
 
-            let! _ = services.sessions.closeSession session
+            let! _ = sessionServ.closeSession session
 
             //Act
-            let! result = services.sessions.getSession session.token
+            let! result = sessionServ.getSession session.token
 
             //Assert
             result |> shouldBeError 404 "Session not found."

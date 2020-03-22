@@ -5,6 +5,8 @@ open Xunit
 open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.IntegrationTests
 open Apex.Api.Model
+open Apex.Api.Logic.Interfaces
+open Apex.Api.Db.Interfaces
 
 //TODO: Audit test class
 type FillEmptyPlayerSlotsTests() =
@@ -16,13 +18,13 @@ type FillEmptyPlayerSlotsTests() =
         let session = getSessionForUser 1
         let gameRequest = getGameParameters()
         task {
-            let! game = managers.games.createGame gameRequest session |> thenValue
+            let! game = (gameMan :> IGameManager).createGame gameRequest session |> thenValue
 
             //Act
             let! updatedGame = TestUtilities.fillEmptyPlayerSlots game |> thenValue
 
             //Assert
-            let! doubleCheck = db.games.getGame game.id |> thenValue
+            let! doubleCheck = (gameRepo :> IGameRepository).getGame game.id |> thenValue
 
             updatedGame.players.Length |> shouldBe gameRequest.regionCount
             doubleCheck |> shouldBe updatedGame
@@ -40,10 +42,10 @@ type FillEmptyPlayerSlotsTests() =
         let session = getSessionForUser 1
         let gameRequest = getGameParameters()
         task {
-            let! game = managers.games.createGame gameRequest session |> thenValue
+            let! game = (gameMan :> IGameManager).createGame gameRequest session |> thenValue
 
             //Act
-            let! effects = services.players.fillEmptyPlayerSlots game |> thenValue
+            let! effects = playerServ.fillEmptyPlayerSlots game |> thenValue
 
             //Assert
             effects.Length |> shouldBe 2

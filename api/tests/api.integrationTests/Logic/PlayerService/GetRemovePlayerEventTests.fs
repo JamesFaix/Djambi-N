@@ -1,4 +1,4 @@
-namespace Apex.Api.IntegrationTests.Logic.Services.Players
+namespace Apex.Api.IntegrationTests.Logic.playerServ
 
 open System
 open FSharp.Control.Tasks
@@ -7,6 +7,8 @@ open Apex.Api.Common.Control
 open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.IntegrationTests
 open Apex.Api.Model
+open Apex.Api.Db.Interfaces
+open Apex.Api.Logic.Interfaces
 
 type GetRemovePlayerEventTests() =
     inherit TestsBase()
@@ -19,17 +21,17 @@ type GetRemovePlayerEventTests() =
             let session = session |> TestUtilities.setSessionPrivileges [EditPendingGames]
 
             let gameRequest = getGameParameters()
-            let! game2 = managers.games.createGame gameRequest session |> thenValue
+            let! game2 = (gameMan :> IGameManager).createGame gameRequest session |> thenValue
 
             let! user = createUser() |> thenValue
             let request = CreatePlayerRequest.user user.id
 
-            let! player = managers.players.addPlayer game1.id request session
+            let! player = (gameMan :> IPlayerManager).addPlayer game1.id request session
                           |> thenMap (fun resp -> resp.game.players |> List.except game1.players |> List.head)
                           |> thenValue
 
             //Act
-            let error = services.players.getRemovePlayerEvent (game2, player.id) session
+            let error = playerServ.getRemovePlayerEvent (game2, player.id) session
 
             //Assert
             error |> shouldBeError 404 "Player not found."
@@ -47,11 +49,11 @@ type GetRemovePlayerEventTests() =
                     name = Some "test"
                     userId = None
                 }
-            let! neutralPlayer = db.games.addPlayer(game.id, request) |> thenValue
-            let! game = db.games.getGame game.id |> thenValue
+            let! neutralPlayer = (gameRepo :> IGameRepository).addPlayer(game.id, request) |> thenValue
+            let! game = (gameRepo :> IGameRepository).getGame game.id |> thenValue
 
             //Act
-            let error = services.players.getRemovePlayerEvent (game, neutralPlayer.id) session
+            let error = playerServ.getRemovePlayerEvent (game, neutralPlayer.id) session
 
             //Assert
             error |> shouldBeError 400 "Cannot remove neutral players from game."
@@ -70,14 +72,14 @@ type GetRemovePlayerEventTests() =
             let session = session |> TestUtilities.setSessionPrivileges []
                                   |> TestUtilities.setSessionUserId Int32.MinValue
 
-            let! player = managers.players.addPlayer game.id request adminSession
+            let! player = (gameMan :> IPlayerManager).addPlayer game.id request adminSession
                           |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                           |> thenValue
 
-            let! game = db.games.getGame game.id |> thenValue
+            let! game = (gameRepo :> IGameRepository).getGame game.id |> thenValue
 
             //Act
-            let error = services.players.getRemovePlayerEvent (game, player.id) session
+            let error = playerServ.getRemovePlayerEvent (game, player.id) session
 
             //Assert
             error |> shouldBeError 403 "Cannot remove other users from game."
@@ -90,14 +92,14 @@ type GetRemovePlayerEventTests() =
             let! (user, session, game) = createuserSessionAndGame(true) |> thenValue
             let request = CreatePlayerRequest.guest (user.id, "test")
 
-            let! player = managers.players.addPlayer game.id request session
+            let! player = (gameMan :> IPlayerManager).addPlayer game.id request session
                           |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                           |> thenValue
 
-            let! game = db.games.getGame game.id |> thenValue
+            let! game = (gameRepo :> IGameRepository).getGame game.id |> thenValue
 
             //Act
-            let event = services.players.getRemovePlayerEvent (game, player.id) session |> Result.value
+            let event = playerServ.getRemovePlayerEvent (game, player.id) session |> Result.value
 
             //Assert
             event.kind |> shouldBe EventKind.PlayerRemoved
@@ -119,14 +121,14 @@ type GetRemovePlayerEventTests() =
             let! user = createUser() |> thenValue
             let request = CreatePlayerRequest.user user.id
 
-            let! player = managers.players.addPlayer game.id request session
+            let! player = (gameMan :> IPlayerManager).addPlayer game.id request session
                           |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                           |> thenValue
 
-            let! game = db.games.getGame game.id |> thenValue
+            let! game = (gameRepo :> IGameRepository).getGame game.id |> thenValue
 
             //Act
-            let event = services.players.getRemovePlayerEvent (game, player.id) session |> Result.value
+            let event = playerServ.getRemovePlayerEvent (game, player.id) session |> Result.value
 
             //Assert
             event.kind |> shouldBe EventKind.PlayerRemoved
@@ -148,14 +150,14 @@ type GetRemovePlayerEventTests() =
             let request = CreatePlayerRequest.user user.id
 
             let adminSession = session |> TestUtilities.setSessionPrivileges [EditPendingGames]
-            let! player = managers.players.addPlayer game.id request adminSession
+            let! player = (gameMan :> IPlayerManager).addPlayer game.id request adminSession
                           |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                           |> thenValue
 
-            let! game = db.games.getGame game.id |> thenValue
+            let! game = (gameRepo :> IGameRepository).getGame game.id |> thenValue
 
             //Act
-            let event = services.players.getRemovePlayerEvent (game, player.id) session |> Result.value
+            let event = playerServ.getRemovePlayerEvent (game, player.id) session |> Result.value
 
             //Assert
             event.kind |> shouldBe EventKind.PlayerRemoved
@@ -180,18 +182,18 @@ type GetRemovePlayerEventTests() =
             let adminSession = session |> TestUtilities.setSessionPrivileges [EditPendingGames]
 
             let! userPlayer =
-                managers.players.addPlayer game.id userPlayerRequest adminSession
+                (gameMan :> IPlayerManager).addPlayer game.id userPlayerRequest adminSession
                 |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                 |> thenValue
 
             let! guestPlayer =
-                managers.players.addPlayer game.id guestPlayerRequest adminSession
+                (gameMan :> IPlayerManager).addPlayer game.id guestPlayerRequest adminSession
                 |> thenMap (fun resp -> resp.game.players |> List.except (userPlayer :: game.players) |> List.head)
                 |> thenValue
 
-            let! game = db.games.getGame game.id |> thenValue
+            let! game = (gameRepo :> IGameRepository).getGame game.id |> thenValue
 
-            let event = services.players.getRemovePlayerEvent (game, userPlayer.id) session |> Result.value
+            let event = playerServ.getRemovePlayerEvent (game, userPlayer.id) session |> Result.value
 
             //Assert
             event.kind |> shouldBe EventKind.PlayerRemoved
@@ -217,19 +219,19 @@ type GetRemovePlayerEventTests() =
             let adminSession = session |> TestUtilities.setSessionPrivileges [EditPendingGames]
 
             let! userPlayer =
-                managers.players.addPlayer game.id userPlayerRequest adminSession
+                (gameMan :> IPlayerManager).addPlayer game.id userPlayerRequest adminSession
                 |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                 |> thenValue
 
             let! guestPlayer =
-                managers.players.addPlayer game.id guestPlayerRequest adminSession
+                (gameMan :> IPlayerManager).addPlayer game.id guestPlayerRequest adminSession
                 |> thenMap (fun resp -> resp.game.players |> List.except (userPlayer :: game.players) |> List.head)
                 |> thenValue
 
-            let! game = db.games.getGame game.id |> thenValue
+            let! game = (gameRepo :> IGameRepository).getGame game.id |> thenValue
 
             //Act
-            let event = services.players.getRemovePlayerEvent (game, guestPlayer.id) session |> Result.value
+            let event = playerServ.getRemovePlayerEvent (game, guestPlayer.id) session |> Result.value
 
             //Assert
             event.kind |> shouldBe EventKind.PlayerRemoved
@@ -249,7 +251,7 @@ type GetRemovePlayerEventTests() =
             let creator = game.players |> List.head
 
             //Act
-            let event = services.players.getRemovePlayerEvent (game, creator.id) session |> Result.value
+            let event = playerServ.getRemovePlayerEvent (game, creator.id) session |> Result.value
 
             //Assert
             event.kind |> shouldBe EventKind.PlayerRemoved
@@ -277,13 +279,13 @@ type GetRemovePlayerEventTests() =
                     name = Some "p2"
                 }
 
-            let! _ = managers.players.addPlayer game.id p2Request session |> thenValue
+            let! _ = (gameMan :> IPlayerManager).addPlayer game.id p2Request session |> thenValue
 
-            let! resp = managers.games.startGame game.id session |> thenValue
+            let! resp = (gameMan :> IGameManager).startGame game.id session |> thenValue
             let game = resp.game
 
             //Act
-            let result = services.players.getRemovePlayerEvent (game, game.players.[0].id) session
+            let result = playerServ.getRemovePlayerEvent (game, game.players.[0].id) session
 
             //Assert
             result |> shouldBeError 400 "Cannot remove players unless game is Pending."

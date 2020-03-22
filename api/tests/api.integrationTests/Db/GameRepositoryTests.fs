@@ -5,6 +5,7 @@ open Xunit
 open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.IntegrationTests
 open Apex.Api.Model
+open Apex.Api.Db.Interfaces
 
 type GameRepositoryTests() =
     inherit TestsBase()
@@ -16,7 +17,7 @@ type GameRepositoryTests() =
         let request = getCreateGameRequest(userId)
         task {
             //Act
-            let! gameId = db.games.createGame request |> thenValue
+            let! gameId = (gameRepo :> IGameRepository).createGame request |> thenValue
 
             //Assert
             Assert.NotEqual(0, gameId)
@@ -28,10 +29,10 @@ type GameRepositoryTests() =
         let userId = 1
         let request = getCreateGameRequest(userId)
         task {
-            let! gameId = db.games.createGame request |> thenValue
+            let! gameId = (gameRepo :> IGameRepository).createGame request |> thenValue
 
             //Act
-            let! game = db.games.getGame gameId |> thenValue
+            let! game = (gameRepo :> IGameRepository).getGame gameId |> thenValue
 
             //Assert
             Assert.Equal(gameId, game.id)
@@ -45,15 +46,15 @@ type GameRepositoryTests() =
         let gameRequest = getCreateGameRequest(userId)
         let userRequest = getCreateUserRequest()
         task {
-            let! gameId = db.games.createGame gameRequest |> thenValue
-            let! user = db.users.createUser userRequest |> thenValue
+            let! gameId = (gameRepo :> IGameRepository).createGame gameRequest |> thenValue
+            let! user = (userRepo :> IUserRepository).createUser userRequest |> thenValue
             let request = CreatePlayerRequest.user user.id
 
             //Act
-            let! _ = db.games.addPlayer (gameId, request) |> thenValue
+            let! _ = (gameRepo :> IGameRepository).addPlayer (gameId, request) |> thenValue
 
             //Assert
-            let! game = db.games.getGame gameId |> thenValue
+            let! game = (gameRepo :> IGameRepository).getGame gameId |> thenValue
             let exists = game.players
                          |> List.exists (fun p -> p.userId = Some user.id
                                                   && p.name = user.name
@@ -67,14 +68,14 @@ type GameRepositoryTests() =
         let userId = 1
         let gameRequest = getCreateGameRequest(userId)
         task {
-            let! gameId = db.games.createGame gameRequest |> thenValue
+            let! gameId = (gameRepo :> IGameRepository).createGame gameRequest |> thenValue
             let request = CreatePlayerRequest.neutral "test"
 
             //Act
-            let! _ = db.games.addPlayer (gameId, request) |> thenValue
+            let! _ = (gameRepo :> IGameRepository).addPlayer (gameId, request) |> thenValue
 
             //Assert
-            let! game = db.games.getGame gameId |> thenValue
+            let! game = (gameRepo :> IGameRepository).getGame gameId |> thenValue
             let exists = game.players |> List.exists (fun p ->
                 p.userId = None
                 && p.name = request.name.Value
@@ -89,15 +90,15 @@ type GameRepositoryTests() =
         let gameRequest = getCreateGameRequest(userId)
         let userRequest = getCreateUserRequest()
         task {
-            let! gameId = db.games.createGame gameRequest |> thenValue
-            let! user = db.users.createUser userRequest |> thenValue
+            let! gameId = (gameRepo :> IGameRepository).createGame gameRequest |> thenValue
+            let! user = (userRepo :> IUserRepository).createUser userRequest |> thenValue
             let request = CreatePlayerRequest.guest (user.id, "test")
 
             //Act
-            let! _ = db.games.addPlayer (gameId, request) |> thenValue
+            let! _ = (gameRepo :> IGameRepository).addPlayer (gameId, request) |> thenValue
 
             //Assert
-            let! game = db.games.getGame gameId |> thenValue
+            let! game = (gameRepo :> IGameRepository).getGame gameId |> thenValue
             let exists = game.players |> List.exists (fun p ->
                 p.userId = Some user.id
                 && p.name = request.name.Value
@@ -112,16 +113,16 @@ type GameRepositoryTests() =
         let gameRequest = getCreateGameRequest(userId)
         let userRequest = getCreateUserRequest()
         task {
-            let! gameId = db.games.createGame gameRequest |> thenValue
-            let! user = db.users.createUser userRequest |> thenValue
+            let! gameId = (gameRepo :> IGameRepository).createGame gameRequest |> thenValue
+            let! user = (userRepo :> IUserRepository).createUser userRequest |> thenValue
             let playerRequest = CreatePlayerRequest.user user.id
-            let! player = db.games.addPlayer (gameId, playerRequest) |> thenValue
+            let! player = (gameRepo :> IGameRepository).addPlayer (gameId, playerRequest) |> thenValue
 
             //Act
-            let! _ = db.games.removePlayer (gameId, player.id) |> thenValue
+            let! _ = (gameRepo :> IGameRepository).removePlayer (gameId, player.id) |> thenValue
 
             //Assert
-            let! game = db.games.getGame gameId |> thenValue
+            let! game = (gameRepo :> IGameRepository).getGame gameId |> thenValue
             let exists = game.players |> List.exists (fun p -> p.id = player.id)
             Assert.False(exists)
         }

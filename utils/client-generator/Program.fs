@@ -25,7 +25,7 @@ let renderModel (renderers : IRenderer list, config : IConfigurationRoot) : Unit
 
 let renderFunctions (renderers : IRenderer list, config : IConfigurationRoot) : Unit =
     printfn "Loading functions assembly..."
-    let assembly = typeof<Apex.Api.Logic.Interfaces.IManagerRoot>.Assembly
+    let assembly = typeof<Apex.Api.Logic.Interfaces.IBoardManager>.Assembly
 
     let methods =
         assembly.GetTypes()

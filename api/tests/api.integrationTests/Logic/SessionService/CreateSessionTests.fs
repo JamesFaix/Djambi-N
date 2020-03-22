@@ -1,4 +1,4 @@
-namespace Apex.Api.IntegrationTests.Logic.Services.Sessions
+namespace Apex.Api.IntegrationTests.Logic.sessionServ
 
 open FSharp.Control.Tasks
 open Xunit
@@ -13,13 +13,13 @@ type CreateSessionTests() =
         task {
             //Arrange
             let userRequest = getCreateUserRequest()
-            let! user = services.users.createUser userRequest None
+            let! user = userServ.createUser userRequest None
                         |> thenValue
 
             let request = getLoginRequest userRequest
 
             //Act
-            let! session = services.sessions.openSession request
+            let! session = sessionServ.openSession request
                            |> thenValue
 
             //Assert
@@ -33,16 +33,16 @@ type CreateSessionTests() =
         task {
             //Arrange
             let userRequest = getCreateUserRequest()
-            let! user = services.users.createUser userRequest None
+            let! user = userServ.createUser userRequest None
                         |> thenValue
 
             let request = getLoginRequest userRequest
 
-            let! oldSession = services.sessions.openSession request
+            let! oldSession = sessionServ.openSession request
                               |> thenValue
 
             //Act
-            let! newSession = services.sessions.openSession request |> thenValue
+            let! newSession = sessionServ.openSession request |> thenValue
 
             //Assert
             newSession.token |> shouldNotBe oldSession.token
@@ -53,13 +53,13 @@ type CreateSessionTests() =
         task {
             //Arrange
             let userRequest = getCreateUserRequest()
-            let! _ = services.users.createUser userRequest None
+            let! _ = userServ.createUser userRequest None
                         |> thenValue
 
             let request = { getLoginRequest userRequest with password = "wrong" }
 
             //Act
-            let! error = services.sessions.openSession request
+            let! error = sessionServ.openSession request
 
             //Assert
             error |> shouldBeError 401 "Incorrect password."
@@ -70,19 +70,19 @@ type CreateSessionTests() =
         task {
              //Arrange
             let userRequest = getCreateUserRequest()
-            let! _ = services.users.createUser userRequest None
+            let! _ = userServ.createUser userRequest None
                         |> thenValue
 
             let request = { getLoginRequest userRequest with password = "wrong" }
 
-            let! _ = services.sessions.openSession request
-            let! _ = services.sessions.openSession request
-            let! _ = services.sessions.openSession request
-            let! _ = services.sessions.openSession request
-            let! _ = services.sessions.openSession request
+            let! _ = sessionServ.openSession request
+            let! _ = sessionServ.openSession request
+            let! _ = sessionServ.openSession request
+            let! _ = sessionServ.openSession request
+            let! _ = sessionServ.openSession request
 
             //Act
-            let! error = services.sessions.openSession request
+            let! error = sessionServ.openSession request
 
             //Assert
             error |> shouldBeError 401 "Account locked."
