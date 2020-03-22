@@ -15,6 +15,7 @@
     </Content>
     <Content Include="Properties\launchSettings.json" />
     <Compile Include="Config.fs" />
+    <Compile Include="Startup.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
