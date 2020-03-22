@@ -16,6 +16,13 @@ open Apex.Api.Common.Json
 open Apex.Api.Db
 open Apex.Api.Logic
 open Apex.Api.Web
+open Apex.Api.Db.Repositories
+open Apex.Api.Logic.Services
+open Apex.Api.Logic.Managers
+open Apex.Api.Web.Controllers
+open Microsoft.AspNetCore.Http
+open Apex.Api.Logic.Interfaces
+open Apex.Api.Web.Interfaces
 
 let options = Apex.Api.Host.Config.options
 
@@ -89,13 +96,111 @@ let configureWebServer(app : IApplicationBuilder) : IApplicationBuilder =
     )
 
 let apiHandler =
-    let dbRoot = DbRoot(options.apexConnectionString)
-    let servRoot = ServiceRoot(dbRoot, log)
-    let manRoot = ManagerRoot(dbRoot, servRoot)
-    let webRoot = WebRoot(options.cookieDomain, manRoot, servRoot, log)
-    let routing = RoutingTable(webRoot)
+    // DB layer
+    let ctxProvider = CommandContextProvider(options.apexConnectionString)
+    let gameRepo = GameRepository(ctxProvider)
+    let userRepo = UserRepository(ctxProvider)
+    let eventRepo = EventRepository(ctxProvider, gameRepo)
+    let searchRepo = SearchRepository(ctxProvider)
+    let sessionRepo = SessionRepository(ctxProvider, userRepo)
+    let snapshotRepo = SnapshotRepository(ctxProvider)
 
-    routing.getHandler
+    // App layer
+    let boardServ = BoardService()
+    let gameCrudServ = GameCrudService(gameRepo)
+    let notificationServ = NotificationService(log)
+    let playerServ = PlayerService(gameRepo)
+    let selectionOptionsServ = SelectionOptionsService()
+    let sessionServ = SessionService(sessionRepo, userRepo)
+    let userServ = UserService(userRepo)
+    let gameStartServ = GameStartService(playerServ, selectionOptionsServ)
+    let eventServ = EventService(gameStartServ)
+    let indirectEffectsServ = IndirectEffectsService(eventServ, selectionOptionsServ)
+    let playerStatusChangeServ = PlayerStatusChangeService(eventServ, indirectEffectsServ)
+    let selectionServ = SelectionService(selectionOptionsServ)
+    let turnServ = TurnService(eventServ, indirectEffectsServ, selectionOptionsServ)
+      
+    let boardMan = BoardManager(boardServ)
+    let gameMan = GameManager(eventRepo,
+                            eventServ,
+                            gameCrudServ,
+                            gameRepo,
+                            gameStartServ,
+                            notificationServ,
+                            playerServ,
+                            playerStatusChangeServ,
+                            selectionServ,
+                            turnServ)
+    let searchMan = SearchManager(searchRepo)
+    let sessionMan = SessionManager(sessionServ)
+    let snapshotMan = SnapshotManager(eventRepo, gameRepo, snapshotRepo)
+    let userMan = UserManager(userServ)
+
+    let httpUtil = HttpUtility(options.cookieDomain, sessionServ, log)
+    let boardCtrl = BoardController(boardMan, httpUtil)
+    let eventCtrl = EventController(gameMan, httpUtil)
+    let gameCtrl = GameController(gameMan, httpUtil)
+    let notificationCtrl = NotificationController(httpUtil, notificationServ, log)
+    let playerCtrl = PlayerController(httpUtil, gameMan)
+    let searchCtrl = SearchController(searchMan, httpUtil)
+    let sessionCtrl = SessionController(httpUtil, sessionMan)
+    let snapshotCtrl = SnapshotController(httpUtil, snapshotMan)
+    let turnCtrl = TurnController(httpUtil, gameMan)
+    let userCtrl = UserController(httpUtil, userMan)
+
+    let getHandler : HttpFunc -> HttpContext -> HttpFuncResult =
+           choose [
+               subRoute "/api"
+                   (choose [
+
+                   //Session
+                       POST >=> route Routes.sessions >=> (sessionCtrl :> ISessionController).openSession
+                       DELETE >=> route Routes.sessions >=> (sessionCtrl :> ISessionController).closeSession
+
+                   //Users
+                       POST >=> route Routes.users >=> (userCtrl :> IUserController).createUser
+                       GET >=> routef Routes.userFormat (userCtrl :> IUserController).getUser
+                       GET >=> route Routes.currentUser >=> (userCtrl :> IUserController).getCurrentUser
+                       DELETE >=> routef Routes.userFormat (userCtrl :> IUserController).deleteUser
+
+                   //Board
+                       GET >=> routef Routes.boardFormat (boardCtrl :> IBoardController).getBoard
+                       GET >=> routef Routes.pathsFormat (boardCtrl :> IBoardController).getCellPaths
+
+                   //Game lobby
+                       POST >=> route Routes.games >=> (gameCtrl :> IGameController).createGame
+                       GET >=> routef Routes.gameFormat (gameCtrl :> IGameController).getGame
+                       PUT >=> routef Routes.gameParametersFormat (gameCtrl :> IGameController).updateGameParameters
+                       POST >=> routef Routes.startGameFormat (gameCtrl :> IGameController).startGame
+
+                   //Players
+                       POST >=> routef Routes.playersFormat (playerCtrl :> IPlayerController).addPlayer
+                       DELETE >=> routef Routes.playerFormat (playerCtrl :> IPlayerController).removePlayer
+                       PUT >=> routef Routes.playerStatusChangeFormat (playerCtrl :> IPlayerController).updatePlayerStatus
+
+                   //Turn actions
+                       POST >=> routef Routes.selectCellFormat (turnCtrl :> ITurnController).selectCell
+                       POST >=> routef Routes.resetTurnFormat (turnCtrl :> ITurnController).resetTurn
+                       POST >=> routef Routes.commitTurnFormat (turnCtrl :> ITurnController).commitTurn
+
+                   //Events
+                       POST >=> routef Routes.eventsQueryFormat (eventCtrl :> IEventController).getEvents
+
+                   //Search
+                       POST >=> route Routes.searchGames >=> (searchCtrl :> ISearchController).searchGames
+
+                   //Snapshots
+                       POST >=> routef Routes.snapshotsFormat (snapshotCtrl :> ISnapshotController).createSnapshot
+                       GET >=> routef Routes.snapshotsFormat (snapshotCtrl :> ISnapshotController).getSnapshotsForGame
+                       DELETE >=> routef Routes.snapshotFormat (snapshotCtrl :> ISnapshotController).deleteSnapshot
+                       POST >=> routef Routes.snapshotLoadFormat (snapshotCtrl :> ISnapshotController).loadSnapshot
+
+                   //Notifications
+                       GET >=> route Routes.notificationsSse >=> (notificationCtrl :> INotificationsController).connectSse
+                       GET >=> route Routes.notificationsWebSockets >=> (notificationCtrl :> INotificationsController).connectWebSockets
+                   ])
+               setStatusCode 404 >=> text "Not Found" ]
+    getHandler
 
 let configureServices (services : IServiceCollection) =
     services.AddCors()    |> ignore

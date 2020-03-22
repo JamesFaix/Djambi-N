@@ -6,6 +6,9 @@ open Apex.Api.Common.Control
 open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.IntegrationTests
 open Apex.Api.Model
+open Apex.Api.Logic.Interfaces
+open Apex.Api.Db
+open Apex.Api.Db.Interfaces
 
 type StartGameTests() =
     inherit TestsBase()
@@ -18,10 +21,10 @@ type StartGameTests() =
 
             let playerRequest = CreatePlayerRequest.guest (user.id, "test")
 
-            let! _ = managers.players.addPlayer game.id playerRequest session |> thenValue
+            let! _ = (gameMan :> IPlayerManager).addPlayer game.id playerRequest session |> thenValue
 
             //Act
-            let! resp = managers.games.startGame game.id session
+            let! resp = (gameMan :> IGameManager).startGame game.id session
                         |> thenValue
 
             //Assert
@@ -43,12 +46,12 @@ type StartGameTests() =
             let! (user, session, game) = createuserSessionAndGame(true) |> thenValue
 
             //Act
-            let! result = managers.games.startGame game.id session
+            let! result = (gameMan :> IGameManager).startGame game.id session
 
             //Assert
             result |> shouldBeError 400 "Cannot start game with only one player."
 
-            let! lobbyResult = db.games.getGame game.id
+            let! lobbyResult = (gameRepo :> IGameRepository).getGame game.id
             lobbyResult |> Result.isOk |> shouldBeTrue
         }
 

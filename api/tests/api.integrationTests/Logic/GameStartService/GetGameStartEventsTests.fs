@@ -6,6 +6,7 @@ open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.IntegrationTests
 open Apex.Api.Model
 open Apex.Api.Logic
+open Apex.Api.Db.Interfaces
 
 type GetGameStartEventsTests() =
     inherit TestsBase()
@@ -20,12 +21,12 @@ type GetGameStartEventsTests() =
                     kind = PlayerKind.Guest
                     name = Some "p2"
                 }
-            let! _ = db.games.addPlayer (game.id, player2request) |> thenValue
+            let! _ = (gameRepo :> IGameRepository).addPlayer (game.id, player2request) |> thenValue
 
             let player3request = { player2request with name = Some "p3" }
-            let! _ = db.games.addPlayer (game.id, player3request) |> thenValue
+            let! _ = (gameRepo :> IGameRepository).addPlayer (game.id, player3request) |> thenValue
 
-            let! game = db.games.getGame game.id |> thenValue
+            let! game = (gameRepo :> IGameRepository).getGame game.id |> thenValue
 
             return Ok (user, session, game)
         }
@@ -38,7 +39,7 @@ type GetGameStartEventsTests() =
             let session = session |> TestUtilities.setSessionUserId (session.user.id+1)
 
             //Act
-            let! result = services.gameStart.getGameStartEvents game session
+            let! result = gameStartServ.getGameStartEvents game session
 
             //Assert
             result |> shouldBeError 403 Security.noPrivilegeOrCreatorErrorMessage
@@ -51,7 +52,7 @@ type GetGameStartEventsTests() =
             let! (_, session, game) = createuserSessionAndGame(true) |> thenValue
 
             //Act
-            let! result = services.gameStart.getGameStartEvents game session
+            let! result = gameStartServ.getGameStartEvents game session
 
             //Assert
             result |> shouldBeError 400 "Cannot start game with only one player."
@@ -66,7 +67,7 @@ type GetGameStartEventsTests() =
                                   |> TestUtilities.setSessionPrivileges [EditPendingGames]
 
             //Act
-            let! events = services.gameStart.getGameStartEvents game session |> thenValue
+            let! events = gameStartServ.getGameStartEvents game session |> thenValue
 
             //Assert
             let (addNeutralPlayers, startGame) = events
@@ -89,7 +90,7 @@ type GetGameStartEventsTests() =
             let! (user, session, game) = createUserSessionAndGameWith3Players() |> thenValue
 
             //Act
-            let! events = services.gameStart.getGameStartEvents game session |> thenValue
+            let! events = gameStartServ.getGameStartEvents game session |> thenValue
 
             //Assert
             let (addNeutralPlayers, startGame) = events
@@ -118,11 +119,11 @@ type GetGameStartEventsTests() =
                     name = Some "p2"
                 }
 
-            let! _ = db.games.addPlayer(game.id, p2Request)
-            let! game = db.games.getGame game.id |> thenValue
+            let! _ = (gameRepo :> IGameRepository).addPlayer(game.id, p2Request)
+            let! game = (gameRepo :> IGameRepository).getGame game.id |> thenValue
 
             //Act
-            let! events = services.gameStart.getGameStartEvents game session |> thenValue
+            let! events = gameStartServ.getGameStartEvents game session |> thenValue
             
             //Assert
             let (addNeutralPlayers, startGame) = events

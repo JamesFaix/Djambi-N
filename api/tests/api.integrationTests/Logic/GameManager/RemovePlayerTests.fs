@@ -6,6 +6,7 @@ open Xunit
 open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.IntegrationTests
 open Apex.Api.Model
+open Apex.Api.Logic.Interfaces
 
 type RemovePlayerTests() =
     inherit TestsBase()
@@ -20,12 +21,12 @@ type RemovePlayerTests() =
             let session = getSessionForUser user.id
             let request = CreatePlayerRequest.user user.id
 
-            let! player = managers.players.addPlayer game.id request session
+            let! player = (gameMan :> IPlayerManager).addPlayer game.id request session
                           |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                           |> thenValue
 
             //Act
-            let! resp = managers.players.removePlayer (game.id, player.id) session
+            let! resp = (gameMan :> IPlayerManager).removePlayer (game.id, player.id) session
                         |> thenValue
 
             //Assert
@@ -42,16 +43,16 @@ type RemovePlayerTests() =
             let request = CreatePlayerRequest.user user.id
             let session = session |> TestUtilities.setSessionPrivileges [EditPendingGames]
 
-            let! player = managers.players.addPlayer game.id request session
+            let! player = (gameMan :> IPlayerManager).addPlayer game.id request session
                           |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                           |> thenValue
 
             //Act
-            let! error = managers.players.removePlayer (Int32.MinValue, player.id) session
+            let! error = (gameMan :> IPlayerManager).removePlayer (Int32.MinValue, player.id) session
 
             //Assert
             error |> shouldBeError 404 "Game not found."
 
-            let! game = managers.games.getGame game.id session |> thenValue
+            let! game = (gameMan :> IGameManager).getGame game.id session |> thenValue
             game.players |> shouldExist (fun p -> p.id = player.id)
         }

@@ -16,7 +16,6 @@
     <Compile Include="Repositories\EventRepository.fs" />
     <Compile Include="Repositories\SearchRepository.fs" />
     <Compile Include="Repositories\SnapshotRepository.fs" />
-    <Compile Include="DbRoot.fs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.30" />

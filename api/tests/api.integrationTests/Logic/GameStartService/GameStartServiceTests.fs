@@ -7,6 +7,7 @@ open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.IntegrationTests
 open Apex.Api.Logic.ModelExtensions
 open Apex.Api.Model
+open Apex.Api.Logic.Interfaces
 
 type GameStartServiceTests() =
     inherit TestsBase()
@@ -17,12 +18,12 @@ type GameStartServiceTests() =
             //Arrange
             let session = getSessionForUser 1
             let parameters = getGameParameters()
-            let! game = managers.games.createGame parameters session
+            let! game = (gameMan :> IGameManager).createGame parameters session
                         |> thenBindAsync TestUtilities.fillEmptyPlayerSlots
                         |> thenValue
 
             //Act
-            let playersWithStartConditions = services.gameStart.assignStartingConditions game.players
+            let playersWithStartConditions = gameStartServ.assignStartingConditions game.players
 
             //Assert
             Assert.Equal(game.parameters.regionCount, playersWithStartConditions.Length)
@@ -40,14 +41,14 @@ type GameStartServiceTests() =
             //Arrange
             let session = getSessionForUser 1
             let parameters = getGameParameters()
-            let! game = managers.games.createGame parameters session
+            let! game = (gameMan :> IGameManager).createGame parameters session
                         |> thenBindAsync TestUtilities.fillEmptyPlayerSlots
                         |> thenValue
-            let playersWithStartConditions = services.gameStart.assignStartingConditions game.players
+            let playersWithStartConditions = gameStartServ.assignStartingConditions game.players
             let board = BoardModelUtility.getBoardMetadata(game.parameters.regionCount)
 
             //Act
-            let pieces = services.gameStart.createPieces(board, playersWithStartConditions)
+            let pieces = gameStartServ.createPieces(board, playersWithStartConditions)
 
             //Assert
             Assert.Equal(game.parameters.regionCount * Constants.piecesPerPlayer, pieces.Length)
@@ -72,10 +73,10 @@ type GameStartServiceTests() =
 
             let playerRequest = CreatePlayerRequest.guest (user.id, "test")
 
-            let! _ = managers.players.addPlayer game.id playerRequest session |> thenValue
+            let! _ = (gameMan :> IPlayerManager).addPlayer game.id playerRequest session |> thenValue
 
             //Act
-            let updatedGame = services.gameStart.applyStartGame game
+            let updatedGame = gameStartServ.applyStartGame game
 
             //Assert
             let neutralPlayerIds =

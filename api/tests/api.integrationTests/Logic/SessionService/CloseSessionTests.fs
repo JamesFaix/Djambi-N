@@ -1,4 +1,4 @@
-namespace Apex.Api.IntegrationTests.Logic.Services.Sessions
+namespace Apex.Api.IntegrationTests.Logic.sessionServ
 
 open FSharp.Control.Tasks
 open Xunit
@@ -13,15 +13,15 @@ type CloseSessionTests() =
         task {
             //Arrange
             let userRequest = getCreateUserRequest()
-            let! _ = services.users.createUser userRequest None
+            let! _ = userServ.createUser userRequest None
                      |> AsyncHttpResult.thenValue
 
             let loginRequest = getLoginRequest userRequest
-            let! session = services.sessions.openSession loginRequest
+            let! session = sessionServ.openSession loginRequest
                            |> AsyncHttpResult.thenValue
 
             //Act
-            let! result = services.sessions.closeSession session
+            let! result = sessionServ.closeSession session
 
             //Assert
             result |> Result.isOk |> shouldBeTrue
@@ -34,7 +34,7 @@ type CloseSessionTests() =
             let session = getSessionForUser 1
 
             //Act
-            let! result = services.sessions.closeSession session
+            let! result = sessionServ.closeSession session
 
             //Assert
             result |> shouldBeError 404 "Session not found."

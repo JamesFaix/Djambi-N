@@ -47,15 +47,3 @@ type IUserController =
     abstract member deleteUser : userId:int -> HttpHandler
     abstract member getUser : userId:int -> HttpHandler
     abstract member getCurrentUser : HttpHandler
-
-type IWebRoot =
-    abstract member boards : IBoardController
-    abstract member events : IEventController
-    abstract member games : IGameController
-    abstract member notifications : INotificationsController
-    abstract member players : IPlayerController
-    abstract member search : ISearchController
-    abstract member sessions : ISessionController
-    abstract member snapshots : ISnapshotController
-    abstract member turns : ITurnController
-    abstract member users : IUserController

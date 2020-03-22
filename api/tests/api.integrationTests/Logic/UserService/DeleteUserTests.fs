@@ -1,4 +1,4 @@
-namespace Apex.Api.IntegrationTests.Logic.Services.Users
+namespace Apex.Api.IntegrationTests.Logic.userServ
 
 open FSharp.Control.Tasks
 open Xunit
@@ -15,13 +15,13 @@ type DeleteUserTests() =
         task {
             //Arrange
             let request = getCreateUserRequest()
-            let! user = services.users.createUser request None
+            let! user = userServ.createUser request None
                         |> AsyncHttpResult.thenValue
 
             let session = getSessionForUser user.id |> TestUtilities.setSessionPrivileges []
 
             //Act
-            let! response = services.users.deleteUser user.id session
+            let! response = userServ.deleteUser user.id session
 
             //Assert
             response |> Result.isOk |> shouldBeTrue
@@ -32,13 +32,13 @@ type DeleteUserTests() =
         task {
             //Arrange
             let request = getCreateUserRequest()
-            let! user = services.users.createUser request None
+            let! user = userServ.createUser request None
                         |> AsyncHttpResult.thenValue
 
             let session = getSessionForUser (user.id + 1) |> TestUtilities.setSessionPrivileges [EditUsers]
 
             //Act
-            let! response = services.users.deleteUser user.id session
+            let! response = userServ.deleteUser user.id session
 
             //Assert
             response |> Result.isOk |> shouldBeTrue
@@ -49,13 +49,13 @@ type DeleteUserTests() =
         task {
             //Arrange
             let request = getCreateUserRequest()
-            let! user = services.users.createUser request None
+            let! user = userServ.createUser request None
                         |> AsyncHttpResult.thenValue
 
             let session = getSessionForUser (user.id + 1) |> TestUtilities.setSessionPrivileges []
 
             //Act
-            let! response = services.users.deleteUser user.id session
+            let! response = userServ.deleteUser user.id session
 
             //Assert
             response |> shouldBeError 403 Security.noPrivilegeOrSelfErrorMessage
@@ -66,15 +66,15 @@ type DeleteUserTests() =
         task {
             //Arrange
             let request = getCreateUserRequest()
-            let! user = services.users.createUser request None
+            let! user = userServ.createUser request None
                         |> AsyncHttpResult.thenValue
 
             let session = getSessionForUser 1 |> TestUtilities.setSessionPrivileges [EditUsers]
 
-            let! _ = services.users.deleteUser user.id session
+            let! _ = userServ.deleteUser user.id session
 
             //Act
-            let! response = services.users.deleteUser user.id session
+            let! response = userServ.deleteUser user.id session
 
             //Assert
             response |> shouldBeError 404 "User not found."
