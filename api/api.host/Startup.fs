@@ -8,7 +8,6 @@ open Microsoft.Extensions.Configuration
 open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.FileProviders
 
-open Giraffe
 open Newtonsoft.Json
 open Serilog
 
@@ -30,7 +29,6 @@ type Startup() =
     member __.ConfigureServices(services : IServiceCollection) : unit =
         // Framework services
         services.AddCors() |> ignore
-        //services.AddGiraffe() |> ignore // TODO: Phase out
         services.AddControllers() |> ignore
 
         // Configuration
@@ -101,11 +99,6 @@ type Startup() =
             settings.Converters <- converters.ToList()
             JsonConvert.DefaultSettings <- (fun () -> settings)
 
-        //let errorHandler (ex : Exception) (logger : Microsoft.Extensions.Logging.ILogger) =
-        //    logger.LogError(ex, "An unhandled exception has occurred while executing the request.")
-        //    Log.Logger.Error(ex, "An unexpected error occurred.")
-        //    clearResponse >=> setStatusCode 500 >=> text ex.Message
-
         let configureCors (builder : CorsPolicyBuilder) =
             builder.WithOrigins(__.Configuration.GetValue<string>("Api:WebAddress"))
                     .AllowAnyMethod()
@@ -148,10 +141,8 @@ type Startup() =
         configureNewtonsoft() 
 
         if __.Configuration.GetValue<bool>("WebServer:Enable")
-        then
-            configureWebServer(app) |> ignore
+        then configureWebServer(app) |> ignore
 
-//        app.UseGiraffeErrorHandler(errorHandler) |> ignore
         app.UseCors(configureCors) |> ignore
         app.UseWebSockets() |> ignore
 

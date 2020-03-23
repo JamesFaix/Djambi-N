@@ -23,7 +23,6 @@
     <None Include="Dockerfile" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Giraffe" Version="4.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />
