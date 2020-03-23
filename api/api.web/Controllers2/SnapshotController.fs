@@ -11,7 +11,7 @@ open Apex.Api.Web
 
 [<ApiController>]
 [<Route("games/{gameId}/snapshots")>]
-type SnapshotController2(manager : ISnapshotManager,
+type SnapshotController(manager : ISnapshotManager,
                        logger : ILogger,
                        util : HttpUtility) =
     inherit ControllerBase()

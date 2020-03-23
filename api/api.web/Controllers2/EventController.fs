@@ -11,7 +11,7 @@ open Apex.Api.Web
 
 [<ApiController>]
 [<Route("events")>]
-type EventManager2(manager : IEventManager,
+type EventController(manager : IEventManager,
                        logger : ILogger,
                        util : HttpUtility) =
     inherit ControllerBase()

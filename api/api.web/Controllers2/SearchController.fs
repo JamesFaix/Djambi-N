@@ -11,7 +11,7 @@ open Apex.Api.Web
 
 [<ApiController>]
 [<Route("search")>]
-type SearchController2(manager : ISearchManager,
+type SearchController(manager : ISearchManager,
                        logger : ILogger,
                        util : HttpUtility) =
     inherit ControllerBase()

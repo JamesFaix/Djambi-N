@@ -11,7 +11,7 @@ open Apex.Api.Web
 
 [<ApiController>]
 [<Route("games/{gameId}/current-turn")>]
-type TurnController2(manager : ITurnManager,
+type TurnController(manager : ITurnManager,
                        logger : ILogger,
                        util : HttpUtility) =
     inherit ControllerBase()

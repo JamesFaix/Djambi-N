@@ -12,7 +12,7 @@ open Apex.Api.Common
 
 [<ApiController>]
 [<Route("games/{gameId}/players")>]
-type PlayerController2(manager : IPlayerManager,
+type PlayerController(manager : IPlayerManager,
                        logger : ILogger,
                        util : HttpUtility) =
     inherit ControllerBase()

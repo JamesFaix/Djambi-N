@@ -45,7 +45,6 @@
     <ProjectReference Include="..\api.logic.interfaces\api.logic.interfaces.fsproj" />
     <ProjectReference Include="..\api.logic\api.logic.fsproj" />
     <ProjectReference Include="..\api.model\api.model.fsproj" />
-    <ProjectReference Include="..\api.web.interfaces\api.web.interfaces.fsproj" />
     <ProjectReference Include="..\api.web\api.web.fsproj" />
   </ItemGroup>
 </Project>

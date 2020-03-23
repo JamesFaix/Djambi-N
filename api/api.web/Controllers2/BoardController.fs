@@ -11,7 +11,7 @@ open Apex.Api.Web
 
 [<ApiController>]
 [<Route("boards")>]
-type BoardController2(manager : IBoardManager,
+type BoardController(manager : IBoardManager,
                        logger : ILogger,
                        util : HttpUtility) =
     inherit ControllerBase()

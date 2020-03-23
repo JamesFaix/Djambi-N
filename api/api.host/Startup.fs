@@ -1,15 +1,12 @@
 ﻿namespace Apex.Api.Host
 
-open System
 open System.Linq
 open Microsoft.AspNetCore.Builder
 open Microsoft.AspNetCore.Cors.Infrastructure
 open Microsoft.AspNetCore.Hosting
-open Microsoft.AspNetCore.Http
 open Microsoft.Extensions.Configuration
 open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.FileProviders
-open Microsoft.Extensions.Logging
 
 open Giraffe
 open Newtonsoft.Json
@@ -22,10 +19,9 @@ open Apex.Api.Logic.Interfaces
 open Apex.Api.Logic.Managers
 open Apex.Api.Logic.Services
 open Apex.Api.Web
-open Apex.Api.Web.Controllers
-open Apex.Api.Web.Interfaces
 open Apex.Api.Model.Configuration
 open Apex.Api.Db.Interfaces
+open Microsoft.AspNetCore.Http
 
 type Startup() =
 
@@ -34,7 +30,7 @@ type Startup() =
     member __.ConfigureServices(services : IServiceCollection) : unit =
         // Framework services
         services.AddCors() |> ignore
-        services.AddGiraffe() |> ignore // TODO: Phase out
+        //services.AddGiraffe() |> ignore // TODO: Phase out
         services.AddControllers() |> ignore
 
         // Configuration
@@ -84,16 +80,6 @@ type Startup() =
 
         // Controller layer
         services.AddSingleton<HttpUtility>() |> ignore
-        services.AddSingleton<IBoardController, BoardController>() |> ignore
-        services.AddSingleton<IEventController, EventController>() |> ignore
-        services.AddSingleton<IGameController, GameController>() |> ignore
-        services.AddSingleton<INotificationsController, NotificationController>() |> ignore
-        services.AddSingleton<IPlayerController, PlayerController>() |> ignore
-        services.AddSingleton<ISearchController, SearchController>() |> ignore
-        services.AddSingleton<ISessionController, SessionController>() |> ignore
-        services.AddSingleton<ISnapshotController, SnapshotController>() |> ignore
-        services.AddSingleton<ITurnController, TurnController>() |> ignore
-        services.AddSingleton<IUserController, UserController>() |> ignore
         
         ()
 
@@ -115,10 +101,10 @@ type Startup() =
             settings.Converters <- converters.ToList()
             JsonConvert.DefaultSettings <- (fun () -> settings)
 
-        let errorHandler (ex : Exception) (logger : Microsoft.Extensions.Logging.ILogger) =
-            logger.LogError(ex, "An unhandled exception has occurred while executing the request.")
-            Log.Logger.Error(ex, "An unexpected error occurred.")
-            clearResponse >=> setStatusCode 500 >=> text ex.Message
+        //let errorHandler (ex : Exception) (logger : Microsoft.Extensions.Logging.ILogger) =
+        //    logger.LogError(ex, "An unhandled exception has occurred while executing the request.")
+        //    Log.Logger.Error(ex, "An unexpected error occurred.")
+        //    clearResponse >=> setStatusCode 500 >=> text ex.Message
 
         let configureCors (builder : CorsPolicyBuilder) =
             builder.WithOrigins(__.Configuration.GetValue<string>("Api:WebAddress"))
@@ -126,73 +112,6 @@ type Startup() =
                     .AllowAnyHeader()
                     .AllowCredentials()
                     |> ignore
-
-        let apiHandler =
-            let getService () : 'a = app.ApplicationServices.GetService<'a>()
-            let sessionCtrl = getService<ISessionController>()
-            let userCtrl = getService<IUserController>()
-            let boardCtrl = getService<IBoardController>()
-            let gameCtrl = getService<IGameController>()
-            let playerCtrl = getService<IPlayerController>()
-            let turnCtrl = getService<ITurnController>()
-            let eventCtrl = getService<IEventController>()
-            let searchCtrl = getService<ISearchController>()
-            let snapshotCtrl = getService<ISnapshotController>()
-            let notificationCtrl = getService<INotificationsController>()
-
-            let getHandler : HttpFunc -> HttpContext -> HttpFuncResult =
-                    choose [
-                        subRoute "/api"
-                            (choose [
-
-                            //Session
-                                POST >=> route Routes.sessions >=> sessionCtrl.openSession
-                                DELETE >=> route Routes.sessions >=> sessionCtrl.closeSession
-
-                            //Users
-                                POST >=> route Routes.users >=> userCtrl.createUser
-                                GET >=> routef Routes.userFormat userCtrl.getUser
-                                GET >=> route Routes.currentUser >=> userCtrl.getCurrentUser
-                                DELETE >=> routef Routes.userFormat userCtrl.deleteUser
-
-                            //Board
-                                GET >=> routef Routes.boardFormat boardCtrl.getBoard
-                                GET >=> routef Routes.pathsFormat boardCtrl.getCellPaths
-
-                            //Game lobby
-                                POST >=> route Routes.games >=> gameCtrl.createGame
-                                GET >=> routef Routes.gameFormat gameCtrl.getGame
-                                PUT >=> routef Routes.gameParametersFormat gameCtrl.updateGameParameters
-                                POST >=> routef Routes.startGameFormat gameCtrl.startGame
-
-                            //Players
-                                POST >=> routef Routes.playersFormat playerCtrl.addPlayer
-                                DELETE >=> routef Routes.playerFormat playerCtrl.removePlayer
-                                PUT >=> routef Routes.playerStatusChangeFormat playerCtrl.updatePlayerStatus
-
-                            //Turn actions
-                                POST >=> routef Routes.selectCellFormat turnCtrl.selectCell
-                                POST >=> routef Routes.resetTurnFormat turnCtrl.resetTurn
-                                POST >=> routef Routes.commitTurnFormat turnCtrl.commitTurn
-
-                            //Events
-                                POST >=> routef Routes.eventsQueryFormat eventCtrl.getEvents
-
-                            //Search
-                                POST >=> route Routes.searchGames >=> searchCtrl.searchGames
-
-                            //Snapshots
-                                POST >=> routef Routes.snapshotsFormat snapshotCtrl.createSnapshot
-                                GET >=> routef Routes.snapshotsFormat snapshotCtrl.getSnapshotsForGame
-                                DELETE >=> routef Routes.snapshotFormat snapshotCtrl.deleteSnapshot
-                                POST >=> routef Routes.snapshotLoadFormat snapshotCtrl.loadSnapshot
-
-                            //Notifications
-                                GET >=> route Routes.notificationsSse >=> notificationCtrl.connectSse
-                                GET >=> route Routes.notificationsWebSockets >=> notificationCtrl.connectWebSockets
-                            ])
-                        setStatusCode 404 >=> text "Not Found" ]
-            getHandler
     
         let configureWebServer(app : IApplicationBuilder) : IApplicationBuilder =
             let isDefault (path : string) =
@@ -232,12 +151,15 @@ type Startup() =
         then
             configureWebServer(app) |> ignore
 
-        app.UseGiraffeErrorHandler(errorHandler) |> ignore
+//        app.UseGiraffeErrorHandler(errorHandler) |> ignore
         app.UseCors(configureCors) |> ignore
         app.UseWebSockets() |> ignore
-        app.UseGiraffe(apiHandler) |> ignore
+
+        app.UseRouting() |> ignore
+        app.UsePathBase(PathString("/api")) |> ignore
         app.UseEndpoints(fun endpoints -> 
             endpoints.MapControllers() |> ignore
         ) |> ignore
+
         app.UseMiddleware<ErrorHandlingMiddleware>() |> ignore
         ()

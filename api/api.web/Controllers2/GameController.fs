@@ -11,7 +11,7 @@ open Apex.Api.Web
 
 [<ApiController>]
 [<Route("games")>]
-type GameController2(manager : IGameManager,
+type GameController(manager : IGameManager,
                        logger : ILogger,
                        util : HttpUtility) =
     inherit ControllerBase()
