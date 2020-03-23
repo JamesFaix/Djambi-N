@@ -13,11 +13,11 @@ services:
     ports:
       - "5100:5100"
     environment:
-      - APEX_apiAddress=http://*:5100
-      - "APEX_apexConnectionString=Data Source=db;Initial Catalog=Apex;User Id=SA;Password=GR3@Tpassword;"
-      - APEX_webAddress=http://localhost:8080
-      - APEX_logsDir=
-      - APEX_cookieDomain=localhost
+      - APEX_Api__apiAddress=http://*:5100
+      - APEX_Api__cookieDomain=localhost
+      - APEX_Api__webAddress=http://localhost:8080
+      - APEX_Log__directory=
+      - "APEX_Sql__connectionString=Data Source=db;Initial Catalog=Apex;User Id=SA;Password=GR3@Tpassword;"
   web:
     build:
       context: .

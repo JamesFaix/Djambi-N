@@ -14,10 +14,12 @@ open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.Common.Json
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Model.SessionModel
+open Microsoft.Extensions.Options
+open Apex.Api.Model.Configuration
 
 type HttpHandler = HttpFunc -> HttpContext -> HttpContext option Task
 
-type HttpUtility(cookieDomain : string,
+type HttpUtility(options : IOptions<ApiSettings>,
                  sessionServ : ISessionService,
                  log : ILogger) =
 
@@ -51,7 +53,7 @@ type HttpUtility(cookieDomain : string,
 
     member x.appendCookie (ctx : HttpContext) (token : string, expiration : DateTime) =
         let cookieOptions = CookieOptions()
-        cookieOptions.Domain <- cookieDomain
+        cookieOptions.Domain <- options.Value.cookieDomain
         cookieOptions.Path <- "/"
         cookieOptions.Secure <- false
         cookieOptions.HttpOnly <- true

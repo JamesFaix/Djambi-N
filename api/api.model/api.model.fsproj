@@ -4,6 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Configuration.fs" />
     <Compile Include="UserModel.fs" />
     <Compile Include="SessionModel.fs" />
     <Compile Include="BoardModel.fs" />

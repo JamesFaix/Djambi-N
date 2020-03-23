@@ -3,6 +3,8 @@ namespace Apex.Api.Db
 open System.Data
 open System.Data.SqlClient
 open System
+open Microsoft.Extensions.Options
+open Apex.Api.Model.Configuration
 
 /// <summary>
 /// Encapsulates a database connection, with optional transaction.
@@ -31,7 +33,9 @@ type CommandContext(cn, tran) =
 /// <summary>
 /// Creates <c>CommandContext</c> instances.
 /// </summary>
-type CommandContextProvider(connectionString) =
+type CommandContextProvider(options : IOptions<SqlSettings>) =
+    let connectionString = options.Value.connectionString
+
     member x.getContext() : CommandContext =
         let cn = new SqlConnection(connectionString)
         cn.Open()

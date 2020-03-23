@@ -3,12 +3,12 @@
     "Kestrel": {
       "commandName": "Project",
       "environmentVariables": {
-        "APEX_webRoot": "C:\\Git\\Apex\\web",
-        "APEX_apexConnectionString": "Data Source=localhost;Initial Catalog=Apex;Integrated Security=True;",
-        "APEX_webAddress": "http://localhost:5100",
-        "APEX_apiAddress": "http://localhost:5100",
-        "APEX_logsDir": "C:\\Git\\Apex\\logs",
-        "APEX_cookieDomain": "localhost",
+        "APEX_Api__webAddress": "http://localhost:8080",
+        "APEX_Api__apiAddress": "http://localhost:5100",
+        "APEX_Api__cookieDomain": "localhost",
+        "APEX_Log__directory": "C:\\Git\\Apex\\logs",
+        "APEX_Sql__connectionString": "Data Source=localhost;Initial Catalog=Apex;Integrated Security=True;",
+        "APEX_WebServer__webRoot": "C:\\Git\\Apex\\web",
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "applicationUrl": "http://localhost:5100/"
