@@ -34,7 +34,8 @@ type Startup() =
     member __.ConfigureServices(services : IServiceCollection) : unit =
         // Framework services
         services.AddCors() |> ignore
-        services.AddGiraffe() |> ignore // Phase out
+        services.AddGiraffe() |> ignore // TODO: Phase out
+        services.AddControllers() |> ignore
 
         // Configuration
         services.Configure<AppSettings>(__.Configuration) |> ignore
@@ -235,5 +236,8 @@ type Startup() =
         app.UseCors(configureCors) |> ignore
         app.UseWebSockets() |> ignore
         app.UseGiraffe(apiHandler) |> ignore
-
+        app.UseEndpoints(fun endpoints -> 
+            endpoints.MapControllers() |> ignore
+        ) |> ignore
+        app.UseMiddleware<ErrorHandlingMiddleware>() |> ignore
         ()
