@@ -1,0 +1,63 @@
+﻿namespace Apex.Api.Web.Controllers2
+
+open System.Threading.Tasks
+open Microsoft.AspNetCore.Mvc
+open FSharp.Control.Tasks
+open Serilog
+open Apex.Api.Common.Control.AsyncHttpResult
+open Apex.Api.Logic.Interfaces
+open Apex.Api.Model
+open Apex.Api.Web
+
+[<ApiController>]
+[<Route("games/{gameId}/current-turn")>]
+type TurnController2(manager : ITurnManager,
+                       logger : ILogger,
+                       util : HttpUtility) =
+    inherit ControllerBase()
+    
+    [<HttpPost("selections/{cellId}")>]
+    [<ProducesResponseType(200, Type = typeof<StateAndEventResponse>)>]
+    member __.SelectCell(gameId : int, cellId : int) : Task<IActionResult> =
+        let ctx = base.HttpContext
+        task {
+            let response =
+                util.getSessionFromContext ctx
+                |> thenBindAsync (fun session ->
+                    manager.selectCell (gameId, cellId) session
+                )
+                |> thenExtract
+
+            return OkObjectResult(response) :> IActionResult
+        }
+        
+    [<HttpPost("reset-request")>]
+    [<ProducesResponseType(200, Type = typeof<StateAndEventResponse>)>]
+    member __.ResetTurn(gameId : int) : Task<IActionResult> =
+        let ctx = base.HttpContext
+        task {
+            let response =
+                util.getSessionFromContext ctx
+                |> thenBindAsync (fun session ->
+                    manager.resetTurn gameId session
+                )
+                |> thenExtract
+
+            return OkObjectResult(response) :> IActionResult
+        }
+    
+    [<HttpPost("commit-request")>]
+    [<ProducesResponseType(200, Type = typeof<StateAndEventResponse>)>]
+    member __.CommitTurn(gameId : int) : Task<IActionResult> =
+        let ctx = base.HttpContext
+        task {
+            let response =
+                util.getSessionFromContext ctx
+                |> thenBindAsync (fun session ->
+                    manager.commitTurn gameId session
+                )
+                |> thenExtract
+
+            return OkObjectResult(response) :> IActionResult
+        }
+    
