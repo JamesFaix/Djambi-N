@@ -1,4 +1,4 @@
-﻿namespace Apex.Api.Web.Controllers2
+﻿namespace Apex.Api.Web.Controllers
 
 open System.Threading.Tasks
 open Microsoft.AspNetCore.Mvc

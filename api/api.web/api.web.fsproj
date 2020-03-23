@@ -7,17 +7,17 @@
     <Compile Include="Websockets.fs" />
     <Compile Include="HttpUtility.fs" />
     <Compile Include="ServerSideEvents.fs" />
-    <Compile Include="Controllers2\BoardController.fs" />
-    <Compile Include="Controllers2\EventController.fs" />
-    <Compile Include="Controllers2\GameController.fs" />
-    <Compile Include="Controllers2\NotificationController.fs" />
-    <Compile Include="Controllers2\PlayerController.fs" />
-    <Compile Include="Controllers2\SearchController.fs" />
-    <Compile Include="Controllers2\SessionController.fs" />
-    <Compile Include="Controllers2\SnapshotController.fs" />
-    <Compile Include="Controllers2\TurnController.fs" />
-    <Compile Include="Controllers2\UserController.fs" />
+    <Compile Include="Controllers\OldNotificationController.fs" />
+    <Compile Include="Controllers\BoardController.fs" />
+    <Compile Include="Controllers\EventController.fs" />
+    <Compile Include="Controllers\GameController.fs" />
     <Compile Include="Controllers\NotificationController.fs" />
+    <Compile Include="Controllers\PlayerController.fs" />
+    <Compile Include="Controllers\SearchController.fs" />
+    <Compile Include="Controllers\SessionController.fs" />
+    <Compile Include="Controllers\SnapshotController.fs" />
+    <Compile Include="Controllers\TurnController.fs" />
+    <Compile Include="Controllers\UserController.fs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Giraffe" Version="4.0.0" />
