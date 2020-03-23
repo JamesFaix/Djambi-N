@@ -24,6 +24,8 @@ open Apex.Api.Logic.Services
 open Apex.Api.Web
 open Apex.Api.Web.Controllers
 open Apex.Api.Web.Interfaces
+open Apex.Api.Model.Configuration
+open Apex.Api.Db.Interfaces
 
 type Startup() =
 
@@ -34,6 +36,64 @@ type Startup() =
         services.AddCors() |> ignore
         services.AddGiraffe() |> ignore // Phase out
 
+        // Configuration
+        services.Configure<AppSettings>(__.Configuration) |> ignore
+        services.Configure<SqlSettings>(__.Configuration.GetSection("Sql")) |> ignore
+        services.Configure<WebServerSettings>(__.Configuration.GetSection("WebServer")) |> ignore
+        services.Configure<ApiSettings>(__.Configuration.GetSection("Api")) |> ignore
+
+        // Serilog
+        services.AddSingleton<Serilog.ILogger>(Log.Logger) |> ignore
+
+        // Database layer
+        services.AddSingleton<CommandContextProvider>() |> ignore
+        services.AddSingleton<IEventRepository, EventRepository>() |> ignore
+        services.AddSingleton<GameRepository>() |> ignore
+        services.AddSingleton<IGameRepository, GameRepository>() |> ignore
+        services.AddSingleton<ISearchRepository, SearchRepository>() |> ignore
+        services.AddSingleton<ISessionRepository, SessionRepository>() |> ignore
+        services.AddSingleton<ISnapshotRepository, SnapshotRepository>() |> ignore
+        services.AddSingleton<IUserRepository, UserRepository>() |> ignore
+
+        // Logic layer
+        services.AddSingleton<BoardService>() |> ignore
+        services.AddSingleton<EventService>() |> ignore
+        services.AddSingleton<GameCrudService>() |> ignore
+        services.AddSingleton<GameStartService>() |> ignore
+        services.AddSingleton<IndirectEffectsService>() |> ignore
+        services.AddSingleton<INotificationService, NotificationService>() |> ignore
+        services.AddSingleton<PlayerService>() |> ignore
+        services.AddSingleton<PlayerStatusChangeService>() |> ignore
+        services.AddSingleton<ISessionService, SessionService>() |> ignore
+        services.AddSingleton<SelectionOptionsService>() |> ignore
+        services.AddSingleton<SelectionService>() |> ignore
+        services.AddSingleton<TurnService>() |> ignore
+        services.AddSingleton<UserService>() |> ignore
+        
+        services.AddSingleton<IBoardManager, BoardManager>() |> ignore
+        services.AddSingleton<ISearchManager, SearchManager>() |> ignore
+        services.AddSingleton<ISessionManager, SessionManager>() |> ignore
+        services.AddSingleton<ISnapshotManager, SnapshotManager>() |> ignore
+        services.AddSingleton<IUserManager, UserManager>() |> ignore
+        // TODO: Break up game manager
+        services.AddSingleton<IEventManager, GameManager>() |> ignore
+        services.AddSingleton<IGameManager, GameManager>() |> ignore
+        services.AddSingleton<IPlayerManager, GameManager>() |> ignore
+        services.AddSingleton<ITurnManager, GameManager>() |> ignore
+
+        // Controller layer
+        services.AddSingleton<HttpUtility>() |> ignore
+        services.AddSingleton<IBoardController, BoardController>() |> ignore
+        services.AddSingleton<IEventController, EventController>() |> ignore
+        services.AddSingleton<IGameController, GameController>() |> ignore
+        services.AddSingleton<INotificationsController, NotificationController>() |> ignore
+        services.AddSingleton<IPlayerController, PlayerController>() |> ignore
+        services.AddSingleton<ISearchController, SearchController>() |> ignore
+        services.AddSingleton<ISessionController, SessionController>() |> ignore
+        services.AddSingleton<ISnapshotController, SnapshotController>() |> ignore
+        services.AddSingleton<ITurnController, TurnController>() |> ignore
+        services.AddSingleton<IUserController, UserController>() |> ignore
+        
         ()
 
     member __.Configure(app : IApplicationBuilder, env : IWebHostEnvironment) : unit =
@@ -60,64 +120,24 @@ type Startup() =
             clearResponse >=> setStatusCode 500 >=> text ex.Message
 
         let configureCors (builder : CorsPolicyBuilder) =
-            builder.WithOrigins(__.Configuration.GetValue<string>("webAddress"))
+            builder.WithOrigins(__.Configuration.GetValue<string>("Api:WebAddress"))
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials()
                     |> ignore
 
         let apiHandler =
-            // DB layer
-            let ctxProvider = CommandContextProvider(__.Configuration.GetValue<string>("apexConnectionString"))
-            let gameRepo = GameRepository(ctxProvider)
-            let userRepo = UserRepository(ctxProvider)
-            let eventRepo = EventRepository(ctxProvider, gameRepo)
-            let searchRepo = SearchRepository(ctxProvider)
-            let sessionRepo = SessionRepository(ctxProvider, userRepo)
-            let snapshotRepo = SnapshotRepository(ctxProvider)
-
-            // App layer
-            let boardServ = BoardService()
-            let gameCrudServ = GameCrudService(gameRepo)
-            let notificationServ = NotificationService(Log.Logger)
-            let playerServ = PlayerService(gameRepo)
-            let selectionOptionsServ = SelectionOptionsService()
-            let sessionServ = SessionService(sessionRepo, userRepo)
-            let userServ = UserService(userRepo)
-            let gameStartServ = GameStartService(playerServ, selectionOptionsServ)
-            let eventServ = EventService(gameStartServ)
-            let indirectEffectsServ = IndirectEffectsService(eventServ, selectionOptionsServ)
-            let playerStatusChangeServ = PlayerStatusChangeService(eventServ, indirectEffectsServ)
-            let selectionServ = SelectionService(selectionOptionsServ)
-            let turnServ = TurnService(eventServ, indirectEffectsServ, selectionOptionsServ)
-      
-            let boardMan = BoardManager(boardServ)
-            let gameMan = GameManager(eventRepo,
-                                    eventServ,
-                                    gameCrudServ,
-                                    gameRepo,
-                                    gameStartServ,
-                                    notificationServ,
-                                    playerServ,
-                                    playerStatusChangeServ,
-                                    selectionServ,
-                                    turnServ)
-            let searchMan = SearchManager(searchRepo)
-            let sessionMan = SessionManager(sessionServ)
-            let snapshotMan = SnapshotManager(eventRepo, gameRepo, snapshotRepo)
-            let userMan = UserManager(userServ)
-
-            let httpUtil = HttpUtility(__.Configuration.GetValue<string>("cookieDomain"), sessionServ, Log.Logger)
-            let boardCtrl = BoardController(boardMan, httpUtil)
-            let eventCtrl = EventController(gameMan, httpUtil)
-            let gameCtrl = GameController(gameMan, httpUtil)
-            let notificationCtrl = NotificationController(httpUtil, notificationServ, Log.Logger)
-            let playerCtrl = PlayerController(httpUtil, gameMan)
-            let searchCtrl = SearchController(searchMan, httpUtil)
-            let sessionCtrl = SessionController(httpUtil, sessionMan)
-            let snapshotCtrl = SnapshotController(httpUtil, snapshotMan)
-            let turnCtrl = TurnController(httpUtil, gameMan)
-            let userCtrl = UserController(httpUtil, userMan)
+            let getService () : 'a = app.ApplicationServices.GetService<'a>()
+            let sessionCtrl = getService<ISessionController>()
+            let userCtrl = getService<IUserController>()
+            let boardCtrl = getService<IBoardController>()
+            let gameCtrl = getService<IGameController>()
+            let playerCtrl = getService<IPlayerController>()
+            let turnCtrl = getService<ITurnController>()
+            let eventCtrl = getService<IEventController>()
+            let searchCtrl = getService<ISearchController>()
+            let snapshotCtrl = getService<ISnapshotController>()
+            let notificationCtrl = getService<INotificationsController>()
 
             let getHandler : HttpFunc -> HttpContext -> HttpFuncResult =
                     choose [
@@ -125,50 +145,50 @@ type Startup() =
                             (choose [
 
                             //Session
-                                POST >=> route Routes.sessions >=> (sessionCtrl :> ISessionController).openSession
-                                DELETE >=> route Routes.sessions >=> (sessionCtrl :> ISessionController).closeSession
+                                POST >=> route Routes.sessions >=> sessionCtrl.openSession
+                                DELETE >=> route Routes.sessions >=> sessionCtrl.closeSession
 
                             //Users
-                                POST >=> route Routes.users >=> (userCtrl :> IUserController).createUser
-                                GET >=> routef Routes.userFormat (userCtrl :> IUserController).getUser
-                                GET >=> route Routes.currentUser >=> (userCtrl :> IUserController).getCurrentUser
-                                DELETE >=> routef Routes.userFormat (userCtrl :> IUserController).deleteUser
+                                POST >=> route Routes.users >=> userCtrl.createUser
+                                GET >=> routef Routes.userFormat userCtrl.getUser
+                                GET >=> route Routes.currentUser >=> userCtrl.getCurrentUser
+                                DELETE >=> routef Routes.userFormat userCtrl.deleteUser
 
                             //Board
-                                GET >=> routef Routes.boardFormat (boardCtrl :> IBoardController).getBoard
-                                GET >=> routef Routes.pathsFormat (boardCtrl :> IBoardController).getCellPaths
+                                GET >=> routef Routes.boardFormat boardCtrl.getBoard
+                                GET >=> routef Routes.pathsFormat boardCtrl.getCellPaths
 
                             //Game lobby
-                                POST >=> route Routes.games >=> (gameCtrl :> IGameController).createGame
-                                GET >=> routef Routes.gameFormat (gameCtrl :> IGameController).getGame
-                                PUT >=> routef Routes.gameParametersFormat (gameCtrl :> IGameController).updateGameParameters
-                                POST >=> routef Routes.startGameFormat (gameCtrl :> IGameController).startGame
+                                POST >=> route Routes.games >=> gameCtrl.createGame
+                                GET >=> routef Routes.gameFormat gameCtrl.getGame
+                                PUT >=> routef Routes.gameParametersFormat gameCtrl.updateGameParameters
+                                POST >=> routef Routes.startGameFormat gameCtrl.startGame
 
                             //Players
-                                POST >=> routef Routes.playersFormat (playerCtrl :> IPlayerController).addPlayer
-                                DELETE >=> routef Routes.playerFormat (playerCtrl :> IPlayerController).removePlayer
-                                PUT >=> routef Routes.playerStatusChangeFormat (playerCtrl :> IPlayerController).updatePlayerStatus
+                                POST >=> routef Routes.playersFormat playerCtrl.addPlayer
+                                DELETE >=> routef Routes.playerFormat playerCtrl.removePlayer
+                                PUT >=> routef Routes.playerStatusChangeFormat playerCtrl.updatePlayerStatus
 
                             //Turn actions
-                                POST >=> routef Routes.selectCellFormat (turnCtrl :> ITurnController).selectCell
-                                POST >=> routef Routes.resetTurnFormat (turnCtrl :> ITurnController).resetTurn
-                                POST >=> routef Routes.commitTurnFormat (turnCtrl :> ITurnController).commitTurn
+                                POST >=> routef Routes.selectCellFormat turnCtrl.selectCell
+                                POST >=> routef Routes.resetTurnFormat turnCtrl.resetTurn
+                                POST >=> routef Routes.commitTurnFormat turnCtrl.commitTurn
 
                             //Events
-                                POST >=> routef Routes.eventsQueryFormat (eventCtrl :> IEventController).getEvents
+                                POST >=> routef Routes.eventsQueryFormat eventCtrl.getEvents
 
                             //Search
-                                POST >=> route Routes.searchGames >=> (searchCtrl :> ISearchController).searchGames
+                                POST >=> route Routes.searchGames >=> searchCtrl.searchGames
 
                             //Snapshots
-                                POST >=> routef Routes.snapshotsFormat (snapshotCtrl :> ISnapshotController).createSnapshot
-                                GET >=> routef Routes.snapshotsFormat (snapshotCtrl :> ISnapshotController).getSnapshotsForGame
-                                DELETE >=> routef Routes.snapshotFormat (snapshotCtrl :> ISnapshotController).deleteSnapshot
-                                POST >=> routef Routes.snapshotLoadFormat (snapshotCtrl :> ISnapshotController).loadSnapshot
+                                POST >=> routef Routes.snapshotsFormat snapshotCtrl.createSnapshot
+                                GET >=> routef Routes.snapshotsFormat snapshotCtrl.getSnapshotsForGame
+                                DELETE >=> routef Routes.snapshotFormat snapshotCtrl.deleteSnapshot
+                                POST >=> routef Routes.snapshotLoadFormat snapshotCtrl.loadSnapshot
 
                             //Notifications
-                                GET >=> route Routes.notificationsSse >=> (notificationCtrl :> INotificationsController).connectSse
-                                GET >=> route Routes.notificationsWebSockets >=> (notificationCtrl :> INotificationsController).connectWebSockets
+                                GET >=> route Routes.notificationsSse >=> notificationCtrl.connectSse
+                                GET >=> route Routes.notificationsWebSockets >=> notificationCtrl.connectWebSockets
                             ])
                         setStatusCode 404 >=> text "Not Found" ]
             getHandler
@@ -185,7 +205,7 @@ type Startup() =
                         path.StartsWith("/dist") ||
                         isDefault path
 
-                    if __.Configuration.GetValue<bool>("enableWebServerDevelopmentMode") then
+                    if __.Configuration.GetValue<bool>("WebServer:EnableDevelopmentMode") then
                         //This has to be allowed in development because of the React development packages.
                         //TODO: Disable this in release configuration
                         isPublic <- isPublic || path.StartsWith("/node_modules")
@@ -197,7 +217,7 @@ type Startup() =
                 ),
                 (fun a ->
                     let sfOptions = StaticFileOptions()
-                    sfOptions.FileProvider <- new PhysicalFileProvider(__.Configuration.GetValue<string>("webRoot"))
+                    sfOptions.FileProvider <- new PhysicalFileProvider(__.Configuration.GetValue<string>("WebServer:WebRoot"))
             
                     a.UseDefaultFiles()
                         .UseStaticFiles(sfOptions) 
@@ -207,7 +227,7 @@ type Startup() =
 
         configureNewtonsoft() 
 
-        if __.Configuration.GetValue<bool>("enableWebServer")
+        if __.Configuration.GetValue<bool>("WebServer:Enable")
         then
             configureWebServer(app) |> ignore
 

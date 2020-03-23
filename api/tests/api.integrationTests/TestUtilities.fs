@@ -10,24 +10,28 @@ open Apex.Api.Common.Control
 open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.Db
 open Apex.Api.Db.Interfaces
-open Apex.Api.Logic
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Model
 open Apex.Api.Logic.Managers
 open Apex.Api.Logic.Services
 open Apex.Api.Db.Repositories
+open Apex.Api.Model.Configuration
+open Microsoft.Extensions.Options
 
 let private config =
     ConfigurationBuilder()
         .AddEnvironmentVariables("APEX_")
         .Build()
 
-let connectionString = config.["apexConnectionString"]
+let settings = 
+    let x = AppSettings.empty
+    ConfigurationBinder.Bind(config, x)
+    x
 
 let log = LoggerConfiguration().CreateLogger()
 
 // DB layer
-let ctxProvider = CommandContextProvider(connectionString)
+let ctxProvider = CommandContextProvider(Options.Create(settings.sql))
 let gameRepo = GameRepository(ctxProvider)
 let userRepo = UserRepository(ctxProvider)
 let eventRepo = EventRepository(ctxProvider, gameRepo)
