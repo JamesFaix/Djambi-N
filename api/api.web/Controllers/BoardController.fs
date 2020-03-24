@@ -32,12 +32,11 @@ type BoardController(manager : IBoardManager,
         }
     
     [<HttpGet("{regionCount}/cells/{cellId}")>]
-    [<ProducesResponseType(200, Type = typeof<int[][]>)>]
+    [<ProducesResponseType(200, Type = typeof<List<List<int>>>)>]
     member __.GetCellPaths(regionCount : int, cellId : int) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
             let! session = scp.GetSessionFromContext ctx
             let! paths = manager.getCellPaths (regionCount, cellId) session |> thenExtract
-            let dto = paths |> toPathsDto
-            return OkObjectResult(dto) :> IActionResult
+            return OkObjectResult(paths) :> IActionResult
         }

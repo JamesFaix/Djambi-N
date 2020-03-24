@@ -8,32 +8,27 @@ module SearchMappings =
 
     let toGamesQuery (source : GamesQueryDto) : GamesQuery =
         {
-            gameId = source.GameId |> Option.ofNullable
-            descriptionContains = source.DescriptionContains |> Option.ofObj
-            createdByUserName = source.CreatedByUserName |> Option.ofObj
-            playerUserName = source.PlayerUserName |> Option.ofObj
-            containsMe = source.ContainsMe |> Option.ofNullable
-            isPublic = source.IsPublic |> Option.ofNullable
-            allowGuests = source.AllowGuests |> Option.ofNullable
-            statuses = source.Statuses |> Seq.map toGameStatus |> Seq.toList
-            createdBefore = source.CreatedBefore |> Option.ofNullable
-            createdAfter = source.CreatedAfter |> Option.ofNullable
-            lastEventBefore = source.LastEventBefore |> Option.ofNullable
-            lastEventAfter = source.LastEventAfter |> Option.ofNullable
+            gameId = source.gameId |> Option.ofNullable
+            descriptionContains = source.descriptionContains |> Option.ofObj
+            createdByUserName = source.createdByUserName |> Option.ofObj
+            playerUserName = source.playerUserName |> Option.ofObj
+            containsMe = source.containsMe |> Option.ofNullable
+            isPublic = source.isPublic |> Option.ofNullable
+            allowGuests = source.allowGuests |> Option.ofNullable
+            statuses = source.statuses |> Seq.map toGameStatus |> Seq.toList
+            createdBefore = source.createdBefore |> Option.ofNullable
+            createdAfter = source.createdAfter |> Option.ofNullable
+            lastEventBefore = source.lastEventBefore |> Option.ofNullable
+            lastEventAfter = source.lastEventAfter |> Option.ofNullable
         }
 
     let toSearchGameDto (source : SearchGame) : SearchGameDto =
-        let result = SearchGameDto()
-        result.ContainsMe <- source.containsMe
-        result.CreatedBy <- source.createdBy |> toCreationSourceDto
-        result.Id <- source.id
-        result.LastEventOn <- source.lastEventOn
-        result.Parameters <- source.parameters |> toGameParametersDto
-        result.PlayerCount <- source.playerCount
-        result.Status <- source.status |> toGameStatusDto
-        result
-
-    let toSearchGameDtos (source : List<SearchGame>) : SearchGameDto[] =
-        source
-        |> List.map toSearchGameDto
-        |> List.toArray
+        {
+            id = source.id
+            containsMe = source.containsMe
+            createdBy = source.createdBy |> toCreationSourceDto
+            lastEventOn = source.lastEventOn
+            parameters = source.parameters |> toGameParametersDto
+            playerCount = source.playerCount
+            status = source.status |> toGameStatusDto
+        }

@@ -7,18 +7,13 @@ open Apex.Api.Web.Model
 module SnapshotMappings =
 
     let toSnapshotInfoDto (source : SnapshotInfo) : SnapshotInfoDto =
-        let result = SnapshotInfoDto()
-        result.CreatedBy <- source.createdBy |> toCreationSourceDto
-        result.Description <- source.description 
-        result.Id <- source.id
-        result
-
-    let toSnapshotInfoDtos (source : List<SnapshotInfo>) : SnapshotInfoDto[] =
-        source
-        |> List.map toSnapshotInfoDto
-        |> List.toArray
+        {
+            id = source.id
+            createdBy = source.createdBy |> toCreationSourceDto
+            description = source.description
+        }
 
     let toCreateSnapshotRequest (source : CreateSnapshotRequestDto) : CreateSnapshotRequest =
         {
-            description = source.Description
+            description = source.description
         }

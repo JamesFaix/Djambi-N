@@ -8,15 +8,15 @@ module SessionMapping =
     
     let toLoginRequest (source : LoginRequestDto) : LoginRequest =
         {
-            username = source.UserName
-            password = source.Password
+            username = source.username
+            password = source.password
         }
 
     let toSessionDto (source : Session) : SessionDto =
-        let result = SessionDto()
-        result.Id <- source.id
-        result.Token <- source.token
-        result.CreatedOn <- source.createdOn
-        result.ExpiresOn <- source.expiresOn
-        result.User <- source.user |> toUserDto
-        result
+        {
+            id = source.id
+            token = source.token
+            createdOn = source.createdOn
+            expiresOn = source.expiresOn
+            user = source.user |> toUserDto
+        }

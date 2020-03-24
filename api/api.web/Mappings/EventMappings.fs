@@ -8,120 +8,89 @@ module EventMappings =
     
     let toEventsQuery (source : EventsQueryDto) : EventsQuery =
         {
-            maxResults = source.MaxResults |> Option.ofNullable
-            direction = source.Direction
-            thresholdTime = source.ThresholdTime |> Option.ofNullable  
-            thresholdEventId = source.ThresholdEventId |> Option.ofNullable
+            maxResults = source.maxResults |> Option.ofNullable
+            direction = source.direction
+            thresholdTime = source.thresholdTime |> Option.ofNullable  
+            thresholdEventId = source.thresholdEventId |> Option.ofNullable
         }
 
     let toCurrentTurnChangedEffectDto (source : CurrentTurnChangedEffect) : EffectDto =
-        let result = CurrentTurnChangedEffectDto()
-        result.NewValue <- source.newValue |> Option.map toTurnDto |> Option.toObj
-        result.OldValue <- source.oldValue |> Option.map toTurnDto |> Option.toObj
-        result :> EffectDto
+        ChangeEffectDto<TurnDto>(
+            EffectKindDto.CurrentTurnChanged,
+            source.oldValue |> Option.map toTurnDto |> Option.toObj,
+            source.newValue |> Option.map toTurnDto |> Option.toObj
+        ) :> EffectDto
         
     let toGameStatusChangedEffectDto (source : GameStatusChangedEffect) : EffectDto =
-        let result = GameStatusChangedEffectDto()
-        result.NewValue <- source.newValue |> toGameStatusDto
-        result.OldValue <- source.oldValue |> toGameStatusDto
-        result :> EffectDto
+        ChangeEffectDto<GameStatusDto>(
+            EffectKindDto.GameStatusChanged,
+            source.oldValue |> toGameStatusDto,
+            source.newValue |> toGameStatusDto
+        ) :> EffectDto
 
     let toNeutralPlayerAddedEffectDto (source : NeutralPlayerAddedEffect) : EffectDto =
-        let result = NeutralPlayerAddedEffectDto()
-        result.Name <- source.name
-        result.PlaceholderPlayerId <- source.placeholderPlayerId
-        result :> EffectDto
+        NeutralPlayerAddedEffectDto(source.name, source.placeholderPlayerId) :> EffectDto
 
     let toParametersChangedEffectDto (source : ParametersChangedEffect) : EffectDto =
-        let result = ParametersChangedEffectDto()
-        result.NewValue <- source.newValue |> toGameParametersDto
-        result.OldValue <- source.oldValue |> toGameParametersDto
-        result :> EffectDto
+        ChangeEffectDto<GameParametersDto>(
+            EffectKindDto.ParametersChanged,
+            source.oldValue |> toGameParametersDto,
+            source.newValue |> toGameParametersDto
+        ) :> EffectDto
             
     let toPieceAbandonedEffectDto (source : PieceAbandonedEffect) : EffectDto =
-        let result = PieceAbandonedEffectDto()
-        result.OldPiece <- source.oldPiece |> toPieceDto
-        result :> EffectDto
+        PieceUpdateEffectDto(EffectKindDto.PieceAbandoned, source.oldPiece |> toPieceDto) :> EffectDto
     
     let toPieceDroppedEffectDto (source : PieceDroppedEffect) : EffectDto =
-        let result = PieceDroppedEffectDto()
-        result.NewValue <- source.newPiece |> toPieceDto
-        result.OldValue <- source.oldPiece |> toPieceDto
-        result :> EffectDto
+        ChangeEffectDto<PieceDto>(
+            EffectKindDto.PieceDropped,
+            source.oldPiece |> toPieceDto,
+            source.newPiece |> toPieceDto
+        ) :> EffectDto
     
     let toPieceEnlistedEffectDto (source : PieceEnlistedEffect) : EffectDto =
-        let result = PieceEnlistedEffectDto()
-        result.NewPlayerId <- source.newPlayerId
-        result.OldPiece <- source.oldPiece |> toPieceDto
-        result :> EffectDto
+        PieceEnlistedEffectDto(source.oldPiece |> toPieceDto, source.newPlayerId) :> EffectDto
     
     let toPieceKilledEffectDto (source : PieceKilledEffect) : EffectDto =
-        let result = PieceKilledEffectDto()
-        result.OldPiece <- source.oldPiece |> toPieceDto
-        result :> EffectDto
+        PieceUpdateEffectDto(EffectKindDto.PieceKilled, source.oldPiece |> toPieceDto) :> EffectDto
     
     let toPieceMovedEffectDto (source : PieceMovedEffect) : EffectDto =
-        let result = PieceMovedEffectDto()
-        result.NewCellId <- source.newCellId
-        result.OldPiece <- source.oldPiece |> toPieceDto
-        result :> EffectDto
+        PieceMovedEffectDto(source.oldPiece |> toPieceDto, source.newCellId) :> EffectDto
     
     let toPieceVacatedEffectDto (source : PieceVacatedEffect) : EffectDto =
-        let result = PieceVacatedEffectDto()
-        result.NewCellId <- source.newCellId
-        result.OldPiece <- source.oldPiece |> toPieceDto
-        result :> EffectDto
+        PieceVacatedEffectDto(source.oldPiece |> toPieceDto, source.newCellId) :> EffectDto
     
     let toPlayerAddedEffectDto (source : PlayerAddedEffect) : EffectDto =
-        let result = PlayerAddedEffectDto()
-        result.Name <- source.name |> Option.toObj
-        result.PlayerKind <- source.kind |> toPlayerKindDto
-        result.UserId <- source.userId
-        result :> EffectDto
-    
+        PlayerAddedEffectDto(
+            source.name |> Option.toObj, 
+            source.userId, 
+            source.kind |> toPlayerKindDto
+        ) :> EffectDto
+
     let toPlayerOutOfMovesEffectDto (source : PlayerOutOfMovesEffect) : EffectDto =
-        let result = PlayerOutOfMovesEffectDto()
-        result.PlayerId <- source.playerId
-        result :> EffectDto
+        PlayerOutOfMovesEffectDto(source.playerId) :> EffectDto
     
     let toPlayerRemovedEffectDto (source : PlayerRemovedEffect) : EffectDto =
-        let result = PlayerRemovedEffectDto()
-        result.OldPlayer <- source.oldPlayer |> toPlayerDto
-        result :> EffectDto
+        PlayerRemovedEffectDto(source.oldPlayer |> toPlayerDto) :> EffectDto
 
     let toPlayerStatusChangedEffectDto (source : PlayerStatusChangedEffect) : EffectDto =
-        let result = PlayerStatusChangedEffectDto()
-        result.NewValue <- source.newStatus |> toPlayerStatusDto
-        result.OldValue <- source.oldStatus |> toPlayerStatusDto
-        result.PlayerId <- source.playerId
-        result :> EffectDto
+        PlayerStatusChangedEffectDto(
+            source.oldStatus |> toPlayerStatusDto,
+            source.newStatus |> toPlayerStatusDto,
+            source.playerId
+        ) :> EffectDto
         
     let toTurnCycleAdvancedEffectDto (source : TurnCycleAdvancedEffect) : EffectDto =
-        let result = TurnCycleAdvancedEffectDto()
-        result.NewValue <- source.newValue |> List.toArray
-        result.OldValue <- source.oldValue |> List.toArray
-        result :> EffectDto
+        ChangeEffectDto<List<int>>(EffectKindDto.TurnCycleAdvanced, source.oldValue, source.newValue) :> EffectDto
             
     let toTurnCyclePlayerFellFromPowerEffectDto (source : TurnCyclePlayerFellFromPowerEffect) : EffectDto =
-        let result = TurnCyclePlayerFellFromPowerEffectDto()
-        result.NewValue <- source.newValue |> List.toArray
-        result.OldValue <- source.oldValue |> List.toArray
-        result.PlayerId <- source.playerId
-        result :> EffectDto
+        TurnCyclePlayerFellFromPowerEffectDto(source.oldValue, source.newValue, source.playerId) :> EffectDto
                 
     let toTurnCyclePlayerRemovedEffectDto (source : TurnCyclePlayerRemovedEffect) : EffectDto =
-        let result = TurnCyclePlayerRemovedEffectDto()
-        result.NewValue <- source.newValue |> List.toArray
-        result.OldValue <- source.oldValue |> List.toArray
-        result.PlayerId <- source.playerId
-        result :> EffectDto
+        TurnCyclePlayerRemovedEffectDto(source.oldValue, source.newValue, source.playerId) :> EffectDto
                     
     let toTurnCyclePlayerRoseToPowerEffectDto (source : TurnCyclePlayerRoseToPowerEffect) : EffectDto =
-        let result = TurnCyclePlayerRoseToPowerEffectDto()
-        result.NewValue <- source.newValue |> List.toArray
-        result.OldValue <- source.oldValue |> List.toArray
-        result.PlayerId <- source.playerId
-        result :> EffectDto
+        TurnCyclePlayerRoseToPowerEffectDto(source.oldValue, source.newValue, source.playerId) :> EffectDto
 
     let toEffectDto (source : Effect) : EffectDto =
         match source with
@@ -157,13 +126,13 @@ module EventMappings =
         | EventKind.TurnReset -> EventKindDto.TurnReset
 
     let toEventDto (source : Event) : EventDto =
-        let result = EventDto()
-        result.ActingPlayerId <- source.actingPlayerId |> Option.toNullable
-        result.CreatedBy <- source.createdBy |> toCreationSourceDto
-        result.Effects <- source.effects |> List.map toEffectDto |> List.toArray
-        result.Id <- source.id
-        result.Kind <- source.kind |> toEventKindDto
-        result
+        {
+            id = source.id
+            createdBy =  source.createdBy |> toCreationSourceDto
+            actingPlayerId = source.actingPlayerId |> Option.toNullable
+            effects = source.effects |> List.map toEffectDto
+            kind = source.kind |> toEventKindDto
+        }
 
     let toEventDtos (source : List<Event>) : EventDto[] =
         source
@@ -171,7 +140,7 @@ module EventMappings =
         |> List.toArray
 
     let toStateAndEventResponseDto (source : StateAndEventResponse) : StateAndEventResponseDto =
-        let result = StateAndEventResponseDto()
-        result.Event <- source.event |> toEventDto
-        result.Game <- source.game |> toGameDto
-        result
+        {
+            event = source.event |> toEventDto
+            game = source.game |> toGameDto
+        }

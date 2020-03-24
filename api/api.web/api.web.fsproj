@@ -6,6 +6,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="CookieProvider.fs" />
+    <Compile Include="Model\BoardWebModel.fs" />
+    <Compile Include="Model\UserWebModel.fs" />
+    <Compile Include="Model\GameWebModel.fs" />
+    <Compile Include="Model\EventWebModel.fs" />
+    <Compile Include="Model\GameRequestWebModel.fs" />
+    <Compile Include="Model\SessionWebModel.fs" />
+    <Compile Include="Model\SearchWebModel.fs" />
+    <Compile Include="Model\SnapshotWebModel.fs" />
     <Compile Include="Mappings\BoardMappings.fs" />
     <Compile Include="Mappings\PlayerMappings.fs" />
     <Compile Include="Mappings\TurnMappings.fs" />
@@ -40,6 +48,5 @@
     <ProjectReference Include="..\api.common\api.common.fsproj" />
     <ProjectReference Include="..\api.logic.interfaces\api.logic.interfaces.fsproj" />
     <ProjectReference Include="..\api.model\api.model.fsproj" />
-    <ProjectReference Include="..\api.web.model\api.web.model.csproj" />
   </ItemGroup>
 </Project>

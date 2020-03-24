@@ -7,32 +7,21 @@ open Apex.Api.Web.Model
 module BoardMappings =
 
     let toLocationDto (source : Location) : LocationDto =
-        let result = LocationDto()
-        result.Region <- source.region
-        result.X <- source.x
-        result.Y <- source.y
-        result
+        {
+            region = source.region
+            x = source.x
+            y = source.y
+        }
 
     let toCellDto (source : Cell) : CellDto =
-        let result = CellDto()
-        result.Id <- source.id
-        result.Locations <-
-            source.locations
-            |> List.map toLocationDto
-            |> List.toArray
-        result
+        {
+            id = source.id
+            locations = source.locations |> List.map toLocationDto
+        }
 
     let toBoardDto (source : Board) : BoardDto =
-        let result = BoardDto()
-        result.Cells <- 
-            source.cells 
-            |> List.map toCellDto
-            |> List.toArray
-        result.RegionCount <- source.regionCount
-        result.RegionSize <- source.regionSize
-        result
-
-    let toPathsDto (source : List<List<int>>) : int[][] =
-        source 
-        |> List.map List.toArray
-        |> List.toArray
+        {
+            regionCount = source.regionCount
+            regionSize = source.regionSize
+            cells = source.cells |> List.map toCellDto
+        }

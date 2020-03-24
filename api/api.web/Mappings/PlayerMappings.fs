@@ -28,16 +28,16 @@ module PlayerMappings =
         | _ -> raise <| InvalidEnumArgumentException("source", int source, typeof<PlayerStatusDto>)
 
     let toPlayerDto (source : Player) : PlayerDto =
-        let result = PlayerDto()
-        result.ColorId <- source.colorId |> Option.toNullable
-        result.GameId <- source.gameId
-        result.Id <- source.id
-        result.Name <- source.name
-        result.StartingRegion <- source.startingRegion |> Option.toNullable
-        result.StartingTurnNumber <- source.startingTurnNumber |> Option.toNullable
-        result.Status <- source.status |> toPlayerStatusDto
-        result.UserId <- source.userId |> Option.toNullable
-        result
+        {
+            id = source.id
+            gameId = source.gameId
+            name = source.name
+            status = source.status |> toPlayerStatusDto
+            userId = source.userId |> Option.toNullable
+            colorId = source.colorId |> Option.toNullable
+            startingRegion = source.startingRegion |> Option.toNullable
+            startingTurnNumber = source.startingTurnNumber |> Option.toNullable
+        }
 
     let toPlayerKind (source : PlayerKindDto) : PlayerKind =
         match source with
@@ -54,7 +54,7 @@ module PlayerMappings =
 
     let toCreatePlayerRequest (source : CreatePlayerRequestDto) : CreatePlayerRequest =
         {
-            kind = source.Kind |> toPlayerKind
-            name = source.Name |> Option.ofObj
-            userId = source.UserId |> Option.ofNullable
+            kind = source.kind |> toPlayerKind
+            name = source.name |> Option.ofObj
+            userId = source.userId |> Option.ofNullable
         }

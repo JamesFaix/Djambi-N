@@ -25,6 +25,6 @@ type SearchController(manager : ISearchManager,
             let! session = scp.GetSessionFromContext ctx
             let query = query |> toGamesQuery
             let! games = manager.searchGames query session |> thenExtract
-            let dtos = games |> toSearchGameDtos
+            let dtos = games |> List.map toSearchGameDto
             return OkObjectResult(dtos) :> IActionResult
         }

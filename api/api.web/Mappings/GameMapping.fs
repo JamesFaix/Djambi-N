@@ -8,19 +8,19 @@ open System.ComponentModel
 module GameMapping =
     
     let toGameParametersDto (source : GameParameters) : GameParametersDto =
-        let result = GameParametersDto()
-        result.AllowGuests <- source.allowGuests
-        result.Description <- source.description |> Option.toObj
-        result.IsPublic <- source.isPublic
-        result.RegionCount <- source.regionCount
-        result
+        {
+            allowGuests = source.allowGuests
+            isPublic = source.isPublic
+            description = source.description |> Option.toObj
+            regionCount = source.regionCount
+        }
 
     let toGameParameters (source : GameParametersDto) : GameParameters =
         {
-            allowGuests = source.AllowGuests
-            description = source.Description |> Option.ofObj
-            isPublic = source.IsPublic
-            regionCount = source.RegionCount
+            allowGuests = source.allowGuests
+            description = source.description |> Option.ofObj
+            isPublic = source.isPublic
+            regionCount = source.regionCount
         }
 
     let toPieceKindDto (source : PieceKind) : PieceKindDto =
@@ -34,13 +34,13 @@ module GameMapping =
         | PieceKind.Thug -> PieceKindDto.Thug
 
     let toPieceDto (source : Piece) : PieceDto =
-        let result = PieceDto()
-        result.CellId <- source.cellId
-        result.Id <- source.id
-        result.Kind <- source.kind |> toPieceKindDto
-        result.OriginalPlayerId <- source.originalPlayerId
-        result.PlayerId <- source.playerId |> Option.toNullable
-        result
+        {
+            id = source.id
+            cellId = source.cellId
+            kind = source.kind |> toPieceKindDto
+            playerId = source.playerId |> Option.toNullable
+            originalPlayerId = source.originalPlayerId
+        }
 
     let toGameStatusDto (source : GameStatus) : GameStatusDto =
         match source with
@@ -58,22 +58,14 @@ module GameMapping =
         | _ -> raise <| InvalidEnumArgumentException("source", int source, typeof<GameStatusDto>)
 
     let toGameDto (source : Game) : GameDto =
-        let result = GameDto()
-        result.CreatedBy <- source.createdBy |> toCreationSourceDto
-        result.CurrentTurn <- 
-            source.currentTurn 
-            |> Option.map toTurnDto
-            |> Option.toObj
-        result.Id <- source.id
-        result.Parameters <- source.parameters |> toGameParametersDto
-        result.Pieces <-
-            source.pieces
-            |> List.map toPieceDto
-            |> List.toArray            
-        result.Players <-
-            source.players
-            |> List.map toPlayerDto
-            |> List.toArray
-        result.Status <- source.status |> toGameStatusDto
-        result.TurnCycle <- source.turnCycle |> List.toArray
-        result
+        {
+            id = source.id
+            createdBy = source.createdBy |> toCreationSourceDto
+            currentTurn = source.currentTurn |> Option.map toTurnDto |> Option.toObj
+            parameters = source.parameters |> toGameParametersDto
+            pieces = source.pieces |> List.map toPieceDto
+            players = source.players |> List.map toPlayerDto
+            status = source.status |> toGameStatusDto
+            turnCycle = source.turnCycle        
+        }
+        

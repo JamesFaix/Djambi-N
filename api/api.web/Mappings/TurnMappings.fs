@@ -15,11 +15,11 @@ module TurnMappings =
         | SelectionKind.Vacate -> SelectionKindDto.Vacate
 
     let toSelectionDto (source : Selection) : SelectionDto =
-        let result = SelectionDto()
-        result.CellId <- source.cellId
-        result.Kind <- source.kind |> toSelectionKindDto
-        result.PieceId <- source.pieceId |> Option.toNullable
-        result
+        {
+            cellId = source.cellId
+            kind = source.kind |> toSelectionKindDto
+            pieceId = source.pieceId |> Option.toNullable
+        }
 
     let toTurnStatusDto (source : TurnStatus) : TurnStatusDto =
         match source with
@@ -28,17 +28,11 @@ module TurnMappings =
         | TurnStatus.DeadEnd -> TurnStatusDto.DeadEnd
 
     let toTurnDto (source : Turn) : TurnDto =
-        let result = TurnDto()
-        result.RequiresSelectionKind <- 
+        TurnDto(
+            source.status |> toTurnStatusDto,
+            source.selections |> List.map toSelectionDto,
+            source.selectionOptions,
             source.requiredSelectionKind
-            |> Option.map toSelectionKindDto
-            |> Option.toNullable
-        result.SelectionOptions <- 
-            source.selectionOptions
-            |> List.toArray
-        result.Selections <- 
-            source.selections
-            |> List.map toSelectionDto
-            |> List.toArray
-        result.Status <- source.status |> toTurnStatusDto
-        result
+                |> Option.map toSelectionKindDto
+                |> Option.toNullable
+        )

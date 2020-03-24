@@ -36,7 +36,7 @@ type SnapshotController(manager : ISnapshotManager,
         task {
             let! session = scp.GetSessionFromContext ctx
             let! snapshots = manager.getSnapshotsForGame gameId session |> thenExtract
-            let dtos = snapshots |> toSnapshotInfoDtos
+            let dtos = snapshots |> List.map toSnapshotInfoDto
             return OkObjectResult(dtos) :> IActionResult
         }
     

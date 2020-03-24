@@ -8,8 +8,8 @@ module UserMapping =
     
     let toCreateUserRequest (source : CreateUserRequestDto) : CreateUserRequest =
         {
-            name = source.Name
-            password = source.Password
+            name = source.name
+            password = source.password
         }
 
     let toPrivilegeDto (source : Privilege) : PrivilegeDto =
@@ -21,18 +21,15 @@ module UserMapping =
         | Privilege.ViewGames -> PrivilegeDto.ViewGames
 
     let toUserDto (source : User) : UserDto =
-        let result = UserDto()
-        result.Id <- source.id
-        result.Name <- source.name
-        result.Privileges <- 
-            source.privileges 
-            |> List.map toPrivilegeDto
-            |> List.toArray
-        result
+        {
+            id = source.id
+            name = source.name
+            privileges = source.privileges |> List.map toPrivilegeDto
+        }
 
     let toCreationSourceDto (source : CreationSource) : CreationSourceDto =
-        let result = CreationSourceDto()
-        result.UserId <- source.userId
-        result.UserName <-source.userName
-        result.Time <- source.time
-        result
+        {
+            userId = source.userId
+            userName = source.userName
+            time = source.time
+        }
