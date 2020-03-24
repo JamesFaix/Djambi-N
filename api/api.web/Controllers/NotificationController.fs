@@ -1,18 +1,20 @@
 ﻿namespace Apex.Api.Web.Controllers
 
+open System
+open System.Threading
 open System.Threading.Tasks
 open Microsoft.AspNetCore.Mvc
+open Microsoft.Extensions.Primitives
+
 open FSharp.Control.Tasks
 open Serilog
-open Apex.Api.Common.Control.AsyncHttpResult
+
+open Apex.Api.Common.Control
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Model
 open Apex.Api.Web
-open Microsoft.Extensions.Primitives
-open Microsoft.AspNetCore.Http
-open Apex.Api.Common.Control
-open System
 open Apex.Api.Web.Sse
+open Apex.Api.Web.Websockets
 
 [<ApiController>]
 [<Route("api/notifications")>]
@@ -24,52 +26,60 @@ type NotificationController(service : INotificationService,
     let contentType = "text/event-stream"
     let checkForCloseDelay = TimeSpan.FromSeconds(3.0)
 
-    let checkAcceptHeader (ctx : HttpContext) =
-         if (ctx.Request.Headers.["Accept"] <> StringValues(contentType))
-         then Error <| HttpException(400, sprintf "Accept header must be '%s'." contentType)
-         else Ok ()
-    
 
     [<HttpGet("sse")>]
     [<ProducesResponseType(200)>]
-    member __.ConnectSse() : Task<IActionResult> =
-        raise <| NotImplementedException()
-        //let ctx = base.HttpContext
-        //checkAcceptHeader ctx
-        //|> Apex.Api.Common.Control.Result.bindAsync (fun _ -> util.getSessionFromContext ctx)
-        //|> thenMap (fun session ->
-        //    ctx.Response.Headers.["Content-Type"] <- StringValues(contentType)
-        //    ctx.Response.Body.Flush()
+    member __.ConnectSse() : Task =
+        let ctx = base.HttpContext
 
-        //    let userId = session.user.id
-        //    let subscriber = new SseSubscriber(userId, ctx.Response, log)
+        if (ctx.Request.Headers.["Accept"] <> StringValues(contentType))
+        then raise <| HttpException(400, sprintf "Accept header must be '%s'." contentType)
+        
+        task {
+            let! sessionResult = util.getSessionFromContext ctx
+            let session = 
+                match sessionResult with
+                | Ok s -> s
+                | Error ex -> raise ex
 
-        //    service.add subscriber
+            ctx.Response.Headers.["Content-Type"] <- StringValues(contentType)
+            ctx.Response.Body.Flush()
+            
+            let userId = session.user.id
+            let subscriber = new SseSubscriber(userId, ctx.Response, logger)
 
-        //    userId
-        //)
-        //|> thenBindAsync (fun userId ->
-        //    task {
-        //        while not ctx.RequestAborted.IsCancellationRequested do
-        //            let! _ = Task.Delay checkForCloseDelay
-        //            ()
-        //        service.remove userId
-        //        return Ok ()
-        //    }
-        //)
+            service.add subscriber
+
+            while not ctx.RequestAborted.IsCancellationRequested do
+                let! _ = Task.Delay checkForCloseDelay
+                ()
+            service.remove userId
+            return ()
+        } :> Task
     
     [<HttpGet("ws")>]
     [<ProducesResponseType(200)>]
-    member __.ConnectWebSockets() : Task<IActionResult> =
-        raise <| NotImplementedException()
-        //let ctx = base.HttpContext
-        //task {
-        //    let board =
-        //        util.getSessionFromContext ctx
-        //        |> thenBindAsync (fun session ->
-        //            manager.getCellPaths (regionCount, cellId) session
-        //        )
-        //        |> thenExtract
+    member __.ConnectWebSockets() : Task =
+        let ctx = base.HttpContext
 
-        //    return OkObjectResult(board) :> IActionResult
-        //}
+        if not ctx.WebSockets.IsWebSocketRequest
+        then raise <| HttpException(400, "This endpoint requires a websocket request.")
+
+        task {
+            let! sessionResult = util.getSessionFromContext ctx
+            let session = 
+                match sessionResult with
+                | Ok s -> s
+                | Error ex -> raise ex
+
+            let! socket = ctx.WebSockets.AcceptWebSocketAsync()
+
+            let userId = session.user.id
+            let subscriber = new WebsocketSubscriber(userId, socket, logger)
+            service.add subscriber
+                            
+            let buffer : byte[] = Array.zeroCreate 4096
+            let! _ = socket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None)
+            
+            return ()                   
+        } :> Task
