@@ -18,7 +18,7 @@ type EventController(manager : IEventManager,
     
     [<HttpGet("{gameId}")>]
     [<ProducesResponseType(200, Type = typeof<Event[]>)>]
-    member __.GetBoard(gameId : int, [<FromBody>] query : EventsQuery) : Task<IActionResult> =
+    member __.GetEvents(gameId : int, [<FromBody>] query : EventsQuery) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
             let! events =

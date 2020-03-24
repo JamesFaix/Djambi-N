@@ -33,7 +33,7 @@ type UserController(manager : IUserManager,
         
     [<HttpDelete("{userId}")>]
     [<ProducesResponseType(200)>]
-    member __.ResetTurn(userId : int) : Task<IActionResult> =
+    member __.DeleteUser(userId : int) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
             let! response =
