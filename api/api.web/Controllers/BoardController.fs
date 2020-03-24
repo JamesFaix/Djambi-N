@@ -6,8 +6,9 @@ open FSharp.Control.Tasks
 open Serilog
 open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.Logic.Interfaces
-open Apex.Api.Model
 open Apex.Api.Web
+open Apex.Api.Web.Mappings
+open Apex.Api.Web.Model
 
 [<ApiController>]
 [<Route("api/boards")>]
@@ -20,13 +21,14 @@ type BoardController(manager : IBoardManager,
     /// <param name="regionCount"> The number of regions in the board. </param>
     /// <response code="200"> The board. </response>
     [<HttpGet("{regionCount}")>]
-    [<ProducesResponseType(200, Type = typeof<Board>)>]
+    [<ProducesResponseType(200, Type = typeof<BoardDto>)>]
     member __.GetBoard(regionCount : int) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
             let! session = scp.GetSessionFromContext ctx
             let! board = manager.getBoard regionCount session |> thenExtract
-            return OkObjectResult(board) :> IActionResult
+            let dto = board |> toBoardDto
+            return OkObjectResult(dto) :> IActionResult
         }
     
     [<HttpGet("{regionCount}/cells/{cellId}")>]
@@ -35,6 +37,7 @@ type BoardController(manager : IBoardManager,
         let ctx = base.HttpContext
         task {
             let! session = scp.GetSessionFromContext ctx
-            let! board = manager.getCellPaths (regionCount, cellId) session |> thenExtract
-            return OkObjectResult(board) :> IActionResult
+            let! paths = manager.getCellPaths (regionCount, cellId) session |> thenExtract
+            let dto = paths |> toPathsDto
+            return OkObjectResult(dto) :> IActionResult
         }

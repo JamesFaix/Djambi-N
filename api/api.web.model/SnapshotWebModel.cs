@@ -1,13 +1,13 @@
 ﻿namespace Apex.Api.Web.Model
 {
-    public class SnapshotInfo
+    public class SnapshotInfoDto
     {
         public int Id { get; set; }
-        public CreationSource CreatedBy { get; set; }
+        public CreationSourceDto CreatedBy { get; set; }
         public string Description { get; set; }
     }
 
-    public class CreateSnapshotRequest
+    public class CreateSnapshotRequestDto
     {
         public string Description { get; set; }
     }

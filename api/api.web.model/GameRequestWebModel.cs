@@ -3,19 +3,19 @@ using System.ComponentModel;
 
 namespace Apex.Api.Web.Model
 {
-    public class CreatePlayerRequest
+    public class CreatePlayerRequestDto
     {
-        public PlayerKind Kind { get; set; }
+        public PlayerKindDto Kind { get; set; }
         public int? UserId { get; set; }
         public string Name { get; set; }
     }
 
-    public class SelectionRequest
+    public class SelectionRequestDto
     {
         public int CellId { get; set; }
     }
 
-    public class EventsQuery
+    public class EventsQueryDto
     {
         public int? MaxResults { get; set; }
         public ListSortDirection Direction { get; set; }

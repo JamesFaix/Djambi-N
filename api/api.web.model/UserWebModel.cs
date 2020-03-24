@@ -2,7 +2,7 @@
 
 namespace Apex.Api.Web.Model
 {
-    public enum Privilege
+    public enum PrivilegeDto
     {
         EditUsers = 1,
         EditPendingGames = 2,
@@ -11,20 +11,20 @@ namespace Apex.Api.Web.Model
         Snapshots = 5
     }
 
-    public class User
+    public class UserDto
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public Privilege[] Privileges { get; set; }
+        public PrivilegeDto[] Privileges { get; set; }
     }
 
-    public class CreateUserRequest
+    public class CreateUserRequestDto
     {
         public string Name { get; set; }
         public string Password { get; set; }
     }
 
-    public class CreationSource
+    public class CreationSourceDto
     {
         public int UserId { get; set; }
         public string UserName { get; set; }

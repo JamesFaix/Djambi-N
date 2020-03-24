@@ -6,8 +6,9 @@ open FSharp.Control.Tasks
 open Serilog
 open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.Logic.Interfaces
-open Apex.Api.Model
 open Apex.Api.Web
+open Apex.Api.Web.Mappings
+open Apex.Api.Web.Model
 
 [<ApiController>]
 [<Route("api/games/{gameId}/current-turn")>]
@@ -17,32 +18,35 @@ type TurnController(manager : ITurnManager,
     inherit ControllerBase()
     
     [<HttpPost("selection-request/{cellId}")>]
-    [<ProducesResponseType(200, Type = typeof<StateAndEventResponse>)>]
+    [<ProducesResponseType(200, Type = typeof<StateAndEventResponseDto>)>]
     member __.SelectCell(gameId : int, cellId : int) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
             let! session = scp.GetSessionFromContext ctx
             let! response = manager.selectCell (gameId, cellId) session |> thenExtract
-            return OkObjectResult(response) :> IActionResult
+            let dto = response |> toStateAndEventResponseDto
+            return OkObjectResult(dto) :> IActionResult
         }
         
     [<HttpPost("reset-request")>]
-    [<ProducesResponseType(200, Type = typeof<StateAndEventResponse>)>]
+    [<ProducesResponseType(200, Type = typeof<StateAndEventResponseDto>)>]
     member __.ResetTurn(gameId : int) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
             let! session = scp.GetSessionFromContext ctx
             let! response = manager.resetTurn gameId session |> thenExtract
-            return OkObjectResult(response) :> IActionResult
+            let dto = response |> toStateAndEventResponseDto
+            return OkObjectResult(dto) :> IActionResult
         }
     
     [<HttpPost("commit-request")>]
-    [<ProducesResponseType(200, Type = typeof<StateAndEventResponse>)>]
+    [<ProducesResponseType(200, Type = typeof<StateAndEventResponseDto>)>]
     member __.CommitTurn(gameId : int) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
             let! session = scp.GetSessionFromContext ctx
             let! response = manager.commitTurn gameId session |> thenExtract
-            return OkObjectResult(response) :> IActionResult
+            let dto = response |> toStateAndEventResponseDto
+            return OkObjectResult(dto) :> IActionResult
         }
     

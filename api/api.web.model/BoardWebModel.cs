@@ -1,22 +1,22 @@
 ﻿namespace Apex.Api.Web.Model
 {
-    public class Location
+    public class LocationDto
     {
         public int Region { get; set; }
         public int X { get; set; }
         public int Y { get; set; }
     }
 
-    public class Cell
+    public class CellDto
     {
         public int Id { get; set; }
-        public Location[] Locations { get; set; }
+        public LocationDto[] Locations { get; set; }
     }
 
-    public class Board
+    public class BoardDto
     {
         public int RegionCount { get; set; }
         public int RegionSize { get; set; }
-        public Cell[] Cells { get; set; }
+        public CellDto[] Cells { get; set; }
     }
 }

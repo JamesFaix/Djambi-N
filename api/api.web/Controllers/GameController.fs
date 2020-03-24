@@ -8,6 +8,8 @@ open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Model
 open Apex.Api.Web
+open Apex.Api.Web.Mappings
+open Apex.Api.Web.Model
 
 [<ApiController>]
 [<Route("api/games")>]
@@ -17,41 +19,47 @@ type GameController(manager : IGameManager,
     inherit ControllerBase()
     
     [<HttpGet("{gameId}")>]
-    [<ProducesResponseType(200, Type = typeof<Game>)>]
+    [<ProducesResponseType(200, Type = typeof<GameDto>)>]
     member __.GetGame(gameId : int) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
             let! session = scp.GetSessionFromContext ctx
             let! game = manager.getGame gameId session |> thenExtract
-            return OkObjectResult(game) :> IActionResult
+            let dto = game |> toGameDto
+            return OkObjectResult(dto) :> IActionResult
         }
 
     [<HttpPost>]
     [<ProducesResponseType(200, Type = typeof<Game>)>]
-    member __.CreateGame([<FromBody>] request : GameParameters) : Task<IActionResult> =
+    member __.CreateGame([<FromBody>] request : GameParametersDto) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
             let! session = scp.GetSessionFromContext ctx
+            let request = request |> toGameParameters
             let! game = manager.createGame request session |> thenExtract
-            return OkObjectResult(game) :> IActionResult
+            let dto = game |> toGameDto
+            return OkObjectResult(dto) :> IActionResult
         }
     
     [<HttpPut("{gameId}/parameters")>]
-    [<ProducesResponseType(200, Type = typeof<StateAndEventResponse>)>]
-    member __.UpdateGameParameters(gameId : int, [<FromBody>] parameters : GameParameters) : Task<IActionResult> =
+    [<ProducesResponseType(200, Type = typeof<StateAndEventResponseDto>)>]
+    member __.UpdateGameParameters(gameId : int, [<FromBody>] parameters : GameParametersDto) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
-            let! session = scp.GetSessionFromContext ctx
+            let! session = scp.GetSessionFromContext ctx            
+            let parameters = parameters |> toGameParameters
             let! response = manager.updateGameParameters gameId parameters session |> thenExtract
-            return OkObjectResult(response) :> IActionResult
+            let dto = response |> toStateAndEventResponseDto
+            return OkObjectResult(dto) :> IActionResult
         }
 
     [<HttpPost("{gameId}/start-request")>]
-    [<ProducesResponseType(200, Type = typeof<StateAndEventResponse>)>]
+    [<ProducesResponseType(200, Type = typeof<StateAndEventResponseDto>)>]
     member __.StartGame(gameId : int) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
             let! session = scp.GetSessionFromContext ctx
             let! response = manager.startGame gameId session |> thenExtract
-            return OkObjectResult(response) :> IActionResult
+            let dto = response |> toStateAndEventResponseDto
+            return OkObjectResult(dto) :> IActionResult
         }

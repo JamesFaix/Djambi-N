@@ -1,13 +1,13 @@
 ﻿namespace Apex.Api.Web.Model
 {
-    public enum PlayerKind
+    public enum PlayerKindDto
     {
         User = 1,
         Guest = 2,
         Neutral = 3
     }
 
-    public enum PlayerStatus
+    public enum PlayerStatusDto
     {
         Pending = 1,
         Alive = 2,
@@ -18,19 +18,19 @@
         Victorious = 7
     }
 
-    public class Player
+    public class PlayerDto
     {
         public int Id { get; set; }
         public int GameId { get; set; }
         public int? UserId { get; set; }
         public string Name { get; set; }
-        public PlayerStatus Status { get; set; }
+        public PlayerStatusDto Status { get; set; }
         public int? ColorId { get; set; }
         public int? StartingRegion { get; set; }
         public int? StartingTurnNumber { get; set; }
     }
 
-    public enum PieceKind
+    public enum PieceKindDto
     {
         Conduit = 1,
         Thug = 2,
@@ -41,16 +41,16 @@
         Corpse = 7
     }
 
-    public class Piece
+    public class PieceDto
     {
         public int Id { get; set; }
-        public PieceKind Kind { get; set; }
+        public PieceKindDto Kind { get; set; }
         public int? PlayerId { get; set; }
         public int OriginalPlayerId { get; set; }
         public int CellId { get; set; }
     }
 
-    public enum SelectionKind
+    public enum SelectionKindDto
     {
         Subject = 1,
         Move = 2,
@@ -59,29 +59,29 @@
         Vacate = 5
     }
 
-    public class Selection
+    public class SelectionDto
     {
-        public SelectionKind Kind { get; set; }
+        public SelectionKindDto Kind { get; set; }
         public int CellId { get; set; }
         public int? PieceId { get; set; }
     }
 
-    public enum TurnStatus
+    public enum TurnStatusDto
     {
         AwaitingSelection = 1,
         AwaitingCommit = 2,
         DeadEnd = 3 
     }
 
-    public class Turn
+    public class TurnDto
     {
-        public TurnStatus Status { get; set; }
-        public Selection[] Selections { get; set; }
+        public TurnStatusDto Status { get; set; }
+        public SelectionDto[] Selections { get; set; }
         public int[] SelectionOptions { get; set; }
-        public SelectionKind? RequiresSelectionKind { get; set; }
+        public SelectionKindDto? RequiresSelectionKind { get; set; }
     }
 
-    public enum GameStatus
+    public enum GameStatusDto
     {
         Pending = 1,
         InProgress = 2,
@@ -89,7 +89,7 @@
         Over = 4
     }
 
-    public class GameParameters
+    public class GameParametersDto
     {
         public string Description { get; set; }
         public int RegionCount { get; set; }
@@ -97,15 +97,15 @@
         public bool AllowGuests { get; set; }
     }
 
-    public class Game
+    public class GameDto
     {
         public int Id { get; set; }
-        public CreationSource CreatedBy { get; set; }
-        public GameParameters Parameters { get; set; }
-        public GameStatus Status { get; set; }
-        public Player[] Players { get; set; }
-        public Piece[] Pieces { get; set; }
+        public CreationSourceDto CreatedBy { get; set; }
+        public GameParametersDto Parameters { get; set; }
+        public GameStatusDto Status { get; set; }
+        public PlayerDto[] Players { get; set; }
+        public PieceDto[] Pieces { get; set; }
         public int[] TurnCycle { get; set; }
-        public Turn CurrentTurn { get; set; }
+        public TurnDto CurrentTurn { get; set; }
     }
 }

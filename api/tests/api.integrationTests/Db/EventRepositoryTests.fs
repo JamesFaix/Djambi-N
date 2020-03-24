@@ -7,6 +7,7 @@ open Apex.Api.IntegrationTests
 open Apex.Api.Model
 open Apex.Api.Db.Interfaces
 open Apex.Api.Logic.Interfaces
+open System.ComponentModel
 
 type EventRepositoryTests() =
     inherit TestsBase()
@@ -222,7 +223,7 @@ type EventRepositoryTests() =
             let query : EventsQuery =
                 {
                     maxResults = None
-                    direction = Ascending
+                    direction = ListSortDirection.Ascending
                     thresholdEventId = None
                     thresholdTime = None
                 }
