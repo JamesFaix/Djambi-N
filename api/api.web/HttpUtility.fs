@@ -23,32 +23,6 @@ type HttpUtility(options : IOptions<ApiSettings>,
                  sessionServ : ISessionService,
                  log : ILogger) =
 
-    let converters =
-        [|
-            OptionJsonConverter() :> JsonConverter
-            TupleArrayJsonConverter() :> JsonConverter
-            UnionEnumJsonConverter() :> JsonConverter
-            SingleFieldUnionJsonConverter() :> JsonConverter
-        |]
-
-    let readJsonBody (ctx : HttpContext) : 'a AsyncHttpResult =
-        try
-            task {
-                use reader = new StreamReader(ctx.Request.Body)
-                let! json = reader.ReadToEndAsync()
-                let value = JsonConvert.DeserializeObject<'a>(json, converters)
-                return Ok value            
-            }
-        with
-        | ex -> errorTask <| HttpException(400, ex.Message)
-
-    let tupleWithModel (ctx : HttpContext) (result : 'b AsyncHttpResult): ('a * 'b) AsyncHttpResult =
-        result
-        |> thenBindAsync (fun value ->
-            readJsonBody ctx
-            |> thenBindAsync (fun body -> okTask (body, value))
-        )
-
     member x.cookieName = "ApexSession"
 
     member x.appendCookie (ctx : HttpContext) (token : string, expiration : DateTime) =
@@ -122,22 +96,3 @@ type HttpUtility(options : IOptions<ApiSettings>,
                 Error <| HttpException(401, "Not signed in.")
             | Some session -> Ok session
         )
-
-    member x.getSessionAndModelFromContext<'a> (ctx : HttpContext) : ('a * Session) AsyncHttpResult =
-        x.getSessionFromContext ctx
-        |> tupleWithModel ctx
-
-    member x.getSessionOptionAndModelFromContext<'a> (ctx : HttpContext) : ('a * Session option) AsyncHttpResult =
-        x.getSessionOptionFromContext ctx
-        |> tupleWithModel ctx
-
-    member x.ensureNotSignedIn (ctx : HttpContext) : Result<Unit, HttpException> =
-        let token = ctx.Request.Cookies.Item(x.cookieName)
-        if token |> String.IsNullOrEmpty |> not
-        then Error <| HttpException(401, "Operation not allowed if already signed in.")
-        else Ok ()
-
-    member x.ensureNotSignedInAndGetModel<'a> (ctx : HttpContext) : 'a AsyncHttpResult =
-        match x.ensureNotSignedIn ctx with
-        | Error ex -> errorTask ex
-        | Ok _ -> readJsonBody ctx
