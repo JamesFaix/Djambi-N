@@ -55,7 +55,17 @@ type Startup() =
             ()
 
         // Framework services
-        services.AddCors() |> ignore
+        services.AddCors(fun opt ->
+            let webAddress = __.Configuration.GetValue<string>("Api:WebAddress")
+            opt.AddPolicy("ApiCorsPolicy", fun builder -> 
+                builder
+                    .WithOrigins(webAddress)
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials()
+                    |> ignore
+            )
+        ) |> ignore
         services.AddControllers() |> ignore
 
         // Configuration
@@ -112,6 +122,9 @@ type Startup() =
         ()
 
     member __.Configure(app : IApplicationBuilder, env : IWebHostEnvironment) : unit =
+        // See https://docs.microsoft.com/en-us/aspnet/core/fundamentals/middleware/?view=aspnetcore-3.1#middleware-order
+        // regarding middleware order
+
         let configureNewtonsoft () =
             //This will only provide custom serialization of responses to clients.
             //Custom deserialization of request bodies does not work that same way in this framework.
@@ -128,13 +141,6 @@ type Startup() =
             let settings = JsonSerializerSettings()
             settings.Converters <- converters.ToList()
             JsonConvert.DefaultSettings <- (fun () -> settings)
-
-        let configureCors (builder : CorsPolicyBuilder) =
-            builder.WithOrigins(__.Configuration.GetValue<string>("Api:WebAddress"))
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowCredentials()
-                    |> ignore
     
         let configureWebServer(app : IApplicationBuilder) : IApplicationBuilder =
             let isDefault (path : string) =
@@ -170,19 +176,19 @@ type Startup() =
 
         configureNewtonsoft() 
 
+        app.UseMiddleware<ErrorHandlingMiddleware>() |> ignore
+
         if __.Configuration.GetValue<bool>("WebServer:Enable")
         then configureWebServer(app) |> ignore
 
-        app.UseCors(configureCors) |> ignore
+        app.UseRouting() |> ignore
+        app.UseCors("ApiCorsPolicy") |> ignore
+
         app.UseWebSockets() |> ignore
 
-        app.UseRouting() |> ignore
-        app.UsePathBase(PathString("/api")) |> ignore
         app.UseEndpoints(fun endpoints -> 
             endpoints.MapControllers() |> ignore
         ) |> ignore
-
-        app.UseMiddleware<ErrorHandlingMiddleware>() |> ignore
 
         app.UseSwagger() |> ignore
         app.UseSwaggerUI(fun opt -> 

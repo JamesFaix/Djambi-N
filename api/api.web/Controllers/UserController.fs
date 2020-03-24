@@ -47,7 +47,7 @@ type UserController(manager : IUserManager,
             return OkObjectResult(response) :> IActionResult
         }
     
-    [<HttpPost("{userId}")>]
+    [<HttpGet("{userId}")>]
     [<ProducesResponseType(200, Type = typeof<User>)>]
     member __.GetUser(userId : int) : Task<IActionResult> =
         let ctx = base.HttpContext
@@ -62,7 +62,7 @@ type UserController(manager : IUserManager,
             return OkObjectResult(response) :> IActionResult
         }
         
-    [<HttpPost("current")>]
+    [<HttpGet("current")>]
     [<ProducesResponseType(200, Type = typeof<User>)>]
     member __.GetCurrentUser() : Task<IActionResult> =
         let ctx = base.HttpContext
