@@ -1,27 +1,20 @@
 namespace Apex.Api.Web
 
 open System
-open System.IO
 open System.Threading.Tasks
 open FSharp.Control.Tasks
 open Giraffe
 open Microsoft.AspNetCore.Http
-open Newtonsoft.Json
-open Serilog
 open Apex.Api.Common
 open Apex.Api.Common.Control
 open Apex.Api.Common.Control.AsyncHttpResult
-open Apex.Api.Common.Json
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Model.SessionModel
 open Microsoft.Extensions.Options
 open Apex.Api.Model.Configuration
 
-type HttpHandler = HttpFunc -> HttpContext -> HttpContext option Task
-
 type HttpUtility(options : IOptions<ApiSettings>,
-                 sessionServ : ISessionService,
-                 log : ILogger) =
+                 sessionServ : ISessionService) =
 
     member x.cookieName = "ApexSession"
 
@@ -36,40 +29,6 @@ type HttpUtility(options : IOptions<ApiSettings>,
 
     member x.appendEmptyCookie (ctx : HttpContext) =
         x.appendCookie ctx ("", DateTime.MinValue)
-
-    member x.handle<'a> (func : HttpContext -> 'a AsyncHttpResult) : HttpHandler =
-
-        fun (next : HttpFunc) (ctx : HttpContext) ->
-            let route = sprintf "%s %s" ctx.Request.Method (ctx.Request.Path.ToString())
-            log.Information(sprintf "API Req: %s" route)
-            task {
-                try
-                    let! result = func ctx
-                    match result with
-                    | Ok value ->
-                        match ctx.Response.ContentType with
-                        | "text/event-stream" ->
-                            return! next ctx
-                        | _ ->
-                            return! json value next ctx
-                    | Error ex ->
-                        ctx.SetStatusCode ex.statusCode
-                        return! json ex.Message next ctx
-                with
-                | :? HttpException as ex ->
-                    ctx.SetStatusCode ex.statusCode
-                    return! json ex.Message next ctx
-                | ex ->
-                    ctx.SetStatusCode 500
-                    return! json ex.Message next ctx
-            }
-            |> Task.map(fun x -> 
-                match x with 
-                | Some c ->
-                    log.Information(sprintf "API Rsp: %s %i" route c.Response.StatusCode)
-                | _ -> ()
-                x
-            )
 
     member x.getSessionOptionFromContext (ctx : HttpContext) : Session option AsyncHttpResult =
         let token = ctx.Request.Cookies.Item(x.cookieName)
