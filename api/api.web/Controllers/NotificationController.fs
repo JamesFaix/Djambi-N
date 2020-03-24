@@ -20,7 +20,7 @@ open Apex.Api.Web.Websockets
 [<Route("api/notifications")>]
 type NotificationController(service : INotificationService,
                        logger : ILogger,
-                       util : HttpUtility) =
+                       scp : SessionContextProvider) =
     inherit ControllerBase()
     
     let contentType = "text/event-stream"
@@ -36,11 +36,7 @@ type NotificationController(service : INotificationService,
         then raise <| HttpException(400, sprintf "Accept header must be '%s'." contentType)
         
         task {
-            let! sessionResult = util.getSessionFromContext ctx
-            let session = 
-                match sessionResult with
-                | Ok s -> s
-                | Error ex -> raise ex
+            let! session = scp.GetSessionFromContext ctx
 
             ctx.Response.Headers.["Content-Type"] <- StringValues(contentType)
             ctx.Response.Body.Flush()
@@ -66,11 +62,7 @@ type NotificationController(service : INotificationService,
         then raise <| HttpException(400, "This endpoint requires a websocket request.")
 
         task {
-            let! sessionResult = util.getSessionFromContext ctx
-            let session = 
-                match sessionResult with
-                | Ok s -> s
-                | Error ex -> raise ex
+            let! session = scp.GetSessionFromContext ctx
 
             let! socket = ctx.WebSockets.AcceptWebSocketAsync()
 

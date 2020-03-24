@@ -10,24 +10,19 @@ open Apex.Api.Model
 open Apex.Api.Web
 
 [<ApiController>]
-[<Route("api/events")>]
+[<Route("api/games/{gameId}/events")>]
 type EventController(manager : IEventManager,
-                       logger : ILogger,
-                       util : HttpUtility) =
+                    logger : ILogger,
+                    scp : SessionContextProvider) =
     inherit ControllerBase()
     
-    [<HttpGet("{gameId}")>]
+    [<HttpPost("query")>]
     [<ProducesResponseType(200, Type = typeof<Event[]>)>]
     member __.GetEvents(gameId : int, [<FromBody>] query : EventsQuery) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
-            let! events =
-                util.getSessionFromContext ctx
-                |> thenBindAsync (fun session ->
-                    manager.getEvents (gameId, query) session
-                )
-                |> thenExtract
-
+            let! session = scp.GetSessionFromContext ctx
+            let! events = manager.getEvents (gameId, query) session |> thenExtract
             return OkObjectResult(events) :> IActionResult
         }
     

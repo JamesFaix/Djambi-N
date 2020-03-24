@@ -17,6 +17,7 @@ type ApiSettings = {
     apiAddress : string
     webAddress : string
     cookieDomain : string
+    cookieName : string
 }
 
 [<CLIMutable>]
@@ -47,6 +48,7 @@ module AppSettings =
             apiAddress = ""
             webAddress = ""
             cookieDomain = ""
+            cookieName = ""
         }
         log = {
             directory = ""

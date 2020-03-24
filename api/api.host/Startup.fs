@@ -125,7 +125,8 @@ type Startup() =
         services.AddSingleton<ITurnManager, GameManager>() |> ignore
 
         // Controller layer
-        services.AddSingleton<HttpUtility>() |> ignore
+        services.AddSingleton<CookieProvider>() |> ignore
+        services.AddSingleton<SessionContextProvider>() |> ignore
         
         ()
 

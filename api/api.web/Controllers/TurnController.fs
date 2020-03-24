@@ -13,7 +13,7 @@ open Apex.Api.Web
 [<Route("api/games/{gameId}/current-turn")>]
 type TurnController(manager : ITurnManager,
                        logger : ILogger,
-                       util : HttpUtility) =
+                       scp : SessionContextProvider) =
     inherit ControllerBase()
     
     [<HttpPost("selection-request/{cellId}")>]
@@ -21,13 +21,8 @@ type TurnController(manager : ITurnManager,
     member __.SelectCell(gameId : int, cellId : int) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
-            let! response =
-                util.getSessionFromContext ctx
-                |> thenBindAsync (fun session ->
-                    manager.selectCell (gameId, cellId) session
-                )
-                |> thenExtract
-
+            let! session = scp.GetSessionFromContext ctx
+            let! response = manager.selectCell (gameId, cellId) session |> thenExtract
             return OkObjectResult(response) :> IActionResult
         }
         
@@ -36,13 +31,8 @@ type TurnController(manager : ITurnManager,
     member __.ResetTurn(gameId : int) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
-            let! response =
-                util.getSessionFromContext ctx
-                |> thenBindAsync (fun session ->
-                    manager.resetTurn gameId session
-                )
-                |> thenExtract
-
+            let! session = scp.GetSessionFromContext ctx
+            let! response = manager.resetTurn gameId session |> thenExtract
             return OkObjectResult(response) :> IActionResult
         }
     
@@ -51,13 +41,8 @@ type TurnController(manager : ITurnManager,
     member __.CommitTurn(gameId : int) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
-            let! response =
-                util.getSessionFromContext ctx
-                |> thenBindAsync (fun session ->
-                    manager.commitTurn gameId session
-                )
-                |> thenExtract
-
+            let! session = scp.GetSessionFromContext ctx
+            let! response = manager.commitTurn gameId session |> thenExtract
             return OkObjectResult(response) :> IActionResult
         }
     
