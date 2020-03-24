@@ -1,32 +1,59 @@
 ﻿namespace Apex.Api.Host
 
+open System
+open System.IO
 open System.Linq
 open Microsoft.AspNetCore.Builder
 open Microsoft.AspNetCore.Cors.Infrastructure
 open Microsoft.AspNetCore.Hosting
+open Microsoft.AspNetCore.Http
 open Microsoft.Extensions.Configuration
 open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.FileProviders
+open Microsoft.OpenApi.Models
 
 open Newtonsoft.Json
 open Serilog
+open Swashbuckle.AspNetCore.SwaggerGen
 
 open Apex.Api.Common.Json
 open Apex.Api.Db
+open Apex.Api.Db.Interfaces
 open Apex.Api.Db.Repositories
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Logic.Managers
 open Apex.Api.Logic.Services
-open Apex.Api.Web
+open Apex.Api.Model
 open Apex.Api.Model.Configuration
-open Apex.Api.Db.Interfaces
-open Microsoft.AspNetCore.Http
+open Apex.Api.Web
+open Apex.Api.Web.Controllers
 
 type Startup() =
 
     member val Configuration : IConfiguration = (Config.config :> IConfiguration) with get, set
 
     member __.ConfigureServices(services : IServiceCollection) : unit =
+        let configureSwagger (opt : SwaggerGenOptions) : unit =
+            let version = "v1"
+
+            let info = OpenApiInfo()
+            info.Title <- "Apex API"
+            info.Description <- "API for Apex"
+            info.Version <- version
+
+            opt.SwaggerDoc(version, info)
+
+            let assemblies = [
+                typeof<CreateUserRequest>.Assembly // Model
+                typeof<UserController>.Assembly // Controllers
+            ]
+
+            for a in assemblies do
+                let file = a.GetName().Name + ".xml"
+                let path = Path.Combine(AppContext.BaseDirectory, file)
+                opt.IncludeXmlComments(path)
+            ()
+
         // Framework services
         services.AddCors() |> ignore
         services.AddControllers() |> ignore
@@ -39,6 +66,9 @@ type Startup() =
 
         // Serilog
         services.AddSingleton<Serilog.ILogger>(Log.Logger) |> ignore
+
+        // Swagger
+        services.AddSwaggerGen(fun opt -> configureSwagger opt) |> ignore
 
         // Database layer
         services.AddSingleton<CommandContextProvider>() |> ignore
@@ -153,4 +183,9 @@ type Startup() =
         ) |> ignore
 
         app.UseMiddleware<ErrorHandlingMiddleware>() |> ignore
+
+        app.UseSwagger() |> ignore
+        app.UseSwaggerUI(fun opt -> 
+            opt.SwaggerEndpoint("/swagger/v1/swagger.json", "Apex API V1")        
+        ) |> ignore
         ()

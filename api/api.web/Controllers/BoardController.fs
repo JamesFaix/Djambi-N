@@ -16,6 +16,9 @@ type BoardController(manager : IBoardManager,
                        util : HttpUtility) =
     inherit ControllerBase()
     
+    /// <summary> Gets the board with the given region count. </summary>
+    /// <param name="regionCount"> The number of regions in the board. </param>
+    /// <response code="200"> The board. </response>
     [<HttpGet("{regionCount}")>]
     [<ProducesResponseType(200, Type = typeof<Board>)>]
     member __.GetBoard(regionCount : int) : Task<IActionResult> =
