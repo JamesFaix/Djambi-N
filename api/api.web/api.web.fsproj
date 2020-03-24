@@ -2,17 +2,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Websockets.fs" />
     <Compile Include="HttpUtility.fs" />
     <Compile Include="ServerSideEvents.fs" />
-    <Compile Include="Controllers\SearchController.fs" />
     <Compile Include="Controllers\BoardController.fs" />
     <Compile Include="Controllers\EventController.fs" />
     <Compile Include="Controllers\GameController.fs" />
     <Compile Include="Controllers\NotificationController.fs" />
     <Compile Include="Controllers\PlayerController.fs" />
+    <Compile Include="Controllers\SearchController.fs" />
     <Compile Include="Controllers\SessionController.fs" />
     <Compile Include="Controllers\SnapshotController.fs" />
     <Compile Include="Controllers\TurnController.fs" />
@@ -20,6 +21,8 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Giraffe" Version="4.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
     <PackageReference Include="Microsoft.AspNetCore.WebSockets" Version="2.2.1" />
     <PackageReference Include="Serilog" Version="2.8.0" />
     <PackageReference Include="TaskBuilder.fs" Version="2.1.0" />
@@ -28,6 +31,5 @@
     <ProjectReference Include="..\api.common\api.common.fsproj" />
     <ProjectReference Include="..\api.logic.interfaces\api.logic.interfaces.fsproj" />
     <ProjectReference Include="..\api.model\api.model.fsproj" />
-    <ProjectReference Include="..\api.web.interfaces\api.web.interfaces.fsproj" />
   </ItemGroup>
 </Project>

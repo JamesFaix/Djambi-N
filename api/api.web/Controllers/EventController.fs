@@ -1,18 +1,33 @@
-namespace Apex.Api.Web.Controllers
+﻿namespace Apex.Api.Web.Controllers
 
+open System.Threading.Tasks
+open Microsoft.AspNetCore.Mvc
+open FSharp.Control.Tasks
+open Serilog
 open Apex.Api.Common.Control.AsyncHttpResult
-open Apex.Api.Model
-open Apex.Api.Web.Interfaces
-open Apex.Api.Web
 open Apex.Api.Logic.Interfaces
+open Apex.Api.Model
+open Apex.Api.Web
 
-type EventController(eventMan : IEventManager,
-                     u : HttpUtility) =
-    interface IEventController with
-        member x.getEvents gameId =
-            let func ctx =
-                u.getSessionAndModelFromContext<EventsQuery> ctx
-                |> thenBindAsync (fun (query, session) ->
-                    eventMan.getEvents (gameId, query) session
+[<ApiController>]
+[<Route("api/events")>]
+type EventController(manager : IEventManager,
+                       logger : ILogger,
+                       util : HttpUtility) =
+    inherit ControllerBase()
+    
+    [<HttpGet("{gameId}")>]
+    [<ProducesResponseType(200, Type = typeof<Event[]>)>]
+    member __.GetEvents(gameId : int, [<FromBody>] query : EventsQuery) : Task<IActionResult> =
+        let ctx = base.HttpContext
+        task {
+            let! events =
+                util.getSessionFromContext ctx
+                |> thenBindAsync (fun session ->
+                    manager.getEvents (gameId, query) session
                 )
-            u.handle func
+                |> thenExtract
+
+            return OkObjectResult(events) :> IActionResult
+        }
+    

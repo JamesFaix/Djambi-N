@@ -1,6 +1,7 @@
 ﻿namespace Apex.Api.Host
 
 open System
+open System.IO
 open System.Linq
 open Microsoft.AspNetCore.Builder
 open Microsoft.AspNetCore.Cors.Infrastructure
@@ -9,32 +10,71 @@ open Microsoft.AspNetCore.Http
 open Microsoft.Extensions.Configuration
 open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.FileProviders
-open Microsoft.Extensions.Logging
+open Microsoft.OpenApi.Models
 
-open Giraffe
 open Newtonsoft.Json
 open Serilog
+open Swashbuckle.AspNetCore.SwaggerGen
 
 open Apex.Api.Common.Json
 open Apex.Api.Db
+open Apex.Api.Db.Interfaces
 open Apex.Api.Db.Repositories
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Logic.Managers
 open Apex.Api.Logic.Services
+open Apex.Api.Model
+open Apex.Api.Model.Configuration
 open Apex.Api.Web
 open Apex.Api.Web.Controllers
-open Apex.Api.Web.Interfaces
-open Apex.Api.Model.Configuration
-open Apex.Api.Db.Interfaces
 
 type Startup() =
 
     member val Configuration : IConfiguration = (Config.config :> IConfiguration) with get, set
 
     member __.ConfigureServices(services : IServiceCollection) : unit =
+        let configureSwagger (opt : SwaggerGenOptions) : unit =
+            let version = "v1"
+
+            let info = OpenApiInfo()
+            info.Title <- "Apex API"
+            info.Description <- "API for Apex"
+            info.Version <- version
+
+            opt.SwaggerDoc(version, info)
+
+            let assemblies = [
+                typeof<CreateUserRequest>.Assembly // Model
+                typeof<UserController>.Assembly // Controllers
+            ]
+
+            for a in assemblies do
+                let file = a.GetName().Name + ".xml"
+                let path = Path.Combine(AppContext.BaseDirectory, file)
+                opt.IncludeXmlComments(path)
+            ()
+
         // Framework services
-        services.AddCors() |> ignore
-        services.AddGiraffe() |> ignore // Phase out
+        services.AddCors(fun opt ->
+            let webAddress = __.Configuration.GetValue<string>("Api:WebAddress")
+            opt.AddPolicy("ApiCorsPolicy", fun builder -> 
+                builder
+                    .WithOrigins(webAddress)
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials()
+                    |> ignore
+            )
+        ) |> ignore
+        services.AddControllers()
+            .AddNewtonsoftJson(fun opt -> 
+                let converters = opt.SerializerSettings.Converters
+                converters.Add(OptionJsonConverter())
+                converters.Add(TupleArrayJsonConverter())
+                converters.Add(OptionJsonConverter())
+                converters.Add(UnionEnumJsonConverter())
+                converters.Add(SingleFieldUnionJsonConverter())
+            ) |> ignore
 
         // Configuration
         services.Configure<AppSettings>(__.Configuration) |> ignore
@@ -44,6 +84,9 @@ type Startup() =
 
         // Serilog
         services.AddSingleton<Serilog.ILogger>(Log.Logger) |> ignore
+
+        // Swagger
+        services.AddSwaggerGen(fun opt -> configureSwagger opt) |> ignore
 
         // Database layer
         services.AddSingleton<CommandContextProvider>() |> ignore
@@ -83,20 +126,13 @@ type Startup() =
 
         // Controller layer
         services.AddSingleton<HttpUtility>() |> ignore
-        services.AddSingleton<IBoardController, BoardController>() |> ignore
-        services.AddSingleton<IEventController, EventController>() |> ignore
-        services.AddSingleton<IGameController, GameController>() |> ignore
-        services.AddSingleton<INotificationsController, NotificationController>() |> ignore
-        services.AddSingleton<IPlayerController, PlayerController>() |> ignore
-        services.AddSingleton<ISearchController, SearchController>() |> ignore
-        services.AddSingleton<ISessionController, SessionController>() |> ignore
-        services.AddSingleton<ISnapshotController, SnapshotController>() |> ignore
-        services.AddSingleton<ITurnController, TurnController>() |> ignore
-        services.AddSingleton<IUserController, UserController>() |> ignore
         
         ()
 
     member __.Configure(app : IApplicationBuilder, env : IWebHostEnvironment) : unit =
+        // See https://docs.microsoft.com/en-us/aspnet/core/fundamentals/middleware/?view=aspnetcore-3.1#middleware-order
+        // regarding middleware order
+
         let configureNewtonsoft () =
             //This will only provide custom serialization of responses to clients.
             //Custom deserialization of request bodies does not work that same way in this framework.
@@ -113,85 +149,6 @@ type Startup() =
             let settings = JsonSerializerSettings()
             settings.Converters <- converters.ToList()
             JsonConvert.DefaultSettings <- (fun () -> settings)
-
-        let errorHandler (ex : Exception) (logger : Microsoft.Extensions.Logging.ILogger) =
-            logger.LogError(ex, "An unhandled exception has occurred while executing the request.")
-            Log.Logger.Error(ex, "An unexpected error occurred.")
-            clearResponse >=> setStatusCode 500 >=> text ex.Message
-
-        let configureCors (builder : CorsPolicyBuilder) =
-            builder.WithOrigins(__.Configuration.GetValue<string>("Api:WebAddress"))
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowCredentials()
-                    |> ignore
-
-        let apiHandler =
-            let getService () : 'a = app.ApplicationServices.GetService<'a>()
-            let sessionCtrl = getService<ISessionController>()
-            let userCtrl = getService<IUserController>()
-            let boardCtrl = getService<IBoardController>()
-            let gameCtrl = getService<IGameController>()
-            let playerCtrl = getService<IPlayerController>()
-            let turnCtrl = getService<ITurnController>()
-            let eventCtrl = getService<IEventController>()
-            let searchCtrl = getService<ISearchController>()
-            let snapshotCtrl = getService<ISnapshotController>()
-            let notificationCtrl = getService<INotificationsController>()
-
-            let getHandler : HttpFunc -> HttpContext -> HttpFuncResult =
-                    choose [
-                        subRoute "/api"
-                            (choose [
-
-                            //Session
-                                POST >=> route Routes.sessions >=> sessionCtrl.openSession
-                                DELETE >=> route Routes.sessions >=> sessionCtrl.closeSession
-
-                            //Users
-                                POST >=> route Routes.users >=> userCtrl.createUser
-                                GET >=> routef Routes.userFormat userCtrl.getUser
-                                GET >=> route Routes.currentUser >=> userCtrl.getCurrentUser
-                                DELETE >=> routef Routes.userFormat userCtrl.deleteUser
-
-                            //Board
-                                GET >=> routef Routes.boardFormat boardCtrl.getBoard
-                                GET >=> routef Routes.pathsFormat boardCtrl.getCellPaths
-
-                            //Game lobby
-                                POST >=> route Routes.games >=> gameCtrl.createGame
-                                GET >=> routef Routes.gameFormat gameCtrl.getGame
-                                PUT >=> routef Routes.gameParametersFormat gameCtrl.updateGameParameters
-                                POST >=> routef Routes.startGameFormat gameCtrl.startGame
-
-                            //Players
-                                POST >=> routef Routes.playersFormat playerCtrl.addPlayer
-                                DELETE >=> routef Routes.playerFormat playerCtrl.removePlayer
-                                PUT >=> routef Routes.playerStatusChangeFormat playerCtrl.updatePlayerStatus
-
-                            //Turn actions
-                                POST >=> routef Routes.selectCellFormat turnCtrl.selectCell
-                                POST >=> routef Routes.resetTurnFormat turnCtrl.resetTurn
-                                POST >=> routef Routes.commitTurnFormat turnCtrl.commitTurn
-
-                            //Events
-                                POST >=> routef Routes.eventsQueryFormat eventCtrl.getEvents
-
-                            //Search
-                                POST >=> route Routes.searchGames >=> searchCtrl.searchGames
-
-                            //Snapshots
-                                POST >=> routef Routes.snapshotsFormat snapshotCtrl.createSnapshot
-                                GET >=> routef Routes.snapshotsFormat snapshotCtrl.getSnapshotsForGame
-                                DELETE >=> routef Routes.snapshotFormat snapshotCtrl.deleteSnapshot
-                                POST >=> routef Routes.snapshotLoadFormat snapshotCtrl.loadSnapshot
-
-                            //Notifications
-                                GET >=> route Routes.notificationsSse >=> notificationCtrl.connectSse
-                                GET >=> route Routes.notificationsWebSockets >=> notificationCtrl.connectWebSockets
-                            ])
-                        setStatusCode 404 >=> text "Not Found" ]
-            getHandler
     
         let configureWebServer(app : IApplicationBuilder) : IApplicationBuilder =
             let isDefault (path : string) =
@@ -227,13 +184,22 @@ type Startup() =
 
         configureNewtonsoft() 
 
+        app.UseMiddleware<ErrorHandlingMiddleware>() |> ignore
+
         if __.Configuration.GetValue<bool>("WebServer:Enable")
-        then
-            configureWebServer(app) |> ignore
+        then configureWebServer(app) |> ignore
 
-        app.UseGiraffeErrorHandler(errorHandler) |> ignore
-        app.UseCors(configureCors) |> ignore
+        app.UseRouting() |> ignore
+        app.UseCors("ApiCorsPolicy") |> ignore
+
         app.UseWebSockets() |> ignore
-        app.UseGiraffe(apiHandler) |> ignore
 
+        app.UseEndpoints(fun endpoints -> 
+            endpoints.MapControllers() |> ignore
+        ) |> ignore
+
+        app.UseSwagger() |> ignore
+        app.UseSwaggerUI(fun opt -> 
+            opt.SwaggerEndpoint("/swagger/v1/swagger.json", "Apex API V1")        
+        ) |> ignore
         ()

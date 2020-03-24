@@ -181,3 +181,13 @@ module AsyncHttpResult =
                 | 0 -> Ok ()
                 | _ -> Error <| HttpException (500, String.Join("\n", errors))
         }
+
+    let thenExtract (t : 'a AsyncHttpResult) : 'a Task =
+        task {
+            let! r = t
+            let result = 
+                match r with
+                | Ok a -> a
+                | Error ex -> raise ex
+            return result
+        }

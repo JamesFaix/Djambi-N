@@ -1,22 +1,50 @@
-namespace Apex.Api.Web.Controllers
+﻿namespace Apex.Api.Web.Controllers
 
+open System.Threading.Tasks
+open Microsoft.AspNetCore.Mvc
+open FSharp.Control.Tasks
+open Serilog
 open Apex.Api.Common.Control.AsyncHttpResult
-open Apex.Api.Web.Interfaces
-open Apex.Api.Web
 open Apex.Api.Logic.Interfaces
+open Apex.Api.Model
+open Apex.Api.Web
 
-type BoardController(boardMan : IBoardManager,
-                     u : HttpUtility) =
-    interface IBoardController with
+[<ApiController>]
+[<Route("api/boards")>]
+type BoardController(manager : IBoardManager,
+                       logger : ILogger,
+                       util : HttpUtility) =
+    inherit ControllerBase()
+    
+    /// <summary> Gets the board with the given region count. </summary>
+    /// <param name="regionCount"> The number of regions in the board. </param>
+    /// <response code="200"> The board. </response>
+    [<HttpGet("{regionCount}")>]
+    [<ProducesResponseType(200, Type = typeof<Board>)>]
+    member __.GetBoard(regionCount : int) : Task<IActionResult> =
+        let ctx = base.HttpContext
+        task {
+            let! board =
+                util.getSessionFromContext ctx
+                |> thenBindAsync (fun session ->
+                    manager.getBoard regionCount session
+                )
+                |> thenExtract
 
-        member x.getBoard regionCount =
-            let func ctx =
-                u.getSessionFromContext ctx
-                |> thenBindAsync (boardMan.getBoard regionCount)
-            u.handle func
+            return OkObjectResult(board) :> IActionResult
+        }
+    
+    [<HttpGet("{regionCount}/cells/{cellId}")>]
+    [<ProducesResponseType(200, Type = typeof<int[][]>)>]
+    member __.GetCellPaths(regionCount : int, cellId : int) : Task<IActionResult> =
+        let ctx = base.HttpContext
+        task {
+            let! board =
+                util.getSessionFromContext ctx
+                |> thenBindAsync (fun session ->
+                    manager.getCellPaths (regionCount, cellId) session
+                )
+                |> thenExtract
 
-        member x.getCellPaths (regionCount, cellId) =
-            let func ctx =
-                u.getSessionFromContext ctx
-                |> thenBindAsync (boardMan.getCellPaths (regionCount, cellId))
-            u.handle func
+            return OkObjectResult(board) :> IActionResult
+        }

@@ -1,35 +1,54 @@
-namespace Apex.Api.Web.Controllers
+﻿namespace Apex.Api.Web.Controllers
 
-open Microsoft.AspNetCore.Http
+open System.Threading.Tasks
+open Microsoft.AspNetCore.Mvc
+open FSharp.Control.Tasks
+open Serilog
 open Apex.Api.Common.Control.AsyncHttpResult
-open Apex.Api.Model
-open Apex.Api.Web.Interfaces
-open Apex.Api.Web
 open Apex.Api.Logic.Interfaces
+open Apex.Api.Model
+open Apex.Api.Web
 
-type SessionController(u : HttpUtility,
-                       sessionMan : ISessionManager) =
-    interface ISessionController with
-
-        member x.openSession =
-            let func (ctx : HttpContext) =
-                u.getSessionOptionAndModelFromContext<LoginRequest> ctx
-                |> thenBindAsync (fun (request, session) ->
+[<ApiController>]
+[<Route("api/sessions")>]
+type SessionController(manager : ISessionManager,
+                       logger : ILogger,
+                       util : HttpUtility) =
+    inherit ControllerBase()
+    
+    [<HttpPost>]
+    [<ProducesResponseType(200, Type = typeof<Session>)>]
+    member __.OpenSession([<FromBody>] request : LoginRequest) : Task<IActionResult> =
+        let ctx = base.HttpContext
+        task {
+            let! games =
+                util.getSessionOptionFromContext ctx
+                |> thenBindAsync (fun session ->
                     match session with
-                    | Some s -> sessionMan.logout s
+                    | Some s -> manager.logout s
                     | None -> okTask ()
 
-                    |> thenBindAsync (fun _ -> sessionMan.login request)
-                    |> thenDo (fun session -> u.appendCookie ctx (session.token, session.expiresOn))
+                    |> thenBindAsync (fun _ -> manager.login request)
+                    |> thenDo (fun session -> util.appendCookie ctx (session.token, session.expiresOn))                                  
                 )
-            u.handle func
+                |> thenExtract
 
-        member x.closeSession =
-            let func (ctx : HttpContext) =
-                //Always clear the cookie, even if the DB does not have a session matching it
-                u.appendEmptyCookie ctx
+            return OkObjectResult(games) :> IActionResult
+        }
+       
+    [<HttpDelete>]
+    [<ProducesResponseType(200)>]
+    member __.CloseSession() : Task<IActionResult> =
+        let ctx = base.HttpContext
 
-                u.getSessionFromContext ctx
-                |> thenBindAsync sessionMan.logout
+        //Always clear the cookie, even if the DB does not have a session matching it
+        util.appendEmptyCookie ctx
 
-            u.handle func
+        task {
+            let! games =
+                util.getSessionFromContext ctx
+                |> thenBindAsync manager.logout 
+                |> thenExtract
+
+            return OkObjectResult(games) :> IActionResult
+        }

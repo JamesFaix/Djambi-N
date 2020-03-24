@@ -1,27 +1,63 @@
-namespace Apex.Api.Web.Controllers
+﻿namespace Apex.Api.Web.Controllers
 
+open System.Threading.Tasks
+open Microsoft.AspNetCore.Mvc
+open FSharp.Control.Tasks
+open Serilog
 open Apex.Api.Common.Control.AsyncHttpResult
-open Apex.Api.Web.Interfaces
-open Apex.Api.Web
 open Apex.Api.Logic.Interfaces
+open Apex.Api.Model
+open Apex.Api.Web
 
-type TurnController(u : HttpUtility,
-                    turnMan : ITurnManager) =
-    interface ITurnController with
-        member x.selectCell (gameId, cellId) =
-            let func ctx =
-                u.getSessionFromContext ctx
-                |> thenBindAsync (turnMan.selectCell(gameId, cellId))
-            u.handle func
+[<ApiController>]
+[<Route("api/games/{gameId}/current-turn")>]
+type TurnController(manager : ITurnManager,
+                       logger : ILogger,
+                       util : HttpUtility) =
+    inherit ControllerBase()
+    
+    [<HttpPost("selection-request/{cellId}")>]
+    [<ProducesResponseType(200, Type = typeof<StateAndEventResponse>)>]
+    member __.SelectCell(gameId : int, cellId : int) : Task<IActionResult> =
+        let ctx = base.HttpContext
+        task {
+            let! response =
+                util.getSessionFromContext ctx
+                |> thenBindAsync (fun session ->
+                    manager.selectCell (gameId, cellId) session
+                )
+                |> thenExtract
 
-        member x.resetTurn gameId =
-            let func ctx =
-                u.getSessionFromContext ctx
-                |> thenBindAsync (turnMan.resetTurn gameId)
-            u.handle func
+            return OkObjectResult(response) :> IActionResult
+        }
+        
+    [<HttpPost("reset-request")>]
+    [<ProducesResponseType(200, Type = typeof<StateAndEventResponse>)>]
+    member __.ResetTurn(gameId : int) : Task<IActionResult> =
+        let ctx = base.HttpContext
+        task {
+            let! response =
+                util.getSessionFromContext ctx
+                |> thenBindAsync (fun session ->
+                    manager.resetTurn gameId session
+                )
+                |> thenExtract
 
-        member x.commitTurn gameId =
-            let func ctx =
-                u.getSessionFromContext ctx
-                |> thenBindAsync (turnMan.commitTurn gameId)
-            u.handle func
+            return OkObjectResult(response) :> IActionResult
+        }
+    
+    [<HttpPost("commit-request")>]
+    [<ProducesResponseType(200, Type = typeof<StateAndEventResponse>)>]
+    member __.CommitTurn(gameId : int) : Task<IActionResult> =
+        let ctx = base.HttpContext
+        task {
+            let! response =
+                util.getSessionFromContext ctx
+                |> thenBindAsync (fun session ->
+                    manager.commitTurn gameId session
+                )
+                |> thenExtract
+
+            return OkObjectResult(response) :> IActionResult
+        }
+    

@@ -41,7 +41,10 @@ type BoardMetadata =
 [<ClientType(ClientSection.Board)>]
 type Board =
     {
+        /// <summary> Number of regions on the board. </summary>
         regionCount : int
+        /// <summary> Width/height of region in cells. </summary>
         regionSize : int
+        /// <summary> List of cells. </summary>
         cells : Cell list
     }

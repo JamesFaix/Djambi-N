@@ -15,6 +15,7 @@
     </Content>
     <Content Include="Properties\launchSettings.json" />
     <Compile Include="Config.fs" />
+    <Compile Include="ErrorHandlingMiddleware.fs" />
     <Compile Include="Startup.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
@@ -22,8 +23,8 @@
     <None Include="Dockerfile" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Giraffe" Version="4.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.WebSockets" Version="2.2.1" />
@@ -36,6 +37,9 @@
     <PackageReference Include="Serilog.AspNetCore" Version="3.2.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
     <PackageReference Include="Serilog.Sinks.File" Version="4.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="5.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="5.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUi" Version="5.0.0" />  
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\api.common\api.common.fsproj" />
@@ -44,7 +48,6 @@
     <ProjectReference Include="..\api.logic.interfaces\api.logic.interfaces.fsproj" />
     <ProjectReference Include="..\api.logic\api.logic.fsproj" />
     <ProjectReference Include="..\api.model\api.model.fsproj" />
-    <ProjectReference Include="..\api.web.interfaces\api.web.interfaces.fsproj" />
     <ProjectReference Include="..\api.web\api.web.fsproj" />
   </ItemGroup>
 </Project>
