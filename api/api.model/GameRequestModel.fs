@@ -2,11 +2,8 @@
 module Apex.Api.Model.GameRequestModel
 
 open System
-open Apex.ClientGenerator.Annotations
 open System.ComponentModel
 
-[<CLIMutable>]
-[<ClientType(ClientSection.Player)>]
 type CreatePlayerRequest =
     {
         kind : PlayerKind
@@ -44,15 +41,11 @@ type PlayerStatusChangeRequest =
         status : PlayerStatus
     }
 
-[<CLIMutable>]
-[<ClientType(ClientSection.Turn)>]
 type SelectionRequest =
     {
         cellId : int
     }
 
-[<CLIMutable>]
-[<ClientType(ClientSection.Events)>]
 type EventsQuery =
     {
         maxResults : int option

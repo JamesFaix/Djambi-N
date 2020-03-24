@@ -3,9 +3,7 @@ module Apex.Api.Model.SessionModel
 
 open System
 open Apex.Api.Model
-open Apex.ClientGenerator.Annotations
 
-[<ClientType(ClientSection.Session)>]
 type Session =
     {
         id : int
@@ -15,8 +13,6 @@ type Session =
         expiresOn : DateTime
     }
 
-[<CLIMutable>]
-[<ClientType(ClientSection.Session)>]
 type LoginRequest =
     {
         username : string

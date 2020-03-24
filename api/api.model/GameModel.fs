@@ -1,15 +1,11 @@
 [<AutoOpen>]
 module Apex.Api.Model.GameModel
 
-open Apex.ClientGenerator.Annotations
-
-[<ClientType(ClientSection.Player)>]
 type PlayerKind =
     | User
     | Guest
     | Neutral
 
-[<ClientType(ClientSection.Player)>]
 type PlayerStatus =
     | Pending
     | Alive
@@ -19,7 +15,6 @@ type PlayerStatus =
     | AcceptsDraw
     | Victorious
 
-[<ClientType(ClientSection.Player)>]
 type Player =
     {
         id : int
@@ -33,7 +28,6 @@ type Player =
         startingTurnNumber : int option
     }
 
-[<ClientType(ClientSection.Game)>]
 type PieceKind =
     | Conduit
     | Thug
@@ -43,7 +37,6 @@ type PieceKind =
     | Reaper
     | Corpse
 
-[<ClientType(ClientSection.Game)>]
 type Piece =
     {
         id : int
@@ -53,7 +46,6 @@ type Piece =
         cellId : int
     }
 
-[<ClientType(ClientSection.Turn)>]
 type SelectionKind =
     | Subject
     | Move
@@ -61,7 +53,6 @@ type SelectionKind =
     | Drop
     | Vacate
 
-[<ClientType(ClientSection.Turn)>]
 type Selection =
     {
         kind : SelectionKind
@@ -112,13 +103,11 @@ module Selection =
             pieceId = None
         }
 
-[<ClientType(ClientSection.Turn)>]
 type TurnStatus =
     | AwaitingSelection
     | AwaitingCommit
     | DeadEnd
 
-[<ClientType(ClientSection.Turn)>]
 type Turn =
     {
         status : TurnStatus
@@ -144,15 +133,12 @@ module Turn =
             requiredSelectionKind = None
         }
 
-[<ClientType(ClientSection.Game)>]
 type GameStatus =
     | Pending
     | InProgress
     | Canceled
     | Over
 
-[<CLIMutable>]
-[<ClientType(ClientSection.Game)>]
 type GameParameters =
     {
         description : string option
@@ -161,7 +147,6 @@ type GameParameters =
         allowGuests : bool
     }
 
-[<ClientType(ClientSection.Game)>]
 type Game =
     {
         id : int
