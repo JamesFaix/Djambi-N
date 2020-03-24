@@ -21,7 +21,7 @@ type SnapshotController(manager : ISnapshotManager,
     member __.CreateSnapshot(gameId : int, [<FromBody>] request : CreateSnapshotRequest) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
-            let games =
+            let! games =
                 util.getSessionFromContext ctx
                 |> thenBindAsync (fun session ->
                     manager.createSnapshot gameId request session
@@ -36,7 +36,7 @@ type SnapshotController(manager : ISnapshotManager,
     member __.GetSnapshots(gameId : int) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
-            let games =
+            let! games =
                 util.getSessionFromContext ctx
                 |> thenBindAsync (fun session ->
                     manager.getSnapshotsForGame gameId session
@@ -51,7 +51,7 @@ type SnapshotController(manager : ISnapshotManager,
     member __.DeleteSnapshot(gameId : int, snapshotId : int) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
-            let games =
+            let! games =
                 util.getSessionFromContext ctx
                 |> thenBindAsync (fun session ->
                     manager.deleteSnapshot gameId snapshotId session
@@ -66,7 +66,7 @@ type SnapshotController(manager : ISnapshotManager,
     member __.LoadSnapshot(gameId : int, snapshotId : int) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
-            let games =
+            let! games =
                 util.getSessionFromContext ctx
                 |> thenBindAsync (fun session ->
                     manager.loadSnapshot gameId snapshotId session

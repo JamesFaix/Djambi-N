@@ -16,12 +16,12 @@ type TurnController(manager : ITurnManager,
                        util : HttpUtility) =
     inherit ControllerBase()
     
-    [<HttpPost("selections/{cellId}")>]
+    [<HttpPost("selection-request/{cellId}")>]
     [<ProducesResponseType(200, Type = typeof<StateAndEventResponse>)>]
     member __.SelectCell(gameId : int, cellId : int) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
-            let response =
+            let! response =
                 util.getSessionFromContext ctx
                 |> thenBindAsync (fun session ->
                     manager.selectCell (gameId, cellId) session
@@ -36,7 +36,7 @@ type TurnController(manager : ITurnManager,
     member __.ResetTurn(gameId : int) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
-            let response =
+            let! response =
                 util.getSessionFromContext ctx
                 |> thenBindAsync (fun session ->
                     manager.resetTurn gameId session
@@ -51,7 +51,7 @@ type TurnController(manager : ITurnManager,
     member __.CommitTurn(gameId : int) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
-            let response =
+            let! response =
                 util.getSessionFromContext ctx
                 |> thenBindAsync (fun session ->
                     manager.commitTurn gameId session

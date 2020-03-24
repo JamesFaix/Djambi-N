@@ -21,7 +21,7 @@ type GameController(manager : IGameManager,
     member __.GetGame(gameId : int) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
-            let game =
+            let! game =
                 util.getSessionFromContext ctx
                 |> thenBindAsync (fun session ->
                     manager.getGame gameId session
@@ -36,7 +36,7 @@ type GameController(manager : IGameManager,
     member __.CreateGame([<FromBody>] request : GameParameters) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
-            let game =
+            let! game =
                 util.getSessionFromContext ctx
                 |> thenBindAsync (fun session ->
                     manager.createGame request session
@@ -51,7 +51,7 @@ type GameController(manager : IGameManager,
     member __.UpdateGameParameters(gameId : int, [<FromBody>] parameters : GameParameters) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
-            let response =
+            let! response =
                 util.getSessionFromContext ctx
                 |> thenBindAsync (fun session ->
                     manager.updateGameParameters gameId parameters session
@@ -66,7 +66,7 @@ type GameController(manager : IGameManager,
     member __.StartGame(gameId : int) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
-            let response =
+            let! response =
                 util.getSessionFromContext ctx
                 |> thenBindAsync (fun session ->
                     manager.startGame gameId session

@@ -24,7 +24,7 @@ type BoardController(manager : IBoardManager,
     member __.GetBoard(regionCount : int) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
-            let board =
+            let! board =
                 util.getSessionFromContext ctx
                 |> thenBindAsync (fun session ->
                     manager.getBoard regionCount session
@@ -39,7 +39,7 @@ type BoardController(manager : IBoardManager,
     member __.GetCellPaths(regionCount : int, cellId : int) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
-            let board =
+            let! board =
                 util.getSessionFromContext ctx
                 |> thenBindAsync (fun session ->
                     manager.getCellPaths (regionCount, cellId) session

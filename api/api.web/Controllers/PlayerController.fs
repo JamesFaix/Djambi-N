@@ -22,7 +22,7 @@ type PlayerController(manager : IPlayerManager,
     member __.AddPlayer(gameId : int, [<FromBody>] request : CreatePlayerRequest) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
-            let response =
+            let! response =
                 util.getSessionFromContext ctx
                 |> thenBindAsync (fun session ->
                     manager.addPlayer gameId request session
@@ -37,7 +37,7 @@ type PlayerController(manager : IPlayerManager,
     member __.RemovePlayer(gameId : int, playerId : int) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
-            let response =
+            let! response =
                 util.getSessionFromContext ctx
                 |> thenBindAsync (fun session ->
                     manager.removePlayer (gameId, playerId) session
@@ -52,7 +52,7 @@ type PlayerController(manager : IPlayerManager,
     member __.UpdateGameParameters(gameId : int, playerId : int, statusName : string) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
-            let response =
+            let! response =
                 Enum.parseUnion<PlayerStatus> statusName
                 |> Apex.Api.Common.Control.Result.bindAsync (fun status ->
                     util.getSessionFromContext ctx

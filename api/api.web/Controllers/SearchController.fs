@@ -21,7 +21,7 @@ type SearchController(manager : ISearchManager,
     member __.SearchGames([<FromBody>] query : GamesQuery) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
-            let games =
+            let! games =
                 util.getSessionFromContext ctx
                 |> thenBindAsync (fun session ->
                     manager.searchGames query session

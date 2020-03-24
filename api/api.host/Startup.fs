@@ -66,7 +66,15 @@ type Startup() =
                     |> ignore
             )
         ) |> ignore
-        services.AddControllers() |> ignore
+        services.AddControllers()
+            .AddNewtonsoftJson(fun opt -> 
+                let converters = opt.SerializerSettings.Converters
+                converters.Add(OptionJsonConverter())
+                converters.Add(TupleArrayJsonConverter())
+                converters.Add(OptionJsonConverter())
+                converters.Add(UnionEnumJsonConverter())
+                converters.Add(SingleFieldUnionJsonConverter())
+            ) |> ignore
 
         // Configuration
         services.Configure<AppSettings>(__.Configuration) |> ignore

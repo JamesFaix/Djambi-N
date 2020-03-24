@@ -21,7 +21,7 @@ type UserController(manager : IUserManager,
     member __.CreateUser([<FromBody>] request : CreateUserRequest) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
-            let response =
+            let! response =
                 util.getSessionOptionFromContext ctx
                 |> thenBindAsync (fun sessionOption ->
                     manager.createUser request sessionOption
@@ -36,7 +36,7 @@ type UserController(manager : IUserManager,
     member __.ResetTurn(userId : int) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
-            let response =
+            let! response =
                 util.getSessionFromContext ctx
                 |> thenBindAsync (fun session ->
                     manager.deleteUser userId session
@@ -52,7 +52,7 @@ type UserController(manager : IUserManager,
     member __.GetUser(userId : int) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
-            let response =
+            let! response =
                 util.getSessionFromContext ctx
                 |> thenBindAsync (fun session ->
                     manager.getUser userId session
@@ -67,7 +67,7 @@ type UserController(manager : IUserManager,
     member __.GetCurrentUser() : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
-            let response =
+            let! response =
                 util.getSessionFromContext ctx
                 |> thenBindAsync (fun session ->
                     manager.getCurrentUser session

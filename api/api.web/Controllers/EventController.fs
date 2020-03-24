@@ -21,7 +21,7 @@ type EventController(manager : IEventManager,
     member __.GetBoard(gameId : int, [<FromBody>] query : EventsQuery) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
-            let events =
+            let! events =
                 util.getSessionFromContext ctx
                 |> thenBindAsync (fun session ->
                     manager.getEvents (gameId, query) session

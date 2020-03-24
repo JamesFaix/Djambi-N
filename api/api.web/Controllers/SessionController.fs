@@ -21,7 +21,7 @@ type SessionController(manager : ISessionManager,
     member __.OpenSession([<FromBody>] request : LoginRequest) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
-            let games =
+            let! games =
                 util.getSessionOptionFromContext ctx
                 |> thenBindAsync (fun session ->
                     match session with
@@ -45,7 +45,7 @@ type SessionController(manager : ISessionManager,
         util.appendEmptyCookie ctx
 
         task {
-            let games =
+            let! games =
                 util.getSessionFromContext ctx
                 |> thenBindAsync manager.logout 
                 |> thenExtract
