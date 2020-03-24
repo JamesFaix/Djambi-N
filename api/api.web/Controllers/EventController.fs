@@ -10,13 +10,13 @@ open Apex.Api.Model
 open Apex.Api.Web
 
 [<ApiController>]
-[<Route("api/events")>]
+[<Route("api/games/{gameId}/events")>]
 type EventController(manager : IEventManager,
                     logger : ILogger,
                     scp : SessionContextProvider) =
     inherit ControllerBase()
     
-    [<HttpGet("{gameId}")>]
+    [<HttpPost("query")>]
     [<ProducesResponseType(200, Type = typeof<Event[]>)>]
     member __.GetEvents(gameId : int, [<FromBody>] query : EventsQuery) : Task<IActionResult> =
         let ctx = base.HttpContext
