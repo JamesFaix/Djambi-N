@@ -14,7 +14,7 @@ open Apex.Api.Common
 [<Route("api/games/{gameId}/players")>]
 type PlayerController(manager : IPlayerManager,
                        logger : ILogger,
-                       util : HttpUtility) =
+                       scp : SessionContextProvider) =
     inherit ControllerBase()
     
     [<HttpPost>]
@@ -22,13 +22,8 @@ type PlayerController(manager : IPlayerManager,
     member __.AddPlayer(gameId : int, [<FromBody>] request : CreatePlayerRequest) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
-            let! response =
-                util.getSessionFromContext ctx
-                |> thenBindAsync (fun session ->
-                    manager.addPlayer gameId request session
-                )
-                |> thenExtract
-
+            let! session = scp.GetSessionFromContext ctx
+            let! response = manager.addPlayer gameId request session |> thenExtract
             return OkObjectResult(response) :> IActionResult
         }
 
@@ -37,13 +32,8 @@ type PlayerController(manager : IPlayerManager,
     member __.RemovePlayer(gameId : int, playerId : int) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
-            let! response =
-                util.getSessionFromContext ctx
-                |> thenBindAsync (fun session ->
-                    manager.removePlayer (gameId, playerId) session
-                )
-                |> thenExtract
-
+            let! session = scp.GetSessionFromContext ctx
+            let! response = manager.removePlayer (gameId, playerId) session |> thenExtract
             return OkObjectResult(response) :> IActionResult
         }
     
@@ -52,11 +42,11 @@ type PlayerController(manager : IPlayerManager,
     member __.UpdateGameParameters(gameId : int, playerId : int, statusName : string) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
+            let! session = scp.GetSessionFromContext ctx
             let! response =
                 Enum.parseUnion<PlayerStatus> statusName
                 |> Apex.Api.Common.Control.Result.bindAsync (fun status ->
-                    util.getSessionFromContext ctx
-                    |> thenBindAsync (manager.updatePlayerStatus (gameId, playerId, status))
+                    manager.updatePlayerStatus (gameId, playerId, status) session
                 )
                 |> thenExtract
 

@@ -13,7 +13,7 @@ open Apex.Api.Web
 [<Route("api/search")>]
 type SearchController(manager : ISearchManager,
                        logger : ILogger,
-                       util : HttpUtility) =
+                       scp : SessionContextProvider) =
     inherit ControllerBase()
     
     [<HttpPost("games")>]
@@ -21,12 +21,7 @@ type SearchController(manager : ISearchManager,
     member __.SearchGames([<FromBody>] query : GamesQuery) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
-            let! games =
-                util.getSessionFromContext ctx
-                |> thenBindAsync (fun session ->
-                    manager.searchGames query session
-                )
-                |> thenExtract
-
+            let! session = scp.GetSessionFromContext ctx
+            let! games = manager.searchGames query session |> thenExtract
             return OkObjectResult(games) :> IActionResult
         }

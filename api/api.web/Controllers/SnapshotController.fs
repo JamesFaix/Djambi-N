@@ -13,7 +13,7 @@ open Apex.Api.Web
 [<Route("api/games/{gameId}/snapshots")>]
 type SnapshotController(manager : ISnapshotManager,
                        logger : ILogger,
-                       util : HttpUtility) =
+                       scp : SessionContextProvider) =
     inherit ControllerBase()
     
     [<HttpPost>]
@@ -21,14 +21,9 @@ type SnapshotController(manager : ISnapshotManager,
     member __.CreateSnapshot(gameId : int, [<FromBody>] request : CreateSnapshotRequest) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
-            let! games =
-                util.getSessionFromContext ctx
-                |> thenBindAsync (fun session ->
-                    manager.createSnapshot gameId request session
-                )
-                |> thenExtract
-
-            return OkObjectResult(games) :> IActionResult
+            let! session = scp.GetSessionFromContext ctx
+            let! snapshot = manager.createSnapshot gameId request session |> thenExtract
+            return OkObjectResult(snapshot) :> IActionResult
         }
         
     [<HttpGet>]
@@ -36,14 +31,9 @@ type SnapshotController(manager : ISnapshotManager,
     member __.GetSnapshots(gameId : int) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
-            let! games =
-                util.getSessionFromContext ctx
-                |> thenBindAsync (fun session ->
-                    manager.getSnapshotsForGame gameId session
-                )
-                |> thenExtract
-
-            return OkObjectResult(games) :> IActionResult
+            let! session = scp.GetSessionFromContext ctx
+            let! snapshots = manager.getSnapshotsForGame gameId session |> thenExtract
+            return OkObjectResult(snapshots) :> IActionResult
         }
     
     [<HttpDelete("{snapshotId}")>]
@@ -51,14 +41,9 @@ type SnapshotController(manager : ISnapshotManager,
     member __.DeleteSnapshot(gameId : int, snapshotId : int) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
-            let! games =
-                util.getSessionFromContext ctx
-                |> thenBindAsync (fun session ->
-                    manager.deleteSnapshot gameId snapshotId session
-                )
-                |> thenExtract
-
-            return OkObjectResult(games) :> IActionResult
+            let! session = scp.GetSessionFromContext ctx
+            let! _ = manager.deleteSnapshot gameId snapshotId session |> thenExtract
+            return OkResult() :> IActionResult
         }
     
     [<HttpPost("{snapshotId}/load")>]
@@ -66,12 +51,7 @@ type SnapshotController(manager : ISnapshotManager,
     member __.LoadSnapshot(gameId : int, snapshotId : int) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
-            let! games =
-                util.getSessionFromContext ctx
-                |> thenBindAsync (fun session ->
-                    manager.loadSnapshot gameId snapshotId session
-                )
-                |> thenExtract
-
-            return OkObjectResult(games) :> IActionResult
+            let! session = scp.GetSessionFromContext ctx
+            let! _ = manager.loadSnapshot gameId snapshotId session |> thenExtract
+            return OkResult() :> IActionResult
         }

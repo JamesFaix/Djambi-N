@@ -5,8 +5,9 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="CookieProvider.fs" />
+    <Compile Include="SessionContextProvider.fs" />
     <Compile Include="Websockets.fs" />
-    <Compile Include="HttpUtility.fs" />
     <Compile Include="ServerSideEvents.fs" />
     <Compile Include="Controllers\BoardController.fs" />
     <Compile Include="Controllers\EventController.fs" />
@@ -20,7 +21,6 @@
     <Compile Include="Controllers\UserController.fs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Giraffe" Version="4.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
     <PackageReference Include="Microsoft.AspNetCore.WebSockets" Version="2.2.1" />
