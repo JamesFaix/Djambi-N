@@ -13,7 +13,7 @@ open Apex.Api.Web
 [<Route("api/games")>]
 type GameController(manager : IGameManager,
                        logger : ILogger,
-                       util : HttpUtility) =
+                       scp : SessionContextProvider) =
     inherit ControllerBase()
     
     [<HttpGet("{gameId}")>]
@@ -21,13 +21,8 @@ type GameController(manager : IGameManager,
     member __.GetGame(gameId : int) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
-            let! game =
-                util.getSessionFromContext ctx
-                |> thenBindAsync (fun session ->
-                    manager.getGame gameId session
-                )
-                |> thenExtract
-
+            let! session = scp.GetSessionFromContext ctx
+            let! game = manager.getGame gameId session |> thenExtract
             return OkObjectResult(game) :> IActionResult
         }
 
@@ -36,13 +31,8 @@ type GameController(manager : IGameManager,
     member __.CreateGame([<FromBody>] request : GameParameters) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
-            let! game =
-                util.getSessionFromContext ctx
-                |> thenBindAsync (fun session ->
-                    manager.createGame request session
-                )
-                |> thenExtract
-
+            let! session = scp.GetSessionFromContext ctx
+            let! game = manager.createGame request session |> thenExtract
             return OkObjectResult(game) :> IActionResult
         }
     
@@ -51,13 +41,8 @@ type GameController(manager : IGameManager,
     member __.UpdateGameParameters(gameId : int, [<FromBody>] parameters : GameParameters) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
-            let! response =
-                util.getSessionFromContext ctx
-                |> thenBindAsync (fun session ->
-                    manager.updateGameParameters gameId parameters session
-                )
-                |> thenExtract
-
+            let! session = scp.GetSessionFromContext ctx
+            let! response = manager.updateGameParameters gameId parameters session |> thenExtract
             return OkObjectResult(response) :> IActionResult
         }
 
@@ -66,12 +51,7 @@ type GameController(manager : IGameManager,
     member __.StartGame(gameId : int) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
-            let! response =
-                util.getSessionFromContext ctx
-                |> thenBindAsync (fun session ->
-                    manager.startGame gameId session
-                )
-                |> thenExtract
-
+            let! session = scp.GetSessionFromContext ctx
+            let! response = manager.startGame gameId session |> thenExtract
             return OkObjectResult(response) :> IActionResult
         }

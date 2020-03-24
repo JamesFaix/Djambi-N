@@ -13,7 +13,8 @@ open Apex.Api.Web
 [<Route("api/sessions")>]
 type SessionController(manager : ISessionManager,
                        logger : ILogger,
-                       util : HttpUtility) =
+                       scp : SessionContextProvider,
+                       cookieProvider : CookieProvider) =
     inherit ControllerBase()
     
     [<HttpPost>]
@@ -21,19 +22,16 @@ type SessionController(manager : ISessionManager,
     member __.OpenSession([<FromBody>] request : LoginRequest) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
-            let! games =
-                util.getSessionOptionFromContext ctx
-                |> thenBindAsync (fun session ->
-                    match session with
-                    | Some s -> manager.logout s
-                    | None -> okTask ()
+            let! sessionOption = scp.GetSessionOptionFromContext ctx
+            let! _ = match sessionOption with
+                        | Some s -> manager.logout s
+                        | None -> okTask ()
 
-                    |> thenBindAsync (fun _ -> manager.login request)
-                    |> thenDo (fun session -> util.appendCookie ctx (session.token, session.expiresOn))                                  
-                )
-                |> thenExtract
+            let! session = manager.login request |> thenExtract
 
-            return OkObjectResult(games) :> IActionResult
+            cookieProvider.AppendCookie ctx (session.token, session.expiresOn)                               
+            
+            return OkObjectResult(session) :> IActionResult
         }
        
     [<HttpDelete>]
@@ -42,13 +40,13 @@ type SessionController(manager : ISessionManager,
         let ctx = base.HttpContext
 
         //Always clear the cookie, even if the DB does not have a session matching it
-        util.appendEmptyCookie ctx
+        cookieProvider.AppendEmptyCookie ctx
 
         task {
-            let! games =
-                util.getSessionFromContext ctx
-                |> thenBindAsync manager.logout 
-                |> thenExtract
+            let! sessionOption = scp.GetSessionOptionFromContext ctx
+            let! _ = match sessionOption with
+                        | Some s -> manager.logout s
+                        | None -> okTask ()
 
-            return OkObjectResult(games) :> IActionResult
+            return OkResult() :> IActionResult
         }

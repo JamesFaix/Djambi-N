@@ -13,7 +13,7 @@ open Apex.Api.Web
 [<Route("api/boards")>]
 type BoardController(manager : IBoardManager,
                        logger : ILogger,
-                       util : HttpUtility) =
+                       scp : SessionContextProvider) =
     inherit ControllerBase()
     
     /// <summary> Gets the board with the given region count. </summary>
@@ -24,13 +24,8 @@ type BoardController(manager : IBoardManager,
     member __.GetBoard(regionCount : int) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
-            let! board =
-                util.getSessionFromContext ctx
-                |> thenBindAsync (fun session ->
-                    manager.getBoard regionCount session
-                )
-                |> thenExtract
-
+            let! session = scp.GetSessionFromContext ctx
+            let! board = manager.getBoard regionCount session |> thenExtract
             return OkObjectResult(board) :> IActionResult
         }
     
@@ -39,12 +34,7 @@ type BoardController(manager : IBoardManager,
     member __.GetCellPaths(regionCount : int, cellId : int) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
-            let! board =
-                util.getSessionFromContext ctx
-                |> thenBindAsync (fun session ->
-                    manager.getCellPaths (regionCount, cellId) session
-                )
-                |> thenExtract
-
+            let! session = scp.GetSessionFromContext ctx
+            let! board = manager.getCellPaths (regionCount, cellId) session |> thenExtract
             return OkObjectResult(board) :> IActionResult
         }

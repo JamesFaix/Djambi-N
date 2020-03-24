@@ -13,7 +13,7 @@ open Apex.Api.Web
 [<Route("api/users")>]
 type UserController(manager : IUserManager,
                        logger : ILogger,
-                       util : HttpUtility) =
+                       scp : SessionContextProvider) =
     inherit ControllerBase()
     
     [<HttpPost>]
@@ -21,13 +21,8 @@ type UserController(manager : IUserManager,
     member __.CreateUser([<FromBody>] request : CreateUserRequest) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
-            let! response =
-                util.getSessionOptionFromContext ctx
-                |> thenBindAsync (fun sessionOption ->
-                    manager.createUser request sessionOption
-                )
-                |> thenExtract
-
+            let! sessionOption = scp.GetSessionOptionFromContext ctx
+            let! response = manager.createUser request sessionOption |> thenExtract
             return OkObjectResult(response) :> IActionResult
         }
         
@@ -36,14 +31,9 @@ type UserController(manager : IUserManager,
     member __.DeleteUser(userId : int) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
-            let! response =
-                util.getSessionFromContext ctx
-                |> thenBindAsync (fun session ->
-                    manager.deleteUser userId session
-                )
-                //TODO: Log out if non-admin deleting self
-                |> thenExtract
-
+            let! session = scp.GetSessionFromContext ctx
+            let! response = manager.deleteUser userId session |> thenExtract
+            //TODO: Log out if non-admin deleting self
             return OkObjectResult(response) :> IActionResult
         }
     
@@ -52,13 +42,8 @@ type UserController(manager : IUserManager,
     member __.GetUser(userId : int) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
-            let! response =
-                util.getSessionFromContext ctx
-                |> thenBindAsync (fun session ->
-                    manager.getUser userId session
-                )
-                |> thenExtract
-
+            let! session = scp.GetSessionFromContext ctx
+            let! response =  manager.getUser userId session |> thenExtract
             return OkObjectResult(response) :> IActionResult
         }
         
@@ -67,12 +52,7 @@ type UserController(manager : IUserManager,
     member __.GetCurrentUser() : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
-            let! response =
-                util.getSessionFromContext ctx
-                |> thenBindAsync (fun session ->
-                    manager.getCurrentUser session
-                )
-                |> thenExtract
-
+            let! session = scp.GetSessionFromContext ctx
+            let! response = manager.getCurrentUser session |> thenExtract
             return OkObjectResult(response) :> IActionResult
         }
