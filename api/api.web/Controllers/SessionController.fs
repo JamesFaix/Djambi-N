@@ -10,7 +10,7 @@ open Apex.Api.Model
 open Apex.Api.Web
 
 [<ApiController>]
-[<Route("sessions")>]
+[<Route("api/sessions")>]
 type SessionController(manager : ISessionManager,
                        logger : ILogger,
                        util : HttpUtility) =

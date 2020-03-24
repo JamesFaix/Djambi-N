@@ -10,7 +10,7 @@ open Apex.Api.Model
 open Apex.Api.Web
 
 [<ApiController>]
-[<Route("users")>]
+[<Route("api/users")>]
 type UserController(manager : IUserManager,
                        logger : ILogger,
                        util : HttpUtility) =

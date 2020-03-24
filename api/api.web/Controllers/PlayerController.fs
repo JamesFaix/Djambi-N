@@ -11,7 +11,7 @@ open Apex.Api.Web
 open Apex.Api.Common
 
 [<ApiController>]
-[<Route("games/{gameId}/players")>]
+[<Route("api/games/{gameId}/players")>]
 type PlayerController(manager : IPlayerManager,
                        logger : ILogger,
                        util : HttpUtility) =

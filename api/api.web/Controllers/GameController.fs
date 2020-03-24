@@ -10,7 +10,7 @@ open Apex.Api.Model
 open Apex.Api.Web
 
 [<ApiController>]
-[<Route("games")>]
+[<Route("api/games")>]
 type GameController(manager : IGameManager,
                        logger : ILogger,
                        util : HttpUtility) =

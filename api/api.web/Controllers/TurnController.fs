@@ -10,7 +10,7 @@ open Apex.Api.Model
 open Apex.Api.Web
 
 [<ApiController>]
-[<Route("games/{gameId}/current-turn")>]
+[<Route("api/games/{gameId}/current-turn")>]
 type TurnController(manager : ITurnManager,
                        logger : ILogger,
                        util : HttpUtility) =

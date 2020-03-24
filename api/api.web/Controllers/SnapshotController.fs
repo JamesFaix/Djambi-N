@@ -10,7 +10,7 @@ open Apex.Api.Model
 open Apex.Api.Web
 
 [<ApiController>]
-[<Route("games/{gameId}/snapshots")>]
+[<Route("api/games/{gameId}/snapshots")>]
 type SnapshotController(manager : ISnapshotManager,
                        logger : ILogger,
                        util : HttpUtility) =

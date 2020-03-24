@@ -10,7 +10,7 @@ open Apex.Api.Model
 open Apex.Api.Web
 
 [<ApiController>]
-[<Route("boards")>]
+[<Route("api/boards")>]
 type BoardController(manager : IBoardManager,
                        logger : ILogger,
                        util : HttpUtility) =

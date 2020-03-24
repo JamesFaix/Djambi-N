@@ -15,7 +15,7 @@ open System
 open Apex.Api.Web.Sse
 
 [<ApiController>]
-[<Route("notifications")>]
+[<Route("api/notifications")>]
 type NotificationController(service : INotificationService,
                        logger : ILogger,
                        util : HttpUtility) =

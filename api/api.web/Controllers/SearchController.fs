@@ -10,7 +10,7 @@ open Apex.Api.Model
 open Apex.Api.Web
 
 [<ApiController>]
-[<Route("search")>]
+[<Route("api/search")>]
 type SearchController(manager : ISearchManager,
                        logger : ILogger,
                        util : HttpUtility) =

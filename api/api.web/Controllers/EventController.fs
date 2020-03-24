@@ -10,7 +10,7 @@ open Apex.Api.Model
 open Apex.Api.Web
 
 [<ApiController>]
-[<Route("events")>]
+[<Route("api/events")>]
 type EventController(manager : IEventManager,
                        logger : ILogger,
                        util : HttpUtility) =
