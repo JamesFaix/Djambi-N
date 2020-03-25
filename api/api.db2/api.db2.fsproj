@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Repositories\Repositories.fs" />
+    <Compile Include="Mappings\Mappings.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\api.db.model\api.db.model.csproj" />
+    <ProjectReference Include="..\api.db.interfaces\api.db.interfaces.fsproj" />
+  </ItemGroup>
+
+</Project>
