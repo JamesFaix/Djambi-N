@@ -141,7 +141,7 @@ let mapGameResponse(sqlModel : GameSqlModel) : Game =
         parameters =
             {
                 regionCount = sqlModel.regionCount
-                description = sqlModel.description |> Option.ofReference
+                description = sqlModel.description |> Option.ofObj
                 isPublic = sqlModel.isPublic
                 allowGuests = sqlModel.allowGuests
             }
@@ -163,7 +163,7 @@ let mapSearchGameResponse(sqlModel : SearchGameSqlModel) : SearchGame =
         parameters =
             {
                 regionCount = sqlModel.regionCount
-                description = sqlModel.description |> Option.ofReference
+                description = sqlModel.description |> Option.ofObj
                 isPublic = sqlModel.isPublic
                 allowGuests = sqlModel.allowGuests
             }

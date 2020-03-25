@@ -68,7 +68,7 @@ type OpenCommand with
 
         CommandDefinition(x.text,
                           dp,
-                          transaction |> Option.toReference,
+                          transaction |> Option.toObj,
                           Nullable<int>(),
                           x.commandType |> Nullable.ofValue)
 
