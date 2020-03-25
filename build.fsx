@@ -19,7 +19,6 @@ let all = "all"
 let buildApi = "build-api"
 let buildWeb = "build-web"
 let dbReset = "db-reset"
-let genClient = "gen-client"
 let restoreWeb = "restore-web"
 let buildAll = "build-all"
 
@@ -74,7 +73,6 @@ let launchConsole (dir : string) (command : string) (args : string list) (_ : Ta
 
 Target.create buildApi (dotnetBuild "api/api.host/api.host.fsproj")
 Target.create dbReset (dotNetRun "utils/db-reset/db-reset.fsproj")
-Target.create genClient (dotNetRun "utils/client-generator/client-generator.fsproj")
 Target.create restoreWeb (fun _ -> Npm.install (setNpmParams "web"))
 Target.create buildWeb (fun _ -> Npm.run "build" (setNpmParams "web"))
 
@@ -114,16 +112,13 @@ Target.create all ignore
 open Fake.Core.TargetOperators
 
 dbReset ?=> buildApi
-buildApi ?=> genClient
-genClient ?=> buildWeb
+buildApi ?=> buildWeb
 buildApi ?=> runApi
 restoreWeb ?=> buildWeb
 buildWeb ?=> runWeb
 
 buildApi ?=> testApiUnit
 buildApi ?=> testApiInt
-genClient ?=> testApiUnit
-genClient ?=> testApiInt
 buildWeb ?=> testWebUnit
 
 testApiUnit ?=> runApi
@@ -134,7 +129,6 @@ buildAll <==
     [
         dbReset
         buildApi
-        genClient
         restoreWeb
         buildWeb
     ]
