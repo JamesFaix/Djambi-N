@@ -1,8 +1,10 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Apex.Api.Db.Model
 {
+    [Table("Snapshots")]
     public class SnapshotSqlModel
     {
         [Required]
@@ -17,7 +19,8 @@ namespace Apex.Api.Db.Model
         [Required] 
         public DateTime CreatedOn { get; set; }
 
-        [Required] 
+        [Required]
+        [StringLength(50)]
         public string Description { get; set; }
 
         [Required] 

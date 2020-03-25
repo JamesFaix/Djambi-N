@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Apex.Api.Db.Model
 {
+    [Table("Players")]
     public class PlayerSqlModel
     {
         [Required]
@@ -17,6 +19,7 @@ namespace Apex.Api.Db.Model
         public PlayerKindSqlModel Kind { get; set; }
 
         [Required]
+        [StringLength(20)]
         public string Name { get; set; }
 
         [Required]

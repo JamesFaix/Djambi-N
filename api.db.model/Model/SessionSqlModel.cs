@@ -1,8 +1,10 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Apex.Api.Db.Model
 {
+    [Table("Sessions")]
     public class SessionSqlModel
     {
         [Required]
