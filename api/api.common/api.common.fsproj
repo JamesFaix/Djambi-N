@@ -19,7 +19,6 @@
     <Compile Include="Enum.fs" />
     <Compile Include="Function.fs" />
     <Compile Include="Nullable.fs" />
-    <Compile Include="Option.fs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
