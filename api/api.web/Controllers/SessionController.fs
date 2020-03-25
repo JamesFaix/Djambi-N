@@ -8,6 +8,8 @@ open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Model
 open Apex.Api.Web
+open Apex.Api.Web.Model
+open Apex.Api.Web.Mappings
 
 [<ApiController>]
 [<Route("api/sessions")>]
@@ -18,8 +20,8 @@ type SessionController(manager : ISessionManager,
     inherit ControllerBase()
     
     [<HttpPost>]
-    [<ProducesResponseType(200, Type = typeof<Session>)>]
-    member __.OpenSession([<FromBody>] request : LoginRequest) : Task<IActionResult> =
+    [<ProducesResponseType(200, Type = typeof<SessionDto>)>]
+    member __.OpenSession([<FromBody>] request : LoginRequestDto) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
             let! sessionOption = scp.GetSessionOptionFromContext ctx
@@ -27,11 +29,13 @@ type SessionController(manager : ISessionManager,
                         | Some s -> manager.logout s
                         | None -> okTask ()
 
+            let request = request |> toLoginRequest
             let! session = manager.login request |> thenExtract
+            let dto = session |> toSessionDto
 
             cookieProvider.AppendCookie ctx (session.token, session.expiresOn)                               
             
-            return OkObjectResult(session) :> IActionResult
+            return OkObjectResult(dto) :> IActionResult
         }
        
     [<HttpDelete>]

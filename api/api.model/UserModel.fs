@@ -2,9 +2,7 @@
 module Apex.Api.Model.UserModel
 
 open System
-open Apex.ClientGenerator.Annotations
 
-[<ClientType(ClientSection.User)>]
 type Privilege =
     | EditUsers
     | EditPendingGames
@@ -12,7 +10,6 @@ type Privilege =
     | ViewGames
     | Snapshots
 
-[<ClientType(ClientSection.User)>]
 type User =
     {
         id : int
@@ -42,15 +39,12 @@ module UserDetails =
             privileges = user.privileges
         }
 
-[<CLIMutable>]
-[<ClientType(ClientSection.User)>]
 type CreateUserRequest =
     {
         name : string
         password : string
     }
 
-[<ClientType(ClientSection.User)>]
 type CreationSource =
     {
         userId : int

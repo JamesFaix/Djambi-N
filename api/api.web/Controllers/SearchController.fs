@@ -6,8 +6,9 @@ open FSharp.Control.Tasks
 open Serilog
 open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.Logic.Interfaces
-open Apex.Api.Model
 open Apex.Api.Web
+open Apex.Api.Web.Model
+open Apex.Api.Web.Mappings
 
 [<ApiController>]
 [<Route("api/search")>]
@@ -17,11 +18,13 @@ type SearchController(manager : ISearchManager,
     inherit ControllerBase()
     
     [<HttpPost("games")>]
-    [<ProducesResponseType(200, Type = typeof<SearchGame[]>)>]
-    member __.SearchGames([<FromBody>] query : GamesQuery) : Task<IActionResult> =
+    [<ProducesResponseType(200, Type = typeof<SearchGameDto[]>)>]
+    member __.SearchGames([<FromBody>] query : GamesQueryDto) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
             let! session = scp.GetSessionFromContext ctx
+            let query = query |> toGamesQuery
             let! games = manager.searchGames query session |> thenExtract
-            return OkObjectResult(games) :> IActionResult
+            let dtos = games |> List.map toSearchGameDto
+            return OkObjectResult(dtos) :> IActionResult
         }

@@ -1,77 +1,64 @@
 [<AutoOpen>]
 module Apex.Api.Model.EventModel
 
-open Apex.ClientGenerator.Annotations
-
-[<ClientType(ClientSection.Events)>]
 type CurrentTurnChangedEffect =
     {
         oldValue : Turn option
         newValue : Turn option
     }
 
-[<ClientType(ClientSection.Events)>]
 type GameStatusChangedEffect =
     {
         oldValue : GameStatus
         newValue : GameStatus
     }
 
-[<ClientType(ClientSection.Events)>]
 type NeutralPlayerAddedEffect =
     {
         name : string
         placeholderPlayerId : int
     }
 
-[<ClientType(ClientSection.Events)>]
 type ParametersChangedEffect =
     {
         oldValue : GameParameters
         newValue : GameParameters
     }
 
-[<ClientType(ClientSection.Events)>]
 type PieceEnlistedEffect =
     {
         oldPiece : Piece
         newPlayerId : int
     }
 
-[<ClientType(ClientSection.Events)>]
 type PieceAbandonedEffect =
     {
         oldPiece : Piece
     }
 
-[<ClientType(ClientSection.Events)>]
 type PieceDroppedEffect =
     {
         oldPiece : Piece
         newPiece : Piece
     }
 
-[<ClientType(ClientSection.Events)>]
 type PieceKilledEffect =
     {
         oldPiece : Piece
     }
 
-[<ClientType(ClientSection.Events)>]
 type PieceMovedEffect =
     {
         oldPiece : Piece
         newCellId : int
     }
 
-[<ClientType(ClientSection.Events)>]
 type PieceVacatedEffect =
     {
         oldPiece : Piece
         newCellId : int
     }
 
-[<ClientType(ClientSection.Events)>]
 type PlayerAddedEffect =
     {
         name : string option
@@ -79,19 +66,16 @@ type PlayerAddedEffect =
         kind : PlayerKind
     }
 
-[<ClientType(ClientSection.Events)>]
 type PlayerOutOfMovesEffect =
     {
         playerId : int
     }
 
-[<ClientType(ClientSection.Events)>]
 type PlayerRemovedEffect =
     {
         oldPlayer : Player
     }
 
-[<ClientType(ClientSection.Events)>]
 type PlayerStatusChangedEffect =
     {
         playerId : int
@@ -99,14 +83,12 @@ type PlayerStatusChangedEffect =
         newStatus : PlayerStatus
     }
 
-[<ClientType(ClientSection.Events)>]
 type TurnCycleAdvancedEffect =
     {
         oldValue : int list
         newValue : int list
     }
 
-[<ClientType(ClientSection.Events)>]
 type TurnCyclePlayerFellFromPowerEffect =
     {
         oldValue : int list
@@ -114,7 +96,6 @@ type TurnCyclePlayerFellFromPowerEffect =
         playerId : int
     }
 
-[<ClientType(ClientSection.Events)>]
 type TurnCyclePlayerRemovedEffect =
     {
         oldValue : int list
@@ -122,7 +103,6 @@ type TurnCyclePlayerRemovedEffect =
         playerId : int
     }
 
-[<ClientType(ClientSection.Events)>]
 type TurnCyclePlayerRoseToPowerEffect =
     {
         oldValue : int list
@@ -130,7 +110,6 @@ type TurnCyclePlayerRoseToPowerEffect =
         playerId : int
     }
 
-[<ClientType(ClientSection.Events)>]
 type Effect =
     | CurrentTurnChanged of CurrentTurnChangedEffect
     | GameStatusChanged of GameStatusChangedEffect
@@ -151,7 +130,6 @@ type Effect =
     | TurnCyclePlayerRemoved of TurnCyclePlayerRemovedEffect
     | TurnCyclePlayerRoseToPower of TurnCyclePlayerRoseToPowerEffect
 
-[<ClientType(ClientSection.Events)>]
 type EventKind =
     | GameParametersChanged
     | GameCanceled
@@ -163,7 +141,6 @@ type EventKind =
     | CellSelected
     | PlayerStatusChanged
 
-[<ClientType(ClientSection.Events)>]
 type Event =
     {
         id : int
@@ -173,7 +150,6 @@ type Event =
         effects : Effect list
     }
 
-[<ClientType(ClientSection.Events)>]
 type StateAndEventResponse =
     {
         game : Game

@@ -6,8 +6,9 @@ open FSharp.Control.Tasks
 open Serilog
 open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.Logic.Interfaces
-open Apex.Api.Model
 open Apex.Api.Web
+open Apex.Api.Web.Model
+open Apex.Api.Web.Mappings
 
 [<ApiController>]
 [<Route("api/games/{gameId}/events")>]
@@ -17,12 +18,14 @@ type EventController(manager : IEventManager,
     inherit ControllerBase()
     
     [<HttpPost("query")>]
-    [<ProducesResponseType(200, Type = typeof<Event[]>)>]
-    member __.GetEvents(gameId : int, [<FromBody>] query : EventsQuery) : Task<IActionResult> =
+    [<ProducesResponseType(200, Type = typeof<EventDto[]>)>]
+    member __.GetEvents(gameId : int, [<FromBody>] query : EventsQueryDto) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
             let! session = scp.GetSessionFromContext ctx
+            let query = query |> toEventsQuery
             let! events = manager.getEvents (gameId, query) session |> thenExtract
-            return OkObjectResult(events) :> IActionResult
+            let dtos = events |> toEventDtos
+            return OkObjectResult(dtos) :> IActionResult
         }
     

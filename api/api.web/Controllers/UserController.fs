@@ -6,8 +6,9 @@ open FSharp.Control.Tasks
 open Serilog
 open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.Logic.Interfaces
-open Apex.Api.Model
 open Apex.Api.Web
+open Apex.Api.Web.Mappings
+open Apex.Api.Web.Model
 
 [<ApiController>]
 [<Route("api/users")>]
@@ -17,13 +18,15 @@ type UserController(manager : IUserManager,
     inherit ControllerBase()
     
     [<HttpPost>]
-    [<ProducesResponseType(200, Type = typeof<User>)>]
-    member __.CreateUser([<FromBody>] request : CreateUserRequest) : Task<IActionResult> =
+    [<ProducesResponseType(200, Type = typeof<UserDto>)>]
+    member __.CreateUser([<FromBody>] request : CreateUserRequestDto) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
             let! sessionOption = scp.GetSessionOptionFromContext ctx
-            let! response = manager.createUser request sessionOption |> thenExtract
-            return OkObjectResult(response) :> IActionResult
+            let request = request |> toCreateUserRequest
+            let! user = manager.createUser request sessionOption |> thenExtract
+            let dto = user |> toUserDto
+            return OkObjectResult(dto) :> IActionResult
         }
         
     [<HttpDelete("{userId}")>]
@@ -38,21 +41,23 @@ type UserController(manager : IUserManager,
         }
     
     [<HttpGet("{userId}")>]
-    [<ProducesResponseType(200, Type = typeof<User>)>]
+    [<ProducesResponseType(200, Type = typeof<UserDto>)>]
     member __.GetUser(userId : int) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
             let! session = scp.GetSessionFromContext ctx
-            let! response =  manager.getUser userId session |> thenExtract
-            return OkObjectResult(response) :> IActionResult
+            let! user =  manager.getUser userId session |> thenExtract
+            let dto = user |> toUserDto
+            return OkObjectResult(dto) :> IActionResult
         }
         
     [<HttpGet("current")>]
-    [<ProducesResponseType(200, Type = typeof<User>)>]
+    [<ProducesResponseType(200, Type = typeof<UserDto>)>]
     member __.GetCurrentUser() : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
             let! session = scp.GetSessionFromContext ctx
-            let! response = manager.getCurrentUser session |> thenExtract
-            return OkObjectResult(response) :> IActionResult
+            let! user = manager.getCurrentUser session |> thenExtract
+            let dto = user |> toUserDto
+            return OkObjectResult(dto) :> IActionResult
         }

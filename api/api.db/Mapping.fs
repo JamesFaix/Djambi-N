@@ -4,6 +4,7 @@ open Apex.Api.Common
 open Apex.Api.Common.Json
 open Apex.Api.Db.Model
 open Apex.Api.Model
+open System.ComponentModel
 
 let private findRight<'a, 'b when 'a : equality> (map : ('a * 'b) list) (key : 'a) : 'b =
     let result = map |> List.tryFind(fun (a, _) -> a = key)
@@ -184,8 +185,8 @@ let mapEventResponse (sqlModel : EventSqlModel) : Event =
         effects = JsonUtility.deserializeList sqlModel.effectsJson
     }
 
-let mapResultsDirectionToAscendingBool (direction : ResultsDirection) : bool =
-    direction = ResultsDirection.Ascending
+let mapResultsDirectionToAscendingBool (direction : ListSortDirection) : bool =
+    direction = ListSortDirection.Ascending
 
 let mapSnapshotFromSql (sqlModel : SnapshotSqlModel) : Snapshot =
     let data : SnapshotJson = JsonUtility.deserialize sqlModel.snapshotJson

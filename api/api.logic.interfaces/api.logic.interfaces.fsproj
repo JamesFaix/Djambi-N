@@ -4,11 +4,9 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Routes.fs" />
     <Compile Include="Interfaces.fs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\utils\client-generator.annotations\client-generator.annotations.fsproj" />
     <ProjectReference Include="..\api.common\api.common.fsproj" />
     <ProjectReference Include="..\api.model\api.model.fsproj" />
   </ItemGroup>

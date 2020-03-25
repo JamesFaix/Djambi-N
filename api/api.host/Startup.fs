@@ -43,16 +43,9 @@ type Startup() =
 
             opt.SwaggerDoc(version, info)
 
-            let assemblies = [
-                typeof<CreateUserRequest>.Assembly // Model
-                typeof<UserController>.Assembly // Controllers
-            ]
-
-            for a in assemblies do
-                let file = a.GetName().Name + ".xml"
-                let path = Path.Combine(AppContext.BaseDirectory, file)
-                opt.IncludeXmlComments(path)
-            ()
+            let file = typeof<UserController>.Assembly.GetName().Name + ".xml"
+            let path = Path.Combine(AppContext.BaseDirectory, file)
+            opt.IncludeXmlComments(path)
 
         // Framework services
         services.AddCors(fun opt ->

@@ -3,6 +3,7 @@ namespace Apex.Api.Db
 open System
 open Apex.Api.Db.Command
 open Apex.Api.Db.Model
+open System.ComponentModel
 
 ///<summary>
 /// This module contains factory methods for SQL commands.
@@ -389,7 +390,7 @@ module Commands2 =
     let getEvent (gameId : int, eventId : int) =
         (Commands.getEvents (Some eventId,
                             gameId,
-                            mapResultsDirectionToAscendingBool Ascending,
+                            mapResultsDirectionToAscendingBool ListSortDirection.Ascending,
                             None,
                             None,
                             None))

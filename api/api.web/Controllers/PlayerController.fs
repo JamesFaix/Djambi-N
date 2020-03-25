@@ -6,9 +6,9 @@ open FSharp.Control.Tasks
 open Serilog
 open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.Logic.Interfaces
-open Apex.Api.Model
 open Apex.Api.Web
-open Apex.Api.Common
+open Apex.Api.Web.Mappings
+open Apex.Api.Web.Model
 
 [<ApiController>]
 [<Route("api/games/{gameId}/players")>]
@@ -18,37 +18,36 @@ type PlayerController(manager : IPlayerManager,
     inherit ControllerBase()
     
     [<HttpPost>]
-    [<ProducesResponseType(200, Type = typeof<StateAndEventResponse>)>]
-    member __.AddPlayer(gameId : int, [<FromBody>] request : CreatePlayerRequest) : Task<IActionResult> =
+    [<ProducesResponseType(200, Type = typeof<StateAndEventResponseDto>)>]
+    member __.AddPlayer(gameId : int, [<FromBody>] request : CreatePlayerRequestDto) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
             let! session = scp.GetSessionFromContext ctx
+            let request = request |> toCreatePlayerRequest
             let! response = manager.addPlayer gameId request session |> thenExtract
-            return OkObjectResult(response) :> IActionResult
+            let dto = response |> toStateAndEventResponseDto
+            return OkObjectResult(dto) :> IActionResult
         }
 
     [<HttpDelete("{playerId}")>]
-    [<ProducesResponseType(200, Type = typeof<StateAndEventResponse>)>]
+    [<ProducesResponseType(200, Type = typeof<StateAndEventResponseDto>)>]
     member __.RemovePlayer(gameId : int, playerId : int) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
             let! session = scp.GetSessionFromContext ctx
             let! response = manager.removePlayer (gameId, playerId) session |> thenExtract
-            return OkObjectResult(response) :> IActionResult
+            let dto = response |> toStateAndEventResponseDto
+            return OkObjectResult(dto) :> IActionResult
         }
     
-    [<HttpPut("{playerId}/status/{statusName}")>]
-    [<ProducesResponseType(200, Type = typeof<StateAndEventResponse>)>]
-    member __.UpdateGameParameters(gameId : int, playerId : int, statusName : string) : Task<IActionResult> =
+    [<HttpPut("{playerId}/status/{status}")>]
+    [<ProducesResponseType(200, Type = typeof<StateAndEventResponseDto>)>]
+    member __.SetPlayerStatus(gameId : int, playerId : int, status : PlayerStatusDto) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
             let! session = scp.GetSessionFromContext ctx
-            let! response =
-                Enum.parseUnion<PlayerStatus> statusName
-                |> Apex.Api.Common.Control.Result.bindAsync (fun status ->
-                    manager.updatePlayerStatus (gameId, playerId, status) session
-                )
-                |> thenExtract
-
-            return OkObjectResult(response) :> IActionResult
+            let status = status |> toPlayerStatus
+            let! response = manager.updatePlayerStatus (gameId, playerId, status) session |> thenExtract                
+            let dto = response |> toStateAndEventResponseDto
+            return OkObjectResult(dto) :> IActionResult
         }

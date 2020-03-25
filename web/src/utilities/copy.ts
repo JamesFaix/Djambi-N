@@ -200,37 +200,37 @@ export default class Copy {
     public static getEffectDescription(effect : Effect, game : Game, board: Board) : string {
         switch (effect.kind) {
             case EffectKind.PieceAbandoned: {
-                const f = <PieceAbandonedEffect>effect.value;
+                const f = <PieceAbandonedEffect>effect;
                 return `${Copy.getPieceLabel(f.oldPiece, game)} was abandoned.`;
             }
             case EffectKind.PieceDropped: {
-                const f = <PieceDroppedEffect>effect.value;
+                const f = <PieceDroppedEffect>effect;
                 //Get newpiece name here because the piece may have transitioned into corpsehood
-                return `${Copy.getPieceLabel(f.newPiece, game)} was dropped at ${Copy.getCellLabel(f.newPiece.cellId, board)}.`;
+                return `${Copy.getPieceLabel(f.newValue, game)} was dropped at ${Copy.getCellLabel(f.newValue.cellId, board)}.`;
             }
             case EffectKind.PieceEnlisted: {
-                const f = <PieceEnlistedEffect>effect.value;
+                const f = <PieceEnlistedEffect>effect;
                 return `${Copy.getPieceLabel(f.oldPiece, game)} was enlisted by ${Copy.getPlayerName(f.newPlayerId, game)}.`;
             }
             case EffectKind.PieceKilled: {
-                const f = <PieceKilledEffect>effect.value;
+                const f = <PieceKilledEffect>effect;
                 return `${Copy.getPieceLabel(f.oldPiece, game)} was killed.`;
             }
             case EffectKind.PieceMoved: {
-                const f = <PieceMovedEffect>effect.value;
+                const f = <PieceMovedEffect>effect;
                 return `${Copy.getPieceLabel(f.oldPiece, game)} was moved to ${Copy.getCellLabel(f.newCellId, board)}.`;
             }
             case EffectKind.PieceVacated: {
-                const f = <PieceVacatedEffect>effect.value;
+                const f = <PieceVacatedEffect>effect;
                 return `${Copy.getPieceLabel(f.oldPiece, game)} vacated the ${this.centerCellName()} to ${Copy.getCellLabel(f.newCellId, board)}.`;
             }
             case EffectKind.PlayerOutOfMoves: {
-                const f = <PlayerOutOfMovesEffect>effect.value;
+                const f = <PlayerOutOfMovesEffect>effect;
                 return `${Copy.getPlayerName(f.playerId, game)} is out of moves.`;
             }
             case EffectKind.PlayerStatusChanged: {
-                const f = <PlayerStatusChangedEffect>effect.value;
-                switch (f.newStatus) {
+                const f = <PlayerStatusChangedEffect>effect;
+                switch (f.newValue) {
                     case PlayerStatus.Eliminated:
                         return `${Copy.getPlayerName(f.playerId, game)} was eliminated.`;
                     case PlayerStatus.Victorious:
@@ -244,15 +244,15 @@ export default class Copy {
                     case PlayerStatus.AcceptsDraw:
                         return `${Copy.getPlayerName(f.playerId, game)} will accept a draw.`;
                     default:
-                        throw "Unsupported player status: " + f.newStatus;
+                        throw "Unsupported player status: " + f.newValue;
                 }
             }
             case EffectKind.TurnCyclePlayerFellFromPower: {
-                const f = <TurnCyclePlayerFellFromPowerEffect>effect.value;
+                const f = <TurnCyclePlayerFellFromPowerEffect>effect;
                 return `${Copy.getPlayerName(f.playerId, game)} fell from power.`;
             }
             case EffectKind.TurnCyclePlayerRoseToPower: {
-                const f = <TurnCyclePlayerRoseToPowerEffect>effect.value;
+                const f = <TurnCyclePlayerRoseToPowerEffect>effect;
                 return `${Copy.getPlayerName(f.playerId, game)} rose to power.`;
             }
             default:
@@ -272,7 +272,7 @@ export default class Copy {
 
             case EventKind.PlayerStatusChanged: {
                 const f = event.effects.find(x => x.kind === EffectKind.PlayerStatusChanged);
-                const s = (<PlayerStatusChangedEffect>f.value).newStatus;
+                const s = (<PlayerStatusChangedEffect>f).newValue;
                 switch (s) {
                     case PlayerStatus.AcceptsDraw:
                         return `${agent} will accept a draw`;
@@ -288,13 +288,13 @@ export default class Copy {
 
             case EventKind.PlayerJoined: {
                 const f = event.effects.find(x => x.kind === EffectKind.PlayerAdded);
-                const name = (<PlayerAddedEffect>f.value).name;
+                const name = (<PlayerAddedEffect>f).name;
                 return `${name} joined the game`;
             }
 
             case EventKind.PlayerRemoved: {
                 const fs = event.effects.filter(x => x.kind === EffectKind.PlayerRemoved);
-                const names = fs.map(f => (<PlayerRemovedEffect>f.value).oldPlayer.name);
+                const names = fs.map(f => (<PlayerRemovedEffect>f).oldPlayer.name);
                 if (names.length === 1) {
                     return `${names[0]} left the game`;
                 } else {
