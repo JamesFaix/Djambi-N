@@ -1,6 +1,7 @@
 ﻿namespace Apex.Api.Web.Model
 
 open System
+open System.ComponentModel.DataAnnotations
 
 [<CLIMutable>]
 type GamesQueryDto = {
@@ -20,8 +21,13 @@ type GamesQueryDto = {
 
 type SearchGameDto = {
     id : int
+
+    [<Required>]
     parameters : GameParametersDto
+
+    [<Required>]
     createdBy : CreationSourceDto
+    
     status : GameStatusDto
     lastEventOn : DateTime
     playerCount : int

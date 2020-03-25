@@ -1,6 +1,7 @@
 ﻿namespace Apex.Api.Web.Model
 
 open System
+open System.ComponentModel.DataAnnotations
 
 type PlayerKindDto =
     | User = 1
@@ -20,7 +21,11 @@ type PlayerDto = {
     id : int
     gameId : int
     userId : Nullable<int>
+    kind : PlayerKindDto
+
+    [<Required>]
     name : string
+
     status : PlayerStatusDto
     colorId : Nullable<int>
     startingRegion : Nullable<int>
@@ -69,9 +74,14 @@ type TurnDto(status : TurnStatusDto,
             selectionOptions : List<int>,
             requiredSelectionKind : Nullable<SelectionKindDto>) =
     member __.Status = status
+
+    [<Required>]
     member __.Selections = selections
+
+    [<Required>]
     member __.SelectionOptions = selectionOptions
-    member __.RequireSelectionKind = requiredSelectionKind
+
+    member __.RequiredSelectionKind = requiredSelectionKind
 
 type GameStatusDto = 
     | Pending = 1
@@ -79,20 +89,38 @@ type GameStatusDto =
     | Canceled = 3
     | Over = 4
 
+[<CLIMutable>]
 type GameParametersDto = {
+    // Nullable
     description : string
+    
     regionCount : int
+    
     isPublic : bool
+    
     allowGuests : bool
 }
 
 type GameDto = {
     id : int
+
+    [<Required>]
     createdBy : CreationSourceDto
+
+    [<Required>]
     parameters : GameParametersDto
+
     status : GameStatusDto
+
+    [<Required>]
     players : List<PlayerDto>
+
+    // Nullable
     pieces : List<PieceDto>
+
+    // Nullable
     turnCycle : List<int>
+
+    // Nullable
     currentTurn : TurnDto
 }

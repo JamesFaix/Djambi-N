@@ -1,6 +1,7 @@
 ﻿namespace Apex.Api.Web.Model
 
 open System
+open System.ComponentModel.DataAnnotations
 
 type EventKindDto =
    | GameParametersChanged = 1
@@ -97,13 +98,20 @@ type TurnCyclePlayerRoseToPowerEffectDto(oldValue : List<int>, newValue : List<i
 
 type EventDto = {
     id : int
+
+    [<Required>]
     createdBy : CreationSourceDto
     actingPlayerId : Nullable<int>
     kind : EventKindDto
+
+    [<Required>]
     effects : List<EffectDto>
 }
 
 type StateAndEventResponseDto = {
+    [<Required>]
     game : GameDto
+    
+    [<Required>]
     event : EventDto
 }

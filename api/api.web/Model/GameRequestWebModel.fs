@@ -7,6 +7,8 @@ open System.ComponentModel
 type CreatePlayerRequestDto = {
     kind : PlayerKindDto
     userId : Nullable<int>
+
+    // Nullable
     name : string
 }
 

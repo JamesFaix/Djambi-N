@@ -27,18 +27,6 @@ module PlayerMappings =
         | PlayerStatusDto.WillConcede -> PlayerStatus.WillConcede
         | _ -> raise <| InvalidEnumArgumentException("source", int source, typeof<PlayerStatusDto>)
 
-    let toPlayerDto (source : Player) : PlayerDto =
-        {
-            id = source.id
-            gameId = source.gameId
-            name = source.name
-            status = source.status |> toPlayerStatusDto
-            userId = source.userId |> Option.toNullable
-            colorId = source.colorId |> Option.toNullable
-            startingRegion = source.startingRegion |> Option.toNullable
-            startingTurnNumber = source.startingTurnNumber |> Option.toNullable
-        }
-
     let toPlayerKind (source : PlayerKindDto) : PlayerKind =
         match source with
         | PlayerKindDto.Guest -> PlayerKind.Guest
@@ -51,6 +39,19 @@ module PlayerMappings =
         | PlayerKind.Guest -> PlayerKindDto.Guest
         | PlayerKind.Neutral -> PlayerKindDto.Neutral
         | PlayerKind.User -> PlayerKindDto.User
+
+    let toPlayerDto (source : Player) : PlayerDto =
+        {
+            id = source.id
+            gameId = source.gameId
+            name = source.name
+            kind = source.kind |> toPlayerKindDto
+            status = source.status |> toPlayerStatusDto
+            userId = source.userId |> Option.toNullable
+            colorId = source.colorId |> Option.toNullable
+            startingRegion = source.startingRegion |> Option.toNullable
+            startingTurnNumber = source.startingTurnNumber |> Option.toNullable
+        }
 
     let toCreatePlayerRequest (source : CreatePlayerRequestDto) : CreatePlayerRequest =
         {

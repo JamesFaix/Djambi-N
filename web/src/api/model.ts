@@ -1,8 +1,3 @@
-/*
- * This file was generated with the Client Generator utility.
- * Do not manually edit.
- */
-
 //-------- USER --------
 
 export interface CreateUserRequest {
@@ -17,11 +12,11 @@ export interface CreationSource {
 }
 
 export enum Privilege {
-    EditPendingGames = "EditPendingGames",
-    EditUsers = "EditUsers",
-    OpenParticipation = "OpenParticipation",
-    Snapshots = "Snapshots",
-    ViewGames = "ViewGames",
+    EditUsers = 1,
+    EditPendingGames = 2,
+    OpenParticipation = 3,
+    Snapshots = 4,
+    ViewGames = 5,
 }
 
 export interface User {
@@ -85,10 +80,10 @@ export interface GameParameters {
 }
 
 export enum GameStatus {
-    Canceled = "Canceled",
-    InProgress = "InProgress",
-    Over = "Over",
-    Pending = "Pending",
+    Pending = 1,
+    InProgress = 2,
+    Canceled = 3,
+    Over = 4,
 }
 
 export interface Piece {
@@ -100,13 +95,13 @@ export interface Piece {
 }
 
 export enum PieceKind {
-    Conduit = "Conduit",
-    Corpse = "Corpse",
-    Diplomat = "Diplomat",
-    Hunter = "Hunter",
-    Reaper = "Reaper",
-    Scientist = "Scientist",
-    Thug = "Thug",
+    Conduit = 1,
+    Thug = 2,
+    Scientist = 3,
+    Hunter = 4,
+    Diplomat = 5,
+    Reaper = 6,
+    Corpse = 7,
 }
 
 //-------- PLAYER --------
@@ -130,19 +125,19 @@ export interface Player {
 }
 
 export enum PlayerKind {
-    Guest = "Guest",
-    Neutral = "Neutral",
-    User = "User",
+    User = 1,
+    Guest = 2,
+    Neutral = 3,
 }
 
 export enum PlayerStatus {
-    AcceptsDraw = "AcceptsDraw",
-    Alive = "Alive",
-    Conceded = "Conceded",
-    Eliminated = "Eliminated",
-    Pending = "Pending",
-    Victorious = "Victorious",
-    WillConcede = "WillConcede",
+    Pending = 1,
+    Alive = 2,
+    Eliminated = 3,
+    Conceded = 4,
+    WillConcede = 5,
+    AcceptsDraw = 6,
+    Victorious = 7,
 }
 
 //-------- TURN --------
@@ -154,11 +149,11 @@ export interface Selection {
 }
 
 export enum SelectionKind {
-    Drop = "Drop",
-    Move = "Move",
-    Subject = "Subject",
-    Target = "Target",
-    Vacate = "Vacate",
+    Subject = 1,
+    Move = 2,
+    Target = 3,
+    Drop = 4,
+    Vacate = 5,
 }
 
 export interface SelectionRequest {
@@ -173,64 +168,37 @@ export interface Turn {
 }
 
 export enum TurnStatus {
-    AwaitingCommit = "AwaitingCommit",
-    AwaitingSelection = "AwaitingSelection",
-    DeadEnd = "DeadEnd",
+    AwaitingSelection = 1,
+    AwaitingCommit = 2,
+    DeadEnd = 3,
 }
 
 //-------- EVENTS --------
 
-export interface CurrentTurnChangedEffect {
-    oldValue : Turn,
-    newValue : Turn
-}
-
 export interface Effect {
-    kind : EffectKind,
-    value : EffectCase
+    kind : EffectKind
 }
-
-export type EffectCase =
-    CurrentTurnChangedEffect |
-    GameStatusChangedEffect |
-    NeutralPlayerAddedEffect |
-    ParametersChangedEffect |
-    PieceAbandonedEffect |
-    PieceDroppedEffect |
-    PieceEnlistedEffect |
-    PieceKilledEffect |
-    PieceMovedEffect |
-    PieceVacatedEffect |
-    PlayerAddedEffect |
-    PlayerOutOfMovesEffect |
-    PlayerRemovedEffect |
-    PlayerStatusChangedEffect |
-    TurnCycleAdvancedEffect |
-    TurnCyclePlayerFellFromPowerEffect |
-    TurnCyclePlayerRemovedEffect |
-    TurnCyclePlayerRoseToPowerEffect
 
 export enum EffectKind {
-    CurrentTurnChanged = "CurrentTurnChanged",
-    GameStatusChanged = "GameStatusChanged",
-    NeutralPlayerAdded = "NeutralPlayerAdded",
-    ParametersChanged = "ParametersChanged",
-    PieceAbandoned = "PieceAbandoned",
-    PieceDropped = "PieceDropped",
-    PieceEnlisted = "PieceEnlisted",
-    PieceKilled = "PieceKilled",
-    PieceMoved = "PieceMoved",
-    PieceVacated = "PieceVacated",
-    PlayerAdded = "PlayerAdded",
-    PlayerOutOfMoves = "PlayerOutOfMoves",
-    PlayerRemoved = "PlayerRemoved",
-    PlayerStatusChanged = "PlayerStatusChanged",
-    TurnCycleAdvanced = "TurnCycleAdvanced",
-    TurnCyclePlayerFellFromPower = "TurnCyclePlayerFellFromPower",
-    TurnCyclePlayerRemoved = "TurnCyclePlayerRemoved",
-    TurnCyclePlayerRoseToPower = "TurnCyclePlayerRoseToPower",
+    CurrentTurnChanged = 1,
+    GameStatusChanged = 2,
+    NeutralPlayerAdded = 3,
+    ParametersChanged = 4,
+    PieceAbandoned = 5,
+    PieceDropped = 6,
+    PieceEnlisted = 7,
+    PieceKilled = 8,
+    PieceMoved = 9,
+    PieceVacated = 10,
+    PlayerAdded = 11,
+    PlayerOutOfMoves = 12,
+    PlayerRemoved = 13,
+    PlayerStatusChanged = 14,
+    TurnCycleAdvanced = 15,
+    TurnCyclePlayerFellFromPower = 16,
+    TurnCyclePlayerRemoved = 17,
+    TurnCyclePlayerRoseToPower = 18,
 }
-
 
 export interface Event {
     id : number,
@@ -241,15 +209,15 @@ export interface Event {
 }
 
 export enum EventKind {
-    CellSelected = "CellSelected",
-    GameCanceled = "GameCanceled",
-    GameParametersChanged = "GameParametersChanged",
-    GameStarted = "GameStarted",
-    PlayerJoined = "PlayerJoined",
-    PlayerRemoved = "PlayerRemoved",
-    PlayerStatusChanged = "PlayerStatusChanged",
-    TurnCommitted = "TurnCommitted",
-    TurnReset = "TurnReset",
+    GameParametersChanged = 1,
+    GameCanceled = 2,
+    PlayerJoined = 3,
+    PlayerRemoved = 4,
+    GameStarted = 5,
+    TurnCommitted = 6,
+    TurnReset = 7,
+    CellSelected = 8,
+    PlayerStatusChanged = 9,
 }
 
 export interface EventsQuery {
@@ -259,67 +227,72 @@ export interface EventsQuery {
     thresholdEventId : number
 }
 
-export interface GameStatusChangedEffect {
+export interface CurrentTurnChangedEffect extends Effect {
+    oldValue : Turn,
+    newValue : Turn
+}
+
+export interface GameStatusChangedEffect extends Effect {
     oldValue : GameStatus,
     newValue : GameStatus
 }
 
-export interface NeutralPlayerAddedEffect {
+export interface NeutralPlayerAddedEffect extends Effect {
     name : string,
     placeholderPlayerId : number
 }
 
-export interface ParametersChangedEffect {
+export interface ParametersChangedEffect extends Effect {
     oldValue : GameParameters,
     newValue : GameParameters
 }
 
-export interface PieceAbandonedEffect {
+export interface PieceAbandonedEffect extends Effect {
     oldPiece : Piece
 }
 
-export interface PieceDroppedEffect {
-    oldPiece : Piece,
-    newPiece : Piece
+export interface PieceDroppedEffect extends Effect {
+    oldValue : Piece,
+    newValue : Piece
 }
 
-export interface PieceEnlistedEffect {
+export interface PieceEnlistedEffect extends Effect {
     oldPiece : Piece,
     newPlayerId : number
 }
 
-export interface PieceKilledEffect {
+export interface PieceKilledEffect extends Effect {
     oldPiece : Piece
 }
 
-export interface PieceMovedEffect {
+export interface PieceMovedEffect extends Effect {
     oldPiece : Piece,
     newCellId : number
 }
 
-export interface PieceVacatedEffect {
+export interface PieceVacatedEffect extends Effect {
     oldPiece : Piece,
     newCellId : number
 }
 
-export interface PlayerAddedEffect {
+export interface PlayerAddedEffect extends Effect {
     name : string,
     userId : number,
-    kind : PlayerKind
+    playerKind : PlayerKind
 }
 
-export interface PlayerOutOfMovesEffect {
+export interface PlayerOutOfMovesEffect extends Effect {
     playerId : number
 }
 
-export interface PlayerRemovedEffect {
+export interface PlayerRemovedEffect extends Effect {
     oldPlayer : Player
 }
 
-export interface PlayerStatusChangedEffect {
+export interface PlayerStatusChangedEffect extends Effect {
     playerId : number,
-    oldStatus : PlayerStatus,
-    newStatus : PlayerStatus
+    oldValue : PlayerStatus,
+    newValue : PlayerStatus
 }
 
 export interface StateAndEventResponse {
@@ -327,24 +300,24 @@ export interface StateAndEventResponse {
     event : Event
 }
 
-export interface TurnCycleAdvancedEffect {
+export interface TurnCycleAdvancedEffect extends Effect {
     oldValue : number[],
     newValue : number[]
 }
 
-export interface TurnCyclePlayerFellFromPowerEffect {
+export interface TurnCyclePlayerFellFromPowerEffect extends Effect {
     oldValue : number[],
     newValue : number[],
     playerId : number
 }
 
-export interface TurnCyclePlayerRemovedEffect {
+export interface TurnCyclePlayerRemovedEffect extends Effect {
     oldValue : number[],
     newValue : number[],
     playerId : number
 }
 
-export interface TurnCyclePlayerRoseToPowerEffect {
+export interface TurnCyclePlayerRoseToPowerEffect extends Effect {
     oldValue : number[],
     newValue : number[],
     playerId : number
@@ -392,7 +365,7 @@ export interface SearchGame {
 //-------- MISC --------
 
 export enum ResultsDirection {
-    Ascending = "Ascending",
-    Descending = "Descending",
+    Ascending = 0,
+    Descending = 1,
 }
 
