@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace Apex.Api.Db.Model
 {
@@ -25,6 +26,19 @@ namespace Apex.Api.Db.Model
                 "Trusted_Connection=True;" + 
                 "MultipleActiveResultSets=true"
             );
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            var foreignKeys = modelBuilder.Model.GetEntityTypes()
+                .SelectMany(e => e.GetForeignKeys());
+
+            foreach (var fkey in foreignKeys)
+            {
+                fkey.DeleteBehavior = DeleteBehavior.Restrict;
+            }
         }
     }
 }
