@@ -88,7 +88,6 @@ type EventRepository(context : ApexDbContext) =
                     p.Game <- game
 
                     let! _ = context.Players.AddAsync(p)
-
                     return p |> toPlayer
                 }
 
@@ -99,8 +98,6 @@ type EventRepository(context : ApexDbContext) =
                     then raise <| HttpException(404, "Not found.")
 
                     context.Players.Remove(p) |> ignore
-                    let! _ = context.SaveChangesAsync()
-
                     return ()
                 }
 
@@ -110,8 +107,6 @@ type EventRepository(context : ApexDbContext) =
                     p.Game <- game
 
                     context.Players.Update(p) |> ignore
-                    let! _ = context.SaveChangesAsync()
-
                     return ()
                 }
 
@@ -119,6 +114,17 @@ type EventRepository(context : ApexDbContext) =
                 let! g = context.Games.FindAsync(oldGame.id)
                 if g = null
                 then raise <| HttpException(404, "Not found.")
+
+                // Update game
+                g.AllowGuests <- newGame.parameters.allowGuests
+                g.IsPublic <- newGame.parameters.isPublic
+                g.Description <- newGame.parameters.description |> Option.toObj
+                g.RegionCount <- byte newGame.parameters.regionCount
+                g.CurrentTurnJson <- newGame.currentTurn |> JsonUtility.serialize
+                g.TurnCycleJson <- newGame.turnCycle |> JsonUtility.serialize
+                g.PiecesJson <- newGame.pieces |> JsonUtility.serialize
+                g.StatusId <- newGame.status |> toGameStatusSqlId
+                context.Games.Update(g) |> ignore
 
                 // Update players
                 for p in removedPlayers do
@@ -131,40 +137,10 @@ type EventRepository(context : ApexDbContext) =
                     let! _ = updatePlayer(g, p)
                     ()
 
-                g.AllowGuests <- newGame.parameters.allowGuests
-                g.IsPublic <- newGame.parameters.isPublic
-                g.Description <- newGame.parameters.description |> Option.toObj
-                g.RegionCount <- byte newGame.parameters.regionCount
-                g.CurrentTurnJson <- newGame.currentTurn |> JsonUtility.serialize
-                g.TurnCycleJson <- newGame.turnCycle |> JsonUtility.serialize
-                g.PiecesJson <- newGame.pieces |> JsonUtility.serialize
-
-                let! s = context.GameStatuses.FindAsync(newGame.status |> toGameStatusSqlId)
-                if s = null
-                then raise <| HttpException(404, "Not found.")
-                else g.Status <- s
-
-                let! u = context.Users.FindAsync(request.createdByUserId)
-                if u = null
-                then raise <| HttpException(404, "Not found.")
-
-                let! p = context.Players.SingleOrDefaultAsync(fun p -> 
-                            p.Game.Id = g.Id && 
-                            (
-                                request.actingPlayerId.IsNone || 
-                                p.Id = request.actingPlayerId.Value
-                            )
-                )
-
-                let! eventKind = context.EventKinds.SingleOrDefaultAsync(fun ek -> 
-                                    ek.Id = (request.kind |> toEventKindSqlId))
-                if eventKind = null
-                then raise <| HttpException(404, "Not found.")
-
-                let e = createEventRequestToEventSqlModel request eventKind g u (p |> Option.ofObj)
+                // Save event               
+                let e = createEventRequestToEventSqlModel request g.Id
+                let! _ = context.Events.AddAsync(e)
                 
-                //save event
-
                 let! _ = context.SaveChangesAsync()
 
                 let response = {

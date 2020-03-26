@@ -10,8 +10,14 @@ namespace Apex.Api.Db.Model
         [Required]
         public int Id { get; set; }
 
+        [Required]
+        public int GameId { get; set; }
+
         [Required] 
         public GameSqlModel Game { get; set; }
+
+        [Required]
+        public int CreatedByUserId { get; set; }
 
         [Required] 
         public UserSqlModel CreatedByUser { get; set; }

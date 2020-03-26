@@ -12,10 +12,16 @@ namespace Apex.Api.Db.Model
         public int Id { get; set; }
         
         [Required]
+        public int CreatedByUserId { get; set; }
+
+        [Required]
         public UserSqlModel CreatedByUser { get; set; }
         
         [Required]
         public DateTime CreatedOn { get; set; }
+
+        [Required]
+        public byte StatusId { get; set; }
 
         [Required]
         public GameStatusSqlModel Status { get; set; }

@@ -25,20 +25,15 @@ type SessionRepository(context : ApexDbContext) =
 
         member __.createSession request =
             task {
-                let! u = context.Users.FindAsync(request.userId)
-                
-                if u = null
-                then return Error <| HttpException(404, "Not found.")
-                else    
-                    let s = SessionSqlModel()
-                    s.User <- u
-                    s.Token <- request.token
-                    s.CreatedOn <- DateTime.UtcNow
-                    s.ExpiresOn <- request.expiresOn
+                let s = SessionSqlModel()
+                s.UserId <- request.userId
+                s.Token <- request.token
+                s.CreatedOn <- DateTime.UtcNow
+                s.ExpiresOn <- request.expiresOn
 
-                    let! _ = context.Sessions.AddAsync(s)
+                let! _ = context.Sessions.AddAsync(s)
 
-                    return Ok(s |> toSession)
+                return Ok(s |> toSession)
             }
 
         member __.renewSessionExpiration (sessionId, expiresOn) =
@@ -48,6 +43,7 @@ type SessionRepository(context : ApexDbContext) =
                 then return Error <| HttpException(404, "Not found.")
                 else 
                     s.ExpiresOn <- expiresOn
+                    context.Sessions.Update(s) |> ignore
                     let! _ = context.SaveChangesAsync()
                     return Ok(s |> toSession)
             }

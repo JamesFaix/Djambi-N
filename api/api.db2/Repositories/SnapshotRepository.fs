@@ -45,26 +45,16 @@ type SnapshotRepository(context : ApexDbContext) =
 
         member __.createSnapshot request  =
             task {
-                let! u = context.Users.FindAsync(request.createdByUserId)
-                if u = null
-                then raise <| HttpException(404, "Not found")
-
-                let! g = context.Games.FindAsync(request.game.id)
-                if g = null
-                then raise <| HttpException(404, "Not found")
-
                 let snapshotJson = {
                     game = request.game
                     history = request.history
                 }
 
-                let json = snapshotJson |> JsonUtility.serialize
-
                 let s = SnapshotSqlModel()
                 s.Description <- request.description
-                s.CreatedByUser <- u
-                s.Game <- g
-                s.SnapshotJson <- json
+                s.CreatedByUserId <- request.createdByUserId
+                s.GameId <- request.game.id
+                s.SnapshotJson <- snapshotJson |> JsonUtility.serialize
                 s.CreatedOn <- DateTime.UtcNow
                 
                 let! _ = context.Snapshots.AddAsync(s)
@@ -73,7 +63,7 @@ type SnapshotRepository(context : ApexDbContext) =
                 return Ok(s.Id)
             }
 
-        member __.loadSnapshot (gameId, snapshotId)  =
+        member __.loadSnapshot (gameId, snapshotId) =
             task {
                 let! s = context.Snapshots.SingleOrDefaultAsync(
                             fun s -> s.Id = snapshotId && s.Game.Id = gameId)
@@ -115,22 +105,22 @@ type SnapshotRepository(context : ApexDbContext) =
                 context.Events.RemoveRange(oldEvents)
 
                 // Add new history
-                let history = snapshot.history |> List.map toEventSqlModel |> List.toArray
+                let history = 
+                    snapshot.history 
+                    |> List.map (fun e -> toEventSqlModel e gameId)
+                    |> List.toArray
                 let! _ = context.Events.AddRangeAsync(history)
-
-                let! status = context.GameStatuses.FindAsync(snapshot.game.status |> toGameStatusSqlId)
-                if status = null
-                then raise <| HttpException(404, "Not found")
 
                 // Modify game
                 gameSqlModel.AllowGuests <- snapshot.game.parameters.allowGuests
                 gameSqlModel.IsPublic <- snapshot.game.parameters.isPublic
                 gameSqlModel.Description <- snapshot.game.parameters.description |> Option.toObj
                 gameSqlModel.RegionCount <- byte snapshot.game.parameters.regionCount
-                gameSqlModel.Status <- status
+                gameSqlModel.StatusId <- snapshot.game.status |> toGameStatusSqlId
                 gameSqlModel.PiecesJson <- snapshot.game.pieces |> JsonUtility.serialize
                 gameSqlModel.TurnCycleJson <- snapshot.game.turnCycle |> JsonUtility.serialize
                 gameSqlModel.CurrentTurnJson <- snapshot.game.currentTurn |> JsonUtility.serialize
+                context.Games.Update(gameSqlModel) |> ignore
 
                 // Modify players                
                 let updatedPlayerSqlModels = snapshot.game.players |> List.map toPlayerSqlModel

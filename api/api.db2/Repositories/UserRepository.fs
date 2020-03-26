@@ -58,6 +58,7 @@ type UserRepository(context : ApexDbContext) =
                 let! u = context.Users.FindAsync(request.userId)
                 u.FailedLoginAttempts <- byte request.failedLoginAttempts
                 u.LastFailedLoginAttemptOn <- request.lastFailedLoginAttemptOn |> Option.toNullable
+                context.Users.Update(u) |> ignore
                 let! _ = context.SaveChangesAsync()
                 return Ok ()
             }

@@ -11,7 +11,7 @@ type EventKindDto =
    | GameStarted = 5
    | TurnCommitted = 6
    | TurnReset = 7
-   | CellSelected  = 8
+   | CellSelected = 8
    | PlayerStatusChanged = 9 
 
 type EffectKindDto =

@@ -8,6 +8,7 @@ open Apex.Api.Db.Mappings
 open System.Linq
 open Microsoft.EntityFrameworkCore
 open Apex.Api.Model
+open Apex.Api.Common.Control
 
 type SearchRepository(context : ApexDbContext) =
     let privId = Privilege.ViewGames |> toPrivilegeSqlId
@@ -62,6 +63,8 @@ type SearchRepository(context : ApexDbContext) =
         member __.searchGames (query, currentUserId) =
             task {
                 let! currentUser = context.Users.FindAsync(currentUserId)
+                if currentUser = null
+                then raise <| HttpException(404, "Not found.")
 
                 let! games = 
                     context.Games
@@ -69,5 +72,10 @@ type SearchRepository(context : ApexDbContext) =
                         .Where(queryFilter query currentUser)
                         .ToListAsync()
 
-                return Ok(games |> Seq.map toSearchGame |> Seq.toList)            
+                let games = 
+                    games
+                    |> Seq.map (fun g -> toSearchGame g currentUserId)
+                    |> Seq.toList
+
+                return Ok(games)            
             }

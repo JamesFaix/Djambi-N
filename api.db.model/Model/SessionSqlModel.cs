@@ -14,6 +14,9 @@ namespace Apex.Api.Db.Model
         public string Token { get; set; }
 
         [Required]
+        public int UserId { get; set; }
+
+        [Required]
         public UserSqlModel User { get; set; }
 
         [Required]
