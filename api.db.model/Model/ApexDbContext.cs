@@ -5,7 +5,7 @@ namespace Apex.Api.Db.Model
 {
     public class ApexDbContext : DbContext
     {
-        //public DbSet<EventSqlModel> Events { get; set; }
+        public DbSet<EventSqlModel> Events { get; set; }
         public DbSet<EventKindSqlModel> EventKinds { get; set; }
         public DbSet<GameSqlModel> Games { get; set; }
         public DbSet<GameStatusSqlModel> GameStatuses { get; set; }
