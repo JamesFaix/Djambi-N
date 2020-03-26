@@ -15,7 +15,7 @@ type UserRepository(context : ApexDbContext) =
                 let! sqlModel = context.Users.FindAsync(userId)
 
                 return match sqlModel with
-                        | null -> Error <| HttpException(400, "Not found.")
+                        | null -> Error <| HttpException(404, "Not found.")
                         | x -> Ok(x |> toUserDetails)
             }
 
@@ -25,7 +25,7 @@ type UserRepository(context : ApexDbContext) =
                     String.Equals(name, x.Name, StringComparison.InvariantCultureIgnoreCase))
 
                 return match sqlModel with
-                        | null -> Error <| HttpException(400, "Not found.")
+                        | null -> Error <| HttpException(404, "Not found.")
                         | x -> Ok(x |> toUserDetails)
             }
 
@@ -54,4 +54,10 @@ type UserRepository(context : ApexDbContext) =
             }
 
         member __.updateFailedLoginAttempts request =
-            raise <| NotImplementedException()
+            task {
+                let! u = context.Users.FindAsync(request.userId)
+                u.FailedLoginAttempts <- byte request.failedLoginAttempts
+                u.LastFailedLoginAttemptOn <- request.lastFailedLoginAttemptOn |> Option.toNullable
+                let! _ = context.SaveChangesAsync()
+                return Ok ()
+            }

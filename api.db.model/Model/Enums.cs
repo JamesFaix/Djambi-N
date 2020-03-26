@@ -7,7 +7,7 @@ namespace Apex.Api.Db.Model
     public class EventKindSqlModel
     {
         [Required]
-        public int Id { get; set; }
+        public byte Id { get; set; }
         
         [Required]
         [StringLength(20)]
@@ -18,7 +18,7 @@ namespace Apex.Api.Db.Model
     public class GameStatusSqlModel
     {
         [Required]
-        public int Id { get; set; }
+        public byte Id { get; set; }
         
         [Required]
         [StringLength(20)]

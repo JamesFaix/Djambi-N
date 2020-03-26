@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -18,6 +19,13 @@ namespace Apex.Api.Db.Model
 
         [Required]
         public GameStatusSqlModel Status { get; set; }
+
+        [Required]
+        public IList<PlayerSqlModel> Players { get; set; }
+
+        [Required]
+        public IList<EventSqlModel> Events { get; set; }
+
         public string Description { get; set; }
 
         [Required]

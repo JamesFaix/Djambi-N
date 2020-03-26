@@ -5,13 +5,20 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Repositories\Repositories.fs" />
+    <Compile Include="Model\Model.fs" />
     <Compile Include="Mappings\Mappings.fs" />
+    <Compile Include="Repositories\EventRepository.fs" />
+    <Compile Include="Repositories\GameRepository.fs" />
+    <Compile Include="Repositories\SearchRepository.fs" />
+    <Compile Include="Repositories\SessionRepository.fs" />
+    <Compile Include="Repositories\SnapshotRepository.fs" />
+    <Compile Include="Repositories\UserRepository.fs" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\api.db.model\api.db.model.csproj" />
     <ProjectReference Include="..\api.db.interfaces\api.db.interfaces.fsproj" />
+    <ProjectReference Include="..\api.model\api.model.fsproj" />
   </ItemGroup>
 
 </Project>

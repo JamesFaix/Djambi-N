@@ -10,8 +10,11 @@ type IEventRepository =
 
 type IGameRepository =
     abstract member getGame : gameId:int -> Game AsyncHttpResult
-    abstract member createGame : request:CreateGameRequest -> int AsyncHttpResult
+    [<Obsolete("Only used for tests")>]
+    abstract member createGame : request:CreateGameRequest -> int AsyncHttpResult   
+    [<Obsolete("Only used for tests")>]
     abstract member addPlayer : gameId:int * request:CreatePlayerRequest -> Player AsyncHttpResult
+    [<Obsolete("Only used for tests")>]
     abstract member removePlayer : gameID:int * playerId:int -> unit AsyncHttpResult
     abstract member getNeutralPlayerNames : unit -> string list AsyncHttpResult
     abstract member createGameAndAddPlayer : gameRequest:CreateGameRequest * playerRequest:CreatePlayerRequest -> int AsyncHttpResult
