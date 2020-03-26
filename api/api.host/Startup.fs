@@ -4,29 +4,27 @@ open System
 open System.IO
 open System.Linq
 open Microsoft.AspNetCore.Builder
-open Microsoft.AspNetCore.Cors.Infrastructure
 open Microsoft.AspNetCore.Hosting
-open Microsoft.AspNetCore.Http
 open Microsoft.Extensions.Configuration
 open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.FileProviders
 open Microsoft.OpenApi.Models
+open Microsoft.EntityFrameworkCore
 
 open Newtonsoft.Json
 open Serilog
 open Swashbuckle.AspNetCore.SwaggerGen
 
 open Apex.Api.Common.Json
-open Apex.Api.Db
 open Apex.Api.Db.Interfaces
 open Apex.Api.Db.Repositories
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Logic.Managers
 open Apex.Api.Logic.Services
-open Apex.Api.Model
 open Apex.Api.Model.Configuration
 open Apex.Api.Web
 open Apex.Api.Web.Controllers
+open Apex.Api.Db.Model
 
 type Startup() =
 
@@ -47,7 +45,7 @@ type Startup() =
             let path = Path.Combine(AppContext.BaseDirectory, file)
             opt.IncludeXmlComments(path)
 
-        // Framework services
+        // ASP.NET
         services.AddCors(fun opt ->
             let webAddress = __.Configuration.GetValue<string>("Api:WebAddress")
             opt.AddPolicy("ApiCorsPolicy", fun builder -> 
@@ -81,10 +79,15 @@ type Startup() =
         // Swagger
         services.AddSwaggerGen(fun opt -> configureSwagger opt) |> ignore
 
+        // Entity Framework
+        services.AddDbContext<ApexDbContext>(fun opt -> 
+            let cnStr = __.Configuration.GetValue<string>("Sql:ConnectionString")
+            opt.UseSqlServer(cnStr) |> ignore
+            ()
+        ) |> ignore
+
         // Database layer
-        services.AddSingleton<CommandContextProvider>() |> ignore
         services.AddSingleton<IEventRepository, EventRepository>() |> ignore
-        services.AddSingleton<GameRepository>() |> ignore
         services.AddSingleton<IGameRepository, GameRepository>() |> ignore
         services.AddSingleton<ISearchRepository, SearchRepository>() |> ignore
         services.AddSingleton<ISessionRepository, SessionRepository>() |> ignore

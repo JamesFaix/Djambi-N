@@ -18,15 +18,8 @@ namespace Apex.Api.Db.Model
         public DbSet<SnapshotSqlModel> Snapshots { get; set; }
         public DbSet<UserSqlModel> Users { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer(
-                @"Server=localhost;" + 
-                "Database=Apex2;" + 
-                "Trusted_Connection=True;" + 
-                "MultipleActiveResultSets=true"
-            );
-        }
+        public ApexDbContext(DbContextOptions<ApexDbContext> options) 
+            : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
