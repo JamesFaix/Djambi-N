@@ -1,6 +1,5 @@
 ﻿namespace Apex.Api.Db.Repositories
 
-open System
 open Apex.Api.Db.Interfaces
 open Apex.Api.Db.Model
 open System.Linq
@@ -9,32 +8,36 @@ open FSharp.Control.Tasks
 open Apex.Api.Db.Mappings
 open Apex.Api.Model
 open System.ComponentModel
+open Apex.Api.Common.Control
+open System.Threading.Tasks
+open Apex.Api.Common.Json
 
 type EventRepository(context : ApexDbContext) =
-    let noneOr (f : 'a -> bool) (o : Option<'a>)  =
-        o.IsNone || f(o.Value)
-
-    let orderBy (d : ListSortDirection) (f : 'a -> 'b) (xs : IQueryable<'a>) : IOrderedQueryable<'a> =
-        if d = ListSortDirection.Descending
-        then xs.OrderByDescending(f)
-        else xs.OrderBy(f)
-
-    let queryFilter (query : EventsQuery) (event : EventSqlModel) : bool =
-        let isAscending = query.direction <> ListSortDirection.Descending
-
-        query.thresholdEventId |> noneOr (fun x -> 
-            if isAscending 
-            then event.Id <= x 
-            else event.Id >= x
-        ) &&
-        query.thresholdTime |> noneOr (fun x -> 
-            if isAscending 
-            then event.CreatedOn <= x
-            else event.CreatedOn >= x
-        )
 
     interface IEventRepository with
         member __.getEvents (gameId, query) =
+            let noneOr (f : 'a -> bool) (o : Option<'a>)  =
+                o.IsNone || f(o.Value)
+
+            let orderBy (d : ListSortDirection) (f : 'a -> 'b) (xs : IQueryable<'a>) : IOrderedQueryable<'a> =
+                if d = ListSortDirection.Descending
+                then xs.OrderByDescending(f)
+                else xs.OrderBy(f)
+
+            let queryFilter (query : EventsQuery) (event : EventSqlModel) : bool =
+                let isAscending = query.direction <> ListSortDirection.Descending
+
+                query.thresholdEventId |> noneOr (fun x -> 
+                    if isAscending 
+                    then event.Id <= x 
+                    else event.Id >= x
+                ) &&
+                query.thresholdTime |> noneOr (fun x -> 
+                    if isAscending 
+                    then event.CreatedOn <= x
+                    else event.CreatedOn >= x
+                )
+
             task {
                 let maxResults = 
                     match query.maxResults with
@@ -57,4 +60,117 @@ type EventRepository(context : ApexDbContext) =
             }
 
         member __.persistEvent (request, oldGame, newGame) =
-            raise <| NotImplementedException()
+            // Find players to update
+            let removedPlayers =
+                oldGame.players
+                |> Seq.filter (fun oldP ->
+                    newGame.players
+                    |> (not << Seq.exists (fun newP -> oldP.id = newP.id )))
+
+            let addedPlayers =
+                newGame.players
+                |> Seq.filter (fun newP ->
+                    oldGame.players
+                    |> (not << Seq.exists (fun oldP -> oldP.id = newP.id)))
+
+            let modifiedPlayers =
+                Enumerable.Join(
+                    oldGame.players, newGame.players,
+                    (fun p -> p.id), (fun p -> p.id),
+                    (fun oldP newP -> (oldP, newP))
+                )
+                |> Seq.filter (fun (o, n) -> o <> n)
+                |> Seq.map (fun (_, n) -> n)
+
+            let addPlayer(game : GameSqlModel, player : Player) : Task<Player> =
+                task {
+                    let p = player |> toPlayerSqlModel
+                    p.Game <- game
+
+                    let! _ = context.Players.AddAsync(p)
+
+                    return p |> toPlayer
+                }
+
+            let removePlayer(game : GameSqlModel, playerId : int) : Task<unit> =
+                task {
+                    let! p = context.Players.SingleOrDefaultAsync(fun p -> p.Game.Id = game.Id && p.Id = playerId)
+                    if p = null
+                    then raise <| HttpException(404, "Not found.")
+
+                    context.Players.Remove(p) |> ignore
+                    let! _ = context.SaveChangesAsync()
+
+                    return ()
+                }
+
+            let updatePlayer(game : GameSqlModel, player : Player) : Task<unit> =
+                task {
+                    let p = player |> toPlayerSqlModel
+                    p.Game <- game
+
+                    context.Players.Update(p) |> ignore
+                    let! _ = context.SaveChangesAsync()
+
+                    return ()
+                }
+
+            task {
+                let! g = context.Games.FindAsync(oldGame.id)
+                if g = null
+                then raise <| HttpException(404, "Not found.")
+
+                // Update players
+                for p in removedPlayers do
+                    let! _ = removePlayer(g, p.id)
+                    ()
+                for p in addedPlayers do
+                    let! _ = addPlayer(g, p)
+                    ()
+                for p in modifiedPlayers do
+                    let! _ = updatePlayer(g, p)
+                    ()
+
+                g.AllowGuests <- newGame.parameters.allowGuests
+                g.IsPublic <- newGame.parameters.isPublic
+                g.Description <- newGame.parameters.description |> Option.toObj
+                g.RegionCount <- byte newGame.parameters.regionCount
+                g.CurrentTurnJson <- newGame.currentTurn |> JsonUtility.serialize
+                g.TurnCycleJson <- newGame.turnCycle |> JsonUtility.serialize
+                g.PiecesJson <- newGame.pieces |> JsonUtility.serialize
+
+                let! s = context.GameStatuses.FindAsync(newGame.status |> toGameStatusSqlId)
+                if s = null
+                then raise <| HttpException(404, "Not found.")
+                else g.Status <- s
+
+                let! u = context.Users.FindAsync(request.createdByUserId)
+                if u = null
+                then raise <| HttpException(404, "Not found.")
+
+                let! p = context.Players.SingleOrDefaultAsync(fun p -> 
+                            p.Game.Id = g.Id && 
+                            (
+                                request.actingPlayerId.IsNone || 
+                                p.Id = request.actingPlayerId.Value
+                            )
+                )
+
+                let! eventKind = context.EventKinds.SingleOrDefaultAsync(fun ek -> 
+                                    ek.Id = (request.kind |> toEventKindSqlId))
+                if eventKind = null
+                then raise <| HttpException(404, "Not found.")
+
+                let e = createEventRequestToEventSqlModel request eventKind g u (p |> Option.ofObj)
+                
+                //save event
+
+                let! _ = context.SaveChangesAsync()
+
+                let response = {
+                    game = newGame
+                    event = e |> toEvent
+                }
+
+                return Ok response
+            }

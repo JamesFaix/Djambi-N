@@ -8,6 +8,7 @@ open Apex.Api.Common.Control
 open Microsoft.EntityFrameworkCore
 open System.Linq
 open Apex.Api.Db.Mappings
+open Apex.Api.Model
 
 type GameRepository(context : ApexDbContext) =
     interface IGameRepository with
@@ -47,7 +48,15 @@ type GameRepository(context : ApexDbContext) =
 
         member __.createGameAndAddPlayer (gameRequest, playerRequest) =
             task {
-                let gameSqlModel = gameRequest |> toGameSqlModel
+                let! u = context.Users.FindAsync(gameRequest.createdByUserId)
+                if u = null
+                then raise <| HttpException(404, "Not found.")
+
+                let! s = context.GameStatuses.FindAsync(GameStatus.Pending |> toGameStatusSqlId)
+                if s = null
+                then raise <| HttpException(404, "Not found.")
+
+                let gameSqlModel = toGameSqlModel gameRequest u s
                 let! _ = context.Games.AddAsync(gameSqlModel)
 
                 let playerSqlModel = playerRequest |> createPlayerRequestToPlayerSqlModel
