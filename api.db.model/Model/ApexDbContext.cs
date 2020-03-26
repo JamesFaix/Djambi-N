@@ -17,7 +17,7 @@ namespace Apex.Api.Db.Model
         //public DbSet<SessionSqlModel> Sessions { get; set; }
         //public DbSet<SnapshotSqlModel> Snapshots { get; set; }
         public DbSet<UserSqlModel> Users { get; set; }
-        //public DbSet<UserPrivilegeSqlModel> UserPrivileges { get; set; }
+        public DbSet<UserPrivilegeSqlModel> UserPrivileges { get; set; }
 
         public ApexDbContext(DbContextOptions<ApexDbContext> options)
             : base(options) { }
