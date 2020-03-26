@@ -22,9 +22,9 @@ namespace Apex.Api.Db.Model
         public byte StatusId { get; set; }
         public GameStatusSqlModel Status { get; set; }
 
-        //        public IList<PlayerSqlModel> Players { get; set; }
+        public IList<PlayerSqlModel> Players { get; set; }
 
-        //        public IList<EventSqlModel> Events { get; set; }
+        public IList<EventSqlModel> Events { get; set; }
 
         public string Description { get; set; }
 
