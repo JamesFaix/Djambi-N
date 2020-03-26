@@ -17,7 +17,7 @@ type SearchRepository(context : ApexDbContext) =
         game.IsPublic ||
         game.CreatedByUser.Id = currentUser.Id ||
         game.Players.Any(fun p -> p.User.Id = currentUser.Id) ||
-        currentUser.Privileges.Any(fun p -> p.Id = privId) 
+        currentUser.UserPrivileges.Any(fun p -> p.PrivilegeId = privId) 
 
     let comparison = StringComparison.InvariantCultureIgnoreCase
 

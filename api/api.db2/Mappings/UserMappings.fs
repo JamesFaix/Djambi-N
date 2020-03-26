@@ -7,8 +7,8 @@ open System.ComponentModel
 [<AutoOpen>]
 module UserMappings =
 
-    let toPrivilege (source : PrivilegeSqlModel) : Privilege =
-        match source.Id with
+    let toPrivilege (source : byte) : Privilege =
+        match source with
         | 1uy -> Privilege.EditUsers
         | 2uy -> Privilege.EditPendingGames
         | 3uy -> Privilege.OpenParticipation
@@ -31,12 +31,12 @@ module UserMappings =
             password = source.Password
             failedLoginAttempts = int source.FailedLoginAttempts
             lastFailedLoginAttemptOn = source.LastFailedLoginAttemptOn |> Option.ofNullable
-            privileges = source.Privileges |> Seq.map toPrivilege |> Seq.toList
+            privileges = source.UserPrivileges |> Seq.map (fun up -> up.PrivilegeId |> toPrivilege) |> Seq.toList
         }    
 
     let toUser (source : UserSqlModel) : User =
         {
             id = source.Id
             name = source.Name
-            privileges = source.Privileges |> Seq.map toPrivilege |> Seq.toList
+            privileges = source.UserPrivileges |> Seq.map (fun up -> up.PrivilegeId |> toPrivilege) |> Seq.toList
         } 

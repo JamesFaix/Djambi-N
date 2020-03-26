@@ -26,7 +26,6 @@ namespace Apex.Api.Db.Model
 
         public DateTime? LastFailedLoginAttemptOn { get; set; }
 
-        [Required] 
-        public List<PrivilegeSqlModel> Privileges { get; set; }
+        public List<UserPrivilegeSqlModel> UserPrivileges { get; set; }
     }
 }

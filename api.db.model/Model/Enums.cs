@@ -8,7 +8,7 @@ namespace Apex.Api.Db.Model
     {
         [Required]
         public byte Id { get; set; }
-        
+
         [Required]
         [StringLength(20)]
         public string Name { get; set; }
@@ -19,7 +19,7 @@ namespace Apex.Api.Db.Model
     {
         [Required]
         public byte Id { get; set; }
-        
+
         [Required]
         [StringLength(20)]
         public string Name { get; set; }

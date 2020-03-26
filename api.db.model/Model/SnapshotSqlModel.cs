@@ -12,24 +12,20 @@ namespace Apex.Api.Db.Model
 
         [Required]
         public int GameId { get; set; }
-
-        [Required] 
         public GameSqlModel Game { get; set; }
 
         [Required]
         public int CreatedByUserId { get; set; }
-
-        [Required] 
         public UserSqlModel CreatedByUser { get; set; }
 
-        [Required] 
+        [Required]
         public DateTime CreatedOn { get; set; }
 
         [Required]
         [StringLength(50)]
         public string Description { get; set; }
 
-        [Required] 
+        [Required]
         public string SnapshotJson { get; set; }
     }
 }

@@ -9,31 +9,23 @@ namespace Apex.Api.Db.Model
     {
         [Required]
         public int Id { get; set; }
-        
+
         [Required]
         public int GameId { get; set; }
-
-        [Required]
         public GameSqlModel Game { get; set; }
-        
+
         [Required]
         public int CreatedByUserId { get; set; }
-
-        [Required]
         public UserSqlModel CreatedByUser { get; set; }
-        
-        public int? ActingPlayerId { get; set; }
 
-        // Nullable
+        public int? ActingPlayerId { get; set; }
         public PlayerSqlModel ActingPlayer { get; set; }
 
         [Required]
         public DateTime CreatedOn { get; set; }
-        
-        [Required]
-        public byte KindId { get; set; }
 
         [Required]
+        public byte KindId { get; set; }
         public EventKindSqlModel Kind { get; set; }
 
         [Required]

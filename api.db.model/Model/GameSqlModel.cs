@@ -10,26 +10,20 @@ namespace Apex.Api.Db.Model
     {
         [Required]
         public int Id { get; set; }
-        
-        [Required]
-        public int CreatedByUserId { get; set; }
 
         [Required]
+        public int CreatedByUserId { get; set; }
         public UserSqlModel CreatedByUser { get; set; }
-        
+
         [Required]
         public DateTime CreatedOn { get; set; }
 
         [Required]
         public byte StatusId { get; set; }
-
-        [Required]
         public GameStatusSqlModel Status { get; set; }
 
-        [Required]
         public IList<PlayerSqlModel> Players { get; set; }
 
-        [Required]
         public IList<EventSqlModel> Events { get; set; }
 
         public string Description { get; set; }
@@ -48,7 +42,7 @@ namespace Apex.Api.Db.Model
 
         // Nullable
         public string PiecesJson { get; set; }
-        
+
         // Nullable
         public string CurrentTurnJson { get; set; }
     }

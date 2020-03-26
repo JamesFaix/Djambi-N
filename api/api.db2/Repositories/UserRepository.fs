@@ -37,7 +37,6 @@ type UserRepository(context : ApexDbContext) =
                 u.FailedLoginAttempts <- 0uy
                 u.LastFailedLoginAttemptOn <- Nullable<DateTime>()
                 u.CreatedOn <- DateTime.UtcNow
-                u.Privileges <- System.Collections.Generic.List<PrivilegeSqlModel>()
 
                 let! _ = context.Users.AddAsync(u)
                 let! _ = context.SaveChangesAsync()

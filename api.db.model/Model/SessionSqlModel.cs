@@ -10,13 +10,11 @@ namespace Apex.Api.Db.Model
         [Required]
         public int Id { get; set; }
 
-        [Required] 
+        [Required]
         public string Token { get; set; }
 
         [Required]
         public int UserId { get; set; }
-
-        [Required]
         public UserSqlModel User { get; set; }
 
         [Required]

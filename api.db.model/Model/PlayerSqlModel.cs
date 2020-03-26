@@ -11,20 +11,13 @@ namespace Apex.Api.Db.Model
 
         [Required]
         public int GameId { get; set; }
-
-        [Required]
         public GameSqlModel Game { get; set; }
 
-        //Nullable
         public int? UserId { get; set; }
-
-        // Nullable
         public UserSqlModel User { get; set; }
 
         [Required]
         public byte KindId { get; set; }
-
-        [Required]
         public PlayerKindSqlModel Kind { get; set; }
 
         [Required]
@@ -33,8 +26,6 @@ namespace Apex.Api.Db.Model
 
         [Required]
         public byte StatusId { get; set; }
-
-        [Required]
         public PlayerStatusSqlModel Status { get; set; }
 
         public byte? ColorId { get; set; }

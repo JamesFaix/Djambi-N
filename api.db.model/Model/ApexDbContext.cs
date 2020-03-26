@@ -1,8 +1,7 @@
 ﻿using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using Apex.Api.Db.Model;
 
-namespace Apex.Api.Db
+namespace Apex.Api.Db.Model
 {
     public class ApexDbContext : DbContext
     {
@@ -18,14 +17,10 @@ namespace Apex.Api.Db
         public DbSet<SessionSqlModel> Sessions { get; set; }
         public DbSet<SnapshotSqlModel> Snapshots { get; set; }
         public DbSet<UserSqlModel> Users { get; set; }
+        public DbSet<UserPrivilegeSqlModel> UserPrivileges { get; set; }
 
-        public ApexDbContext(DbContextOptions<ApexDbContext> options) 
+        public ApexDbContext(DbContextOptions<ApexDbContext> options)
             : base(options) { }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-
-        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
