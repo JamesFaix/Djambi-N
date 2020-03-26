@@ -1,7 +1,8 @@
 ﻿using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Apex.Api.Db.Model;
 
-namespace Apex.Api.Db.Model
+namespace Apex.Api.Db
 {
     public class ApexDbContext : DbContext
     {
@@ -20,6 +21,11 @@ namespace Apex.Api.Db.Model
 
         public ApexDbContext(DbContextOptions<ApexDbContext> options) 
             : base(options) { }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
