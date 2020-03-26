@@ -11,10 +11,10 @@ namespace Apex.Api.Db.Model
         public DbSet<GameStatusSqlModel> GameStatuses { get; set; }
         public DbSet<NeutralPlayerNameSqlModel> NeutralPlayerNames { get; set; }
         public DbSet<PlayerKindSqlModel> PlayerKinds { get; set; }
-        //public DbSet<PlayerSqlModel> Players { get; set; }
+        public DbSet<PlayerSqlModel> Players { get; set; }
         public DbSet<PlayerStatusSqlModel> PlayerStatuses { get; set; }
         public DbSet<PrivilegeSqlModel> Privileges { get; set; }
-        //public DbSet<SessionSqlModel> Sessions { get; set; }
+        public DbSet<SessionSqlModel> Sessions { get; set; }
         //public DbSet<SnapshotSqlModel> Snapshots { get; set; }
         public DbSet<UserSqlModel> Users { get; set; }
         public DbSet<UserPrivilegeSqlModel> UserPrivileges { get; set; }
