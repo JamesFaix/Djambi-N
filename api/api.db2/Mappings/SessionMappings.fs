@@ -8,7 +8,7 @@ module SessionMappings =
 
     let toSession (source : SessionSqlModel) : Session =
         {
-            id = source.Id
+            id = source.SessionId
             token = source.Token
             user = source.User |> toUser
             expiresOn = source.ExpiresOn

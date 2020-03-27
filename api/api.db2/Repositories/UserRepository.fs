@@ -21,8 +21,7 @@ type UserRepository(context : ApexDbContext) =
 
         member __.getUserByName name =
             task {
-                let! sqlModel = context.Users.SingleOrDefaultAsync(fun x -> 
-                    String.Equals(name, x.Name, StringComparison.InvariantCultureIgnoreCase))
+                let! sqlModel = context.Users.SingleOrDefaultAsync(fun x -> name = x.Name) // Relies on case insensitivity of SQL 
 
                 return match sqlModel with
                         | null -> Error <| HttpException(404, "Not found.")

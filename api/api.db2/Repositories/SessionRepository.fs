@@ -12,11 +12,14 @@ type SessionRepository(context : ApexDbContext) =
     interface ISessionRepository with
         member __.getSession query =
             task {
-                let! s = context.Sessions.SingleOrDefaultAsync(fun s ->
-                    (query.sessionId.IsNone || s.Id = query.sessionId.Value) &&
-                    (query.token.IsNone || s.Token = query.token.Value) &&
-                    (query.userId.IsNone || s.User.Id = query.userId.Value)
-                )
+                let! s = 
+                    context.Sessions
+                        .Include(fun s -> s.User)
+                        .SingleOrDefaultAsync(fun s ->
+                            (query.sessionId.IsNone || s.SessionId = query.sessionId.Value) &&
+                            (query.token.IsNone || s.Token = query.token.Value) &&
+                            (query.userId.IsNone || s.User.UserId = query.userId.Value)
+                        )
 
                 if s = null
                 then return Error <| HttpException(404, "Not found.")
@@ -32,6 +35,12 @@ type SessionRepository(context : ApexDbContext) =
                 s.ExpiresOn <- request.expiresOn
 
                 let! _ = context.Sessions.AddAsync(s)
+                let! _ = context.SaveChangesAsync()
+
+                let! s = 
+                    context.Sessions
+                        .Include(fun s -> s.User)
+                        .SingleOrDefaultAsync(fun s1 -> s1.SessionId = s.SessionId)
 
                 return Ok(s |> toSession)
             }

@@ -50,11 +50,11 @@ type GameRepository(context : ApexDbContext) =
                 let gameSqlModel = toGameSqlModel gameRequest
                 let! _ = context.Games.AddAsync(gameSqlModel)
 
-                let playerSqlModel = createPlayerRequestToPlayerSqlModel playerRequest None
-                playerSqlModel.GameId <- gameSqlModel.Id
+                let playerSqlModel = createPlayerRequestToPlayerSqlModel playerRequest
+                playerSqlModel.GameId <- gameSqlModel.GameId
                 let! _ = context.Players.AddAsync(playerSqlModel)
 
                 let! _ = context.SaveChangesAsync()
 
-                return Ok(gameSqlModel.Id)
+                return Ok(gameSqlModel.GameId)
             }

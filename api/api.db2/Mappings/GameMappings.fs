@@ -64,12 +64,12 @@ module GameMappings =
             if x.HasValue then Some(int x.Value) else None
 
         {   
-            id = source.Id
+            id = source.PlayerId
             name = source.Name
             gameId = source.GameId
             userId = source.UserId |> Option.ofNullable
-            kind = source.KindId |> toPlayerKind
-            status = source.StatusId |> toPlayerStatus
+            kind = source.PlayerKindId |> toPlayerKind
+            status = source.PlayerStatusId |> toPlayerStatus
             colorId = source.ColorId |> toIntOption
             startingRegion = source.ColorId |>toIntOption
             startingTurnNumber = source.ColorId |> toIntOption
@@ -80,32 +80,30 @@ module GameMappings =
             if x.IsSome then Nullable<byte>(byte x.Value) else Nullable<byte>()
 
         let x = PlayerSqlModel()
-        x.Id <- source.id
+        x.PlayerId <- source.id
         x.GameId <- source.gameId
         x.UserId <- source.userId |> Option.toNullable
-        x.KindId <- source.kind |> toPlayerKindSqlId
-        x.StatusId <- source.status |> toPlayerStatusSqlId
+        x.PlayerKindId <- source.kind |> toPlayerKindSqlId
+        x.PlayerStatusId <- source.status |> toPlayerStatusSqlId
         x.Name <- source.name
         x.ColorId <- source.colorId |> toByteNullable
         x.StartingRegion <- source.startingRegion |> toByteNullable
         x.StartingTurnNumber <- source.startingTurnNumber |> toByteNullable
         x
         
-    let createPlayerRequestToPlayerSqlModel (source : CreatePlayerRequest) (name : Option<string>) : PlayerSqlModel =
-        let name = if source.name.IsSome then source.name.Value else name.Value
-
+    let createPlayerRequestToPlayerSqlModel (source : CreatePlayerRequest) : PlayerSqlModel =
         let x = PlayerSqlModel()
         x.UserId <- source.userId |> Option.toNullable
-        x.KindId <- source.kind |> toPlayerKindSqlId
-        x.StatusId <- PlayerStatus.Pending |> toPlayerStatusSqlId
-        x.Name <- name
+        x.PlayerKindId <- source.kind |> toPlayerKindSqlId
+        x.PlayerStatusId <- PlayerStatus.Pending |> toPlayerStatusSqlId
+        x.Name <- source.name.Value
         x
 
     let toGame (source : GameSqlModel) (players : seq<PlayerSqlModel>) : Game =
         {
-            id = source.Id
+            id = source.GameId
             createdBy = {
-                userId = source.CreatedByUser.Id
+                userId = source.CreatedByUser.UserId
                 userName = source.CreatedByUser.Name
                 time = source.CreatedOn
             }
@@ -115,7 +113,7 @@ module GameMappings =
                 description = source.Description |> Option.ofObj
                 regionCount = int source.RegionCount
             }
-            status = source.StatusId |> toGameStatus
+            status = source.GameStatusId |> toGameStatus
             players = players |> Seq.map toPlayer |> Seq.toList
             pieces = source.PiecesJson |> JsonUtility.deserialize
             turnCycle = source.TurnCycleJson |> JsonUtility.deserialize
@@ -130,7 +128,7 @@ module GameMappings =
         x.RegionCount <- byte source.parameters.regionCount
         x.Players <- List<PlayerSqlModel>()
         x.CreatedOn <- DateTime.UtcNow
-        x.StatusId <- GameStatus.Pending |> toGameStatusSqlId
+        x.GameStatusId <- GameStatus.Pending |> toGameStatusSqlId
         x.CreatedByUserId <- source.createdByUserId
         x.CurrentTurnJson <- null
         x.TurnCycleJson <- null

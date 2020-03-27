@@ -10,10 +10,10 @@ module SnapshotMappings =
 
     let toSnapshotInfo (source : SnapshotSqlModel) : SnapshotInfo =
         {
-            id = source.Id
+            id = source.SnapshotId
             description = source.Description
             createdBy = {
-                userId = source.CreatedByUser.Id
+                userId = source.CreatedByUser.UserId
                 userName = source.CreatedByUser.Name
                 time = source.CreatedOn
             }
@@ -22,10 +22,10 @@ module SnapshotMappings =
     let toSnapshot (source : SnapshotSqlModel) : Snapshot =
         let data = JsonUtility.deserialize<SnapshotJson> source.SnapshotJson
         {
-            id = source.Id
+            id = source.SnapshotId
             description = source.Description
             createdBy = {
-                userId = source.CreatedByUser.Id
+                userId = source.CreatedByUser.UserId
                 userName = source.CreatedByUser.Name
                 time = source.CreatedOn
             }

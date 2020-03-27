@@ -6,9 +6,9 @@ namespace Apex.Api.Db.Model
     [Table("UserPrivileges")]
     public class UserPrivilegeSqlModel
     {
+        [Key]
         [Required]
-        [Column("UserPrivilegeId")]
-        public int Id { get; set; }
+        public int UserPrivilegeId { get; set; }
 
         [Required]
         public int UserId { get; set; }

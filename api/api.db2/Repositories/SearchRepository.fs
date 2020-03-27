@@ -6,17 +6,17 @@ open Apex.Api.Db.Model
 open FSharp.Control.Tasks
 open Apex.Api.Db.Mappings
 open System.Linq
-open Microsoft.EntityFrameworkCore
 open Apex.Api.Model
 open Apex.Api.Common.Control
+open Microsoft.EntityFrameworkCore
 
 type SearchRepository(context : ApexDbContext) =
     let privId = Privilege.ViewGames |> toPrivilegeSqlId
 
     let securityFilter (currentUser : UserSqlModel) (game : GameSqlModel) : bool =
         game.IsPublic ||
-        game.CreatedByUser.Id = currentUser.Id ||
-        game.Players.Any(fun p -> p.User.Id = currentUser.Id) ||
+        game.CreatedByUser.UserId = currentUser.UserId ||
+        game.Players.Any(fun p -> p.User.UserId = currentUser.UserId) ||
         currentUser.UserPrivileges.Any(fun p -> p.PrivilegeId = privId) 
 
     let comparison = StringComparison.InvariantCultureIgnoreCase
@@ -40,7 +40,7 @@ type SearchRepository(context : ApexDbContext) =
         query.containsMe |> noneOr (fun x -> 
             x = game.Players.Any(fun p -> 
                 p.User <> null && 
-                p.User.Id = currentUser.Id
+                p.User.UserId = currentUser.UserId
             )
         ) &&
         query.isPublic |> noneOr (fun x -> x = game.IsPublic) &&        
@@ -49,7 +49,7 @@ type SearchRepository(context : ApexDbContext) =
            query.statuses.IsEmpty ||
            query.statuses 
            |> Seq.map toGameStatusSqlId 
-           |> Seq.contains game.Status.Id
+           |> Seq.contains game.GameStatus.Id
         ) &&
         query.createdBefore |> noneOr (fun x -> x > game.CreatedOn) &&        
         query.createdAfter |> noneOr (fun x -> x < game.CreatedOn) &&
@@ -66,16 +66,15 @@ type SearchRepository(context : ApexDbContext) =
                 if currentUser = null
                 then raise <| HttpException(404, "Not found.")
 
-                let! games = 
-                    context.Games
-                        .Where(securityFilter currentUser)
-                        .Where(queryFilter query currentUser)
-                        .ToListAsync()
-
                 let games = 
-                    games
-                    |> Seq.map (fun g -> toSearchGame g currentUserId)
-                    |> Seq.toList
+                    context.Games
+                        .Include(fun g -> g.Players)
+                        .Include(fun g -> g.Events)
+                        .AsEnumerable()
+                        |> Seq.filter (securityFilter currentUser)
+                        |> Seq.filter (queryFilter query currentUser)
+                        |> Seq.map (fun g -> toSearchGame g currentUserId)
+                        |> Seq.toList
 
                 return Ok(games)            
             }

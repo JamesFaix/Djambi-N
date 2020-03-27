@@ -10,7 +10,7 @@ module SearchMappings =
 
     let toSearchGame (source : GameSqlModel) (currentUserId : int) : SearchGame =
         {
-            id = source.Id
+            id = source.GameId
             parameters = {
                 description = source.Description |> Option.ofObj
                 allowGuests = source.AllowGuests
@@ -18,11 +18,11 @@ module SearchMappings =
                 regionCount = int source.RegionCount
             }
             createdBy = {
-                userId = source.CreatedByUser.Id
+                userId = source.CreatedByUser.UserId
                 userName = source.CreatedByUser.Name
                 time = source.CreatedOn
             }
-            status = source.StatusId |> toGameStatus
+            status = source.GameStatusId |> toGameStatus
             lastEventOn = source.Events.Max(fun e -> e.CreatedOn)
             playerCount = source.Players.Count
             containsMe = source.Players.Any(fun p -> p.UserId.HasValue && p.UserId.Value = currentUserId)

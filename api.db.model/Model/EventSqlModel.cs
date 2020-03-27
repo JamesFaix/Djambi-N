@@ -7,9 +7,9 @@ namespace Apex.Api.Db.Model
     [Table("Events")]
     public class EventSqlModel
     {
-        [Column("EventId")]
+        [Key]
         [Required]
-        public int Id { get; set; }
+        public int EventId { get; set; }
 
         [Required]
         public int GameId { get; set; }
@@ -26,8 +26,8 @@ namespace Apex.Api.Db.Model
         public DateTime CreatedOn { get; set; }
 
         [Required]
-        public byte KindId { get; set; }
-        public EventKindSqlModel Kind { get; set; }
+        public byte EventKindId { get; set; }
+        public EventKindSqlModel EventKind { get; set; }
 
         [Required]
         public string EffectsJson { get; set; }

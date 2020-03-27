@@ -24,7 +24,7 @@ type GameCrudService(gameRepo : IGameRepository) =
                 {
                     kind = PlayerKind.User
                     userId = Some self.id
-                    name = None
+                    name = Some session.user.name
                 }
 
             gameRepo.createGameAndAddPlayer (gameRequest, playerRequest)

@@ -8,9 +8,9 @@ namespace Apex.Api.Db.Model
     [Table("Games")]
     public class GameSqlModel
     {
-        [Column("GameId")]
+        [Key]
         [Required]
-        public int Id { get; set; }
+        public int GameId { get; set; }
 
         [Required]
         public int CreatedByUserId { get; set; }
@@ -20,8 +20,8 @@ namespace Apex.Api.Db.Model
         public DateTime CreatedOn { get; set; }
 
         [Required]
-        public byte StatusId { get; set; }
-        public GameStatusSqlModel Status { get; set; }
+        public byte GameStatusId { get; set; }
+        public GameStatusSqlModel GameStatus { get; set; }
 
         public IList<PlayerSqlModel> Players { get; set; }
 

@@ -36,14 +36,14 @@ module EventMappings =
 
     let toEvent (source : EventSqlModel) : Event =
         {
-            id = source.Id
+            id = source.EventId
             createdBy = {
-                userId = source.CreatedByUser.Id
+                userId = source.CreatedByUser.UserId
                 userName = source.CreatedByUser.Name
                 time = source.CreatedOn
             }
-            actingPlayerId = source.ActingPlayer |> Option.ofObj |> Option.map (fun x -> x.Id)
-            kind = source.KindId |> toEventKind
+            actingPlayerId = source.ActingPlayer |> Option.ofObj |> Option.map (fun x -> x.PlayerId)
+            kind = source.EventKindId |> toEventKind
             effects = source.EffectsJson |> JsonUtility.deserializeList
         }
 
@@ -54,7 +54,7 @@ module EventMappings =
         x.ActingPlayerId <- source.actingPlayerId |> Option.toNullable
         x.CreatedByUserId <- source.createdBy.userId
         x.EffectsJson <- source.effects |> JsonUtility.serialize
-        x.KindId <- source.kind |> toEventKindSqlId
+        x.EventKindId <- source.kind |> toEventKindSqlId
         x
    
     let createEventRequestToEventSqlModel (source : CreateEventRequest) (gameId : int) : EventSqlModel = 
@@ -64,5 +64,5 @@ module EventMappings =
         x.ActingPlayerId <- source.actingPlayerId |> Option.toNullable
         x.CreatedByUserId <- source.createdByUserId
         x.EffectsJson <- source.effects |> JsonUtility.serialize
-        x.KindId <- source.kind |> toEventKindSqlId
+        x.EventKindId <- source.kind |> toEventKindSqlId
         x

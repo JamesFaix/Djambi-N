@@ -7,9 +7,9 @@ namespace Apex.Api.Db.Model
     [Table("Snapshots")]
     public class SnapshotSqlModel
     {
+        [Key]
         [Required]
-        [Column("SnapshotId")]
-        public int Id { get; set; }
+        public int SnapshotId { get; set; }
 
         [Required]
         public int GameId { get; set; }

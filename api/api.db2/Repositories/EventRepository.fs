@@ -29,8 +29,8 @@ type EventRepository(context : ApexDbContext) =
 
                 query.thresholdEventId |> noneOr (fun x -> 
                     if isAscending 
-                    then event.Id <= x 
-                    else event.Id >= x
+                    then event.EventId <= x 
+                    else event.EventId >= x
                 ) &&
                 query.thresholdTime |> noneOr (fun x -> 
                     if isAscending 
@@ -46,7 +46,7 @@ type EventRepository(context : ApexDbContext) =
 
                 let mutable sqlQuery = 
                     context.Events
-                        .Where(fun e -> e.Game.Id = gameId)
+                        .Where(fun e -> e.Game.GameId = gameId)
                         .Where(queryFilter query)
 
                 sqlQuery <- sqlQuery |> orderBy query.direction (fun e -> e.CreatedOn)
@@ -93,7 +93,7 @@ type EventRepository(context : ApexDbContext) =
 
             let removePlayer(game : GameSqlModel, playerId : int) : Task<unit> =
                 task {
-                    let! p = context.Players.SingleOrDefaultAsync(fun p -> p.Game.Id = game.Id && p.Id = playerId)
+                    let! p = context.Players.SingleOrDefaultAsync(fun p -> p.Game.GameId = game.GameId && p.PlayerId = playerId)
                     if p = null
                     then raise <| HttpException(404, "Not found.")
 
@@ -123,7 +123,7 @@ type EventRepository(context : ApexDbContext) =
                 g.CurrentTurnJson <- newGame.currentTurn |> JsonUtility.serialize
                 g.TurnCycleJson <- newGame.turnCycle |> JsonUtility.serialize
                 g.PiecesJson <- newGame.pieces |> JsonUtility.serialize
-                g.StatusId <- newGame.status |> toGameStatusSqlId
+                g.GameStatusId <- newGame.status |> toGameStatusSqlId
                 context.Games.Update(g) |> ignore
 
                 // Update players
@@ -138,7 +138,7 @@ type EventRepository(context : ApexDbContext) =
                     ()
 
                 // Save event               
-                let e = createEventRequestToEventSqlModel request g.Id
+                let e = createEventRequestToEventSqlModel request g.GameId
                 let! _ = context.Events.AddAsync(e)
                 
                 let! _ = context.SaveChangesAsync()

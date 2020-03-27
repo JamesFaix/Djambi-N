@@ -7,9 +7,9 @@ namespace Apex.Api.Db.Model
     [Table("Sessions")]
     public class SessionSqlModel
     {
+        [Key]
         [Required]
-        [Column("SessionId")]
-        public int Id { get; set; }
+        public int SessionId { get; set; }
 
         [Required]
         public string Token { get; set; }

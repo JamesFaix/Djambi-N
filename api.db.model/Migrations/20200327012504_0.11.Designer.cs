@@ -4,14 +4,16 @@ using Apex.Api.Db.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Apex.Api.Db.Model.Migrations
 {
     [DbContext(typeof(ApexDbContext))]
-    partial class ApexDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200327012504_0.11")]
+    partial class _011
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,8 +39,9 @@ namespace Apex.Api.Db.Model.Migrations
 
             modelBuilder.Entity("Apex.Api.Db.Model.EventSqlModel", b =>
                 {
-                    b.Property<int>("EventId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnName("EventId")
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -55,29 +58,30 @@ namespace Apex.Api.Db.Model.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<byte>("EventKindId")
-                        .HasColumnType("tinyint");
-
                     b.Property<int>("GameId")
                         .HasColumnType("int");
 
-                    b.HasKey("EventId");
+                    b.Property<byte>("KindId")
+                        .HasColumnType("tinyint");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("ActingPlayerId");
 
                     b.HasIndex("CreatedByUserId");
 
-                    b.HasIndex("EventKindId");
-
                     b.HasIndex("GameId");
+
+                    b.HasIndex("KindId");
 
                     b.ToTable("Events");
                 });
 
             modelBuilder.Entity("Apex.Api.Db.Model.GameSqlModel", b =>
                 {
-                    b.Property<int>("GameId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnName("GameId")
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -96,9 +100,6 @@ namespace Apex.Api.Db.Model.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<byte>("GameStatusId")
-                        .HasColumnType("tinyint");
-
                     b.Property<bool>("IsPublic")
                         .HasColumnType("bit");
 
@@ -108,14 +109,17 @@ namespace Apex.Api.Db.Model.Migrations
                     b.Property<byte>("RegionCount")
                         .HasColumnType("tinyint");
 
+                    b.Property<byte>("StatusId")
+                        .HasColumnType("tinyint");
+
                     b.Property<string>("TurnCycleJson")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("GameId");
+                    b.HasKey("Id");
 
                     b.HasIndex("CreatedByUserId");
 
-                    b.HasIndex("GameStatusId");
+                    b.HasIndex("StatusId");
 
                     b.ToTable("Games");
                 });
@@ -138,8 +142,9 @@ namespace Apex.Api.Db.Model.Migrations
 
             modelBuilder.Entity("Apex.Api.Db.Model.NeutralPlayerNameSqlModel", b =>
                 {
-                    b.Property<int>("NeutralPlayerNameId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnName("NeutralPlayerNameId")
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -148,7 +153,7 @@ namespace Apex.Api.Db.Model.Migrations
                         .HasColumnType("nvarchar(20)")
                         .HasMaxLength(20);
 
-                    b.HasKey("NeutralPlayerNameId");
+                    b.HasKey("Id");
 
                     b.ToTable("NeutralPlayerNames");
                 });
@@ -171,8 +176,9 @@ namespace Apex.Api.Db.Model.Migrations
 
             modelBuilder.Entity("Apex.Api.Db.Model.PlayerSqlModel", b =>
                 {
-                    b.Property<int>("PlayerId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnName("PlayerId")
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -182,16 +188,13 @@ namespace Apex.Api.Db.Model.Migrations
                     b.Property<int>("GameId")
                         .HasColumnType("int");
 
+                    b.Property<byte>("KindId")
+                        .HasColumnType("tinyint");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(20)")
                         .HasMaxLength(20);
-
-                    b.Property<byte>("PlayerKindId")
-                        .HasColumnType("tinyint");
-
-                    b.Property<byte>("PlayerStatusId")
-                        .HasColumnType("tinyint");
 
                     b.Property<byte?>("StartingRegion")
                         .HasColumnType("tinyint");
@@ -199,16 +202,19 @@ namespace Apex.Api.Db.Model.Migrations
                     b.Property<byte?>("StartingTurnNumber")
                         .HasColumnType("tinyint");
 
+                    b.Property<byte>("StatusId")
+                        .HasColumnType("tinyint");
+
                     b.Property<int?>("UserId")
                         .HasColumnType("int");
 
-                    b.HasKey("PlayerId");
+                    b.HasKey("Id");
 
                     b.HasIndex("GameId");
 
-                    b.HasIndex("PlayerKindId");
+                    b.HasIndex("KindId");
 
-                    b.HasIndex("PlayerStatusId");
+                    b.HasIndex("StatusId");
 
                     b.HasIndex("UserId");
 
@@ -248,8 +254,9 @@ namespace Apex.Api.Db.Model.Migrations
 
             modelBuilder.Entity("Apex.Api.Db.Model.SessionSqlModel", b =>
                 {
-                    b.Property<int>("SessionId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnName("SessionId")
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -266,7 +273,7 @@ namespace Apex.Api.Db.Model.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.HasKey("SessionId");
+                    b.HasKey("Id");
 
                     b.HasIndex("UserId");
 
@@ -275,8 +282,9 @@ namespace Apex.Api.Db.Model.Migrations
 
             modelBuilder.Entity("Apex.Api.Db.Model.SnapshotSqlModel", b =>
                 {
-                    b.Property<int>("SnapshotId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnName("SnapshotId")
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -298,7 +306,7 @@ namespace Apex.Api.Db.Model.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("SnapshotId");
+                    b.HasKey("Id");
 
                     b.HasIndex("CreatedByUserId");
 
@@ -309,8 +317,9 @@ namespace Apex.Api.Db.Model.Migrations
 
             modelBuilder.Entity("Apex.Api.Db.Model.UserPrivilegeSqlModel", b =>
                 {
-                    b.Property<int>("UserPrivilegeId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnName("UserPrivilegeId")
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -320,7 +329,7 @@ namespace Apex.Api.Db.Model.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.HasKey("UserPrivilegeId");
+                    b.HasKey("Id");
 
                     b.HasIndex("PrivilegeId");
 
@@ -331,8 +340,9 @@ namespace Apex.Api.Db.Model.Migrations
 
             modelBuilder.Entity("Apex.Api.Db.Model.UserSqlModel", b =>
                 {
-                    b.Property<int>("UserId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnName("UserId")
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -354,7 +364,7 @@ namespace Apex.Api.Db.Model.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("UserId");
+                    b.HasKey("Id");
 
                     b.ToTable("Users");
                 });
@@ -372,15 +382,15 @@ namespace Apex.Api.Db.Model.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Apex.Api.Db.Model.EventKindSqlModel", "EventKind")
-                        .WithMany()
-                        .HasForeignKey("EventKindId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("Apex.Api.Db.Model.GameSqlModel", "Game")
                         .WithMany("Events")
                         .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Apex.Api.Db.Model.EventKindSqlModel", "Kind")
+                        .WithMany()
+                        .HasForeignKey("KindId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
@@ -393,9 +403,9 @@ namespace Apex.Api.Db.Model.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Apex.Api.Db.Model.GameStatusSqlModel", "GameStatus")
+                    b.HasOne("Apex.Api.Db.Model.GameStatusSqlModel", "Status")
                         .WithMany()
-                        .HasForeignKey("GameStatusId")
+                        .HasForeignKey("StatusId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
@@ -408,15 +418,15 @@ namespace Apex.Api.Db.Model.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Apex.Api.Db.Model.PlayerKindSqlModel", "PlayerKind")
+                    b.HasOne("Apex.Api.Db.Model.PlayerKindSqlModel", "Kind")
                         .WithMany()
-                        .HasForeignKey("PlayerKindId")
+                        .HasForeignKey("KindId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Apex.Api.Db.Model.PlayerStatusSqlModel", "PlayerStatus")
+                    b.HasOne("Apex.Api.Db.Model.PlayerStatusSqlModel", "Status")
                         .WithMany()
-                        .HasForeignKey("PlayerStatusId")
+                        .HasForeignKey("StatusId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 

@@ -6,9 +6,9 @@ namespace Apex.Api.Db.Model
     [Table("Players")]
     public class PlayerSqlModel
     {
+        [Key]
         [Required]
-        [Column("PlayerId")]
-        public int Id { get; set; }
+        public int PlayerId { get; set; }
 
         [Required]
         public int GameId { get; set; }
@@ -18,16 +18,16 @@ namespace Apex.Api.Db.Model
         public UserSqlModel User { get; set; }
 
         [Required]
-        public byte KindId { get; set; }
-        public PlayerKindSqlModel Kind { get; set; }
+        public byte PlayerKindId { get; set; }
+        public PlayerKindSqlModel PlayerKind { get; set; }
 
         [Required]
         [StringLength(20)]
         public string Name { get; set; }
 
         [Required]
-        public byte StatusId { get; set; }
-        public PlayerStatusSqlModel Status { get; set; }
+        public byte PlayerStatusId { get; set; }
+        public PlayerStatusSqlModel PlayerStatus { get; set; }
 
         public byte? ColorId { get; set; }
 

@@ -25,7 +25,7 @@ type SnapshotRepository(context : ApexDbContext) =
 
         member __.getSnapshotsForGame gameId  =
             task {
-                let! sqlModels = context.Snapshots.Where(fun s -> s.Game.Id = gameId).ToListAsync()
+                let! sqlModels = context.Snapshots.Where(fun s -> s.Game.GameId = gameId).ToListAsync()
                 let results = sqlModels |> Seq.map toSnapshotInfo |> Seq.toList
                 return Ok(results)
             }
@@ -60,13 +60,13 @@ type SnapshotRepository(context : ApexDbContext) =
                 let! _ = context.Snapshots.AddAsync(s)
                 let! _ = context.SaveChangesAsync()
 
-                return Ok(s.Id)
+                return Ok(s.SnapshotId)
             }
 
         member __.loadSnapshot (gameId, snapshotId) =
             task {
                 let! s = context.Snapshots.SingleOrDefaultAsync(
-                            fun s -> s.Id = snapshotId && s.Game.Id = gameId)
+                            fun s -> s.SnapshotId = snapshotId && s.Game.GameId = gameId)
                     
                 if s = null
                 then raise <| HttpException(404, "Not found")
@@ -78,13 +78,13 @@ type SnapshotRepository(context : ApexDbContext) =
                 let snapshot = JsonUtility.deserialize<SnapshotJson> s.SnapshotJson
 
                 // Validate player changes
-                let! playerSqlModels = context.Players.Where(fun p -> p.Game.Id = gameId).ToListAsync()
+                let! playerSqlModels = context.Players.Where(fun p -> p.Game.GameId = gameId).ToListAsync()
                 
                 let playersToRemove = 
                     playerSqlModels
                     |> Seq.filter (fun oldPlayer -> 
                         snapshot.game.players 
-                        |> Seq.exists(fun newPlayer -> newPlayer.id = oldPlayer.Id) 
+                        |> Seq.exists(fun newPlayer -> newPlayer.id = oldPlayer.PlayerId) 
                         |> not
                     )
                 
@@ -92,7 +92,7 @@ type SnapshotRepository(context : ApexDbContext) =
                     snapshot.game.players
                     |> Seq.filter (fun newPlayer ->
                         playerSqlModels
-                        |> Seq.exists(fun oldPlayer -> newPlayer.id = oldPlayer.Id)
+                        |> Seq.exists(fun oldPlayer -> newPlayer.id = oldPlayer.PlayerId)
                         |> not
                     )
                     |> Seq.map toPlayerSqlModel
@@ -101,7 +101,7 @@ type SnapshotRepository(context : ApexDbContext) =
                 then raise <| NotSupportedException("Snapshots can only be used after the game has started.")
 
                 // Remove old history
-                let! oldEvents = context.Events.Where(fun e -> e.Game.Id = gameId).ToArrayAsync()
+                let! oldEvents = context.Events.Where(fun e -> e.Game.GameId = gameId).ToArrayAsync()
                 context.Events.RemoveRange(oldEvents)
 
                 // Add new history
@@ -116,7 +116,7 @@ type SnapshotRepository(context : ApexDbContext) =
                 gameSqlModel.IsPublic <- snapshot.game.parameters.isPublic
                 gameSqlModel.Description <- snapshot.game.parameters.description |> Option.toObj
                 gameSqlModel.RegionCount <- byte snapshot.game.parameters.regionCount
-                gameSqlModel.StatusId <- snapshot.game.status |> toGameStatusSqlId
+                gameSqlModel.GameStatusId <- snapshot.game.status |> toGameStatusSqlId
                 gameSqlModel.PiecesJson <- snapshot.game.pieces |> JsonUtility.serialize
                 gameSqlModel.TurnCycleJson <- snapshot.game.turnCycle |> JsonUtility.serialize
                 gameSqlModel.CurrentTurnJson <- snapshot.game.currentTurn |> JsonUtility.serialize

@@ -8,9 +8,9 @@ namespace Apex.Api.Db.Model
     [Table("Users")]
     public class UserSqlModel
     {
+        [Key]
         [Required]
-        [Column("UserId")]
-        public int Id { get; set; }
+        public int UserId { get; set; }
 
         [Required]
         [StringLength(20)]
