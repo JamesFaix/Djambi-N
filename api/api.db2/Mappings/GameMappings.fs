@@ -115,9 +115,9 @@ module GameMappings =
             }
             status = source.GameStatusId |> toGameStatus
             players = players |> Seq.map toPlayer |> Seq.toList
-            pieces = source.PiecesJson |> JsonUtility.deserialize
-            turnCycle = source.TurnCycleJson |> JsonUtility.deserialize
-            currentTurn = source.CurrentTurnJson |> JsonUtility.deserialize
+            pieces = source.PiecesJson |> JsonUtility.deserializeList
+            turnCycle = source.TurnCycleJson |> JsonUtility.deserializeList
+            currentTurn = source.CurrentTurnJson |> JsonUtility.deserializeOption
         }
 
     let toGameSqlModel (source : CreateGameRequest) : GameSqlModel =
