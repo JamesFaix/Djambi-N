@@ -9,6 +9,7 @@ namespace Apex.Api.Db.Model
     public class UserSqlModel
     {
         [Required]
+        [Column("UserId")]
         public int Id { get; set; }
 
         [Required]

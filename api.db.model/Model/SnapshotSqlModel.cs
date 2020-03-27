@@ -8,6 +8,7 @@ namespace Apex.Api.Db.Model
     public class SnapshotSqlModel
     {
         [Required]
+        [Column("SnapshotId")]
         public int Id { get; set; }
 
         [Required]

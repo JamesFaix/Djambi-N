@@ -8,6 +8,7 @@ namespace Apex.Api.Db.Model
     public class SessionSqlModel
     {
         [Required]
+        [Column("SessionId")]
         public int Id { get; set; }
 
         [Required]

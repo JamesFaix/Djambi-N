@@ -6,6 +6,7 @@ namespace Apex.Api.Db.Model
     [Table("EventKinds")]
     public class EventKindSqlModel
     {
+        [Column("EventKindId")]
         [Required]
         public byte Id { get; set; }
 
@@ -17,6 +18,7 @@ namespace Apex.Api.Db.Model
     [Table("GameStatuses")]
     public class GameStatusSqlModel
     {
+        [Column("GameStatusId")]
         [Required]
         public byte Id { get; set; }
 
@@ -28,6 +30,7 @@ namespace Apex.Api.Db.Model
     [Table("PlayerKinds")]
     public class PlayerKindSqlModel
     {
+        [Column("PlayerKindId")]
         [Required]
         public byte Id { get; set; }
 
@@ -39,6 +42,7 @@ namespace Apex.Api.Db.Model
     [Table("PlayerStatuses")]
     public class PlayerStatusSqlModel
     {
+        [Column("PlayerStatusId")]
         [Required]
         public byte Id { get; set; }
 
@@ -50,6 +54,7 @@ namespace Apex.Api.Db.Model
     [Table("Privileges")]
     public class PrivilegeSqlModel
     {
+        [Column("PrivilegeId")]
         [Required]
         public byte Id { get; set; }
 

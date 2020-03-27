@@ -7,6 +7,7 @@ namespace Apex.Api.Db.Model
     [Table("Events")]
     public class EventSqlModel
     {
+        [Column("EventId")]
         [Required]
         public int Id { get; set; }
 

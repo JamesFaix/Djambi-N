@@ -8,6 +8,7 @@ namespace Apex.Api.Db.Model
     [Table("Games")]
     public class GameSqlModel
     {
+        [Column("GameId")]
         [Required]
         public int Id { get; set; }
 

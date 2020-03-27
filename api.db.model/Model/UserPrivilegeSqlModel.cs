@@ -7,6 +7,7 @@ namespace Apex.Api.Db.Model
     public class UserPrivilegeSqlModel
     {
         [Required]
+        [Column("UserPrivilegeId")]
         public int Id { get; set; }
 
         [Required]
