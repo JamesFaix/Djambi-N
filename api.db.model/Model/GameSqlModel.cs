@@ -23,9 +23,9 @@ namespace Apex.Api.Db.Model
         public byte GameStatusId { get; set; }
         public GameStatusSqlModel GameStatus { get; set; }
 
-        public IList<PlayerSqlModel> Players { get; set; }
+        public IList<PlayerSqlModel> Players { get; set; } = new List<PlayerSqlModel>();
 
-        public IList<EventSqlModel> Events { get; set; }
+        public IList<EventSqlModel> Events { get; set; } = new List<EventSqlModel>();
 
         public string Description { get; set; }
 
