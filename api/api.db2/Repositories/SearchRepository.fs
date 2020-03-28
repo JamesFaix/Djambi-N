@@ -13,68 +13,101 @@ open Microsoft.EntityFrameworkCore
 type SearchRepository(context : ApexDbContext) =
     let privId = Privilege.ViewGames |> toPrivilegeSqlId
 
-    let securityFilter (currentUser : UserSqlModel) (game : GameSqlModel) : bool =
-        game.IsPublic ||
-        game.CreatedByUser.UserId = currentUser.UserId ||
-        game.Players.Any(fun p -> p.User.UserId = currentUser.UserId) ||
-        currentUser.UserPrivileges.Any(fun p -> p.PrivilegeId = privId) 
-
-    let comparison = StringComparison.InvariantCultureIgnoreCase
-
-    let noneOr (f : 'a -> bool) (o : Option<'a>)  =
-        o.IsNone || f(o.Value)
-
-    let queryFilter (query : GamesQuery) (currentUser : UserSqlModel) (game : GameSqlModel) : bool =
-        query.descriptionContains |> noneOr (fun x -> 
-            game.Description.Contains(x, comparison))
-        &&        
-        query.createdByUserName |> noneOr (fun x -> 
-            game.CreatedByUser.Name.Contains(x, comparison))
-        &&        
-        query.playerUserName |> noneOr (fun x -> 
-            game.Players.Any(fun p -> 
-                p.User <> null && 
-                p.User.Name.Contains(x, comparison)
-            )
-        ) &&
-        query.containsMe |> noneOr (fun x -> 
-            x = game.Players.Any(fun p -> 
-                p.User <> null && 
-                p.User.UserId = currentUser.UserId
-            )
-        ) &&
-        query.isPublic |> noneOr (fun x -> x = game.IsPublic) &&        
-        query.allowGuests |> noneOr (fun x -> x = game.AllowGuests) && 
-        (
-           query.statuses.IsEmpty ||
-           query.statuses 
-           |> Seq.map toGameStatusSqlId 
-           |> Seq.contains game.GameStatus.Id
-        ) &&
-        query.createdBefore |> noneOr (fun x -> x > game.CreatedOn) &&        
-        query.createdAfter |> noneOr (fun x -> x < game.CreatedOn) &&
-        (
-            let lastEvent = game.Events.OrderByDescending(fun e -> e.CreatedOn).First()
-            query.lastEventBefore |> noneOr (fun x -> x > lastEvent.CreatedOn) &&
-            query.lastEventAfter |> noneOr (fun x -> x > lastEvent.CreatedOn)        
-        )
-
     interface ISearchRepository with
         member __.searchGames (query, currentUserId) =
             task {
-                let! currentUser = context.Users.FindAsync(currentUserId)
+                let! currentUser =
+                    context.Users
+                        .Include(fun u -> u.UserPrivileges)
+                        .SingleOrDefaultAsync(fun u -> u.UserId = currentUserId)
+
                 if currentUser = null
                 then raise <| HttpException(404, "Not found.")
+                
+                // Note: LINQ-to-SQL below
+                // Using wordy conditional building of IQueryable rather than higher-order-functions
+                // because each lambda is an Expression<Func> not a Func
 
-                let games = 
+                let mutable q : IQueryable<GameSqlModel> = 
                     context.Games
                         .Include(fun g -> g.Players)
                         .Include(fun g -> g.Events)
-                        .AsEnumerable()
-                        |> Seq.filter (securityFilter currentUser)
-                        |> Seq.filter (queryFilter query currentUser)
-                        |> Seq.map (fun g -> toSearchGame g currentUserId)
-                        |> Seq.toList
+                        :> IQueryable<GameSqlModel>
 
-                return Ok(games)            
+                // Security filter
+                if not <| currentUser.UserPrivileges.Any(fun p -> p.PrivilegeId = privId)
+                then 
+                    q <- q.Where(fun g -> 
+                        g.IsPublic ||
+                        g.CreatedByUserId = currentUserId ||
+                        g.Players.Any(fun p -> p.UserId = Nullable<int>(currentUserId))
+                    )
+
+                // Query filters
+                match query.descriptionContains with
+                | None -> ()
+                | Some x -> 
+                    q <- q.Where(fun g -> g.Description.Contains(x))
+
+                match query.createdByUserName with
+                | None -> ()
+                | Some x -> 
+                    q <- q.Where(fun g -> g.CreatedByUser.Name.Contains(x))
+
+                match query.playerUserName with
+                | None -> ()
+                | Some x -> 
+                    q <- q.Where(fun g -> g.Players.Any(fun p -> p.Name.Contains(x)))
+
+                match query.containsMe with
+                | None -> ()
+                | Some x -> 
+                    q <- q.Where(fun g -> g.Players.Any(fun p -> p.UserId = Nullable<int>(currentUserId)) = x)
+
+                match query.isPublic with
+                | None -> ()
+                | Some x -> 
+                    q <- q.Where(fun g -> g.IsPublic = x)
+
+                match query.allowGuests with
+                | None -> ()
+                | Some x -> 
+                    q <- q.Where(fun g -> g.AllowGuests = x)
+
+                match query.createdBefore with
+                | None -> ()
+                | Some x -> 
+                    q <- q.Where(fun g -> g.CreatedOn < x)
+
+                match query.createdAfter with
+                | None -> ()
+                | Some x -> 
+                    q <- q.Where(fun g -> g.CreatedOn > x)
+
+                match query.statuses with
+                | [] -> ()
+                | xs -> 
+                    let ids = xs |> List.map toGameStatusSqlId
+                    q <- q.Where(fun g -> ids.Contains(g.GameStatusId))
+
+                match query.lastEventBefore with
+                | None -> ()
+                | Some x ->
+                    q <- q.Where(fun g -> g.Events.OrderBy(fun e -> e.CreatedOn).Last().CreatedOn < x)
+
+                match query.lastEventAfter with
+                | None -> ()
+                | Some x ->
+                    q <- q.Where(fun g -> g.Events.OrderBy(fun e -> e.CreatedOn).Last().CreatedOn > x)
+
+                // Actually get data from SQL
+                let! sqlModels = q.ToListAsync()
+
+                // Map results
+                let games = 
+                    sqlModels
+                    |> Seq.map (fun g -> toSearchGame g currentUserId)
+                    |> Seq.toList
+
+                return Ok(games)          
             }
