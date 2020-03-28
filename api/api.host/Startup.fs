@@ -27,6 +27,7 @@ open Apex.Api.Model
 open Apex.Api.Model.Configuration
 open Apex.Api.Web
 open Apex.Api.Web.Controllers
+open Apex.Api.Enums
 
 type Startup() =
 
@@ -43,9 +44,15 @@ type Startup() =
 
             opt.SwaggerDoc(version, info)
 
-            let file = typeof<UserController>.Assembly.GetName().Name + ".xml"
-            let path = Path.Combine(AppContext.BaseDirectory, file)
-            opt.IncludeXmlComments(path)
+            let assemblies = [
+                typeof<UserController>.Assembly // Model and controllers
+                typeof<PlayerKind>.Assembly // Enums
+            ]
+
+            for a in assemblies do
+                let file = a.GetName().Name + ".xml"
+                let path = Path.Combine(AppContext.BaseDirectory, file)
+                opt.IncludeXmlComments(path)
 
         // Framework services
         services.AddCors(fun opt ->
