@@ -9,6 +9,7 @@ open Apex.Api.Logic.Interfaces
 open Apex.Api.Web
 open Apex.Api.Web.Mappings
 open Apex.Api.Web.Model
+open Apex.Api.Enums
 
 [<ApiController>]
 [<Route("api/games/{gameId}/players")>]
@@ -42,11 +43,10 @@ type PlayerController(manager : IPlayerManager,
     
     [<HttpPut("{playerId}/status/{status}")>]
     [<ProducesResponseType(200, Type = typeof<StateAndEventResponseDto>)>]
-    member __.SetPlayerStatus(gameId : int, playerId : int, status : PlayerStatusDto) : Task<IActionResult> =
+    member __.SetPlayerStatus(gameId : int, playerId : int, status : PlayerStatus) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
             let! session = scp.GetSessionFromContext ctx
-            let status = status |> toPlayerStatus
             let! response = manager.updatePlayerStatus (gameId, playerId, status) session |> thenExtract                
             let dto = response |> toStateAndEventResponseDto
             return OkObjectResult(dto) :> IActionResult

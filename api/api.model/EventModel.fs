@@ -1,6 +1,8 @@
 [<AutoOpen>]
 module Apex.Api.Model.EventModel
 
+open Apex.Api.Enums
+
 type CurrentTurnChangedEffect =
     {
         oldValue : Turn option
@@ -129,17 +131,6 @@ type Effect =
     | TurnCyclePlayerFellFromPower of TurnCyclePlayerFellFromPowerEffect
     | TurnCyclePlayerRemoved of TurnCyclePlayerRemovedEffect
     | TurnCyclePlayerRoseToPower of TurnCyclePlayerRoseToPowerEffect
-
-type EventKind =
-    | GameParametersChanged
-    | GameCanceled
-    | PlayerJoined
-    | PlayerRemoved
-    | GameStarted
-    | TurnCommitted
-    | TurnReset
-    | CellSelected
-    | PlayerStatusChanged
 
 type Event =
     {

@@ -17,6 +17,7 @@ open Apex.Api.Logic.Services
 open Apex.Api.Db.Repositories
 open Apex.Api.Model.Configuration
 open Microsoft.Extensions.Options
+open Apex.Api.Enums
 
 let private config =
     ConfigurationBuilder()

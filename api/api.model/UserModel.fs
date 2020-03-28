@@ -2,13 +2,7 @@
 module Apex.Api.Model.UserModel
 
 open System
-
-type Privilege =
-    | EditUsers
-    | EditPendingGames
-    | OpenParticipation
-    | ViewGames
-    | Snapshots
+open Apex.Api.Enums
 
 type User =
     {

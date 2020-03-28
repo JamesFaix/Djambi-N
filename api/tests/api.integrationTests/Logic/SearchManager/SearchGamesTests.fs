@@ -8,6 +8,7 @@ open Apex.Api.IntegrationTests
 open Apex.Api.Model
 open Apex.Api.Db.Repositories
 open Apex.Api.Logic.Interfaces
+open Apex.Api.Enums
 
 type SearchGamesTests() =
     inherit TestsBase()
@@ -18,7 +19,7 @@ type SearchGamesTests() =
             //Arrange
             let! (user1, _, game1) = TestUtilities.createuserSessionAndGame(false) |> thenValue
             let! (_, _, game2) = TestUtilities.createuserSessionAndGame(false) |> thenValue
-            let session = getSessionForUser user1.id |> TestUtilities.setSessionPrivileges [ViewGames]
+            let session = getSessionForUser user1.id |> TestUtilities.setSessionPrivileges [Privilege.ViewGames]
             let query = { GamesQuery.empty with createdByUserName = Some user1.name }
 
             //Act
@@ -36,7 +37,7 @@ type SearchGamesTests() =
             //Arrange
             let! (_, _, game1) = TestUtilities.createuserSessionAndGame(false) |> thenValue
             let! (user2, _, game2) = TestUtilities.createuserSessionAndGame(true) |> thenValue
-            let session = getSessionForUser user2.id |> TestUtilities.setSessionPrivileges [ViewGames]
+            let session = getSessionForUser user2.id |> TestUtilities.setSessionPrivileges [Privilege.ViewGames]
 
             let query = { GamesQuery.empty with allowGuests = Some true }
 
@@ -58,7 +59,7 @@ type SearchGamesTests() =
             let! (user2, _, game2) = TestUtilities.createuserSessionAndGame(true) |> thenValue
             let! _ = gameRepo.updateGame({ game2 with parameters = { game2.parameters with isPublic = true }}) |> thenValue
 
-            let session = getSessionForUser user2.id |> TestUtilities.setSessionPrivileges [ViewGames]
+            let session = getSessionForUser user2.id |> TestUtilities.setSessionPrivileges [Privilege.ViewGames]
             let query = { GamesQuery.empty with isPublic = Some true }
 
             //Act
@@ -76,7 +77,7 @@ type SearchGamesTests() =
             //Arrange
             let! (user1, _, game1) = TestUtilities.createuserSessionAndGame(false) |> thenValue
             let! (user2, _, game2) = TestUtilities.createuserSessionAndGame(false) |> thenValue
-            let adminSession = getSessionForUser user2.id |> TestUtilities.setSessionPrivileges [EditPendingGames; ViewGames]
+            let adminSession = getSessionForUser user2.id |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames; Privilege.ViewGames]
 
             let playerRequest = { getCreatePlayerRequest with userId = Some user2.id }
             let! _ = (gameMan :> IPlayerManager).addPlayer game1.id playerRequest adminSession |> thenValue
@@ -98,7 +99,7 @@ type SearchGamesTests() =
             //Arrange
             let! (_, _, game1) = TestUtilities.createuserSessionAndGame(false) |> thenValue
             let! (user2, _, game2) = TestUtilities.createuserSessionAndGame(false) |> thenValue
-            let session = getSessionForUser user2.id |> TestUtilities.setSessionPrivileges [ViewGames]
+            let session = getSessionForUser user2.id |> TestUtilities.setSessionPrivileges [Privilege.ViewGames]
 
             let! _ = gameRepo.updateGame({ game1 with status = GameStatus.Canceled });
 

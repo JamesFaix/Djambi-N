@@ -7,6 +7,7 @@ open Apex.Api.IntegrationTests
 open Apex.Api.Model
 open Apex.Api.Logic
 open Apex.Api.Db.Interfaces
+open Apex.Api.Enums
 
 type GetGameStartEventsTests() =
     inherit TestsBase()
@@ -64,7 +65,7 @@ type GetGameStartEventsTests() =
             //Arrange
             let! (user, session, game) = createUserSessionAndGameWith3Players() |> thenValue
             let session = session |> TestUtilities.setSessionUserId (session.user.id+1)
-                                  |> TestUtilities.setSessionPrivileges [EditPendingGames]
+                                  |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames]
 
             //Act
             let! events = gameStartServ.getGameStartEvents game session |> thenValue

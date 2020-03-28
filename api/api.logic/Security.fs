@@ -2,6 +2,7 @@ module Apex.Api.Logic.Security
 
 open Apex.Api.Common.Control
 open Apex.Api.Model
+open Apex.Api.Enums
 
 let noPrivilegeErrorMessage = "You do not have the required privilege to complete the requested action."
 
@@ -20,7 +21,7 @@ let ensureHas (privilege : Privilege) (session : Session) : Unit HttpResult =
 
 let ensureCreatorOrEditPendingGames (session : Session) (game : Game) : Unit HttpResult =
     let self = session.user
-    if self.has EditPendingGames
+    if self.has Privilege.EditPendingGames
         || self.id = game.createdBy.userId
     then Ok ()
     else Error <| HttpException(403, noPrivilegeOrCreatorErrorMessage)
@@ -35,7 +36,7 @@ let ensurePlayerOrHas (privilege : Privilege) (session : Session) (game : Game) 
 let ensureCurrentPlayerOrOpenParticipation (session : Session) (game : Game) : Unit HttpResult =
     let self = session.user
     let pass =
-        if self.has OpenParticipation
+        if self.has Privilege.OpenParticipation
         then true
         elif not game.turnCycle.IsEmpty
         then

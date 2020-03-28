@@ -26,6 +26,7 @@
   <ItemGroup>
     <ProjectReference Include="..\api.common\api.common.fsproj" />
     <ProjectReference Include="..\api.db.interfaces\api.db.interfaces.fsproj" />
+    <ProjectReference Include="..\api.enums\api.enums.fsproj" />
     <ProjectReference Include="..\api.model\api.model.fsproj" />
   </ItemGroup>
   <ItemGroup>

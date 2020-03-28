@@ -2,6 +2,7 @@
 module Apex.Api.Model.SearchModel
 
 open System
+open Apex.Api.Enums
 
 type GamesQuery =
     {

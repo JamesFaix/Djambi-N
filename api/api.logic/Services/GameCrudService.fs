@@ -6,6 +6,7 @@ open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.Db.Interfaces
 open Apex.Api.Model
 open Apex.Api.Logic
+open Apex.Api.Enums
 
 type GameCrudService(gameRepo : IGameRepository) =
     member x.createGame (parameters : GameParameters) (session : Session) : Game AsyncHttpResult =

@@ -10,6 +10,7 @@ open Apex.Api.Logic
 open Apex.Api.Db.Repositories
 open Apex.Api.Logic.Services
 open Apex.Api.Db.Interfaces
+open Apex.Api.Enums
 
 type GetUpdateGameParametersEventTests() =
     inherit TestsBase()

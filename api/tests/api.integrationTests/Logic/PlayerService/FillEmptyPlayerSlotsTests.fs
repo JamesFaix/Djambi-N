@@ -7,6 +7,7 @@ open Apex.Api.IntegrationTests
 open Apex.Api.Model
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Db.Interfaces
+open Apex.Api.Enums
 
 //TODO: Audit test class
 type FillEmptyPlayerSlotsTests() =

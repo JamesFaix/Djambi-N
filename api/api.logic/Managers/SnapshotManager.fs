@@ -6,6 +6,7 @@ open Apex.Api.Logic
 open Apex.Api.Model
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Db.Interfaces
+open Apex.Api.Enums
 
 type SnapshotManager(eventRepo : IEventRepository,
                      gameRepo : IGameRepository,

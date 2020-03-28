@@ -62,7 +62,7 @@ type EventListTvp(xs : Event seq) =
                 x.createdBy.userId,
                 x.actingPlayerId |> Option.toValueOrDbNull,
                 x.createdBy.time,
-                Mapping.mapEventKindToId x.kind,
+                x.kind,
                 JsonUtility.serialize x.effects)
             |> ignore
         dt

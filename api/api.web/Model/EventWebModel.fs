@@ -2,98 +2,68 @@
 
 open System
 open System.ComponentModel.DataAnnotations
-
-type EventKindDto =
-   | GameParametersChanged = 1
-   | GameCanceled = 2
-   | PlayerJoined = 3
-   | PlayerRemoved = 4
-   | GameStarted = 5
-   | TurnCommitted = 6
-   | TurnReset = 7
-   | CellSelected  = 8
-   | PlayerStatusChanged = 9 
-
-type EffectKindDto =
-    | CurrentTurnChanged = 1
-    | GameStatusChanged = 2
-    | NeutralPlayerAdded = 3
-    | ParametersChanged = 4
-    | PieceAbandoned = 5
-    | PieceDropped = 6
-    | PieceEnlisted = 7
-    | PieceKilled = 8
-    | PieceMoved = 9
-    | PieceVacated = 10
-    | PlayerAdded = 11
-    | PlayerOutOfMoves = 12
-    | PlayerRemoved = 13
-    | PlayerStatusChanged = 14
-    | TurnCycleAdvanced = 15
-    | TurnCyclePlayerFellFromPower = 16
-    | TurnCyclePlayerRemoved = 17
-    | TurnCyclePlayerRoseToPower = 18
+open Apex.Api.Enums
 
 [<AbstractClass>]
-type EffectDto(kind : EffectKindDto) =
+type EffectDto(kind : EffectKind) =
     member __.Kind = kind
 
-type ChangeEffectDto<'a>(kind : EffectKindDto,
+type ChangeEffectDto<'a>(kind : EffectKind,
                         oldValue : 'a,
                         newValue : 'a) =
     inherit EffectDto(kind)
     member __.OldValue = oldValue
     member __.NewValue = newValue
 
-type PieceUpdateEffectDto(kind : EffectKindDto, oldPiece : PieceDto) =
+type PieceUpdateEffectDto(kind : EffectKind, oldPiece : PieceDto) =
     inherit EffectDto(kind)
     member __.OldPiece = oldPiece
 
 type NeutralPlayerAddedEffectDto(name : string, placeholderPlayerId : int) =
-    inherit EffectDto(EffectKindDto.NeutralPlayerAdded)
+    inherit EffectDto(EffectKind.NeutralPlayerAdded)
     member __.Name = name
     member __.PlaceholderPlayerId = placeholderPlayerId
 
 type PieceEnlistedEffectDto(oldPiece : PieceDto, newPlayerId : int) =
-    inherit PieceUpdateEffectDto(EffectKindDto.PieceEnlisted, oldPiece)
+    inherit PieceUpdateEffectDto(EffectKind.PieceEnlisted, oldPiece)
     member __.NewPlayerId = newPlayerId
 
 type PieceMovedEffectDto(oldPiece : PieceDto, newCellId : int) =
-    inherit PieceUpdateEffectDto(EffectKindDto.PieceMoved, oldPiece)
+    inherit PieceUpdateEffectDto(EffectKind.PieceMoved, oldPiece)
     member __.NewCellId = newCellId
 
 type PieceVacatedEffectDto(oldPiece : PieceDto, newCellId : int) =
-    inherit PieceUpdateEffectDto(EffectKindDto.PieceVacated, oldPiece)
+    inherit PieceUpdateEffectDto(EffectKind.PieceVacated, oldPiece)
     member __.NewCellId = newCellId
 
-type PlayerAddedEffectDto(name : string, userId : int, playerKind : PlayerKindDto) =
-    inherit EffectDto(EffectKindDto.PlayerAdded)
+type PlayerAddedEffectDto(name : string, userId : int, playerKind : PlayerKind) =
+    inherit EffectDto(EffectKind.PlayerAdded)
     member __.Name = name
     member __.UserId = userId
     member __.PlayerKind = playerKind
 
 type PlayerOutOfMovesEffectDto(playerId : int) =
-    inherit EffectDto(EffectKindDto.PlayerOutOfMoves)
+    inherit EffectDto(EffectKind.PlayerOutOfMoves)
     member __.PlayerId = playerId
     
 type PlayerRemovedEffectDto(oldPlayer : PlayerDto) =
-    inherit EffectDto(EffectKindDto.PlayerRemoved)
+    inherit EffectDto(EffectKind.PlayerRemoved)
     member __.OldPlayer = oldPlayer
 
-type PlayerStatusChangedEffectDto(oldValue : PlayerStatusDto, newValue : PlayerStatusDto, playerId : int) =
-    inherit ChangeEffectDto<PlayerStatusDto>(EffectKindDto.PlayerStatusChanged, oldValue, newValue)
+type PlayerStatusChangedEffectDto(oldValue : PlayerStatus, newValue : PlayerStatus, playerId : int) =
+    inherit ChangeEffectDto<PlayerStatus>(EffectKind.PlayerStatusChanged, oldValue, newValue)
     member __.PlayerId = playerId
 
 type TurnCyclePlayerFellFromPowerEffectDto(oldValue : List<int>, newValue : List<int>, playerId : int) =
-    inherit ChangeEffectDto<List<int>>(EffectKindDto.TurnCyclePlayerFellFromPower, oldValue, newValue)
+    inherit ChangeEffectDto<List<int>>(EffectKind.TurnCyclePlayerFellFromPower, oldValue, newValue)
     member __.PlayerId = playerId
 
 type TurnCyclePlayerRemovedEffectDto(oldValue : List<int>, newValue : List<int>, playerId : int) =
-    inherit ChangeEffectDto<List<int>>(EffectKindDto.TurnCyclePlayerRemoved, oldValue, newValue)
+    inherit ChangeEffectDto<List<int>>(EffectKind.TurnCyclePlayerRemoved, oldValue, newValue)
     member __.PlayerId = playerId
 
 type TurnCyclePlayerRoseToPowerEffectDto(oldValue : List<int>, newValue : List<int>, playerId : int) =
-    inherit ChangeEffectDto<List<int>>(EffectKindDto.TurnCyclePlayerRoseToPower, oldValue, newValue)
+    inherit ChangeEffectDto<List<int>>(EffectKind.TurnCyclePlayerRoseToPower, oldValue, newValue)
     member __.PlayerId = playerId
 
 type EventDto = {
@@ -102,7 +72,7 @@ type EventDto = {
     [<Required>]
     createdBy : CreationSourceDto
     actingPlayerId : Nullable<int>
-    kind : EventKindDto
+    kind : EventKind
 
     [<Required>]
     effects : List<EffectDto>

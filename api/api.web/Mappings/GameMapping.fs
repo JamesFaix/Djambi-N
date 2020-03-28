@@ -2,7 +2,6 @@
 
 open Apex.Api.Model
 open Apex.Api.Web.Model
-open System.ComponentModel
 
 [<AutoOpen>]
 module GameMapping =
@@ -23,39 +22,14 @@ module GameMapping =
             regionCount = source.regionCount
         }
 
-    let toPieceKindDto (source : PieceKind) : PieceKindDto =
-        match source with
-        | PieceKind.Conduit -> PieceKindDto.Conduit
-        | PieceKind.Corpse -> PieceKindDto.Corpse
-        | PieceKind.Diplomat -> PieceKindDto.Diplomat
-        | PieceKind.Hunter -> PieceKindDto.Hunter
-        | PieceKind.Reaper -> PieceKindDto.Reaper
-        | PieceKind.Scientist -> PieceKindDto.Scientist
-        | PieceKind.Thug -> PieceKindDto.Thug
-
     let toPieceDto (source : Piece) : PieceDto =
         {
             id = source.id
             cellId = source.cellId
-            kind = source.kind |> toPieceKindDto
+            kind = source.kind
             playerId = source.playerId |> Option.toNullable
             originalPlayerId = source.originalPlayerId
         }
-
-    let toGameStatusDto (source : GameStatus) : GameStatusDto =
-        match source with
-        | GameStatus.Canceled -> GameStatusDto.Canceled
-        | GameStatus.InProgress -> GameStatusDto.InProgress
-        | GameStatus.Over -> GameStatusDto.Over
-        | GameStatus.Pending -> GameStatusDto.Pending
-
-    let toGameStatus (source : GameStatusDto) : GameStatus =
-        match source with
-        | GameStatusDto.Canceled -> GameStatus.Canceled
-        | GameStatusDto.InProgress -> GameStatus.InProgress
-        | GameStatusDto.Over -> GameStatus.Over
-        | GameStatusDto.Pending -> GameStatus.Pending
-        | _ -> raise <| InvalidEnumArgumentException("source", int source, typeof<GameStatusDto>)
 
     let toGameDto (source : Game) : GameDto =
         {
@@ -65,7 +39,7 @@ module GameMapping =
             parameters = source.parameters |> toGameParametersDto
             pieces = source.pieces |> List.map toPieceDto
             players = source.players |> List.map toPlayerDto
-            status = source.status |> toGameStatusDto
+            status = source.status
             turnCycle = source.turnCycle        
         }
         

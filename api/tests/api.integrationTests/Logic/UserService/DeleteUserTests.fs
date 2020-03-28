@@ -6,6 +6,7 @@ open Apex.Api.Common.Control
 open Apex.Api.IntegrationTests
 open Apex.Api.Model
 open Apex.Api.Logic
+open Apex.Api.Enums
 
 type DeleteUserTests() =
     inherit TestsBase()
@@ -35,7 +36,7 @@ type DeleteUserTests() =
             let! user = userServ.createUser request None
                         |> AsyncHttpResult.thenValue
 
-            let session = getSessionForUser (user.id + 1) |> TestUtilities.setSessionPrivileges [EditUsers]
+            let session = getSessionForUser (user.id + 1) |> TestUtilities.setSessionPrivileges [Privilege.EditUsers]
 
             //Act
             let! response = userServ.deleteUser user.id session
@@ -69,7 +70,7 @@ type DeleteUserTests() =
             let! user = userServ.createUser request None
                         |> AsyncHttpResult.thenValue
 
-            let session = getSessionForUser 1 |> TestUtilities.setSessionPrivileges [EditUsers]
+            let session = getSessionForUser 1 |> TestUtilities.setSessionPrivileges [Privilege.EditUsers]
 
             let! _ = userServ.deleteUser user.id session
 
