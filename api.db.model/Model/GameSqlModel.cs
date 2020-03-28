@@ -20,7 +20,7 @@ namespace Apex.Api.Db.Model
         public DateTime CreatedOn { get; set; }
 
         [Required]
-        public byte GameStatusId { get; set; }
+        public GameStatusSqlId GameStatusId { get; set; }
         public GameStatusSqlModel GameStatus { get; set; }
 
         public IList<PlayerSqlModel> Players { get; set; } = new List<PlayerSqlModel>();

@@ -1,4 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using Microsoft.EntityFrameworkCore;
 
 namespace Apex.Api.Db.Model
@@ -26,13 +29,48 @@ namespace Apex.Api.Db.Model
         {
             base.OnModelCreating(modelBuilder);
 
+            DisableCascadingDeletesOnForeignKeys(modelBuilder);
+            PopulateStaticData(modelBuilder);
+        }
+
+        private void DisableCascadingDeletesOnForeignKeys(ModelBuilder modelBuilder)
+        {
             var foreignKeys = modelBuilder.Model.GetEntityTypes()
-                .SelectMany(e => e.GetForeignKeys());
+               .SelectMany(e => e.GetForeignKeys());
 
             foreach (var fkey in foreignKeys)
             {
                 fkey.DeleteBehavior = DeleteBehavior.Restrict;
             }
         }
+
+        private void PopulateStaticData(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<EventKindSqlModel>(e =>
+            {
+                var eventKinds = GetValues<EventKindSqlId>()
+                    .Select(id => new EventKindSqlModel
+                    {
+                        Id = id,
+                        Name = id.ToString()
+                    });
+                e.HasData(eventKinds);
+            });
+
+            modelBuilder.Entity<GameStatusSqlModel>(e =>
+            {
+                var eventKinds = GetValues<GameStatusSqlId>()
+                    .Select(id => new GameStatusSqlModel
+                    {
+                        Id = id,
+                        Name = id.ToString()
+                    });
+                e.HasData(eventKinds);
+            });
+        }
+
+        private static IEnumerable<TEnum> GetValues<TEnum>()
+            where TEnum : Enum =>
+            Enum.GetValues(typeof(TEnum)).Cast<TEnum>();
     }
 }

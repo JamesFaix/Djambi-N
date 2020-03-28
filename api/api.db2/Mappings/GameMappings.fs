@@ -9,21 +9,20 @@ open System.Collections.Generic
 
 [<AutoOpen>]
 module GameMappings =
+    let private gameStatuses = HashSet<(GameStatus * GameStatusSqlId)>([
+        (GameStatus.Canceled, GameStatusSqlId.Canceled)
+        (GameStatus.InProgress, GameStatusSqlId.InProgress)
+        (GameStatus.Over, GameStatusSqlId.Over)
+        (GameStatus.Pending, GameStatusSqlId.Pending)
+    ])
 
-    let toGameStatusSqlId (source : GameStatus) : byte =
-        match source with
-        | GameStatus.Canceled -> 1uy
-        | GameStatus.InProgress -> 2uy
-        | GameStatus.Over -> 3uy
-        | GameStatus.Pending -> 4uy
+    let toGameStatusSqlId (source : GameStatus) : GameStatusSqlId =
+        let (_, id) = gameStatuses |> Seq.find(fun (status, _) -> status = source)
+        id
 
-    let toGameStatus (source : byte) : GameStatus =
-        match source with
-        | 1uy -> GameStatus.Canceled
-        | 2uy -> GameStatus.InProgress
-        | 3uy -> GameStatus.Over
-        | 4uy -> GameStatus.Pending
-        | _ -> raise <| InvalidEnumArgumentException()
+    let toGameStatus (source : GameStatusSqlId) : GameStatus =
+        let (status, _) = gameStatuses |> Seq.find(fun (_, id) -> id = source)
+        status
 
     let toPlayerKindSqlId (source : PlayerKind) : byte =
         match source with

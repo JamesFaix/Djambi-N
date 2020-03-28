@@ -5,34 +5,29 @@ open Apex.Api.Model
 open System
 open Apex.Api.Common.Json
 open System.ComponentModel
+open System.Collections.Generic
 
 [<AutoOpen>]
 module EventMappings =
+    let private eventKinds = HashSet<(EventKind * EventKindSqlId)>([
+        (EventKind.GameParametersChanged, EventKindSqlId.GameParametersChanged)
+        (EventKind.GameCanceled, EventKindSqlId.GameCanceled)
+        (EventKind.PlayerJoined, EventKindSqlId.PlayerJoined)
+        (EventKind.PlayerRemoved, EventKindSqlId.PlayerRemoved)
+        (EventKind.GameStarted, EventKindSqlId.GameStarted)
+        (EventKind.TurnCommitted, EventKindSqlId.TurnCommitted)
+        (EventKind.TurnReset, EventKindSqlId.TurnReset)
+        (EventKind.CellSelected, EventKindSqlId.CellSelected)
+        (EventKind.PlayerStatusChanged, EventKindSqlId.PlayerStatusChanged)
+    ])
 
-    let toEventKind (source : byte) : EventKind =
-        match source with
-        | 1uy -> EventKind.GameParametersChanged
-        | 2uy -> EventKind.GameCanceled 
-        | 3uy -> EventKind.PlayerJoined 
-        | 4uy -> EventKind.PlayerRemoved 
-        | 5uy -> EventKind.GameStarted 
-        | 6uy -> EventKind.TurnCommitted 
-        | 7uy -> EventKind.TurnReset 
-        | 8uy -> EventKind.CellSelected 
-        | 9uy -> EventKind.PlayerStatusChanged 
-        | _ -> raise <| InvalidEnumArgumentException()
+    let toEventKind (source : EventKindSqlId) : EventKind =
+        let (kind, _) = eventKinds |> Seq.find (fun (_, id) -> id = source)
+        kind
 
-    let toEventKindSqlId (source : EventKind) : byte =
-        match source with
-        | EventKind.GameParametersChanged -> 1uy
-        | EventKind.GameCanceled -> 2uy
-        | EventKind.PlayerJoined -> 3uy
-        | EventKind.PlayerRemoved -> 4uy
-        | EventKind.GameStarted -> 5uy
-        | EventKind.TurnCommitted -> 6uy
-        | EventKind.TurnReset -> 7uy
-        | EventKind.CellSelected -> 8uy
-        | EventKind.PlayerStatusChanged -> 9uy
+    let toEventKindSqlId (source : EventKind) : EventKindSqlId =
+        let (_, id) = eventKinds |> Seq.find (fun (kind, _) -> kind = source)
+        id
 
     let toEvent (source : EventSqlModel) : Event =
         {

@@ -9,10 +9,18 @@ namespace Apex.Api.Db.Model
         [Key]
         [Column("GameStatusId")]
         [Required]
-        public byte Id { get; set; }
+        public GameStatusSqlId Id { get; set; }
 
         [Required]
         [StringLength(20)]
         public string Name { get; set; }
+    }
+
+    public enum GameStatusSqlId : byte
+    {
+        Canceled = 1,
+        InProgress = 2,
+        Over = 3,
+        Pending = 4
     }
 }

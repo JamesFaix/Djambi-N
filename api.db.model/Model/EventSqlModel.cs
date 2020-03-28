@@ -26,7 +26,7 @@ namespace Apex.Api.Db.Model
         public DateTime CreatedOn { get; set; }
 
         [Required]
-        public byte EventKindId { get; set; }
+        public EventKindSqlId EventKindId { get; set; }
         public EventKindSqlModel EventKind { get; set; }
 
         [Required]
