@@ -3,6 +3,7 @@ namespace Apex.Api.Logic
 open System
 open System.Collections.Generic
 open Apex.Api.Model.GameModel
+open Apex.Api.Enums
 
 type PieceStrategy() =
     abstract member moveMaxDistance : int
@@ -33,7 +34,7 @@ type HunterStrategy() =
     inherit PieceStrategy() with
         override x.canTargetWithMove = true
         override x.canTargetPiece (subject : Piece) (target : Piece) =
-            target.kind <> Corpse &&
+            target.kind <> PieceKind.Corpse &&
             target.playerId <> subject.playerId
         override x.canEnterCenterToEvictPiece = true
         override x.movesTargetToOrigin = true
@@ -43,7 +44,7 @@ type ConduitStrategy() =
     inherit PieceStrategy() with
         override x.canTargetWithMove = true
         override x.canTargetPiece (subject : Piece) (target : Piece) =
-            target.kind <> Corpse &&
+            target.kind <> PieceKind.Corpse &&
             target.playerId <> subject.playerId
         override x.canStayInCenter = true
         override x.canEnterCenterToEvictPiece = true
@@ -59,7 +60,7 @@ type DiplomatStrategy() =
     inherit PieceStrategy() with
         override x.canTargetWithMove = true
         override x.canTargetPiece (subject : Piece) (target : Piece) =
-            target.kind <> Corpse &&
+            target.kind <> PieceKind.Corpse &&
             target.playerId <> subject.playerId
         override x.canEnterCenterToEvictPiece = true
         override x.canDropTarget = true
@@ -68,7 +69,7 @@ type ReaperStrategy() =
     inherit PieceStrategy() with
         override x.canTargetWithMove = true
         override x.canTargetPiece (subject : Piece) (target : Piece) =
-            target.kind = Corpse
+            target.kind = PieceKind.Corpse
         override x.canEnterCenterToEvictPiece = true
         override x.canDropTarget = true
 
@@ -76,7 +77,7 @@ type ScientistStrategy() =
     inherit PieceStrategy() with
         override x.canTargetAfterMove = true
         override x.canTargetPiece (subject : Piece) (target : Piece) =
-            target.kind <> Corpse &&
+            target.kind <> PieceKind.Corpse &&
             target.playerId <> subject.playerId
         override x.killsTarget = true
 
@@ -85,7 +86,7 @@ type ThugStrategy() =
         override x.moveMaxDistance = 2
         override x.canTargetWithMove = true
         override x.canTargetPiece (subject : Piece) (target : Piece) =
-            target.kind <> Corpse &&
+            target.kind <> PieceKind.Corpse &&
             target.playerId <> subject.playerId
         override x.canDropTarget = true
         override x.killsTarget = true
@@ -93,13 +94,13 @@ type ThugStrategy() =
 module Pieces =
 
     let private strategies = Dictionary<PieceKind, PieceStrategy>()
-    strategies.Add(Hunter, HunterStrategy())
-    strategies.Add(Conduit, ConduitStrategy())
-    strategies.Add(Corpse, CorpseStrategy())
-    strategies.Add(Diplomat, DiplomatStrategy())
-    strategies.Add(Reaper, ReaperStrategy())
-    strategies.Add(Scientist, ScientistStrategy())
-    strategies.Add(Thug, ThugStrategy())
+    strategies.Add(PieceKind.Hunter, HunterStrategy())
+    strategies.Add(PieceKind.Conduit, ConduitStrategy())
+    strategies.Add(PieceKind.Corpse, CorpseStrategy())
+    strategies.Add(PieceKind.Diplomat, DiplomatStrategy())
+    strategies.Add(PieceKind.Reaper, ReaperStrategy())
+    strategies.Add(PieceKind.Scientist, ScientistStrategy())
+    strategies.Add(PieceKind.Thug, ThugStrategy())
 
     let getStrategy (piece : Piece) : PieceStrategy =
         strategies.[piece.kind]

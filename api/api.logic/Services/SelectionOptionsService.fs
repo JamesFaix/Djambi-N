@@ -6,6 +6,8 @@ open Apex.Api.Logic.ModelExtensions.GameModelExtensions
 open Apex.Api.Model
 open Apex.Api.Logic
 open Apex.Api.Common.Control
+open Apex.Api.Enums
+open System.ComponentModel
 
 type SelectionOptionsService() =
 
@@ -100,7 +102,7 @@ type SelectionOptionsService() =
                             else 
                                 //If the center is vacant, you must check if the target piece could stay there
                                 let subjectStrategy = Pieces.getStrategy subject
-                                let targetKind = if subjectStrategy.killsTarget then Corpse else target.kind
+                                let targetKind = if subjectStrategy.killsTarget then PieceKind.Corpse else target.kind
                                 let targetStrategy = Pieces.getStrategyForKind targetKind
                                 targetStrategy.canStayInCenter
                     ) 
@@ -131,15 +133,15 @@ type SelectionOptionsService() =
         match turn.requiredSelectionKind with
         | None ->
             Ok []
-        | Some Subject ->
+        | Some SelectionKind.Subject ->
             Ok <| getSubjectSelectionOptions (game, turn)
-        | Some Move ->
+        | Some SelectionKind.Move ->
             let subject = turn.subjectPiece(game).Value
             Ok <| getMoveSelectionOptions (game, subject)
-        | Some Target ->
+        | Some SelectionKind.Target ->
             Ok <| getTargetSelectionOptions (game, turn)
-        | Some Drop ->
+        | Some SelectionKind.Drop ->
             Ok <| getDropSelectionOptions (game, turn)
-        | Some Vacate ->
+        | Some SelectionKind.Vacate ->
             Ok <| getVacateSelectionOptions (game, turn)
-         
+        | _ -> raise <| InvalidEnumArgumentException()

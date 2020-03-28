@@ -7,6 +7,7 @@ open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.IntegrationTests
 open Apex.Api.Model
 open Apex.Api.Logic.Interfaces
+open Apex.Api.Enums
 
 type AddPlayerTests() =
     inherit TestsBase()
@@ -42,7 +43,7 @@ type AddPlayerTests() =
             //Arrange
             let! (user, session, _) = createuserSessionAndGame(true) |> thenValue
             let request = CreatePlayerRequest.guest (user.id, "test")
-            let session = session |> TestUtilities.setSessionPrivileges [EditPendingGames]
+            let session = session |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames]
             //Act
             let! error = (gameMan :> IPlayerManager).addPlayer Int32.MinValue request session
 

@@ -7,6 +7,7 @@ open Apex.Api.Logic
 open Apex.Api.Logic.ModelExtensions.GameModelExtensions
 open Apex.Api.Logic.Services
 open Apex.Api.Model
+open Apex.Api.Enums
 
 type TurnService(eventServ : EventService,
                  indirectEffectsServ : IndirectEffectsService,
@@ -54,7 +55,7 @@ type TurnService(eventServ : EventService,
                     //It should not affect how this event is processed on the server
                     let newPiece = 
                         if subjectStrategy.killsTarget 
-                        then { target with cellId = dropCellId; kind = Corpse; playerId = None }
+                        then { target with cellId = dropCellId; kind = PieceKind.Corpse; playerId = None }
                         else { target with cellId = dropCellId }
                     effects.Add(Effect.PieceDropped { oldPiece = target; newPiece = newPiece })
                 | None -> ()
@@ -67,7 +68,7 @@ type TurnService(eventServ : EventService,
                     //It should not affect how this event is processed on the server
                     let newPiece = 
                         if subjectStrategy.killsTarget 
-                        then { target with cellId = originCellId; kind = Corpse; playerId = None }
+                        then { target with cellId = originCellId; kind = PieceKind.Corpse; playerId = None }
                         else { target with cellId = originCellId }
                     effects.Add(Effect.PieceDropped { oldPiece = target; newPiece = newPiece })
 

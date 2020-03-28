@@ -8,6 +8,7 @@ open Apex.Api.Model
 open Apex.Api.Db.Interfaces
 open Apex.Api.Logic.Interfaces
 open System.ComponentModel
+open Apex.Api.Enums
 
 type EventRepositoryTests() =
     inherit TestsBase()

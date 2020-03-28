@@ -2,6 +2,7 @@
 
 open Apex.Api.Model
 open Apex.Api.Web.Model
+open Apex.Api.Enums
 
 [<AutoOpen>]
 module EventMappings =
@@ -16,16 +17,16 @@ module EventMappings =
 
     let toCurrentTurnChangedEffectDto (source : CurrentTurnChangedEffect) : EffectDto =
         ChangeEffectDto<TurnDto>(
-            EffectKindDto.CurrentTurnChanged,
+            EffectKind.CurrentTurnChanged,
             source.oldValue |> Option.map toTurnDto |> Option.toObj,
             source.newValue |> Option.map toTurnDto |> Option.toObj
         ) :> EffectDto
         
     let toGameStatusChangedEffectDto (source : GameStatusChangedEffect) : EffectDto =
-        ChangeEffectDto<GameStatusDto>(
-            EffectKindDto.GameStatusChanged,
-            source.oldValue |> toGameStatusDto,
-            source.newValue |> toGameStatusDto
+        ChangeEffectDto<GameStatus>(
+            EffectKind.GameStatusChanged,
+            source.oldValue,
+            source.newValue
         ) :> EffectDto
 
     let toNeutralPlayerAddedEffectDto (source : NeutralPlayerAddedEffect) : EffectDto =
@@ -33,17 +34,17 @@ module EventMappings =
 
     let toParametersChangedEffectDto (source : ParametersChangedEffect) : EffectDto =
         ChangeEffectDto<GameParametersDto>(
-            EffectKindDto.ParametersChanged,
+            EffectKind.ParametersChanged,
             source.oldValue |> toGameParametersDto,
             source.newValue |> toGameParametersDto
         ) :> EffectDto
             
     let toPieceAbandonedEffectDto (source : PieceAbandonedEffect) : EffectDto =
-        PieceUpdateEffectDto(EffectKindDto.PieceAbandoned, source.oldPiece |> toPieceDto) :> EffectDto
+        PieceUpdateEffectDto(EffectKind.PieceAbandoned, source.oldPiece |> toPieceDto) :> EffectDto
     
     let toPieceDroppedEffectDto (source : PieceDroppedEffect) : EffectDto =
         ChangeEffectDto<PieceDto>(
-            EffectKindDto.PieceDropped,
+            EffectKind.PieceDropped,
             source.oldPiece |> toPieceDto,
             source.newPiece |> toPieceDto
         ) :> EffectDto
@@ -52,7 +53,7 @@ module EventMappings =
         PieceEnlistedEffectDto(source.oldPiece |> toPieceDto, source.newPlayerId) :> EffectDto
     
     let toPieceKilledEffectDto (source : PieceKilledEffect) : EffectDto =
-        PieceUpdateEffectDto(EffectKindDto.PieceKilled, source.oldPiece |> toPieceDto) :> EffectDto
+        PieceUpdateEffectDto(EffectKind.PieceKilled, source.oldPiece |> toPieceDto) :> EffectDto
     
     let toPieceMovedEffectDto (source : PieceMovedEffect) : EffectDto =
         PieceMovedEffectDto(source.oldPiece |> toPieceDto, source.newCellId) :> EffectDto
@@ -64,7 +65,7 @@ module EventMappings =
         PlayerAddedEffectDto(
             source.name |> Option.toObj, 
             source.userId, 
-            source.kind |> toPlayerKindDto
+            source.kind
         ) :> EffectDto
 
     let toPlayerOutOfMovesEffectDto (source : PlayerOutOfMovesEffect) : EffectDto =
@@ -75,13 +76,13 @@ module EventMappings =
 
     let toPlayerStatusChangedEffectDto (source : PlayerStatusChangedEffect) : EffectDto =
         PlayerStatusChangedEffectDto(
-            source.oldStatus |> toPlayerStatusDto,
-            source.newStatus |> toPlayerStatusDto,
+            source.oldStatus,
+            source.newStatus,
             source.playerId
         ) :> EffectDto
         
     let toTurnCycleAdvancedEffectDto (source : TurnCycleAdvancedEffect) : EffectDto =
-        ChangeEffectDto<List<int>>(EffectKindDto.TurnCycleAdvanced, source.oldValue, source.newValue) :> EffectDto
+        ChangeEffectDto<List<int>>(EffectKind.TurnCycleAdvanced, source.oldValue, source.newValue) :> EffectDto
             
     let toTurnCyclePlayerFellFromPowerEffectDto (source : TurnCyclePlayerFellFromPowerEffect) : EffectDto =
         TurnCyclePlayerFellFromPowerEffectDto(source.oldValue, source.newValue, source.playerId) :> EffectDto
@@ -113,25 +114,13 @@ module EventMappings =
         | TurnCyclePlayerRemoved(e) -> toTurnCyclePlayerRemovedEffectDto e
         | TurnCyclePlayerRoseToPower(e) -> toTurnCyclePlayerRoseToPowerEffectDto e
 
-    let toEventKindDto (source : EventKind) : EventKindDto =
-        match source with
-        | EventKind.CellSelected -> EventKindDto.CellSelected
-        | EventKind.GameCanceled -> EventKindDto.GameCanceled
-        | EventKind.GameParametersChanged -> EventKindDto.GameParametersChanged
-        | EventKind.GameStarted -> EventKindDto.GameStarted
-        | EventKind.PlayerJoined -> EventKindDto.PlayerJoined
-        | EventKind.PlayerRemoved -> EventKindDto.PlayerRemoved
-        | EventKind.PlayerStatusChanged -> EventKindDto.PlayerStatusChanged
-        | EventKind.TurnCommitted -> EventKindDto.TurnCommitted
-        | EventKind.TurnReset -> EventKindDto.TurnReset
-
     let toEventDto (source : Event) : EventDto =
         {
             id = source.id
             createdBy =  source.createdBy |> toCreationSourceDto
             actingPlayerId = source.actingPlayerId |> Option.toNullable
             effects = source.effects |> List.map toEffectDto
-            kind = source.kind |> toEventKindDto
+            kind = source.kind
         }
 
     let toEventDtos (source : List<Event>) : EventDto[] =

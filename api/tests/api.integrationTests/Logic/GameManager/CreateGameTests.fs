@@ -6,6 +6,7 @@ open Apex.Api.Common.Control
 open Apex.Api.IntegrationTests
 open Apex.Api.Model
 open Apex.Api.Logic.Interfaces
+open Apex.Api.Enums
 
 type CreateGameTests() =
     inherit TestsBase()

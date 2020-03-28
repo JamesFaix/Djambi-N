@@ -2,6 +2,7 @@
 
 open System
 open System.ComponentModel.DataAnnotations
+open Apex.Api.Enums
 
 [<CLIMutable>]
 type GamesQueryDto = {
@@ -12,7 +13,7 @@ type GamesQueryDto = {
     containsMe : Nullable<bool>
     isPublic : Nullable<bool>
     allowGuests : Nullable<bool>
-    statuses : List<GameStatusDto>
+    statuses : List<GameStatus>
     createdBefore : Nullable<DateTime>
     createdAfter : Nullable<DateTime>
     lastEventBefore : Nullable<DateTime>
@@ -28,7 +29,7 @@ type SearchGameDto = {
     [<Required>]
     createdBy : CreationSourceDto
     
-    status : GameStatusDto
+    status : GameStatus
     lastEventOn : DateTime
     playerCount : int
     containsMe : bool

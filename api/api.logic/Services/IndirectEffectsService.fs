@@ -9,6 +9,7 @@ open Apex.Api.Logic.ModelExtensions.GameModelExtensions
 open Apex.Api.Logic
 open Apex.Api.Logic.Services
 open Apex.Api.Model
+open Apex.Api.Enums
 
 type IndirectEffectsService(eventServ : EventService,
                             selectionOptionsServ : SelectionOptionsService) =
@@ -40,7 +41,7 @@ type IndirectEffectsService(eventServ : EventService,
         effects.Add(Effect.PlayerStatusChanged {
             playerId = p.id
             oldStatus = p.status
-            newStatus = Eliminated
+            newStatus = PlayerStatus.Eliminated
         })
 
         let newCycle =
@@ -161,21 +162,21 @@ type IndirectEffectsService(eventServ : EventService,
         effects |> Seq.toList
 
     let getVictoryEffects (game : Game) : Effect list =
-        let remainingPlayers = game.players |> List.filter (fun p -> p.status = Alive && p.userId.IsSome)
+        let remainingPlayers = game.players |> List.filter (fun p -> p.status = PlayerStatus.Alive && p.userId.IsSome)
         if remainingPlayers.Length = 1
         then
             let p = remainingPlayers.[0]
             let finishConcedeEffects =
                 game.players
-                |> List.filter (fun p -> p.status = WillConcede)
+                |> List.filter (fun p -> p.status = PlayerStatus.WillConcede)
                 |> List.map (fun p -> Effect.PlayerStatusChanged {
                     playerId = p.id
-                    oldStatus = WillConcede
-                    newStatus = Conceded
+                    oldStatus = PlayerStatus.WillConcede
+                    newStatus = PlayerStatus.Conceded
                 })
             let mainEffects = [
-                Effect.PlayerStatusChanged { oldStatus = p.status; newStatus = Victorious; playerId = p.id}
-                Effect.GameStatusChanged { oldValue = game.status; newValue = Over }
+                Effect.PlayerStatusChanged { oldStatus = p.status; newStatus = PlayerStatus.Victorious; playerId = p.id}
+                Effect.GameStatusChanged { oldValue = game.status; newValue = GameStatus.Over }
                 Effect.CurrentTurnChanged { oldValue = game.currentTurn; newValue = None }
             ]
             List.append finishConcedeEffects mainEffects
@@ -198,9 +199,9 @@ type IndirectEffectsService(eventServ : EventService,
         while game.turnCycle.Length > 1 && not stop do
             let player = game.players |> List.find (fun p -> p.id = game.turnCycle.[0])
             //Check for players who conceded before their turn
-            if player.status = WillConcede then
-                let fx = Effect.PlayerStatusChanged { playerId = player.id; oldStatus = WillConcede; newStatus = Conceded } ::
-                         getSecondaryEffectsForConcede(game, {playerId = player.id; gameId = game.id; status = Conceded})
+            if player.status = PlayerStatus.WillConcede then
+                let fx = Effect.PlayerStatusChanged { playerId = player.id; oldStatus = PlayerStatus.WillConcede; newStatus = PlayerStatus.Conceded } ::
+                         getSecondaryEffectsForConcede(game, {playerId = player.id; gameId = game.id; status = PlayerStatus.Conceded})
                 effects.AddRange fx
                 game <- eventServ.applyEffects fx game
             else

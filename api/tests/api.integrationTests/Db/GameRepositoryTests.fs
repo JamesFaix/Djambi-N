@@ -6,6 +6,7 @@ open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.IntegrationTests
 open Apex.Api.Model
 open Apex.Api.Db.Interfaces
+open Apex.Api.Enums
 
 type GameRepositoryTests() =
     inherit TestsBase()

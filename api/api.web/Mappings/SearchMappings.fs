@@ -15,7 +15,7 @@ module SearchMappings =
             containsMe = source.containsMe |> Option.ofNullable
             isPublic = source.isPublic |> Option.ofNullable
             allowGuests = source.allowGuests |> Option.ofNullable
-            statuses = source.statuses |> Seq.map toGameStatus |> Seq.toList
+            statuses = source.statuses
             createdBefore = source.createdBefore |> Option.ofNullable
             createdAfter = source.createdAfter |> Option.ofNullable
             lastEventBefore = source.lastEventBefore |> Option.ofNullable
@@ -30,5 +30,5 @@ module SearchMappings =
             lastEventOn = source.lastEventOn
             parameters = source.parameters |> toGameParametersDto
             playerCount = source.playerCount
-            status = source.status |> toGameStatusDto
+            status = source.status
         }

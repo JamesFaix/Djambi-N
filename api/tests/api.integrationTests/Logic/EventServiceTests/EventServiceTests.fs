@@ -3,6 +3,7 @@ namespace Apex.Api.IntegrationTests.Logic.eventServTests
 open Xunit
 open Apex.Api.IntegrationTests
 open Apex.Api.Model
+open Apex.Api.Enums
 
 //TODO: Move to unit test project
 
@@ -84,7 +85,7 @@ type EventServiceTests() =
         p.id |> shouldBe -1 //The real ID is generated when the event is persisted
         p.gameId |> shouldBe newGame.id
         p.userId |> shouldBe None
-        p.kind |> shouldBe Neutral
+        p.kind |> shouldBe PlayerKind.Neutral
         p.name |> shouldBe "p2"
 
         //These are assigned at game start
@@ -354,7 +355,7 @@ type EventServiceTests() =
         let effect = Effect.PlayerStatusChanged {
                 playerId = player.id
                 oldStatus = player.status
-                newStatus = Eliminated
+                newStatus = PlayerStatus.Eliminated
             }
         let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
 

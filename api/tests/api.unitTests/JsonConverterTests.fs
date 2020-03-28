@@ -4,6 +4,7 @@ open Newtonsoft.Json
 open Xunit
 open Apex.Api.Common.Json
 open Apex.Api.Model
+open Apex.Api.Enums
 
 //---Option---
 

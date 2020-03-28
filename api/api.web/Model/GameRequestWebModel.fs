@@ -2,10 +2,11 @@
 
 open System
 open System.ComponentModel
+open Apex.Api.Enums
 
 [<CLIMutable>]
 type CreatePlayerRequestDto = {
-    kind : PlayerKindDto
+    kind : PlayerKind
     userId : Nullable<int>
 
     // Nullable

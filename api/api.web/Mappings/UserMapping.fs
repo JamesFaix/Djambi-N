@@ -12,19 +12,11 @@ module UserMapping =
             password = source.password
         }
 
-    let toPrivilegeDto (source : Privilege) : PrivilegeDto =
-        match source with
-        | Privilege.EditPendingGames -> PrivilegeDto.EditPendingGames
-        | Privilege.EditUsers -> PrivilegeDto.EditUsers
-        | Privilege.OpenParticipation -> PrivilegeDto.OpenParticipation
-        | Privilege.Snapshots -> PrivilegeDto.Snapshots
-        | Privilege.ViewGames -> PrivilegeDto.ViewGames
-
     let toUserDto (source : User) : UserDto =
         {
             id = source.id
             name = source.name
-            privileges = source.privileges |> List.map toPrivilegeDto
+            privileges = source.privileges
         }
 
     let toCreationSourceDto (source : CreationSource) : CreationSourceDto =

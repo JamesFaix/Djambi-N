@@ -1,6 +1,7 @@
 module Apex.Api.Logic.Context
 
 open Apex.Api.Model
+open Apex.Api.Enums
 
 let getActingPlayerId (session : Session) (game : Game) =
     //Before the game starts, acting players are obvious or can be determined by userID.
