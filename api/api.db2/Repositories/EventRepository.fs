@@ -16,40 +16,46 @@ type EventRepository(context : ApexDbContext) =
 
     interface IEventRepository with
         member __.getEvents (gameId, query) =
-            let noneOr (f : 'a -> bool) (o : Option<'a>)  =
-                o.IsNone || f(o.Value)
+            // Unassigned and all invalid values count as Ascending
+            let isAscending = query.direction <> ListSortDirection.Descending 
 
-            let orderBy (d : ListSortDirection) (f : 'a -> 'b) (xs : IQueryable<'a>) : IOrderedQueryable<'a> =
-                if d = ListSortDirection.Descending
-                then xs.OrderByDescending(f)
-                else xs.OrderBy(f)
-
-            let queryFilter (query : EventsQuery) (event : EventSqlModel) : bool =
-                let isAscending = query.direction <> ListSortDirection.Descending
-
-                query.thresholdEventId |> noneOr (fun x -> 
-                    if isAscending 
-                    then event.EventId <= x 
-                    else event.EventId >= x
-                ) &&
-                query.thresholdTime |> noneOr (fun x -> 
-                    if isAscending 
-                    then event.CreatedOn <= x
-                    else event.CreatedOn >= x
-                )
+            // Note: LINQ-to-SQL below
+            // Using wordy conditional building of IQueryable rather than higher-order-functions
+            // because each lambda is an Expression<Func> not a Func
 
             task {
                 let maxResults = 
+                    let defaultMaxResults = 10000 // TODO: Move to config
                     match query.maxResults with
                     | Some x -> x
-                    | None -> 10000 // TODO: Move to config
+                    | None -> defaultMaxResults
 
                 let mutable sqlQuery = 
                     context.Events
                         .Where(fun e -> e.Game.GameId = gameId)
-                        .Where(queryFilter query)
 
-                sqlQuery <- sqlQuery |> orderBy query.direction (fun e -> e.CreatedOn)
+                // Filters
+                match query.thresholdEventId with
+                | None -> ()
+                | Some(x) -> 
+                    sqlQuery <- 
+                        if isAscending
+                        then sqlQuery.Where(fun e -> e.EventId <= x)
+                        else sqlQuery.Where(fun e -> e.EventId >= x)
+                
+                match query.thresholdTime with
+                | None -> ()
+                | Some(x) -> 
+                    sqlQuery <- 
+                        if isAscending 
+                        then sqlQuery.Where(fun e -> e.CreatedOn <= x)
+                        else sqlQuery.Where(fun e -> e.CreatedOn >= x)
+
+                // Sorting
+                sqlQuery <-
+                    if isAscending
+                    then sqlQuery.OrderBy(fun e -> e.CreatedOn)
+                    else sqlQuery.OrderByDescending(fun e -> e.CreatedOn)
 
                 let! sqlModels =
                     sqlQuery
@@ -60,6 +66,8 @@ type EventRepository(context : ApexDbContext) =
             }
 
         member __.persistEvent (request, oldGame, newGame) =
+            let gameId = oldGame.id
+
             // Find players to update
             let removedPlayers =
                 oldGame.players
@@ -82,18 +90,19 @@ type EventRepository(context : ApexDbContext) =
                 |> Seq.filter (fun (o, n) -> o <> n)
                 |> Seq.map (fun (_, n) -> n)
 
-            let addPlayer(game : GameSqlModel, player : Player) : Task<Player> =
+            let addPlayer(player : Player) : Task<Player> =
                 task {
                     let p = player |> toPlayerSqlModel
-                    p.Game <- game
+                    p.PlayerId <- 0
+                    p.GameId <- gameId
 
                     let! _ = context.Players.AddAsync(p)
                     return p |> toPlayer
                 }
 
-            let removePlayer(game : GameSqlModel, playerId : int) : Task<unit> =
+            let removePlayer(playerId : int) : Task<unit> =
                 task {
-                    let! p = context.Players.SingleOrDefaultAsync(fun p -> p.Game.GameId = game.GameId && p.PlayerId = playerId)
+                    let! p = context.Players.SingleOrDefaultAsync(fun p -> p.Game.GameId = gameId && p.PlayerId = playerId)
                     if p = null
                     then raise <| HttpException(404, "Not found.")
 
@@ -101,17 +110,19 @@ type EventRepository(context : ApexDbContext) =
                     return ()
                 }
 
-            let updatePlayer(game : GameSqlModel, player : Player) : Task<unit> =
+            let updatePlayer(playerSqlModel : PlayerSqlModel, player : Player) : Task<unit> =
                 task {
-                    let p = player |> toPlayerSqlModel
-                    p.Game <- game
-
-                    context.Players.Update(p) |> ignore
+                    playerSqlModel.PlayerStatusId <- player.status |> toPlayerStatusSqlId
+                    playerSqlModel.ColorId <- player.colorId |> Option.map byte |> Option.toNullable
+                    playerSqlModel.StartingRegion <- player.startingRegion |> Option.map byte |> Option.toNullable
+                    playerSqlModel.StartingTurnNumber <- player.startingTurnNumber |> Option.map byte |> Option.toNullable
+                    // Other properties cannot be mutated
+                    context.Players.Update(playerSqlModel) |> ignore
                     return ()
                 }
 
             task {
-                let! g = context.Games.FindAsync(oldGame.id)
+                let! g = context.Games.FindAsync(gameId)
                 if g = null
                 then raise <| HttpException(404, "Not found.")
 
@@ -128,17 +139,26 @@ type EventRepository(context : ApexDbContext) =
 
                 // Update players
                 for p in removedPlayers do
-                    let! _ = removePlayer(g, p.id)
+                    let! _ = removePlayer(p.id)
                     ()
                 for p in addedPlayers do
-                    let! _ = addPlayer(g, p)
+                    let! _ = addPlayer(p)
                     ()
-                for p in modifiedPlayers do
-                    let! _ = updatePlayer(g, p)
+
+                let! playerSqlModels = context.Players.Where(fun p -> p.GameId = gameId).ToListAsync()
+                let updates = 
+                    modifiedPlayers.Join(
+                        playerSqlModels, 
+                        (fun p -> p.id), 
+                        (fun sqlModel -> sqlModel.PlayerId),
+                        (fun player sqlModel -> (player, sqlModel)))
+
+                for (player, sqlModel) in updates do
+                    let! _ = updatePlayer(sqlModel, player)
                     ()
 
                 // Save event               
-                let e = createEventRequestToEventSqlModel request g.GameId
+                let e = createEventRequestToEventSqlModel request gameId
                 let! _ = context.Events.AddAsync(e)
                 
                 let! _ = context.SaveChangesAsync()
