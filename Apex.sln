@@ -36,7 +36,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Solution Items", "_Solutio
 		api\README.md = api\README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "api.db.model", "api.db.model\api.db.model.csproj", "{CDFF3AE4-E25B-4383-8BAD-1379F958C1D3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "api.db.model", "api.db.model\api.db.model.csproj", "{CDFF3AE4-E25B-4383-8BAD-1379F958C1D3}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "api.enums", "api\api.enums\api.enums.fsproj", "{A6EA7141-3A6F-46A5-8E2C-0EC2BE460EFE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -92,6 +94,10 @@ Global
 		{CDFF3AE4-E25B-4383-8BAD-1379F958C1D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CDFF3AE4-E25B-4383-8BAD-1379F958C1D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CDFF3AE4-E25B-4383-8BAD-1379F958C1D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6EA7141-3A6F-46A5-8E2C-0EC2BE460EFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6EA7141-3A6F-46A5-8E2C-0EC2BE460EFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6EA7141-3A6F-46A5-8E2C-0EC2BE460EFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6EA7141-3A6F-46A5-8E2C-0EC2BE460EFE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -109,6 +115,7 @@ Global
 		{065F3E33-525E-41E5-9924-375F74F0C007} = {2FAF11B4-A2BA-48CF-8E4D-766CB7B26A3A}
 		{C4D54419-5950-4AF0-B5DF-AB401F4C50CF} = {2FAF11B4-A2BA-48CF-8E4D-766CB7B26A3A}
 		{CDFF3AE4-E25B-4383-8BAD-1379F958C1D3} = {2FAF11B4-A2BA-48CF-8E4D-766CB7B26A3A}
+		{A6EA7141-3A6F-46A5-8E2C-0EC2BE460EFE} = {2FAF11B4-A2BA-48CF-8E4D-766CB7B26A3A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5C5837E5-44E0-4D02-8AD3-DCFB9460E497}
