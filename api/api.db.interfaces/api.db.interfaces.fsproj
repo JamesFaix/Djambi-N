@@ -10,4 +10,7 @@
     <ProjectReference Include="..\api.common\api.common.fsproj" />
     <ProjectReference Include="..\api.model\api.model.fsproj" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="4.7.1" />
+  </ItemGroup>
 </Project>
