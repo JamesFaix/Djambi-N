@@ -104,32 +104,29 @@ namespace Apex.Api.Db.Model
 
             modelBuilder.Entity<NeutralPlayerNameSqlModel>(e =>
             {
-                e.HasNoKey();
-
-                //var names = new[]
-                //{
-                //    "SPORKMASTER",
-                //    "dwight-schrute",
-                //    "1337h4x",
-                //    "DragonBjorn",
-                //    "docta-octagon",
-                //    "Sam_I_Am",
-                //    "New_Boots",
-                //    "myseterious-stranger",
-                //    "Riemann",
-                //    "PT3R0D4C7YL",
-                //    "Rhombicuboctohedron",
-                //    "Schmorpheus",
-                //    "TheMangler",
-                //    "the-real-dwight-schrute",
-                //    "ManBearPig",
-                //};
-                //var rows = names.Select((n, i) => new NeutralPlayerNameSqlModel
-                //{
-                //    NeutralPlayerNameId = i,
-                //    Name = n
-                //});
-                //e.HasData(rows);
+                var names = new[]
+                {
+                    "SPORKMASTER",
+                    "dwight-schrute",
+                    "1337h4x",
+                    "DragonBjorn",
+                    "docta-octagon",
+                    "Sam_I_Am",
+                    "New_Boots",
+                    "mysterious-stranger",
+                    "Riemann",
+                    "PT3R0D4C7YL",
+                    "Rhombicuboctohedron",
+                    "Schmorpheus",
+                    "TheMangler",
+                    "ManBearPig",
+                };
+                var rows = names.Select((n, i) => new NeutralPlayerNameSqlModel
+                {
+                    NeutralPlayerNameId = i,
+                    Name = n
+                });
+                e.HasData(rows);
             });
         }
 
