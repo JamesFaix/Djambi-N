@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Apex.Api.Enums;
 
 namespace Apex.Api.Db.Model
 {
@@ -9,7 +10,7 @@ namespace Apex.Api.Db.Model
         [Key]
         [Column("PlayerKindId")]
         [Required]
-        public byte Id { get; set; }
+        public PlayerKind Id { get; set; }
 
         [Required]
         [StringLength(20)]

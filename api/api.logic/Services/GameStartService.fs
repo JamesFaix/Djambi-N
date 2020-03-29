@@ -10,6 +10,7 @@ open Apex.Api.Logic.ModelExtensions.BoardModelExtensions
 open Apex.Api.Logic.Services
 open Apex.Api.Model
 open Apex.Api.Logic
+open Apex.Api.Enums
 
 type GameStartService(playerServ : PlayerService,
                       selectionOptionsServ : SelectionOptionsService) =
@@ -18,7 +19,7 @@ type GameStartService(playerServ : PlayerService,
         Security.ensureCreatorOrEditPendingGames session game
         |> Result.bindAsync (fun _ ->
             if game.players
-                |> List.filter (fun p -> p.kind <> Neutral)
+                |> List.filter (fun p -> p.kind <> PlayerKind.Neutral)
                 |> List.length = 1
             then errorTask <| HttpException(400, "Cannot start game with only one player.")
             elif game.status <> GameStatus.Pending
@@ -44,7 +45,7 @@ type GameStartService(playerServ : PlayerService,
                         effects = [
                             Effect.GameStatusChanged { 
                                 oldValue = GameStatus.Pending
-                                newValue = InProgress 
+                                newValue = GameStatus.InProgress 
                             }
                         ]
                         createdByUserId = session.user.id
@@ -80,7 +81,7 @@ type GameStartService(playerServ : PlayerService,
 
         let nonNeutralPlayers =
             players
-            |> List.filter (fun p -> p.kind <> Neutral)
+            |> List.filter (fun p -> p.kind <> PlayerKind.Neutral)
             |> List.shuffle
             |> Seq.mapi (fun i p -> (i, p))
 
@@ -89,7 +90,7 @@ type GameStartService(playerServ : PlayerService,
 
         dict.Values
         |> Seq.map (fun p ->
-            let status =  if p.kind = Neutral then AcceptsDraw else Alive
+            let status =  if p.kind = PlayerKind.Neutral then PlayerStatus.AcceptsDraw else PlayerStatus.Alive
             { p with status = status }
         )
         |> Seq.toList
@@ -106,15 +107,15 @@ type GameStartService(playerServ : PlayerService,
                 }
             let n = Constants.regionSize - 1
             [
-                getPiece(startingId, Conduit, n,n)
-                getPiece(startingId+1, Scientist, n,n-1)
-                getPiece(startingId+2, Hunter, n-1,n)
-                getPiece(startingId+3, Diplomat, n-1,n-1)
-                getPiece(startingId+4, Reaper, n-2,n-2)
-                getPiece(startingId+5, Thug, n-2,n-1)
-                getPiece(startingId+6, Thug, n-2,n)
-                getPiece(startingId+7, Thug, n-1,n-2)
-                getPiece(startingId+8, Thug, n,n-2)
+                getPiece(startingId, PieceKind.Conduit, n,n)
+                getPiece(startingId+1, PieceKind.Scientist, n,n-1)
+                getPiece(startingId+2, PieceKind.Hunter, n-1,n)
+                getPiece(startingId+3, PieceKind.Diplomat, n-1,n-1)
+                getPiece(startingId+4, PieceKind.Reaper, n-2,n-2)
+                getPiece(startingId+5, PieceKind.Thug, n-2,n-1)
+                getPiece(startingId+6, PieceKind.Thug, n-2,n)
+                getPiece(startingId+7, PieceKind.Thug, n-1,n-2)
+                getPiece(startingId+8, PieceKind.Thug, n,n-2)
             ]
 
         players
@@ -128,7 +129,7 @@ type GameStartService(playerServ : PlayerService,
         let game =
             {
                 game with
-                    status = InProgress
+                    status = GameStatus.InProgress
                     pieces = x.createPieces(board, players) //Starting conditions must first be assigned
                     players = players
                     turnCycle = players //Starting conditions must first be assigned

@@ -22,7 +22,7 @@ module SearchMappings =
                 userName = source.CreatedByUser.Name
                 time = source.CreatedOn
             }
-            status = source.GameStatusId |> toGameStatus
+            status = source.GameStatusId
             lastEventOn = source.Events.Max(fun e -> e.CreatedOn)
             playerCount = source.Players.Count
             containsMe = source.Players.Any(fun p -> p.UserId.HasValue && p.UserId.Value = currentUserId)

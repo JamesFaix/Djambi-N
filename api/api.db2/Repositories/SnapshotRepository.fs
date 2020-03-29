@@ -116,7 +116,7 @@ type SnapshotRepository(context : ApexDbContext) =
                 gameSqlModel.IsPublic <- snapshot.game.parameters.isPublic
                 gameSqlModel.Description <- snapshot.game.parameters.description |> Option.toObj
                 gameSqlModel.RegionCount <- byte snapshot.game.parameters.regionCount
-                gameSqlModel.GameStatusId <- snapshot.game.status |> toGameStatusSqlId
+                gameSqlModel.GameStatusId <- snapshot.game.status
                 gameSqlModel.PiecesJson <- snapshot.game.pieces |> JsonUtility.serialize
                 gameSqlModel.TurnCycleJson <- snapshot.game.turnCycle |> JsonUtility.serialize
                 gameSqlModel.CurrentTurnJson <- snapshot.game.currentTurn |> JsonUtility.serialize

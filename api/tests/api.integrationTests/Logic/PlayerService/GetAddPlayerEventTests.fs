@@ -8,6 +8,7 @@ open Apex.Api.IntegrationTests
 open Apex.Api.Model
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Db.Interfaces
+open Apex.Api.Enums
 
 type GetAddPlayerEventTests() =
     inherit TestsBase()
@@ -41,7 +42,7 @@ type GetAddPlayerEventTests() =
         task {
             //Arrange
             let! (_, session, game) = createuserSessionAndGame(false) |> thenValue
-            let session = session |> TestUtilities.setSessionPrivileges [EditPendingGames]
+            let session = session |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames]
             let! user = createUser() |> thenValue
             let request = CreatePlayerRequest.user user.id
 
@@ -74,7 +75,7 @@ type GetAddPlayerEventTests() =
         task {
             //Arrange
             let! (_, session, game) = createuserSessionAndGame(false) |> thenValue
-            let session = session |> TestUtilities.setSessionPrivileges [EditPendingGames]
+            let session = session |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames]
 
             let! user = createUser() |> thenValue
 
@@ -97,7 +98,7 @@ type GetAddPlayerEventTests() =
         task {
             //Arrange
             let! (_, session, game) = createuserSessionAndGame(false) |> thenValue
-            let session = session |> TestUtilities.setSessionPrivileges [EditPendingGames]
+            let session = session |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames]
 
             let! user = createUser() |> thenValue
 
@@ -120,7 +121,7 @@ type GetAddPlayerEventTests() =
         task {
             //Arrange
             let! (user, session, game) = createuserSessionAndGame(false) |> thenValue
-            let session = session |> TestUtilities.setSessionPrivileges [EditPendingGames]
+            let session = session |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames]
             let request = CreatePlayerRequest.user user.id
 
             //Act
@@ -151,7 +152,7 @@ type GetAddPlayerEventTests() =
         task {
             //Arrange
             let! (_, session, game) = createuserSessionAndGame(true) |> thenValue
-            let session = session |> TestUtilities.setSessionPrivileges [EditPendingGames]
+            let session = session |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames]
 
             let! user = createUser() |> thenValue
             let request = CreatePlayerRequest.guest (user.id, "test")
@@ -255,7 +256,7 @@ type GetAddPlayerEventTests() =
         task {
             //Arrange
             let! (_, session, game) = createuserSessionAndGame(false) |> thenValue
-            let session = session |> TestUtilities.setSessionPrivileges [EditPendingGames]
+            let session = session |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames]
             let request = CreatePlayerRequest.neutral ("test")
 
             //Act

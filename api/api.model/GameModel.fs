@@ -1,19 +1,7 @@
 [<AutoOpen>]
 module Apex.Api.Model.GameModel
 
-type PlayerKind =
-    | User
-    | Guest
-    | Neutral
-
-type PlayerStatus =
-    | Pending
-    | Alive
-    | Eliminated
-    | Conceded
-    | WillConcede
-    | AcceptsDraw
-    | Victorious
+open Apex.Api.Enums
 
 type Player =
     {
@@ -28,15 +16,6 @@ type Player =
         startingTurnNumber : int option
     }
 
-type PieceKind =
-    | Conduit
-    | Thug
-    | Scientist
-    | Hunter
-    | Diplomat
-    | Reaper
-    | Corpse
-
 type Piece =
     {
         id : int
@@ -45,13 +24,6 @@ type Piece =
         originalPlayerId : int
         cellId : int
     }
-
-type SelectionKind =
-    | Subject
-    | Move
-    | Target
-    | Drop
-    | Vacate
 
 type Selection =
     {
@@ -63,50 +35,45 @@ type Selection =
 module Selection =
     let subject(cellId, pieceId) =
         {
-            kind = Subject
+            kind = SelectionKind.Subject
             cellId = cellId
             pieceId = Some pieceId
         }
 
     let move(cellId) =
         {
-            kind = Move
+            kind = SelectionKind.Move
             cellId = cellId
             pieceId = None
         }
 
     let moveWithTarget(cellId, pieceId) =
         {
-            kind = Move
+            kind = SelectionKind.Move
             cellId = cellId
             pieceId = Some pieceId
         }
 
     let target(cellId, pieceId) =
         {
-            kind = Target
+            kind = SelectionKind.Target
             cellId = cellId
             pieceId = Some pieceId
         }
 
     let drop(cellId) =
         {
-            kind = Drop
+            kind = SelectionKind.Drop
             cellId = cellId
             pieceId = None
         }
 
     let vacate(cellId) =
         {
-            kind = Vacate
+            kind = SelectionKind.Vacate
             cellId = cellId
             pieceId = None
         }
-
-type TurnStatus =
-    | AwaitingSelection
-    | AwaitingCommit
-    | DeadEnd
 
 type Turn =
     {
@@ -119,25 +86,19 @@ type Turn =
 module Turn =
     let empty =
         {
-            status = AwaitingSelection
+            status = TurnStatus.AwaitingSelection
             selections = []
             selectionOptions = []
-            requiredSelectionKind = Some Subject
+            requiredSelectionKind = Some SelectionKind.Subject
         }
 
     let deadEnd (selections) =
         {
-            status = DeadEnd
+            status = TurnStatus.DeadEnd
             selections = selections
             selectionOptions = []
             requiredSelectionKind = None
         }
-
-type GameStatus =
-    | Pending
-    | InProgress
-    | Canceled
-    | Over
 
 type GameParameters =
     {

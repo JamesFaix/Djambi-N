@@ -7,6 +7,7 @@ open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.IntegrationTests
 open Apex.Api.Model
 open Apex.Api.Logic.Interfaces
+open Apex.Api.Enums
 
 type RemovePlayerTests() =
     inherit TestsBase()
@@ -41,7 +42,7 @@ type RemovePlayerTests() =
 
             let! user = createUser() |> thenValue
             let request = CreatePlayerRequest.user user.id
-            let session = session |> TestUtilities.setSessionPrivileges [EditPendingGames]
+            let session = session |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames]
 
             let! player = (gameMan :> IPlayerManager).addPlayer game.id request session
                           |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)

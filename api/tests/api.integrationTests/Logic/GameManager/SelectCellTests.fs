@@ -9,6 +9,7 @@ open Apex.Api.IntegrationTests
 open Apex.Api.Logic
 open Apex.Api.Model
 open Apex.Api.Logic.Interfaces
+open Apex.Api.Enums
 
 type SelectCellTests() =
     inherit TestsBase()
@@ -92,7 +93,7 @@ type SelectCellTests() =
                 match updatedGame.turnCycle.Head with
                 | x when x = player2.id -> session1
                 | _ -> session2
-                |> TestUtilities.setSessionPrivileges [OpenParticipation]
+                |> TestUtilities.setSessionPrivileges [Privilege.OpenParticipation]
 
             //Act
             let! result = (gameMan :> ITurnManager).selectCell (updatedGame.id, cellId) sessionWithoutActivePlayer

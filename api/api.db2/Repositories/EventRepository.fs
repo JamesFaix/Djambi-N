@@ -112,7 +112,7 @@ type EventRepository(context : ApexDbContext) =
 
             let updatePlayer(playerSqlModel : PlayerSqlModel, player : Player) : Task<unit> =
                 task {
-                    playerSqlModel.PlayerStatusId <- player.status |> toPlayerStatusSqlId
+                    playerSqlModel.PlayerStatusId <- player.status
                     playerSqlModel.ColorId <- player.colorId |> Option.map byte |> Option.toNullable
                     playerSqlModel.StartingRegion <- player.startingRegion |> Option.map byte |> Option.toNullable
                     playerSqlModel.StartingTurnNumber <- player.startingTurnNumber |> Option.map byte |> Option.toNullable
@@ -134,7 +134,7 @@ type EventRepository(context : ApexDbContext) =
                 g.CurrentTurnJson <- newGame.currentTurn |> JsonUtility.serialize
                 g.TurnCycleJson <- newGame.turnCycle |> JsonUtility.serialize
                 g.PiecesJson <- newGame.pieces |> JsonUtility.serialize
-                g.GameStatusId <- newGame.status |> toGameStatusSqlId
+                g.GameStatusId <- newGame.status
                 context.Games.Update(g) |> ignore
 
                 // Update players

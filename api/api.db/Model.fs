@@ -2,6 +2,7 @@ module Apex.Api.Db.Model
 
 open System
 open Apex.Api.Model
+open Apex.Api.Enums
 
 [<CLIMutable>]
 type UserSqlModel =
@@ -31,8 +32,8 @@ type PlayerSqlModel =
         gameId : int
         userId : int Nullable
         name : string
-        playerKindId : byte
-        playerStatusId : byte
+        playerKindId : PlayerKind
+        playerStatusId : PlayerStatus
         colorId : byte Nullable
         startingRegion : byte Nullable
         startingTurnNumber : byte Nullable
@@ -45,7 +46,7 @@ type GameSqlModel =
         createdOn : DateTime
         createdByUserId : int
         createdByUserName : string
-        gameStatusId : byte
+        gameStatusId : GameStatus
         //Game parameters
         description : string
         regionCount : int
@@ -65,7 +66,7 @@ type SearchGameSqlModel =
         createdByUserId : int
         createdByUserName : string
         containsMe : bool
-        gameStatusId : byte
+        gameStatusId : GameStatus
         //Game parameters
         description : string
         regionCount : int
@@ -86,7 +87,7 @@ type EventSqlModel =
         createdByUserName : string
         actingPlayerId : int Nullable
         createdOn : DateTime
-        eventKindId : byte
+        eventKindId : EventKind
         effectsJson : string
     }
 

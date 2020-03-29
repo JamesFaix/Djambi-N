@@ -9,6 +9,7 @@ open Apex.Api.Model
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Db
 open Apex.Api.Db.Interfaces
+open Apex.Api.Enums
 
 type StartGameTests() =
     inherit TestsBase()
@@ -36,7 +37,7 @@ type StartGameTests() =
             for p in updatedGame.players do
                 p.colorId |> shouldNotBe None
                 p.startingRegion |> shouldNotBe None
-                p.status |> shouldBe (if p.kind = Neutral then AcceptsDraw else Alive)
+                p.status |> shouldBe (if p.kind = PlayerKind.Neutral then PlayerStatus.AcceptsDraw else PlayerStatus.Alive)
         }
 
     [<Fact>]

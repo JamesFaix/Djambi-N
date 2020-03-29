@@ -8,6 +8,7 @@ open Apex.Api.Logic
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Logic.Services
 open Apex.Api.Model
+open Apex.Api.Enums
 
 type GameManager(eventRepo : IEventRepository,
                  eventServ : EventService,
@@ -97,7 +98,7 @@ type GameManager(eventRepo : IEventRepository,
     interface IEventManager with
         member x.getEvents (gameId, query) session =
             gameRepo.getGame gameId
-            |> thenBind (Security.ensurePlayerOrHas ViewGames session)
+            |> thenBind (Security.ensurePlayerOrHas Privilege.ViewGames session)
             |> thenBindAsync (fun _ -> eventRepo.getEvents (gameId, query))
 
     interface IGameManager with

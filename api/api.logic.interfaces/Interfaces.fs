@@ -3,6 +3,7 @@ namespace Apex.Api.Logic.Interfaces
 open System
 open Apex.Api.Common.Control
 open Apex.Api.Model
+open Apex.Api.Enums
 
 type ISubscriber =
     inherit IDisposable

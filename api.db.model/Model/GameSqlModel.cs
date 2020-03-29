@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Apex.Api.Enums;
 
 namespace Apex.Api.Db.Model
 {
@@ -20,8 +21,7 @@ namespace Apex.Api.Db.Model
         public DateTime CreatedOn { get; set; }
 
         [Required]
-        public GameStatusSqlId GameStatusId { get; set; }
-        public GameStatusSqlModel GameStatus { get; set; }
+        public GameStatus GameStatusId { get; set; }
 
         public IList<PlayerSqlModel> Players { get; set; } = new List<PlayerSqlModel>();
 

@@ -9,6 +9,7 @@ open Apex.Api.IntegrationTests
 open Apex.Api.Model
 open Apex.Api.Db.Interfaces
 open Apex.Api.Logic.Interfaces
+open Apex.Api.Enums
 
 type GetRemovePlayerEventTests() =
     inherit TestsBase()
@@ -18,7 +19,7 @@ type GetRemovePlayerEventTests() =
         task {
             //Arrange
             let! (_, session, game1) = createuserSessionAndGame(false) |> thenValue
-            let session = session |> TestUtilities.setSessionPrivileges [EditPendingGames]
+            let session = session |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames]
 
             let gameRequest = getGameParameters()
             let! game2 = (gameMan :> IGameManager).createGame gameRequest session |> thenValue
@@ -64,7 +65,7 @@ type GetRemovePlayerEventTests() =
         task {
             //Arrange
             let! (_, session, game) = createuserSessionAndGame(false) |> thenValue
-            let adminSession = session |> TestUtilities.setSessionPrivileges [EditPendingGames]
+            let adminSession = session |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames]
 
             let! user = createUser() |> thenValue
             let request = CreatePlayerRequest.user user.id
@@ -116,7 +117,7 @@ type GetRemovePlayerEventTests() =
         task {
             //Arrange
             let! (_, session, game) = createuserSessionAndGame(false) |> thenValue
-            let session = session |> TestUtilities.setSessionPrivileges [EditPendingGames]
+            let session = session |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames]
 
             let! user = createUser() |> thenValue
             let request = CreatePlayerRequest.user user.id
@@ -149,7 +150,7 @@ type GetRemovePlayerEventTests() =
             let! user = createUser() |> thenValue
             let request = CreatePlayerRequest.user user.id
 
-            let adminSession = session |> TestUtilities.setSessionPrivileges [EditPendingGames]
+            let adminSession = session |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames]
             let! player = (gameMan :> IPlayerManager).addPlayer game.id request adminSession
                           |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                           |> thenValue
@@ -179,7 +180,7 @@ type GetRemovePlayerEventTests() =
             let userPlayerRequest = CreatePlayerRequest.user user.id
             let guestPlayerRequest = CreatePlayerRequest.guest (user.id, "test")
 
-            let adminSession = session |> TestUtilities.setSessionPrivileges [EditPendingGames]
+            let adminSession = session |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames]
 
             let! userPlayer =
                 (gameMan :> IPlayerManager).addPlayer game.id userPlayerRequest adminSession
@@ -216,7 +217,7 @@ type GetRemovePlayerEventTests() =
             let userPlayerRequest = CreatePlayerRequest.user user.id
             let guestPlayerRequest = CreatePlayerRequest.guest (user.id, "test")
 
-            let adminSession = session |> TestUtilities.setSessionPrivileges [EditPendingGames]
+            let adminSession = session |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames]
 
             let! userPlayer =
                 (gameMan :> IPlayerManager).addPlayer game.id userPlayerRequest adminSession

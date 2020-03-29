@@ -4,14 +4,13 @@ open Apex.Api.Common.Control
 open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.Db
 open Apex.Api.Db.Interfaces
-open Apex.Api.Model
+open Apex.Api.Enums
 
 type UserRepository(ctxProvider : CommandContextProvider) =
 
     let getUserPrivileges (userId : int) : Privilege list AsyncHttpResult =
         Commands.getUserPrivileges (Some userId, None)
         |> Command.execute ctxProvider
-        |> thenMap (List.map Mapping.mapPrivilegeId)
 
     interface IUserRepository with
         member x.getUser userId =

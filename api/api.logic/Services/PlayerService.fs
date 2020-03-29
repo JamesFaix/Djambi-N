@@ -8,6 +8,8 @@ open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.Db.Interfaces
 open Apex.Api.Model
 open Apex.Api.Logic
+open Apex.Api.Enums
+open System.ComponentModel
 
 type PlayerService(gameRepo : IGameRepository) =
     member x.getAddPlayerEvent (game : Game, request : CreatePlayerRequest) (session : Session) : CreateEventRequest HttpResult =
@@ -28,7 +30,7 @@ type PlayerService(gameRepo : IGameRepository) =
                 then Error <| HttpException(400, "Cannot provide name when adding a user player.")
                 elif game.players |> List.exists (fun p -> p.kind = PlayerKind.User && p.userId = request.userId)
                 then Error <| HttpException(409, "User is already a player.")
-                elif not (self.has EditPendingGames) && request.userId.Value <> self.id
+                elif not (self.has Privilege.EditPendingGames) && request.userId.Value <> self.id
                 then Error <| HttpException(403, "Cannot add other users to a game.")
                 else Ok ()
 
@@ -39,7 +41,7 @@ type PlayerService(gameRepo : IGameRepository) =
                 then Error <| HttpException(400, "UserID must be provided when adding a guest player.")
                 elif request.name.IsNone
                 then Error <| HttpException(400, "Must provide name when adding a guest player.")
-                elif not (self.has EditPendingGames) && request.userId.Value <> self.id
+                elif not (self.has Privilege.EditPendingGames) && request.userId.Value <> self.id
                 then Error <| HttpException(403, "Cannot add guests for other users to a game.")
                 elif not <| Validation.isValidPlayerName request.name.Value
                 then Error <| HttpException(422, "Player names must contain only lettes A-Z, numbers 0-9, _, or -, and must be 1 to 20 characters.")
@@ -47,6 +49,7 @@ type PlayerService(gameRepo : IGameRepository) =
 
             | PlayerKind.Neutral ->
                 Error <| HttpException(400, "Cannot directly add neutral players to a game.")
+            | _ -> raise <| InvalidEnumArgumentException()
         |> Result.map (fun _ ->
             {
                 kind = EventKind.PlayerJoined
@@ -58,7 +61,7 @@ type PlayerService(gameRepo : IGameRepository) =
 
     member x.getRemovePlayerEvent (game : Game, playerId : int) (session : Session) : CreateEventRequest HttpResult =
         let self = session.user
-        if game.status <> Pending then
+        if game.status <> GameStatus.Pending then
             Error <| HttpException(400, "Cannot remove players unless game is Pending.")
         else
             match game.players |> List.tryFind (fun p -> p.id = playerId) with
@@ -67,7 +70,7 @@ type PlayerService(gameRepo : IGameRepository) =
                 match player.userId with
                 | None -> Error <| HttpException(400, "Cannot remove neutral players from game.")
                 | Some x ->
-                    if not <| (self.has EditPendingGames
+                    if not <| (self.has Privilege.EditPendingGames
                         || game.createdBy.userId = self.id
                         || x = self.id)
                     then Error <| HttpException(403, "Cannot remove other users from game.")
@@ -76,10 +79,10 @@ type PlayerService(gameRepo : IGameRepository) =
 
                         let playersToRemove =
                             match player.kind with
-                            | User ->
+                            | PlayerKind.User ->
                                 game.players
                                 |> List.filter (fun p -> p.userId = player.userId)
-                            | Guest -> 
+                            | PlayerKind.Guest -> 
                                 game.players
                                 |> List.filter (fun p -> p.id = playerId)
                             | _ -> [] //Already eliminated this case in validation above

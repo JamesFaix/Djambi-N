@@ -8,6 +8,7 @@ open Apex.Api.IntegrationTests
 open Apex.Api.Logic.ModelExtensions
 open Apex.Api.Model
 open Apex.Api.Logic.Interfaces
+open Apex.Api.Enums
 
 type GameStartServiceTests() =
     inherit TestsBase()
@@ -57,12 +58,12 @@ type GameStartServiceTests() =
             Assert.Equal(game.parameters.regionCount, groupByPlayer.Length)
 
             for (_, grp) in groupByPlayer do
-                Assert.Single<Piece>(grp, (fun p -> p.kind = Conduit)) |> ignore
-                Assert.Single<Piece>(grp, (fun p -> p.kind = Diplomat)) |> ignore
-                Assert.Single<Piece>(grp, (fun p -> p.kind = Scientist)) |> ignore
-                Assert.Single<Piece>(grp, (fun p -> p.kind = Reaper)) |> ignore
-                Assert.Single<Piece>(grp, (fun p -> p.kind = Hunter)) |> ignore
-                Assert.Equal(4, grp |> List.filter (fun p -> p.kind = Thug) |> List.length)
+                Assert.Single<Piece>(grp, (fun p -> p.kind = PieceKind.Conduit)) |> ignore
+                Assert.Single<Piece>(grp, (fun p -> p.kind = PieceKind.Diplomat)) |> ignore
+                Assert.Single<Piece>(grp, (fun p -> p.kind = PieceKind.Scientist)) |> ignore
+                Assert.Single<Piece>(grp, (fun p -> p.kind = PieceKind.Reaper)) |> ignore
+                Assert.Single<Piece>(grp, (fun p -> p.kind = PieceKind.Hunter)) |> ignore
+                Assert.Equal(4, grp |> List.filter (fun p -> p.kind = PieceKind.Thug) |> List.length)
         }
 
     [<Fact>]

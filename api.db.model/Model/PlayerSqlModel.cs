@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Apex.Api.Enums;
 
 namespace Apex.Api.Db.Model
 {
@@ -18,16 +19,14 @@ namespace Apex.Api.Db.Model
         public UserSqlModel User { get; set; }
 
         [Required]
-        public byte PlayerKindId { get; set; }
-        public PlayerKindSqlModel PlayerKind { get; set; }
+        public PlayerKind PlayerKindId { get; set; }
 
         [Required]
         [StringLength(20)]
         public string Name { get; set; }
 
         [Required]
-        public byte PlayerStatusId { get; set; }
-        public PlayerStatusSqlModel PlayerStatus { get; set; }
+        public PlayerStatus PlayerStatusId { get; set; }
 
         public byte? ColorId { get; set; }
 

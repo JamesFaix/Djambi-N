@@ -9,26 +9,7 @@ open System.Collections.Generic
 
 [<AutoOpen>]
 module EventMappings =
-    let private eventKinds = HashSet<(EventKind * EventKindSqlId)>([
-        (EventKind.GameParametersChanged, EventKindSqlId.GameParametersChanged)
-        (EventKind.GameCanceled, EventKindSqlId.GameCanceled)
-        (EventKind.PlayerJoined, EventKindSqlId.PlayerJoined)
-        (EventKind.PlayerRemoved, EventKindSqlId.PlayerRemoved)
-        (EventKind.GameStarted, EventKindSqlId.GameStarted)
-        (EventKind.TurnCommitted, EventKindSqlId.TurnCommitted)
-        (EventKind.TurnReset, EventKindSqlId.TurnReset)
-        (EventKind.CellSelected, EventKindSqlId.CellSelected)
-        (EventKind.PlayerStatusChanged, EventKindSqlId.PlayerStatusChanged)
-    ])
-
-    let toEventKind (source : EventKindSqlId) : EventKind =
-        let (kind, _) = eventKinds |> Seq.find (fun (_, id) -> id = source)
-        kind
-
-    let toEventKindSqlId (source : EventKind) : EventKindSqlId =
-        let (_, id) = eventKinds |> Seq.find (fun (kind, _) -> kind = source)
-        id
-
+    
     let toEvent (source : EventSqlModel) : Event =
         {
             id = source.EventId
@@ -38,7 +19,7 @@ module EventMappings =
                 time = source.CreatedOn
             }
             actingPlayerId = source.ActingPlayer |> Option.ofObj |> Option.map (fun x -> x.PlayerId)
-            kind = source.EventKindId |> toEventKind
+            kind = source.EventKindId
             effects = source.EffectsJson |> JsonUtility.deserializeList
         }
 
@@ -49,7 +30,7 @@ module EventMappings =
         x.ActingPlayerId <- source.actingPlayerId |> Option.toNullable
         x.CreatedByUserId <- source.createdBy.userId
         x.EffectsJson <- source.effects |> JsonUtility.serialize
-        x.EventKindId <- source.kind |> toEventKindSqlId
+        x.EventKindId <- source.kind
         x
    
     let createEventRequestToEventSqlModel (source : CreateEventRequest) (gameId : int) : EventSqlModel = 
@@ -59,5 +40,5 @@ module EventMappings =
         x.ActingPlayerId <- source.actingPlayerId |> Option.toNullable
         x.CreatedByUserId <- source.createdByUserId
         x.EffectsJson <- source.effects |> JsonUtility.serialize
-        x.EventKindId <- source.kind |> toEventKindSqlId
+        x.EventKindId <- source.kind
         x

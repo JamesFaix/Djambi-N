@@ -5,6 +5,7 @@ open Xunit
 open Apex.Api.Common.Control
 open Apex.Api.IntegrationTests
 open Apex.Api.Model
+open Apex.Api.Enums
 
 type CreateUserTests() =
     inherit TestsBase()
@@ -57,7 +58,7 @@ type CreateUserTests() =
         task {
             //Arrange
             let request = getCreateUserRequest()
-            let session = getSessionForUser 1 |> TestUtilities.setSessionPrivileges [EditUsers]
+            let session = getSessionForUser 1 |> TestUtilities.setSessionPrivileges [Privilege.EditUsers]
 
             //Act
             let! user = userServ.createUser request (Some session)

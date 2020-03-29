@@ -6,57 +6,10 @@ open Apex.Api.Db.Model
 open Apex.Api.Common.Json
 open System.ComponentModel
 open System.Collections.Generic
+open Apex.Api.Enums
 
 [<AutoOpen>]
 module GameMappings =
-    let private gameStatuses = HashSet<(GameStatus * GameStatusSqlId)>([
-        (GameStatus.Canceled, GameStatusSqlId.Canceled)
-        (GameStatus.InProgress, GameStatusSqlId.InProgress)
-        (GameStatus.Over, GameStatusSqlId.Over)
-        (GameStatus.Pending, GameStatusSqlId.Pending)
-    ])
-
-    let toGameStatusSqlId (source : GameStatus) : GameStatusSqlId =
-        let (_, id) = gameStatuses |> Seq.find(fun (status, _) -> status = source)
-        id
-
-    let toGameStatus (source : GameStatusSqlId) : GameStatus =
-        let (status, _) = gameStatuses |> Seq.find(fun (_, id) -> id = source)
-        status
-
-    let toPlayerKindSqlId (source : PlayerKind) : byte =
-        match source with
-        | PlayerKind.User -> 1uy
-        | PlayerKind.Guest -> 2uy
-        | PlayerKind.Neutral -> 3uy
-
-    let toPlayerKind (source : byte) : PlayerKind =
-        match source with
-        | 1uy -> PlayerKind.User
-        | 2uy -> PlayerKind.Guest
-        | 3uy -> PlayerKind.Neutral
-        | _ -> raise <| InvalidEnumArgumentException()
-
-    let toPlayerStatusSqlId (source : PlayerStatus) : byte =
-        match source with
-        | PlayerStatus.Pending -> 1uy
-        | PlayerStatus.Alive -> 2uy
-        | PlayerStatus.Eliminated -> 3uy
-        | PlayerStatus.Conceded -> 4uy
-        | PlayerStatus.WillConcede -> 5uy
-        | PlayerStatus.AcceptsDraw -> 6uy
-        | PlayerStatus.Victorious -> 7uy
-
-    let toPlayerStatus (source : byte) : PlayerStatus =
-        match source with
-        | 1uy -> PlayerStatus.Pending
-        | 2uy -> PlayerStatus.Alive
-        | 3uy -> PlayerStatus.Eliminated
-        | 4uy -> PlayerStatus.Conceded
-        | 5uy -> PlayerStatus.WillConcede
-        | 6uy -> PlayerStatus.AcceptsDraw
-        | 7uy -> PlayerStatus.Victorious
-        | _ -> raise <| InvalidEnumArgumentException()
 
     let toPlayer (source : PlayerSqlModel) : Player =
         let toIntOption (x : Nullable<byte>) : Option<int> =
@@ -67,8 +20,8 @@ module GameMappings =
             name = source.Name
             gameId = source.GameId
             userId = source.UserId |> Option.ofNullable
-            kind = source.PlayerKindId |> toPlayerKind
-            status = source.PlayerStatusId |> toPlayerStatus
+            kind = source.PlayerKindId
+            status = source.PlayerStatusId
             colorId = source.ColorId |> toIntOption
             startingRegion = source.ColorId |>toIntOption
             startingTurnNumber = source.ColorId |> toIntOption
@@ -82,8 +35,8 @@ module GameMappings =
         x.PlayerId <- source.id
         x.GameId <- source.gameId
         x.UserId <- source.userId |> Option.toNullable
-        x.PlayerKindId <- source.kind |> toPlayerKindSqlId
-        x.PlayerStatusId <- source.status |> toPlayerStatusSqlId
+        x.PlayerKindId <- source.kind
+        x.PlayerStatusId <- source.status
         x.Name <- source.name
         x.ColorId <- source.colorId |> toByteNullable
         x.StartingRegion <- source.startingRegion |> toByteNullable
@@ -93,8 +46,8 @@ module GameMappings =
     let createPlayerRequestToPlayerSqlModel (source : CreatePlayerRequest) : PlayerSqlModel =
         let x = PlayerSqlModel()
         x.UserId <- source.userId |> Option.toNullable
-        x.PlayerKindId <- source.kind |> toPlayerKindSqlId
-        x.PlayerStatusId <- PlayerStatus.Pending |> toPlayerStatusSqlId
+        x.PlayerKindId <- source.kind
+        x.PlayerStatusId <- PlayerStatus.Pending
         x.Name <- source.name.Value
         x
 
@@ -112,7 +65,7 @@ module GameMappings =
                 description = source.Description |> Option.ofObj
                 regionCount = int source.RegionCount
             }
-            status = source.GameStatusId |> toGameStatus
+            status = source.GameStatusId
             players = players |> Seq.map toPlayer |> Seq.toList
             pieces = source.PiecesJson |> JsonUtility.deserializeList
             turnCycle = source.TurnCycleJson |> JsonUtility.deserializeList
@@ -127,7 +80,7 @@ module GameMappings =
         x.RegionCount <- byte source.parameters.regionCount
         x.Players <- List<PlayerSqlModel>()
         x.CreatedOn <- DateTime.UtcNow
-        x.GameStatusId <- GameStatus.Pending |> toGameStatusSqlId
+        x.GameStatusId <- GameStatus.Pending
         x.CreatedByUserId <- source.createdByUserId
         x.CurrentTurnJson <- null
         x.TurnCycleJson <- null

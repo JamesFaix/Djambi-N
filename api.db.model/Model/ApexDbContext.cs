@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using Apex.Api.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace Apex.Api.Db.Model
@@ -48,7 +49,7 @@ namespace Apex.Api.Db.Model
         {
             modelBuilder.Entity<EventKindSqlModel>(e =>
             {
-                var eventKinds = GetValues<EventKindSqlId>()
+                var eventKinds = GetValues<EventKind>()
                     .Select(id => new EventKindSqlModel
                     {
                         Id = id,
@@ -59,7 +60,7 @@ namespace Apex.Api.Db.Model
 
             modelBuilder.Entity<GameStatusSqlModel>(e =>
             {
-                var eventKinds = GetValues<GameStatusSqlId>()
+                var eventKinds = GetValues<GameStatus>()
                     .Select(id => new GameStatusSqlModel
                     {
                         Id = id,

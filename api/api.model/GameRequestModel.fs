@@ -3,6 +3,7 @@ module Apex.Api.Model.GameRequestModel
 
 open System
 open System.ComponentModel
+open Apex.Api.Enums
 
 type CreatePlayerRequest =
     {

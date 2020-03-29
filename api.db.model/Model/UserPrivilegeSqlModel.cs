@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Apex.Api.Enums;
 
 namespace Apex.Api.Db.Model
 {
@@ -12,10 +13,8 @@ namespace Apex.Api.Db.Model
 
         [Required]
         public int UserId { get; set; }
-        public UserSqlModel User { get; set; }
 
         [Required]
-        public byte PrivilegeId { get; set; }
-        public PrivilegeSqlModel Privilege { get; set; }
+        public Privilege PrivilegeId { get; set; }
     }
 }

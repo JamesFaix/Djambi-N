@@ -4,6 +4,7 @@ open Apex.Api.Common.Collections
 open Apex.Api.Common.Control
 open Apex.Api.Model
 open Apex.Api.Logic
+open Apex.Api.Enums
 
 type PlayerStatusChangeService(eventServ : EventService,
                                indirectEffectsServ : IndirectEffectsService) =
@@ -13,21 +14,21 @@ type PlayerStatusChangeService(eventServ : EventService,
             game.players
             |> List.filter (fun p ->
                 p.id <> request.playerId &&
-                p.status = Alive
+                p.status = PlayerStatus.Alive
             )
 
         if otherLivingPlayersNotAcceptingADraw.IsEmpty
         then
             [
-                Effect.GameStatusChanged { oldValue = InProgress; newValue = Over }
+                Effect.GameStatusChanged { oldValue = GameStatus.InProgress; newValue = GameStatus.Over }
             ]
         else [] //If not last player to accept, nothing special happens
 
     member x.getUpdatePlayerStatusEvent (game : Game, request : PlayerStatusChangeRequest) (session : Session) : CreateEventRequest HttpResult =
-        if game.status <> InProgress then
+        if game.status <> GameStatus.InProgress then
             Error <| HttpException(400, "Cannot change player status unless game is InProgress.")
         else
-            Security.ensurePlayerOrHas OpenParticipation session game
+            Security.ensurePlayerOrHas Privilege.OpenParticipation session game
             |> Result.bind (fun _ ->
                 let player = game.players |> List.find (fun p -> p.id = request.playerId)
                 let oldStatus = player.status
@@ -50,16 +51,16 @@ type PlayerStatusChangeService(eventServ : EventService,
                     }
 
                     match (oldStatus, newStatus) with
-                    | (Alive, AcceptsDraw) ->
+                    | (PlayerStatus.Alive, PlayerStatus.AcceptsDraw) ->
                         let finalAcceptDrawEffects = getFinalAcceptDrawEffects (game, request)
                         Ok { event with effects = primaryEffect :: finalAcceptDrawEffects }
-                    | (AcceptsDraw, Alive) ->
+                    | (PlayerStatus.AcceptsDraw, PlayerStatus.Alive) ->
                         //If revoking draw, just change status
                         Ok event
-                    | (Alive, Conceded)
-                    | (AcceptsDraw, Conceded)
-                    | (Alive, WillConcede)
-                    | (AcceptsDraw, WillConcede) ->
+                    | (PlayerStatus.Alive, PlayerStatus.Conceded)
+                    | (PlayerStatus.AcceptsDraw, PlayerStatus.Conceded)
+                    | (PlayerStatus.Alive, PlayerStatus.WillConcede)
+                    | (PlayerStatus.AcceptsDraw, PlayerStatus.WillConcede) ->
                         let isPlayersTurn = game.turnCycle.[0] = request.playerId
                         if isPlayersTurn
                         then
@@ -67,7 +68,7 @@ type PlayerStatusChangeService(eventServ : EventService,
 
                             let primary = Effect.PlayerStatusChanged {
                                 oldStatus = oldStatus
-                                newStatus = Conceded
+                                newStatus = PlayerStatus.Conceded
                                 playerId = player.id
                             }
 
@@ -78,7 +79,7 @@ type PlayerStatusChangeService(eventServ : EventService,
                         else
                             let primary = Effect.PlayerStatusChanged {
                                 oldStatus = oldStatus
-                                newStatus = WillConcede
+                                newStatus = PlayerStatus.WillConcede
                                 playerId = player.id
                             }
                             Ok { event with effects = [primary] }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Apex.Api.Enums;
 
 namespace Apex.Api.Db.Model
 {
@@ -26,8 +27,7 @@ namespace Apex.Api.Db.Model
         public DateTime CreatedOn { get; set; }
 
         [Required]
-        public EventKindSqlId EventKindId { get; set; }
-        public EventKindSqlModel EventKind { get; set; }
+        public EventKind EventKindId { get; set; }
 
         [Required]
         public string EffectsJson { get; set; }

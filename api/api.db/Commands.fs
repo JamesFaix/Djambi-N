@@ -4,6 +4,7 @@ open System
 open Apex.Api.Db.Command
 open Apex.Api.Db.Model
 open System.ComponentModel
+open Apex.Api.Enums
 
 ///<summary>
 /// This module contains factory methods for SQL commands.
@@ -18,7 +19,7 @@ module Commands =
             .forEntity("Privilege")
             .param("UserId", userId)
             .param("Name", name)
-            .returnsMany<byte>()
+            .returnsMany<Privilege>()
 
     let getUser (userId : int option, name : string option) =
         proc("Users_Get")
@@ -114,10 +115,10 @@ module Commands =
             .returnsSingle<int>()
 
     let addPlayer (gameId : int,
-                   playerKindId : byte,
+                   playerKindId : PlayerKind,
                    userId : int option,
                    name : string option,
-                   playerStatusId : byte,
+                   playerStatusId : PlayerStatus,
                    colorId : int option,
                    startingRegion : int option,
                    startingTurnNumber : int option) =
@@ -145,7 +146,7 @@ module Commands =
                     allowGuests : bool,
                     isPublic : bool,
                     regionCount : int,
-                    gameStatusId : byte,
+                    gameStatusId : GameStatus,
                     piecesJson : string,
                     currentTurnJson : string,
                     turnCycleJson : string) =
@@ -167,7 +168,7 @@ module Commands =
                       colorId : int option,
                       startingTurnNumber : int option,
                       startingRegion : int option,
-                      playerStatusId : byte) =
+                      playerStatusId : PlayerStatus) =
         proc("Players_Update")
             .forEntity("Player")
             .param("GameId", gameId)
@@ -216,7 +217,7 @@ module Commands =
     //--- Events ---
 
     let createEvent (gameId : int,
-                     eventKindId : byte,
+                     eventKindId : EventKind,
                      createdByUserId : int,
                      actingPlayerId : int option,
                      effectsJson : string) =
@@ -311,7 +312,7 @@ module Commands2 =
                               query.containsMe,
                               query.isPublic,
                               query.allowGuests,
-                              Int32ListTvp(query.statuses |> List.map (mapGameStatusToId >> int)),
+                              Int32ListTvp(query.statuses |> List.map int),
                               query.createdBefore,
                               query.createdAfter,
                               query.lastEventBefore,
@@ -334,20 +335,20 @@ module Commands2 =
 
     let addPendingPlayer (gameId : int, request : CreatePlayerRequest) =
         Commands.addPlayer (gameId,
-                            mapPlayerKindToId request.kind,
+                            request.kind,
                             request.userId,
                             request.name,
-                            mapPlayerStatusToId PlayerStatus.Pending,
+                            PlayerStatus.Pending,
                             None,
                             None,
                             None)
 
     let addFullPlayer (player : Player) =
         Commands.addPlayer (player.gameId,
-                            mapPlayerKindToId player.kind,
+                            player.kind,
                             player.userId,
                             (if player.kind = PlayerKind.User then None else Some player.name),
-                            mapPlayerStatusToId player.status,
+                            player.status,
                             player.colorId,
                             player.startingRegion,
                             player.startingTurnNumber)
@@ -358,7 +359,7 @@ module Commands2 =
                              game.parameters.allowGuests,
                              game.parameters.isPublic,
                              game.parameters.regionCount,
-                             mapGameStatusToId game.status,
+                             game.status,
                              serialize game.pieces,
                              serialize game.currentTurn,
                              serialize game.turnCycle)
@@ -369,11 +370,11 @@ module Commands2 =
                                player.colorId,
                                player.startingTurnNumber,
                                player.startingRegion,
-                               mapPlayerStatusToId player.status)
+                               player.status)
 
     let createEvent (gameId : int, request : CreateEventRequest) =
         Commands.createEvent (gameId,
-                              mapEventKindToId request.kind,
+                              request.kind,
                               request.createdByUserId,
                               request.actingPlayerId,
                               serialize request.effects)

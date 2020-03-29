@@ -9,9 +9,9 @@ open System.Linq
 open Apex.Api.Model
 open Apex.Api.Common.Control
 open Microsoft.EntityFrameworkCore
+open Apex.Api.Enums
 
 type SearchRepository(context : ApexDbContext) =
-    let privId = Privilege.ViewGames |> toPrivilegeSqlId
 
     interface ISearchRepository with
         member __.searchGames (query, currentUserId) =
@@ -35,7 +35,7 @@ type SearchRepository(context : ApexDbContext) =
                         :> IQueryable<GameSqlModel>
 
                 // Security filter
-                if not <| currentUser.UserPrivileges.Any(fun p -> p.PrivilegeId = privId)
+                if not <| currentUser.UserPrivileges.Any(fun p -> p.PrivilegeId = Privilege.ViewGames)
                 then 
                     q <- q.Where(fun g -> 
                         g.IsPublic ||
@@ -87,8 +87,7 @@ type SearchRepository(context : ApexDbContext) =
                 match query.statuses with
                 | [] -> ()
                 | xs -> 
-                    let ids = xs |> List.map toGameStatusSqlId
-                    q <- q.Where(fun g -> ids.Contains(g.GameStatusId))
+                    q <- q.Where(fun g -> xs.Contains(g.GameStatusId))
 
                 match query.lastEventBefore with
                 | None -> ()

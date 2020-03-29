@@ -2,6 +2,7 @@ namespace Apex.Api.Logic.ModelExtensions
 
 open Apex.Api.Logic.ModelExtensions.BoardModelExtensions
 open Apex.Api.Model
+open Apex.Api.Enums
 
 module GameModelExtensions =
 
@@ -10,7 +11,7 @@ module GameModelExtensions =
             { this with cellId = cellId }
 
         member this.kill =
-            { this with kind = Corpse; playerId = None }
+            { this with kind = PieceKind.Corpse; playerId = None }
 
         member this.enlistBy playerId =
             { this with playerId = Some playerId }
@@ -22,7 +23,7 @@ module GameModelExtensions =
 
         member this.subject : Selection option =
             this.selections
-            |> List.tryFind (fun s -> s.kind = Subject)
+            |> List.tryFind (fun s -> s.kind = SelectionKind.Subject)
 
         member this.subjectPieceId : int option =
             this.subject
@@ -34,21 +35,21 @@ module GameModelExtensions =
 
         member this.destinationCellId : int option =
             this.selections
-            |> List.tryFind (fun s -> s.kind = Move)
+            |> List.tryFind (fun s -> s.kind = SelectionKind.Move)
             |> Option.map (fun s -> s.cellId)
 
         member this.targetPieceId : int option =
             this.selections
-            |> List.tryFind (fun s -> s.kind = Target || (s.kind = Move && s.pieceId.IsSome))
+            |> List.tryFind (fun s -> s.kind = SelectionKind.Target || (s.kind = SelectionKind.Move && s.pieceId.IsSome))
             |> Option.map (fun s -> s.pieceId.Value)
 
         member this.dropCellId : int option =
             this.selections
-            |> List.tryFind (fun s -> s.kind = Drop)
+            |> List.tryFind (fun s -> s.kind = SelectionKind.Drop)
             |> Option.map (fun s -> s.cellId)
 
         member this.vacateCellId : int option =
-            let moves = this.selections |> List.filter (fun s -> s.kind = Move)
+            let moves = this.selections |> List.filter (fun s -> s.kind = SelectionKind.Move)
             match moves.Length with
             | 2 -> Some(moves.[1].cellId)
             | _ -> None

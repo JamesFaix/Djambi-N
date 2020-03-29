@@ -2,13 +2,7 @@
 
 open System
 open System.ComponentModel.DataAnnotations
-
-type PrivilegeDto =
-    | EditUsers = 1
-    | EditPendingGames = 2
-    | OpenParticipation = 3
-    | ViewGames = 4
-    | Snapshots = 5
+open Apex.Api.Enums
 
 type UserDto = {
     id : int
@@ -17,7 +11,7 @@ type UserDto = {
     name : string
 
     [<Required>]
-    privileges : List<PrivilegeDto>
+    privileges : List<Privilege>
 }
 
 [<CLIMutable>]
