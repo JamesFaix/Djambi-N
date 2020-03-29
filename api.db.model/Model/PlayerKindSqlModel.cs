@@ -10,6 +10,7 @@ namespace Apex.Api.Db.Model
         [Key]
         [Column("PlayerKindId")]
         [Required]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public PlayerKind Id { get; set; }
 
         [Required]

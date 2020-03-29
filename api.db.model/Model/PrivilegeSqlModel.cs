@@ -10,6 +10,7 @@ namespace Apex.Api.Db.Model
         [Key]
         [Column("PrivilegeId")]
         [Required]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public Privilege Id { get; set; }
 
         [Required]

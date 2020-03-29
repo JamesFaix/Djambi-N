@@ -10,6 +10,7 @@ namespace Apex.Api.Db.Model
         [Key]
         [Column("GameStatusId")]
         [Required]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public GameStatus Id { get; set; }
 
         [Required]

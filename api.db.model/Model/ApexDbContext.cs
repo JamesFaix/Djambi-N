@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using Apex.Api.Enums;
 using Microsoft.EntityFrameworkCore;
@@ -62,6 +61,39 @@ namespace Apex.Api.Db.Model
             {
                 var eventKinds = GetValues<GameStatus>()
                     .Select(id => new GameStatusSqlModel
+                    {
+                        Id = id,
+                        Name = id.ToString()
+                    });
+                e.HasData(eventKinds);
+            });
+
+            modelBuilder.Entity<PlayerKindSqlModel>(e =>
+            {
+                var eventKinds = GetValues<PlayerKind>()
+                    .Select(id => new PlayerKindSqlModel
+                    {
+                        Id = id,
+                        Name = id.ToString()
+                    });
+                e.HasData(eventKinds);
+            });
+
+            modelBuilder.Entity<PlayerStatusSqlModel>(e =>
+            {
+                var eventKinds = GetValues<PlayerStatus>()
+                    .Select(id => new PlayerStatusSqlModel
+                    {
+                        Id = id,
+                        Name = id.ToString()
+                    });
+                e.HasData(eventKinds);
+            });
+
+            modelBuilder.Entity<PrivilegeSqlModel>(e =>
+            {
+                var eventKinds = GetValues<Privilege>()
+                    .Select(id => new PrivilegeSqlModel
                     {
                         Id = id,
                         Name = id.ToString()

@@ -10,10 +10,11 @@ namespace Apex.Api.Db.Model
         [Key]
         [Column("EventKindId")]
         [Required]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public EventKind Id { get; set; }
 
         [Required]
-        [StringLength(20)]
+        [StringLength(50)]
         public string Name { get; set; }
     }
 }
