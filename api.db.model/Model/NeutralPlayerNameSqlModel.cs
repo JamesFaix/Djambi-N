@@ -6,9 +6,10 @@ namespace Apex.Api.Db.Model
     [Table("NeutralPlayerNames")]
     public class NeutralPlayerNameSqlModel
     {
-        [Key]
-        [Required]
-        public int NeutralPlayerNameId { get; set; }
+        //[Key]
+        //[Required]
+        //[DatabaseGenerated(DatabaseGeneratedOption.None)]
+        //public int NeutralPlayerNameId { get; set; }
 
         [Required]
         [StringLength(20)]
