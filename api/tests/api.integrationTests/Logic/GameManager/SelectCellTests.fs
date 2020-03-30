@@ -21,15 +21,15 @@ type SelectCellTests() =
             let! (user, session, game) = createuserSessionAndGame(true) |> thenValue
 
             let guestRequest = CreatePlayerRequest.guest (user.id, "test")
-            let! _ = (gameMan :> IPlayerManager).addPlayer game.id guestRequest session |> thenValue
+            let! _ = Host.get<IPlayerManager>().addPlayer game.id guestRequest session |> thenValue
 
-            let! resp = (gameMan :> IGameManager).startGame game.id session |> thenValue
+            let! resp = Host.get<IGameManager>().startGame game.id session |> thenValue
             let updatedGame = resp.game
 
             let cellId = updatedGame.currentTurn.Value.selectionOptions.Head
 
             //Act
-            let! result = (gameMan :> ITurnManager).selectCell (updatedGame.id, cellId) session
+            let! result = Host.get<ITurnManager>().selectCell (updatedGame.id, cellId) session
 
             //Assert
             result |> Result.isOk |> shouldBeTrue
@@ -50,11 +50,11 @@ type SelectCellTests() =
             let! user2 = createUser() |> thenValue
             let session2 = getSessionForUser user2.id
             let playerRequest = CreatePlayerRequest.user user2.id
-            let! player2 = (gameMan :> IPlayerManager).addPlayer game.id playerRequest session2
+            let! player2 = Host.get<IPlayerManager>().addPlayer game.id playerRequest session2
                             |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                             |> thenValue
 
-            let! resp = (gameMan :> IGameManager).startGame game.id session1 |> thenValue
+            let! resp = Host.get<IGameManager>().startGame game.id session1 |> thenValue
             let updatedGame = resp.game
 
             let cellId = updatedGame.currentTurn.Value.selectionOptions.Head
@@ -65,7 +65,7 @@ type SelectCellTests() =
                 | _ -> session2
 
             //Act
-            let! result = (gameMan :> ITurnManager).selectCell (updatedGame.id, cellId) sessionWithoutActivePlayer
+            let! result = Host.get<ITurnManager>().selectCell (updatedGame.id, cellId) sessionWithoutActivePlayer
 
             //Assert
             result |> shouldBeError 403 Security.noPrivilegeOrCurrentPlayerErrorMessage
@@ -80,11 +80,11 @@ type SelectCellTests() =
             let! user2 = createUser() |> thenValue
             let session2 = getSessionForUser user2.id
             let playerRequest = CreatePlayerRequest.user user2.id
-            let! player2 = (gameMan :> IPlayerManager).addPlayer game.id playerRequest session2
+            let! player2 = Host.get<IPlayerManager>().addPlayer game.id playerRequest session2
                             |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                             |> thenValue
 
-            let! resp = (gameMan :> IGameManager).startGame game.id session1 |> thenValue
+            let! resp = Host.get<IGameManager>().startGame game.id session1 |> thenValue
             let updatedGame = resp.game
 
             let cellId = updatedGame.currentTurn.Value.selectionOptions.Head
@@ -96,7 +96,7 @@ type SelectCellTests() =
                 |> TestUtilities.setSessionPrivileges [Privilege.OpenParticipation]
 
             //Act
-            let! result = (gameMan :> ITurnManager).selectCell (updatedGame.id, cellId) sessionWithoutActivePlayer
+            let! result = Host.get<ITurnManager>().selectCell (updatedGame.id, cellId) sessionWithoutActivePlayer
 
             //Assert
             result |> Result.isOk |> shouldBeTrue
@@ -114,15 +114,15 @@ type SelectCellTests() =
             let! (user, session, game) = createuserSessionAndGame(true) |> thenValue
 
             let guestRequest = CreatePlayerRequest.guest (user.id, "test")
-            let! _ = (gameMan :> IPlayerManager).addPlayer game.id guestRequest session |> thenValue
+            let! _ = Host.get<IPlayerManager>().addPlayer game.id guestRequest session |> thenValue
 
-            let! resp = (gameMan :> IGameManager).startGame game.id session |> thenValue
+            let! resp = Host.get<IGameManager>().startGame game.id session |> thenValue
             let updatedGame = resp.game
 
             let cellId = updatedGame.currentTurn.Value.selectionOptions.Head
 
             //Act
-            let! result = (gameMan :> ITurnManager).selectCell (Int32.MinValue, cellId) session
+            let! result = Host.get<ITurnManager>().selectCell (Int32.MinValue, cellId) session
 
             //Assert
             result |> shouldBeError 404 "Game not found."
@@ -135,13 +135,13 @@ type SelectCellTests() =
             let! (user, session, game) = createuserSessionAndGame(true) |> thenValue
 
             let guestRequest = CreatePlayerRequest.guest (user.id, "test")
-            let! _ = (gameMan :> IPlayerManager).addPlayer game.id guestRequest session |> thenValue
+            let! _ = Host.get<IPlayerManager>().addPlayer game.id guestRequest session |> thenValue
 
-            let! resp = (gameMan :> IGameManager).startGame game.id session |> thenValue
+            let! resp = Host.get<IGameManager>().startGame game.id session |> thenValue
             let updatedGame = resp.game
 
             //Act
-            let! result = (gameMan :> ITurnManager).selectCell (updatedGame.id, Int32.MinValue) session
+            let! result = Host.get<ITurnManager>().selectCell (updatedGame.id, Int32.MinValue) session
 
             //Assert
             result |> shouldBeError 404 "Cell not found."
@@ -154,9 +154,9 @@ type SelectCellTests() =
             let! (user, session, game) = createuserSessionAndGame(true) |> thenValue
 
             let guestRequest = CreatePlayerRequest.guest (user.id, "test")
-            let! _ = (gameMan :> IPlayerManager).addPlayer game.id guestRequest session |> thenValue
+            let! _ = Host.get<IPlayerManager>().addPlayer game.id guestRequest session |> thenValue
 
-            let! resp = (gameMan :> IGameManager).startGame game.id session |> thenValue
+            let! resp = Host.get<IGameManager>().startGame game.id session |> thenValue
             let updatedGame = resp.game
 
             let cellId =
@@ -165,7 +165,7 @@ type SelectCellTests() =
                                        |> (not << List.exists (fun cId -> cId = n)))
 
             //Act
-            let! result = (gameMan :> ITurnManager).selectCell (updatedGame.id, cellId) session
+            let! result = Host.get<ITurnManager>().selectCell (updatedGame.id, cellId) session
 
             //Assert
             result |> shouldBeError 400 (sprintf "Cell %i is not currently selectable." cellId)

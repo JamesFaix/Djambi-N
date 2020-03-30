@@ -8,6 +8,7 @@ open Apex.Api.IntegrationTests
 open Apex.Api.Model
 open Apex.Api.Logic
 open Apex.Api.Enums
+open Apex.Api.Logic.Services
 
 type GetUserTests() =
     inherit TestsBase()
@@ -17,13 +18,13 @@ type GetUserTests() =
         task {
             //Arrange
             let request = getCreateUserRequest()
-            let! user = userServ.createUser request None
+            let! user = Host.get<UserService>().createUser request None
                         |> AsyncHttpResult.thenValue
 
             let session = getSessionForUser 1 |> TestUtilities.setSessionPrivileges [Privilege.EditUsers]
 
             //Act
-            let! userResponse = userServ.getUser user.id session
+            let! userResponse = Host.get<UserService>().getUser user.id session
                                 |> AsyncHttpResult.thenValue
 
             //Assert
@@ -36,13 +37,13 @@ type GetUserTests() =
         task {
             //Arrange
             let request = getCreateUserRequest()
-            let! user = userServ.createUser request None
+            let! user = Host.get<UserService>().createUser request None
                         |> AsyncHttpResult.thenValue
 
             let session = getSessionForUser 1 |> TestUtilities.setSessionPrivileges []
 
             //Act
-            let! error = userServ.getUser user.id session
+            let! error = Host.get<UserService>().getUser user.id session
 
             //Assert
             error |> shouldBeError 403 Security.noPrivilegeOrSelfErrorMessage
@@ -56,7 +57,7 @@ type GetUserTests() =
             let session = getSessionForUser 1 |> TestUtilities.setSessionPrivileges [Privilege.EditUsers]
 
             //Act
-            let! error = userServ.getUser Int32.MinValue session
+            let! error = Host.get<UserService>().getUser Int32.MinValue session
 
             //Assert
             error |> shouldBeError 404 "User not found."

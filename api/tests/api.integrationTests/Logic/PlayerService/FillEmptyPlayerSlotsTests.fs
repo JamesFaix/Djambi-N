@@ -8,6 +8,7 @@ open Apex.Api.Model
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Db.Interfaces
 open Apex.Api.Enums
+open Apex.Api.Logic.Services
 
 //TODO: Audit test class
 type FillEmptyPlayerSlotsTests() =
@@ -19,13 +20,13 @@ type FillEmptyPlayerSlotsTests() =
         let session = getSessionForUser 1
         let gameRequest = getGameParameters()
         task {
-            let! game = (gameMan :> IGameManager).createGame gameRequest session |> thenValue
+            let! game = Host.get<IGameManager>().createGame gameRequest session |> thenValue
 
             //Act
             let! updatedGame = TestUtilities.fillEmptyPlayerSlots game |> thenValue
 
             //Assert
-            let! doubleCheck = (gameRepo :> IGameRepository).getGame game.id |> thenValue
+            let! doubleCheck = Host.get<IGameRepository>().getGame game.id |> thenValue
 
             updatedGame.players.Length |> shouldBe gameRequest.regionCount
             doubleCheck |> shouldBe updatedGame
@@ -43,10 +44,10 @@ type FillEmptyPlayerSlotsTests() =
         let session = getSessionForUser 1
         let gameRequest = getGameParameters()
         task {
-            let! game = (gameMan :> IGameManager).createGame gameRequest session |> thenValue
+            let! game = Host.get<IGameManager>().createGame gameRequest session |> thenValue
 
             //Act
-            let! effects = playerServ.fillEmptyPlayerSlots game |> thenValue
+            let! effects = Host.get<PlayerService>().fillEmptyPlayerSlots game |> thenValue
 
             //Assert
             effects.Length |> shouldBe 2

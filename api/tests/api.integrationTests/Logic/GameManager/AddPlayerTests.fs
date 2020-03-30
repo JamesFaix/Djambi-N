@@ -23,7 +23,7 @@ type AddPlayerTests() =
             let request = CreatePlayerRequest.user user.id
 
             //Act
-            let! resp = (gameMan :> IPlayerManager).addPlayer game.id request session |> thenValue
+            let! resp = Host.get<IPlayerManager>().addPlayer game.id request session |> thenValue
 
             //Assert
             let player = resp.game.players |> List.except game.players |> List.head
@@ -45,7 +45,7 @@ type AddPlayerTests() =
             let request = CreatePlayerRequest.guest (user.id, "test")
             let session = session |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames]
             //Act
-            let! error = (gameMan :> IPlayerManager).addPlayer Int32.MinValue request session
+            let! error = Host.get<IPlayerManager>().addPlayer Int32.MinValue request session
 
             //Assert
             error |> shouldBeError 404 "Game not found."

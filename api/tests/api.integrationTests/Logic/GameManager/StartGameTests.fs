@@ -22,10 +22,10 @@ type StartGameTests() =
 
             let playerRequest = CreatePlayerRequest.guest (user.id, "test")
 
-            let! _ = (gameMan :> IPlayerManager).addPlayer game.id playerRequest session |> thenValue
+            let! _ = Host.get<IPlayerManager>().addPlayer game.id playerRequest session |> thenValue
 
             //Act
-            let! resp = (gameMan :> IGameManager).startGame game.id session
+            let! resp = Host.get<IGameManager>().startGame game.id session
                         |> thenValue
 
             //Assert
@@ -47,12 +47,12 @@ type StartGameTests() =
             let! (user, session, game) = createuserSessionAndGame(true) |> thenValue
 
             //Act
-            let! result = (gameMan :> IGameManager).startGame game.id session
+            let! result = Host.get<IGameManager>().startGame game.id session
 
             //Assert
             result |> shouldBeError 400 "Cannot start game with only one player."
 
-            let! lobbyResult = (gameRepo :> IGameRepository).getGame game.id
+            let! lobbyResult = Host.get<IGameRepository>().getGame game.id
             lobbyResult |> Result.isOk |> shouldBeTrue
         }
 

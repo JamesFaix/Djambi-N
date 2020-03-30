@@ -30,7 +30,7 @@ type GetUpdateGameParametersEventTests() =
                 }
 
             //Act
-            let event = gameCrudServ.getUpdateGameParametersEvent (game, newParameters) session |> Result.value
+            let event = Host.get<GameCrudService>().getUpdateGameParametersEvent (game, newParameters) session |> Result.value
 
             //Assert
             event.kind |> shouldBe EventKind.GameParametersChanged
@@ -56,7 +56,7 @@ type GetUpdateGameParametersEventTests() =
                             { game.parameters with regionCount = 4 }
                 }
 
-            let! _ = gameRepo.updateGame newGame |> thenValue
+            let! _ = Host.get<IGameRepository>().updateGame newGame |> thenValue
 
             for n in [2..4] do
                 let playerRequest =
@@ -65,15 +65,15 @@ type GetUpdateGameParametersEventTests() =
                         kind = PlayerKind.Guest;
                         name = Some (sprintf "p%i" n)
                     }
-                let! _ = (gameRepo :> IGameRepository).addPlayer (game.id, playerRequest)
+                let! _ = Host.get<IGameRepository>().addPlayer (game.id, playerRequest)
                 ()
 
-            let! game = (gameRepo :> IGameRepository).getGame game.id |> thenValue
+            let! game = Host.get<IGameRepository>().getGame game.id |> thenValue
 
             let newParameters = { game.parameters with regionCount = 3}
 
             //Act
-            let event = gameCrudServ.getUpdateGameParametersEvent (game, newParameters) session |> Result.value
+            let event = Host.get<GameCrudService>().getUpdateGameParametersEvent (game, newParameters) session |> Result.value
 
             //Assert
             event.kind |> shouldBe EventKind.GameParametersChanged
@@ -101,15 +101,15 @@ type GetUpdateGameParametersEventTests() =
                         kind = PlayerKind.Guest;
                         name = Some (sprintf "p%i" n)
                     }
-                let! _ = (gameRepo :> IGameRepository).addPlayer (game.id, playerRequest)
+                let! _ = Host.get<IGameRepository>().addPlayer (game.id, playerRequest)
                 ()
 
-            let! game = (gameRepo :> IGameRepository).getGame game.id |> thenValue
+            let! game = Host.get<IGameRepository>().getGame game.id |> thenValue
 
             let newParameters = { game.parameters with allowGuests = false }
 
             //Act
-            let event = gameCrudServ.getUpdateGameParametersEvent (game, newParameters) session |> Result.value
+            let event = Host.get<GameCrudService>().getUpdateGameParametersEvent (game, newParameters) session |> Result.value
 
             //Assert
             event.kind |> shouldBe EventKind.GameParametersChanged
@@ -131,12 +131,12 @@ type GetUpdateGameParametersEventTests() =
             //Arrange
             let! (_, session, game) = TestUtilities.createuserSessionAndGame(true) |> thenValue
             let newGame = { game with status = GameStatus.InProgress }
-            let! _ = gameRepo.updateGame newGame |> thenValue
-            let! game = (gameRepo :> IGameRepository).getGame game.id |> thenValue
+            let! _ = Host.get<IGameRepository>().updateGame newGame |> thenValue
+            let! game = Host.get<IGameRepository>().getGame game.id |> thenValue
             let newParameters = game.parameters
 
             //Act
-            let result = gameCrudServ.getUpdateGameParametersEvent (game, newParameters) session
+            let result = Host.get<GameCrudService>().getUpdateGameParametersEvent (game, newParameters) session
 
             //Assert
             result |> shouldBeError 400 "Cannot change game parameters unless game is Pending."
@@ -153,7 +153,7 @@ type GetUpdateGameParametersEventTests() =
             let otherSession = session |> TestUtilities.setSessionUserId (session.user.id + 1)
 
             //Act
-            let result = gameCrudServ.getUpdateGameParametersEvent (game, newParameters) otherSession
+            let result = Host.get<GameCrudService>().getUpdateGameParametersEvent (game, newParameters) otherSession
 
             //Assert
             result |> shouldBeError 403 Security.noPrivilegeOrCreatorErrorMessage

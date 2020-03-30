@@ -1,4 +1,4 @@
-namespace Apex.Api.IntegrationTests.Logic.playerServ
+namespace Apex.Api.IntegrationTests.Logic.PlayerService
 
 open FSharp.Control.Tasks
 open Xunit
@@ -9,6 +9,7 @@ open Apex.Api.Model
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Db.Interfaces
 open Apex.Api.Enums
+open Apex.Api.Logic.Services
 
 type GetAddPlayerEventTests() =
     inherit TestsBase()
@@ -31,7 +32,7 @@ type GetAddPlayerEventTests() =
             let request = CreatePlayerRequest.user user.id
 
             //Act
-            let eventRequest = playerServ.getAddPlayerEvent (game, request) session |> Result.value
+            let eventRequest = Host.get<PlayerService>().getAddPlayerEvent (game, request) session |> Result.value
 
             //Assert
             assertSuccess eventRequest request
@@ -47,7 +48,7 @@ type GetAddPlayerEventTests() =
             let request = CreatePlayerRequest.user user.id
 
             //Act
-            let eventRequest = playerServ.getAddPlayerEvent (game, request) session |> Result.value
+            let eventRequest = Host.get<PlayerService>().getAddPlayerEvent (game, request) session |> Result.value
 
             //Assert
             assertSuccess eventRequest request
@@ -64,7 +65,7 @@ type GetAddPlayerEventTests() =
             let request = CreatePlayerRequest.user user.id
 
             //Act
-            let error = playerServ.getAddPlayerEvent (game, request) session
+            let error = Host.get<PlayerService>().getAddPlayerEvent (game, request) session
 
             //Assert
             error |> shouldBeError 403 "Cannot add other users to a game."
@@ -87,7 +88,7 @@ type GetAddPlayerEventTests() =
                 }
 
             //Act
-            let error = playerServ.getAddPlayerEvent (game, request) session
+            let error = Host.get<PlayerService>().getAddPlayerEvent (game, request) session
 
             //Assert
             error |> shouldBeError 400 "UserID must be provided when adding a user player."
@@ -110,7 +111,7 @@ type GetAddPlayerEventTests() =
                 }
 
             //Act
-            let error = playerServ.getAddPlayerEvent (game, request) session
+            let error = Host.get<PlayerService>().getAddPlayerEvent (game, request) session
 
             //Assert
             error |> shouldBeError 400 "Cannot provide name when adding a user player."
@@ -125,7 +126,7 @@ type GetAddPlayerEventTests() =
             let request = CreatePlayerRequest.user user.id
 
             //Act
-            let error = playerServ.getAddPlayerEvent (game, request) session
+            let error = Host.get<PlayerService>().getAddPlayerEvent (game, request) session
 
             //Assert
             error |> shouldBeError 409 "User is already a player."
@@ -141,7 +142,7 @@ type GetAddPlayerEventTests() =
             let request = CreatePlayerRequest.guest (user.id, "test")
 
             //Act
-            let eventRequest = playerServ.getAddPlayerEvent (game, request) session |> Result.value
+            let eventRequest = Host.get<PlayerService>().getAddPlayerEvent (game, request) session |> Result.value
 
             //Assert
             assertSuccess eventRequest request
@@ -158,7 +159,7 @@ type GetAddPlayerEventTests() =
             let request = CreatePlayerRequest.guest (user.id, "test")
 
             //Act
-            let eventRequest = playerServ.getAddPlayerEvent (game, request) session |> Result.value
+            let eventRequest = Host.get<PlayerService>().getAddPlayerEvent (game, request) session |> Result.value
 
             //Assert
             assertSuccess eventRequest request
@@ -175,7 +176,7 @@ type GetAddPlayerEventTests() =
             let request = CreatePlayerRequest.guest (user.id, "test")
 
             //Act
-            let error = playerServ.getAddPlayerEvent (game, request) session
+            let error = Host.get<PlayerService>().getAddPlayerEvent (game, request) session
 
             //Assert
             error |> shouldBeError 403 "Cannot add guests for other users to a game."
@@ -195,7 +196,7 @@ type GetAddPlayerEventTests() =
                 }
 
             //Act
-            let error = playerServ.getAddPlayerEvent (game, request) session
+            let error = Host.get<PlayerService>().getAddPlayerEvent (game, request) session
 
             //Assert
             error |> shouldBeError 400 "UserID must be provided when adding a guest player."
@@ -215,7 +216,7 @@ type GetAddPlayerEventTests() =
                 }
 
             //Act
-            let error = playerServ.getAddPlayerEvent (game, request) session
+            let error = Host.get<PlayerService>().getAddPlayerEvent (game, request) session
 
             //Assert
             error |> shouldBeError 400 "Must provide name when adding a guest player."
@@ -229,7 +230,7 @@ type GetAddPlayerEventTests() =
             let request = CreatePlayerRequest.guest (user.id, user.name)
 
             //Act
-            let error = playerServ.getAddPlayerEvent (game, request) session
+            let error = Host.get<PlayerService>().getAddPlayerEvent (game, request) session
 
             //Assert
             error |> shouldBeError 409 "A player with that name already exists."
@@ -243,7 +244,7 @@ type GetAddPlayerEventTests() =
             let request = CreatePlayerRequest.guest (user.id, "test")
 
             //Act
-            let error = playerServ.getAddPlayerEvent (game, request) session
+            let error = Host.get<PlayerService>().getAddPlayerEvent (game, request) session
 
             //Assert
             error |> shouldBeError 400 "Game does not allow guest players."
@@ -260,7 +261,7 @@ type GetAddPlayerEventTests() =
             let request = CreatePlayerRequest.neutral ("test")
 
             //Act
-            let error = playerServ.getAddPlayerEvent (game, request) session
+            let error = Host.get<PlayerService>().getAddPlayerEvent (game, request) session
 
             //Assert
             error |> shouldBeError 400 "Cannot directly add neutral players to a game."
@@ -278,13 +279,13 @@ type GetAddPlayerEventTests() =
             let request2 = { request1 with name = Some "test2" }
             let request3 = { request1 with name = Some "test3" }
 
-            let! _ = (gameMan :> IPlayerManager).addPlayer game.id request1 session |> thenValue
-            let! _ = (gameMan :> IPlayerManager).addPlayer game.id request2 session |> thenValue
+            let! _ = Host.get<IPlayerManager>().addPlayer game.id request1 session |> thenValue
+            let! _ = Host.get<IPlayerManager>().addPlayer game.id request2 session |> thenValue
 
-            let! game = (gameRepo :> IGameRepository).getGame game.id |> thenValue
+            let! game = Host.get<IGameRepository>().getGame game.id |> thenValue
 
             //Act
-            let error = playerServ.getAddPlayerEvent (game, request3) session
+            let error = Host.get<PlayerService>().getAddPlayerEvent (game, request3) session
 
             //Assert
             error |> shouldBeError 400 "Max player count reached."
@@ -299,7 +300,7 @@ type GetAddPlayerEventTests() =
             let game = { game with status = GameStatus.InProgress }
 
             //Act
-            let error = playerServ.getAddPlayerEvent (game, request) session
+            let error = Host.get<PlayerService>().getAddPlayerEvent (game, request) session
 
             //Assert
             error |> shouldBeError 400 "Can only add players to pending games."

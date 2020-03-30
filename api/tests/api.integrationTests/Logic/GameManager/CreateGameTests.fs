@@ -19,7 +19,7 @@ type CreateGameTests() =
             let session = getSessionForUser 1
 
             //Act
-            let! game = (gameMan :> IGameManager).createGame parameters session
+            let! game = Host.get<IGameManager>().createGame parameters session
                         |> AsyncHttpResult.thenValue
 
             //Assert
@@ -39,7 +39,7 @@ type CreateGameTests() =
             let session = getSessionForUser 1
 
             //Act
-            let! game = (gameMan :> IGameManager).createGame parameters session
+            let! game = Host.get<IGameManager>().createGame parameters session
                         |> AsyncHttpResult.thenValue
 
             //Assert

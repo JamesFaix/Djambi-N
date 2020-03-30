@@ -15,14 +15,14 @@ type SearchRepositoryTests() =
         //Arrange
         task {
             let userRequest = getCreateUserRequest()
-            let! user = (userRepo :> IUserRepository).createUser userRequest |> thenValue
+            let! user = Host.get<IUserRepository>().createUser userRequest |> thenValue
 
             let gameRequest = getCreateGameRequest(user.id)
-            let! gameId = (gameRepo :> IGameRepository).createGame gameRequest |> thenValue
+            let! gameId = Host.get<IGameRepository>().createGame gameRequest |> thenValue
             let query = GamesQuery.empty
 
             //Act
-            let! games = (searchRepo :> ISearchRepository).searchGames (query, user.id) |> thenValue
+            let! games = Host.get<ISearchRepository>().searchGames (query, user.id) |> thenValue
 
             //Assert
             let exists = games |> List.exists (fun l -> l.id = gameId)

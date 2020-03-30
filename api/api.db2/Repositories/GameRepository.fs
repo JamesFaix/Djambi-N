@@ -35,6 +35,10 @@ type GameRepository(context : ApexDbContext) =
         member __.removePlayer (gameId, playerId) =
             raise <| NotImplementedException()
 
+        [<Obsolete("Only used for tests")>]
+        member __.updateGame game =
+            raise <| NotImplementedException()
+
         member __.getNeutralPlayerNames () =
             task {
                 let! names = 

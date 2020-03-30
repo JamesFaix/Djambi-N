@@ -22,12 +22,12 @@ type RemovePlayerTests() =
             let session = getSessionForUser user.id
             let request = CreatePlayerRequest.user user.id
 
-            let! player = (gameMan :> IPlayerManager).addPlayer game.id request session
+            let! player = Host.get<IPlayerManager>().addPlayer game.id request session
                           |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                           |> thenValue
 
             //Act
-            let! resp = (gameMan :> IPlayerManager).removePlayer (game.id, player.id) session
+            let! resp = Host.get<IPlayerManager>().removePlayer (game.id, player.id) session
                         |> thenValue
 
             //Assert
@@ -44,16 +44,16 @@ type RemovePlayerTests() =
             let request = CreatePlayerRequest.user user.id
             let session = session |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames]
 
-            let! player = (gameMan :> IPlayerManager).addPlayer game.id request session
+            let! player = Host.get<IPlayerManager>().addPlayer game.id request session
                           |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                           |> thenValue
 
             //Act
-            let! error = (gameMan :> IPlayerManager).removePlayer (Int32.MinValue, player.id) session
+            let! error = Host.get<IPlayerManager>().removePlayer (Int32.MinValue, player.id) session
 
             //Assert
             error |> shouldBeError 404 "Game not found."
 
-            let! game = (gameMan :> IGameManager).getGame game.id session |> thenValue
+            let! game = Host.get<IGameManager>().getGame game.id session |> thenValue
             game.players |> shouldExist (fun p -> p.id = player.id)
         }

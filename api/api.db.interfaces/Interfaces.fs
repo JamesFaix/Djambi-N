@@ -16,6 +16,8 @@ type IGameRepository =
     abstract member addPlayer : gameId:int * request:CreatePlayerRequest -> Player AsyncHttpResult
     [<Obsolete("Only used for tests")>]
     abstract member removePlayer : gameID:int * playerId:int -> unit AsyncHttpResult
+    [<Obsolete("Only used for tests")>]
+    abstract member updateGame : game:Game -> unit AsyncHttpResult
     abstract member getNeutralPlayerNames : unit -> string list AsyncHttpResult
     abstract member createGameAndAddPlayer : gameRequest:CreateGameRequest * playerRequest:CreatePlayerRequest -> int AsyncHttpResult
 

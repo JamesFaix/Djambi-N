@@ -8,16 +8,12 @@ open Microsoft.Extensions.Configuration
 open Serilog
 open Apex.Api.Common.Control
 open Apex.Api.Common.Control.AsyncHttpResult
-open Apex.Api.Db
 open Apex.Api.Db.Interfaces
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Model
-open Apex.Api.Logic.Managers
-open Apex.Api.Logic.Services
-open Apex.Api.Db.Repositories
 open Apex.Api.Model.Configuration
-open Microsoft.Extensions.Options
 open Apex.Api.Enums
+open Apex.Api.Logic.Services
 
 let private config =
     ConfigurationBuilder()
@@ -30,47 +26,6 @@ let settings =
     x
 
 let log = LoggerConfiguration().CreateLogger()
-
-// DB layer
-let ctxProvider = CommandContextProvider(Options.Create(settings.sql))
-let gameRepo = GameRepository(ctxProvider)
-let userRepo = UserRepository(ctxProvider)
-let eventRepo = EventRepository(ctxProvider, gameRepo)
-let searchRepo = SearchRepository(ctxProvider)
-let sessionRepo = SessionRepository(ctxProvider, userRepo)
-let snapshotRepo = SnapshotRepository(ctxProvider)
-
-// App layer
-let boardServ = BoardService()
-let gameCrudServ = GameCrudService(gameRepo)
-let notificationServ = NotificationService(log)
-let playerServ = PlayerService(gameRepo)
-let selectionOptionsServ = SelectionOptionsService()
-let sessionServ = SessionService(sessionRepo, userRepo)
-let userServ = UserService(userRepo)
-let gameStartServ = GameStartService(playerServ, selectionOptionsServ)
-let eventServ = EventService(gameStartServ)
-let indirectEffectsServ = IndirectEffectsService(eventServ, selectionOptionsServ)
-let playerStatusChangeServ = PlayerStatusChangeService(eventServ, indirectEffectsServ)
-let selectionServ = SelectionService(selectionOptionsServ)
-let turnServ = TurnService(eventServ, indirectEffectsServ, selectionOptionsServ)
-  
-let boardMan = BoardManager(boardServ)
-let gameMan = GameManager(eventRepo,
-                        eventServ,
-                        gameCrudServ,
-                        gameRepo,
-                        gameStartServ,
-                        notificationServ,
-                        playerServ,
-                        playerStatusChangeServ,
-                        selectionServ,
-                        turnServ)
-let searchMan = SearchManager(searchRepo)
-let sessionMan = SessionManager(sessionServ)
-let snapshotMan = SnapshotManager(eventRepo, gameRepo, snapshotRepo)
-let userMan = UserManager(userServ)
-
 
 let random = Random()
 let randomAlphanumericString (length : int) : string =
@@ -133,7 +88,7 @@ let getSessionForUser (userId : int) : Session =
 
 let createUser() : UserDetails AsyncHttpResult =
     let userRequest = getCreateUserRequest()
-    userServ.createUser userRequest None
+    Host.get<UserService>().createUser userRequest None
 
 let createuserSessionAndGame(allowGuests : bool) : (UserDetails * Session * Game) AsyncHttpResult =
     task {
@@ -142,22 +97,23 @@ let createuserSessionAndGame(allowGuests : bool) : (UserDetails * Session * Game
         let session = getSessionForUser user.id
 
         let parameters = { getGameParameters() with allowGuests = allowGuests }
-        let! game = (gameMan :> IGameManager).createGame parameters session
+        let! game = Host.get<IGameManager>().createGame parameters session
                      |> thenValue
 
         return Ok <| (user, session, game)
     }
 
 let fillEmptyPlayerSlots (game : Game) : Game AsyncHttpResult =
+    let gameRepo = Host.get<IGameRepository>()
     task {
         let missingPlayerCount = game.parameters.regionCount - game.players.Length
         for i in Enumerable.Range(0, missingPlayerCount) do
             let name = sprintf "neutral%i" (i+1)
             let request = CreatePlayerRequest.neutral name
-            let! _ = (gameRepo :> IGameRepository).addPlayer (game.id, request) |> thenValue
+            let! _ = Host.get<IGameRepository>().addPlayer (game.id, request) |> thenValue
             ()
 
-        return! (gameRepo :> IGameRepository).getGame game.id
+        return! Host.get<IGameRepository>().getGame game.id
     }
 
 let emptyEventRequest : CreateEventRequest =
