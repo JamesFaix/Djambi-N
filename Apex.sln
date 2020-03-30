@@ -3,15 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29324.140
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "db-reset", "utils\db-reset\db-reset.fsproj", "{0B3DE3BC-4AFF-4F24-B86A-AC902F0F70F1}"
-EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.host", "api\api.host\api.host.fsproj", "{3664C02D-2B0E-4C1B-AE20-CCDEC13105F8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{2FAF11B4-A2BA-48CF-8E4D-766CB7B26A3A}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utils", "Utils", "{12EE890F-7CFC-4DA3-A880-F94AF30F5F34}"
-EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.db", "api\api.db\api.db.fsproj", "{4426AAB4-A812-44AE-B0EB-D33E74AFFFA6}"
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.common", "api\api.common\api.common.fsproj", "{4A3444EA-56B6-469F-B9F2-4B3090BE5DE8}"
 EndProject
@@ -38,9 +32,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Solution Items", "_Solutio
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "api.db.model", "api.db.model\api.db.model.csproj", "{CDFF3AE4-E25B-4383-8BAD-1379F958C1D3}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "api.db2", "api\api.db2\api.db2.fsproj", "{7A3F2F38-D19E-48C3-962E-F647055450AB}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.db2", "api\api.db2\api.db2.fsproj", "{7A3F2F38-D19E-48C3-962E-F647055450AB}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "api.enums", "api\api.enums\api.enums.fsproj", "{A6EA7141-3A6F-46A5-8E2C-0EC2BE460EFE}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.enums", "api\api.enums\api.enums.fsproj", "{A6EA7141-3A6F-46A5-8E2C-0EC2BE460EFE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -48,18 +42,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{0B3DE3BC-4AFF-4F24-B86A-AC902F0F70F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0B3DE3BC-4AFF-4F24-B86A-AC902F0F70F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0B3DE3BC-4AFF-4F24-B86A-AC902F0F70F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0B3DE3BC-4AFF-4F24-B86A-AC902F0F70F1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3664C02D-2B0E-4C1B-AE20-CCDEC13105F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3664C02D-2B0E-4C1B-AE20-CCDEC13105F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3664C02D-2B0E-4C1B-AE20-CCDEC13105F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3664C02D-2B0E-4C1B-AE20-CCDEC13105F8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4426AAB4-A812-44AE-B0EB-D33E74AFFFA6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4426AAB4-A812-44AE-B0EB-D33E74AFFFA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4426AAB4-A812-44AE-B0EB-D33E74AFFFA6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4426AAB4-A812-44AE-B0EB-D33E74AFFFA6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4A3444EA-56B6-469F-B9F2-4B3090BE5DE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4A3444EA-56B6-469F-B9F2-4B3090BE5DE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4A3444EA-56B6-469F-B9F2-4B3090BE5DE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -109,9 +95,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{0B3DE3BC-4AFF-4F24-B86A-AC902F0F70F1} = {12EE890F-7CFC-4DA3-A880-F94AF30F5F34}
 		{3664C02D-2B0E-4C1B-AE20-CCDEC13105F8} = {2FAF11B4-A2BA-48CF-8E4D-766CB7B26A3A}
-		{4426AAB4-A812-44AE-B0EB-D33E74AFFFA6} = {2FAF11B4-A2BA-48CF-8E4D-766CB7B26A3A}
 		{4A3444EA-56B6-469F-B9F2-4B3090BE5DE8} = {2FAF11B4-A2BA-48CF-8E4D-766CB7B26A3A}
 		{E265C601-7350-49E2-AE16-24C00E9DD8C1} = {2FAF11B4-A2BA-48CF-8E4D-766CB7B26A3A}
 		{FDE6242E-F281-4AC7-B492-067F48D62901} = {2FAF11B4-A2BA-48CF-8E4D-766CB7B26A3A}

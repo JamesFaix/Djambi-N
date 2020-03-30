@@ -1,7 +1,0 @@
-INSERT INTO [dbo].[PlayerStatuses] ([PlayerStatusId], [Name]) VALUES (1, N'Pending')
-INSERT INTO [dbo].[PlayerStatuses] ([PlayerStatusId], [Name]) VALUES (2, N'Alive')
-INSERT INTO [dbo].[PlayerStatuses] ([PlayerStatusId], [Name]) VALUES (3, N'Eliminated')
-INSERT INTO [dbo].[PlayerStatuses] ([PlayerStatusId], [Name]) VALUES (4, N'Conceded')
-INSERT INTO [dbo].[PlayerStatuses] ([PlayerStatusId], [Name]) VALUES (5, N'WillConcede')
-INSERT INTO [dbo].[PlayerStatuses] ([PlayerStatusId], [Name]) VALUES (6, N'AcceptsDraw')
-INSERT INTO [dbo].[PlayerStatuses] ([PlayerStatusId], [Name]) VALUES (7, N'Victorious')
