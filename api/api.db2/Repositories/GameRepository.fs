@@ -8,6 +8,8 @@ open Apex.Api.Common.Control
 open Microsoft.EntityFrameworkCore
 open System.Linq
 open Apex.Api.Db.Mappings
+open System.Threading.Tasks
+open Apex.Api.Common.Json
 
 type GameRepository(context : ApexDbContext) =
     interface IGameRepository with
@@ -28,19 +30,59 @@ type GameRepository(context : ApexDbContext) =
             
         [<Obsolete("Only used for tests")>]
         member __.createGame request =
-            raise <| NotImplementedException()
+            task {
+                let g = request |> toGameSqlModel
+                let! _ = context.Games.AddAsync(g)
+                let! _ = context.SaveChangesAsync()
+                return Ok(g.GameId)
+            }
         
         [<Obsolete("Only used for tests")>]
         member __.addPlayer (gameId, request) =
-            raise <| NotImplementedException()
+            task {
+                let p = PlayerSqlModel()
+                p.GameId <- gameId
+                p.PlayerKindId <- request.kind
+                p.UserId <- request.userId |> Option.toNullable
+
+                let! u = 
+                    match request.userId with
+                    | Some userId -> context.Users.SingleOrDefaultAsync(fun u -> u.UserId = userId)
+                    | None -> Task.FromResult(Unchecked.defaultof<UserSqlModel>)
+
+                if request.name.IsSome 
+                then p.Name <- request.name.Value
+                else p.Name <- u.Name
+
+                let! _ = context.Players.AddAsync(p)
+                let! _ = context.SaveChangesAsync()
+                return Ok(p |> toPlayer)
+            }
             
         [<Obsolete("Only used for tests")>]
         member __.removePlayer (gameId, playerId) =
-            raise <| NotImplementedException()
+            task {
+                let! p = context.Players.SingleOrDefaultAsync(fun p -> p.GameId = gameId && p.PlayerId = playerId)
+                context.Players.Remove(p) |> ignore
+                let! _ = context.SaveChangesAsync()
+                return Ok()
+            }
 
         [<Obsolete("Only used for tests")>]
         member __.updateGame game =
-            raise <| NotImplementedException()
+            task {
+                let! g = context.Games.FindAsync(game.id)
+                g.IsPublic <- game.parameters.isPublic
+                g.AllowGuests <- game.parameters.allowGuests
+                g.Description <- game.parameters.description |> Option.toObj
+                g.RegionCount <- byte game.parameters.regionCount
+                g.CurrentTurnJson <- game.currentTurn |> JsonUtility.serialize
+                g.TurnCycleJson <- game.turnCycle |> JsonUtility.serialize
+                g.PiecesJson <- game.pieces |> JsonUtility.serialize
+                context.Games.Update(g) |> ignore
+                let! _ = context.SaveChangesAsync()
+                return Ok()            
+            }
 
         member __.getNeutralPlayerNames () =
             task {
