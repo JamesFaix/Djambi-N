@@ -13,7 +13,10 @@ type GameRepository(context : ApexDbContext) =
     interface IGameRepository with
         member __.getGame gameId =
             task {
-                let! g = context.Games.FindAsync(gameId)
+                let! g = 
+                    context.Games
+                        .Include(fun g -> g.CreatedByUser)
+                        .SingleOrDefaultAsync(fun g -> g.GameId = gameId)
                 if g = null
                 then raise <| HttpException(404, "Not found.")
 

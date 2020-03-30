@@ -14,6 +14,7 @@ type RemovePlayerTests() =
 
     [<Fact>]
     let ``Remove player should work if removing self``() =
+        let host = HostFactory.createHost()
         task {
             //Arrange
             let! (_, _, game) = createuserSessionAndGame(false) |> thenValue
@@ -22,12 +23,12 @@ type RemovePlayerTests() =
             let session = getSessionForUser user.id
             let request = CreatePlayerRequest.user user.id
 
-            let! player = Host.get<IPlayerManager>().addPlayer game.id request session
+            let! player = host.Get<IPlayerManager>().addPlayer game.id request session
                           |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                           |> thenValue
 
             //Act
-            let! resp = Host.get<IPlayerManager>().removePlayer (game.id, player.id) session
+            let! resp = host.Get<IPlayerManager>().removePlayer (game.id, player.id) session
                         |> thenValue
 
             //Assert
@@ -36,6 +37,7 @@ type RemovePlayerTests() =
 
     [<Fact>]
     let ``Remove player should fail if invalid gameId``() =
+        let host = HostFactory.createHost()
         task {
             //Arrange
             let! (_, session, game) = createuserSessionAndGame(false) |> thenValue
@@ -44,16 +46,16 @@ type RemovePlayerTests() =
             let request = CreatePlayerRequest.user user.id
             let session = session |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames]
 
-            let! player = Host.get<IPlayerManager>().addPlayer game.id request session
+            let! player = host.Get<IPlayerManager>().addPlayer game.id request session
                           |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                           |> thenValue
 
             //Act
-            let! error = Host.get<IPlayerManager>().removePlayer (Int32.MinValue, player.id) session
+            let! error = host.Get<IPlayerManager>().removePlayer (Int32.MinValue, player.id) session
 
             //Assert
             error |> shouldBeError 404 "Game not found."
 
-            let! game = Host.get<IGameManager>().getGame game.id session |> thenValue
+            let! game = host.Get<IGameManager>().getGame game.id session |> thenValue
             game.players |> shouldExist (fun p -> p.id = player.id)
         }

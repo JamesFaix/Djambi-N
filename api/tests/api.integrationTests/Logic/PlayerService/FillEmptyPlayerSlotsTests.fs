@@ -16,17 +16,18 @@ type FillEmptyPlayerSlotsTests() =
 
     [<Fact>]
     let ``Fill empty player slots should work``() =
+        let host = HostFactory.createHost()
         //Arrange
         let session = getSessionForUser 1
         let gameRequest = getGameParameters()
         task {
-            let! game = Host.get<IGameManager>().createGame gameRequest session |> thenValue
+            let! game = host.Get<IGameManager>().createGame gameRequest session |> thenValue
 
             //Act
             let! updatedGame = TestUtilities.fillEmptyPlayerSlots game |> thenValue
 
             //Assert
-            let! doubleCheck = Host.get<IGameRepository>().getGame game.id |> thenValue
+            let! doubleCheck = host.Get<IGameRepository>().getGame game.id |> thenValue
 
             updatedGame.players.Length |> shouldBe gameRequest.regionCount
             doubleCheck |> shouldBe updatedGame
@@ -40,14 +41,15 @@ type FillEmptyPlayerSlotsTests() =
 
     [<Fact>]
     let ``Fill empty player slots should return effect for each neutral player``() =
+        let host = HostFactory.createHost()
         //Arrange
         let session = getSessionForUser 1
         let gameRequest = getGameParameters()
         task {
-            let! game = Host.get<IGameManager>().createGame gameRequest session |> thenValue
+            let! game = host.Get<IGameManager>().createGame gameRequest session |> thenValue
 
             //Act
-            let! effects = Host.get<PlayerService>().fillEmptyPlayerSlots game |> thenValue
+            let! effects = host.Get<PlayerService>().fillEmptyPlayerSlots game |> thenValue
 
             //Assert
             effects.Length |> shouldBe 2

@@ -4,28 +4,13 @@ module Apex.Api.IntegrationTests.TestUtilities
 open System
 open System.Linq
 open FSharp.Control.Tasks
-open Microsoft.Extensions.Configuration
-open Serilog
 open Apex.Api.Common.Control
 open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.Db.Interfaces
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Model
-open Apex.Api.Model.Configuration
 open Apex.Api.Enums
 open Apex.Api.Logic.Services
-
-let private config =
-    ConfigurationBuilder()
-        .AddEnvironmentVariables("APEX_")
-        .Build()
-
-let settings = 
-    let x = AppSettings.empty
-    ConfigurationBinder.Bind(config, x)
-    x
-
-let log = LoggerConfiguration().CreateLogger()
 
 let random = Random()
 let randomAlphanumericString (length : int) : string =
@@ -87,33 +72,36 @@ let getSessionForUser (userId : int) : Session =
     }
 
 let createUser() : UserDetails AsyncHttpResult =
+    let host = HostFactory.createHost()
     let userRequest = getCreateUserRequest()
-    Host.get<UserService>().createUser userRequest None
+    host.Get<UserService>().createUser userRequest None
 
 let createuserSessionAndGame(allowGuests : bool) : (UserDetails * Session * Game) AsyncHttpResult =
+    let host = HostFactory.createHost()
     task {
         let! user = createUser() |> thenValue
 
         let session = getSessionForUser user.id
 
         let parameters = { getGameParameters() with allowGuests = allowGuests }
-        let! game = Host.get<IGameManager>().createGame parameters session
+        let! game = host.Get<IGameManager>().createGame parameters session
                      |> thenValue
 
         return Ok <| (user, session, game)
     }
 
 let fillEmptyPlayerSlots (game : Game) : Game AsyncHttpResult =
-    let gameRepo = Host.get<IGameRepository>()
+    let host = HostFactory.createHost()
+    let gameRepo = host.Get<IGameRepository>()
     task {
         let missingPlayerCount = game.parameters.regionCount - game.players.Length
         for i in Enumerable.Range(0, missingPlayerCount) do
             let name = sprintf "neutral%i" (i+1)
             let request = CreatePlayerRequest.neutral name
-            let! _ = Host.get<IGameRepository>().addPlayer (game.id, request) |> thenValue
+            let! _ = host.Get<IGameRepository>().addPlayer (game.id, request) |> thenValue
             ()
 
-        return! Host.get<IGameRepository>().getGame game.id
+        return! host.Get<IGameRepository>().getGame game.id
     }
 
 let emptyEventRequest : CreateEventRequest =

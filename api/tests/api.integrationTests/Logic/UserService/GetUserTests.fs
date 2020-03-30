@@ -15,16 +15,17 @@ type GetUserTests() =
 
     [<Fact>]
     let ``Get user should work if EditUsers`` () =
+        let host = HostFactory.createHost()
         task {
             //Arrange
             let request = getCreateUserRequest()
-            let! user = Host.get<UserService>().createUser request None
+            let! user = host.Get<UserService>().createUser request None
                         |> AsyncHttpResult.thenValue
 
             let session = getSessionForUser 1 |> TestUtilities.setSessionPrivileges [Privilege.EditUsers]
 
             //Act
-            let! userResponse = Host.get<UserService>().getUser user.id session
+            let! userResponse = host.Get<UserService>().getUser user.id session
                                 |> AsyncHttpResult.thenValue
 
             //Assert
@@ -34,16 +35,17 @@ type GetUserTests() =
 
     [<Fact>]
     let ``Get user should fail if not EditUsers`` () =
+        let host = HostFactory.createHost()
         task {
             //Arrange
             let request = getCreateUserRequest()
-            let! user = Host.get<UserService>().createUser request None
+            let! user = host.Get<UserService>().createUser request None
                         |> AsyncHttpResult.thenValue
 
             let session = getSessionForUser 1 |> TestUtilities.setSessionPrivileges []
 
             //Act
-            let! error = Host.get<UserService>().getUser user.id session
+            let! error = host.Get<UserService>().getUser user.id session
 
             //Assert
             error |> shouldBeError 403 Security.noPrivilegeOrSelfErrorMessage
@@ -51,13 +53,14 @@ type GetUserTests() =
 
     [<Fact>]
     let ``Get user should fail is user doesn't exist`` () =
+        let host = HostFactory.createHost()
         task {
             //Arrange
             let request = getCreateUserRequest()
             let session = getSessionForUser 1 |> TestUtilities.setSessionPrivileges [Privilege.EditUsers]
 
             //Act
-            let! error = Host.get<UserService>().getUser Int32.MinValue session
+            let! error = host.Get<UserService>().getUser Int32.MinValue session
 
             //Assert
             error |> shouldBeError 404 "User not found."

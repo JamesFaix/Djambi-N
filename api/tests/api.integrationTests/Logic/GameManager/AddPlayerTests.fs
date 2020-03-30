@@ -14,6 +14,7 @@ type AddPlayerTests() =
 
     [<Fact>]
     let ``Should work``() =
+        let host = HostFactory.createHost()
         task {
             //Arrange
             let! (_, _, game) = createuserSessionAndGame(false) |> thenValue
@@ -23,7 +24,7 @@ type AddPlayerTests() =
             let request = CreatePlayerRequest.user user.id
 
             //Act
-            let! resp = Host.get<IPlayerManager>().addPlayer game.id request session |> thenValue
+            let! resp = host.Get<IPlayerManager>().addPlayer game.id request session |> thenValue
 
             //Assert
             let player = resp.game.players |> List.except game.players |> List.head
@@ -39,13 +40,14 @@ type AddPlayerTests() =
 
     [<Fact>]
     let ``Should fail if invalid lobby id``() =
+        let host = HostFactory.createHost()
         task {
             //Arrange
             let! (user, session, _) = createuserSessionAndGame(true) |> thenValue
             let request = CreatePlayerRequest.guest (user.id, "test")
             let session = session |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames]
             //Act
-            let! error = Host.get<IPlayerManager>().addPlayer Int32.MinValue request session
+            let! error = host.Get<IPlayerManager>().addPlayer Int32.MinValue request session
 
             //Assert
             error |> shouldBeError 404 "Game not found."

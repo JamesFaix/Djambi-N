@@ -23,6 +23,7 @@ type GetAddPlayerEventTests() =
 
     [<Fact>]
     let ``Add user player should work if adding self``() =
+        let host = HostFactory.createHost()
         task {
             //Arrange
             let! (_, _, game) = createuserSessionAndGame(false) |> thenValue
@@ -32,7 +33,7 @@ type GetAddPlayerEventTests() =
             let request = CreatePlayerRequest.user user.id
 
             //Act
-            let eventRequest = Host.get<PlayerService>().getAddPlayerEvent (game, request) session |> Result.value
+            let eventRequest = host.Get<PlayerService>().getAddPlayerEvent (game, request) session |> Result.value
 
             //Assert
             assertSuccess eventRequest request
@@ -40,6 +41,7 @@ type GetAddPlayerEventTests() =
 
     [<Fact>]
     let ``Add user player should work if EditPendingGames and adding different user``() =
+        let host = HostFactory.createHost()
         task {
             //Arrange
             let! (_, session, game) = createuserSessionAndGame(false) |> thenValue
@@ -48,7 +50,7 @@ type GetAddPlayerEventTests() =
             let request = CreatePlayerRequest.user user.id
 
             //Act
-            let eventRequest = Host.get<PlayerService>().getAddPlayerEvent (game, request) session |> Result.value
+            let eventRequest = host.Get<PlayerService>().getAddPlayerEvent (game, request) session |> Result.value
 
             //Assert
             assertSuccess eventRequest request
@@ -56,6 +58,7 @@ type GetAddPlayerEventTests() =
 
     [<Fact>]
     let ``Add user player should fail if not EditPendingGames and adding different user``() =
+        let host = HostFactory.createHost()
         task {
             //Arrange
             let! (_, session, game) = createuserSessionAndGame(false) |> thenValue
@@ -65,7 +68,7 @@ type GetAddPlayerEventTests() =
             let request = CreatePlayerRequest.user user.id
 
             //Act
-            let error = Host.get<PlayerService>().getAddPlayerEvent (game, request) session
+            let error = host.Get<PlayerService>().getAddPlayerEvent (game, request) session
 
             //Assert
             error |> shouldBeError 403 "Cannot add other users to a game."
@@ -73,6 +76,7 @@ type GetAddPlayerEventTests() =
 
     [<Fact>]
     let ``Add user player should fail if not passing user id``() =
+        let host = HostFactory.createHost()
         task {
             //Arrange
             let! (_, session, game) = createuserSessionAndGame(false) |> thenValue
@@ -88,7 +92,7 @@ type GetAddPlayerEventTests() =
                 }
 
             //Act
-            let error = Host.get<PlayerService>().getAddPlayerEvent (game, request) session
+            let error = host.Get<PlayerService>().getAddPlayerEvent (game, request) session
 
             //Assert
             error |> shouldBeError 400 "UserID must be provided when adding a user player."
@@ -96,6 +100,7 @@ type GetAddPlayerEventTests() =
 
     [<Fact>]
     let ``Add user player should fail if passing name``() =
+        let host = HostFactory.createHost()
         task {
             //Arrange
             let! (_, session, game) = createuserSessionAndGame(false) |> thenValue
@@ -111,7 +116,7 @@ type GetAddPlayerEventTests() =
                 }
 
             //Act
-            let error = Host.get<PlayerService>().getAddPlayerEvent (game, request) session
+            let error = host.Get<PlayerService>().getAddPlayerEvent (game, request) session
 
             //Assert
             error |> shouldBeError 400 "Cannot provide name when adding a user player."
@@ -119,6 +124,7 @@ type GetAddPlayerEventTests() =
 
     [<Fact>]
     let ``Add user player should fail if user already in lobby``() =
+        let host = HostFactory.createHost()
         task {
             //Arrange
             let! (user, session, game) = createuserSessionAndGame(false) |> thenValue
@@ -126,7 +132,7 @@ type GetAddPlayerEventTests() =
             let request = CreatePlayerRequest.user user.id
 
             //Act
-            let error = Host.get<PlayerService>().getAddPlayerEvent (game, request) session
+            let error = host.Get<PlayerService>().getAddPlayerEvent (game, request) session
 
             //Assert
             error |> shouldBeError 409 "User is already a player."
@@ -136,13 +142,14 @@ type GetAddPlayerEventTests() =
 
     [<Fact>]
     let ``Add guest player should work if adding guest to self``() =
+        let host = HostFactory.createHost()
         task {
             //Arrange
             let! (user, session, game) = createuserSessionAndGame(true) |> AsyncHttpResult.thenValue
             let request = CreatePlayerRequest.guest (user.id, "test")
 
             //Act
-            let eventRequest = Host.get<PlayerService>().getAddPlayerEvent (game, request) session |> Result.value
+            let eventRequest = host.Get<PlayerService>().getAddPlayerEvent (game, request) session |> Result.value
 
             //Assert
             assertSuccess eventRequest request
@@ -150,6 +157,7 @@ type GetAddPlayerEventTests() =
 
     [<Fact>]
     let ``Add guest player should work if EditPendingGames and adding guest to different user``() =
+        let host = HostFactory.createHost()
         task {
             //Arrange
             let! (_, session, game) = createuserSessionAndGame(true) |> thenValue
@@ -159,7 +167,7 @@ type GetAddPlayerEventTests() =
             let request = CreatePlayerRequest.guest (user.id, "test")
 
             //Act
-            let eventRequest = Host.get<PlayerService>().getAddPlayerEvent (game, request) session |> Result.value
+            let eventRequest = host.Get<PlayerService>().getAddPlayerEvent (game, request) session |> Result.value
 
             //Assert
             assertSuccess eventRequest request
@@ -167,6 +175,7 @@ type GetAddPlayerEventTests() =
 
     [<Fact>]
     let ``Add guest player should fail if not EditPendingGames and adding guest to different user``() =
+        let host = HostFactory.createHost()
         task {
             //Arrange
             let! (_, session, game) = createuserSessionAndGame(true) |> thenValue
@@ -176,7 +185,7 @@ type GetAddPlayerEventTests() =
             let request = CreatePlayerRequest.guest (user.id, "test")
 
             //Act
-            let error = Host.get<PlayerService>().getAddPlayerEvent (game, request) session
+            let error = host.Get<PlayerService>().getAddPlayerEvent (game, request) session
 
             //Assert
             error |> shouldBeError 403 "Cannot add guests for other users to a game."
@@ -184,6 +193,7 @@ type GetAddPlayerEventTests() =
 
     [<Fact>]
     let ``Add guest player should fail if not passing user id``() =
+        let host = HostFactory.createHost()
         task {
             //Arrange
             let! (_, session, game) = createuserSessionAndGame(true) |> thenValue
@@ -196,7 +206,7 @@ type GetAddPlayerEventTests() =
                 }
 
             //Act
-            let error = Host.get<PlayerService>().getAddPlayerEvent (game, request) session
+            let error = host.Get<PlayerService>().getAddPlayerEvent (game, request) session
 
             //Assert
             error |> shouldBeError 400 "UserID must be provided when adding a guest player."
@@ -204,6 +214,7 @@ type GetAddPlayerEventTests() =
 
     [<Fact>]
     let ``Add guest player should fail if not passing name``() =
+        let host = HostFactory.createHost()
         task {
             //Arrange
             let! (user, session, game) = createuserSessionAndGame(true) |> thenValue
@@ -216,7 +227,7 @@ type GetAddPlayerEventTests() =
                 }
 
             //Act
-            let error = Host.get<PlayerService>().getAddPlayerEvent (game, request) session
+            let error = host.Get<PlayerService>().getAddPlayerEvent (game, request) session
 
             //Assert
             error |> shouldBeError 400 "Must provide name when adding a guest player."
@@ -224,13 +235,14 @@ type GetAddPlayerEventTests() =
 
     [<Fact>]
     let ``Add guest player should fail if duplicate name``() =
+        let host = HostFactory.createHost()
         task {
             //Arrange
             let! (user, session, game) = createuserSessionAndGame(true) |> thenValue
             let request = CreatePlayerRequest.guest (user.id, user.name)
 
             //Act
-            let error = Host.get<PlayerService>().getAddPlayerEvent (game, request) session
+            let error = host.Get<PlayerService>().getAddPlayerEvent (game, request) session
 
             //Assert
             error |> shouldBeError 409 "A player with that name already exists."
@@ -238,13 +250,14 @@ type GetAddPlayerEventTests() =
 
     [<Fact>]
     let ``Add guest player should fail if lobby does not allow guests``() =
+        let host = HostFactory.createHost()
         task {
             //Arrange
             let! (user, session, game) = createuserSessionAndGame(false) |> thenValue
             let request = CreatePlayerRequest.guest (user.id, "test")
 
             //Act
-            let error = Host.get<PlayerService>().getAddPlayerEvent (game, request) session
+            let error = host.Get<PlayerService>().getAddPlayerEvent (game, request) session
 
             //Assert
             error |> shouldBeError 400 "Game does not allow guest players."
@@ -254,6 +267,7 @@ type GetAddPlayerEventTests() =
 
     [<Fact>]
     let ``Add neutral player should fail``() =
+        let host = HostFactory.createHost()
         task {
             //Arrange
             let! (_, session, game) = createuserSessionAndGame(false) |> thenValue
@@ -261,7 +275,7 @@ type GetAddPlayerEventTests() =
             let request = CreatePlayerRequest.neutral ("test")
 
             //Act
-            let error = Host.get<PlayerService>().getAddPlayerEvent (game, request) session
+            let error = host.Get<PlayerService>().getAddPlayerEvent (game, request) session
 
             //Assert
             error |> shouldBeError 400 "Cannot directly add neutral players to a game."
@@ -271,6 +285,7 @@ type GetAddPlayerEventTests() =
 
     [<Fact>]
     let ``Add player should fail if player count at capacity``() =
+        let host = HostFactory.createHost()
         task {
             //Arrange
             let! (user, session, game) = createuserSessionAndGame(true) |> thenValue
@@ -279,13 +294,13 @@ type GetAddPlayerEventTests() =
             let request2 = { request1 with name = Some "test2" }
             let request3 = { request1 with name = Some "test3" }
 
-            let! _ = Host.get<IPlayerManager>().addPlayer game.id request1 session |> thenValue
-            let! _ = Host.get<IPlayerManager>().addPlayer game.id request2 session |> thenValue
+            let! _ = host.Get<IPlayerManager>().addPlayer game.id request1 session |> thenValue
+            let! _ = host.Get<IPlayerManager>().addPlayer game.id request2 session |> thenValue
 
-            let! game = Host.get<IGameRepository>().getGame game.id |> thenValue
+            let! game = host.Get<IGameRepository>().getGame game.id |> thenValue
 
             //Act
-            let error = Host.get<PlayerService>().getAddPlayerEvent (game, request3) session
+            let error = host.Get<PlayerService>().getAddPlayerEvent (game, request3) session
 
             //Assert
             error |> shouldBeError 400 "Max player count reached."
@@ -293,6 +308,7 @@ type GetAddPlayerEventTests() =
 
     [<Fact>]
     let ``Add player should fail if game already InProgress``() =
+        let host = HostFactory.createHost()
         task {
             //Arrange
             let! (user, session, game) = createuserSessionAndGame(true) |> thenValue
@@ -300,7 +316,7 @@ type GetAddPlayerEventTests() =
             let game = { game with status = GameStatus.InProgress }
 
             //Act
-            let error = Host.get<PlayerService>().getAddPlayerEvent (game, request) session
+            let error = host.Get<PlayerService>().getAddPlayerEvent (game, request) session
 
             //Assert
             error |> shouldBeError 400 "Can only add players to pending games."

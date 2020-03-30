@@ -16,16 +16,17 @@ type StartGameTests() =
 
     [<Fact>]
     let ``Start game should work``() =
+        let host = HostFactory.createHost()
         task {
             //Arrange
             let! (user, session, game) = createuserSessionAndGame(true) |> thenValue
 
             let playerRequest = CreatePlayerRequest.guest (user.id, "test")
 
-            let! _ = Host.get<IPlayerManager>().addPlayer game.id playerRequest session |> thenValue
+            let! _ = host.Get<IPlayerManager>().addPlayer game.id playerRequest session |> thenValue
 
             //Act
-            let! resp = Host.get<IGameManager>().startGame game.id session
+            let! resp = host.Get<IGameManager>().startGame game.id session
                         |> thenValue
 
             //Assert
@@ -42,17 +43,18 @@ type StartGameTests() =
 
     [<Fact>]
     let ``Start game should fail if only one non-neutral player``() =
+        let host = HostFactory.createHost()
         task {
              //Arrange
             let! (user, session, game) = createuserSessionAndGame(true) |> thenValue
 
             //Act
-            let! result = Host.get<IGameManager>().startGame game.id session
+            let! result = host.Get<IGameManager>().startGame game.id session
 
             //Assert
             result |> shouldBeError 400 "Cannot start game with only one player."
 
-            let! lobbyResult = Host.get<IGameRepository>().getGame game.id
+            let! lobbyResult = host.Get<IGameRepository>().getGame game.id
             lobbyResult |> Result.isOk |> shouldBeTrue
         }
 

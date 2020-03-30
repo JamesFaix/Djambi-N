@@ -6,7 +6,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="Properties\launchSettings.json" />
-    <Compile Include="Host.fs" />
+    <Compile Include="HostFactory.fs" />
     <Compile Include="Assertions.fs" />
     <Compile Include="TestUtilities.fs" />
     <Compile Include="TestsBase.fs" />

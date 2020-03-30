@@ -11,16 +11,17 @@ type CreateSessionTests() =
 
     [<Fact>]
     let ``Create session should work``() =
+        let host = HostFactory.createHost()
         task {
             //Arrange
             let userRequest = getCreateUserRequest()
-            let! user = Host.get<UserService>().createUser userRequest None
+            let! user = host.Get<UserService>().createUser userRequest None
                         |> thenValue
 
             let request = getLoginRequest userRequest
 
             //Act
-            let! session = Host.get<SessionService>().openSession request
+            let! session = host.Get<SessionService>().openSession request
                            |> thenValue
 
             //Assert
@@ -31,19 +32,20 @@ type CreateSessionTests() =
 
     [<Fact>]
     let ``Create session should replace existing session if user already has session``() =
+        let host = HostFactory.createHost()
         task {
             //Arrange
             let userRequest = getCreateUserRequest()
-            let! user = Host.get<UserService>().createUser userRequest None
+            let! user = host.Get<UserService>().createUser userRequest None
                         |> thenValue
 
             let request = getLoginRequest userRequest
 
-            let! oldSession = Host.get<SessionService>().openSession request
+            let! oldSession = host.Get<SessionService>().openSession request
                               |> thenValue
 
             //Act
-            let! newSession = Host.get<SessionService>().openSession request |> thenValue
+            let! newSession = host.Get<SessionService>().openSession request |> thenValue
 
             //Assert
             newSession.token |> shouldNotBe oldSession.token
@@ -51,16 +53,17 @@ type CreateSessionTests() =
 
     [<Fact>]
     let ``Create session should fail if incorrect password``() =
+        let host = HostFactory.createHost()
         task {
             //Arrange
             let userRequest = getCreateUserRequest()
-            let! _ = Host.get<UserService>().createUser userRequest None
+            let! _ = host.Get<UserService>().createUser userRequest None
                         |> thenValue
 
             let request = { getLoginRequest userRequest with password = "wrong" }
 
             //Act
-            let! error = Host.get<SessionService>().openSession request
+            let! error = host.Get<SessionService>().openSession request
 
             //Assert
             error |> shouldBeError 401 "Incorrect password."
@@ -68,22 +71,23 @@ type CreateSessionTests() =
 
     [<Fact>]
     let ``Create session should fail with locked message on 6th incorrect password attempt``() =
+        let host = HostFactory.createHost()
         task {
              //Arrange
             let userRequest = getCreateUserRequest()
-            let! _ = Host.get<UserService>().createUser userRequest None
+            let! _ = host.Get<UserService>().createUser userRequest None
                         |> thenValue
 
             let request = { getLoginRequest userRequest with password = "wrong" }
 
-            let! _ = Host.get<SessionService>().openSession request
-            let! _ = Host.get<SessionService>().openSession request
-            let! _ = Host.get<SessionService>().openSession request
-            let! _ = Host.get<SessionService>().openSession request
-            let! _ = Host.get<SessionService>().openSession request
+            let! _ = host.Get<SessionService>().openSession request
+            let! _ = host.Get<SessionService>().openSession request
+            let! _ = host.Get<SessionService>().openSession request
+            let! _ = host.Get<SessionService>().openSession request
+            let! _ = host.Get<SessionService>().openSession request
 
             //Act
-            let! error = Host.get<SessionService>().openSession request
+            let! error = host.Get<SessionService>().openSession request
 
             //Assert
             error |> shouldBeError 401 "Account locked."

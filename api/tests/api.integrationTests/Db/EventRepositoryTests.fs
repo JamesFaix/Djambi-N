@@ -16,6 +16,7 @@ type EventRepositoryTests() =
 
     [<Fact>]
     let ``Should add players``() =
+        let host = HostFactory.createHost()
         task {
             //Arrange
             let! (user, _, game) = TestUtilities.createuserSessionAndGame(true) |> thenValue
@@ -36,7 +37,7 @@ type EventRepositoryTests() =
             let newGame = { game with players = [player] }
 
             //Act
-            let! resp = Host.get<IEventRepository>().persistEvent (TestUtilities.emptyEventRequest, game, newGame) |> thenValue
+            let! resp = host.Get<IEventRepository>().persistEvent (TestUtilities.emptyEventRequest, game, newGame) |> thenValue
 
             //Assert
             let persistedGame = resp.game
@@ -52,6 +53,7 @@ type EventRepositoryTests() =
 
     [<Fact>]
     let ``Should remove players``() =
+        let host = HostFactory.createHost()
         task {
             //Arrange
             let! (user, _, game) = TestUtilities.createuserSessionAndGame(true) |> thenValue
@@ -63,13 +65,13 @@ type EventRepositoryTests() =
                     name = Some "p2"
                 }
 
-            let! _ = Host.get<IGameRepository>().addPlayer(game.id, playerRequest) |> thenValue
-            let! game = Host.get<IGameRepository>().getGame game.id |> thenValue
+            let! _ = host.Get<IGameRepository>().addPlayer(game.id, playerRequest) |> thenValue
+            let! game = host.Get<IGameRepository>().getGame game.id |> thenValue
 
             let newGame = { game with players = [] }
 
             //Act
-            let! resp = Host.get<IEventRepository>().persistEvent (TestUtilities.emptyEventRequest, game, newGame) |> thenValue
+            let! resp = host.Get<IEventRepository>().persistEvent (TestUtilities.emptyEventRequest, game, newGame) |> thenValue
 
             //Assert
             let persistedGame = resp.game
@@ -81,6 +83,7 @@ type EventRepositoryTests() =
 
     [<Fact>]
     let ``Should update players``() =
+        let host = HostFactory.createHost()
         task {
             //Arrange
             let! (user, _, game) = TestUtilities.createuserSessionAndGame(true) |> thenValue
@@ -92,8 +95,8 @@ type EventRepositoryTests() =
                     name = Some "p2"
                 }
 
-            let! _ = Host.get<IGameRepository>().addPlayer(game.id, p2Request) |> thenValue
-            let! game = Host.get<IGameRepository>().getGame game.id |> thenValue
+            let! _ = host.Get<IGameRepository>().addPlayer(game.id, p2Request) |> thenValue
+            let! game = host.Get<IGameRepository>().getGame game.id |> thenValue
 
             let oldP2 = game.players.[1]
             oldP2.status |> shouldBe PlayerStatus.Pending
@@ -118,7 +121,7 @@ type EventRepositoryTests() =
                 }
 
             //Act
-            let! resp = Host.get<IEventRepository>().persistEvent (TestUtilities.emptyEventRequest, game, newGame) |> thenValue
+            let! resp = host.Get<IEventRepository>().persistEvent (TestUtilities.emptyEventRequest, game, newGame) |> thenValue
 
             //Assert
             let persistedGame = resp.game
@@ -132,6 +135,7 @@ type EventRepositoryTests() =
 
     [<Fact>]
     let ``Should update game``() =
+        let host = HostFactory.createHost()
         task {
             //Arrange
             let! (_, _, game) = TestUtilities.createuserSessionAndGame(false) |> thenValue
@@ -172,7 +176,7 @@ type EventRepositoryTests() =
                 }
 
             //Act
-            let! resp = Host.get<IEventRepository>().persistEvent (TestUtilities.emptyEventRequest, game, newGame) |> thenValue
+            let! resp = host.Get<IEventRepository>().persistEvent (TestUtilities.emptyEventRequest, game, newGame) |> thenValue
 
             //Assert
             let persistedGame = resp.game
@@ -181,6 +185,7 @@ type EventRepositoryTests() =
 
     [<Fact>]
     let ``Should rollback all effects if any errors``() =
+        let host = HostFactory.createHost()
         task {
             //Arrange
             let! (_, _, game) = TestUtilities.createuserSessionAndGame(true) |> thenValue
@@ -191,21 +196,22 @@ type EventRepositoryTests() =
             let e = Effect.NeutralPlayerAdded { name = "test"; placeholderPlayerId = -1 }
             let event = TestUtilities.createEventRequest([e;e]) //EventKind doesn't matter
 
-            let newGame = Host.get<EventService>().applyEvent game event
+            let newGame = host.Get<EventService>().applyEvent game event
 
             //Act
-            let! result = Host.get<IEventRepository>().persistEvent (TestUtilities.emptyEventRequest, game, newGame)
+            let! result = host.Get<IEventRepository>().persistEvent (TestUtilities.emptyEventRequest, game, newGame)
 
             //Assert
             result |> shouldBeError 409 "Conflict when attempting to write Event."
 
-            let! persistedGame = Host.get<IGameRepository>().getGame game.id |> thenValue
+            let! persistedGame = host.Get<IGameRepository>().getGame game.id |> thenValue
             persistedGame.players.Length |> shouldBe 1 //Just the creator
             persistedGame.players |> shouldNotExist (fun p -> p.name = "test")
         }
 
     [<Fact>]
     let ``Should get events``() =
+        let host = HostFactory.createHost()
         task {
             //Arrange
             let! (user, session, game) = TestUtilities.createuserSessionAndGame(true) |> thenValue
@@ -219,8 +225,8 @@ type EventRepositoryTests() =
 
             let p3Request = { p2Request with name = Some "p3" }
 
-            let! _ = Host.get<IPlayerManager>().addPlayer game.id p2Request session |> thenValue
-            let! _ = Host.get<IPlayerManager>().addPlayer game.id p3Request session |> thenValue
+            let! _ = host.Get<IPlayerManager>().addPlayer game.id p2Request session |> thenValue
+            let! _ = host.Get<IPlayerManager>().addPlayer game.id p3Request session |> thenValue
 
             let query : EventsQuery =
                 {
@@ -231,7 +237,7 @@ type EventRepositoryTests() =
                 }
 
             //Act
-            let! events = Host.get<IEventRepository>().getEvents (game.id, query) |> thenValue
+            let! events = host.Get<IEventRepository>().getEvents (game.id, query) |> thenValue
 
             //Assert
             events.Length |> shouldBe 2

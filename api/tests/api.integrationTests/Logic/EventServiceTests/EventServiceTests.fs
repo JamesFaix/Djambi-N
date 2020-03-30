@@ -13,6 +13,7 @@ type EventServiceTests() =
 
     [<Fact>]
     let ``Should apply effects in order``() =
+        let host = HostFactory.createHost()
         //Arrange
         let game = TestUtilities.defaultGame
 
@@ -25,13 +26,14 @@ type EventServiceTests() =
         let eventRequest = TestUtilities.createEventRequest(effects) //Kind doesn't matter
 
         //Act
-        let newGame = Host.get<EventService>().applyEvent game eventRequest
+        let newGame = host.Get<EventService>().applyEvent game eventRequest
 
         //Assert
         newGame.status |> shouldBe GameStatus.Over
 
     [<Fact>]
     let ``Should apply CurrentTurnChanged effect``() =
+        let host = HostFactory.createHost()
         //Arrange
         let game = TestUtilities.defaultGame
         let newTurn = Some Turn.empty
@@ -41,7 +43,7 @@ type EventServiceTests() =
         game.currentTurn |> shouldBe None
 
         //Act
-        let newGame = Host.get<EventService>().applyEvent game eventRequest
+        let newGame = host.Get<EventService>().applyEvent game eventRequest
 
         //Assert
         { game with currentTurn = newGame.currentTurn } |> shouldBe newGame
@@ -50,6 +52,7 @@ type EventServiceTests() =
 
     [<Fact>]
     let ``Should apply GameStatusChanged effect``() =
+        let host = HostFactory.createHost()
         //Arrange
         let game = TestUtilities.defaultGame
         let newStatus = GameStatus.Canceled //Can't use InProgress here because that case is more complicated
@@ -59,7 +62,7 @@ type EventServiceTests() =
         game.status |> shouldBe GameStatus.Pending
 
         //Act
-        let newGame = Host.get<EventService>().applyEvent game eventRequest
+        let newGame = host.Get<EventService>().applyEvent game eventRequest
 
         //Assert
         { game with status = newGame.status } |> shouldBe newGame
@@ -68,6 +71,7 @@ type EventServiceTests() =
 
     [<Fact>]
     let ``Should apply NeutralPlayerAdded effect``() =
+        let host = HostFactory.createHost()
         //Arrange
         let game = { TestUtilities.defaultGame with id = 5 }
         let effect = Effect.NeutralPlayerAdded { name = "p2"; placeholderPlayerId = -1 }
@@ -76,7 +80,7 @@ type EventServiceTests() =
         game.players.Length |> shouldBe 0
 
         //Act
-        let newGame = Host.get<EventService>().applyEvent game eventRequest
+        let newGame = host.Get<EventService>().applyEvent game eventRequest
 
         //Assert
         { game with players = newGame.players } |> shouldBe newGame
@@ -97,6 +101,7 @@ type EventServiceTests() =
 
     [<Fact>]
     let ``Should apply ParametersChanged effect``() =
+        let host = HostFactory.createHost()
         //Arrange
         let game = TestUtilities.defaultGame
         let newParameters =
@@ -118,7 +123,7 @@ type EventServiceTests() =
             }
 
         //Act
-        let newGame = Host.get<EventService>().applyEvent game eventRequest
+        let newGame = host.Get<EventService>().applyEvent game eventRequest
 
         //Assert
         { game with parameters = newGame.parameters } |> shouldBe newGame
@@ -127,6 +132,7 @@ type EventServiceTests() =
 
     [<Fact>]
     let ``Should apply PieceAbandoned effect``() =
+        let host = HostFactory.createHost()
         //Arrange
         let pieces : Piece list =
             [
@@ -150,7 +156,7 @@ type EventServiceTests() =
         let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
 
         //Act
-        let newGame = Host.get<EventService>().applyEvent game eventRequest
+        let newGame = host.Get<EventService>().applyEvent game eventRequest
 
         //Assert
         { game with pieces = newGame.pieces } |> shouldBe newGame
@@ -162,6 +168,7 @@ type EventServiceTests() =
 
     [<Fact>]
     let ``Should apply PieceDropped effect``() =
+        let host = HostFactory.createHost()
         //Arrange
         let piece : Piece =
             {
@@ -177,7 +184,7 @@ type EventServiceTests() =
         let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
 
         //Act
-        let newGame = Host.get<EventService>().applyEvent game eventRequest
+        let newGame = host.Get<EventService>().applyEvent game eventRequest
 
         //Assert
         { game with pieces = newGame.pieces } |> shouldBe newGame
@@ -189,6 +196,7 @@ type EventServiceTests() =
 
     [<Fact>]
     let ``Should apply PieceEnlisted effect``() =
+        let host = HostFactory.createHost()
         //Arrange
         let pieces : Piece list =
             [
@@ -213,7 +221,7 @@ type EventServiceTests() =
         let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
 
         //Act
-        let newGame = Host.get<EventService>().applyEvent game eventRequest
+        let newGame = host.Get<EventService>().applyEvent game eventRequest
 
         //Assert
         { game with pieces = newGame.pieces } |> shouldBe newGame
@@ -225,6 +233,7 @@ type EventServiceTests() =
 
     [<Fact>]
     let ``Should apply PieceKilled effect``() =
+        let host = HostFactory.createHost()
         //Arrange
         let piece : Piece =
             {
@@ -242,7 +251,7 @@ type EventServiceTests() =
         let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
 
         //Act
-        let newGame = Host.get<EventService>().applyEvent game eventRequest
+        let newGame = host.Get<EventService>().applyEvent game eventRequest
 
         //Assert
         { game with pieces = newGame.pieces } |> shouldBe newGame
@@ -254,6 +263,7 @@ type EventServiceTests() =
 
     [<Fact>]
     let ``Should apply PieceMoved effect``() =
+        let host = HostFactory.createHost()
         //Arrange
         let piece : Piece =
             {
@@ -269,7 +279,7 @@ type EventServiceTests() =
         let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
 
         //Act
-        let newGame = Host.get<EventService>().applyEvent game eventRequest
+        let newGame = host.Get<EventService>().applyEvent game eventRequest
 
         //Assert
         { game with pieces = newGame.pieces } |> shouldBe newGame
@@ -281,6 +291,7 @@ type EventServiceTests() =
 
     [<Fact>]
     let ``Should apply PIeceVacated effect``() =
+        let host = HostFactory.createHost()
         //Arrange
         let piece : Piece =
             {
@@ -296,7 +307,7 @@ type EventServiceTests() =
         let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
 
         //Act
-        let newGame = Host.get<EventService>().applyEvent game eventRequest
+        let newGame = host.Get<EventService>().applyEvent game eventRequest
 
         //Assert
         { game with pieces = newGame.pieces } |> shouldBe newGame
@@ -308,6 +319,7 @@ type EventServiceTests() =
 
     [<Fact>]
     let ``Should apply PlayerAdded effect``() =
+        let host = HostFactory.createHost()
         //Arrange
         let game = { TestUtilities.defaultGame with id = 5 }
         let userId = 1
@@ -318,7 +330,7 @@ type EventServiceTests() =
         game.players.Length |> shouldBe 0
 
         //Act
-        let newGame = Host.get<EventService>().applyEvent game eventRequest
+        let newGame = host.Get<EventService>().applyEvent game eventRequest
 
         //Assert
         { game with players = newGame.players } |> shouldBe newGame
@@ -339,6 +351,7 @@ type EventServiceTests() =
 
     [<Fact>]
     let ``Should apply PlayerStatusChanged effect``() =
+        let host = HostFactory.createHost()
         //Arrange
         let player : Player =
             {
@@ -361,7 +374,7 @@ type EventServiceTests() =
         let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
 
         //Act
-        let newGame = Host.get<EventService>().applyEvent game eventRequest
+        let newGame = host.Get<EventService>().applyEvent game eventRequest
 
         //Assert
         { game with players = newGame.players } |> shouldBe newGame
@@ -373,6 +386,7 @@ type EventServiceTests() =
 
     [<Fact>]
     let ``Should apply PlayersRemoved effect``() =
+        let host = HostFactory.createHost()
         //Arrange
         let players : Player list =
             [
@@ -404,7 +418,7 @@ type EventServiceTests() =
         let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
 
         //Act
-        let newGame = Host.get<EventService>().applyEvent game eventRequest
+        let newGame = host.Get<EventService>().applyEvent game eventRequest
 
         //Assert
         { game with players = newGame.players } |> shouldBe newGame
@@ -414,6 +428,7 @@ type EventServiceTests() =
 
     [<Fact>]
     let ``Should apply TurnCycleAdvanced effect``() =
+        let host = HostFactory.createHost()
         //Arrange
         let game = TestUtilities.defaultGame
         let newCycle = [1;2;3]
@@ -423,7 +438,7 @@ type EventServiceTests() =
         game.turnCycle |> shouldBe []
 
         //Act
-        let newGame = Host.get<EventService>().applyEvent game eventRequest
+        let newGame = host.Get<EventService>().applyEvent game eventRequest
 
         //Assert
         { game with turnCycle = newGame.turnCycle } |> shouldBe newGame
@@ -432,6 +447,7 @@ type EventServiceTests() =
 
     [<Fact>]
     let ``Should apply TurnCyclePlayerFellFromPower effect``() =
+        let host = HostFactory.createHost()
         //Arrange
         let game = TestUtilities.defaultGame
         let newCycle = [1;2;3]
@@ -441,7 +457,7 @@ type EventServiceTests() =
         game.turnCycle |> shouldBe []
 
         //Act
-        let newGame = Host.get<EventService>().applyEvent game eventRequest
+        let newGame = host.Get<EventService>().applyEvent game eventRequest
 
         //Assert
         { game with turnCycle = newGame.turnCycle } |> shouldBe newGame
@@ -450,6 +466,7 @@ type EventServiceTests() =
 
     [<Fact>]
     let ``Should apply TurnCyclePlayerRemoved effect``() =
+        let host = HostFactory.createHost()
         //Arrange
         let game = TestUtilities.defaultGame
         let newCycle = [1;2;3]
@@ -459,7 +476,7 @@ type EventServiceTests() =
         game.turnCycle |> shouldBe []
 
         //Act
-        let newGame = Host.get<EventService>().applyEvent game eventRequest
+        let newGame = host.Get<EventService>().applyEvent game eventRequest
 
         //Assert
         { game with turnCycle = newGame.turnCycle } |> shouldBe newGame
@@ -468,6 +485,7 @@ type EventServiceTests() =
 
     [<Fact>]
     let ``Should apply TurnCyclePlayerRoseToPower effect``() =
+        let host = HostFactory.createHost()
         //Arrange
         let game = TestUtilities.defaultGame
         let newCycle = [1;2;3]
@@ -477,7 +495,7 @@ type EventServiceTests() =
         game.turnCycle |> shouldBe []
 
         //Act
-        let newGame = Host.get<EventService>().applyEvent game eventRequest
+        let newGame = host.Get<EventService>().applyEvent game eventRequest
 
         //Assert
         { game with turnCycle = newGame.turnCycle } |> shouldBe newGame
