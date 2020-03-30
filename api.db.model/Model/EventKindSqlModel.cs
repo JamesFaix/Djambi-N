@@ -1,18 +1,20 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Apex.Api.Enums;
 
 namespace Apex.Api.Db.Model
 {
-    [Table("NeutralPlayerNames")]
-    public class NeutralPlayerNameSqlModel
+    [Table("EventKinds")]
+    public class EventKindSqlModel
     {
         [Key]
+        [Column("EventKindId")]
         [Required]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public int NeutralPlayerNameId { get; set; }
+        public EventKind Id { get; set; }
 
         [Required]
-        [StringLength(20)]
+        [StringLength(50)]
         public string Name { get; set; }
     }
 }

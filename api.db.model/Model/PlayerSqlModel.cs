@@ -1,29 +1,32 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Apex.Api.Enums;
 
 namespace Apex.Api.Db.Model
 {
     [Table("Players")]
     public class PlayerSqlModel
     {
+        [Key]
         [Required]
-        public int Id { get; set; }
+        public int PlayerId { get; set; }
 
         [Required]
+        public int GameId { get; set; }
         public GameSqlModel Game { get; set; }
 
-        // Nullable
+        public int? UserId { get; set; }
         public UserSqlModel User { get; set; }
 
         [Required]
-        public PlayerKindSqlModel Kind { get; set; }
+        public PlayerKind PlayerKindId { get; set; }
 
         [Required]
         [StringLength(20)]
         public string Name { get; set; }
 
         [Required]
-        public PlayerStatusSqlModel Status { get; set; }
+        public PlayerStatus PlayerStatusId { get; set; }
 
         public byte? ColorId { get; set; }
 

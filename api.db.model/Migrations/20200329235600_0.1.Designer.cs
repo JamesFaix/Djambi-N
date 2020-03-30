@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Apex.Api.Db.Model.Migrations
 {
     [DbContext(typeof(ApexDbContext))]
-    [Migration("20200325024657_CreateDatabase")]
-    partial class CreateDatabase
+    [Migration("20200329235600_0.1")]
+    partial class _01
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,24 +23,70 @@ namespace Apex.Api.Db.Model.Migrations
 
             modelBuilder.Entity("Apex.Api.Db.Model.EventKindSqlModel", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<byte>("Id")
+                        .HasColumnName("EventKindId")
+                        .HasColumnType("tinyint");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(20)")
-                        .HasMaxLength(20);
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.HasKey("Id");
 
                     b.ToTable("EventKinds");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = (byte)1,
+                            Name = "GameParametersChanged"
+                        },
+                        new
+                        {
+                            Id = (byte)2,
+                            Name = "GameCanceled"
+                        },
+                        new
+                        {
+                            Id = (byte)3,
+                            Name = "PlayerJoined"
+                        },
+                        new
+                        {
+                            Id = (byte)4,
+                            Name = "PlayerRemoved"
+                        },
+                        new
+                        {
+                            Id = (byte)5,
+                            Name = "GameStarted"
+                        },
+                        new
+                        {
+                            Id = (byte)6,
+                            Name = "TurnCommitted"
+                        },
+                        new
+                        {
+                            Id = (byte)7,
+                            Name = "TurnReset"
+                        },
+                        new
+                        {
+                            Id = (byte)8,
+                            Name = "CellSelected"
+                        },
+                        new
+                        {
+                            Id = (byte)9,
+                            Name = "PlayerStatusChanged"
+                        });
                 });
 
             modelBuilder.Entity("Apex.Api.Db.Model.EventSqlModel", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("EventId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -58,13 +104,13 @@ namespace Apex.Api.Db.Model.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<byte>("EventKindId")
+                        .HasColumnType("tinyint");
+
                     b.Property<int>("GameId")
                         .HasColumnType("int");
 
-                    b.Property<int>("KindId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
+                    b.HasKey("EventId");
 
                     b.HasIndex("ActingPlayerId");
 
@@ -72,14 +118,12 @@ namespace Apex.Api.Db.Model.Migrations
 
                     b.HasIndex("GameId");
 
-                    b.HasIndex("KindId");
-
                     b.ToTable("Events");
                 });
 
             modelBuilder.Entity("Apex.Api.Db.Model.GameSqlModel", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("GameId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -99,6 +143,9 @@ namespace Apex.Api.Db.Model.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<byte>("GameStatusId")
+                        .HasColumnType("tinyint");
+
                     b.Property<bool>("IsPublic")
                         .HasColumnType("bit");
 
@@ -108,27 +155,21 @@ namespace Apex.Api.Db.Model.Migrations
                     b.Property<byte>("RegionCount")
                         .HasColumnType("tinyint");
 
-                    b.Property<int>("StatusId")
-                        .HasColumnType("int");
-
                     b.Property<string>("TurnCycleJson")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.HasKey("GameId");
 
                     b.HasIndex("CreatedByUserId");
-
-                    b.HasIndex("StatusId");
 
                     b.ToTable("Games");
                 });
 
             modelBuilder.Entity("Apex.Api.Db.Model.GameStatusSqlModel", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<byte>("Id")
+                        .HasColumnName("GameStatusId")
+                        .HasColumnType("tinyint");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -138,28 +179,121 @@ namespace Apex.Api.Db.Model.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("GameStatuses");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = (byte)1,
+                            Name = "Pending"
+                        },
+                        new
+                        {
+                            Id = (byte)2,
+                            Name = "InProgress"
+                        },
+                        new
+                        {
+                            Id = (byte)3,
+                            Name = "Canceled"
+                        },
+                        new
+                        {
+                            Id = (byte)4,
+                            Name = "Over"
+                        });
                 });
 
             modelBuilder.Entity("Apex.Api.Db.Model.NeutralPlayerNameSqlModel", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<int>("NeutralPlayerNameId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(20)")
                         .HasMaxLength(20);
 
-                    b.HasKey("Id");
+                    b.HasKey("NeutralPlayerNameId");
 
                     b.ToTable("NeutralPlayerNames");
+
+                    b.HasData(
+                        new
+                        {
+                            NeutralPlayerNameId = 0,
+                            Name = "SPORKMASTER"
+                        },
+                        new
+                        {
+                            NeutralPlayerNameId = 1,
+                            Name = "dwight-schrute"
+                        },
+                        new
+                        {
+                            NeutralPlayerNameId = 2,
+                            Name = "1337h4x"
+                        },
+                        new
+                        {
+                            NeutralPlayerNameId = 3,
+                            Name = "DragonBjorn"
+                        },
+                        new
+                        {
+                            NeutralPlayerNameId = 4,
+                            Name = "docta-octagon"
+                        },
+                        new
+                        {
+                            NeutralPlayerNameId = 5,
+                            Name = "Sam_I_Am"
+                        },
+                        new
+                        {
+                            NeutralPlayerNameId = 6,
+                            Name = "New_Boots"
+                        },
+                        new
+                        {
+                            NeutralPlayerNameId = 7,
+                            Name = "mysterious-stranger"
+                        },
+                        new
+                        {
+                            NeutralPlayerNameId = 8,
+                            Name = "Riemann"
+                        },
+                        new
+                        {
+                            NeutralPlayerNameId = 9,
+                            Name = "PT3R0D4C7YL"
+                        },
+                        new
+                        {
+                            NeutralPlayerNameId = 10,
+                            Name = "Rhombicuboctohedron"
+                        },
+                        new
+                        {
+                            NeutralPlayerNameId = 11,
+                            Name = "Schmorpheus"
+                        },
+                        new
+                        {
+                            NeutralPlayerNameId = 12,
+                            Name = "TheMangler"
+                        },
+                        new
+                        {
+                            NeutralPlayerNameId = 13,
+                            Name = "ManBearPig"
+                        });
                 });
 
             modelBuilder.Entity("Apex.Api.Db.Model.PlayerKindSqlModel", b =>
                 {
                     b.Property<byte>("Id")
+                        .HasColumnName("PlayerKindId")
                         .HasColumnType("tinyint");
 
                     b.Property<string>("Name")
@@ -170,11 +304,28 @@ namespace Apex.Api.Db.Model.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("PlayerKinds");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = (byte)1,
+                            Name = "User"
+                        },
+                        new
+                        {
+                            Id = (byte)2,
+                            Name = "Guest"
+                        },
+                        new
+                        {
+                            Id = (byte)3,
+                            Name = "Neutral"
+                        });
                 });
 
             modelBuilder.Entity("Apex.Api.Db.Model.PlayerSqlModel", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("PlayerId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -185,13 +336,16 @@ namespace Apex.Api.Db.Model.Migrations
                     b.Property<int>("GameId")
                         .HasColumnType("int");
 
-                    b.Property<byte>("KindId")
-                        .HasColumnType("tinyint");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(20)")
                         .HasMaxLength(20);
+
+                    b.Property<byte>("PlayerKindId")
+                        .HasColumnType("tinyint");
+
+                    b.Property<byte>("PlayerStatusId")
+                        .HasColumnType("tinyint");
 
                     b.Property<byte?>("StartingRegion")
                         .HasColumnType("tinyint");
@@ -199,19 +353,12 @@ namespace Apex.Api.Db.Model.Migrations
                     b.Property<byte?>("StartingTurnNumber")
                         .HasColumnType("tinyint");
 
-                    b.Property<byte>("StatusId")
-                        .HasColumnType("tinyint");
-
                     b.Property<int?>("UserId")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("PlayerId");
 
                     b.HasIndex("GameId");
-
-                    b.HasIndex("KindId");
-
-                    b.HasIndex("StatusId");
 
                     b.HasIndex("UserId");
 
@@ -221,6 +368,7 @@ namespace Apex.Api.Db.Model.Migrations
             modelBuilder.Entity("Apex.Api.Db.Model.PlayerStatusSqlModel", b =>
                 {
                     b.Property<byte>("Id")
+                        .HasColumnName("PlayerStatusId")
                         .HasColumnType("tinyint");
 
                     b.Property<string>("Name")
@@ -231,30 +379,90 @@ namespace Apex.Api.Db.Model.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("PlayerStatuses");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = (byte)1,
+                            Name = "Pending"
+                        },
+                        new
+                        {
+                            Id = (byte)2,
+                            Name = "Alive"
+                        },
+                        new
+                        {
+                            Id = (byte)3,
+                            Name = "Eliminated"
+                        },
+                        new
+                        {
+                            Id = (byte)4,
+                            Name = "Conceded"
+                        },
+                        new
+                        {
+                            Id = (byte)5,
+                            Name = "WillConcede"
+                        },
+                        new
+                        {
+                            Id = (byte)6,
+                            Name = "AcceptsDraw"
+                        },
+                        new
+                        {
+                            Id = (byte)7,
+                            Name = "Victorious"
+                        });
                 });
 
             modelBuilder.Entity("Apex.Api.Db.Model.PrivilegeSqlModel", b =>
                 {
                     b.Property<byte>("Id")
+                        .HasColumnName("PrivilegeId")
                         .HasColumnType("tinyint");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("UserSqlModelId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("UserSqlModelId");
-
                     b.ToTable("Privileges");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = (byte)1,
+                            Name = "EditUsers"
+                        },
+                        new
+                        {
+                            Id = (byte)2,
+                            Name = "EditPendingGames"
+                        },
+                        new
+                        {
+                            Id = (byte)3,
+                            Name = "OpenParticipation"
+                        },
+                        new
+                        {
+                            Id = (byte)4,
+                            Name = "ViewGames"
+                        },
+                        new
+                        {
+                            Id = (byte)5,
+                            Name = "Snapshots"
+                        });
                 });
 
             modelBuilder.Entity("Apex.Api.Db.Model.SessionSqlModel", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("SessionId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -272,7 +480,7 @@ namespace Apex.Api.Db.Model.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("SessionId");
 
                     b.HasIndex("UserId");
 
@@ -281,7 +489,7 @@ namespace Apex.Api.Db.Model.Migrations
 
             modelBuilder.Entity("Apex.Api.Db.Model.SnapshotSqlModel", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("SnapshotId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -304,7 +512,7 @@ namespace Apex.Api.Db.Model.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.HasKey("SnapshotId");
 
                     b.HasIndex("CreatedByUserId");
 
@@ -313,9 +521,32 @@ namespace Apex.Api.Db.Model.Migrations
                     b.ToTable("Snapshots");
                 });
 
+            modelBuilder.Entity("Apex.Api.Db.Model.UserPrivilegeSqlModel", b =>
+                {
+                    b.Property<int>("UserPrivilegeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<byte>("PrivilegeId")
+                        .HasColumnType("tinyint");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UserSqlModelUserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserPrivilegeId");
+
+                    b.HasIndex("UserSqlModelUserId");
+
+                    b.ToTable("UserPrivileges");
+                });
+
             modelBuilder.Entity("Apex.Api.Db.Model.UserSqlModel", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("UserId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -338,7 +569,7 @@ namespace Apex.Api.Db.Model.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.HasKey("UserId");
 
                     b.ToTable("Users");
                 });
@@ -357,14 +588,8 @@ namespace Apex.Api.Db.Model.Migrations
                         .IsRequired();
 
                     b.HasOne("Apex.Api.Db.Model.GameSqlModel", "Game")
-                        .WithMany()
+                        .WithMany("Events")
                         .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Apex.Api.Db.Model.EventKindSqlModel", "Kind")
-                        .WithMany()
-                        .HasForeignKey("KindId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
@@ -376,45 +601,19 @@ namespace Apex.Api.Db.Model.Migrations
                         .HasForeignKey("CreatedByUserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.HasOne("Apex.Api.Db.Model.GameStatusSqlModel", "Status")
-                        .WithMany()
-                        .HasForeignKey("StatusId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Apex.Api.Db.Model.PlayerSqlModel", b =>
                 {
                     b.HasOne("Apex.Api.Db.Model.GameSqlModel", "Game")
-                        .WithMany()
+                        .WithMany("Players")
                         .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Apex.Api.Db.Model.PlayerKindSqlModel", "Kind")
-                        .WithMany()
-                        .HasForeignKey("KindId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Apex.Api.Db.Model.PlayerStatusSqlModel", "Status")
-                        .WithMany()
-                        .HasForeignKey("StatusId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Apex.Api.Db.Model.UserSqlModel", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict);
-                });
-
-            modelBuilder.Entity("Apex.Api.Db.Model.PrivilegeSqlModel", b =>
-                {
-                    b.HasOne("Apex.Api.Db.Model.UserSqlModel", null)
-                        .WithMany("Privileges")
-                        .HasForeignKey("UserSqlModelId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
@@ -440,6 +639,14 @@ namespace Apex.Api.Db.Model.Migrations
                         .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Apex.Api.Db.Model.UserPrivilegeSqlModel", b =>
+                {
+                    b.HasOne("Apex.Api.Db.Model.UserSqlModel", null)
+                        .WithMany("UserPrivileges")
+                        .HasForeignKey("UserSqlModelUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 #pragma warning restore 612, 618
         }

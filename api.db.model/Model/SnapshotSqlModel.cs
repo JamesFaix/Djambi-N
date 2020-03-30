@@ -7,23 +7,26 @@ namespace Apex.Api.Db.Model
     [Table("Snapshots")]
     public class SnapshotSqlModel
     {
+        [Key]
         [Required]
-        public int Id { get; set; }
+        public int SnapshotId { get; set; }
 
-        [Required] 
+        [Required]
+        public int GameId { get; set; }
         public GameSqlModel Game { get; set; }
 
-        [Required] 
+        [Required]
+        public int CreatedByUserId { get; set; }
         public UserSqlModel CreatedByUser { get; set; }
 
-        [Required] 
+        [Required]
         public DateTime CreatedOn { get; set; }
 
         [Required]
         [StringLength(50)]
         public string Description { get; set; }
 
-        [Required] 
+        [Required]
         public string SnapshotJson { get; set; }
     }
 }

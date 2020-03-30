@@ -4,29 +4,27 @@ open System
 open System.IO
 open System.Linq
 open Microsoft.AspNetCore.Builder
-open Microsoft.AspNetCore.Cors.Infrastructure
 open Microsoft.AspNetCore.Hosting
-open Microsoft.AspNetCore.Http
 open Microsoft.Extensions.Configuration
 open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.FileProviders
 open Microsoft.OpenApi.Models
+open Microsoft.EntityFrameworkCore
 
 open Newtonsoft.Json
 open Serilog
 open Swashbuckle.AspNetCore.SwaggerGen
 
 open Apex.Api.Common.Json
-open Apex.Api.Db
 open Apex.Api.Db.Interfaces
 open Apex.Api.Db.Repositories
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Logic.Managers
 open Apex.Api.Logic.Services
-open Apex.Api.Model
 open Apex.Api.Model.Configuration
 open Apex.Api.Web
 open Apex.Api.Web.Controllers
+open Apex.Api.Db.Model
 open Apex.Api.Enums
 
 type Startup() =
@@ -54,7 +52,7 @@ type Startup() =
                 let path = Path.Combine(AppContext.BaseDirectory, file)
                 opt.IncludeXmlComments(path)
 
-        // Framework services
+        // ASP.NET
         services.AddCors(fun opt ->
             let webAddress = __.Configuration.GetValue<string>("Api:WebAddress")
             opt.AddPolicy("ApiCorsPolicy", fun builder -> 
@@ -88,45 +86,52 @@ type Startup() =
         // Swagger
         services.AddSwaggerGen(fun opt -> configureSwagger opt) |> ignore
 
+        // Entity Framework
+        services.AddDbContext<ApexDbContext>(fun opt -> 
+            let cnStr = __.Configuration.GetValue<string>("Sql:ConnectionString")
+            opt.UseSqlServer(cnStr) |> ignore
+            ()
+        ) |> ignore
+
+        // Anything that depends on DbContext (repositories, services, managers) must be in Scoped or Transient mode
+
         // Database layer
-        services.AddSingleton<CommandContextProvider>() |> ignore
-        services.AddSingleton<IEventRepository, EventRepository>() |> ignore
-        services.AddSingleton<GameRepository>() |> ignore
-        services.AddSingleton<IGameRepository, GameRepository>() |> ignore
-        services.AddSingleton<ISearchRepository, SearchRepository>() |> ignore
-        services.AddSingleton<ISessionRepository, SessionRepository>() |> ignore
-        services.AddSingleton<ISnapshotRepository, SnapshotRepository>() |> ignore
-        services.AddSingleton<IUserRepository, UserRepository>() |> ignore
+        services.AddScoped<IEventRepository, EventRepository>() |> ignore
+        services.AddScoped<IGameRepository, GameRepository>() |> ignore
+        services.AddScoped<ISearchRepository, SearchRepository>() |> ignore
+        services.AddScoped<ISessionRepository, SessionRepository>() |> ignore
+        services.AddScoped<ISnapshotRepository, SnapshotRepository>() |> ignore
+        services.AddScoped<IUserRepository, UserRepository>() |> ignore
 
         // Logic layer
-        services.AddSingleton<BoardService>() |> ignore
-        services.AddSingleton<EventService>() |> ignore
-        services.AddSingleton<GameCrudService>() |> ignore
-        services.AddSingleton<GameStartService>() |> ignore
-        services.AddSingleton<IndirectEffectsService>() |> ignore
-        services.AddSingleton<INotificationService, NotificationService>() |> ignore
-        services.AddSingleton<PlayerService>() |> ignore
-        services.AddSingleton<PlayerStatusChangeService>() |> ignore
-        services.AddSingleton<ISessionService, SessionService>() |> ignore
-        services.AddSingleton<SelectionOptionsService>() |> ignore
-        services.AddSingleton<SelectionService>() |> ignore
-        services.AddSingleton<TurnService>() |> ignore
-        services.AddSingleton<UserService>() |> ignore
+        services.AddScoped<BoardService>() |> ignore
+        services.AddScoped<EventService>() |> ignore
+        services.AddScoped<GameCrudService>() |> ignore
+        services.AddScoped<GameStartService>() |> ignore
+        services.AddScoped<IndirectEffectsService>() |> ignore
+        services.AddScoped<INotificationService, NotificationService>() |> ignore
+        services.AddScoped<PlayerService>() |> ignore
+        services.AddScoped<PlayerStatusChangeService>() |> ignore
+        services.AddScoped<ISessionService, SessionService>() |> ignore
+        services.AddScoped<SelectionOptionsService>() |> ignore
+        services.AddScoped<SelectionService>() |> ignore
+        services.AddScoped<TurnService>() |> ignore
+        services.AddScoped<UserService>() |> ignore
         
-        services.AddSingleton<IBoardManager, BoardManager>() |> ignore
-        services.AddSingleton<ISearchManager, SearchManager>() |> ignore
-        services.AddSingleton<ISessionManager, SessionManager>() |> ignore
-        services.AddSingleton<ISnapshotManager, SnapshotManager>() |> ignore
-        services.AddSingleton<IUserManager, UserManager>() |> ignore
+        services.AddScoped<IBoardManager, BoardManager>() |> ignore
+        services.AddScoped<ISearchManager, SearchManager>() |> ignore
+        services.AddScoped<ISessionManager, SessionManager>() |> ignore
+        services.AddScoped<ISnapshotManager, SnapshotManager>() |> ignore
+        services.AddScoped<IUserManager, UserManager>() |> ignore
         // TODO: Break up game manager
-        services.AddSingleton<IEventManager, GameManager>() |> ignore
-        services.AddSingleton<IGameManager, GameManager>() |> ignore
-        services.AddSingleton<IPlayerManager, GameManager>() |> ignore
-        services.AddSingleton<ITurnManager, GameManager>() |> ignore
+        services.AddScoped<IEventManager, GameManager>() |> ignore
+        services.AddScoped<IGameManager, GameManager>() |> ignore
+        services.AddScoped<IPlayerManager, GameManager>() |> ignore
+        services.AddScoped<ITurnManager, GameManager>() |> ignore
 
         // Controller layer
-        services.AddSingleton<CookieProvider>() |> ignore
-        services.AddSingleton<SessionContextProvider>() |> ignore
+        services.AddScoped<CookieProvider>() |> ignore
+        services.AddScoped<SessionContextProvider>() |> ignore
         
         ()
 

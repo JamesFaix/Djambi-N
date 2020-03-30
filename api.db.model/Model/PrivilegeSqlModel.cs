@@ -1,18 +1,19 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Apex.Api.Enums;
 
 namespace Apex.Api.Db.Model
 {
-    [Table("NeutralPlayerNames")]
-    public class NeutralPlayerNameSqlModel
+    [Table("Privileges")]
+    public class PrivilegeSqlModel
     {
         [Key]
+        [Column("PrivilegeId")]
         [Required]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public int NeutralPlayerNameId { get; set; }
+        public Privilege Id { get; set; }
 
         [Required]
-        [StringLength(20)]
         public string Name { get; set; }
     }
 }

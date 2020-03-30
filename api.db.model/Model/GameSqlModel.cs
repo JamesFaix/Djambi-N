@@ -1,23 +1,32 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Apex.Api.Enums;
 
 namespace Apex.Api.Db.Model
 {
     [Table("Games")]
     public class GameSqlModel
     {
+        [Key]
         [Required]
-        public int Id { get; set; }
-        
+        public int GameId { get; set; }
+
         [Required]
+        public int CreatedByUserId { get; set; }
         public UserSqlModel CreatedByUser { get; set; }
-        
+
         [Required]
         public DateTime CreatedOn { get; set; }
 
         [Required]
-        public GameStatusSqlModel Status { get; set; }
+        public GameStatus GameStatusId { get; set; }
+
+        public IList<PlayerSqlModel> Players { get; set; } = new List<PlayerSqlModel>();
+
+        public IList<EventSqlModel> Events { get; set; } = new List<EventSqlModel>();
+
         public string Description { get; set; }
 
         [Required]
@@ -34,7 +43,7 @@ namespace Apex.Api.Db.Model
 
         // Nullable
         public string PiecesJson { get; set; }
-        
+
         // Nullable
         public string CurrentTurnJson { get; set; }
     }
