@@ -15,7 +15,7 @@ type UserRepository(context : ApexDbContext) =
                 let! sqlModel = context.Users.FindAsync(userId)
 
                 return match sqlModel with
-                        | null -> Error <| HttpException(404, "Not found.")
+                        | null -> Error <| HttpException(404, "User not found.")
                         | x -> Ok(x |> toUserDetails)
             }
 
@@ -24,7 +24,7 @@ type UserRepository(context : ApexDbContext) =
                 let! sqlModel = context.Users.SingleOrDefaultAsync(fun x -> name = x.Name) // Relies on case insensitivity of SQL 
 
                 return match sqlModel with
-                        | null -> Error <| HttpException(404, "Not found.")
+                        | null -> Error <| HttpException(404, "User not found.")
                         | x -> Ok(x |> toUserDetails)
             }
 

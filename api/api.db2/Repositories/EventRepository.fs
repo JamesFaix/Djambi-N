@@ -32,6 +32,7 @@ type EventRepository(context : ApexDbContext) =
 
                 let mutable sqlQuery = 
                     context.Events
+                        .Include(fun e -> e.CreatedByUser)
                         .Where(fun e -> e.Game.GameId = gameId)
 
                 // Filters
@@ -162,6 +163,11 @@ type EventRepository(context : ApexDbContext) =
                 let! _ = context.Events.AddAsync(e)
                 
                 let! _ = context.SaveChangesAsync()
+
+                let! e = 
+                    context.Events
+                        .Include(fun e -> e.CreatedByUser)
+                        .SingleOrDefaultAsync(fun e1 -> e1.EventId = e.EventId)
 
                 let response = {
                     game = newGame

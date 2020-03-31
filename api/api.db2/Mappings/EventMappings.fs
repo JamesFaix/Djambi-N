@@ -4,8 +4,6 @@ open Apex.Api.Db.Model
 open Apex.Api.Model
 open System
 open Apex.Api.Common.Json
-open System.ComponentModel
-open System.Collections.Generic
 
 [<AutoOpen>]
 module EventMappings =
@@ -18,7 +16,7 @@ module EventMappings =
                 userName = source.CreatedByUser.Name
                 time = source.CreatedOn
             }
-            actingPlayerId = source.ActingPlayer |> Option.ofObj |> Option.map (fun x -> x.PlayerId)
+            actingPlayerId = source.ActingPlayerId |> Option.ofNullable
             kind = source.EventKindId
             effects = source.EffectsJson |> JsonUtility.deserializeList
         }
