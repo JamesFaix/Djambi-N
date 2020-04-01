@@ -84,6 +84,7 @@ type GameRepository(context : ApexDbContext) =
                 g.AllowGuests <- game.parameters.allowGuests
                 g.Description <- game.parameters.description |> Option.toObj
                 g.RegionCount <- byte game.parameters.regionCount
+                g.GameStatusId <- game.status
                 g.CurrentTurnJson <- game.currentTurn |> JsonUtility.serialize
                 g.TurnCycleJson <- game.turnCycle |> JsonUtility.serialize
                 g.PiecesJson <- game.pieces |> JsonUtility.serialize

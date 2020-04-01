@@ -20,8 +20,8 @@ type AddPlayerTests() =
             let! (_, _, game) = createuserSessionAndGame(false) |> thenValue
 
             let! user = createUser() |> thenValue
-            let session = getSessionForUser user.id
-            let request = CreatePlayerRequest.user user.id
+            let session = getSessionForUser (user |> UserDetails.hideDetails)
+            let request = CreatePlayerRequest.user user
 
             //Act
             let! resp = host.Get<IPlayerManager>().addPlayer game.id request session |> thenValue

@@ -14,11 +14,11 @@ type CreatePlayerRequest =
 
 module CreatePlayerRequest =
 
-    let user (userId : int) : CreatePlayerRequest =
+    let user (user : UserDetails) : CreatePlayerRequest =
         {
             kind = PlayerKind.User
-            userId = Some userId
-            name = None
+            userId = Some user.id
+            name = Some user.name
         }
 
     let guest (userId : int, name : string) : CreatePlayerRequest =

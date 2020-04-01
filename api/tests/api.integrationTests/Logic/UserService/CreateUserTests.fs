@@ -47,8 +47,9 @@ type CreateUserTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
+            let! currentUser = createUser() |> AsyncHttpResult.thenValue
             let request = getCreateUserRequest()
-            let session = getSessionForUser 1 |> TestUtilities.setSessionPrivileges []
+            let session = getSessionForUser (currentUser |> UserDetails.hideDetails) |> TestUtilities.setSessionPrivileges []
 
             //Act
             let! error = host.Get<UserService>().createUser request (Some session)
@@ -62,8 +63,9 @@ type CreateUserTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
+            let! currentUser = createUser() |> AsyncHttpResult.thenValue
             let request = getCreateUserRequest()
-            let session = getSessionForUser 1 |> TestUtilities.setSessionPrivileges [Privilege.EditUsers]
+            let session = getSessionForUser (currentUser |> UserDetails.hideDetails) |> TestUtilities.setSessionPrivileges [Privilege.EditUsers]
 
             //Act
             let! user = host.Get<UserService>().createUser request (Some session)

@@ -18,7 +18,7 @@ type CreateGameTests() =
             //Arrange
             let! user = createUser() |> AsyncHttpResult.thenValue
             let parameters = getGameParameters()
-            let session = getSessionForUser user.id
+            let session = getSessionForUser (user |> UserDetails.hideDetails)
 
             //Act
             let! game = host.Get<IGameManager>().createGame parameters session
@@ -40,7 +40,7 @@ type CreateGameTests() =
             //Arrange
             let! user = createUser() |> AsyncHttpResult.thenValue
             let parameters = getGameParameters()
-            let session = getSessionForUser user.id
+            let session = getSessionForUser (user |> UserDetails.hideDetails)
 
             //Act
             let! game = host.Get<IGameManager>().createGame parameters session

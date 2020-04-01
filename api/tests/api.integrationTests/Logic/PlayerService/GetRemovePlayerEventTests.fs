@@ -27,7 +27,7 @@ type GetRemovePlayerEventTests() =
             let! game2 = host.Get<IGameManager>().createGame gameRequest session |> thenValue
 
             let! user = createUser() |> thenValue
-            let request = CreatePlayerRequest.user user.id
+            let request = CreatePlayerRequest.user user
 
             let! player = host.Get<IPlayerManager>().addPlayer game1.id request session
                           |> thenMap (fun resp -> resp.game.players |> List.except game1.players |> List.head)
@@ -72,7 +72,7 @@ type GetRemovePlayerEventTests() =
             let adminSession = session |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames]
 
             let! user = createUser() |> thenValue
-            let request = CreatePlayerRequest.user user.id
+            let request = CreatePlayerRequest.user user
 
             let session = session |> TestUtilities.setSessionPrivileges []
                                   |> TestUtilities.setSessionUserId Int32.MinValue
@@ -126,7 +126,7 @@ type GetRemovePlayerEventTests() =
             let session = session |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames]
 
             let! user = createUser() |> thenValue
-            let request = CreatePlayerRequest.user user.id
+            let request = CreatePlayerRequest.user user
 
             let! player = host.Get<IPlayerManager>().addPlayer game.id request session
                           |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
@@ -155,7 +155,7 @@ type GetRemovePlayerEventTests() =
             let! (_, session, game) = createuserSessionAndGame(false) |> thenValue
 
             let! user = createUser() |> thenValue
-            let request = CreatePlayerRequest.user user.id
+            let request = CreatePlayerRequest.user user
 
             let adminSession = session |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames]
             let! player = host.Get<IPlayerManager>().addPlayer game.id request adminSession
@@ -185,7 +185,7 @@ type GetRemovePlayerEventTests() =
             let! (_, session, game) = createuserSessionAndGame(true) |> thenValue
 
             let! user = createUser() |> thenValue
-            let userPlayerRequest = CreatePlayerRequest.user user.id
+            let userPlayerRequest = CreatePlayerRequest.user user
             let guestPlayerRequest = CreatePlayerRequest.guest (user.id, "test")
 
             let adminSession = session |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames]
@@ -223,7 +223,7 @@ type GetRemovePlayerEventTests() =
             let! (_, session, game) = createuserSessionAndGame(true) |> thenValue
 
             let! user = createUser() |> thenValue
-            let userPlayerRequest = CreatePlayerRequest.user user.id
+            let userPlayerRequest = CreatePlayerRequest.user user
             let guestPlayerRequest = CreatePlayerRequest.guest (user.id, "test")
 
             let adminSession = session |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames]

@@ -21,7 +21,7 @@ type DeleteUserTests() =
             let! user = host.Get<UserService>().createUser request None
                         |> AsyncHttpResult.thenValue
 
-            let session = getSessionForUser user.id |> TestUtilities.setSessionPrivileges []
+            let session = getSessionForUser (user |> UserDetails.hideDetails) |> TestUtilities.setSessionPrivileges []
 
             //Act
             let! response = host.Get<UserService>().deleteUser user.id session
@@ -35,11 +35,12 @@ type DeleteUserTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
+            let! currentUser = createUser() |> AsyncHttpResult.thenValue
             let request = getCreateUserRequest()
             let! user = host.Get<UserService>().createUser request None
                         |> AsyncHttpResult.thenValue
 
-            let session = getSessionForUser (user.id + 1) |> TestUtilities.setSessionPrivileges [Privilege.EditUsers]
+            let session = getSessionForUser { (currentUser |> UserDetails.hideDetails) with id = currentUser.id + 1} |> TestUtilities.setSessionPrivileges [Privilege.EditUsers]
 
             //Act
             let! response = host.Get<UserService>().deleteUser user.id session
@@ -53,11 +54,12 @@ type DeleteUserTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
+            let! currentUser = createUser() |> AsyncHttpResult.thenValue
             let request = getCreateUserRequest()
             let! user = host.Get<UserService>().createUser request None
                         |> AsyncHttpResult.thenValue
 
-            let session = getSessionForUser (user.id + 1) |> TestUtilities.setSessionPrivileges []
+            let session = getSessionForUser { (currentUser |> UserDetails.hideDetails) with id = currentUser.id + 1} |> TestUtilities.setSessionPrivileges []
 
             //Act
             let! response = host.Get<UserService>().deleteUser user.id session
@@ -71,11 +73,12 @@ type DeleteUserTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
+            let! currentUser = createUser() |> AsyncHttpResult.thenValue
             let request = getCreateUserRequest()
             let! user = host.Get<UserService>().createUser request None
                         |> AsyncHttpResult.thenValue
 
-            let session = getSessionForUser 1 |> TestUtilities.setSessionPrivileges [Privilege.EditUsers]
+            let session = getSessionForUser (currentUser |> UserDetails.hideDetails) |> TestUtilities.setSessionPrivileges [Privilege.EditUsers]
 
             let! _ = host.Get<UserService>().deleteUser user.id session
 

@@ -50,8 +50,8 @@ type SelectCellTests() =
             let! (user1, session1, game) = createuserSessionAndGame(true) |> thenValue
 
             let! user2 = createUser() |> thenValue
-            let session2 = getSessionForUser user2.id
-            let playerRequest = CreatePlayerRequest.user user2.id
+            let session2 = getSessionForUser (user2 |> UserDetails.hideDetails)
+            let playerRequest = CreatePlayerRequest.user user2
             let! player2 = host.Get<IPlayerManager>().addPlayer game.id playerRequest session2
                             |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                             |> thenValue
@@ -81,8 +81,8 @@ type SelectCellTests() =
             let! (user1, session1, game) = createuserSessionAndGame(true) |> thenValue
 
             let! user2 = createUser() |> thenValue
-            let session2 = getSessionForUser user2.id
-            let playerRequest = CreatePlayerRequest.user user2.id
+            let session2 = getSessionForUser (user2 |> UserDetails.hideDetails)
+            let playerRequest = CreatePlayerRequest.user user2
             let! player2 = host.Get<IPlayerManager>().addPlayer game.id playerRequest session2
                             |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
                             |> thenValue

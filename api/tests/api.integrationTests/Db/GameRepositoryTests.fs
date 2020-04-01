@@ -54,7 +54,7 @@ type GameRepositoryTests() =
             let userRequest = getCreateUserRequest()
             let! gameId = host.Get<IGameRepository>().createGame gameRequest |> thenValue
             let! user = host.Get<IUserRepository>().createUser userRequest |> thenValue
-            let request = CreatePlayerRequest.user user.id
+            let request = CreatePlayerRequest.user user
 
             //Act
             let! _ = host.Get<IGameRepository>().addPlayer (gameId, request) |> thenValue
@@ -124,7 +124,7 @@ type GameRepositoryTests() =
             let userRequest = getCreateUserRequest()
             let! gameId = host.Get<IGameRepository>().createGame gameRequest |> thenValue
             let! user = host.Get<IUserRepository>().createUser userRequest |> thenValue
-            let playerRequest = CreatePlayerRequest.user user.id
+            let playerRequest = CreatePlayerRequest.user user
             let! player = host.Get<IGameRepository>().addPlayer (gameId, playerRequest) |> thenValue
 
             //Act

@@ -5,6 +5,8 @@ open Apex.Api.IntegrationTests
 open Apex.Api.Model
 open Apex.Api.Enums
 open Apex.Api.Logic.Services
+open FSharp.Control.Tasks
+open Apex.Api.Common.Control
 
 //TODO: Move to unit test project
 
@@ -321,34 +323,35 @@ type EventServiceTests() =
     let ``Should apply PlayerAdded effect``() =
         let host = HostFactory.createHost()
         //Arrange
-        let game = { TestUtilities.defaultGame with id = 5 }
-        let userId = 1
-        let playerRequest = CreatePlayerRequest.user(userId)
-        let effect = PlayerAddedEffect.fromRequest playerRequest
-        let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
+        task {
+            let game = { TestUtilities.defaultGame with id = 5 }
+            let! user = createUser() |> AsyncHttpResult.thenValue
+            let playerRequest = CreatePlayerRequest.user(user)
+            let effect = PlayerAddedEffect.fromRequest playerRequest
+            let eventRequest = TestUtilities.createEventRequest([effect]) //Kind doesn't matter
 
-        game.players.Length |> shouldBe 0
+            game.players.Length |> shouldBe 0
 
-        //Act
-        let newGame = host.Get<EventService>().applyEvent game eventRequest
+            //Act
+            let newGame = host.Get<EventService>().applyEvent game eventRequest
 
-        //Assert
-        { game with players = newGame.players } |> shouldBe newGame
+            //Assert
+            { game with players = newGame.players } |> shouldBe newGame
 
-        newGame.players.Length |> shouldBe 1
-        let p = newGame.players.Head
-        p.id |> shouldBe 0 //This is generated when the event is persisted
-        p.gameId |> shouldBe newGame.id
-        p.userId |> shouldBe playerRequest.userId
-        p.kind |> shouldBe playerRequest.kind
-        p.name |> shouldBe "" //This is pulled from the db for User players
+            newGame.players.Length |> shouldBe 1
+            let p = newGame.players.Head
+            p.id |> shouldBe 0 //This is generated when the event is persisted
+            p.gameId |> shouldBe newGame.id
+            p.userId |> shouldBe playerRequest.userId
+            p.kind |> shouldBe playerRequest.kind
+            p.name |> shouldBe "" //This is pulled from the db for User players
 
-        //These are assigned at game start
-        p.status |> shouldBe PlayerStatus.Pending
-        p.colorId |> shouldBe None
-        p.startingRegion |> shouldBe None
-        p.startingTurnNumber |> shouldBe None
-
+            //These are assigned at game start
+            p.status |> shouldBe PlayerStatus.Pending
+            p.colorId |> shouldBe None
+            p.startingRegion |> shouldBe None
+            p.startingTurnNumber |> shouldBe None
+        }
     [<Fact>]
     let ``Should apply PlayerStatusChanged effect``() =
         let host = HostFactory.createHost()

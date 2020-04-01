@@ -5,6 +5,7 @@ open Xunit
 open Apex.Api.Common.Control
 open Apex.Api.IntegrationTests
 open Apex.Api.Logic.Services
+open Apex.Api.Model
 
 type CloseSessionTests() =
     inherit TestsBase()
@@ -34,7 +35,8 @@ type CloseSessionTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let session = getSessionForUser 1
+            let! user = createUser() |> AsyncHttpResult.thenValue
+            let session = getSessionForUser (user |> UserDetails.hideDetails)
 
             //Act
             let! result = host.Get<SessionService>().closeSession session

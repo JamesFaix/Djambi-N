@@ -57,14 +57,9 @@ let getCreatePlayerRequest : CreatePlayerRequest =
 
 let adminUserId = 1
 
-let getSessionForUser (userId : int) : Session =
+let getSessionForUser (user : User) : Session =
     {
-        user =
-            {
-                id = userId
-                name = ""
-                privileges = []
-            }
+        user = user
         id = 0
         token = ""
         createdOn = DateTime.MinValue
@@ -81,7 +76,7 @@ let createuserSessionAndGame(allowGuests : bool) : (UserDetails * Session * Game
     task {
         let! user = createUser() |> thenValue
 
-        let session = getSessionForUser user.id
+        let session = getSessionForUser (user |> UserDetails.hideDetails)
 
         let parameters = { getGameParameters() with allowGuests = allowGuests }
         let! game = host.Get<IGameManager>().createGame parameters session

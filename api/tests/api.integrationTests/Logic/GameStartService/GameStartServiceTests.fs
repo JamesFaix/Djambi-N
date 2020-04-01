@@ -10,6 +10,7 @@ open Apex.Api.Model
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Enums
 open Apex.Api.Logic.Services
+open Apex.Api.Common.Control
 
 type GameStartServiceTests() =
     inherit TestsBase()
@@ -19,7 +20,8 @@ type GameStartServiceTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let session = getSessionForUser 1
+            let! user = createUser() |> AsyncHttpResult.thenValue
+            let session = getSessionForUser (user |> UserDetails.hideDetails)
             let parameters = getGameParameters()
             let! game = host.Get<IGameManager>().createGame parameters session
                         |> thenBindAsync TestUtilities.fillEmptyPlayerSlots
@@ -43,7 +45,8 @@ type GameStartServiceTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let session = getSessionForUser 1
+            let! user = createUser() |> AsyncHttpResult.thenValue
+            let session = getSessionForUser (user |> UserDetails.hideDetails)
             let parameters = getGameParameters()
             let! game = host.Get<IGameManager>().createGame parameters session
                         |> thenBindAsync TestUtilities.fillEmptyPlayerSlots

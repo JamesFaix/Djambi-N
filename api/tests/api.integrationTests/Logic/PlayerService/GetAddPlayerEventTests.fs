@@ -29,8 +29,8 @@ type GetAddPlayerEventTests() =
             let! (_, _, game) = createuserSessionAndGame(false) |> thenValue
 
             let! user = createUser() |> thenValue
-            let session = getSessionForUser user.id
-            let request = CreatePlayerRequest.user user.id
+            let session = getSessionForUser (user |> UserDetails.hideDetails)
+            let request = CreatePlayerRequest.user user
 
             //Act
             let eventRequest = host.Get<PlayerService>().getAddPlayerEvent (game, request) session |> Result.value
@@ -47,7 +47,7 @@ type GetAddPlayerEventTests() =
             let! (_, session, game) = createuserSessionAndGame(false) |> thenValue
             let session = session |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames]
             let! user = createUser() |> thenValue
-            let request = CreatePlayerRequest.user user.id
+            let request = CreatePlayerRequest.user user
 
             //Act
             let eventRequest = host.Get<PlayerService>().getAddPlayerEvent (game, request) session |> Result.value
@@ -65,7 +65,7 @@ type GetAddPlayerEventTests() =
             let session = session |> TestUtilities.setSessionPrivileges []
 
             let! user = createUser() |> thenValue
-            let request = CreatePlayerRequest.user user.id
+            let request = CreatePlayerRequest.user user
 
             //Act
             let error = host.Get<PlayerService>().getAddPlayerEvent (game, request) session
@@ -129,7 +129,7 @@ type GetAddPlayerEventTests() =
             //Arrange
             let! (user, session, game) = createuserSessionAndGame(false) |> thenValue
             let session = session |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames]
-            let request = CreatePlayerRequest.user user.id
+            let request = CreatePlayerRequest.user user
 
             //Act
             let error = host.Get<PlayerService>().getAddPlayerEvent (game, request) session
