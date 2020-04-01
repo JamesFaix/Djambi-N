@@ -22,7 +22,7 @@ type SessionRepository(context : ApexDbContext) =
                         )
 
                 if s = null
-                then return Error <| HttpException(404, "Not found.")
+                then return Error <| HttpException(404, "Session not found.")
                 else return Ok(s |> toSession)
             }
 
@@ -49,7 +49,7 @@ type SessionRepository(context : ApexDbContext) =
             task {
                 let! s = context.Sessions.FindAsync(sessionId)
                 if s = null
-                then return Error <| HttpException(404, "Not found.")
+                then return Error <| HttpException(404, "Session not found.")
                 else 
                     s.ExpiresOn <- expiresOn
                     context.Sessions.Update(s) |> ignore
@@ -75,11 +75,11 @@ type SessionRepository(context : ApexDbContext) =
                 if token.IsSome
                 then 
                     let! x = context.Sessions.SingleOrDefaultAsync(fun s -> 
-                        String.Equals(s.Token, token.Value, StringComparison.InvariantCulture))
+                        String.Equals(s.Token.ToLower(), token.Value.ToLower()))
                     s <- x
 
                 if s = null
-                then return Error <| HttpException(404, "Not found.")
+                then return Error <| HttpException(404, "Session not found.")
                 else
                     context.Sessions.Remove(s) |> ignore
                     let! _ = context.SaveChangesAsync()
