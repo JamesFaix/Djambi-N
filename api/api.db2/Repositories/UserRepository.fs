@@ -7,8 +7,13 @@ open FSharp.Control.Tasks
 open Apex.Api.Common.Control
 open Apex.Api.Db.Mappings
 open Microsoft.EntityFrameworkCore
+open System.Data
 
 type UserRepository(context : ApexDbContext) =    
+    let nameConflictMessage = 
+        "The instance of entity type 'UserSqlModel' cannot be tracked because " + 
+        "another instance with the same key value for {'Name'} is already being tracked."
+
     interface IUserRepository with
         member __.getUser userId =
             task {
@@ -37,18 +42,24 @@ type UserRepository(context : ApexDbContext) =
                 u.LastFailedLoginAttemptOn <- Nullable<DateTime>()
                 u.CreatedOn <- DateTime.UtcNow
 
-                let! _ = context.Users.AddAsync(u)
-                let! _ = context.SaveChangesAsync()
-
-                return u |> toUserDetails |> Ok
+                try 
+                    let! _ = context.Users.AddAsync(u)
+                    let! _ = context.SaveChangesAsync()
+                    return u |> toUserDetails |> Ok
+                with
+                | :? InvalidOperationException as ex when ex.Message.StartsWith(nameConflictMessage) ->
+                    return Error <| HttpException(409, "Conflict when attempting to write User.")
             }
 
         member __.deleteUser userId = 
             task {
                 let! u = context.Users.FindAsync(userId)
-                context.Users.Remove(u) |> ignore
-                let! _ = context.SaveChangesAsync()
-                return Ok ()
+                if u = null
+                then return Error <| HttpException(404, "User not found.")
+                else
+                    context.Users.Remove(u) |> ignore
+                    let! _ = context.SaveChangesAsync()
+                    return Ok ()
             }
 
         member __.updateFailedLoginAttempts request =
