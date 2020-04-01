@@ -16,8 +16,9 @@ type CreateGameTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
+            let! user = createUser() |> AsyncHttpResult.thenValue
             let parameters = getGameParameters()
-            let session = getSessionForUser 1
+            let session = getSessionForUser user.id
 
             //Act
             let! game = host.Get<IGameManager>().createGame parameters session
@@ -37,8 +38,9 @@ type CreateGameTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
+            let! user = createUser() |> AsyncHttpResult.thenValue
             let parameters = getGameParameters()
-            let session = getSessionForUser 1
+            let session = getSessionForUser user.id
 
             //Act
             let! game = host.Get<IGameManager>().createGame parameters session

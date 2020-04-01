@@ -2,13 +2,17 @@
 
 open Apex.Api.Db.Model
 open Apex.Api.Model
-open Apex.Api.Db.Mappings
 open System.Linq
 
 [<AutoOpen>]
 module SearchMappings =
 
     let toSearchGame (source : GameSqlModel) (currentUserId : int) : SearchGame =
+        let lastEventOn = 
+            if source.Events.Any() 
+            then source.Events.Max(fun e -> e.CreatedOn) 
+            else source.CreatedOn
+
         {
             id = source.GameId
             parameters = {
@@ -23,7 +27,7 @@ module SearchMappings =
                 time = source.CreatedOn
             }
             status = source.GameStatusId
-            lastEventOn = source.Events.Max(fun e -> e.CreatedOn)
+            lastEventOn = lastEventOn
             playerCount = source.Players.Count
             containsMe = source.Players.Any(fun p -> p.UserId.HasValue && p.UserId.Value = currentUserId)
         }

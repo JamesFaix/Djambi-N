@@ -7,7 +7,6 @@ open FSharp.Control.Tasks
 open Apex.Api.Common.Control
 open Apex.Api.Db.Mappings
 open Microsoft.EntityFrameworkCore
-open System.Data
 
 type UserRepository(context : ApexDbContext) =    
     let nameConflictMessage = 

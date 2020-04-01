@@ -12,6 +12,10 @@ open System.Threading.Tasks
 open Apex.Api.Common.Json
 
 type GameRepository(context : ApexDbContext) =
+    let nameConflictMessage = 
+        "The instance of entity type 'PlayerSqlModel' cannot be tracked because " + 
+        "another instance with the same key value for {'GameId', 'Name'} is already being tracked."
+
     interface IGameRepository with
         member __.getGame gameId =
             task {
@@ -20,7 +24,7 @@ type GameRepository(context : ApexDbContext) =
                         .Include(fun g -> g.CreatedByUser)
                         .SingleOrDefaultAsync(fun g -> g.GameId = gameId)
                 if g = null
-                then raise <| HttpException(404, "Not found.")
+                then raise <| HttpException(404, "Game not found.")
 
                 let! ps = context.Players.Where(fun p -> p.GameId = gameId).ToListAsync()
 
@@ -54,9 +58,13 @@ type GameRepository(context : ApexDbContext) =
                 then p.Name <- request.name.Value
                 else p.Name <- u.Name
 
-                let! _ = context.Players.AddAsync(p)
-                let! _ = context.SaveChangesAsync()
-                return Ok(p |> toPlayer)
+                try 
+                    let! _ = context.Players.AddAsync(p)
+                    let! _ = context.SaveChangesAsync()
+                    return Ok(p |> toPlayer)
+                with
+                | :? InvalidOperationException as ex when ex.Message.StartsWith(nameConflictMessage) ->
+                    return Error <| HttpException(409, "Conflict when attempting to write Player.")
             }
             
         [<Obsolete("Only used for tests")>]
