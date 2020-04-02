@@ -91,7 +91,7 @@ type GetUpdateGameParametersEventTests() =
         }
 
     [<Fact>]
-    let ``Should have effect for remvoving guests if allowGuests is being disabled``() =
+    let ``Should have effect for removing guests if allowGuests is being disabled``() =
         let host = HostFactory.createHost()
         task {
             //Arrange

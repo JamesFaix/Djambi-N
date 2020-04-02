@@ -21,15 +21,15 @@ type GameRepository(context : ApexDbContext) =
             task {
                 let! g = 
                     context.Games
+                        .Include(fun g -> g.Players)
                         .Include(fun g -> g.CreatedByUser)
                         .SingleOrDefaultAsync(fun g -> g.GameId = gameId)
                 if g = null
                 then raise <| HttpException(404, "Game not found.")
 
-                let! ps = context.Players.Where(fun p -> p.GameId = gameId).ToListAsync()
+                g.Players <- g.Players.OrderBy(fun p -> p.PlayerId).ToList()
 
-                let result = toGame g ps
-                return Ok(result)
+                return Ok(g |> toGame)
             }
             
         [<Obsolete("Only used for tests")>]
