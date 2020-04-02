@@ -25,11 +25,10 @@ type GameRepository(context : ApexDbContext) =
                         .Include(fun g -> g.CreatedByUser)
                         .SingleOrDefaultAsync(fun g -> g.GameId = gameId)
                 if g = null
-                then raise <| HttpException(404, "Game not found.")
-
-                g.Players <- g.Players.OrderBy(fun p -> p.PlayerId).ToList()
-
-                return Ok(g |> toGame)
+                then return Error <| HttpException(404, "Game not found.")
+                else 
+                    g.Players <- g.Players.OrderBy(fun p -> p.PlayerId).ToList()
+                    return Ok(g |> toGame)
             }
             
         [<Obsolete("Only used for tests")>]
