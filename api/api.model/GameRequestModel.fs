@@ -18,7 +18,7 @@ module CreatePlayerRequest =
         {
             kind = PlayerKind.User
             userId = Some user.id
-            name = Some user.name
+            name = None
         }
 
     let guest (userId : int, name : string) : CreatePlayerRequest =
