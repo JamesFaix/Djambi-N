@@ -127,6 +127,8 @@ type EventRepository(context : ApexDbContext) =
                 if g = null
                 then raise <| HttpException(404, "Not found.")
 
+                use! transaction = context.Database.BeginTransactionAsync()
+
                 // Update game
                 g.AllowGuests <- newGame.parameters.allowGuests
                 g.IsPublic <- newGame.parameters.isPublic
@@ -163,6 +165,7 @@ type EventRepository(context : ApexDbContext) =
                 let! _ = context.Events.AddAsync(e)
                 
                 let! _ = context.SaveChangesAsync()
+                let! _ = transaction.CommitAsync()
 
                 // Query updated data (so primary keys are assigned, etc)
                 let! g = 
