@@ -164,13 +164,20 @@ type EventRepository(context : ApexDbContext) =
                 
                 let! _ = context.SaveChangesAsync()
 
+                // Query updated data (so primary keys are assigned, etc)
+                let! g = 
+                    context.Games
+                        .Include(fun g -> g.Players)
+                        .Include(fun g -> g.CreatedByUser)
+                        .SingleOrDefaultAsync(fun g -> g.GameId = newGame.id)
+
                 let! e = 
                     context.Events
                         .Include(fun e -> e.CreatedByUser)
                         .SingleOrDefaultAsync(fun e1 -> e1.EventId = e.EventId)
 
                 let response = {
-                    game = newGame
+                    game = g |> toGame
                     event = e |> toEvent
                 }
 
