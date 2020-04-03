@@ -104,6 +104,8 @@ type GameRepository(context : ApexDbContext) =
 
         member __.createGameAndAddPlayer (gameRequest, playerRequest) =
             task {
+                use! transaction = context.Database.BeginTransactionAsync()
+
                 let gameSqlModel = toGameSqlModel gameRequest
                 let! _ = context.Games.AddAsync(gameSqlModel)
                 let! _ = context. SaveChangesAsync()
@@ -113,6 +115,7 @@ type GameRepository(context : ApexDbContext) =
                 let! _ = context.Players.AddAsync(playerSqlModel)
 
                 let! _ = context.SaveChangesAsync()
+                let! _ = transaction.CommitAsync()
 
                 return Ok(gameSqlModel.GameId)
             }
