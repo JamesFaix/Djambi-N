@@ -10,6 +10,7 @@ open System.Linq
 open Apex.Api.Db.Mappings
 open System.Threading.Tasks
 open Apex.Api.Common.Json
+open Apex.Api.Enums
 
 type GameRepository(context : ApexDbContext) =
     let nameConflictMessage = 
@@ -47,6 +48,7 @@ type GameRepository(context : ApexDbContext) =
                 p.GameId <- gameId
                 p.PlayerKindId <- request.kind
                 p.UserId <- request.userId |> Option.toNullable
+                p.PlayerStatusId <- PlayerStatus.Pending
 
                 let! u = 
                     match request.userId with
