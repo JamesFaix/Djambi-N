@@ -37,7 +37,7 @@ type EventRepositoryTests() =
             let newGame = { game with players = [player] }
 
             //Act
-            let! resp = host.Get<IEventRepository>().persistEvent (TestUtilities.emptyEventRequest, game, newGame) |> thenValue
+            let! resp = host.Get<IEventRepository>().persistEvent (TestUtilities.emptyEventRequest(user.id), game, newGame) |> thenValue
 
             //Assert
             let persistedGame = resp.game
@@ -71,7 +71,7 @@ type EventRepositoryTests() =
             let newGame = { game with players = [] }
 
             //Act
-            let! resp = host.Get<IEventRepository>().persistEvent (TestUtilities.emptyEventRequest, game, newGame) |> thenValue
+            let! resp = host.Get<IEventRepository>().persistEvent (TestUtilities.emptyEventRequest(user.id), game, newGame) |> thenValue
 
             //Assert
             let persistedGame = resp.game
@@ -121,7 +121,7 @@ type EventRepositoryTests() =
                 }
 
             //Act
-            let! resp = host.Get<IEventRepository>().persistEvent (TestUtilities.emptyEventRequest, game, newGame) |> thenValue
+            let! resp = host.Get<IEventRepository>().persistEvent (TestUtilities.emptyEventRequest(user.id), game, newGame) |> thenValue
 
             //Assert
             let persistedGame = resp.game
@@ -138,7 +138,7 @@ type EventRepositoryTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (_, _, game) = TestUtilities.createuserSessionAndGame(false) |> thenValue
+            let! (user, _, game) = TestUtilities.createuserSessionAndGame(false) |> thenValue
 
             game.status |> shouldBe GameStatus.Pending
             game.parameters |> shouldBe
@@ -176,7 +176,7 @@ type EventRepositoryTests() =
                 }
 
             //Act
-            let! resp = host.Get<IEventRepository>().persistEvent (TestUtilities.emptyEventRequest, game, newGame) |> thenValue
+            let! resp = host.Get<IEventRepository>().persistEvent (TestUtilities.emptyEventRequest(user.id), game, newGame) |> thenValue
 
             //Assert
             let persistedGame = resp.game
@@ -188,18 +188,18 @@ type EventRepositoryTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (_, _, game) = TestUtilities.createuserSessionAndGame(true) |> thenValue
+            let! (user, _, game) = TestUtilities.createuserSessionAndGame(true) |> thenValue
 
             //Attempt to add 2 players with the same name
             //This will violate a unique index in SQL and fail the second player
 
             let e = Effect.NeutralPlayerAdded { name = "test"; placeholderPlayerId = -1 }
-            let event = TestUtilities.createEventRequest([e;e]) //EventKind doesn't matter
+            let event = TestUtilities.createEventRequest(user.id)([e;e]) //EventKind doesn't matter
 
             let newGame = host.Get<EventService>().applyEvent game event
 
             //Act
-            let! result = host.Get<IEventRepository>().persistEvent (TestUtilities.emptyEventRequest, game, newGame)
+            let! result = host.Get<IEventRepository>().persistEvent (TestUtilities.emptyEventRequest(user.id), game, newGame)
 
             //Assert
             result |> shouldBeError 409 "Conflict when attempting to write Event."

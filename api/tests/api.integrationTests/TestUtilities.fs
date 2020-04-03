@@ -99,16 +99,16 @@ let fillEmptyPlayerSlots (game : Game) : Game AsyncHttpResult =
         return! host.Get<IGameRepository>().getGame game.id
     }
 
-let emptyEventRequest : CreateEventRequest =
+let emptyEventRequest (userId : int) : CreateEventRequest =
     {
         kind = EventKind.CellSelected //Kind shouldn't matter
         effects = []
-        createdByUserId = 1
+        createdByUserId = userId
         actingPlayerId = None
     }
 
-let createEventRequest (effects : Effect list) : CreateEventRequest =
-    { emptyEventRequest with effects = effects }
+let createEventRequest (userId : int) (effects : Effect list) : CreateEventRequest =
+    { (emptyEventRequest userId) with effects = effects }
 
 let defaultGame : Game =
     {
