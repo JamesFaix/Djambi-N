@@ -30,9 +30,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Solution Items", "_Solutio
 		api\README.md = api\README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "api.db.model", "api.db.model\api.db.model.csproj", "{CDFF3AE4-E25B-4383-8BAD-1379F958C1D3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "api.db.model", "api\api.db.model\api.db.model.csproj", "{CDFF3AE4-E25B-4383-8BAD-1379F958C1D3}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.db2", "api\api.db2\api.db2.fsproj", "{7A3F2F38-D19E-48C3-962E-F647055450AB}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.db", "api\api.db\api.db.fsproj", "{7A3F2F38-D19E-48C3-962E-F647055450AB}"
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.enums", "api\api.enums\api.enums.fsproj", "{A6EA7141-3A6F-46A5-8E2C-0EC2BE460EFE}"
 EndProject

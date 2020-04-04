@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\api\api.enums\api.enums.fsproj" />
+    <ProjectReference Include="..\api.enums\api.enums.fsproj" />
   </ItemGroup>
 
   <ItemGroup>
