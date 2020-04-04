@@ -21,8 +21,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\api.db.model\api.db.model.csproj" />
     <ProjectReference Include="..\api.db.interfaces\api.db.interfaces.fsproj" />
+    <ProjectReference Include="..\api.db.model\api.db.model.csproj" />
     <ProjectReference Include="..\api.model\api.model.fsproj" />
   </ItemGroup>
 
