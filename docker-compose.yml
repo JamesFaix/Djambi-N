@@ -1,11 +1,12 @@
 version: '3'
 services:
   db:
-    build:
-      context: .
-      dockerfile: db/Dockerfile
+    image: mcr.microsoft.com/mssql/server:2017-latest
     ports:
       - "1434:1433"
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD="GR3ATpassword"
   api:
     build:
       context: .
@@ -17,7 +18,7 @@ services:
       - APEX_Api__cookieDomain=localhost
       - APEX_Api__webAddress=http://localhost:8080
       - APEX_Log__directory=
-      - "APEX_Sql__connectionString=Data Source=db;Initial Catalog=Apex;User Id=SA;Password=GR3@Tpassword;"
+      - "APEX_Sql__connectionString=Data Source=db;Initial Catalog=Apex2;User Id=SA;Password=GR3@Tpassword;"
   web:
     build:
       context: .

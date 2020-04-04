@@ -4,7 +4,6 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/core/sdk:3.0-alpine AS build
 WORKDIR /src
 COPY ["api", "api/"]
-COPY ["utils/client-generator.annotations", "utils/client-generator.annotations/"]
 RUN dotnet publish "api/api.host/api.host.fsproj" -c Release -o /app/publish
 
 FROM base AS final
