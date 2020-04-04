@@ -9,22 +9,26 @@ open Apex.Api.Logic.ModelExtensions
 open Apex.Api.Model
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Enums
+open Apex.Api.Logic.Services
+open Apex.Api.Common.Control
 
 type GameStartServiceTests() =
     inherit TestsBase()
 
     [<Fact>]
     let ``Get starting conditions should work``() =
+        let host = HostFactory.createHost()
         task {
             //Arrange
-            let session = getSessionForUser 1
+            let! user = createUser() |> AsyncHttpResult.thenValue
+            let session = getSessionForUser (user |> UserDetails.hideDetails)
             let parameters = getGameParameters()
-            let! game = (gameMan :> IGameManager).createGame parameters session
+            let! game = host.Get<IGameManager>().createGame parameters session
                         |> thenBindAsync TestUtilities.fillEmptyPlayerSlots
                         |> thenValue
 
             //Act
-            let playersWithStartConditions = gameStartServ.assignStartingConditions game.players
+            let playersWithStartConditions = host.Get<GameStartService>().assignStartingConditions game.players
 
             //Assert
             Assert.Equal(game.parameters.regionCount, playersWithStartConditions.Length)
@@ -38,18 +42,20 @@ type GameStartServiceTests() =
 
     [<Fact>]
     let ``Create pieces should work``() =
+        let host = HostFactory.createHost()
         task {
             //Arrange
-            let session = getSessionForUser 1
+            let! user = createUser() |> AsyncHttpResult.thenValue
+            let session = getSessionForUser (user |> UserDetails.hideDetails)
             let parameters = getGameParameters()
-            let! game = (gameMan :> IGameManager).createGame parameters session
+            let! game = host.Get<IGameManager>().createGame parameters session
                         |> thenBindAsync TestUtilities.fillEmptyPlayerSlots
                         |> thenValue
-            let playersWithStartConditions = gameStartServ.assignStartingConditions game.players
+            let playersWithStartConditions = host.Get<GameStartService>().assignStartingConditions game.players
             let board = BoardModelUtility.getBoardMetadata(game.parameters.regionCount)
 
             //Act
-            let pieces = gameStartServ.createPieces(board, playersWithStartConditions)
+            let pieces = host.Get<GameStartService>().createPieces(board, playersWithStartConditions)
 
             //Assert
             Assert.Equal(game.parameters.regionCount * Constants.piecesPerPlayer, pieces.Length)
@@ -68,16 +74,17 @@ type GameStartServiceTests() =
 
     [<Fact>]
     let ``Neutral players should not be in the turn cycle``() =
+        let host = HostFactory.createHost()
         task {
             //Arrange
             let! (user, session, game) = createuserSessionAndGame(true) |> thenValue
 
             let playerRequest = CreatePlayerRequest.guest (user.id, "test")
 
-            let! _ = (gameMan :> IPlayerManager).addPlayer game.id playerRequest session |> thenValue
+            let! _ = host.Get<IPlayerManager>().addPlayer game.id playerRequest session |> thenValue
 
             //Act
-            let updatedGame = gameStartServ.applyStartGame game
+            let updatedGame = host.Get<GameStartService>().applyStartGame game
 
             //Assert
             let neutralPlayerIds =

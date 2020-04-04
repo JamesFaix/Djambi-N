@@ -13,13 +13,15 @@ type CreateGameTests() =
 
     [<Fact>]
     let ``Create game should work``() =
+        let host = HostFactory.createHost()
         task {
             //Arrange
+            let! user = createUser() |> AsyncHttpResult.thenValue
             let parameters = getGameParameters()
-            let session = getSessionForUser 1
+            let session = getSessionForUser (user |> UserDetails.hideDetails)
 
             //Act
-            let! game = (gameMan :> IGameManager).createGame parameters session
+            let! game = host.Get<IGameManager>().createGame parameters session
                         |> AsyncHttpResult.thenValue
 
             //Assert
@@ -33,13 +35,15 @@ type CreateGameTests() =
 
     [<Fact>]
     let ``Create game should add self as player``() =
+        let host = HostFactory.createHost()
         task {
             //Arrange
+            let! user = createUser() |> AsyncHttpResult.thenValue
             let parameters = getGameParameters()
-            let session = getSessionForUser 1
+            let session = getSessionForUser (user |> UserDetails.hideDetails)
 
             //Act
-            let! game = (gameMan :> IGameManager).createGame parameters session
+            let! game = host.Get<IGameManager>().createGame parameters session
                         |> AsyncHttpResult.thenValue
 
             //Assert

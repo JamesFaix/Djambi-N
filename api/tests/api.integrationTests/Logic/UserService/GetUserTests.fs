@@ -8,22 +8,25 @@ open Apex.Api.IntegrationTests
 open Apex.Api.Model
 open Apex.Api.Logic
 open Apex.Api.Enums
+open Apex.Api.Logic.Services
 
 type GetUserTests() =
     inherit TestsBase()
 
     [<Fact>]
     let ``Get user should work if EditUsers`` () =
+        let host = HostFactory.createHost()
         task {
             //Arrange
             let request = getCreateUserRequest()
-            let! user = userServ.createUser request None
+            let! user = host.Get<UserService>().createUser request None
                         |> AsyncHttpResult.thenValue
+            let! currentUser = createUser() |> AsyncHttpResult.thenValue
 
-            let session = getSessionForUser 1 |> TestUtilities.setSessionPrivileges [Privilege.EditUsers]
+            let session = getSessionForUser (currentUser |> UserDetails.hideDetails) |> TestUtilities.setSessionPrivileges [Privilege.EditUsers]
 
             //Act
-            let! userResponse = userServ.getUser user.id session
+            let! userResponse = host.Get<UserService>().getUser user.id session
                                 |> AsyncHttpResult.thenValue
 
             //Assert
@@ -33,16 +36,18 @@ type GetUserTests() =
 
     [<Fact>]
     let ``Get user should fail if not EditUsers`` () =
+        let host = HostFactory.createHost()
         task {
             //Arrange
             let request = getCreateUserRequest()
-            let! user = userServ.createUser request None
+            let! user = host.Get<UserService>().createUser request None
                         |> AsyncHttpResult.thenValue
+            let! currentUser = createUser() |> AsyncHttpResult.thenValue
 
-            let session = getSessionForUser 1 |> TestUtilities.setSessionPrivileges []
+            let session = getSessionForUser (currentUser |> UserDetails.hideDetails) |> TestUtilities.setSessionPrivileges []
 
             //Act
-            let! error = userServ.getUser user.id session
+            let! error = host.Get<UserService>().getUser user.id session
 
             //Assert
             error |> shouldBeError 403 Security.noPrivilegeOrSelfErrorMessage
@@ -50,13 +55,14 @@ type GetUserTests() =
 
     [<Fact>]
     let ``Get user should fail is user doesn't exist`` () =
+        let host = HostFactory.createHost()
         task {
             //Arrange
-            let request = getCreateUserRequest()
-            let session = getSessionForUser 1 |> TestUtilities.setSessionPrivileges [Privilege.EditUsers]
+            let! user = createUser() |> AsyncHttpResult.thenValue
+            let session = getSessionForUser (user |> UserDetails.hideDetails) |> TestUtilities.setSessionPrivileges [Privilege.EditUsers]
 
             //Act
-            let! error = userServ.getUser Int32.MinValue session
+            let! error = host.Get<UserService>().getUser Int32.MinValue session
 
             //Assert
             error |> shouldBeError 404 "User not found."

@@ -30,6 +30,7 @@ type SearchRepository(context : ApexDbContext) =
 
                 let mutable q : IQueryable<GameSqlModel> = 
                     context.Games
+                        .Include(fun g -> g.CreatedByUser)
                         .Include(fun g -> g.Players)
                         .Include(fun g -> g.Events)
                         :> IQueryable<GameSqlModel>

@@ -100,6 +100,8 @@ type SnapshotRepository(context : ApexDbContext) =
                 if playersToAdd.Any() || playersToRemove.Any()
                 then raise <| NotSupportedException("Snapshots can only be used after the game has started.")
 
+                use! transaction = context.Database.BeginTransactionAsync()
+
                 // Remove old history
                 let! oldEvents = context.Events.Where(fun e -> e.Game.GameId = gameId).ToArrayAsync()
                 context.Events.RemoveRange(oldEvents)
@@ -127,6 +129,7 @@ type SnapshotRepository(context : ApexDbContext) =
                 context.Players.UpdateRange(updatedPlayerSqlModels)
 
                 let! _ = context.SaveChangesAsync()
+                let! _ = transaction.CommitAsync()
 
                 return Ok()
             }

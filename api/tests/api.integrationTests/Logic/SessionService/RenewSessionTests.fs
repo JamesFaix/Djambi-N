@@ -4,24 +4,26 @@ open FSharp.Control.Tasks
 open Xunit
 open Apex.Api.Common.Control
 open Apex.Api.IntegrationTests
+open Apex.Api.Logic.Services
 
 type RenewSessionTests() =
     inherit TestsBase()
 
     [<Fact>]
     let ``Renew session should work`` () =
+        let host = HostFactory.createHost()
         task {
             //Arrange
             let userRequest = getCreateUserRequest()
-            let! _ = userServ.createUser userRequest None
+            let! _ = host.Get<UserService>().createUser userRequest None
                      |> AsyncHttpResult.thenValue
 
             let request = getLoginRequest userRequest
 
-            let! session = sessionServ.openSession request
+            let! session = host.Get<SessionService>().openSession request
                            |> AsyncHttpResult.thenValue
             //Act
-            let! sessionResponse = sessionServ.renewSession session.token
+            let! sessionResponse = host.Get<SessionService>().renewSession session.token
                                   |> AsyncHttpResult.thenValue
 
             //Assert
@@ -31,11 +33,12 @@ type RenewSessionTests() =
 
     [<Fact>]
     let ``Renew session should fail if session does not exist``() =
+        let host = HostFactory.createHost()
         task {
             //Arrange
 
             //Act
-            let! result = sessionServ.renewSession "does not exist"
+            let! result = host.Get<SessionService>().renewSession "does not exist"
 
             //Assert
             result |> shouldBeError 404 "Session not found."
@@ -43,20 +46,21 @@ type RenewSessionTests() =
 
     [<Fact>]
     let ``Renew session should fail if session closed``() =
+        let host = HostFactory.createHost()
         task {
             //Arrange
             let userRequest = getCreateUserRequest()
-            let! _ = userServ.createUser userRequest None
+            let! _ = host.Get<UserService>().createUser userRequest None
                      |> AsyncHttpResult.thenValue
 
             let loginRequest = getLoginRequest userRequest
-            let! session = sessionServ.openSession loginRequest
+            let! session = host.Get<SessionService>().openSession loginRequest
                            |> AsyncHttpResult.thenValue
 
-            let! _ = sessionServ.closeSession session
+            let! _ = host.Get<SessionService>().closeSession session
 
             //Act
-            let! result = sessionServ.renewSession session.token
+            let! result = host.Get<SessionService>().renewSession session.token
 
             //Assert
             result |> shouldBeError 404 "Session not found."

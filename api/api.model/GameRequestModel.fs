@@ -14,10 +14,10 @@ type CreatePlayerRequest =
 
 module CreatePlayerRequest =
 
-    let user (userId : int) : CreatePlayerRequest =
+    let user (user : UserDetails) : CreatePlayerRequest =
         {
             kind = PlayerKind.User
-            userId = Some userId
+            userId = Some user.id
             name = None
         }
 

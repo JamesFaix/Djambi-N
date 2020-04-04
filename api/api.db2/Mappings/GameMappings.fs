@@ -51,7 +51,7 @@ module GameMappings =
         x.Name <- source.name.Value
         x
 
-    let toGame (source : GameSqlModel) (players : seq<PlayerSqlModel>) : Game =
+    let toGame (source : GameSqlModel) : Game =
         {
             id = source.GameId
             createdBy = {
@@ -66,7 +66,7 @@ module GameMappings =
                 regionCount = int source.RegionCount
             }
             status = source.GameStatusId
-            players = players |> Seq.map toPlayer |> Seq.toList
+            players = source.Players |> Seq.map toPlayer |> Seq.toList
             pieces = source.PiecesJson |> JsonUtility.deserializeList
             turnCycle = source.TurnCycleJson |> JsonUtility.deserializeList
             currentTurn = source.CurrentTurnJson |> JsonUtility.deserializeOption

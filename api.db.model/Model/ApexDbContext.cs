@@ -28,8 +28,8 @@ namespace Apex.Api.Db.Model
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
             DisableCascadingDeletesOnForeignKeys(modelBuilder);
+            AddAlternateKeys(modelBuilder);
             PopulateStaticData(modelBuilder);
         }
 
@@ -42,6 +42,19 @@ namespace Apex.Api.Db.Model
             {
                 fkey.DeleteBehavior = DeleteBehavior.Restrict;
             }
+        }
+
+        private void AddAlternateKeys(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<UserSqlModel>(e =>
+            {
+                e.HasAlternateKey(nameof(UserSqlModel.Name));
+            });
+
+            modelBuilder.Entity<PlayerSqlModel>(e =>
+            {
+                e.HasAlternateKey(nameof(PlayerSqlModel.GameId), nameof(PlayerSqlModel.Name));
+            });
         }
 
         private void PopulateStaticData(ModelBuilder modelBuilder)

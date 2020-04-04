@@ -9,13 +9,17 @@ open Apex.Api.Db.Mappings
 open Microsoft.EntityFrameworkCore
 
 type UserRepository(context : ApexDbContext) =    
+    let nameConflictMessage = 
+        "The instance of entity type 'UserSqlModel' cannot be tracked because " + 
+        "another instance with the same key value for {'Name'} is already being tracked."
+
     interface IUserRepository with
         member __.getUser userId =
             task {
                 let! sqlModel = context.Users.FindAsync(userId)
 
                 return match sqlModel with
-                        | null -> Error <| HttpException(404, "Not found.")
+                        | null -> Error <| HttpException(404, "User not found.")
                         | x -> Ok(x |> toUserDetails)
             }
 
@@ -24,7 +28,7 @@ type UserRepository(context : ApexDbContext) =
                 let! sqlModel = context.Users.SingleOrDefaultAsync(fun x -> name = x.Name) // Relies on case insensitivity of SQL 
 
                 return match sqlModel with
-                        | null -> Error <| HttpException(404, "Not found.")
+                        | null -> Error <| HttpException(404, "User not found.")
                         | x -> Ok(x |> toUserDetails)
             }
 
@@ -37,18 +41,24 @@ type UserRepository(context : ApexDbContext) =
                 u.LastFailedLoginAttemptOn <- Nullable<DateTime>()
                 u.CreatedOn <- DateTime.UtcNow
 
-                let! _ = context.Users.AddAsync(u)
-                let! _ = context.SaveChangesAsync()
-
-                return u |> toUserDetails |> Ok
+                try 
+                    let! _ = context.Users.AddAsync(u)
+                    let! _ = context.SaveChangesAsync()
+                    return u |> toUserDetails |> Ok
+                with
+                | :? InvalidOperationException as ex when ex.Message.StartsWith(nameConflictMessage) ->
+                    return Error <| HttpException(409, "Conflict when attempting to write User.")
             }
 
         member __.deleteUser userId = 
             task {
                 let! u = context.Users.FindAsync(userId)
-                context.Users.Remove(u) |> ignore
-                let! _ = context.SaveChangesAsync()
-                return Ok ()
+                if u = null
+                then return Error <| HttpException(404, "User not found.")
+                else
+                    context.Users.Remove(u) |> ignore
+                    let! _ = context.SaveChangesAsync()
+                    return Ok ()
             }
 
         member __.updateFailedLoginAttempts request =
