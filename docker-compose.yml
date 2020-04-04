@@ -6,7 +6,7 @@ services:
       - "1434:1433"
     environment:
       - ACCEPT_EULA=Y
-      - SA_PASSWORD="GR3ATpassword"
+      - "SA_PASSWORD=GR3@Tpassword"
   api:
     build:
       context: .
