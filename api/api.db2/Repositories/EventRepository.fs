@@ -11,8 +11,13 @@ open System.ComponentModel
 open Apex.Api.Common.Control
 open System.Threading.Tasks
 open Apex.Api.Common.Json
+open System
+open System.Data
 
 type EventRepository(context : ApexDbContext) =
+    let playerNameTakenMessage = 
+        "The instance of entity type 'PlayerSqlModel' cannot be tracked because another " + 
+        "instance with the same key value for {'GameId', 'Name'} is already being tracked."
 
     interface IEventRepository with
         member __.getEvents (gameId, query) =
@@ -97,6 +102,13 @@ type EventRepository(context : ApexDbContext) =
                     p.PlayerId <- 0
                     p.GameId <- gameId
 
+                    // This should really be handled in the logic layer
+                    // Putting here because before it was in a stored proc :(
+                    if String.IsNullOrEmpty(p.Name)
+                    then
+                        let! user = context.Users.FindAsync(p.UserId)
+                        p.Name <- user.Name
+
                     let! _ = context.Players.AddAsync(p)
                     return p |> toPlayer
                 }
@@ -128,61 +140,64 @@ type EventRepository(context : ApexDbContext) =
                 then raise <| HttpException(404, "Not found.")
 
                 use! transaction = context.Database.BeginTransactionAsync()
+                try
+                    // Update game
+                    g.AllowGuests <- newGame.parameters.allowGuests
+                    g.IsPublic <- newGame.parameters.isPublic
+                    g.Description <- newGame.parameters.description |> Option.toObj
+                    g.RegionCount <- byte newGame.parameters.regionCount
+                    g.CurrentTurnJson <- newGame.currentTurn |> JsonUtility.serialize
+                    g.TurnCycleJson <- newGame.turnCycle |> JsonUtility.serialize
+                    g.PiecesJson <- newGame.pieces |> JsonUtility.serialize
+                    g.GameStatusId <- newGame.status
+                    context.Games.Update(g) |> ignore
 
-                // Update game
-                g.AllowGuests <- newGame.parameters.allowGuests
-                g.IsPublic <- newGame.parameters.isPublic
-                g.Description <- newGame.parameters.description |> Option.toObj
-                g.RegionCount <- byte newGame.parameters.regionCount
-                g.CurrentTurnJson <- newGame.currentTurn |> JsonUtility.serialize
-                g.TurnCycleJson <- newGame.turnCycle |> JsonUtility.serialize
-                g.PiecesJson <- newGame.pieces |> JsonUtility.serialize
-                g.GameStatusId <- newGame.status
-                context.Games.Update(g) |> ignore
+                    // Update players
+                    for p in removedPlayers do
+                        let! _ = removePlayer(p.id)
+                        ()
+                    for p in addedPlayers do
+                        let! _ = addPlayer(p)
+                        ()
 
-                // Update players
-                for p in removedPlayers do
-                    let! _ = removePlayer(p.id)
-                    ()
-                for p in addedPlayers do
-                    let! _ = addPlayer(p)
-                    ()
+                    let! playerSqlModels = context.Players.Where(fun p -> p.GameId = gameId).ToListAsync()
+                    let updates = 
+                        modifiedPlayers.Join(
+                            playerSqlModels, 
+                            (fun p -> p.id), 
+                            (fun sqlModel -> sqlModel.PlayerId),
+                            (fun player sqlModel -> (player, sqlModel)))
 
-                let! playerSqlModels = context.Players.Where(fun p -> p.GameId = gameId).ToListAsync()
-                let updates = 
-                    modifiedPlayers.Join(
-                        playerSqlModels, 
-                        (fun p -> p.id), 
-                        (fun sqlModel -> sqlModel.PlayerId),
-                        (fun player sqlModel -> (player, sqlModel)))
+                    for (player, sqlModel) in updates do
+                        let! _ = updatePlayer(sqlModel, player)
+                        ()
 
-                for (player, sqlModel) in updates do
-                    let! _ = updatePlayer(sqlModel, player)
-                    ()
-
-                // Save event               
-                let e = createEventRequestToEventSqlModel request gameId
-                let! _ = context.Events.AddAsync(e)
+                    // Save event               
+                    let e = createEventRequestToEventSqlModel request gameId
+                    let! _ = context.Events.AddAsync(e)
                 
-                let! _ = context.SaveChangesAsync()
-                let! _ = transaction.CommitAsync()
+                    let! _ = context.SaveChangesAsync()
+                    let! _ = transaction.CommitAsync()
 
-                // Query updated data (so primary keys are assigned, etc)
-                let! g = 
-                    context.Games
-                        .Include(fun g -> g.Players)
-                        .Include(fun g -> g.CreatedByUser)
-                        .SingleOrDefaultAsync(fun g -> g.GameId = newGame.id)
+                    // Query updated data (so primary keys are assigned, etc)
+                    let! g = 
+                        context.Games
+                            .Include(fun g -> g.Players)
+                            .Include(fun g -> g.CreatedByUser)
+                            .SingleOrDefaultAsync(fun g -> g.GameId = newGame.id)
 
-                let! e = 
-                    context.Events
-                        .Include(fun e -> e.CreatedByUser)
-                        .SingleOrDefaultAsync(fun e1 -> e1.EventId = e.EventId)
+                    let! e = 
+                        context.Events
+                            .Include(fun e -> e.CreatedByUser)
+                            .SingleOrDefaultAsync(fun e1 -> e1.EventId = e.EventId)
 
-                let response = {
-                    game = g |> toGame
-                    event = e |> toEvent
-                }
+                    let response = {
+                        game = g |> toGame
+                        event = e |> toEvent
+                    }
 
-                return Ok response
+                    return Ok response
+                with
+                | :? InvalidOperationException as ex when ex.Message.StartsWith(playerNameTakenMessage) ->
+                    return Error <| HttpException(409, "Conflict when attempting to write Event.")
             }
