@@ -204,6 +204,7 @@ type EventRepositoryTests() =
             //Assert
             result |> shouldBeError 409 "Conflict when attempting to write Event."
 
+            let host = HostFactory.createHost() // Must create a new host because the DbContext's tracked changes are now in a corrupt state
             let! persistedGame = host.Get<IGameRepository>().getGame game.id |> thenValue
             persistedGame.players.Length |> shouldBe 1 //Just the creator
             persistedGame.players |> shouldNotExist (fun p -> p.name = "test")
