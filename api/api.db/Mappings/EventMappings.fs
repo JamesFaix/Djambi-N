@@ -3,7 +3,7 @@
 open Apex.Api.Db.Model
 open Apex.Api.Model
 open System
-open Apex.Api.Common.Json
+open Newtonsoft.Json
 
 [<AutoOpen>]
 module EventMappings =
@@ -18,7 +18,7 @@ module EventMappings =
             }
             actingPlayerId = source.ActingPlayerId |> Option.ofNullable
             kind = source.EventKindId
-            effects = source.EffectsJson |> JsonUtility.deserializeList
+            effects = source.EffectsJson |> JsonConvert.DeserializeObject<List<Effect>>
         }
 
     let toEventSqlModel (source : Event) (gameId : int) : EventSqlModel =
@@ -27,7 +27,7 @@ module EventMappings =
         x.GameId <- gameId
         x.ActingPlayerId <- source.actingPlayerId |> Option.toNullable
         x.CreatedByUserId <- source.createdBy.userId
-        x.EffectsJson <- source.effects |> JsonUtility.serialize
+        x.EffectsJson <- source.effects |> JsonConvert.SerializeObject
         x.EventKindId <- source.kind
         x
    
@@ -37,6 +37,6 @@ module EventMappings =
         x.GameId <- gameId
         x.ActingPlayerId <- source.actingPlayerId |> Option.toNullable
         x.CreatedByUserId <- source.createdByUserId
-        x.EffectsJson <- source.effects |> JsonUtility.serialize
+        x.EffectsJson <- source.effects |> JsonConvert.SerializeObject
         x.EventKindId <- source.kind
         x

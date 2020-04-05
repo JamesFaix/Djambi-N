@@ -3,10 +3,9 @@
 open Apex.Api.Model
 open System
 open Apex.Api.Db.Model
-open Apex.Api.Common.Json
-open System.ComponentModel
 open System.Collections.Generic
 open Apex.Api.Enums
+open Newtonsoft.Json
 
 [<AutoOpen>]
 module GameMappings =
@@ -67,9 +66,9 @@ module GameMappings =
             }
             status = source.GameStatusId
             players = source.Players |> Seq.map toPlayer |> Seq.toList
-            pieces = source.PiecesJson |> JsonUtility.deserializeList
-            turnCycle = source.TurnCycleJson |> JsonUtility.deserializeList
-            currentTurn = source.CurrentTurnJson |> JsonUtility.deserializeOption
+            pieces = source.PiecesJson |> JsonConvert.DeserializeObject<list<Piece>>
+            turnCycle = source.TurnCycleJson |> JsonConvert.DeserializeObject<list<int>>
+            currentTurn = source.CurrentTurnJson |> JsonConvert.DeserializeObject<Option<Turn>>
         }
 
     let toGameSqlModel (source : CreateGameRequest) : GameSqlModel =
@@ -82,8 +81,8 @@ module GameMappings =
         x.CreatedOn <- DateTime.UtcNow
         x.GameStatusId <- GameStatus.Pending
         x.CreatedByUserId <- source.createdByUserId
-        x.CurrentTurnJson <- null
-        x.TurnCycleJson <- null
-        x.PiecesJson <- null
+        x.CurrentTurnJson <- JsonConvert.SerializeObject None
+        x.TurnCycleJson <- JsonConvert.SerializeObject []
+        x.PiecesJson <- JsonConvert.SerializeObject []
         x
     
