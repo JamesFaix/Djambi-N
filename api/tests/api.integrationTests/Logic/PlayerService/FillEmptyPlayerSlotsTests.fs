@@ -22,10 +22,10 @@ type FillEmptyPlayerSlotsTests() =
             let! user = createUser()
             let session = getSessionForUser user
             let gameRequest = getGameParameters()
-            let! game = host.Get<IGameManager>().createGame gameRequest session |> thenValue
+            let! game = host.Get<IGameManager>().createGame gameRequest session
 
             //Act
-            let! updatedGame = TestUtilities.fillEmptyPlayerSlots game |> thenValue
+            let! updatedGame = TestUtilities.fillEmptyPlayerSlots game
 
             //Assert
             let! doubleCheck = host.Get<IGameRepository>().getGame game.id |> thenValue
@@ -48,7 +48,7 @@ type FillEmptyPlayerSlotsTests() =
             let! user = createUser()
             let session = getSessionForUser user
             let gameRequest = getGameParameters()
-            let! game = host.Get<IGameManager>().createGame gameRequest session |> thenValue
+            let! game = host.Get<IGameManager>().createGame gameRequest session
 
             //Act
             let! effects = host.Get<PlayerService>().fillEmptyPlayerSlots game |> thenValue

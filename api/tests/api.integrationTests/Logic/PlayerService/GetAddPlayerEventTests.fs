@@ -26,7 +26,7 @@ type GetAddPlayerEventTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (_, _, game) = createuserSessionAndGame(false) |> thenValue
+            let! (_, _, game) = createuserSessionAndGame(false)
 
             let! user = createUser()
             let session = getSessionForUser user
@@ -44,7 +44,7 @@ type GetAddPlayerEventTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (_, session, game) = createuserSessionAndGame(false) |> thenValue
+            let! (_, session, game) = createuserSessionAndGame(false)
             let session = session |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames]
             let! user = createUser()
             let request = CreatePlayerRequest.user user
@@ -61,7 +61,7 @@ type GetAddPlayerEventTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (_, session, game) = createuserSessionAndGame(false) |> thenValue
+            let! (_, session, game) = createuserSessionAndGame(false)
             let session = session |> TestUtilities.setSessionPrivileges []
 
             let! user = createUser()
@@ -79,7 +79,7 @@ type GetAddPlayerEventTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (_, session, game) = createuserSessionAndGame(false) |> thenValue
+            let! (_, session, game) = createuserSessionAndGame(false)
             let session = session |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames]
 
             let! user = createUser()
@@ -103,7 +103,7 @@ type GetAddPlayerEventTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (_, session, game) = createuserSessionAndGame(false) |> thenValue
+            let! (_, session, game) = createuserSessionAndGame(false)
             let session = session |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames]
 
             let! user = createUser()    
@@ -127,7 +127,7 @@ type GetAddPlayerEventTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (user, session, game) = createuserSessionAndGame(false) |> thenValue
+            let! (user, session, game) = createuserSessionAndGame(false)
             let session = session |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames]
             let request = CreatePlayerRequest.user user
 
@@ -145,7 +145,7 @@ type GetAddPlayerEventTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (user, session, game) = createuserSessionAndGame(true) |> AsyncHttpResult.thenValue
+            let! (user, session, game) = createuserSessionAndGame(true)
             let request = CreatePlayerRequest.guest (user.id, "test")
 
             //Act
@@ -160,7 +160,7 @@ type GetAddPlayerEventTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (_, session, game) = createuserSessionAndGame(true) |> thenValue
+            let! (_, session, game) = createuserSessionAndGame(true)
             let session = session |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames]
 
             let! user = createUser()
@@ -178,7 +178,7 @@ type GetAddPlayerEventTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (_, session, game) = createuserSessionAndGame(true) |> thenValue
+            let! (_, session, game) = createuserSessionAndGame(true)
             let session = session |> TestUtilities.setSessionPrivileges []
 
             let! user = createUser()
@@ -196,7 +196,7 @@ type GetAddPlayerEventTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (_, session, game) = createuserSessionAndGame(true) |> thenValue
+            let! (_, session, game) = createuserSessionAndGame(true)
 
             let request : CreatePlayerRequest =
                 {
@@ -217,7 +217,7 @@ type GetAddPlayerEventTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (user, session, game) = createuserSessionAndGame(true) |> thenValue
+            let! (user, session, game) = createuserSessionAndGame(true)
 
             let request : CreatePlayerRequest =
                 {
@@ -238,7 +238,7 @@ type GetAddPlayerEventTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (user, session, game) = createuserSessionAndGame(true) |> thenValue
+            let! (user, session, game) = createuserSessionAndGame(true)
             let request = CreatePlayerRequest.guest (user.id, user.name)
 
             //Act
@@ -253,7 +253,7 @@ type GetAddPlayerEventTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (user, session, game) = createuserSessionAndGame(false) |> thenValue
+            let! (user, session, game) = createuserSessionAndGame(false)
             let request = CreatePlayerRequest.guest (user.id, "test")
 
             //Act
@@ -270,7 +270,7 @@ type GetAddPlayerEventTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (_, session, game) = createuserSessionAndGame(false) |> thenValue
+            let! (_, session, game) = createuserSessionAndGame(false)
             let session = session |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames]
             let request = CreatePlayerRequest.neutral ("test")
 
@@ -288,14 +288,14 @@ type GetAddPlayerEventTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (user, session, game) = createuserSessionAndGame(true) |> thenValue
+            let! (user, session, game) = createuserSessionAndGame(true)
 
             let request1 = CreatePlayerRequest.guest (user.id, "test")
             let request2 = { request1 with name = Some "test2" }
             let request3 = { request1 with name = Some "test3" }
 
-            let! _ = host.Get<IPlayerManager>().addPlayer game.id request1 session |> thenValue
-            let! _ = host.Get<IPlayerManager>().addPlayer game.id request2 session |> thenValue
+            let! _ = host.Get<IPlayerManager>().addPlayer game.id request1 session
+            let! _ = host.Get<IPlayerManager>().addPlayer game.id request2 session
 
             let! game = host.Get<IGameRepository>().getGame game.id |> thenValue
 
@@ -311,7 +311,7 @@ type GetAddPlayerEventTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (user, session, game) = createuserSessionAndGame(true) |> thenValue
+            let! (user, session, game) = createuserSessionAndGame(true)
             let request = CreatePlayerRequest.guest (user.id, "test")
             let game = { game with status = GameStatus.InProgress }
 

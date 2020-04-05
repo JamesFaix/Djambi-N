@@ -25,7 +25,7 @@ type PlayerController(manager : IPlayerManager,
         task {
             let! session = scp.GetSessionFromContext ctx
             let request = request |> toCreatePlayerRequest
-            let! response = manager.addPlayer gameId request session |> thenExtract
+            let! response = manager.addPlayer gameId request session
             let dto = response |> toStateAndEventResponseDto
             return OkObjectResult(dto) :> IActionResult
         }
@@ -36,7 +36,7 @@ type PlayerController(manager : IPlayerManager,
         let ctx = base.HttpContext
         task {
             let! session = scp.GetSessionFromContext ctx
-            let! response = manager.removePlayer (gameId, playerId) session |> thenExtract
+            let! response = manager.removePlayer (gameId, playerId) session
             let dto = response |> toStateAndEventResponseDto
             return OkObjectResult(dto) :> IActionResult
         }
@@ -47,7 +47,7 @@ type PlayerController(manager : IPlayerManager,
         let ctx = base.HttpContext
         task {
             let! session = scp.GetSessionFromContext ctx
-            let! response = manager.updatePlayerStatus (gameId, playerId, status) session |> thenExtract                
+            let! response = manager.updatePlayerStatus (gameId, playerId, status) session                
             let dto = response |> toStateAndEventResponseDto
             return OkObjectResult(dto) :> IActionResult
         }

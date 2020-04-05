@@ -7,7 +7,6 @@ open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.IntegrationTests
 open Apex.Api.Model
 open Apex.Api.Logic
-open Apex.Api.Db.Repositories
 open Apex.Api.Logic.Services
 open Apex.Api.Db.Interfaces
 open Apex.Api.Enums
@@ -20,7 +19,7 @@ type GetUpdateGameParametersEventTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (_, session, game) = TestUtilities.createuserSessionAndGame(true) |> thenValue
+            let! (_, session, game) = TestUtilities.createuserSessionAndGame(true)
 
             let newParameters =
                 {
@@ -51,7 +50,7 @@ type GetUpdateGameParametersEventTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (user, session, game) = TestUtilities.createuserSessionAndGame(true) |> thenValue
+            let! (user, session, game) = TestUtilities.createuserSessionAndGame(true)
 
             let newGame =
                 { game with parameters =
@@ -95,7 +94,7 @@ type GetUpdateGameParametersEventTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (user, session, game) = TestUtilities.createuserSessionAndGame(true) |> thenValue
+            let! (user, session, game) = TestUtilities.createuserSessionAndGame(true)
 
             for n in [2..3] do
                 let playerRequest =
@@ -133,7 +132,7 @@ type GetUpdateGameParametersEventTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (_, session, game) = TestUtilities.createuserSessionAndGame(true) |> thenValue
+            let! (_, session, game) = TestUtilities.createuserSessionAndGame(true)
             let newGame = { game with status = GameStatus.InProgress }
             let! _ = host.Get<IGameRepository>().updateGame newGame |> thenValue
             let! game = host.Get<IGameRepository>().getGame game.id |> thenValue
@@ -151,7 +150,7 @@ type GetUpdateGameParametersEventTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (_, session, game) = TestUtilities.createuserSessionAndGame(true) |> thenValue
+            let! (_, session, game) = TestUtilities.createuserSessionAndGame(true)
 
             let newParameters = game.parameters
 

@@ -16,7 +16,7 @@ type GetGameStartEventsTests() =
     let createUserSessionAndGameWith3Players() =
         let host = HostFactory.createHost()
         task {
-            let! (user, session, game) = createuserSessionAndGame(true) |> thenValue
+            let! (user, session, game) = createuserSessionAndGame(true)
 
             let player2request =
                 { TestUtilities.getCreatePlayerRequest with
@@ -54,7 +54,7 @@ type GetGameStartEventsTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (_, session, game) = createuserSessionAndGame(true) |> thenValue
+            let! (_, session, game) = createuserSessionAndGame(true)
 
             //Act
             let! result = host.Get<GameStartService>().getGameStartEvents game session
@@ -118,7 +118,7 @@ type GetGameStartEventsTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (user, session, game) = createuserSessionAndGame(true) |> thenValue
+            let! (user, session, game) = createuserSessionAndGame(true)
 
             let p2Request =
                 {

@@ -23,7 +23,7 @@ type TurnController(manager : ITurnManager,
         let ctx = base.HttpContext
         task {
             let! session = scp.GetSessionFromContext ctx
-            let! response = manager.selectCell (gameId, cellId) session |> thenExtract
+            let! response = manager.selectCell (gameId, cellId) session
             let dto = response |> toStateAndEventResponseDto
             return OkObjectResult(dto) :> IActionResult
         }
@@ -34,7 +34,7 @@ type TurnController(manager : ITurnManager,
         let ctx = base.HttpContext
         task {
             let! session = scp.GetSessionFromContext ctx
-            let! response = manager.resetTurn gameId session |> thenExtract
+            let! response = manager.resetTurn gameId session
             let dto = response |> toStateAndEventResponseDto
             return OkObjectResult(dto) :> IActionResult
         }
@@ -45,7 +45,7 @@ type TurnController(manager : ITurnManager,
         let ctx = base.HttpContext
         task {
             let! session = scp.GetSessionFromContext ctx
-            let! response = manager.commitTurn gameId session |> thenExtract
+            let! response = manager.commitTurn gameId session
             let dto = response |> toStateAndEventResponseDto
             return OkObjectResult(dto) :> IActionResult
         }

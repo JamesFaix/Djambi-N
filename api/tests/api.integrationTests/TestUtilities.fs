@@ -4,7 +4,6 @@ module Apex.Api.IntegrationTests.TestUtilities
 open System
 open System.Linq
 open FSharp.Control.Tasks
-open Apex.Api.Common.Control
 open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.Db.Interfaces
 open Apex.Api.Logic.Interfaces
@@ -71,7 +70,7 @@ let createUser() : Task<User> =
     let userRequest = getCreateUserRequest()
     host.Get<IUserManager>().createUser userRequest None
 
-let createuserSessionAndGame(allowGuests : bool) : (User * Session * Game) AsyncHttpResult =
+let createuserSessionAndGame(allowGuests : bool) : Task<(User * Session * Game)> =
     let host = HostFactory.createHost()
     task {
         let! user = createUser()
@@ -80,12 +79,11 @@ let createuserSessionAndGame(allowGuests : bool) : (User * Session * Game) Async
 
         let parameters = { getGameParameters() with allowGuests = allowGuests }
         let! game = host.Get<IGameManager>().createGame parameters session
-                     |> thenValue
 
-        return Ok <| (user, session, game)
+        return (user, session, game)
     }
 
-let fillEmptyPlayerSlots (game : Game) : Game AsyncHttpResult =
+let fillEmptyPlayerSlots (game : Game) : Task<Game> =
     let host = HostFactory.createHost()
     let gameRepo = host.Get<IGameRepository>()
     task {
@@ -96,7 +94,7 @@ let fillEmptyPlayerSlots (game : Game) : Game AsyncHttpResult =
             let! _ = host.Get<IGameRepository>().addPlayer (game.id, request) |> thenValue
             ()
 
-        return! host.Get<IGameRepository>().getGame game.id
+        return! host.Get<IGameRepository>().getGame game.id |> thenExtract
     }
 
 let emptyEventRequest (userId : int) : CreateEventRequest =

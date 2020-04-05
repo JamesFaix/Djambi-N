@@ -20,18 +20,17 @@ type GetRemovePlayerEventTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (_, session, game1) = createuserSessionAndGame(false) |> thenValue
+            let! (_, session, game1) = createuserSessionAndGame(false)
             let session = session |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames]
 
             let gameRequest = getGameParameters()
-            let! game2 = host.Get<IGameManager>().createGame gameRequest session |> thenValue
+            let! game2 = host.Get<IGameManager>().createGame gameRequest session
 
             let! user = createUser()
             let request = CreatePlayerRequest.user user
 
-            let! player = host.Get<IPlayerManager>().addPlayer game1.id request session
-                          |> thenMap (fun resp -> resp.game.players |> List.except game1.players |> List.head)
-                          |> thenValue
+            let! response = host.Get<IPlayerManager>().addPlayer game1.id request session
+            let player = response.game.players |> List.except game1.players |> List.head
 
             //Act
             let error = host.Get<PlayerService>().getRemovePlayerEvent (game2, player.id) session
@@ -45,7 +44,7 @@ type GetRemovePlayerEventTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (_, session, game) = createuserSessionAndGame(false) |> thenValue
+            let! (_, session, game) = createuserSessionAndGame(false)
 
             let request =
                 {
@@ -68,7 +67,7 @@ type GetRemovePlayerEventTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (_, session, game) = createuserSessionAndGame(false) |> thenValue
+            let! (_, session, game) = createuserSessionAndGame(false)
             let adminSession = session |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames]
 
             let! user = createUser()
@@ -77,9 +76,8 @@ type GetRemovePlayerEventTests() =
             let session = session |> TestUtilities.setSessionPrivileges []
                                   |> TestUtilities.setSessionUserId Int32.MinValue
 
-            let! player = host.Get<IPlayerManager>().addPlayer game.id request adminSession
-                          |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
-                          |> thenValue
+            let! response = host.Get<IPlayerManager>().addPlayer game.id request adminSession
+            let player = response.game.players |> List.except game.players |> List.head
 
             let! game = host.Get<IGameRepository>().getGame game.id |> thenValue
 
@@ -95,12 +93,11 @@ type GetRemovePlayerEventTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (user, session, game) = createuserSessionAndGame(true) |> thenValue
+            let! (user, session, game) = createuserSessionAndGame(true)
             let request = CreatePlayerRequest.guest (user.id, "test")
 
-            let! player = host.Get<IPlayerManager>().addPlayer game.id request session
-                          |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
-                          |> thenValue
+            let! response = host.Get<IPlayerManager>().addPlayer game.id request session
+            let player = response.game.players |> List.except game.players |> List.head
 
             let! game = host.Get<IGameRepository>().getGame game.id |> thenValue
 
@@ -122,15 +119,14 @@ type GetRemovePlayerEventTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (_, session, game) = createuserSessionAndGame(false) |> thenValue
+            let! (_, session, game) = createuserSessionAndGame(false)
             let session = session |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames]
 
             let! user = createUser()
             let request = CreatePlayerRequest.user user
 
-            let! player = host.Get<IPlayerManager>().addPlayer game.id request session
-                          |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
-                          |> thenValue
+            let! response = host.Get<IPlayerManager>().addPlayer game.id request session
+            let player = response.game.players |> List.except game.players |> List.head
 
             let! game = host.Get<IGameRepository>().getGame game.id |> thenValue
 
@@ -152,15 +148,14 @@ type GetRemovePlayerEventTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (_, session, game) = createuserSessionAndGame(false) |> thenValue
+            let! (_, session, game) = createuserSessionAndGame(false)
 
             let! user = createUser()
             let request = CreatePlayerRequest.user user
 
             let adminSession = session |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames]
-            let! player = host.Get<IPlayerManager>().addPlayer game.id request adminSession
-                          |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
-                          |> thenValue
+            let! response = host.Get<IPlayerManager>().addPlayer game.id request adminSession
+            let player = response.game.players |> List.except game.players |> List.head
 
             let! game = host.Get<IGameRepository>().getGame game.id |> thenValue
 
@@ -182,7 +177,7 @@ type GetRemovePlayerEventTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (_, session, game) = createuserSessionAndGame(true) |> thenValue
+            let! (_, session, game) = createuserSessionAndGame(true)
 
             let! user = createUser()
             let userPlayerRequest = CreatePlayerRequest.user user
@@ -190,15 +185,11 @@ type GetRemovePlayerEventTests() =
 
             let adminSession = session |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames]
 
-            let! userPlayer =
-                host.Get<IPlayerManager>().addPlayer game.id userPlayerRequest adminSession
-                |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
-                |> thenValue
+            let! response = host.Get<IPlayerManager>().addPlayer game.id userPlayerRequest adminSession
+            let userPlayer = response.game.players |> List.except game.players |> List.head
 
-            let! guestPlayer =
-                host.Get<IPlayerManager>().addPlayer game.id guestPlayerRequest adminSession
-                |> thenMap (fun resp -> resp.game.players |> List.except (userPlayer :: game.players) |> List.head)
-                |> thenValue
+            let! response = host.Get<IPlayerManager>().addPlayer game.id guestPlayerRequest adminSession
+            let guestPlayer = response.game.players |> List.except (userPlayer :: game.players) |> List.head
 
             let! game = host.Get<IGameRepository>().getGame game.id |> thenValue
 
@@ -220,7 +211,7 @@ type GetRemovePlayerEventTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (_, session, game) = createuserSessionAndGame(true) |> thenValue
+            let! (_, session, game) = createuserSessionAndGame(true)
 
             let! user = createUser()
             let userPlayerRequest = CreatePlayerRequest.user user
@@ -228,15 +219,11 @@ type GetRemovePlayerEventTests() =
 
             let adminSession = session |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames]
 
-            let! userPlayer =
-                host.Get<IPlayerManager>().addPlayer game.id userPlayerRequest adminSession
-                |> thenMap (fun resp -> resp.game.players |> List.except game.players |> List.head)
-                |> thenValue
+            let! response = host.Get<IPlayerManager>().addPlayer game.id userPlayerRequest adminSession
+            let userPlayer = response.game.players |> List.except game.players |> List.head
 
-            let! guestPlayer =
-                host.Get<IPlayerManager>().addPlayer game.id guestPlayerRequest adminSession
-                |> thenMap (fun resp -> resp.game.players |> List.except (userPlayer :: game.players) |> List.head)
-                |> thenValue
+            let! response = host.Get<IPlayerManager>().addPlayer game.id guestPlayerRequest adminSession
+            let guestPlayer = response.game.players |> List.except (userPlayer :: game.players) |> List.head
 
             let! game = host.Get<IGameRepository>().getGame game.id |> thenValue
 
@@ -258,7 +245,7 @@ type GetRemovePlayerEventTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (_, session, game) = createuserSessionAndGame(false) |> thenValue
+            let! (_, session, game) = createuserSessionAndGame(false)
             let creator = game.players |> List.head
 
             //Act
@@ -282,7 +269,7 @@ type GetRemovePlayerEventTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (user, session, game) = createuserSessionAndGame(true) |> thenValue
+            let! (user, session, game) = createuserSessionAndGame(true)
 
             let p2Request =
                 {
@@ -291,9 +278,9 @@ type GetRemovePlayerEventTests() =
                     name = Some "p2"
                 }
 
-            let! _ = host.Get<IPlayerManager>().addPlayer game.id p2Request session |> thenValue
+            let! _ = host.Get<IPlayerManager>().addPlayer game.id p2Request session
 
-            let! resp = host.Get<IGameManager>().startGame game.id session |> thenValue
+            let! resp = host.Get<IGameManager>().startGame game.id session
             let game = resp.game
 
             //Act

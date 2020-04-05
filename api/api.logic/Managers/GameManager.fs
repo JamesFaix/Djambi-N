@@ -10,6 +10,7 @@ open Apex.Api.Logic.Services
 open Apex.Api.Model
 open Apex.Api.Enums
 open FSharp.Control.Tasks
+open System.Threading.Tasks
 
 type GameManager(eventRepo : IEventRepository,
                  eventServ : EventService,
@@ -40,44 +41,41 @@ type GameManager(eventRepo : IEventRepository,
             -> true
         | _ -> false
 
-    let sendIfPublishable (response : StateAndEventResponse) : StateAndEventResponse AsyncHttpResult =
+    let sendIfPublishable (response : StateAndEventResponse) : Task<unit> =
         task {
             if isPublishable response.event
-            then
-                let! _ = notificationServ.send response
-                return Ok response
-            else return Ok response
+            then return! notificationServ.send response
+            else return ()
         }
 
-    let processEvent (gameId : int) (getCreateEventRequest : Game -> CreateEventRequest HttpResult) : StateAndEventResponse AsyncHttpResult =
-        gameRepo.getGame gameId
-        |> thenBindAsync (fun game ->
-            getCreateEventRequest game
-            |> Result.bindAsync (fun eventRequest ->
-                let newGame = eventServ.applyEvent game eventRequest
-                eventRepo.persistEvent (eventRequest, game, newGame)
-            )
-        )
-        |> thenBindAsync sendIfPublishable
+    let processEvent (gameId : int) (getCreateEventRequest : Game -> CreateEventRequest) : Task<StateAndEventResponse> =
+        task {
+            let! game = gameRepo.getGame gameId |> thenExtract
+            let eventRequest = getCreateEventRequest game
+            let newGame = eventServ.applyEvent game eventRequest
+            let! response = eventRepo.persistEvent (eventRequest, game, newGame) |> thenExtract
+            let! _ = sendIfPublishable response
+            return response
+        }
 
-    let processGameStartEventsAsync (gameId : int) (getCreateEventRequests : Game -> (CreateEventRequest option * CreateEventRequest) AsyncHttpResult): StateAndEventResponse AsyncHttpResult =
-        gameRepo.getGame gameId
-        |> thenBindAsync (fun game ->
-            getCreateEventRequests game
-            |> thenBindAsync (fun eventRequests ->
-                (*
-                    This is really kind of ugly because of how inflexible the pattern for
-                    handling SQL transactions while persisting game events is.
-                    The problem is that neutral players must be persisted to get their IDs
-                    before pieces are created, so that the pieces can be assigned owners.
-                    The solution here puts player creation in a separate transaction before the 
-                    changes to the game (pieces, status, etc) are made.
-                *)
-                let (addNeutralPlayers, startGame) = eventRequests;
+    let processGameStartEventsAsync (gameId : int) (getCreateEventRequests : Game -> Task<(CreateEventRequest option * CreateEventRequest)>): Task<StateAndEventResponse> =
+        task {
+            let! game = gameRepo.getGame gameId |> thenExtract
+            let! eventRequests = getCreateEventRequests game
+            (*
+                This is really kind of ugly because of how inflexible the pattern for
+                handling SQL transactions while persisting game events is.
+                The problem is that neutral players must be persisted to get their IDs
+                before pieces are created, so that the pieces can be assigned owners.
+                The solution here puts player creation in a separate transaction before the 
+                changes to the game (pieces, status, etc) are made.
+            *)
+            let (addNeutralPlayers, startGame) = eventRequests;
+            let! response = 
                 match addNeutralPlayers with
                 | Some er -> 
                     let newGame = eventServ.applyEvent game er
-                    eventRepo.persistEvent (er, game, newGame)
+                    eventRepo.persistEvent (er, game, newGame) |> thenExtract
                 | None ->
                     let dummyEvent : Event = {
                         id = 0
@@ -90,14 +88,13 @@ type GameManager(eventRepo : IEventRepository,
                         kind = EventKind.PlayerJoined
                         effects = []
                     }
-                    okTask { game = game; event = dummyEvent }
-                |> thenBindAsync (fun resp -> 
-                    let newGame = eventServ.applyEvent resp.game startGame
-                    eventRepo.persistEvent (startGame, resp.game, newGame)                
-                )
-            )
-        )
-        |> thenBindAsync sendIfPublishable
+                    Task.FromResult{ game = game; event = dummyEvent }
+            
+            let newGame = eventServ.applyEvent response.game startGame
+            let! response = eventRepo.persistEvent (startGame, response.game, newGame) |> thenExtract
+            let! _ = sendIfPublishable response
+            return response
+        }
 
     interface IEventManager with
         member x.getEvents (gameId, query) session =
@@ -111,29 +108,41 @@ type GameManager(eventRepo : IEventRepository,
     interface IGameManager with
         //TODO: Requires integration tests
         member x.getGame gameId session =
-            gameRepo.getGame gameId
-            |> thenBind (fun game ->
+            task {
+                let! game = gameRepo.getGame gameId |> thenExtract
                 if isGameViewableByActiveUser session game
-                then Ok <| game
-                else Error <| HttpException(404, "Game not found.")
-            )
+                then return game
+                else return raise <| HttpException(404, "Game not found.")
+            }
 
         member x.createGame parameters session =
-            gameCrudServ.createGame parameters session
+            gameCrudServ.createGame parameters session |> thenExtract
 
         //TODO: Requires integration tests
         member x.updateGameParameters gameId parameters session =
-            processEvent gameId (fun game -> gameCrudServ.getUpdateGameParametersEvent (game, parameters) session)
+            processEvent gameId (fun game -> 
+                match gameCrudServ.getUpdateGameParametersEvent (game, parameters) session with
+                | Ok x -> x
+                | Error ex -> raise ex
+            )
 
         member x.startGame gameId session =
-            processGameStartEventsAsync gameId (fun game -> gameStartServ.getGameStartEvents game session)
+            processGameStartEventsAsync gameId (fun game -> gameStartServ.getGameStartEvents game session |> thenExtract)
 
     interface IPlayerManager with
         member x.addPlayer gameId request session =
-            processEvent gameId (fun game -> playerServ.getAddPlayerEvent (game, request) session)
+            processEvent gameId (fun game -> 
+                match playerServ.getAddPlayerEvent (game, request) session with
+                | Ok x -> x
+                | Error ex -> raise ex
+            )
 
         member x.removePlayer (gameId, playerId) session =
-            processEvent gameId (fun game -> playerServ.getRemovePlayerEvent (game, playerId) session)
+            processEvent gameId (fun game -> 
+                match playerServ.getRemovePlayerEvent (game, playerId) session with
+                | Ok x -> x
+                | Error ex -> raise ex
+            )
 
         member x.updatePlayerStatus (gameId, playerId, status) session =
             let request =
@@ -142,14 +151,30 @@ type GameManager(eventRepo : IEventRepository,
                     playerId = playerId
                     status = status
                 }
-            processEvent request.gameId (fun game -> playerStatusChangeServ.getUpdatePlayerStatusEvent (game, request) session)
+            processEvent request.gameId (fun game -> 
+                match playerStatusChangeServ.getUpdatePlayerStatusEvent (game, request) session with
+                | Ok x -> x
+                | Error ex -> raise ex
+            )
 
     interface ITurnManager with
         member x.selectCell (gameId, cellId) session =
-            processEvent gameId (fun game -> selectionServ.getCellSelectedEvent (game, cellId) session)
+            processEvent gameId (fun game -> 
+                match selectionServ.getCellSelectedEvent (game, cellId) session with
+                | Ok x -> x
+                | Error ex -> raise ex
+            )
 
         member x.resetTurn gameId session =
-            processEvent gameId (fun game -> turnServ.getResetTurnEvent game session)
+            processEvent gameId (fun game -> 
+                match turnServ.getResetTurnEvent game session with
+                | Ok x -> x
+                | Error ex -> raise ex
+            )
 
         member x.commitTurn gameId session =
-            processEvent gameId (fun game -> turnServ.getCommitTurnEvent game session)
+            processEvent gameId (fun game -> 
+                match turnServ.getCommitTurnEvent game session with
+                | Ok x -> x
+                | Error ex -> raise ex                
+            )

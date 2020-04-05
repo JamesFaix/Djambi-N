@@ -19,7 +19,7 @@ type EventRepositoryTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (user, _, game) = TestUtilities.createuserSessionAndGame(true) |> thenValue
+            let! (user, _, game) = TestUtilities.createuserSessionAndGame(true)
 
             let player : Player =
                 {
@@ -56,7 +56,7 @@ type EventRepositoryTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (user, _, game) = TestUtilities.createuserSessionAndGame(true) |> thenValue
+            let! (user, _, game) = TestUtilities.createuserSessionAndGame(true)
 
             let playerRequest =
                 {
@@ -86,7 +86,7 @@ type EventRepositoryTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (user, _, game) = TestUtilities.createuserSessionAndGame(true) |> thenValue
+            let! (user, _, game) = TestUtilities.createuserSessionAndGame(true)
 
             let p2Request =
                 {
@@ -138,7 +138,7 @@ type EventRepositoryTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (user, _, game) = TestUtilities.createuserSessionAndGame(false) |> thenValue
+            let! (user, _, game) = TestUtilities.createuserSessionAndGame(false)
 
             game.status |> shouldBe GameStatus.Pending
             game.parameters |> shouldBe
@@ -188,7 +188,7 @@ type EventRepositoryTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (user, _, game) = TestUtilities.createuserSessionAndGame(true) |> thenValue
+            let! (user, _, game) = TestUtilities.createuserSessionAndGame(true)
 
             //Attempt to add 2 players with the same name
             //This will violate a unique index in SQL and fail the second player
@@ -215,7 +215,7 @@ type EventRepositoryTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (user, session, game) = TestUtilities.createuserSessionAndGame(true) |> thenValue
+            let! (user, session, game) = TestUtilities.createuserSessionAndGame(true)
 
             let p2Request =
                 {
@@ -226,8 +226,8 @@ type EventRepositoryTests() =
 
             let p3Request = { p2Request with name = Some "p3" }
 
-            let! _ = host.Get<IPlayerManager>().addPlayer game.id p2Request session |> thenValue
-            let! _ = host.Get<IPlayerManager>().addPlayer game.id p3Request session |> thenValue
+            let! _ = host.Get<IPlayerManager>().addPlayer game.id p2Request session
+            let! _ = host.Get<IPlayerManager>().addPlayer game.id p3Request session
 
             let query : EventsQuery =
                 {

@@ -4,7 +4,6 @@ open System.Threading.Tasks
 open Microsoft.AspNetCore.Mvc
 open FSharp.Control.Tasks
 open Serilog
-open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Model
 open Apex.Api.Web
@@ -24,7 +23,7 @@ type GameController(manager : IGameManager,
         let ctx = base.HttpContext
         task {
             let! session = scp.GetSessionFromContext ctx
-            let! game = manager.getGame gameId session |> thenExtract
+            let! game = manager.getGame gameId session
             let dto = game |> toGameDto
             return OkObjectResult(dto) :> IActionResult
         }
@@ -36,7 +35,7 @@ type GameController(manager : IGameManager,
         task {
             let! session = scp.GetSessionFromContext ctx
             let request = request |> toGameParameters
-            let! game = manager.createGame request session |> thenExtract
+            let! game = manager.createGame request session
             let dto = game |> toGameDto
             return OkObjectResult(dto) :> IActionResult
         }
@@ -48,7 +47,7 @@ type GameController(manager : IGameManager,
         task {
             let! session = scp.GetSessionFromContext ctx            
             let parameters = parameters |> toGameParameters
-            let! response = manager.updateGameParameters gameId parameters session |> thenExtract
+            let! response = manager.updateGameParameters gameId parameters session
             let dto = response |> toStateAndEventResponseDto
             return OkObjectResult(dto) :> IActionResult
         }
@@ -59,7 +58,7 @@ type GameController(manager : IGameManager,
         let ctx = base.HttpContext
         task {
             let! session = scp.GetSessionFromContext ctx
-            let! response = manager.startGame gameId session |> thenExtract
+            let! response = manager.startGame gameId session
             let dto = response |> toStateAndEventResponseDto
             return OkObjectResult(dto) :> IActionResult
         }

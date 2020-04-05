@@ -2,7 +2,6 @@
 
 open FSharp.Control.Tasks
 open Xunit
-open Apex.Api.Common.Control
 open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.IntegrationTests
 open Apex.Api.Model
@@ -18,8 +17,8 @@ type SearchGamesTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (user1, _, game1) = TestUtilities.createuserSessionAndGame(false) |> thenValue
-            let! (_, _, game2) = TestUtilities.createuserSessionAndGame(false) |> thenValue
+            let! (user1, _, game1) = TestUtilities.createuserSessionAndGame(false)
+            let! (_, _, game2) = TestUtilities.createuserSessionAndGame(false)
             let session = getSessionForUser user1 |> TestUtilities.setSessionPrivileges [Privilege.ViewGames]
             let query = { GamesQuery.empty with createdByUserName = Some user1.name }
 
@@ -36,8 +35,8 @@ type SearchGamesTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (_, _, game1) = TestUtilities.createuserSessionAndGame(false) |> thenValue
-            let! (user2, _, game2) = TestUtilities.createuserSessionAndGame(true) |> thenValue
+            let! (_, _, game1) = TestUtilities.createuserSessionAndGame(false)
+            let! (user2, _, game2) = TestUtilities.createuserSessionAndGame(true)
             let session = getSessionForUser user2 |> TestUtilities.setSessionPrivileges [Privilege.ViewGames]
 
             let query = { GamesQuery.empty with allowGuests = Some true }
@@ -56,8 +55,8 @@ type SearchGamesTests() =
         task {
             //Arrange
 
-            let! (_, _, game1) = TestUtilities.createuserSessionAndGame(false) |> thenValue
-            let! (user2, _, game2) = TestUtilities.createuserSessionAndGame(true) |> thenValue
+            let! (_, _, game1) = TestUtilities.createuserSessionAndGame(false)
+            let! (user2, _, game2) = TestUtilities.createuserSessionAndGame(true)
             let! _ = host.Get<IGameRepository>().updateGame({ game2 with parameters = { game2.parameters with isPublic = true }}) |> thenValue
 
             let session = getSessionForUser user2 |> TestUtilities.setSessionPrivileges [Privilege.ViewGames]
@@ -76,12 +75,12 @@ type SearchGamesTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (user1, _, game1) = TestUtilities.createuserSessionAndGame(false) |> thenValue
-            let! (user2, _, game2) = TestUtilities.createuserSessionAndGame(false) |> thenValue
+            let! (user1, _, game1) = TestUtilities.createuserSessionAndGame(false)
+            let! (user2, _, game2) = TestUtilities.createuserSessionAndGame(false)
             let adminSession = getSessionForUser user2 |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames; Privilege.ViewGames]
 
             let playerRequest = { getCreatePlayerRequest with userId = Some user2.id }
-            let! _ = host.Get<IPlayerManager>().addPlayer game1.id playerRequest adminSession |> thenValue
+            let! _ = host.Get<IPlayerManager>().addPlayer game1.id playerRequest adminSession
 
             let query = { GamesQuery.empty with playerUserName = Some user2.name }
 
@@ -98,8 +97,8 @@ type SearchGamesTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (_, _, game1) = TestUtilities.createuserSessionAndGame(false) |> thenValue
-            let! (user2, _, game2) = TestUtilities.createuserSessionAndGame(false) |> thenValue
+            let! (_, _, game1) = TestUtilities.createuserSessionAndGame(false)
+            let! (user2, _, game2) = TestUtilities.createuserSessionAndGame(false)
             let session = getSessionForUser user2 |> TestUtilities.setSessionPrivileges [Privilege.ViewGames]
 
             let! _ = host.Get<IGameRepository>().updateGame({ game1 with status = GameStatus.Canceled });
@@ -119,13 +118,12 @@ type SearchGamesTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (user1, session1, game1) = TestUtilities.createuserSessionAndGame(true) |> thenValue
-            let! (user2, session2, game2) = TestUtilities.createuserSessionAndGame(true) |> thenValue
+            let! (user1, session1, game1) = TestUtilities.createuserSessionAndGame(true)
+            let! (user2, session2, game2) = TestUtilities.createuserSessionAndGame(true)
             let! game3 = host.Get<IGameManager>().createGame { getGameParameters() with isPublic = true } session2
-                          |> AsyncHttpResult.thenValue
 
             let playerRequest = { getCreatePlayerRequest with userId = Some user1.id }
-            let! _ = host.Get<IPlayerManager>().addPlayer game1.id playerRequest session1
+            let! _ = host.Get<IPlayerManager>().addPlayer game3.id playerRequest session1
 
             let query = GamesQuery.empty
 
