@@ -238,7 +238,7 @@ type EventRepositoryTests() =
                 }
 
             //Act
-            let! events = host.Get<IEventRepository>().getEvents (game.id, query) |> thenValue
+            let! events = host.Get<IEventRepository>().getEvents (game.id, query)
 
             //Assert
             events.Length |> shouldBe 2

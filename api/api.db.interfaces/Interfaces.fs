@@ -6,7 +6,7 @@ open Apex.Api.Common.Control
 open Apex.Api.Model
 
 type IEventRepository =
-    abstract member getEvents : gameId:int * query:EventsQuery -> Event list AsyncHttpResult
+    abstract member getEvents : gameId:int * query:EventsQuery -> Task<list<Event>>
     abstract member persistEvent : request:CreateEventRequest * oldGame:Game * newGame:Game -> StateAndEventResponse AsyncHttpResult
 
 type IGameRepository =

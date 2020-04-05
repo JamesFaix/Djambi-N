@@ -27,7 +27,7 @@ type IBoardManager =
     abstract member getCellPaths : regionCount:int * cellId:int -> session:Session -> Task<List<List<int>>>
 
 type IEventManager =
-    abstract member getEvents : gameId:int * query:EventsQuery -> session:Session -> Event list AsyncHttpResult
+    abstract member getEvents : gameId:int * query:EventsQuery -> session:Session -> Task<list<Event>>
 
 type IGameManager =
     abstract member getGame : gameId:int -> session:Session -> Game AsyncHttpResult

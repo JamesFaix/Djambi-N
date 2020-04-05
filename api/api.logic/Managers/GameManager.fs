@@ -101,9 +101,12 @@ type GameManager(eventRepo : IEventRepository,
 
     interface IEventManager with
         member x.getEvents (gameId, query) session =
-            gameRepo.getGame gameId
-            |> thenBind (Security.ensurePlayerOrHas Privilege.ViewGames session)
-            |> thenBindAsync (fun _ -> eventRepo.getEvents (gameId, query))
+            task {
+                let! game = gameRepo.getGame gameId |> thenExtract
+                match Security.ensurePlayerOrHas Privilege.ViewGames session game with
+                | Error ex -> return raise ex
+                | _ -> return! eventRepo.getEvents (gameId, query)            
+            }
 
     interface IGameManager with
         //TODO: Requires integration tests

@@ -67,7 +67,7 @@ type EventRepository(context : ApexDbContext) =
                         .Take(maxResults)
                         .ToListAsync()
                 
-                return Ok(sqlModels |> Seq.map toEvent |> Seq.toList)
+                return sqlModels |> Seq.map toEvent |> Seq.toList
             }
 
         member __.persistEvent (request, oldGame, newGame) =

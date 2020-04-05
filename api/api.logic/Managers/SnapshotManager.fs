@@ -23,7 +23,7 @@ type SnapshotManager(eventRepo : IEventRepository,
 
                 task {
                     let! game = gameRepo.getGame gameId |> thenExtract
-                    let! history = eventRepo.getEvents (gameId, EventsQuery.empty) |> thenExtract
+                    let! history = eventRepo.getEvents (gameId, EventsQuery.empty)
                     let request =
                         {
                             game = game
