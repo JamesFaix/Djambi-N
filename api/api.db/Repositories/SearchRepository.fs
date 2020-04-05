@@ -109,5 +109,5 @@ type SearchRepository(context : ApexDbContext) =
                     |> Seq.map (fun g -> toSearchGame g currentUserId)
                     |> Seq.toList
 
-                return Ok(games)          
+                return games       
             }

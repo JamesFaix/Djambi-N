@@ -26,7 +26,6 @@ type SearchGamesTests() =
 
             //Act
             let! result = host.Get<ISearchManager>().searchGames query session
-                          |> AsyncHttpResult.thenValue
 
             //Assert
             result |> shouldExist (fun l -> l.id = game1.id)
@@ -46,7 +45,6 @@ type SearchGamesTests() =
 
             //Act
             let! result = host.Get<ISearchManager>().searchGames query session
-                          |> AsyncHttpResult.thenValue
 
             //Assert
             result |> shouldNotExist (fun l -> l.id = game1.id)
@@ -68,7 +66,6 @@ type SearchGamesTests() =
 
             //Act
             let! result = host.Get<ISearchManager>().searchGames query session
-                          |> AsyncHttpResult.thenValue
 
             //Assert
             result |> shouldNotExist (fun l -> l.id = game1.id)
@@ -91,7 +88,6 @@ type SearchGamesTests() =
 
             //Act
             let! result = host.Get<ISearchManager>().searchGames query adminSession
-                          |> AsyncHttpResult.thenValue
 
             //Assert
             result |> shouldExist (fun l -> l.id = game1.id)
@@ -113,7 +109,6 @@ type SearchGamesTests() =
 
             //Act
             let! result = host.Get<ISearchManager>().searchGames query session
-                          |> AsyncHttpResult.thenValue
 
             //Assert
             result |> shouldNotExist (fun l -> l.id = game1.id)
@@ -137,7 +132,6 @@ type SearchGamesTests() =
 
             //Act
             let! result = host.Get<ISearchManager>().searchGames query session1
-                          |> AsyncHttpResult.thenValue
 
             //Assert
             result |> shouldExist (fun l -> l.id = game1.id)

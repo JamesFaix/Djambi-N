@@ -40,7 +40,7 @@ type IGameManager =
         abstract member startGame : gameId:int -> session:Session -> StateAndEventResponse AsyncHttpResult
 
 type ISearchManager =
-        abstract member searchGames : query:GamesQuery -> session:Session -> SearchGame list AsyncHttpResult
+        abstract member searchGames : query:GamesQuery -> session:Session -> Task<list<SearchGame>>
 
 type IPlayerManager =
         abstract member addPlayer : gameId:int -> request:CreatePlayerRequest -> session:Session -> StateAndEventResponse AsyncHttpResult

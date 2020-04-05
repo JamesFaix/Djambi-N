@@ -23,7 +23,7 @@ type SearchRepositoryTests() =
             let query = GamesQuery.empty
 
             //Act
-            let! games = host.Get<ISearchRepository>().searchGames (query, user.id) |> thenValue
+            let! games = host.Get<ISearchRepository>().searchGames (query, user.id)
 
             //Assert
             let exists = games |> List.exists (fun l -> l.id = gameId)

@@ -4,7 +4,6 @@ open System.Threading.Tasks
 open Microsoft.AspNetCore.Mvc
 open FSharp.Control.Tasks
 open Serilog
-open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Web
 open Apex.Api.Web.Model
@@ -24,7 +23,7 @@ type SearchController(manager : ISearchManager,
         task {
             let! session = scp.GetSessionFromContext ctx
             let query = query |> toGamesQuery
-            let! games = manager.searchGames query session |> thenExtract
+            let! games = manager.searchGames query session
             let dtos = games |> List.map toSearchGameDto
             return OkObjectResult(dtos) :> IActionResult
         }

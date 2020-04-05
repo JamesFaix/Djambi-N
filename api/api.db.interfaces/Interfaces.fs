@@ -1,6 +1,7 @@
 namespace Apex.Api.Db.Interfaces
 
 open System
+open System.Threading.Tasks
 open Apex.Api.Common.Control
 open Apex.Api.Model
 
@@ -22,7 +23,7 @@ type IGameRepository =
     abstract member createGameAndAddPlayer : gameRequest:CreateGameRequest * playerRequest:CreatePlayerRequest -> int AsyncHttpResult
 
 type ISearchRepository =
-    abstract member searchGames : query:GamesQuery * currentUserId:int -> SearchGame list AsyncHttpResult
+    abstract member searchGames : query:GamesQuery * currentUserId:int -> Task<list<SearchGame>>
 
 type ISessionRepository =
     abstract member getSession : query:SessionQuery -> Session AsyncHttpResult
