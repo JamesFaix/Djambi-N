@@ -2,8 +2,7 @@
 
 open Apex.Api.Db.Model
 open Apex.Api.Model
-open System
-open Apex.Api.Common.Json
+open Newtonsoft.Json
 
 [<AutoOpen>]
 module SnapshotMappings =
@@ -20,7 +19,7 @@ module SnapshotMappings =
         }
 
     let toSnapshot (source : SnapshotSqlModel) : Snapshot =
-        let data = JsonUtility.deserialize<SnapshotJson> source.SnapshotJson
+        let data = source.SnapshotJson |> JsonConvert.DeserializeObject<SnapshotJson>
         {
             id = source.SnapshotId
             description = source.Description

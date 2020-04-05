@@ -4,9 +4,9 @@ open System
 open FSharp.Control.Tasks
 open Microsoft.AspNetCore.Http
 open Serilog
-open Apex.Api.Common.Json
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Model
+open Newtonsoft.Json
 
 type SseEvent =
     {
@@ -45,7 +45,7 @@ type SseSubscriber(userId : int,
         {
             id = response.event.id.ToString()
             kind = response.event.kind.ToString()
-            data = [JsonUtility.serialize response]
+            data = [JsonConvert.SerializeObject response]
         }
 
     interface ISubscriber with

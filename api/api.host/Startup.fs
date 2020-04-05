@@ -2,7 +2,6 @@
 
 open System
 open System.IO
-open System.Linq
 open Microsoft.AspNetCore.Builder
 open Microsoft.AspNetCore.Hosting
 open Microsoft.Extensions.Configuration
@@ -11,11 +10,9 @@ open Microsoft.Extensions.FileProviders
 open Microsoft.OpenApi.Models
 open Microsoft.EntityFrameworkCore
 
-open Newtonsoft.Json
 open Serilog
 open Swashbuckle.AspNetCore.SwaggerGen
 
-open Apex.Api.Common.Json
 open Apex.Api.Db.Interfaces
 open Apex.Api.Db.Repositories
 open Apex.Api.Logic.Interfaces
@@ -65,14 +62,7 @@ type Startup() =
             )
         ) |> ignore
         services.AddControllers()
-            .AddNewtonsoftJson(fun opt -> 
-                let converters = opt.SerializerSettings.Converters
-                converters.Add(OptionJsonConverter())
-                converters.Add(TupleArrayJsonConverter())
-                converters.Add(OptionJsonConverter())
-                converters.Add(UnionEnumJsonConverter())
-                converters.Add(SingleFieldUnionJsonConverter())
-            ) |> ignore
+            .AddNewtonsoftJson() |> ignore
 
         // Configuration
         services.Configure<AppSettings>(__.Configuration) |> ignore
@@ -138,23 +128,6 @@ type Startup() =
     member __.Configure(app : IApplicationBuilder, env : IWebHostEnvironment) : unit =
         // See https://docs.microsoft.com/en-us/aspnet/core/fundamentals/middleware/?view=aspnetcore-3.1#middleware-order
         // regarding middleware order
-
-        let configureNewtonsoft () =
-            //This will only provide custom serialization of responses to clients.
-            //Custom deserialization of request bodies does not work that same way in this framework.
-            //See HttpUtility for deserialization.
-
-            let converters : List<JsonConverter> =
-                [
-                    OptionJsonConverter()
-                    TupleArrayJsonConverter()
-                    UnionEnumJsonConverter()
-                    SingleFieldUnionJsonConverter()
-                ]
-
-            let settings = JsonSerializerSettings()
-            settings.Converters <- converters.ToList()
-            JsonConvert.DefaultSettings <- (fun () -> settings)
     
         let configureWebServer(app : IApplicationBuilder) : IApplicationBuilder =
             let isDefault (path : string) =
@@ -187,8 +160,6 @@ type Startup() =
                         |> ignore
                 )
             )
-
-        configureNewtonsoft() 
 
         app.UseMiddleware<ErrorHandlingMiddleware>() |> ignore
 

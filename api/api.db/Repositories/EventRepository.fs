@@ -10,9 +10,8 @@ open Apex.Api.Model
 open System.ComponentModel
 open Apex.Api.Common.Control
 open System.Threading.Tasks
-open Apex.Api.Common.Json
 open System
-open System.Data
+open Newtonsoft.Json
 
 type EventRepository(context : ApexDbContext) =
     let playerNameTakenMessage = 
@@ -146,9 +145,9 @@ type EventRepository(context : ApexDbContext) =
                     g.IsPublic <- newGame.parameters.isPublic
                     g.Description <- newGame.parameters.description |> Option.toObj
                     g.RegionCount <- byte newGame.parameters.regionCount
-                    g.CurrentTurnJson <- newGame.currentTurn |> JsonUtility.serialize
-                    g.TurnCycleJson <- newGame.turnCycle |> JsonUtility.serialize
-                    g.PiecesJson <- newGame.pieces |> JsonUtility.serialize
+                    g.CurrentTurnJson <- newGame.currentTurn |> JsonConvert.SerializeObject
+                    g.TurnCycleJson <- newGame.turnCycle |> JsonConvert.SerializeObject
+                    g.PiecesJson <- newGame.pieces |> JsonConvert.SerializeObject
                     g.GameStatusId <- newGame.status
                     context.Games.Update(g) |> ignore
 

@@ -9,8 +9,8 @@ open Microsoft.EntityFrameworkCore
 open System.Linq
 open Apex.Api.Db.Mappings
 open System.Threading.Tasks
-open Apex.Api.Common.Json
 open Apex.Api.Enums
+open Newtonsoft.Json
 
 type GameRepository(context : ApexDbContext) =
     let nameConflictMessage = 
@@ -86,9 +86,9 @@ type GameRepository(context : ApexDbContext) =
                 g.Description <- game.parameters.description |> Option.toObj
                 g.RegionCount <- byte game.parameters.regionCount
                 g.GameStatusId <- game.status
-                g.CurrentTurnJson <- game.currentTurn |> JsonUtility.serialize
-                g.TurnCycleJson <- game.turnCycle |> JsonUtility.serialize
-                g.PiecesJson <- game.pieces |> JsonUtility.serialize
+                g.CurrentTurnJson <- game.currentTurn |> JsonConvert.SerializeObject
+                g.TurnCycleJson <- game.turnCycle |> JsonConvert.SerializeObject
+                g.PiecesJson <- game.pieces |> JsonConvert.SerializeObject
                 context.Games.Update(g) |> ignore
                 let! _ = context.SaveChangesAsync()
                 return Ok()            
