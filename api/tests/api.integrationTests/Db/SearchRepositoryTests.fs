@@ -16,7 +16,7 @@ type SearchRepositoryTests() =
         //Arrange
         task {
             let userRequest = getCreateUserRequest()
-            let! user = host.Get<IUserRepository>().createUser userRequest |> thenValue
+            let! user = host.Get<IUserRepository>().createUser userRequest
 
             let gameRequest = getCreateGameRequest(user.id)
             let! gameId = host.Get<IGameRepository>().createGame gameRequest |> thenValue

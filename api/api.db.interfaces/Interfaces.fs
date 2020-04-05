@@ -26,10 +26,10 @@ type ISearchRepository =
     abstract member searchGames : query:GamesQuery * currentUserId:int -> Task<list<SearchGame>>
 
 type ISessionRepository =
-    abstract member getSession : query:SessionQuery -> Session AsyncHttpResult
-    abstract member createSession : request:CreateSessionRequest -> Session AsyncHttpResult
-    abstract member renewSessionExpiration : sessionId:int * expiresOn:DateTime -> Session AsyncHttpResult
-    abstract member deleteSession : sessionId:int option * token:string option -> unit AsyncHttpResult
+    abstract member getSession : query:SessionQuery -> Task<Session>
+    abstract member createSession : request:CreateSessionRequest -> Task<Session>
+    abstract member renewSessionExpiration : sessionId:int * expiresOn:DateTime -> Task<Session>
+    abstract member deleteSession : sessionId:int option * token:string option -> Task<unit>
 
 type ISnapshotRepository =
     abstract member getSnapshot : snapshotId:int -> Snapshot AsyncHttpResult
@@ -39,8 +39,8 @@ type ISnapshotRepository =
     abstract member loadSnapshot : gameId:int * snapshotId:int -> unit AsyncHttpResult
 
 type IUserRepository =
-    abstract member getUser : userId:int -> UserDetails AsyncHttpResult
-    abstract member getUserByName : name:string -> UserDetails AsyncHttpResult
-    abstract member createUser : request:CreateUserRequest -> UserDetails AsyncHttpResult
-    abstract member deleteUser : id:int -> unit AsyncHttpResult
-    abstract member updateFailedLoginAttempts : request:UpdateFailedLoginsRequest -> unit AsyncHttpResult
+    abstract member getUser : userId:int -> Task<UserDetails>
+    abstract member getUserByName : name:string -> Task<UserDetails>
+    abstract member createUser : request:CreateUserRequest -> Task<UserDetails>
+    abstract member deleteUser : id:int -> Task<unit>
+    abstract member updateFailedLoginAttempts : request:UpdateFailedLoginsRequest -> Task<unit>

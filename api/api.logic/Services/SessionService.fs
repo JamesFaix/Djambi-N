@@ -2,7 +2,6 @@ namespace Apex.Api.Logic.Services
 
 open System
 open Apex.Api.Common.Control
-open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.Db.Interfaces
 open Apex.Api.Model
 open Apex.Api.Logic.Interfaces
@@ -44,22 +43,22 @@ type SessionService(sessionRepo : ISessionRepository,
 
                 let request = UpdateFailedLoginsRequest.increment (user.id, attempts)
                 task {
-                    let! _ = userRepo.updateFailedLoginAttempts request |> thenExtract
+                    let! _ = userRepo.updateFailedLoginAttempts request
                     raise <| HttpException(401, "Incorrect password.")
                 }
 
         let deleteSessionForUser (userId : int) : Task<unit> =            
             task {
                 try 
-                    let! session = sessionRepo.getSession (SessionQuery.byUserId userId) |> thenExtract
-                    return! sessionRepo.deleteSession (Some session.id, None) |> thenExtract
+                    let! session = sessionRepo.getSession (SessionQuery.byUserId userId)
+                    return! sessionRepo.deleteSession (Some session.id, None)
                 with
                 | :? HttpException as ex when ex.statusCode = 404 ->
                     return () //If no session thats fine
             }
 
         task {
-            let! user = userRepo.getUserByName request.username |> thenExtract
+            let! user = userRepo.getUserByName request.username
             errorIfLocked user
             let! _ = errorIfInvalidPassword user
 
@@ -73,30 +72,29 @@ type SessionService(sessionRepo : ISessionRepository,
                     token = Guid.NewGuid().ToString()
                     expiresOn = DateTime.UtcNow.Add(sessionTimeout)
                 }
-            let! session = sessionRepo.createSession request |> thenExtract
-            let! _ = userRepo.updateFailedLoginAttempts (UpdateFailedLoginsRequest.reset user.id) |> thenExtract
+            let! session = sessionRepo.createSession request
+            let! _ = userRepo.updateFailedLoginAttempts (UpdateFailedLoginsRequest.reset user.id)
 
             return session
         }
 
     member x.renewSession(token : string) : Task<Session> =
         task {
-            let! session = sessionRepo.getSession (SessionQuery.byToken token) |> thenExtract
+            let! session = sessionRepo.getSession (SessionQuery.byToken token)
             errorIfExpired session
-            let! session = sessionRepo.renewSessionExpiration(session.id, DateTime.UtcNow.Add(sessionTimeout)) |> thenExtract
+            let! session = sessionRepo.renewSessionExpiration(session.id, DateTime.UtcNow.Add(sessionTimeout))
             return session            
         }
 
     member x.getSession(token : string) : Task<Session> =
         task {
-            let! session = sessionRepo.getSession (SessionQuery.byToken token) |> thenExtract
+            let! session = sessionRepo.getSession (SessionQuery.byToken token)
             errorIfExpired session
             return session
         }
 
     member x.closeSession(session : Session) : Task<unit> =
         sessionRepo.deleteSession(None, Some session.token)
-        |> thenExtract
 
     interface ISessionService with
         member x.openSession request = x.openSession request

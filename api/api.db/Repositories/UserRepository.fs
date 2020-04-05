@@ -19,8 +19,8 @@ type UserRepository(context : ApexDbContext) =
                 let! sqlModel = context.Users.FindAsync(userId)
 
                 return match sqlModel with
-                        | null -> Error <| HttpException(404, "User not found.")
-                        | x -> Ok(x |> toUserDetails)
+                        | null -> raise <| HttpException(404, "User not found.")
+                        | x -> x |> toUserDetails
             }
 
         member __.getUserByName name =
@@ -28,8 +28,8 @@ type UserRepository(context : ApexDbContext) =
                 let! sqlModel = context.Users.SingleOrDefaultAsync(fun x -> name = x.Name) // Relies on case insensitivity of SQL 
 
                 return match sqlModel with
-                        | null -> Error <| HttpException(404, "User not found.")
-                        | x -> Ok(x |> toUserDetails)
+                        | null -> raise <| HttpException(404, "User not found.")
+                        | x -> x |> toUserDetails
             }
 
         member __.createUser request =
@@ -44,21 +44,21 @@ type UserRepository(context : ApexDbContext) =
                 try 
                     let! _ = context.Users.AddAsync(u)
                     let! _ = context.SaveChangesAsync()
-                    return u |> toUserDetails |> Ok
+                    return u |> toUserDetails
                 with
                 | :? InvalidOperationException as ex when ex.Message.StartsWith(nameConflictMessage) ->
-                    return Error <| HttpException(409, "Conflict when attempting to write User.")
+                    return raise <| HttpException(409, "Conflict when attempting to write User.")
             }
 
         member __.deleteUser userId = 
             task {
                 let! u = context.Users.FindAsync(userId)
                 if u = null
-                then return Error <| HttpException(404, "User not found.")
+                then return raise <| HttpException(404, "User not found.")
                 else
                     context.Users.Remove(u) |> ignore
                     let! _ = context.SaveChangesAsync()
-                    return Ok ()
+                    return ()
             }
 
         member __.updateFailedLoginAttempts request =
@@ -68,5 +68,5 @@ type UserRepository(context : ApexDbContext) =
                 u.LastFailedLoginAttemptOn <- request.lastFailedLoginAttemptOn |> Option.toNullable
                 context.Users.Update(u) |> ignore
                 let! _ = context.SaveChangesAsync()
-                return Ok ()
+                return ()
             }

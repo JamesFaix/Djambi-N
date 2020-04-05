@@ -6,6 +6,7 @@ open Apex.Api.Logic
 open Apex.Api.Common.Control
 open Apex.Api.Enums
 open Apex.Api.Db.Interfaces
+open FSharp.Control.Tasks
 
 type UserManager(userRepo : IUserRepository) =
     interface IUserManager with
@@ -20,20 +21,24 @@ type UserManager(userRepo : IUserRepository) =
                 if not <| Validation.isValidPassord request.password
                 then raise <| HttpException(422, "Password must contain only letters A-Z, numbers 0-9, _ or -, and mus tbe 6 to 20 characters.")
                 
-                userRepo.createUser request
-                |> AsyncHttpResult.thenMap UserDetails.hideDetails
-                |> AsyncHttpResult.thenExtract
+                task {
+                    let! user = userRepo.createUser request
+                    return user |> UserDetails.hideDetails
+                }
 
         member __.deleteUser userId session =
-            Security.ensureSelfOrHas Privilege.EditUsers session userId
-            |> Result.bindAsync (fun _ -> userRepo.deleteUser userId)
-            |> AsyncHttpResult.thenExtract
+            match Security.ensureSelfOrHas Privilege.EditUsers session userId with
+            | Ok () -> userRepo.deleteUser userId
+            | Error ex -> raise ex
 
         member __.getUser userId session =
-            Security.ensureSelfOrHas Privilege.EditUsers session userId
-            |> Result.bindAsync (fun _ -> userRepo.getUser userId)
-            |> AsyncHttpResult.thenMap UserDetails.hideDetails
-            |> AsyncHttpResult.thenExtract
+            match Security.ensureSelfOrHas Privilege.EditUsers session userId with
+            | Ok () -> 
+                task {
+                    let! user = userRepo.getUser userId
+                    return user |> UserDetails.hideDetails
+                }
+            | Error ex -> raise ex
 
         member x.getCurrentUser session =
             (x :> IUserManager).getUser session.user.id session
