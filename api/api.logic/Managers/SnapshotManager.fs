@@ -7,6 +7,7 @@ open Apex.Api.Model
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Db.Interfaces
 open Apex.Api.Enums
+open FSharp.Control.Tasks
 
 type SnapshotManager(eventRepo : IEventRepository,
                      gameRepo : IGameRepository,
@@ -14,47 +15,38 @@ type SnapshotManager(eventRepo : IEventRepository,
     interface ISnapshotManager with
 
         member x.createSnapshot gameId request session =
-            Security.ensureHas Privilege.Snapshots session
-            |> Result.bind (fun _ -> 
+            match Security.ensureHas Privilege.Snapshots session with
+            | Error ex -> raise ex
+            | _ ->
                 if not <| Validation.isValidSnapshotDescription request.description
-                then Error <| HttpException(422, "Snapshot descriptions cannot exceed 100 characters.")
-                else Ok ()
-            )
-            |> Result.bindAsync (fun _ ->
-                gameRepo.getGame gameId
-                |> thenBindAsync (fun game ->
-                    eventRepo.getEvents (gameId, EventsQuery.empty)
-                    |> thenBindAsync (fun history ->
-                        let request =
-                            {
-                                game = game
-                                history = history
-                                description = request.description
-                                createdByUserId = session.user.id
-                            }
-                        snapshotRepo.createSnapshot request
-                    )
-                )
-                |> thenBindAsync (fun snapshotId ->
-                    snapshotRepo.getSnapshot snapshotId
-                    |> thenMap Snapshot.hideDetails
-                )
-            )
+                then raise <| HttpException(422, "Snapshot descriptions cannot exceed 100 characters.")
+
+                task {
+                    let! game = gameRepo.getGame gameId |> thenExtract
+                    let! history = eventRepo.getEvents (gameId, EventsQuery.empty) |> thenExtract
+                    let request =
+                        {
+                            game = game
+                            history = history
+                            description = request.description
+                            createdByUserId = session.user.id
+                        }
+                    let! snapshotId = snapshotRepo.createSnapshot request
+                    let! snapshot = snapshotRepo.getSnapshot snapshotId
+                    return snapshot |> Snapshot.hideDetails
+                }
 
         member x.getSnapshotsForGame gameId session =
-            Security.ensureHas Privilege.Snapshots session
-            |> Result.bindAsync (fun _ ->
-                snapshotRepo.getSnapshotsForGame gameId
-            )
+            match Security.ensureHas Privilege.Snapshots session with
+            | Ok () -> snapshotRepo.getSnapshotsForGame gameId
+            | Error ex -> raise ex
 
         member x.deleteSnapshot gameId snapshotId session =
-            Security.ensureHas Privilege.Snapshots session
-            |> Result.bindAsync (fun _ ->
-                snapshotRepo.deleteSnapshot snapshotId
-            )
+            match Security.ensureHas Privilege.Snapshots session with
+            | Ok () -> snapshotRepo.deleteSnapshot snapshotId
+            | Error ex -> raise ex
 
         member x.loadSnapshot gameId snapshotId session =
-            Security.ensureHas Privilege.Snapshots session
-            |> Result.bindAsync (fun _ ->
-                snapshotRepo.loadSnapshot (gameId, snapshotId)
-            )
+            match Security.ensureHas Privilege.Snapshots session with
+            | Ok () -> snapshotRepo.loadSnapshot (gameId, snapshotId)
+            | Error ex -> raise ex

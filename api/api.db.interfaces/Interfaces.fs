@@ -32,11 +32,11 @@ type ISessionRepository =
     abstract member deleteSession : sessionId:int option * token:string option -> Task<unit>
 
 type ISnapshotRepository =
-    abstract member getSnapshot : snapshotId:int -> Snapshot AsyncHttpResult
-    abstract member getSnapshotsForGame : gameId:int -> SnapshotInfo list AsyncHttpResult
-    abstract member deleteSnapshot : snapshotId:int -> unit AsyncHttpResult
-    abstract member createSnapshot : request:InternalCreateSnapshotRequest -> int AsyncHttpResult
-    abstract member loadSnapshot : gameId:int * snapshotId:int -> unit AsyncHttpResult
+    abstract member getSnapshot : snapshotId:int -> Task<Snapshot>
+    abstract member getSnapshotsForGame : gameId:int -> Task<list<SnapshotInfo>>
+    abstract member deleteSnapshot : snapshotId:int -> Task<unit>
+    abstract member createSnapshot : request:InternalCreateSnapshotRequest -> Task<int>
+    abstract member loadSnapshot : gameId:int * snapshotId:int -> Task<unit>
 
 type IUserRepository =
     abstract member getUser : userId:int -> Task<UserDetails>

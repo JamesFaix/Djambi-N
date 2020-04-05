@@ -55,13 +55,13 @@ type ISessionManager =
         abstract member logout : session:Session -> Task<unit>
 
 type ISnapshotManager =
-        abstract member createSnapshot : gameId:int -> request:CreateSnapshotRequest -> session:Session -> SnapshotInfo AsyncHttpResult
+        abstract member createSnapshot : gameId:int -> request:CreateSnapshotRequest -> session:Session -> Task<SnapshotInfo>
 
-        abstract member getSnapshotsForGame : gameId:int -> session:Session -> SnapshotInfo list AsyncHttpResult
+        abstract member getSnapshotsForGame : gameId:int -> session:Session -> Task<list<SnapshotInfo>>
 
-        abstract member deleteSnapshot : gameId:int -> snapshotId:int -> session:Session -> unit AsyncHttpResult
+        abstract member deleteSnapshot : gameId:int -> snapshotId:int -> session:Session -> Task<unit>
 
-        abstract member loadSnapshot : gameId:int -> snapshotId:int -> session:Session -> unit AsyncHttpResult
+        abstract member loadSnapshot : gameId:int -> snapshotId:int -> session:Session -> Task<unit>
 
 type ITurnManager =
         abstract member selectCell : gameId:int * cellId:int -> session:Session -> StateAndEventResponse AsyncHttpResult
