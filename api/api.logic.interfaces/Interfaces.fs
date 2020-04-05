@@ -9,12 +9,12 @@ open Apex.Api.Enums
 type ISubscriber =
     inherit IDisposable
     abstract member userId : int
-    abstract member send : response:StateAndEventResponse -> unit AsyncHttpResult
+    abstract member send : response:StateAndEventResponse -> Task<unit>
 
 type INotificationService =
     abstract member add : subscriber:ISubscriber -> unit
     abstract member remove : userId:int -> unit
-    abstract member send : response:StateAndEventResponse -> unit AsyncHttpResult
+    abstract member send : response:StateAndEventResponse -> Task<unit>
 
 type ISessionService =
     abstract member openSession : request:LoginRequest -> Task<Session>

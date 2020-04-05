@@ -9,6 +9,7 @@ open Apex.Api.Logic.Interfaces
 open Apex.Api.Logic.Services
 open Apex.Api.Model
 open Apex.Api.Enums
+open FSharp.Control.Tasks
 
 type GameManager(eventRepo : IEventRepository,
                  eventServ : EventService,
@@ -40,10 +41,13 @@ type GameManager(eventRepo : IEventRepository,
         | _ -> false
 
     let sendIfPublishable (response : StateAndEventResponse) : StateAndEventResponse AsyncHttpResult =
-        if isPublishable response.event
-        then notificationServ.send response
-             |> thenMap (fun _ -> response)
-        else okTask response
+        task {
+            if isPublishable response.event
+            then
+                let! _ = notificationServ.send response
+                return Ok response
+            else return Ok response
+        }
 
     let processEvent (gameId : int) (getCreateEventRequest : Game -> CreateEventRequest HttpResult) : StateAndEventResponse AsyncHttpResult =
         gameRepo.getGame gameId
