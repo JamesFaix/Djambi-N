@@ -6,6 +6,8 @@ open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.Db.Interfaces
 open Apex.Api.Model
 open Apex.Api.Logic.Interfaces
+open System.Threading.Tasks
+open FSharp.Control.Tasks
 
 type SessionService(sessionRepo : ISessionRepository,
                     userRepo : IUserRepository) =
@@ -16,10 +18,10 @@ type SessionService(sessionRepo : ISessionRepository,
 
     let errorIfExpired (session : Session) =
         match session with
-        | s when s.expiresOn >= DateTime.UtcNow -> Ok session
-        | _ -> Error <| HttpException(401, "Session expired.")
+        | s when s.expiresOn >= DateTime.UtcNow -> ()
+        | _ -> raise <| HttpException(401, "Session expired.")
 
-    member x.openSession(request : LoginRequest) : Session AsyncHttpResult =
+    member x.openSession(request : LoginRequest) : Task<Session> =
 
         let isWithinLockTimeoutPeriod (u : UserDetails) =
             u.lastFailedLoginAttemptOn.IsNone
@@ -28,12 +30,12 @@ type SessionService(sessionRepo : ISessionRepository,
         let errorIfLocked (user : UserDetails) =
             if user.failedLoginAttempts >= maxFailedLoginAttempts
                 && isWithinLockTimeoutPeriod user
-            then Error <| HttpException(401, "Account locked.")
-            else Ok user
+            then raise <| HttpException(401, "Account locked.")
+            else ()
 
         let errorIfInvalidPassword (user : UserDetails) =
             if request.password = user.password
-            then okTask user
+            then Task.FromResult ()
             else
                 let attempts =
                     if isWithinLockTimeoutPeriod user
@@ -41,47 +43,60 @@ type SessionService(sessionRepo : ISessionRepository,
                     else 1
 
                 let request = UpdateFailedLoginsRequest.increment (user.id, attempts)
+                task {
+                    let! _ = userRepo.updateFailedLoginAttempts request |> thenExtract
+                    raise <| HttpException(401, "Incorrect password.")
+                }
 
-                userRepo.updateFailedLoginAttempts request
-                |> thenBind (fun _ -> Error <| HttpException(401, "Incorrect password."))
+        let deleteSessionForUser (userId : int) : Task<unit> =            
+            task {
+                try 
+                    let! session = sessionRepo.getSession (SessionQuery.byUserId userId) |> thenExtract
+                    return! sessionRepo.deleteSession (Some session.id, None) |> thenExtract
+                with
+                | :? HttpException as ex when ex.statusCode = 404 ->
+                    return () //If no session thats fine
+            }
 
-        userRepo.getUserByName request.username
-        |> thenBind errorIfLocked
-        |> thenBindAsync errorIfInvalidPassword
-        |> thenBindAsync (fun user ->
+        task {
+            let! user = userRepo.getUserByName request.username |> thenExtract
+            errorIfLocked user
+            let! _ = errorIfInvalidPassword user
+
             //If a session already exists for this user, delete it
-            sessionRepo.getSession (SessionQuery.byUserId user.id)
-            |> thenBindAsync(fun session -> sessionRepo.deleteSession (Some session.id, None))
-            |> thenBindError 404 (fun _ -> Ok ()) //If no session thats fine
-            //Create a new session
-            |> thenBindAsync(fun _ ->
-                let request : CreateSessionRequest =
-                    {
-                        userId = user.id
-                        token = Guid.NewGuid().ToString()
-                        expiresOn = DateTime.UtcNow.Add(sessionTimeout)
-                    }
-                sessionRepo.createSession request
-            )
-            |> thenDoAsync (fun _ ->
-                userRepo.updateFailedLoginAttempts (UpdateFailedLoginsRequest.reset user.id)
-            )
-        )
+            let! _ = deleteSessionForUser user.id
 
-    member x.renewSession(token : string) : Session AsyncHttpResult =
-        let renew (s : Session) =
-            sessionRepo.renewSessionExpiration(s.id, DateTime.UtcNow.Add(sessionTimeout))
+            //Create a new session            
+            let request : CreateSessionRequest =
+                {
+                    userId = user.id
+                    token = Guid.NewGuid().ToString()
+                    expiresOn = DateTime.UtcNow.Add(sessionTimeout)
+                }
+            let! session = sessionRepo.createSession request |> thenExtract
+            let! _ = userRepo.updateFailedLoginAttempts (UpdateFailedLoginsRequest.reset user.id) |> thenExtract
 
-        sessionRepo.getSession (SessionQuery.byToken token)
-        |> thenBind errorIfExpired
-        |> thenBindAsync renew
+            return session
+        }
 
-    member x.getSession(token : string) : Session AsyncHttpResult =
-        sessionRepo.getSession (SessionQuery.byToken token)
-        |> thenBind errorIfExpired
+    member x.renewSession(token : string) : Task<Session> =
+        task {
+            let! session = sessionRepo.getSession (SessionQuery.byToken token) |> thenExtract
+            errorIfExpired session
+            let! session = sessionRepo.renewSessionExpiration(session.id, DateTime.UtcNow.Add(sessionTimeout)) |> thenExtract
+            return session            
+        }
 
-    member x.closeSession(session : Session) : Unit AsyncHttpResult =
+    member x.getSession(token : string) : Task<Session> =
+        task {
+            let! session = sessionRepo.getSession (SessionQuery.byToken token) |> thenExtract
+            errorIfExpired session
+            return session
+        }
+
+    member x.closeSession(session : Session) : Task<unit> =
         sessionRepo.deleteSession(None, Some session.token)
+        |> thenExtract
 
     interface ISessionService with
         member x.openSession request = x.openSession request

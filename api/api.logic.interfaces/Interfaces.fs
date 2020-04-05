@@ -17,10 +17,10 @@ type INotificationService =
     abstract member send : response:StateAndEventResponse -> unit AsyncHttpResult
 
 type ISessionService =
-    abstract member openSession : request:LoginRequest -> Session AsyncHttpResult
-    abstract member renewSession : token:string -> Session AsyncHttpResult
-    abstract member getSession : token:string -> Session AsyncHttpResult
-    abstract member closeSession : session:Session -> Unit AsyncHttpResult
+    abstract member openSession : request:LoginRequest -> Task<Session>
+    abstract member renewSession : token:string -> Task<Session>
+    abstract member getSession : token:string -> Task<Session>
+    abstract member closeSession : session:Session -> Task<unit>
 
 type IBoardManager =
         abstract member getBoard : regionCount:int -> session:Session -> Task<Board>
@@ -50,9 +50,9 @@ type IPlayerManager =
         abstract member updatePlayerStatus : gameId:int * playerId:int * status:PlayerStatus -> session:Session -> StateAndEventResponse AsyncHttpResult
 
 type ISessionManager =
-        abstract member login : request:LoginRequest -> Session AsyncHttpResult
+        abstract member login : request:LoginRequest -> Task<Session>
 
-        abstract member logout : session:Session -> unit AsyncHttpResult
+        abstract member logout : session:Session -> Task<unit>
 
 type ISnapshotManager =
         abstract member createSnapshot : gameId:int -> request:CreateSnapshotRequest -> session:Session -> SnapshotInfo AsyncHttpResult
