@@ -9,7 +9,8 @@ namespace Apex.Api.Db.Model
         public ApexDbContext CreateDbContext(string[] args)
         {
             var builder = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json");
+                .AddJsonFile("appsettings.json")
+                .AddEnvironmentVariables("APEX_");
 
             var config = builder.Build();
 
