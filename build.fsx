@@ -18,7 +18,6 @@ let all = "all"
 
 let buildApi = "build-api"
 let buildWeb = "build-web"
-let dbReset = "db-reset"
 let restoreWeb = "restore-web"
 let buildAll = "build-all"
 
@@ -72,7 +71,6 @@ let launchConsole (dir : string) (command : string) (args : string list) (_ : Ta
     Process.Start psi |> ignore
 
 Target.create buildApi (dotnetBuild "api/api.host/api.host.fsproj")
-Target.create dbReset (dotNetRun "utils/db-reset/db-reset.fsproj")
 Target.create restoreWeb (fun _ -> Npm.install (setNpmParams "web"))
 Target.create buildWeb (fun _ -> Npm.run "build" (setNpmParams "web"))
 
@@ -111,7 +109,6 @@ Target.create all ignore
 
 open Fake.Core.TargetOperators
 
-dbReset ?=> buildApi
 buildApi ?=> buildWeb
 buildApi ?=> runApi
 restoreWeb ?=> buildWeb
@@ -127,7 +124,6 @@ testWebUnit ?=> runWeb
 
 buildAll <==
     [
-        dbReset
         buildApi
         restoreWeb
         buildWeb
