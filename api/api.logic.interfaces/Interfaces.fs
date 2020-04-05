@@ -71,10 +71,10 @@ type ITurnManager =
         abstract member commitTurn : gameId:int -> session:Session -> StateAndEventResponse AsyncHttpResult
 
 type IUserManager =
-        abstract member createUser : request:CreateUserRequest -> sessionOption:Session option -> User AsyncHttpResult
+        abstract member createUser : request:CreateUserRequest -> sessionOption:Session option -> Task<User>
 
-        abstract member deleteUser : userId:int -> session:Session -> unit AsyncHttpResult
+        abstract member deleteUser : userId:int -> session:Session -> Task<unit>
 
-        abstract member getUser : userId:int -> session:Session -> User AsyncHttpResult
+        abstract member getUser : userId:int -> session:Session -> Task<User>
 
-        abstract member getCurrentUser : session:Session -> User AsyncHttpResult
+        abstract member getCurrentUser : session:Session -> Task<User>

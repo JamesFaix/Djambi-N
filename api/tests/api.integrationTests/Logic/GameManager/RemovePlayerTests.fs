@@ -19,8 +19,8 @@ type RemovePlayerTests() =
             //Arrange
             let! (_, _, game) = createuserSessionAndGame(false) |> thenValue
 
-            let! user = createUser() |> thenValue
-            let session = getSessionForUser (user |> UserDetails.hideDetails)
+            let! user = createUser()
+            let session = getSessionForUser user
             let request = CreatePlayerRequest.user user
 
             let! player = host.Get<IPlayerManager>().addPlayer game.id request session
@@ -42,7 +42,7 @@ type RemovePlayerTests() =
             //Arrange
             let! (_, session, game) = createuserSessionAndGame(false) |> thenValue
 
-            let! user = createUser() |> thenValue
+            let! user = createUser()
             let request = CreatePlayerRequest.user user
             let session = session |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames]
 

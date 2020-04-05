@@ -7,7 +7,6 @@ open Apex.Api.IntegrationTests
 open Apex.Api.Model
 open Apex.Api.Db.Interfaces
 open Apex.Api.Enums
-open Apex.Api.Common.Control
 
 type GameRepositoryTests() =
     inherit TestsBase()
@@ -17,7 +16,7 @@ type GameRepositoryTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! user = createUser() |> AsyncHttpResult.thenValue
+            let! user = createUser()
             let request = getCreateGameRequest(user.id)
 
             //Act
@@ -32,7 +31,7 @@ type GameRepositoryTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! user = createUser() |> AsyncHttpResult.thenValue
+            let! user = createUser()
             let request = getCreateGameRequest(user.id)
             let! gameId = host.Get<IGameRepository>().createGame request |> thenValue
 
@@ -49,11 +48,10 @@ type GameRepositoryTests() =
         let host = HostFactory.createHost()
         //Arrange
         task {            
-            let! user = createUser() |> AsyncHttpResult.thenValue
+            let! user = createUser()
             let gameRequest = getCreateGameRequest(user.id)
             let userRequest = getCreateUserRequest()
             let! gameId = host.Get<IGameRepository>().createGame gameRequest |> thenValue
-            let! user = host.Get<IUserRepository>().createUser userRequest |> thenValue
             let request = CreatePlayerRequest.user user
 
             //Act
@@ -73,7 +71,7 @@ type GameRepositoryTests() =
         let host = HostFactory.createHost()
         //Arrange
         task {
-            let! user = createUser() |> AsyncHttpResult.thenValue
+            let! user = createUser()
             let gameRequest = getCreateGameRequest(user.id)
             let! gameId = host.Get<IGameRepository>().createGame gameRequest |> thenValue
             let request = CreatePlayerRequest.neutral "test"
@@ -95,7 +93,7 @@ type GameRepositoryTests() =
         let host = HostFactory.createHost()
         //Arrange
         task {
-            let! user = createUser() |> AsyncHttpResult.thenValue
+            let! user = createUser()
             let gameRequest = getCreateGameRequest(user.id)
             let userRequest = getCreateUserRequest()
             let! gameId = host.Get<IGameRepository>().createGame gameRequest |> thenValue
@@ -119,12 +117,12 @@ type GameRepositoryTests() =
         let host = HostFactory.createHost()
         //Arrange
         task {
-            let! user = createUser() |> AsyncHttpResult.thenValue
+            let! user = createUser()
             let gameRequest = getCreateGameRequest(user.id)
             let userRequest = getCreateUserRequest()
             let! gameId = host.Get<IGameRepository>().createGame gameRequest |> thenValue
             let! user = host.Get<IUserRepository>().createUser userRequest |> thenValue
-            let playerRequest = CreatePlayerRequest.user user
+            let playerRequest = CreatePlayerRequest.user (user |> UserDetails.hideDetails)
             let! player = host.Get<IGameRepository>().addPlayer (gameId, playerRequest) |> thenValue
 
             //Act

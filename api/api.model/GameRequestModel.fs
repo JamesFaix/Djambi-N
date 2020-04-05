@@ -14,7 +14,7 @@ type CreatePlayerRequest =
 
 module CreatePlayerRequest =
 
-    let user (user : UserDetails) : CreatePlayerRequest =
+    let user (user : User) : CreatePlayerRequest =
         {
             kind = PlayerKind.User
             userId = Some user.id

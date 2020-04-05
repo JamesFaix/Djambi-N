@@ -9,7 +9,6 @@ open Apex.Api.Logic.Interfaces
 open Apex.Api.Db.Interfaces
 open Apex.Api.Enums
 open Apex.Api.Logic.Services
-open Apex.Api.Common.Control
 
 //TODO: Audit test class
 type FillEmptyPlayerSlotsTests() =
@@ -20,8 +19,8 @@ type FillEmptyPlayerSlotsTests() =
         let host = HostFactory.createHost()
         //Arrange
         task {
-            let! user = createUser() |> AsyncHttpResult.thenValue
-            let session = getSessionForUser (user |> UserDetails.hideDetails)
+            let! user = createUser()
+            let session = getSessionForUser user
             let gameRequest = getGameParameters()
             let! game = host.Get<IGameManager>().createGame gameRequest session |> thenValue
 
@@ -46,8 +45,8 @@ type FillEmptyPlayerSlotsTests() =
         let host = HostFactory.createHost()
         //Arrange
         task {
-            let! user = createUser() |> AsyncHttpResult.thenValue
-            let session = getSessionForUser (user |> UserDetails.hideDetails)
+            let! user = createUser()
+            let session = getSessionForUser user
             let gameRequest = getGameParameters()
             let! game = host.Get<IGameManager>().createGame gameRequest session |> thenValue
 

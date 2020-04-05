@@ -5,6 +5,7 @@ open Xunit
 open Apex.Api.IntegrationTests
 open Apex.Api.Common.Control.AsyncHttpResult;
 open Apex.Api.Logic.Services
+open Apex.Api.Logic.Interfaces
 
 type CreateSessionTests() =
     inherit TestsBase()
@@ -15,8 +16,7 @@ type CreateSessionTests() =
         task {
             //Arrange
             let userRequest = getCreateUserRequest()
-            let! user = host.Get<UserService>().createUser userRequest None
-                        |> thenValue
+            let! user = host.Get<IUserManager>().createUser userRequest None
 
             let request = getLoginRequest userRequest
 
@@ -36,8 +36,7 @@ type CreateSessionTests() =
         task {
             //Arrange
             let userRequest = getCreateUserRequest()
-            let! user = host.Get<UserService>().createUser userRequest None
-                        |> thenValue
+            let! user = host.Get<IUserManager>().createUser userRequest None
 
             let request = getLoginRequest userRequest
 
@@ -57,8 +56,7 @@ type CreateSessionTests() =
         task {
             //Arrange
             let userRequest = getCreateUserRequest()
-            let! _ = host.Get<UserService>().createUser userRequest None
-                        |> thenValue
+            let! _ = host.Get<IUserManager>().createUser userRequest None
 
             let request = { getLoginRequest userRequest with password = "wrong" }
 
@@ -75,8 +73,7 @@ type CreateSessionTests() =
         task {
              //Arrange
             let userRequest = getCreateUserRequest()
-            let! _ = host.Get<UserService>().createUser userRequest None
-                        |> thenValue
+            let! _ = host.Get<IUserManager>().createUser userRequest None
 
             let request = { getLoginRequest userRequest with password = "wrong" }
 

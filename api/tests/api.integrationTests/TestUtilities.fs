@@ -10,7 +10,7 @@ open Apex.Api.Db.Interfaces
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Model
 open Apex.Api.Enums
-open Apex.Api.Logic.Services
+open System.Threading.Tasks
 
 let random = Random()
 let randomAlphanumericString (length : int) : string =
@@ -66,17 +66,17 @@ let getSessionForUser (user : User) : Session =
         expiresOn = DateTime.MinValue
     }
 
-let createUser() : UserDetails AsyncHttpResult =
+let createUser() : Task<User> =
     let host = HostFactory.createHost()
     let userRequest = getCreateUserRequest()
-    host.Get<UserService>().createUser userRequest None
+    host.Get<IUserManager>().createUser userRequest None
 
-let createuserSessionAndGame(allowGuests : bool) : (UserDetails * Session * Game) AsyncHttpResult =
+let createuserSessionAndGame(allowGuests : bool) : (User * Session * Game) AsyncHttpResult =
     let host = HostFactory.createHost()
     task {
-        let! user = createUser() |> thenValue
+        let! user = createUser()
 
-        let session = getSessionForUser (user |> UserDetails.hideDetails)
+        let session = getSessionForUser user
 
         let parameters = { getGameParameters() with allowGuests = allowGuests }
         let! game = host.Get<IGameManager>().createGame parameters session

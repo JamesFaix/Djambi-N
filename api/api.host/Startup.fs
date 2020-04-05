@@ -105,7 +105,6 @@ type Startup() =
         services.AddScoped<SelectionOptionsService>() |> ignore
         services.AddScoped<SelectionService>() |> ignore
         services.AddScoped<TurnService>() |> ignore
-        services.AddScoped<UserService>() |> ignore
         
         services.AddScoped<IBoardManager, BoardManager>() |> ignore
         services.AddScoped<ISearchManager, SearchManager>() |> ignore

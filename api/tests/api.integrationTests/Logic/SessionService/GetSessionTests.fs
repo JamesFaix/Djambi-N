@@ -5,6 +5,7 @@ open Xunit
 open Apex.Api.Common.Control
 open Apex.Api.IntegrationTests
 open Apex.Api.Logic.Services
+open Apex.Api.Logic.Interfaces
 
 type GetSessionTests() =
     inherit TestsBase()
@@ -15,8 +16,7 @@ type GetSessionTests() =
         task {
             //Arrange
             let userRequest = getCreateUserRequest()
-            let! _ = host.Get<UserService>().createUser userRequest None
-                     |> AsyncHttpResult.thenValue
+            let! _ = host.Get<IUserManager>().createUser userRequest None
 
             let request = getLoginRequest userRequest
 
@@ -49,8 +49,7 @@ type GetSessionTests() =
         task {
             //Arrange
             let userRequest = getCreateUserRequest()
-            let! _ = host.Get<UserService>().createUser userRequest None
-                     |> AsyncHttpResult.thenValue
+            let! _ = host.Get<IUserManager>().createUser userRequest None
 
             let loginRequest = getLoginRequest userRequest
             let! session = host.Get<SessionService>().openSession loginRequest

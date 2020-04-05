@@ -26,7 +26,7 @@ type GetRemovePlayerEventTests() =
             let gameRequest = getGameParameters()
             let! game2 = host.Get<IGameManager>().createGame gameRequest session |> thenValue
 
-            let! user = createUser() |> thenValue
+            let! user = createUser()
             let request = CreatePlayerRequest.user user
 
             let! player = host.Get<IPlayerManager>().addPlayer game1.id request session
@@ -71,7 +71,7 @@ type GetRemovePlayerEventTests() =
             let! (_, session, game) = createuserSessionAndGame(false) |> thenValue
             let adminSession = session |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames]
 
-            let! user = createUser() |> thenValue
+            let! user = createUser()
             let request = CreatePlayerRequest.user user
 
             let session = session |> TestUtilities.setSessionPrivileges []
@@ -125,7 +125,7 @@ type GetRemovePlayerEventTests() =
             let! (_, session, game) = createuserSessionAndGame(false) |> thenValue
             let session = session |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames]
 
-            let! user = createUser() |> thenValue
+            let! user = createUser()
             let request = CreatePlayerRequest.user user
 
             let! player = host.Get<IPlayerManager>().addPlayer game.id request session
@@ -154,7 +154,7 @@ type GetRemovePlayerEventTests() =
             //Arrange
             let! (_, session, game) = createuserSessionAndGame(false) |> thenValue
 
-            let! user = createUser() |> thenValue
+            let! user = createUser()
             let request = CreatePlayerRequest.user user
 
             let adminSession = session |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames]
@@ -184,7 +184,7 @@ type GetRemovePlayerEventTests() =
             //Arrange
             let! (_, session, game) = createuserSessionAndGame(true) |> thenValue
 
-            let! user = createUser() |> thenValue
+            let! user = createUser()
             let userPlayerRequest = CreatePlayerRequest.user user
             let guestPlayerRequest = CreatePlayerRequest.guest (user.id, "test")
 
@@ -222,7 +222,7 @@ type GetRemovePlayerEventTests() =
             //Arrange
             let! (_, session, game) = createuserSessionAndGame(true) |> thenValue
 
-            let! user = createUser() |> thenValue
+            let! user = createUser()
             let userPlayerRequest = CreatePlayerRequest.user user
             let guestPlayerRequest = CreatePlayerRequest.guest (user.id, "test")
 

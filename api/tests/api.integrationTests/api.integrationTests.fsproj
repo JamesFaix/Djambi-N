@@ -34,9 +34,9 @@
     <Compile Include="Logic\SessionService\RenewSessionTests.fs" />
     <None Include="Logic\TurnService\CommitTurnTests.fs" />
     <Compile Include="Logic\TurnService\ResetTurnTests.fs" />
-    <Compile Include="Logic\UserService\CreateUserTests.fs" />
-    <Compile Include="Logic\UserService\DeleteUserTests.fs" />
-    <Compile Include="Logic\UserService\GetUserTests.fs" />
+    <Compile Include="Logic\UserManager\CreateUserTests.fs" />
+    <Compile Include="Logic\UserManager\DeleteUserTests.fs" />
+    <Compile Include="Logic\UserManager\GetUserTests.fs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.3" />

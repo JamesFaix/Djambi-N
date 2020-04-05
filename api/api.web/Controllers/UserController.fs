@@ -4,7 +4,6 @@ open System.Threading.Tasks
 open Microsoft.AspNetCore.Mvc
 open FSharp.Control.Tasks
 open Serilog
-open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Web
 open Apex.Api.Web.Mappings
@@ -24,7 +23,7 @@ type UserController(manager : IUserManager,
         task {
             let! sessionOption = scp.GetSessionOptionFromContext ctx
             let request = request |> toCreateUserRequest
-            let! user = manager.createUser request sessionOption |> thenExtract
+            let! user = manager.createUser request sessionOption
             let dto = user |> toUserDto
             return OkObjectResult(dto) :> IActionResult
         }
@@ -35,7 +34,7 @@ type UserController(manager : IUserManager,
         let ctx = base.HttpContext
         task {
             let! session = scp.GetSessionFromContext ctx
-            let! response = manager.deleteUser userId session |> thenExtract
+            let! response = manager.deleteUser userId session
             //TODO: Log out if non-admin deleting self
             return OkObjectResult(response) :> IActionResult
         }
@@ -46,7 +45,7 @@ type UserController(manager : IUserManager,
         let ctx = base.HttpContext
         task {
             let! session = scp.GetSessionFromContext ctx
-            let! user =  manager.getUser userId session |> thenExtract
+            let! user =  manager.getUser userId session
             let dto = user |> toUserDto
             return OkObjectResult(dto) :> IActionResult
         }
@@ -57,7 +56,7 @@ type UserController(manager : IUserManager,
         let ctx = base.HttpContext
         task {
             let! session = scp.GetSessionFromContext ctx
-            let! user = manager.getCurrentUser session |> thenExtract
+            let! user = manager.getCurrentUser session
             let dto = user |> toUserDto
             return OkObjectResult(dto) :> IActionResult
         }

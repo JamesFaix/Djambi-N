@@ -19,8 +19,8 @@ type AddPlayerTests() =
             //Arrange
             let! (_, _, game) = createuserSessionAndGame(false) |> thenValue
 
-            let! user = createUser() |> thenValue
-            let session = getSessionForUser (user |> UserDetails.hideDetails)
+            let! user = createUser()
+            let session = getSessionForUser user
             let request = CreatePlayerRequest.user user
 
             //Act
