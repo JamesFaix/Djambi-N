@@ -23,58 +23,43 @@ type ISessionService =
     abstract member closeSession : session:Session -> Task<unit>
 
 type IBoardManager =
-        abstract member getBoard : regionCount:int -> session:Session -> Task<Board>
-
-        abstract member getCellPaths : regionCount:int * cellId:int -> session:Session -> Task<List<List<int>>>
+    abstract member getBoard : regionCount:int -> session:Session -> Task<Board>
+    abstract member getCellPaths : regionCount:int * cellId:int -> session:Session -> Task<List<List<int>>>
 
 type IEventManager =
-        abstract member getEvents : gameId:int * query:EventsQuery -> session:Session -> Event list AsyncHttpResult
+    abstract member getEvents : gameId:int * query:EventsQuery -> session:Session -> Event list AsyncHttpResult
 
 type IGameManager =
-        abstract member getGame : gameId:int -> session:Session -> Game AsyncHttpResult
-
-        abstract member createGame : parameters:GameParameters -> session:Session -> Game AsyncHttpResult
-
-        abstract member updateGameParameters : gameId:int -> parameters:GameParameters -> session:Session -> StateAndEventResponse AsyncHttpResult
-
-        abstract member startGame : gameId:int -> session:Session -> StateAndEventResponse AsyncHttpResult
+    abstract member getGame : gameId:int -> session:Session -> Game AsyncHttpResult
+    abstract member createGame : parameters:GameParameters -> session:Session -> Game AsyncHttpResult
+    abstract member updateGameParameters : gameId:int -> parameters:GameParameters -> session:Session -> StateAndEventResponse AsyncHttpResult
+    abstract member startGame : gameId:int -> session:Session -> StateAndEventResponse AsyncHttpResult
 
 type ISearchManager =
-        abstract member searchGames : query:GamesQuery -> session:Session -> Task<list<SearchGame>>
+    abstract member searchGames : query:GamesQuery -> session:Session -> Task<list<SearchGame>>
 
 type IPlayerManager =
-        abstract member addPlayer : gameId:int -> request:CreatePlayerRequest -> session:Session -> StateAndEventResponse AsyncHttpResult
-
-        abstract member removePlayer : gameId:int * playerId:int -> session:Session -> StateAndEventResponse AsyncHttpResult
-
-        abstract member updatePlayerStatus : gameId:int * playerId:int * status:PlayerStatus -> session:Session -> StateAndEventResponse AsyncHttpResult
+    abstract member addPlayer : gameId:int -> request:CreatePlayerRequest -> session:Session -> StateAndEventResponse AsyncHttpResult
+    abstract member removePlayer : gameId:int * playerId:int -> session:Session -> StateAndEventResponse AsyncHttpResult
+    abstract member updatePlayerStatus : gameId:int * playerId:int * status:PlayerStatus -> session:Session -> StateAndEventResponse AsyncHttpResult
 
 type ISessionManager =
-        abstract member login : request:LoginRequest -> Task<Session>
-
-        abstract member logout : session:Session -> Task<unit>
+    abstract member login : request:LoginRequest -> Task<Session>
+    abstract member logout : session:Session -> Task<unit>
 
 type ISnapshotManager =
-        abstract member createSnapshot : gameId:int -> request:CreateSnapshotRequest -> session:Session -> Task<SnapshotInfo>
-
-        abstract member getSnapshotsForGame : gameId:int -> session:Session -> Task<list<SnapshotInfo>>
-
-        abstract member deleteSnapshot : gameId:int -> snapshotId:int -> session:Session -> Task<unit>
-
-        abstract member loadSnapshot : gameId:int -> snapshotId:int -> session:Session -> Task<unit>
+    abstract member createSnapshot : gameId:int -> request:CreateSnapshotRequest -> session:Session -> Task<SnapshotInfo>
+    abstract member getSnapshotsForGame : gameId:int -> session:Session -> Task<list<SnapshotInfo>>
+    abstract member deleteSnapshot : gameId:int -> snapshotId:int -> session:Session -> Task<unit>
+    abstract member loadSnapshot : gameId:int -> snapshotId:int -> session:Session -> Task<unit>
 
 type ITurnManager =
-        abstract member selectCell : gameId:int * cellId:int -> session:Session -> StateAndEventResponse AsyncHttpResult
-
-        abstract member resetTurn : gameId:int -> session:Session -> StateAndEventResponse AsyncHttpResult
-
-        abstract member commitTurn : gameId:int -> session:Session -> StateAndEventResponse AsyncHttpResult
+    abstract member selectCell : gameId:int * cellId:int -> session:Session -> StateAndEventResponse AsyncHttpResult
+    abstract member resetTurn : gameId:int -> session:Session -> StateAndEventResponse AsyncHttpResult
+    abstract member commitTurn : gameId:int -> session:Session -> StateAndEventResponse AsyncHttpResult
 
 type IUserManager =
-        abstract member createUser : request:CreateUserRequest -> sessionOption:Session option -> Task<User>
-
-        abstract member deleteUser : userId:int -> session:Session -> Task<unit>
-
-        abstract member getUser : userId:int -> session:Session -> Task<User>
-
-        abstract member getCurrentUser : session:Session -> Task<User>
+    abstract member createUser : request:CreateUserRequest -> sessionOption:Session option -> Task<User>
+    abstract member deleteUser : userId:int -> session:Session -> Task<unit>
+    abstract member getUser : userId:int -> session:Session -> Task<User>
+    abstract member getCurrentUser : session:Session -> Task<User>
