@@ -1,12 +1,20 @@
 namespace Apex.Api.Logic.Managers
 
-open Apex.Api.Logic.Services
 open Apex.Api.Logic.Interfaces
+open Apex.Api.Logic.ModelExtensions
+open System.Threading.Tasks
+open Apex.Api.Common.Control
+open Apex.Api.Logic.ModelExtensions.BoardModelExtensions
+open Apex.Api.Model
 
-type BoardManager(boardServ : BoardService) =
+type BoardManager() =
     interface IBoardManager with
-        member x.getBoard regionCount session =
-            boardServ.getBoard regionCount session
+        member __.getBoard regionCount session =
+            BoardModelUtility.getBoard regionCount |> Task.FromResult
 
-        member x.getCellPaths (regionCount, cellId) session =
-            boardServ.getCellPaths (regionCount, cellId) session
+        member __.getCellPaths (regionCount, cellId) session =
+            let board = BoardModelUtility.getBoardMetadata(regionCount)
+            let cell = board.cells() |> Seq.find(fun c -> c.id = cellId)
+            board.pathsFromCell(cell)
+            |> List.map (List.map (fun c -> c.id))
+            |> Task.FromResult

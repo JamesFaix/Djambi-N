@@ -15,7 +15,6 @@
     <Compile Include="Services\NotificationService.fs" />
     <Compile Include="Services\UserService.fs" />
     <Compile Include="Services\SessionService.fs" />
-    <Compile Include="Services\BoardService.fs" />
     <Compile Include="Services\GameCrudService.fs" />
     <Compile Include="Services\PlayerService.fs" />
     <Compile Include="Services\SelectionOptionsService.fs" />

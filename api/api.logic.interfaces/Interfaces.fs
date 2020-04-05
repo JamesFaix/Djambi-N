@@ -1,6 +1,7 @@
 namespace Apex.Api.Logic.Interfaces
 
 open System
+open System.Threading.Tasks
 open Apex.Api.Common.Control
 open Apex.Api.Model
 open Apex.Api.Enums
@@ -22,9 +23,9 @@ type ISessionService =
     abstract member closeSession : session:Session -> Unit AsyncHttpResult
 
 type IBoardManager =
-        abstract member getBoard : regionCount:int -> session:Session -> Board AsyncHttpResult
+        abstract member getBoard : regionCount:int -> session:Session -> Task<Board>
 
-        abstract member getCellPaths : regionCount:int * cellId:int -> session:Session -> int list list AsyncHttpResult
+        abstract member getCellPaths : regionCount:int * cellId:int -> session:Session -> Task<List<List<int>>>
 
 type IEventManager =
         abstract member getEvents : gameId:int * query:EventsQuery -> session:Session -> Event list AsyncHttpResult
