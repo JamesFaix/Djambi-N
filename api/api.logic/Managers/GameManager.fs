@@ -158,14 +158,10 @@ type GameManager(eventRepo : IEventRepository,
 
         member x.resetTurn gameId session =
             processEvent gameId (fun game -> 
-                match turnServ.getResetTurnEvent game session with
-                | Ok x -> x
-                | Error ex -> raise ex
+                turnServ.getResetTurnEvent game session
             )
 
         member x.commitTurn gameId session =
             processEvent gameId (fun game -> 
-                match turnServ.getCommitTurnEvent game session with
-                | Ok x -> x
-                | Error ex -> raise ex                
+                turnServ.getCommitTurnEvent game session
             )
