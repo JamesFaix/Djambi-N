@@ -102,18 +102,16 @@ type TurnService(eventServ : EventService,
     //--- Reset
 
     member x.getResetTurnEvent(game : Game) (session : Session) : CreateEventRequest =
-        match Security.ensureCurrentPlayerOrOpenParticipation session game with
-        | Error ex -> raise ex
-        | Ok () -> 
-            let updatedGame = { game with currentTurn = Some Turn.empty }
-            let selectionOptions = selectionOptionsServ.getSelectableCellsFromState updatedGame
-            let turn = { Turn.empty with selectionOptions = selectionOptions }
-            let effects = [
-                Effect.CurrentTurnChanged { oldValue = game.currentTurn; newValue = Some turn }
-            ]            
-            {
-                kind = EventKind.TurnReset
-                effects = effects
-                createdByUserId = session.user.id
-                actingPlayerId = Context.getActingPlayerId session game
-            }
+        Security.ensureCurrentPlayerOrOpenParticipation session game
+        let updatedGame = { game with currentTurn = Some Turn.empty }
+        let selectionOptions = selectionOptionsServ.getSelectableCellsFromState updatedGame
+        let turn = { Turn.empty with selectionOptions = selectionOptions }
+        let effects = [
+            Effect.CurrentTurnChanged { oldValue = game.currentTurn; newValue = Some turn }
+        ]            
+        {
+            kind = EventKind.TurnReset
+            effects = effects
+            createdByUserId = session.user.id
+            actingPlayerId = Context.getActingPlayerId session game
+        }

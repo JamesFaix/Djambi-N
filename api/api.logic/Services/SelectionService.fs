@@ -75,46 +75,44 @@ type SelectionService(selectionOptionsServ : SelectionOptionsService) =
         (selection, TurnStatus.AwaitingCommit, None)
 
     member x.getCellSelectedEvent(game : Game, cellId : int) (session: Session) : CreateEventRequest =
-        match Security.ensureCurrentPlayerOrOpenParticipation session game with
-        | Error ex -> raise ex
-        | Ok () ->
-            let board = BoardModelUtility.getBoardMetadata game.parameters.regionCount
-            match board.cell cellId with
-            | None -> raise <| Errors.cellNotFound()
-            | Some _ -> 
-                let currentTurn = game.currentTurn.Value
-                if currentTurn.selectionOptions |> List.contains cellId |> not
-                then raise <| HttpException(400, (sprintf "Cell %i is not currently selectable." cellId))
-                elif currentTurn.status <> TurnStatus.AwaitingSelection || currentTurn.requiredSelectionKind.IsNone
-                then raise <| Errors.turnStatusDoesNotAllowSelection()
-                else
-                    let (selection, turnStatus, requiredSelectionKind) =                    
-                        match currentTurn.requiredSelectionKind with
-                        | None -> raise <| Errors.turnStatusDoesNotAllowSelection()
-                        | Some SelectionKind.Subject -> getSubjectSelectionEventDetails (game, cellId)
-                        | Some SelectionKind.Move -> getMoveSelectionEventDetails (game, cellId)
-                        | Some SelectionKind.Target -> getTargetSelectionEventDetails (game, cellId)
-                        | Some SelectionKind.Drop -> getDropSelectionEventDetails (game, cellId)
-                        | Some SelectionKind.Vacate -> getVacateSelectionEventDetails (game, cellId)
-                        | _ -> raise <| InvalidEnumArgumentException()
+        Security.ensureCurrentPlayerOrOpenParticipation session game
+        let board = BoardModelUtility.getBoardMetadata game.parameters.regionCount
+        match board.cell cellId with
+        | None -> raise <| Errors.cellNotFound()
+        | Some _ -> 
+            let currentTurn = game.currentTurn.Value
+            if currentTurn.selectionOptions |> List.contains cellId |> not
+            then raise <| HttpException(400, (sprintf "Cell %i is not currently selectable." cellId))
+            elif currentTurn.status <> TurnStatus.AwaitingSelection || currentTurn.requiredSelectionKind.IsNone
+            then raise <| Errors.turnStatusDoesNotAllowSelection()
+            else
+                let (selection, turnStatus, requiredSelectionKind) =                    
+                    match currentTurn.requiredSelectionKind with
+                    | None -> raise <| Errors.turnStatusDoesNotAllowSelection()
+                    | Some SelectionKind.Subject -> getSubjectSelectionEventDetails (game, cellId)
+                    | Some SelectionKind.Move -> getMoveSelectionEventDetails (game, cellId)
+                    | Some SelectionKind.Target -> getTargetSelectionEventDetails (game, cellId)
+                    | Some SelectionKind.Drop -> getDropSelectionEventDetails (game, cellId)
+                    | Some SelectionKind.Vacate -> getVacateSelectionEventDetails (game, cellId)
+                    | _ -> raise <| InvalidEnumArgumentException()
 
-                    let turn =
-                        {
-                            status = turnStatus
-                            selections = List.append currentTurn.selections [selection]
-                            selectionOptions = []
-                            requiredSelectionKind = requiredSelectionKind
-                        }
-                    let updatedGame = { game with currentTurn = Some turn }
-                    let selectionOptions = selectionOptionsServ.getSelectableCellsFromState updatedGame
-                    let turn =
-                        if selectionOptions.IsEmpty && turn.status = TurnStatus.AwaitingSelection
-                        then Turn.deadEnd turn.selections
-                        else { turn with selectionOptions = selectionOptions }
-
+                let turn =
                     {
-                        kind = EventKind.CellSelected
-                        effects = [Effect.CurrentTurnChanged { oldValue = game.currentTurn; newValue = Some turn }]
-                        createdByUserId = session.user.id
-                        actingPlayerId = Context.getActingPlayerId session game
-                    }            
+                        status = turnStatus
+                        selections = List.append currentTurn.selections [selection]
+                        selectionOptions = []
+                        requiredSelectionKind = requiredSelectionKind
+                    }
+                let updatedGame = { game with currentTurn = Some turn }
+                let selectionOptions = selectionOptionsServ.getSelectableCellsFromState updatedGame
+                let turn =
+                    if selectionOptions.IsEmpty && turn.status = TurnStatus.AwaitingSelection
+                    then Turn.deadEnd turn.selections
+                    else { turn with selectionOptions = selectionOptions }
+
+                {
+                    kind = EventKind.CellSelected
+                    effects = [Effect.CurrentTurnChanged { oldValue = game.currentTurn; newValue = Some turn }]
+                    createdByUserId = session.user.id
+                    actingPlayerId = Context.getActingPlayerId session game
+                }            

@@ -14,26 +14,26 @@ let noPrivilegeOrCurrentPlayerErrorMessage = "You must be the current player in 
 
 let noPrivilegeOrSelfErrorMessage = "You must be the target user or have the required privilege to complete the requested action."
 
-let ensureHas (privilege : Privilege) (session : Session) : Unit HttpResult =
+let ensureHas (privilege : Privilege) (session : Session) : Unit =
     if session.user.has privilege
-    then Ok ()
-    else Error <| HttpException(403, noPrivilegeErrorMessage)
+    then ()
+    else raise <| HttpException(403, noPrivilegeErrorMessage)
 
-let ensureCreatorOrEditPendingGames (session : Session) (game : Game) : Unit HttpResult =
+let ensureCreatorOrEditPendingGames (session : Session) (game : Game) : Unit =
     let self = session.user
     if self.has Privilege.EditPendingGames
         || self.id = game.createdBy.userId
-    then Ok ()
-    else Error <| HttpException(403, noPrivilegeOrCreatorErrorMessage)
+    then ()
+    else raise <| HttpException(403, noPrivilegeOrCreatorErrorMessage)
 
-let ensurePlayerOrHas (privilege : Privilege) (session : Session) (game : Game) : Unit HttpResult =
+let ensurePlayerOrHas (privilege : Privilege) (session : Session) (game : Game) : Unit =
     let self = session.user
     if self.has privilege
         || game.players |> List.exists (fun p -> p.userId = Some self.id)
-    then Ok ()
-    else Error <| HttpException(403, noPrivilegeOrPlayerErrorMessage)
+    then ()
+    else raise <| HttpException(403, noPrivilegeOrPlayerErrorMessage)
 
-let ensureCurrentPlayerOrOpenParticipation (session : Session) (game : Game) : Unit HttpResult =
+let ensureCurrentPlayerOrOpenParticipation (session : Session) (game : Game) : Unit =
     let self = session.user
     let pass =
         if self.has Privilege.OpenParticipation
@@ -44,12 +44,12 @@ let ensureCurrentPlayerOrOpenParticipation (session : Session) (game : Game) : U
             currentPlayer.userId = Some self.id
         else false
 
-    if pass then Ok ()
-    else Error <| HttpException(403, noPrivilegeOrCurrentPlayerErrorMessage)
+    if pass then ()
+    else raise <| HttpException(403, noPrivilegeOrCurrentPlayerErrorMessage)
 
-let ensureSelfOrHas (privilege : Privilege) (session : Session) (userId : int) : Unit HttpResult =
+let ensureSelfOrHas (privilege : Privilege) (session : Session) (userId : int) : Unit =
     let self = session.user
     if self.has privilege
         || self.id = userId
-    then Ok ()
-    else Error <| HttpException(403, noPrivilegeOrSelfErrorMessage)
+    then ()
+    else raise <| HttpException(403, noPrivilegeOrSelfErrorMessage)

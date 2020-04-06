@@ -17,46 +17,44 @@ type GameStartService(playerServ : PlayerService,
                       selectionOptionsServ : SelectionOptionsService) =
 
     member x.getGameStartEvents (game : Game) (session : Session) : Task<(CreateEventRequest option * CreateEventRequest)> =
-        match Security.ensureCreatorOrEditPendingGames session game with
-        | Error ex -> raise ex
-        | Ok () ->
-            if game.players
-                |> List.filter (fun p -> p.kind <> PlayerKind.Neutral)
-                |> List.length = 1
-            then raise <| HttpException(400, "Cannot start game with only one player.")
-            elif game.status <> GameStatus.Pending
-            then raise <| HttpException(400, "Cannot start game unless it is pending.") 
-            else
-                task {
-                    let! addNeutralPlayerEffects = playerServ.fillEmptyPlayerSlots game
+        Security.ensureCreatorOrEditPendingGames session game
+        if game.players
+            |> List.filter (fun p -> p.kind <> PlayerKind.Neutral)
+            |> List.length = 1
+        then raise <| HttpException(400, "Cannot start game with only one player.")
+        elif game.status <> GameStatus.Pending
+        then raise <| HttpException(400, "Cannot start game unless it is pending.") 
+        else
+            task {
+                let! addNeutralPlayerEffects = playerServ.fillEmptyPlayerSlots game
 
-                    //Order is important. Players must exist before they can be given pieces
-                    let e1 = 
-                        match addNeutralPlayerEffects.Length with
-                        | 0 -> 
-                            None
-                        | _ ->
-                            Some {
-                                kind = EventKind.PlayerJoined
-                                effects = addNeutralPlayerEffects
-                                createdByUserId = session.user.id
-                                actingPlayerId = Context.getActingPlayerId session game                    
-                            }
+                //Order is important. Players must exist before they can be given pieces
+                let e1 = 
+                    match addNeutralPlayerEffects.Length with
+                    | 0 -> 
+                        None
+                    | _ ->
+                        Some {
+                            kind = EventKind.PlayerJoined
+                            effects = addNeutralPlayerEffects
+                            createdByUserId = session.user.id
+                            actingPlayerId = Context.getActingPlayerId session game                    
+                        }
                 
-                    let e2 = {
-                        kind = EventKind.GameStarted
-                        effects = [
-                            Effect.GameStatusChanged { 
-                                oldValue = GameStatus.Pending
-                                newValue = GameStatus.InProgress 
-                            }
-                        ]
-                        createdByUserId = session.user.id
-                        actingPlayerId = Context.getActingPlayerId session game
-                    }
-
-                    return (e1, e2)                
+                let e2 = {
+                    kind = EventKind.GameStarted
+                    effects = [
+                        Effect.GameStatusChanged { 
+                            oldValue = GameStatus.Pending
+                            newValue = GameStatus.InProgress 
+                        }
+                    ]
+                    createdByUserId = session.user.id
+                    actingPlayerId = Context.getActingPlayerId session game
                 }
+
+                return (e1, e2)                
+            }
 
     member x.assignStartingConditions(players : Player list) : Player list =
         let colorIds = [0..(Constants.maxRegions-1)] |> List.shuffle |> Seq.take players.Length

@@ -27,18 +27,15 @@ type UserManager(userRepo : IUserRepository) =
                 }
 
         member __.deleteUser userId session =
-            match Security.ensureSelfOrHas Privilege.EditUsers session userId with
-            | Ok () -> userRepo.deleteUser userId
-            | Error ex -> raise ex
+            Security.ensureSelfOrHas Privilege.EditUsers session userId
+            userRepo.deleteUser userId
 
         member __.getUser userId session =
-            match Security.ensureSelfOrHas Privilege.EditUsers session userId with
-            | Ok () -> 
-                task {
-                    let! user = userRepo.getUser userId
-                    return user |> UserDetails.hideDetails
-                }
-            | Error ex -> raise ex
-
+            Security.ensureSelfOrHas Privilege.EditUsers session userId
+            task {
+                let! user = userRepo.getUser userId
+                return user |> UserDetails.hideDetails
+            }
+            
         member x.getCurrentUser session =
             (x :> IUserManager).getUser session.user.id session

@@ -37,38 +37,36 @@ type GameCrudService(gameRepo : IGameRepository) =
     member x.getUpdateGameParametersEvent (game : Game, parameters : GameParameters) (session : Session) : CreateEventRequest =
         if game.status <> GameStatus.Pending
         then raise <| HttpException (400, "Cannot change game parameters unless game is Pending.")
+        Security.ensureCreatorOrEditPendingGames session game
 
-        match Security.ensureCreatorOrEditPendingGames session game with
-        | Error ex -> raise ex
-        | Ok () ->
-            let effects = new ArrayList<Effect>()
+        let effects = new ArrayList<Effect>()
 
-            effects.Add(Effect.ParametersChanged { oldValue = game.parameters; newValue = parameters })
+        effects.Add(Effect.ParametersChanged { oldValue = game.parameters; newValue = parameters })
 
-            //If lowering region count, extra players are ejected
-            let truncatedPlayers =
-                game.players
-                |> Seq.skipSafe parameters.regionCount
+        //If lowering region count, extra players are ejected
+        let truncatedPlayers =
+            game.players
+            |> Seq.skipSafe parameters.regionCount
 
-            //If disabling AllowGuests, guests are ejected
-            let ejectedGuests =
-                if not parameters.allowGuests
-                then game.players
-                    |> Seq.filter (fun p -> p.kind = PlayerKind.Guest)
-                else Seq.empty
+        //If disabling AllowGuests, guests are ejected
+        let ejectedGuests =
+            if not parameters.allowGuests
+            then game.players
+                |> Seq.filter (fun p -> p.kind = PlayerKind.Guest)
+            else Seq.empty
 
-            let removedPlayers =
-                truncatedPlayers
-                |> Seq.append ejectedGuests
-                |> Seq.groupBy (fun p -> p.id)
-                |> Seq.map (fun (_, elements) -> elements |> Seq.head)
+        let removedPlayers =
+            truncatedPlayers
+            |> Seq.append ejectedGuests
+            |> Seq.groupBy (fun p -> p.id)
+            |> Seq.map (fun (_, elements) -> elements |> Seq.head)
 
-            for player in removedPlayers do
-                effects.Add(Effect.PlayerRemoved({oldPlayer = player}))
+        for player in removedPlayers do
+            effects.Add(Effect.PlayerRemoved({oldPlayer = player}))
 
-            {
-                kind = EventKind.GameParametersChanged
-                effects = effects |> Seq.toList
-                createdByUserId = session.user.id
-                actingPlayerId = Context.getActingPlayerId session game
-            }
+        {
+            kind = EventKind.GameParametersChanged
+            effects = effects |> Seq.toList
+            createdByUserId = session.user.id
+            actingPlayerId = Context.getActingPlayerId session game
+        }

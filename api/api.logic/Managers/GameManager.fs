@@ -99,9 +99,8 @@ type GameManager(eventRepo : IEventRepository,
         member x.getEvents (gameId, query) session =
             task {
                 let! game = gameRepo.getGame gameId
-                match Security.ensurePlayerOrHas Privilege.ViewGames session game with
-                | Error ex -> return raise ex
-                | _ -> return! eventRepo.getEvents (gameId, query)            
+                Security.ensurePlayerOrHas Privilege.ViewGames session game
+                return! eventRepo.getEvents (gameId, query)            
             }
 
     interface IGameManager with
