@@ -105,17 +105,15 @@ type TurnService(eventServ : EventService,
         Security.ensureCurrentPlayerOrOpenParticipation session game
         |> Result.bind (fun _ ->
             let updatedGame = { game with currentTurn = Some Turn.empty }
-            selectionOptionsServ.getSelectableCellsFromState updatedGame
-            |> Result.map (fun selectionOptions ->
-                let turn = { Turn.empty with selectionOptions = selectionOptions }
-                let effects = [
-                    Effect.CurrentTurnChanged { oldValue = game.currentTurn; newValue = Some turn }
-                ]
-                {
-                    kind = EventKind.TurnReset
-                    effects = effects
-                    createdByUserId = session.user.id
-                    actingPlayerId = Context.getActingPlayerId session game
-                }
-            )
+            let selectionOptions = selectionOptionsServ.getSelectableCellsFromState updatedGame
+            let turn = { Turn.empty with selectionOptions = selectionOptions }
+            let effects = [
+                Effect.CurrentTurnChanged { oldValue = game.currentTurn; newValue = Some turn }
+            ]
+            Ok {
+                kind = EventKind.TurnReset
+                effects = effects
+                createdByUserId = session.user.id
+                actingPlayerId = Context.getActingPlayerId session game
+            }
         )

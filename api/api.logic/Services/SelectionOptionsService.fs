@@ -5,7 +5,6 @@ open Apex.Api.Logic.ModelExtensions.BoardModelExtensions
 open Apex.Api.Logic.ModelExtensions.GameModelExtensions
 open Apex.Api.Model
 open Apex.Api.Logic
-open Apex.Api.Common.Control
 open Apex.Api.Enums
 open System.ComponentModel
 
@@ -128,20 +127,20 @@ type SelectionOptionsService() =
                     |> Seq.map (fun cell -> cell.id)
                     |> Seq.toList
 
-    member x.getSelectableCellsFromState(game : Game) : int list HttpResult =
+    member __.getSelectableCellsFromState(game : Game) : int list =
         let turn = game.currentTurn.Value
         match turn.requiredSelectionKind with
         | None ->
-            Ok []
+            []
         | Some SelectionKind.Subject ->
-            Ok <| getSubjectSelectionOptions (game, turn)
+            getSubjectSelectionOptions (game, turn)
         | Some SelectionKind.Move ->
             let subject = turn.subjectPiece(game).Value
-            Ok <| getMoveSelectionOptions (game, subject)
+            getMoveSelectionOptions (game, subject)
         | Some SelectionKind.Target ->
-            Ok <| getTargetSelectionOptions (game, turn)
+            getTargetSelectionOptions (game, turn)
         | Some SelectionKind.Drop ->
-            Ok <| getDropSelectionOptions (game, turn)
+            getDropSelectionOptions (game, turn)
         | Some SelectionKind.Vacate ->
-            Ok <| getVacateSelectionOptions (game, turn)
+            getVacateSelectionOptions (game, turn)
         | _ -> raise <| InvalidEnumArgumentException()

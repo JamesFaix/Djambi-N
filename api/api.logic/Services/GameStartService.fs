@@ -141,6 +141,6 @@ type GameStartService(playerServ : PlayerService,
                     currentTurn = Some Turn.empty
             }
 
-        let options = (selectionOptionsServ.getSelectableCellsFromState game) |> Result.value
+        let options = (selectionOptionsServ.getSelectableCellsFromState game)
         let turn = { game.currentTurn.Value with selectionOptions = options }
         { game with  currentTurn =  Some turn }

@@ -107,19 +107,17 @@ type SelectionService(selectionOptionsServ : SelectionOptionsService) =
                             requiredSelectionKind = requiredSelectionKind
                         }
                     let updatedGame = { game with currentTurn = Some turn }
-                    selectionOptionsServ.getSelectableCellsFromState updatedGame
-                    |> Result.map (fun selectionOptions ->
-                        let turn =
-                            if selectionOptions.IsEmpty && turn.status = TurnStatus.AwaitingSelection
-                            then Turn.deadEnd turn.selections
-                            else { turn with selectionOptions = selectionOptions }
+                    let selectionOptions = selectionOptionsServ.getSelectableCellsFromState updatedGame
+                    let turn =
+                        if selectionOptions.IsEmpty && turn.status = TurnStatus.AwaitingSelection
+                        then Turn.deadEnd turn.selections
+                        else { turn with selectionOptions = selectionOptions }
 
-                        {
-                            kind = EventKind.CellSelected
-                            effects = [Effect.CurrentTurnChanged { oldValue = game.currentTurn; newValue = Some turn }]
-                            createdByUserId = session.user.id
-                            actingPlayerId = Context.getActingPlayerId session game
-                        }
-                    )
+                    Ok {
+                        kind = EventKind.CellSelected
+                        effects = [Effect.CurrentTurnChanged { oldValue = game.currentTurn; newValue = Some turn }]
+                        createdByUserId = session.user.id
+                        actingPlayerId = Context.getActingPlayerId session game
+                    }
                 )
         )
