@@ -2,7 +2,6 @@ namespace Apex.Api.Logic.Managers
 
 open System
 open Apex.Api.Common.Control
-open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.Db.Interfaces
 open Apex.Api.Logic
 open Apex.Api.Logic.Interfaces
@@ -125,21 +124,17 @@ type GameManager(eventRepo : IEventRepository,
             )
 
         member x.startGame gameId session =
-            processGameStartEventsAsync gameId (fun game -> gameStartServ.getGameStartEvents game session |> thenExtract)
+            processGameStartEventsAsync gameId (fun game -> gameStartServ.getGameStartEvents game session)
 
     interface IPlayerManager with
         member x.addPlayer gameId request session =
             processEvent gameId (fun game -> 
-                match playerServ.getAddPlayerEvent (game, request) session with
-                | Ok x -> x
-                | Error ex -> raise ex
+                playerServ.getAddPlayerEvent (game, request) session
             )
 
         member x.removePlayer (gameId, playerId) session =
             processEvent gameId (fun game -> 
-                match playerServ.getRemovePlayerEvent (game, playerId) session with
-                | Ok x -> x
-                | Error ex -> raise ex
+                playerServ.getRemovePlayerEvent (game, playerId) session
             )
 
         member x.updatePlayerStatus (gameId, playerId, status) session =

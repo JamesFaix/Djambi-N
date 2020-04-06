@@ -4,7 +4,6 @@ open System
 open FSharp.Control.Tasks
 open Xunit
 open Apex.Api.Common.Control
-open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.IntegrationTests
 open Apex.Api.Model
 open Apex.Api.Db.Interfaces
@@ -32,11 +31,13 @@ type GetRemovePlayerEventTests() =
             let! response = host.Get<IPlayerManager>().addPlayer game1.id request session
             let player = response.game.players |> List.except game1.players |> List.head
 
-            //Act
-            let error = host.Get<PlayerService>().getRemovePlayerEvent (game2, player.id) session
+            //Act/Assert
+            let ex = Assert.Throws<HttpException>(fun () -> 
+                host.Get<PlayerService>().getRemovePlayerEvent (game2, player.id) session |> ignore
+            )
 
-            //Assert
-            error |> shouldBeError 404 "Player not found."
+            ex.statusCode |> shouldBe 404
+            ex.Message |> shouldBe "Player not found."
         }
 
     [<Fact>]
@@ -55,11 +56,13 @@ type GetRemovePlayerEventTests() =
             let! neutralPlayer = host.Get<IGameRepository>().addPlayer(game.id, request)
             let! game = host.Get<IGameRepository>().getGame game.id
 
-            //Act
-            let error = host.Get<PlayerService>().getRemovePlayerEvent (game, neutralPlayer.id) session
+            //Act/Assert
+            let ex = Assert.Throws<HttpException>(fun () -> 
+                host.Get<PlayerService>().getRemovePlayerEvent (game, neutralPlayer.id) session |> ignore
+            )
 
-            //Assert
-            error |> shouldBeError 400 "Cannot remove neutral players from game."
+            ex.statusCode |> shouldBe 400
+            ex.Message |> shouldBe "Cannot remove neutral players from game."
         }
 
     [<Fact>]
@@ -81,11 +84,13 @@ type GetRemovePlayerEventTests() =
 
             let! game = host.Get<IGameRepository>().getGame game.id
 
-            //Act
-            let error = host.Get<PlayerService>().getRemovePlayerEvent (game, player.id) session
+            //Act/Assert
+            let ex = Assert.Throws<HttpException>(fun () -> 
+                host.Get<PlayerService>().getRemovePlayerEvent (game, player.id) session |> ignore
+            )
 
-            //Assert
-            error |> shouldBeError 403 "Cannot remove other users from game."
+            ex.statusCode |> shouldBe 403
+            ex.Message |> shouldBe "Cannot remove other users from game."
         }
 
     [<Fact>]
@@ -102,7 +107,7 @@ type GetRemovePlayerEventTests() =
             let! game = host.Get<IGameRepository>().getGame game.id
 
             //Act
-            let event = host.Get<PlayerService>().getRemovePlayerEvent (game, player.id) session |> Result.value
+            let event = host.Get<PlayerService>().getRemovePlayerEvent (game, player.id) session
 
             //Assert
             event.kind |> shouldBe EventKind.PlayerRemoved
@@ -131,7 +136,7 @@ type GetRemovePlayerEventTests() =
             let! game = host.Get<IGameRepository>().getGame game.id
 
             //Act
-            let event = host.Get<PlayerService>().getRemovePlayerEvent (game, player.id) session |> Result.value
+            let event = host.Get<PlayerService>().getRemovePlayerEvent (game, player.id) session
 
             //Assert
             event.kind |> shouldBe EventKind.PlayerRemoved
@@ -160,7 +165,7 @@ type GetRemovePlayerEventTests() =
             let! game = host.Get<IGameRepository>().getGame game.id
 
             //Act
-            let event = host.Get<PlayerService>().getRemovePlayerEvent (game, player.id) session |> Result.value
+            let event = host.Get<PlayerService>().getRemovePlayerEvent (game, player.id) session
 
             //Assert
             event.kind |> shouldBe EventKind.PlayerRemoved
@@ -193,7 +198,7 @@ type GetRemovePlayerEventTests() =
 
             let! game = host.Get<IGameRepository>().getGame game.id
 
-            let event = host.Get<PlayerService>().getRemovePlayerEvent (game, userPlayer.id) session |> Result.value
+            let event = host.Get<PlayerService>().getRemovePlayerEvent (game, userPlayer.id) session
 
             //Assert
             event.kind |> shouldBe EventKind.PlayerRemoved
@@ -228,7 +233,7 @@ type GetRemovePlayerEventTests() =
             let! game = host.Get<IGameRepository>().getGame game.id
 
             //Act
-            let event = host.Get<PlayerService>().getRemovePlayerEvent (game, guestPlayer.id) session |> Result.value
+            let event = host.Get<PlayerService>().getRemovePlayerEvent (game, guestPlayer.id) session
 
             //Assert
             event.kind |> shouldBe EventKind.PlayerRemoved
@@ -249,7 +254,7 @@ type GetRemovePlayerEventTests() =
             let creator = game.players |> List.head
 
             //Act
-            let event = host.Get<PlayerService>().getRemovePlayerEvent (game, creator.id) session |> Result.value
+            let event = host.Get<PlayerService>().getRemovePlayerEvent (game, creator.id) session
 
             //Assert
             event.kind |> shouldBe EventKind.PlayerRemoved
@@ -283,9 +288,11 @@ type GetRemovePlayerEventTests() =
             let! resp = host.Get<IGameManager>().startGame game.id session
             let game = resp.game
 
-            //Act
-            let result = host.Get<PlayerService>().getRemovePlayerEvent (game, game.players.[0].id) session
+            //Act/Assert
+            let ex = Assert.Throws<HttpException>(fun () ->
+                host.Get<PlayerService>().getRemovePlayerEvent (game, game.players.[0].id) session |> ignore
+            )
 
-            //Assert
-            result |> shouldBeError 400 "Cannot remove players unless game is Pending."
+            ex.statusCode |> shouldBe 400
+            ex.Message |> shouldBe "Cannot remove players unless game is Pending."
         }

@@ -4,29 +4,32 @@ open System.Linq
 open Apex.Api.Common
 open Apex.Api.Common.Collections
 open Apex.Api.Common.Control
-open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.Logic.ModelExtensions
 open Apex.Api.Logic.ModelExtensions.BoardModelExtensions
 open Apex.Api.Logic.Services
 open Apex.Api.Model
 open Apex.Api.Logic
 open Apex.Api.Enums
+open FSharp.Control.Tasks
+open System.Threading.Tasks
 
 type GameStartService(playerServ : PlayerService,
                       selectionOptionsServ : SelectionOptionsService) =
 
-    member x.getGameStartEvents (game : Game) (session : Session) : (CreateEventRequest option * CreateEventRequest) AsyncHttpResult =
-        Security.ensureCreatorOrEditPendingGames session game
-        |> Result.bindAsync (fun _ ->
+    member x.getGameStartEvents (game : Game) (session : Session) : Task<(CreateEventRequest option * CreateEventRequest)> =
+        match Security.ensureCreatorOrEditPendingGames session game with
+        | Error ex -> raise ex
+        | Ok () ->
             if game.players
                 |> List.filter (fun p -> p.kind <> PlayerKind.Neutral)
                 |> List.length = 1
-            then errorTask <| HttpException(400, "Cannot start game with only one player.")
+            then raise <| HttpException(400, "Cannot start game with only one player.")
             elif game.status <> GameStatus.Pending
-            then errorTask <| HttpException(400, "Cannot start game unless it is pending.") 
+            then raise <| HttpException(400, "Cannot start game unless it is pending.") 
             else
-                playerServ.fillEmptyPlayerSlots game
-                |> thenMap (fun addNeutralPlayerEffects ->
+                task {
+                    let! addNeutralPlayerEffects = playerServ.fillEmptyPlayerSlots game
+
                     //Order is important. Players must exist before they can be given pieces
                     let e1 = 
                         match addNeutralPlayerEffects.Length with
@@ -52,9 +55,8 @@ type GameStartService(playerServ : PlayerService,
                         actingPlayerId = Context.getActingPlayerId session game
                     }
 
-                    (e1, e2)
-                )
-        )
+                    return (e1, e2)                
+                }
 
     member x.assignStartingConditions(players : Player list) : Player list =
         let colorIds = [0..(Constants.maxRegions-1)] |> List.shuffle |> Seq.take players.Length

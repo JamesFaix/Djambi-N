@@ -32,7 +32,7 @@ type GetAddPlayerEventTests() =
             let request = CreatePlayerRequest.user user
 
             //Act
-            let eventRequest = host.Get<PlayerService>().getAddPlayerEvent (game, request) session |> Result.value
+            let eventRequest = host.Get<PlayerService>().getAddPlayerEvent (game, request) session
 
             //Assert
             assertSuccess eventRequest request
@@ -49,7 +49,7 @@ type GetAddPlayerEventTests() =
             let request = CreatePlayerRequest.user user
 
             //Act
-            let eventRequest = host.Get<PlayerService>().getAddPlayerEvent (game, request) session |> Result.value
+            let eventRequest = host.Get<PlayerService>().getAddPlayerEvent (game, request) session
 
             //Assert
             assertSuccess eventRequest request
@@ -66,11 +66,14 @@ type GetAddPlayerEventTests() =
             let! user = createUser()
             let request = CreatePlayerRequest.user user
 
-            //Act
-            let error = host.Get<PlayerService>().getAddPlayerEvent (game, request) session
+            //Act/Assert
 
-            //Assert
-            error |> shouldBeError 403 "Cannot add other users to a game."
+            let ex = Assert.Throws<HttpException>(fun () ->
+                host.Get<PlayerService>().getAddPlayerEvent (game, request) session |> ignore
+            )
+
+            ex.statusCode |> shouldBe 403
+            ex.Message |> shouldBe "Cannot add other users to a game."
         }
 
     [<Fact>]
@@ -90,11 +93,13 @@ type GetAddPlayerEventTests() =
                     kind = PlayerKind.User
                 }
 
-            //Act
-            let error = host.Get<PlayerService>().getAddPlayerEvent (game, request) session
+            //Act/Assert
+            let ex = Assert.Throws<HttpException>(fun () -> 
+                host.Get<PlayerService>().getAddPlayerEvent (game, request) session |> ignore
+            )
 
-            //Assert
-            error |> shouldBeError 400 "UserID must be provided when adding a user player."
+            ex.statusCode |> shouldBe 400
+            ex.Message |> shouldBe "UserID must be provided when adding a user player."
         }
 
     [<Fact>]
@@ -114,11 +119,13 @@ type GetAddPlayerEventTests() =
                     kind = PlayerKind.User
                 }
 
-            //Act
-            let error = host.Get<PlayerService>().getAddPlayerEvent (game, request) session
+            //Act/Assert
+            let ex = Assert.Throws<HttpException>(fun () -> 
+                host.Get<PlayerService>().getAddPlayerEvent (game, request) session |> ignore
+            )
 
-            //Assert
-            error |> shouldBeError 400 "Cannot provide name when adding a user player."
+            ex.statusCode |> shouldBe 400
+            ex.Message |> shouldBe "Cannot provide name when adding a user player."
         }
 
     [<Fact>]
@@ -129,12 +136,14 @@ type GetAddPlayerEventTests() =
             let! (user, session, game) = createuserSessionAndGame(false)
             let session = session |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames]
             let request = CreatePlayerRequest.user user
+            
+            //Act/Assert
+            let ex = Assert.Throws<HttpException>(fun () -> 
+                host.Get<PlayerService>().getAddPlayerEvent (game, request) session |> ignore
+            )
 
-            //Act
-            let error = host.Get<PlayerService>().getAddPlayerEvent (game, request) session
-
-            //Assert
-            error |> shouldBeError 409 "User is already a player."
+            ex.statusCode |> shouldBe 409
+            ex.Message |> shouldBe "User is already a player."
         }
 
     //GUEST PLAYER
@@ -148,7 +157,7 @@ type GetAddPlayerEventTests() =
             let request = CreatePlayerRequest.guest (user.id, "test")
 
             //Act
-            let eventRequest = host.Get<PlayerService>().getAddPlayerEvent (game, request) session |> Result.value
+            let eventRequest = host.Get<PlayerService>().getAddPlayerEvent (game, request) session
 
             //Assert
             assertSuccess eventRequest request
@@ -166,7 +175,7 @@ type GetAddPlayerEventTests() =
             let request = CreatePlayerRequest.guest (user.id, "test")
 
             //Act
-            let eventRequest = host.Get<PlayerService>().getAddPlayerEvent (game, request) session |> Result.value
+            let eventRequest = host.Get<PlayerService>().getAddPlayerEvent (game, request) session
 
             //Assert
             assertSuccess eventRequest request
@@ -183,11 +192,13 @@ type GetAddPlayerEventTests() =
             let! user = createUser()
             let request = CreatePlayerRequest.guest (user.id, "test")
 
-            //Act
-            let error = host.Get<PlayerService>().getAddPlayerEvent (game, request) session
+            //Act/Assert
+            let ex = Assert.Throws<HttpException>(fun () -> 
+                host.Get<PlayerService>().getAddPlayerEvent (game, request) session |> ignore
+            )
 
-            //Assert
-            error |> shouldBeError 403 "Cannot add guests for other users to a game."
+            ex.statusCode |> shouldBe 403
+            ex.Message |> shouldBe "Cannot add guests for other users to a game."
         }
 
     [<Fact>]
@@ -204,11 +215,13 @@ type GetAddPlayerEventTests() =
                     kind = PlayerKind.Guest
                 }
 
-            //Act
-            let error = host.Get<PlayerService>().getAddPlayerEvent (game, request) session
+            //Act/Assert
+            let ex = Assert.Throws<HttpException>(fun () -> 
+                host.Get<PlayerService>().getAddPlayerEvent (game, request) session |> ignore
+            )
 
-            //Assert
-            error |> shouldBeError 400 "UserID must be provided when adding a guest player."
+            ex.statusCode |> shouldBe 400
+            ex.Message |> shouldBe "UserID must be provided when adding a guest player."
         }
 
     [<Fact>]
@@ -224,12 +237,14 @@ type GetAddPlayerEventTests() =
                     name = None
                     kind = PlayerKind.Guest
                 }
+                
+            //Act/Assert
+            let ex = Assert.Throws<HttpException>(fun () -> 
+                host.Get<PlayerService>().getAddPlayerEvent (game, request) session |> ignore
+            )
 
-            //Act
-            let error = host.Get<PlayerService>().getAddPlayerEvent (game, request) session
-
-            //Assert
-            error |> shouldBeError 400 "Must provide name when adding a guest player."
+            ex.statusCode |> shouldBe 400
+            ex.Message |> shouldBe "Must provide name when adding a guest player."
         }
 
     [<Fact>]
@@ -240,11 +255,13 @@ type GetAddPlayerEventTests() =
             let! (user, session, game) = createuserSessionAndGame(true)
             let request = CreatePlayerRequest.guest (user.id, user.name)
 
-            //Act
-            let error = host.Get<PlayerService>().getAddPlayerEvent (game, request) session
+            //Act/Assert
+            let ex = Assert.Throws<HttpException>(fun () -> 
+                host.Get<PlayerService>().getAddPlayerEvent (game, request) session |> ignore
+            )
 
-            //Assert
-            error |> shouldBeError 409 "A player with that name already exists."
+            ex.statusCode |> shouldBe 409
+            ex.Message |> shouldBe "A player with that name already exists."
         }
 
     [<Fact>]
@@ -255,11 +272,13 @@ type GetAddPlayerEventTests() =
             let! (user, session, game) = createuserSessionAndGame(false)
             let request = CreatePlayerRequest.guest (user.id, "test")
 
-            //Act
-            let error = host.Get<PlayerService>().getAddPlayerEvent (game, request) session
+            //Act/Assert
+            let ex = Assert.Throws<HttpException>(fun () -> 
+                host.Get<PlayerService>().getAddPlayerEvent (game, request) session |> ignore
+            )
 
-            //Assert
-            error |> shouldBeError 400 "Game does not allow guest players."
+            ex.statusCode |> shouldBe 400
+            ex.Message |> shouldBe "Game does not allow guest players."
         }
 
     //NEUTRAL PLAYER
@@ -273,11 +292,13 @@ type GetAddPlayerEventTests() =
             let session = session |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames]
             let request = CreatePlayerRequest.neutral ("test")
 
-            //Act
-            let error = host.Get<PlayerService>().getAddPlayerEvent (game, request) session
+            //Act/Assert
+            let ex = Assert.Throws<HttpException>(fun () -> 
+                host.Get<PlayerService>().getAddPlayerEvent (game, request) session |> ignore
+            )
 
-            //Assert
-            error |> shouldBeError 400 "Cannot directly add neutral players to a game."
+            ex.statusCode |> shouldBe 400
+            ex.Message |> shouldBe "Cannot directly add neutral players to a game."
         }
 
     //GENERAL
@@ -298,11 +319,13 @@ type GetAddPlayerEventTests() =
 
             let! game = host.Get<IGameRepository>().getGame game.id
 
-            //Act
-            let error = host.Get<PlayerService>().getAddPlayerEvent (game, request3) session
+            //Act/Assert
+            let ex = Assert.Throws<HttpException>(fun () -> 
+                host.Get<PlayerService>().getAddPlayerEvent (game, request3) session |> ignore
+            )
 
-            //Assert
-            error |> shouldBeError 400 "Max player count reached."
+            ex.statusCode |> shouldBe 400
+            ex.Message |> shouldBe "Max player count reached."
         }
 
     [<Fact>]
@@ -314,9 +337,11 @@ type GetAddPlayerEventTests() =
             let request = CreatePlayerRequest.guest (user.id, "test")
             let game = { game with status = GameStatus.InProgress }
 
-            //Act
-            let error = host.Get<PlayerService>().getAddPlayerEvent (game, request) session
+            //Act/Assert
+            let ex = Assert.Throws<HttpException>(fun () -> 
+                host.Get<PlayerService>().getAddPlayerEvent (game, request) session |> ignore
+            )
 
-            //Assert
-            error |> shouldBeError 400 "Can only add players to pending games."
+            ex.statusCode |> shouldBe 400
+            ex.Message |> shouldBe "Can only add players to pending games."
         }
