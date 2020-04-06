@@ -24,18 +24,19 @@ type PlayerStatusChangeService(eventServ : EventService,
             ]
         else [] //If not last player to accept, nothing special happens
 
-    member x.getUpdatePlayerStatusEvent (game : Game, request : PlayerStatusChangeRequest) (session : Session) : CreateEventRequest HttpResult =
+    member x.getUpdatePlayerStatusEvent (game : Game, request : PlayerStatusChangeRequest) (session : Session) : CreateEventRequest =
         if game.status <> GameStatus.InProgress then
-            Error <| HttpException(400, "Cannot change player status unless game is InProgress.")
+            raise <| HttpException(400, "Cannot change player status unless game is InProgress.")
         else
-            Security.ensurePlayerOrHas Privilege.OpenParticipation session game
-            |> Result.bind (fun _ ->
+            match Security.ensurePlayerOrHas Privilege.OpenParticipation session game with
+            | Error ex -> raise ex
+            | Ok () ->
                 let player = game.players |> List.find (fun p -> p.id = request.playerId)
                 let oldStatus = player.status
                 let newStatus = request.status
 
                 if oldStatus = newStatus
-                    then Error <| HttpException(400, "Cannot change player status to current status.")
+                    then raise <| HttpException(400, "Cannot change player status to current status.")
                 else
                     let primaryEffect = Effect.PlayerStatusChanged {
                         oldStatus = oldStatus
@@ -53,10 +54,10 @@ type PlayerStatusChangeService(eventServ : EventService,
                     match (oldStatus, newStatus) with
                     | (PlayerStatus.Alive, PlayerStatus.AcceptsDraw) ->
                         let finalAcceptDrawEffects = getFinalAcceptDrawEffects (game, request)
-                        Ok { event with effects = primaryEffect :: finalAcceptDrawEffects }
+                        { event with effects = primaryEffect :: finalAcceptDrawEffects }
                     | (PlayerStatus.AcceptsDraw, PlayerStatus.Alive) ->
                         //If revoking draw, just change status
-                        Ok event
+                        event
                     | (PlayerStatus.Alive, PlayerStatus.Conceded)
                     | (PlayerStatus.AcceptsDraw, PlayerStatus.Conceded)
                     | (PlayerStatus.Alive, PlayerStatus.WillConcede)
@@ -75,15 +76,14 @@ type PlayerStatusChangeService(eventServ : EventService,
                             effects.Add(primary)
                             let game = eventServ.applyEffect primary game
                             effects.AddRange (indirectEffectsServ.getIndirectEffectsForConcede (game, request))
-                            Ok { event with effects = effects |> Seq.toList }
+                            { event with effects = effects |> Seq.toList }
                         else
                             let primary = Effect.PlayerStatusChanged {
                                 oldStatus = oldStatus
                                 newStatus = PlayerStatus.WillConcede
                                 playerId = player.id
                             }
-                            Ok { event with effects = [primary] }
+                            { event with effects = [primary] }
 
                     | _ ->
-                        Error <| HttpException(400, "Player status transition not allowed.")
-            )
+                        raise <| HttpException(400, "Player status transition not allowed.")

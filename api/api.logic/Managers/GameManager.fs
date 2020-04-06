@@ -145,9 +145,7 @@ type GameManager(eventRepo : IEventRepository,
                     status = status
                 }
             processEvent request.gameId (fun game -> 
-                match playerStatusChangeServ.getUpdatePlayerStatusEvent (game, request) session with
-                | Ok x -> x
-                | Error ex -> raise ex
+                playerStatusChangeServ.getUpdatePlayerStatusEvent (game, request) session
             )
 
     interface ITurnManager with
