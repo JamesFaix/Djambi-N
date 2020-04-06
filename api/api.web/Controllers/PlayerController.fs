@@ -4,7 +4,6 @@ open System.Threading.Tasks
 open Microsoft.AspNetCore.Mvc
 open FSharp.Control.Tasks
 open Serilog
-open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Web
 open Apex.Api.Web.Mappings

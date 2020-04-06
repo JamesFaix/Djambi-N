@@ -31,7 +31,6 @@ type WebsocketSubscriber(userId : int,
             try 
                 socket.SendAsync(segment, WebSocketMessageType.Text, true, CancellationToken.None)
                 |> Task.toGeneric
-                |> Task.map ignore
             with 
             | _ -> raise <| HttpException(500, "Socket error")
         else raise <| HttpException(500, "Socket closed")

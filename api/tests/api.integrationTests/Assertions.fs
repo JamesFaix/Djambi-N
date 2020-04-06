@@ -2,7 +2,6 @@
 module Apex.Api.IntegrationTests.Assertions
 
 open Xunit
-open Apex.Api.Common.Control
 
 let shouldBe<'a> (expected : 'a) (actual : 'a) =
     Assert.Equal(expected, actual)
@@ -33,12 +32,6 @@ let shouldBeGreaterThan<'a when 'a : comparison> (threshold : 'a) (actual : 'a) 
 
 let shouldBeLessThan<'a when 'a : comparison> (threshold : 'a) (actual : 'a) =
     Assert.True(actual < threshold)
-
-let shouldBeError<'a> (statusCode : int) (message : string) (result : Result<'a, HttpException>) =
-    Assert.True(result |> Result.isError)
-    let error = result |> Result.error
-    Assert.Equal(statusCode, error.statusCode)
-    Assert.Equal(message, error.Message)
 
 let shouldExist<'a> (predicate : 'a -> bool) (xs : 'a seq) =
     xs |> Seq.exists predicate

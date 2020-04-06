@@ -2,7 +2,6 @@ namespace Apex.Api.IntegrationTests.Logic.GameStartService
 
 open FSharp.Control.Tasks
 open Xunit
-open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.IntegrationTests
 open Apex.Api.Model
 open Apex.Api.Logic
@@ -33,7 +32,7 @@ type GetGameStartEventsTests() =
 
             let! game = host.Get<IGameRepository>().getGame game.id
 
-            return Ok (user, session, game)
+            return user, session, game
         }
 
     [<Fact>]
@@ -41,7 +40,7 @@ type GetGameStartEventsTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (user, session, game) = createUserSessionAndGameWith3Players() |> thenValue
+            let! (user, session, game) = createUserSessionAndGameWith3Players()
             let session = session |> TestUtilities.setSessionUserId (session.user.id+1)
 
             //Act/Assert
@@ -74,7 +73,7 @@ type GetGameStartEventsTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (user, session, game) = createUserSessionAndGameWith3Players() |> thenValue
+            let! (user, session, game) = createUserSessionAndGameWith3Players()
             let session = session |> TestUtilities.setSessionUserId (session.user.id+1)
                                   |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames]
 
@@ -100,7 +99,7 @@ type GetGameStartEventsTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (user, session, game) = createUserSessionAndGameWith3Players() |> thenValue
+            let! (user, session, game) = createUserSessionAndGameWith3Players()
 
             //Act
             let! events = host.Get<GameStartService>().getGameStartEvents game session
