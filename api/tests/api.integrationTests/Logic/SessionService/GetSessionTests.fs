@@ -5,6 +5,8 @@ open Xunit
 open Apex.Api.Common.Control
 open Apex.Api.IntegrationTests
 open Apex.Api.Logic.Services
+open Apex.Api.Logic.Interfaces
+open System.Threading.Tasks
 
 type GetSessionTests() =
     inherit TestsBase()
@@ -15,16 +17,14 @@ type GetSessionTests() =
         task {
             //Arrange
             let userRequest = getCreateUserRequest()
-            let! _ = host.Get<UserService>().createUser userRequest None
-                     |> AsyncHttpResult.thenValue
+            let! _ = host.Get<IUserManager>().createUser userRequest None
 
             let request = getLoginRequest userRequest
 
             let! session = host.Get<SessionService>().openSession request
-                           |> AsyncHttpResult.thenValue
+
             //Act
             let! sessionResponse = host.Get<SessionService>().getSession session.token
-                                  |> AsyncHttpResult.thenValue
 
             //Assert
             sessionResponse |> shouldBe session
@@ -34,13 +34,14 @@ type GetSessionTests() =
     let ``Get session should fail if token not found``() =
         let host = HostFactory.createHost()
         task {
-            //Arrange
+            let! ex = Assert.ThrowsAsync<HttpException>(fun () -> 
+                task {
+                    return! host.Get<SessionService>().getSession "invalid token string"
+                } :> Task
+            )
 
-            //Act
-            let! result = host.Get<SessionService>().getSession "does not exist"
-
-            //Assert
-            result |> shouldBeError 404 "Session not found."
+            ex.statusCode |> shouldBe 404
+            ex.Message |> shouldBe "Session not found."
         }
 
     [<Fact>]
@@ -49,18 +50,20 @@ type GetSessionTests() =
         task {
             //Arrange
             let userRequest = getCreateUserRequest()
-            let! _ = host.Get<UserService>().createUser userRequest None
-                     |> AsyncHttpResult.thenValue
+            let! _ = host.Get<IUserManager>().createUser userRequest None
 
             let loginRequest = getLoginRequest userRequest
             let! session = host.Get<SessionService>().openSession loginRequest
-                           |> AsyncHttpResult.thenValue
 
             let! _ = host.Get<SessionService>().closeSession session
 
-            //Act
-            let! result = host.Get<SessionService>().getSession session.token
+            //Act/Assert
+            let! ex = Assert.ThrowsAsync<HttpException>(fun () -> 
+                task {
+                    return! host.Get<SessionService>().getSession session.token
+                } :> Task
+            )
 
-            //Assert
-            result |> shouldBeError 404 "Session not found."
+            ex.statusCode |> shouldBe 404
+            ex.Message |> shouldBe "Session not found."
         }

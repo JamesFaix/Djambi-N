@@ -3,13 +3,12 @@ namespace Apex.Api.IntegrationTests.Logic.GameManager
 open FSharp.Control.Tasks
 open Xunit
 open Apex.Api.Common.Control
-open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.IntegrationTests
 open Apex.Api.Model
 open Apex.Api.Logic.Interfaces
-open Apex.Api.Db
 open Apex.Api.Db.Interfaces
 open Apex.Api.Enums
+open System.Threading.Tasks
 
 type StartGameTests() =
     inherit TestsBase()
@@ -19,15 +18,14 @@ type StartGameTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (user, session, game) = createuserSessionAndGame(true) |> thenValue
+            let! (user, session, game) = createuserSessionAndGame(true)
 
             let playerRequest = CreatePlayerRequest.guest (user.id, "test")
 
-            let! _ = host.Get<IPlayerManager>().addPlayer game.id playerRequest session |> thenValue
+            let! _ = host.Get<IPlayerManager>().addPlayer game.id playerRequest session
 
             //Act
             let! resp = host.Get<IGameManager>().startGame game.id session
-                        |> thenValue
 
             //Assert
             let updatedGame = resp.game
@@ -46,16 +44,21 @@ type StartGameTests() =
         let host = HostFactory.createHost()
         task {
              //Arrange
-            let! (user, session, game) = createuserSessionAndGame(true) |> thenValue
+            let! (user, session, game) = createuserSessionAndGame(true)
 
-            //Act
-            let! result = host.Get<IGameManager>().startGame game.id session
+            //Act/Assert
+            let! ex = Assert.ThrowsAsync<HttpException>(fun () -> 
+                task {
+                    return! host.Get<IGameManager>().startGame game.id session
+                } :> Task
+            )
 
-            //Assert
-            result |> shouldBeError 400 "Cannot start game with only one player."
+            ex.statusCode |> shouldBe 400
+            ex.Message |> shouldBe "Cannot start game with only one player."
 
-            let! lobbyResult = host.Get<IGameRepository>().getGame game.id
-            lobbyResult |> Result.isOk |> shouldBeTrue
+            let! _ = host.Get<IGameRepository>().getGame game.id
+            // Didn't throw
+            return ()
         }
 
     //TODO: Test other error cases

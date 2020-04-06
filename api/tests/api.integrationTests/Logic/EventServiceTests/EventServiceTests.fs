@@ -6,7 +6,6 @@ open Apex.Api.Model
 open Apex.Api.Enums
 open Apex.Api.Logic.Services
 open FSharp.Control.Tasks
-open Apex.Api.Common.Control
 
 //TODO: Move to unit test project
 
@@ -19,7 +18,7 @@ type EventServiceTests() =
         //Arrange
         task {
             let game = TestUtilities.defaultGame
-            let! user = createUser() |> AsyncHttpResult.thenValue
+            let! user = createUser()
             let effects =
                 [
                     //If the status InProgress is used here additional setup is required to make `game` valid
@@ -40,7 +39,7 @@ type EventServiceTests() =
         //Arrange
         task {
             let game = TestUtilities.defaultGame
-            let! user = createUser() |> AsyncHttpResult.thenValue
+            let! user = createUser()
             let newTurn = Some Turn.empty
             let effect = Effect.CurrentTurnChanged { oldValue = game.currentTurn; newValue = newTurn }
             let eventRequest = TestUtilities.createEventRequest(user.id)([effect]) //Kind doesn't matter
@@ -61,7 +60,7 @@ type EventServiceTests() =
         //Arrange
         task {
             let game = TestUtilities.defaultGame
-            let! user = createUser() |> AsyncHttpResult.thenValue
+            let! user = createUser()
             let newStatus = GameStatus.Canceled //Can't use InProgress here because that case is more complicated
             let effect = Effect.GameStatusChanged { oldValue = game.status; newValue = newStatus }
             let eventRequest = TestUtilities.createEventRequest(user.id)([effect]) //Kind doesn't matter
@@ -82,7 +81,7 @@ type EventServiceTests() =
         //Arrange
         task {
             let game = { TestUtilities.defaultGame with id = 5 }
-            let! user = createUser() |> AsyncHttpResult.thenValue
+            let! user = createUser()
             let effect = Effect.NeutralPlayerAdded { name = "p2"; placeholderPlayerId = -1 }
             let eventRequest = TestUtilities.createEventRequest(user.id)([effect]) //Kind doesn't matter
 
@@ -114,7 +113,7 @@ type EventServiceTests() =
         //Arrange
         task {
             let game = TestUtilities.defaultGame
-            let! user = createUser() |> AsyncHttpResult.thenValue
+            let! user = createUser()
             let newParameters =
                 {
                     allowGuests = true
@@ -164,7 +163,7 @@ type EventServiceTests() =
                     }
                 ]
             let game = { TestUtilities.defaultGame with pieces = pieces}
-            let! user = createUser() |> AsyncHttpResult.thenValue
+            let! user = createUser()
             let effect = Effect.PieceAbandoned { oldPiece = pieces.[0] }
             let eventRequest = TestUtilities.createEventRequest(user.id)([effect]) //Kind doesn't matter
 
@@ -193,7 +192,7 @@ type EventServiceTests() =
                     originalPlayerId = 0
                     cellId = 0
                 }
-            let! user = createUser() |> AsyncHttpResult.thenValue
+            let! user = createUser()
             let game = { TestUtilities.defaultGame with pieces = [piece]}
             let newPiece = { piece with cellId = 3 }
             let effect = Effect.PieceDropped { oldPiece = piece; newPiece = newPiece }
@@ -234,7 +233,7 @@ type EventServiceTests() =
                     }
                 ]
             let game = { TestUtilities.defaultGame with pieces = pieces}
-            let! user = createUser() |> AsyncHttpResult.thenValue
+            let! user = createUser()
             let newPlayerId = 1
             let effect = Effect.PieceEnlisted { oldPiece = pieces.[0]; newPlayerId = newPlayerId }
             let eventRequest = TestUtilities.createEventRequest(user.id)([effect]) //Kind doesn't matter
@@ -265,7 +264,7 @@ type EventServiceTests() =
                     cellId = 0
                 }
             let game = { TestUtilities.defaultGame with pieces = [piece]}
-            let! user = createUser() |> AsyncHttpResult.thenValue
+            let! user = createUser()
             let effect = Effect.PieceKilled {
                 oldPiece = piece
             }
@@ -297,7 +296,7 @@ type EventServiceTests() =
                     cellId = 0
                 }
             let game = { TestUtilities.defaultGame with pieces = [piece]}
-            let! user = createUser() |> AsyncHttpResult.thenValue
+            let! user = createUser()
             let newCellId = 3
             let effect = Effect.PieceMoved { oldPiece = piece; newCellId = newCellId }
             let eventRequest = TestUtilities.createEventRequest(user.id)([effect]) //Kind doesn't matter
@@ -327,7 +326,7 @@ type EventServiceTests() =
                     originalPlayerId = 0
                     cellId = 0
                 }
-            let! user = createUser() |> AsyncHttpResult.thenValue
+            let! user = createUser()
             let game = { TestUtilities.defaultGame with pieces = [piece]}
             let newCellId = 3
             let effect = Effect.PieceVacated { oldPiece = piece; newCellId = newCellId }
@@ -351,7 +350,7 @@ type EventServiceTests() =
         //Arrange
         task {
             let game = { TestUtilities.defaultGame with id = 5 }
-            let! user = createUser() |> AsyncHttpResult.thenValue
+            let! user = createUser()
             let playerRequest = CreatePlayerRequest.user(user)
             let effect = PlayerAddedEffect.fromRequest playerRequest
             let eventRequest = TestUtilities.createEventRequest(user.id)([effect]) //Kind doesn't matter
@@ -395,7 +394,7 @@ type EventServiceTests() =
                     startingRegion = None
                     startingTurnNumber = None
                 }
-            let! user = createUser() |> AsyncHttpResult.thenValue
+            let! user = createUser()
             let game = { TestUtilities.defaultGame with players = [player] }
             let effect = Effect.PlayerStatusChanged {
                     playerId = player.id
@@ -446,7 +445,7 @@ type EventServiceTests() =
                         startingTurnNumber = None
                     }
                 ]
-            let! user = createUser() |> AsyncHttpResult.thenValue
+            let! user = createUser()
             let game = { TestUtilities.defaultGame with players = players}
             let effect = Effect.PlayerRemoved { oldPlayer = players.[0] }
             let eventRequest = TestUtilities.createEventRequest(user.id)([effect]) //Kind doesn't matter
@@ -467,7 +466,7 @@ type EventServiceTests() =
         //Arrange
         task {
             let game = TestUtilities.defaultGame
-            let! user = createUser() |> AsyncHttpResult.thenValue
+            let! user = createUser()
             let newCycle = [1;2;3]
             let effect = Effect.TurnCycleAdvanced { oldValue = game.turnCycle; newValue = newCycle }
             let eventRequest = TestUtilities.createEventRequest(user.id)([effect]) //Kind doesn't matter
@@ -489,7 +488,7 @@ type EventServiceTests() =
         //Arrange
         task {
             let game = TestUtilities.defaultGame
-            let! user = createUser() |> AsyncHttpResult.thenValue
+            let! user = createUser()
             let newCycle = [1;2;3]
             let effect = Effect.TurnCyclePlayerFellFromPower { oldValue = game.turnCycle; newValue = newCycle; playerId = 1 } //PlayerID is just informative, doesn't effect processing
             let eventRequest = TestUtilities.createEventRequest(user.id)([effect]) //Kind doesn't matter
@@ -510,7 +509,7 @@ type EventServiceTests() =
         let host = HostFactory.createHost()
         //Arrange
         task {
-            let! user = createUser() |> AsyncHttpResult.thenValue
+            let! user = createUser()
             let game = TestUtilities.defaultGame
             let newCycle = [1;2;3]
             let effect = Effect.TurnCyclePlayerRemoved { oldValue = game.turnCycle; newValue = newCycle; playerId = 1 } //PlayerID is just informative, doesn't effect processing
@@ -533,7 +532,7 @@ type EventServiceTests() =
         //Arrange
         task {
             let game = TestUtilities.defaultGame
-            let! user = createUser() |> AsyncHttpResult.thenValue
+            let! user = createUser()
             let newCycle = [1;2;3]
             let effect = Effect.TurnCyclePlayerRoseToPower { oldValue = game.turnCycle; newValue = newCycle; playerId = 1 } //PlayerID is just informative, doesn't effect processing
             let eventRequest = TestUtilities.createEventRequest(user.id)([effect]) //Kind doesn't matter

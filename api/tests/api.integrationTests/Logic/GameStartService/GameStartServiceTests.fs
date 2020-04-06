@@ -3,14 +3,12 @@ namespace Apex.Api.IntegrationTests.Logic.GameStartService
 open FSharp.Control.Tasks
 open Xunit
 open Apex.Api.Common
-open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.IntegrationTests
 open Apex.Api.Logic.ModelExtensions
 open Apex.Api.Model
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Enums
 open Apex.Api.Logic.Services
-open Apex.Api.Common.Control
 
 type GameStartServiceTests() =
     inherit TestsBase()
@@ -20,12 +18,11 @@ type GameStartServiceTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! user = createUser() |> AsyncHttpResult.thenValue
-            let session = getSessionForUser (user |> UserDetails.hideDetails)
+            let! user = createUser()
+            let session = getSessionForUser user
             let parameters = getGameParameters()
             let! game = host.Get<IGameManager>().createGame parameters session
-                        |> thenBindAsync TestUtilities.fillEmptyPlayerSlots
-                        |> thenValue
+            let! game = TestUtilities.fillEmptyPlayerSlots game
 
             //Act
             let playersWithStartConditions = host.Get<GameStartService>().assignStartingConditions game.players
@@ -45,12 +42,12 @@ type GameStartServiceTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! user = createUser() |> AsyncHttpResult.thenValue
-            let session = getSessionForUser (user |> UserDetails.hideDetails)
+            let! user = createUser()
+            let session = getSessionForUser user
             let parameters = getGameParameters()
             let! game = host.Get<IGameManager>().createGame parameters session
-                        |> thenBindAsync TestUtilities.fillEmptyPlayerSlots
-                        |> thenValue
+            let! game = TestUtilities.fillEmptyPlayerSlots game
+
             let playersWithStartConditions = host.Get<GameStartService>().assignStartingConditions game.players
             let board = BoardModelUtility.getBoardMetadata(game.parameters.regionCount)
 
@@ -77,11 +74,11 @@ type GameStartServiceTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (user, session, game) = createuserSessionAndGame(true) |> thenValue
+            let! (user, session, game) = createuserSessionAndGame(true)
 
             let playerRequest = CreatePlayerRequest.guest (user.id, "test")
 
-            let! _ = host.Get<IPlayerManager>().addPlayer game.id playerRequest session |> thenValue
+            let! _ = host.Get<IPlayerManager>().addPlayer game.id playerRequest session
 
             //Act
             let updatedGame = host.Get<GameStartService>().applyStartGame game

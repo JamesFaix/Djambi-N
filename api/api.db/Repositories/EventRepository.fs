@@ -67,7 +67,7 @@ type EventRepository(context : ApexDbContext) =
                         .Take(maxResults)
                         .ToListAsync()
                 
-                return Ok(sqlModels |> Seq.map toEvent |> Seq.toList)
+                return sqlModels |> Seq.map toEvent |> Seq.toList
             }
 
         member __.persistEvent (request, oldGame, newGame) =
@@ -195,8 +195,8 @@ type EventRepository(context : ApexDbContext) =
                         event = e |> toEvent
                     }
 
-                    return Ok response
+                    return response
                 with
                 | :? InvalidOperationException as ex when ex.Message.StartsWith(playerNameTakenMessage) ->
-                    return Error <| HttpException(409, "Conflict when attempting to write Event.")
+                    return raise <| HttpException(409, "Conflict when attempting to write Event.")
             }

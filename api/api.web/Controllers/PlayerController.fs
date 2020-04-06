@@ -4,7 +4,6 @@ open System.Threading.Tasks
 open Microsoft.AspNetCore.Mvc
 open FSharp.Control.Tasks
 open Serilog
-open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Web
 open Apex.Api.Web.Mappings
@@ -25,7 +24,7 @@ type PlayerController(manager : IPlayerManager,
         task {
             let! session = scp.GetSessionFromContext ctx
             let request = request |> toCreatePlayerRequest
-            let! response = manager.addPlayer gameId request session |> thenExtract
+            let! response = manager.addPlayer gameId request session
             let dto = response |> toStateAndEventResponseDto
             return OkObjectResult(dto) :> IActionResult
         }
@@ -36,7 +35,7 @@ type PlayerController(manager : IPlayerManager,
         let ctx = base.HttpContext
         task {
             let! session = scp.GetSessionFromContext ctx
-            let! response = manager.removePlayer (gameId, playerId) session |> thenExtract
+            let! response = manager.removePlayer (gameId, playerId) session
             let dto = response |> toStateAndEventResponseDto
             return OkObjectResult(dto) :> IActionResult
         }
@@ -47,7 +46,7 @@ type PlayerController(manager : IPlayerManager,
         let ctx = base.HttpContext
         task {
             let! session = scp.GetSessionFromContext ctx
-            let! response = manager.updatePlayerStatus (gameId, playerId, status) session |> thenExtract                
+            let! response = manager.updatePlayerStatus (gameId, playerId, status) session                
             let dto = response |> toStateAndEventResponseDto
             return OkObjectResult(dto) :> IActionResult
         }

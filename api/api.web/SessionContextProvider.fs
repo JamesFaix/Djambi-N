@@ -24,17 +24,15 @@ type SessionContextProvider(options : IOptions<ApiSettings>,
         then None |> Task.FromResult
         else
             task {
-                let! result = service.getSession token
-
-                let sessionOption = 
-                    match result with
-                    | Ok session -> Some(session)
-                    | Error ex when ex.statusCode = 404 -> None
-                    | Error ex ->
-                        cookieProvider.AppendEmptyCookie ctx
-                        raise ex
-
-                return sessionOption
+                try 
+                    let! session = service.getSession token
+                    return Some(session)
+                with
+                | :? HttpException as ex when ex.statusCode = 404 ->
+                    return None
+                | :? HttpException as ex ->
+                    cookieProvider.AppendEmptyCookie ctx
+                    return raise ex
             }
 
     member x.GetSessionFromContext (ctx : HttpContext) : Task<Session> =

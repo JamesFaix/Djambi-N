@@ -4,7 +4,6 @@ open System.Threading.Tasks
 open Microsoft.AspNetCore.Mvc
 open FSharp.Control.Tasks
 open Serilog
-open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Model
 open Apex.Api.Web
@@ -27,10 +26,10 @@ type SessionController(manager : ISessionManager,
             let! sessionOption = scp.GetSessionOptionFromContext ctx
             let! _ = match sessionOption with
                         | Some s -> manager.logout s
-                        | None -> okTask ()
+                        | None -> Task.FromResult ()
 
             let request = request |> toLoginRequest
-            let! session = manager.login request |> thenExtract
+            let! session = manager.login request
             let dto = session |> toSessionDto
 
             cookieProvider.AppendCookie ctx (session.token, session.expiresOn)                               
@@ -50,7 +49,7 @@ type SessionController(manager : ISessionManager,
             let! sessionOption = scp.GetSessionOptionFromContext ctx
             let! _ = match sessionOption with
                         | Some s -> manager.logout s
-                        | None -> okTask ()
+                        | None -> Task.FromResult ()
 
             return OkResult() :> IActionResult
         }

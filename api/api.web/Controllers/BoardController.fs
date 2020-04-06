@@ -4,7 +4,6 @@ open System.Threading.Tasks
 open Microsoft.AspNetCore.Mvc
 open FSharp.Control.Tasks
 open Serilog
-open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Web
 open Apex.Api.Web.Mappings
@@ -26,7 +25,7 @@ type BoardController(manager : IBoardManager,
         let ctx = base.HttpContext
         task {
             let! session = scp.GetSessionFromContext ctx
-            let! board = manager.getBoard regionCount session |> thenExtract
+            let! board = manager.getBoard regionCount session
             let dto = board |> toBoardDto
             return OkObjectResult(dto) :> IActionResult
         }
@@ -37,6 +36,6 @@ type BoardController(manager : IBoardManager,
         let ctx = base.HttpContext
         task {
             let! session = scp.GetSessionFromContext ctx
-            let! paths = manager.getCellPaths (regionCount, cellId) session |> thenExtract
+            let! paths = manager.getCellPaths (regionCount, cellId) session
             return OkObjectResult(paths) :> IActionResult
         }

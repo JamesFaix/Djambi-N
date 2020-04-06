@@ -4,7 +4,6 @@ open System.Threading.Tasks
 open Microsoft.AspNetCore.Mvc
 open FSharp.Control.Tasks
 open Serilog
-open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Web
 open Apex.Api.Web.Mappings
@@ -23,7 +22,7 @@ type TurnController(manager : ITurnManager,
         let ctx = base.HttpContext
         task {
             let! session = scp.GetSessionFromContext ctx
-            let! response = manager.selectCell (gameId, cellId) session |> thenExtract
+            let! response = manager.selectCell (gameId, cellId) session
             let dto = response |> toStateAndEventResponseDto
             return OkObjectResult(dto) :> IActionResult
         }
@@ -34,7 +33,7 @@ type TurnController(manager : ITurnManager,
         let ctx = base.HttpContext
         task {
             let! session = scp.GetSessionFromContext ctx
-            let! response = manager.resetTurn gameId session |> thenExtract
+            let! response = manager.resetTurn gameId session
             let dto = response |> toStateAndEventResponseDto
             return OkObjectResult(dto) :> IActionResult
         }
@@ -45,7 +44,7 @@ type TurnController(manager : ITurnManager,
         let ctx = base.HttpContext
         task {
             let! session = scp.GetSessionFromContext ctx
-            let! response = manager.commitTurn gameId session |> thenExtract
+            let! response = manager.commitTurn gameId session
             let dto = response |> toStateAndEventResponseDto
             return OkObjectResult(dto) :> IActionResult
         }

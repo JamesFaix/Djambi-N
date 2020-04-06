@@ -40,7 +40,6 @@ let createHost() =
                 services.AddTransient<ISessionRepository, SessionRepository>() |> ignore
                 services.AddTransient<ISnapshotRepository, SnapshotRepository>() |> ignore
 
-                services.AddTransient<BoardService>() |> ignore
                 services.AddTransient<EventService>() |> ignore
                 services.AddTransient<GameCrudService>() |> ignore
                 services.AddTransient<GameStartService>() |> ignore
@@ -53,7 +52,6 @@ let createHost() =
                 services.AddTransient<SelectionOptionsService>() |> ignore
                 services.AddTransient<SelectionService>() |> ignore
                 services.AddTransient<TurnService>() |> ignore
-                services.AddTransient<UserService>() |> ignore
                   
                 services.AddTransient<IBoardManager, BoardManager>() |> ignore
                 services.AddTransient<ISearchManager, SearchManager>() |> ignore

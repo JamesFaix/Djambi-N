@@ -20,14 +20,13 @@ type SnapshotRepository(context : ApexDbContext) =
                 if s = null
                 then raise <| HttpException(404, "Not found")
 
-                return Ok(s |> toSnapshot)
+                return s |> toSnapshot
             }
 
         member __.getSnapshotsForGame gameId  =
             task {
                 let! sqlModels = context.Snapshots.Where(fun s -> s.Game.GameId = gameId).ToListAsync()
-                let results = sqlModels |> Seq.map toSnapshotInfo |> Seq.toList
-                return Ok(results)
+                return sqlModels |> Seq.map toSnapshotInfo |> Seq.toList
             }
 
         member __.deleteSnapshot snapshotId  =
@@ -40,7 +39,7 @@ type SnapshotRepository(context : ApexDbContext) =
                 context.Snapshots.Remove(s) |> ignore
                 let! _ = context.SaveChangesAsync()
 
-                return Ok()
+                return ()
             }
 
         member __.createSnapshot request  =
@@ -60,7 +59,7 @@ type SnapshotRepository(context : ApexDbContext) =
                 let! _ = context.Snapshots.AddAsync(s)
                 let! _ = context.SaveChangesAsync()
 
-                return Ok(s.SnapshotId)
+                return s.SnapshotId
             }
 
         member __.loadSnapshot (gameId, snapshotId) =
@@ -131,5 +130,5 @@ type SnapshotRepository(context : ApexDbContext) =
                 let! _ = context.SaveChangesAsync()
                 let! _ = transaction.CommitAsync()
 
-                return Ok()
+                return ()
             }

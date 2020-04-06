@@ -38,7 +38,7 @@ type SseSubscriber(userId : int,
                 ()
             let! _ = httpResponse.WriteAsync("\n")
             httpResponse.Body.Flush()
-            return Ok ()
+            return ()
         }
 
     let mapReponseToSseEvent (response : StateAndEventResponse) =

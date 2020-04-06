@@ -5,7 +5,8 @@ open Xunit
 open Apex.Api.Common.Control
 open Apex.Api.IntegrationTests
 open Apex.Api.Logic.Services
-open Apex.Api.Model
+open Apex.Api.Logic.Interfaces
+open System.Threading.Tasks
 
 type CloseSessionTests() =
     inherit TestsBase()
@@ -16,18 +17,16 @@ type CloseSessionTests() =
         task {
             //Arrange
             let userRequest = getCreateUserRequest()
-            let! _ = host.Get<UserService>().createUser userRequest None
-                     |> AsyncHttpResult.thenValue
+            let! _ = host.Get<IUserManager>().createUser userRequest None
 
             let loginRequest = getLoginRequest userRequest
             let! session = host.Get<SessionService>().openSession loginRequest
-                           |> AsyncHttpResult.thenValue
 
-            //Act
-            let! result = host.Get<SessionService>().closeSession session
+            //Act/Assert
+            let! _ = host.Get<SessionService>().closeSession session
+            // Did not throw
 
-            //Assert
-            result |> Result.isOk |> shouldBeTrue
+            return ()
         }
 
     [<Fact>]
@@ -35,12 +34,17 @@ type CloseSessionTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! user = createUser() |> AsyncHttpResult.thenValue
-            let session = getSessionForUser (user |> UserDetails.hideDetails)
+            let! user = createUser()
+            let session = getSessionForUser user
 
-            //Act
-            let! result = host.Get<SessionService>().closeSession session
+            //Act/Assert
+            let! ex = Assert.ThrowsAsync<HttpException>(fun () -> 
+                task {
+                    let! _ = host.Get<SessionService>().closeSession session
+                    return ()
+                } :> Task
+            )
 
-            //Assert
-            result |> shouldBeError 404 "Session not found."
+            ex.statusCode |> shouldBe 404
+            ex.Message |> shouldBe "Session not found."
         }

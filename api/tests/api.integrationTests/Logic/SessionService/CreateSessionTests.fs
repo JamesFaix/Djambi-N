@@ -3,8 +3,11 @@ namespace Apex.Api.IntegrationTests.Logic.sessionServ
 open FSharp.Control.Tasks
 open Xunit
 open Apex.Api.IntegrationTests
-open Apex.Api.Common.Control.AsyncHttpResult;
 open Apex.Api.Logic.Services
+open Apex.Api.Logic.Interfaces
+open Apex.Api.Common.Control
+open System.Threading.Tasks
+open Apex.Api.Model
 
 type CreateSessionTests() =
     inherit TestsBase()
@@ -15,14 +18,12 @@ type CreateSessionTests() =
         task {
             //Arrange
             let userRequest = getCreateUserRequest()
-            let! user = host.Get<UserService>().createUser userRequest None
-                        |> thenValue
+            let! user = host.Get<IUserManager>().createUser userRequest None
 
             let request = getLoginRequest userRequest
 
             //Act
             let! session = host.Get<SessionService>().openSession request
-                           |> thenValue
 
             //Assert
             session.user.id |> shouldBe user.id
@@ -36,16 +37,14 @@ type CreateSessionTests() =
         task {
             //Arrange
             let userRequest = getCreateUserRequest()
-            let! user = host.Get<UserService>().createUser userRequest None
-                        |> thenValue
+            let! user = host.Get<IUserManager>().createUser userRequest None
 
             let request = getLoginRequest userRequest
 
             let! oldSession = host.Get<SessionService>().openSession request
-                              |> thenValue
 
             //Act
-            let! newSession = host.Get<SessionService>().openSession request |> thenValue
+            let! newSession = host.Get<SessionService>().openSession request
 
             //Assert
             newSession.token |> shouldNotBe oldSession.token
@@ -57,38 +56,53 @@ type CreateSessionTests() =
         task {
             //Arrange
             let userRequest = getCreateUserRequest()
-            let! _ = host.Get<UserService>().createUser userRequest None
-                        |> thenValue
+            let! _ = host.Get<IUserManager>().createUser userRequest None
 
             let request = { getLoginRequest userRequest with password = "wrong" }
 
-            //Act
-            let! error = host.Get<SessionService>().openSession request
+            //Act/Assert
+            let! ex = Assert.ThrowsAsync<HttpException>(fun () ->
+                task {
+                    return! host.Get<SessionService>().openSession request
+                } :> Task
+            )
 
-            //Assert
-            error |> shouldBeError 401 "Incorrect password."
+            ex.statusCode |> shouldBe 401
+            ex.Message |> shouldBe "Incorrect password."
         }
 
     [<Fact>]
     let ``Create session should fail with locked message on 6th incorrect password attempt``() =
         let host = HostFactory.createHost()
+
+        let attemptLoginAndIgnoreInvalidPasswordError (request : LoginRequest) =
+            task {
+                try 
+                    let! _ = host.Get<SessionService>().openSession request
+                    return ()
+                with 
+                | :? HttpException as ex when ex.Message = "Incorrect password." ->
+                    return ()
+            }
+
         task {
              //Arrange
             let userRequest = getCreateUserRequest()
-            let! _ = host.Get<UserService>().createUser userRequest None
-                        |> thenValue
+            let! _ = host.Get<IUserManager>().createUser userRequest None
 
             let request = { getLoginRequest userRequest with password = "wrong" }
 
-            let! _ = host.Get<SessionService>().openSession request
-            let! _ = host.Get<SessionService>().openSession request
-            let! _ = host.Get<SessionService>().openSession request
-            let! _ = host.Get<SessionService>().openSession request
-            let! _ = host.Get<SessionService>().openSession request
+            for _ in 1..5 do
+                let! _ = attemptLoginAndIgnoreInvalidPasswordError request
+                ()
 
-            //Act
-            let! error = host.Get<SessionService>().openSession request
+            //Act/Assert
+            let! ex = Assert.ThrowsAsync<HttpException>(fun () ->
+                task {
+                    return! host.Get<SessionService>().openSession request
+                } :> Task
+            )
 
-            //Assert
-            error |> shouldBeError 401 "Account locked."
+            ex.statusCode |> shouldBe 401
+            ex.Message |> shouldBe "Account locked."
         }

@@ -4,13 +4,11 @@ module Apex.Api.IntegrationTests.TestUtilities
 open System
 open System.Linq
 open FSharp.Control.Tasks
-open Apex.Api.Common.Control
-open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.Db.Interfaces
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Model
 open Apex.Api.Enums
-open Apex.Api.Logic.Services
+open System.Threading.Tasks
 
 let random = Random()
 let randomAlphanumericString (length : int) : string =
@@ -66,26 +64,25 @@ let getSessionForUser (user : User) : Session =
         expiresOn = DateTime.MinValue
     }
 
-let createUser() : UserDetails AsyncHttpResult =
+let createUser() : Task<User> =
     let host = HostFactory.createHost()
     let userRequest = getCreateUserRequest()
-    host.Get<UserService>().createUser userRequest None
+    host.Get<IUserManager>().createUser userRequest None
 
-let createuserSessionAndGame(allowGuests : bool) : (UserDetails * Session * Game) AsyncHttpResult =
+let createuserSessionAndGame(allowGuests : bool) : Task<(User * Session * Game)> =
     let host = HostFactory.createHost()
     task {
-        let! user = createUser() |> thenValue
+        let! user = createUser()
 
-        let session = getSessionForUser (user |> UserDetails.hideDetails)
+        let session = getSessionForUser user
 
         let parameters = { getGameParameters() with allowGuests = allowGuests }
         let! game = host.Get<IGameManager>().createGame parameters session
-                     |> thenValue
 
-        return Ok <| (user, session, game)
+        return (user, session, game)
     }
 
-let fillEmptyPlayerSlots (game : Game) : Game AsyncHttpResult =
+let fillEmptyPlayerSlots (game : Game) : Task<Game> =
     let host = HostFactory.createHost()
     let gameRepo = host.Get<IGameRepository>()
     task {
@@ -93,7 +90,7 @@ let fillEmptyPlayerSlots (game : Game) : Game AsyncHttpResult =
         for i in Enumerable.Range(0, missingPlayerCount) do
             let name = sprintf "neutral%i" (i+1)
             let request = CreatePlayerRequest.neutral name
-            let! _ = host.Get<IGameRepository>().addPlayer (game.id, request) |> thenValue
+            let! _ = host.Get<IGameRepository>().addPlayer (game.id, request)
             ()
 
         return! host.Get<IGameRepository>().getGame game.id

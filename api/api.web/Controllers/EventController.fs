@@ -4,7 +4,6 @@ open System.Threading.Tasks
 open Microsoft.AspNetCore.Mvc
 open FSharp.Control.Tasks
 open Serilog
-open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Web
 open Apex.Api.Web.Model
@@ -24,7 +23,7 @@ type EventController(manager : IEventManager,
         task {
             let! session = scp.GetSessionFromContext ctx
             let query = query |> toEventsQuery
-            let! events = manager.getEvents (gameId, query) session |> thenExtract
+            let! events = manager.getEvents (gameId, query) session
             let dtos = events |> toEventDtos
             return OkObjectResult(dtos) :> IActionResult
         }

@@ -3,7 +3,6 @@ namespace Apex.Api.Logic.Services
 open System.Collections.Generic
 open System.Linq
 open Apex.Api.Common.Collections
-open Apex.Api.Common.Control
 open Apex.Api.Logic.ModelExtensions.BoardModelExtensions
 open Apex.Api.Logic.ModelExtensions.GameModelExtensions
 open Apex.Api.Logic
@@ -206,7 +205,7 @@ type IndirectEffectsService(eventServ : EventService,
                 game <- eventServ.applyEffects fx game
             else
             //Then check for out of moves
-                let selectionOptions = (selectionOptionsServ.getSelectableCellsFromState game) |> Result.value
+                let selectionOptions = (selectionOptionsServ.getSelectableCellsFromState game)
                 if selectionOptions.IsEmpty then
                     let fx = Effect.PlayerOutOfMoves { playerId = player.id } ::
                              (getEliminatePlayerEffects game player.id None)
@@ -245,7 +244,7 @@ type IndirectEffectsService(eventServ : EventService,
 
             if victoryEffects.IsEmpty
             then
-                let seletionOptions = selectionOptionsServ.getSelectableCellsFromState game |> Result.value
+                let seletionOptions = selectionOptionsServ.getSelectableCellsFromState game
                 let turn = { Turn.empty with selectionOptions = seletionOptions }
                 effects.Add(Effect.CurrentTurnChanged { oldValue = game.currentTurn; newValue = Some turn })
             else ()

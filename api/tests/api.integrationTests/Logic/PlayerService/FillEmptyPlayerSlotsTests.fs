@@ -2,14 +2,12 @@ namespace Apex.Api.IntegrationTests.Logic.PlayerService
 
 open FSharp.Control.Tasks
 open Xunit
-open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.IntegrationTests
 open Apex.Api.Model
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Db.Interfaces
 open Apex.Api.Enums
 open Apex.Api.Logic.Services
-open Apex.Api.Common.Control
 
 //TODO: Audit test class
 type FillEmptyPlayerSlotsTests() =
@@ -20,16 +18,16 @@ type FillEmptyPlayerSlotsTests() =
         let host = HostFactory.createHost()
         //Arrange
         task {
-            let! user = createUser() |> AsyncHttpResult.thenValue
-            let session = getSessionForUser (user |> UserDetails.hideDetails)
+            let! user = createUser()
+            let session = getSessionForUser user
             let gameRequest = getGameParameters()
-            let! game = host.Get<IGameManager>().createGame gameRequest session |> thenValue
+            let! game = host.Get<IGameManager>().createGame gameRequest session
 
             //Act
-            let! updatedGame = TestUtilities.fillEmptyPlayerSlots game |> thenValue
+            let! updatedGame = TestUtilities.fillEmptyPlayerSlots game
 
             //Assert
-            let! doubleCheck = host.Get<IGameRepository>().getGame game.id |> thenValue
+            let! doubleCheck = host.Get<IGameRepository>().getGame game.id
 
             updatedGame.players.Length |> shouldBe gameRequest.regionCount
             doubleCheck |> shouldBe updatedGame
@@ -46,13 +44,13 @@ type FillEmptyPlayerSlotsTests() =
         let host = HostFactory.createHost()
         //Arrange
         task {
-            let! user = createUser() |> AsyncHttpResult.thenValue
-            let session = getSessionForUser (user |> UserDetails.hideDetails)
+            let! user = createUser()
+            let session = getSessionForUser user
             let gameRequest = getGameParameters()
-            let! game = host.Get<IGameManager>().createGame gameRequest session |> thenValue
+            let! game = host.Get<IGameManager>().createGame gameRequest session
 
             //Act
-            let! effects = host.Get<PlayerService>().fillEmptyPlayerSlots game |> thenValue
+            let! effects = host.Get<PlayerService>().fillEmptyPlayerSlots game
 
             //Assert
             effects.Length |> shouldBe 2

@@ -2,7 +2,6 @@ namespace Apex.Api.IntegrationTests.Logic.GameManager
 
 open FSharp.Control.Tasks
 open Xunit
-open Apex.Api.Common.Control
 open Apex.Api.IntegrationTests
 open Apex.Api.Model
 open Apex.Api.Logic.Interfaces
@@ -16,13 +15,12 @@ type CreateGameTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! user = createUser() |> AsyncHttpResult.thenValue
+            let! user = createUser()
             let parameters = getGameParameters()
-            let session = getSessionForUser (user |> UserDetails.hideDetails)
+            let session = getSessionForUser user
 
             //Act
             let! game = host.Get<IGameManager>().createGame parameters session
-                        |> AsyncHttpResult.thenValue
 
             //Assert
             game.id |> shouldNotBe 0
@@ -38,13 +36,12 @@ type CreateGameTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! user = createUser() |> AsyncHttpResult.thenValue
+            let! user = createUser()
             let parameters = getGameParameters()
-            let session = getSessionForUser (user |> UserDetails.hideDetails)
+            let session = getSessionForUser user
 
             //Act
             let! game = host.Get<IGameManager>().createGame parameters session
-                        |> AsyncHttpResult.thenValue
 
             //Assert
             let players = game.players

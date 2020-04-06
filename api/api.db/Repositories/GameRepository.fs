@@ -26,10 +26,10 @@ type GameRepository(context : ApexDbContext) =
                         .Include(fun g -> g.CreatedByUser)
                         .SingleOrDefaultAsync(fun g -> g.GameId = gameId)
                 if g = null
-                then return Error <| HttpException(404, "Game not found.")
+                then return raise <| HttpException(404, "Game not found.")
                 else 
                     g.Players <- g.Players.OrderBy(fun p -> p.PlayerId).ToList()
-                    return Ok(g |> toGame)
+                    return g |> toGame
             }
             
         [<Obsolete("Only used for tests")>]
@@ -38,7 +38,7 @@ type GameRepository(context : ApexDbContext) =
                 let g = request |> toGameSqlModel
                 let! _ = context.Games.AddAsync(g)
                 let! _ = context.SaveChangesAsync()
-                return Ok(g.GameId)
+                return g.GameId
             }
         
         [<Obsolete("Only used for tests")>]
@@ -62,10 +62,10 @@ type GameRepository(context : ApexDbContext) =
                 try 
                     let! _ = context.Players.AddAsync(p)
                     let! _ = context.SaveChangesAsync()
-                    return Ok(p |> toPlayer)
+                    return p |> toPlayer
                 with
                 | :? InvalidOperationException as ex when ex.Message.StartsWith(nameConflictMessage) ->
-                    return Error <| HttpException(409, "Conflict when attempting to write Player.")
+                    return raise <| HttpException(409, "Conflict when attempting to write Player.")
             }
             
         [<Obsolete("Only used for tests")>]
@@ -74,7 +74,7 @@ type GameRepository(context : ApexDbContext) =
                 let! p = context.Players.SingleOrDefaultAsync(fun p -> p.GameId = gameId && p.PlayerId = playerId)
                 context.Players.Remove(p) |> ignore
                 let! _ = context.SaveChangesAsync()
-                return Ok()
+                return ()
             }
 
         [<Obsolete("Only used for tests")>]
@@ -91,7 +91,7 @@ type GameRepository(context : ApexDbContext) =
                 g.PiecesJson <- game.pieces |> JsonConvert.SerializeObject
                 context.Games.Update(g) |> ignore
                 let! _ = context.SaveChangesAsync()
-                return Ok()            
+                return ()            
             }
 
         member __.getNeutralPlayerNames () =
@@ -101,7 +101,7 @@ type GameRepository(context : ApexDbContext) =
                         .Select(fun x -> x.Name)
                         .ToListAsync()
 
-                return Ok(names |> Seq.toList)
+                return names |> Seq.toList
             }
 
         member __.createGameAndAddPlayer (gameRequest, playerRequest) =
@@ -119,5 +119,5 @@ type GameRepository(context : ApexDbContext) =
                 let! _ = context.SaveChangesAsync()
                 let! _ = transaction.CommitAsync()
 
-                return Ok(gameSqlModel.GameId)
+                return gameSqlModel.GameId
             }

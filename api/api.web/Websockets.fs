@@ -7,7 +7,6 @@ open System.Threading
 open Newtonsoft.Json
 open Serilog
 open Apex.Api.Common.Control
-open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Model
 
@@ -32,10 +31,9 @@ type WebsocketSubscriber(userId : int,
             try 
                 socket.SendAsync(segment, WebSocketMessageType.Text, true, CancellationToken.None)
                 |> Task.toGeneric
-                |> Task.map (fun _ -> Ok ())
             with 
-            | _ -> errorTask <| HttpException(500, "Socket error")
-        else errorTask <| HttpException(500, "Socket closed")
+            | _ -> raise <| HttpException(500, "Socket error")
+        else raise <| HttpException(500, "Socket closed")
     
     interface ISubscriber with
         member x.userId = userId

@@ -4,7 +4,6 @@ open System.Threading.Tasks
 open Microsoft.AspNetCore.Mvc
 open FSharp.Control.Tasks
 open Serilog
-open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Web
 open Apex.Api.Web.Mappings
@@ -24,7 +23,7 @@ type SnapshotController(manager : ISnapshotManager,
         task {
             let! session = scp.GetSessionFromContext ctx
             let request = request |> toCreateSnapshotRequest
-            let! snapshot = manager.createSnapshot gameId request session |> thenExtract
+            let! snapshot = manager.createSnapshot gameId request session
             let dto = snapshot |> toSnapshotInfoDto
             return OkObjectResult(dto) :> IActionResult
         }
@@ -35,7 +34,7 @@ type SnapshotController(manager : ISnapshotManager,
         let ctx = base.HttpContext
         task {
             let! session = scp.GetSessionFromContext ctx
-            let! snapshots = manager.getSnapshotsForGame gameId session |> thenExtract
+            let! snapshots = manager.getSnapshotsForGame gameId session
             let dtos = snapshots |> List.map toSnapshotInfoDto
             return OkObjectResult(dtos) :> IActionResult
         }
@@ -46,7 +45,7 @@ type SnapshotController(manager : ISnapshotManager,
         let ctx = base.HttpContext
         task {
             let! session = scp.GetSessionFromContext ctx
-            let! _ = manager.deleteSnapshot gameId snapshotId session |> thenExtract
+            let! _ = manager.deleteSnapshot gameId snapshotId session
             return OkResult() :> IActionResult
         }
     
@@ -56,6 +55,6 @@ type SnapshotController(manager : ISnapshotManager,
         let ctx = base.HttpContext
         task {
             let! session = scp.GetSessionFromContext ctx
-            let! _ = manager.loadSnapshot gameId snapshotId session |> thenExtract
+            let! _ = manager.loadSnapshot gameId snapshotId session
             return OkResult() :> IActionResult
         }

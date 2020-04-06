@@ -3,11 +3,9 @@ namespace Apex.Api.IntegrationTests.Logic.GameCrudService
 open FSharp.Control.Tasks
 open Xunit
 open Apex.Api.Common.Control
-open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.IntegrationTests
 open Apex.Api.Model
 open Apex.Api.Logic
-open Apex.Api.Db.Repositories
 open Apex.Api.Logic.Services
 open Apex.Api.Db.Interfaces
 open Apex.Api.Enums
@@ -20,7 +18,7 @@ type GetUpdateGameParametersEventTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (_, session, game) = TestUtilities.createuserSessionAndGame(true) |> thenValue
+            let! (_, session, game) = TestUtilities.createuserSessionAndGame(true)
 
             let newParameters =
                 {
@@ -31,7 +29,7 @@ type GetUpdateGameParametersEventTests() =
                 }
 
             //Act
-            let event = host.Get<GameCrudService>().getUpdateGameParametersEvent (game, newParameters) session |> Result.value
+            let event = host.Get<GameCrudService>().getUpdateGameParametersEvent (game, newParameters) session
 
             //Assert
             event.kind |> shouldBe EventKind.GameParametersChanged
@@ -51,14 +49,14 @@ type GetUpdateGameParametersEventTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (user, session, game) = TestUtilities.createuserSessionAndGame(true) |> thenValue
+            let! (user, session, game) = TestUtilities.createuserSessionAndGame(true)
 
             let newGame =
                 { game with parameters =
                             { game.parameters with regionCount = 4 }
                 }
 
-            let! _ = host.Get<IGameRepository>().updateGame newGame |> thenValue
+            let! _ = host.Get<IGameRepository>().updateGame newGame
 
             for n in [2..4] do
                 let playerRequest =
@@ -70,12 +68,12 @@ type GetUpdateGameParametersEventTests() =
                 let! _ = host.Get<IGameRepository>().addPlayer (game.id, playerRequest)
                 ()
 
-            let! game = host.Get<IGameRepository>().getGame game.id |> thenValue
+            let! game = host.Get<IGameRepository>().getGame game.id
 
             let newParameters = { game.parameters with regionCount = 3}
 
             //Act
-            let event = host.Get<GameCrudService>().getUpdateGameParametersEvent (game, newParameters) session |> Result.value
+            let event = host.Get<GameCrudService>().getUpdateGameParametersEvent (game, newParameters) session
 
             //Assert
             event.kind |> shouldBe EventKind.GameParametersChanged
@@ -95,7 +93,7 @@ type GetUpdateGameParametersEventTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (user, session, game) = TestUtilities.createuserSessionAndGame(true) |> thenValue
+            let! (user, session, game) = TestUtilities.createuserSessionAndGame(true)
 
             for n in [2..3] do
                 let playerRequest =
@@ -107,12 +105,12 @@ type GetUpdateGameParametersEventTests() =
                 let! _ = host.Get<IGameRepository>().addPlayer (game.id, playerRequest)
                 ()
 
-            let! game = host.Get<IGameRepository>().getGame game.id |> thenValue
+            let! game = host.Get<IGameRepository>().getGame game.id
 
             let newParameters = { game.parameters with allowGuests = false }
 
             //Act
-            let event = host.Get<GameCrudService>().getUpdateGameParametersEvent (game, newParameters) session |> Result.value
+            let event = host.Get<GameCrudService>().getUpdateGameParametersEvent (game, newParameters) session
 
             //Assert
             event.kind |> shouldBe EventKind.GameParametersChanged
@@ -133,17 +131,20 @@ type GetUpdateGameParametersEventTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (_, session, game) = TestUtilities.createuserSessionAndGame(true) |> thenValue
+            let! (_, session, game) = TestUtilities.createuserSessionAndGame(true)
             let newGame = { game with status = GameStatus.InProgress }
-            let! _ = host.Get<IGameRepository>().updateGame newGame |> thenValue
-            let! game = host.Get<IGameRepository>().getGame game.id |> thenValue
+            let! _ = host.Get<IGameRepository>().updateGame newGame
+            let! game = host.Get<IGameRepository>().getGame game.id
             let newParameters = game.parameters
 
-            //Act
-            let result = host.Get<GameCrudService>().getUpdateGameParametersEvent (game, newParameters) session
+            //Act/Assert
+            let ex = Assert.Throws<HttpException>(fun () -> 
+                host.Get<GameCrudService>().getUpdateGameParametersEvent (game, newParameters) session 
+                |> ignore
+            )
 
-            //Assert
-            result |> shouldBeError 400 "Cannot change game parameters unless game is Pending."
+            ex.statusCode |> shouldBe 400
+            ex.Message |> shouldBe "Cannot change game parameters unless game is Pending."
         }
 
     [<Fact>]
@@ -151,15 +152,18 @@ type GetUpdateGameParametersEventTests() =
         let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (_, session, game) = TestUtilities.createuserSessionAndGame(true) |> thenValue
+            let! (_, session, game) = TestUtilities.createuserSessionAndGame(true)
 
             let newParameters = game.parameters
 
             let otherSession = session |> TestUtilities.setSessionUserId (session.user.id + 1)
 
-            //Act
-            let result = host.Get<GameCrudService>().getUpdateGameParametersEvent (game, newParameters) otherSession
+            //Act/Assert
+            let ex = Assert.Throws<HttpException>(fun () -> 
+                host.Get<GameCrudService>().getUpdateGameParametersEvent (game, newParameters) otherSession
+                |> ignore
+            )
 
-            //Assert
-            result |> shouldBeError 403 Security.noPrivilegeOrCreatorErrorMessage
+            ex.statusCode |> shouldBe 403
+            ex.Message |> shouldBe Security.noPrivilegeOrCreatorErrorMessage
         }

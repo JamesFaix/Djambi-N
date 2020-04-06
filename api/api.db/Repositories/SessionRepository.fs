@@ -21,9 +21,9 @@ type SessionRepository(context : ApexDbContext) =
                             (query.userId.IsNone || s.User.UserId = query.userId.Value)
                         )
 
-                if s = null
-                then return Error <| HttpException(404, "Session not found.")
-                else return Ok(s |> toSession)
+                return if s = null
+                       then raise <| HttpException(404, "Session not found.")
+                       else s |> toSession
             }
 
         member __.createSession request =
@@ -42,19 +42,19 @@ type SessionRepository(context : ApexDbContext) =
                         .Include(fun s -> s.User)
                         .SingleOrDefaultAsync(fun s1 -> s1.SessionId = s.SessionId)
 
-                return Ok(s |> toSession)
+                return s |> toSession
             }
 
         member __.renewSessionExpiration (sessionId, expiresOn) =
             task {
                 let! s = context.Sessions.FindAsync(sessionId)
                 if s = null
-                then return Error <| HttpException(404, "Session not found.")
+                then return raise <| HttpException(404, "Session not found.")
                 else 
                     s.ExpiresOn <- expiresOn
                     context.Sessions.Update(s) |> ignore
                     let! _ = context.SaveChangesAsync()
-                    return Ok(s |> toSession)
+                    return s |> toSession
             }
 
         member __.deleteSession (sessionId, token) =
@@ -79,10 +79,9 @@ type SessionRepository(context : ApexDbContext) =
                     s <- x
 
                 if s = null
-                then return Error <| HttpException(404, "Session not found.")
+                then return raise <| HttpException(404, "Session not found.")
                 else
                     context.Sessions.Remove(s) |> ignore
                     let! _ = context.SaveChangesAsync()
-
-                    return Ok ()
+                    return ()
             }
