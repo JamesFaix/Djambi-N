@@ -153,9 +153,7 @@ type GameManager(eventRepo : IEventRepository,
     interface ITurnManager with
         member x.selectCell (gameId, cellId) session =
             processEvent gameId (fun game -> 
-                match selectionServ.getCellSelectedEvent (game, cellId) session with
-                | Ok x -> x
-                | Error ex -> raise ex
+                selectionServ.getCellSelectedEvent (game, cellId) session    
             )
 
         member x.resetTurn gameId session =
