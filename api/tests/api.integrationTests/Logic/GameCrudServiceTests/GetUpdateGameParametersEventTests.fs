@@ -3,7 +3,6 @@ namespace Apex.Api.IntegrationTests.Logic.GameCrudService
 open FSharp.Control.Tasks
 open Xunit
 open Apex.Api.Common.Control
-open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.IntegrationTests
 open Apex.Api.Model
 open Apex.Api.Logic
@@ -57,7 +56,7 @@ type GetUpdateGameParametersEventTests() =
                             { game.parameters with regionCount = 4 }
                 }
 
-            let! _ = host.Get<IGameRepository>().updateGame newGame |> thenValue
+            let! _ = host.Get<IGameRepository>().updateGame newGame
 
             for n in [2..4] do
                 let playerRequest =
@@ -69,7 +68,7 @@ type GetUpdateGameParametersEventTests() =
                 let! _ = host.Get<IGameRepository>().addPlayer (game.id, playerRequest)
                 ()
 
-            let! game = host.Get<IGameRepository>().getGame game.id |> thenValue
+            let! game = host.Get<IGameRepository>().getGame game.id
 
             let newParameters = { game.parameters with regionCount = 3}
 
@@ -106,7 +105,7 @@ type GetUpdateGameParametersEventTests() =
                 let! _ = host.Get<IGameRepository>().addPlayer (game.id, playerRequest)
                 ()
 
-            let! game = host.Get<IGameRepository>().getGame game.id |> thenValue
+            let! game = host.Get<IGameRepository>().getGame game.id
 
             let newParameters = { game.parameters with allowGuests = false }
 
@@ -134,8 +133,8 @@ type GetUpdateGameParametersEventTests() =
             //Arrange
             let! (_, session, game) = TestUtilities.createuserSessionAndGame(true)
             let newGame = { game with status = GameStatus.InProgress }
-            let! _ = host.Get<IGameRepository>().updateGame newGame |> thenValue
-            let! game = host.Get<IGameRepository>().getGame game.id |> thenValue
+            let! _ = host.Get<IGameRepository>().updateGame newGame
+            let! game = host.Get<IGameRepository>().getGame game.id
             let newParameters = game.parameters
 
             //Act

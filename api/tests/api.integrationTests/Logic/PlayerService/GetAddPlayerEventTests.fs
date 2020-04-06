@@ -3,7 +3,6 @@ namespace Apex.Api.IntegrationTests.Logic.PlayerService
 open FSharp.Control.Tasks
 open Xunit
 open Apex.Api.Common.Control
-open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.IntegrationTests
 open Apex.Api.Model
 open Apex.Api.Logic.Interfaces
@@ -297,7 +296,7 @@ type GetAddPlayerEventTests() =
             let! _ = host.Get<IPlayerManager>().addPlayer game.id request1 session
             let! _ = host.Get<IPlayerManager>().addPlayer game.id request2 session
 
-            let! game = host.Get<IGameRepository>().getGame game.id |> thenValue
+            let! game = host.Get<IGameRepository>().getGame game.id
 
             //Act
             let error = host.Get<PlayerService>().getAddPlayerEvent (game, request3) session

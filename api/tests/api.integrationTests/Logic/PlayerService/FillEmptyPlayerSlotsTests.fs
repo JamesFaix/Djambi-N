@@ -28,7 +28,7 @@ type FillEmptyPlayerSlotsTests() =
             let! updatedGame = TestUtilities.fillEmptyPlayerSlots game
 
             //Assert
-            let! doubleCheck = host.Get<IGameRepository>().getGame game.id |> thenValue
+            let! doubleCheck = host.Get<IGameRepository>().getGame game.id
 
             updatedGame.players.Length |> shouldBe gameRequest.regionCount
             doubleCheck |> shouldBe updatedGame

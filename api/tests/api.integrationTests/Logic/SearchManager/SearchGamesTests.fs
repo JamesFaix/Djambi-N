@@ -2,7 +2,6 @@
 
 open FSharp.Control.Tasks
 open Xunit
-open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.IntegrationTests
 open Apex.Api.Model
 open Apex.Api.Logic.Interfaces
@@ -57,7 +56,7 @@ type SearchGamesTests() =
 
             let! (_, _, game1) = TestUtilities.createuserSessionAndGame(false)
             let! (user2, _, game2) = TestUtilities.createuserSessionAndGame(true)
-            let! _ = host.Get<IGameRepository>().updateGame({ game2 with parameters = { game2.parameters with isPublic = true }}) |> thenValue
+            let! _ = host.Get<IGameRepository>().updateGame({ game2 with parameters = { game2.parameters with isPublic = true }})
 
             let session = getSessionForUser user2 |> TestUtilities.setSessionPrivileges [Privilege.ViewGames]
             let query = { GamesQuery.empty with isPublic = Some true }

@@ -52,8 +52,8 @@ type GetRemovePlayerEventTests() =
                     name = Some "test"
                     userId = None
                 }
-            let! neutralPlayer = host.Get<IGameRepository>().addPlayer(game.id, request) |> thenValue
-            let! game = host.Get<IGameRepository>().getGame game.id |> thenValue
+            let! neutralPlayer = host.Get<IGameRepository>().addPlayer(game.id, request)
+            let! game = host.Get<IGameRepository>().getGame game.id
 
             //Act
             let error = host.Get<PlayerService>().getRemovePlayerEvent (game, neutralPlayer.id) session
@@ -79,7 +79,7 @@ type GetRemovePlayerEventTests() =
             let! response = host.Get<IPlayerManager>().addPlayer game.id request adminSession
             let player = response.game.players |> List.except game.players |> List.head
 
-            let! game = host.Get<IGameRepository>().getGame game.id |> thenValue
+            let! game = host.Get<IGameRepository>().getGame game.id
 
             //Act
             let error = host.Get<PlayerService>().getRemovePlayerEvent (game, player.id) session
@@ -99,7 +99,7 @@ type GetRemovePlayerEventTests() =
             let! response = host.Get<IPlayerManager>().addPlayer game.id request session
             let player = response.game.players |> List.except game.players |> List.head
 
-            let! game = host.Get<IGameRepository>().getGame game.id |> thenValue
+            let! game = host.Get<IGameRepository>().getGame game.id
 
             //Act
             let event = host.Get<PlayerService>().getRemovePlayerEvent (game, player.id) session |> Result.value
@@ -128,7 +128,7 @@ type GetRemovePlayerEventTests() =
             let! response = host.Get<IPlayerManager>().addPlayer game.id request session
             let player = response.game.players |> List.except game.players |> List.head
 
-            let! game = host.Get<IGameRepository>().getGame game.id |> thenValue
+            let! game = host.Get<IGameRepository>().getGame game.id
 
             //Act
             let event = host.Get<PlayerService>().getRemovePlayerEvent (game, player.id) session |> Result.value
@@ -157,7 +157,7 @@ type GetRemovePlayerEventTests() =
             let! response = host.Get<IPlayerManager>().addPlayer game.id request adminSession
             let player = response.game.players |> List.except game.players |> List.head
 
-            let! game = host.Get<IGameRepository>().getGame game.id |> thenValue
+            let! game = host.Get<IGameRepository>().getGame game.id
 
             //Act
             let event = host.Get<PlayerService>().getRemovePlayerEvent (game, player.id) session |> Result.value
@@ -191,7 +191,7 @@ type GetRemovePlayerEventTests() =
             let! response = host.Get<IPlayerManager>().addPlayer game.id guestPlayerRequest adminSession
             let guestPlayer = response.game.players |> List.except (userPlayer :: game.players) |> List.head
 
-            let! game = host.Get<IGameRepository>().getGame game.id |> thenValue
+            let! game = host.Get<IGameRepository>().getGame game.id
 
             let event = host.Get<PlayerService>().getRemovePlayerEvent (game, userPlayer.id) session |> Result.value
 
@@ -225,7 +225,7 @@ type GetRemovePlayerEventTests() =
             let! response = host.Get<IPlayerManager>().addPlayer game.id guestPlayerRequest adminSession
             let guestPlayer = response.game.players |> List.except (userPlayer :: game.players) |> List.head
 
-            let! game = host.Get<IGameRepository>().getGame game.id |> thenValue
+            let! game = host.Get<IGameRepository>().getGame game.id
 
             //Act
             let event = host.Get<PlayerService>().getRemovePlayerEvent (game, guestPlayer.id) session |> Result.value

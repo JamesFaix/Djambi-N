@@ -50,17 +50,17 @@ type GameManager(eventRepo : IEventRepository,
 
     let processEvent (gameId : int) (getCreateEventRequest : Game -> CreateEventRequest) : Task<StateAndEventResponse> =
         task {
-            let! game = gameRepo.getGame gameId |> thenExtract
+            let! game = gameRepo.getGame gameId
             let eventRequest = getCreateEventRequest game
             let newGame = eventServ.applyEvent game eventRequest
-            let! response = eventRepo.persistEvent (eventRequest, game, newGame) |> thenExtract
+            let! response = eventRepo.persistEvent (eventRequest, game, newGame)
             let! _ = sendIfPublishable response
             return response
         }
 
     let processGameStartEventsAsync (gameId : int) (getCreateEventRequests : Game -> Task<(CreateEventRequest option * CreateEventRequest)>): Task<StateAndEventResponse> =
         task {
-            let! game = gameRepo.getGame gameId |> thenExtract
+            let! game = gameRepo.getGame gameId
             let! eventRequests = getCreateEventRequests game
             (*
                 This is really kind of ugly because of how inflexible the pattern for
@@ -75,7 +75,7 @@ type GameManager(eventRepo : IEventRepository,
                 match addNeutralPlayers with
                 | Some er -> 
                     let newGame = eventServ.applyEvent game er
-                    eventRepo.persistEvent (er, game, newGame) |> thenExtract
+                    eventRepo.persistEvent (er, game, newGame)
                 | None ->
                     let dummyEvent : Event = {
                         id = 0
@@ -91,7 +91,7 @@ type GameManager(eventRepo : IEventRepository,
                     Task.FromResult{ game = game; event = dummyEvent }
             
             let newGame = eventServ.applyEvent response.game startGame
-            let! response = eventRepo.persistEvent (startGame, response.game, newGame) |> thenExtract
+            let! response = eventRepo.persistEvent (startGame, response.game, newGame)
             let! _ = sendIfPublishable response
             return response
         }
@@ -99,7 +99,7 @@ type GameManager(eventRepo : IEventRepository,
     interface IEventManager with
         member x.getEvents (gameId, query) session =
             task {
-                let! game = gameRepo.getGame gameId |> thenExtract
+                let! game = gameRepo.getGame gameId
                 match Security.ensurePlayerOrHas Privilege.ViewGames session game with
                 | Error ex -> return raise ex
                 | _ -> return! eventRepo.getEvents (gameId, query)            
@@ -109,7 +109,7 @@ type GameManager(eventRepo : IEventRepository,
         //TODO: Requires integration tests
         member x.getGame gameId session =
             task {
-                let! game = gameRepo.getGame gameId |> thenExtract
+                let! game = gameRepo.getGame gameId
                 if isGameViewableByActiveUser session game
                 then return game
                 else return raise <| HttpException(404, "Game not found.")

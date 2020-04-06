@@ -24,12 +24,12 @@ type GetGameStartEventsTests() =
                     kind = PlayerKind.Guest
                     name = Some "p2"
                 }
-            let! _ = host.Get<IGameRepository>().addPlayer (game.id, player2request) |> thenValue
+            let! _ = host.Get<IGameRepository>().addPlayer (game.id, player2request)
 
             let player3request = { player2request with name = Some "p3" }
-            let! _ = host.Get<IGameRepository>().addPlayer (game.id, player3request) |> thenValue
+            let! _ = host.Get<IGameRepository>().addPlayer (game.id, player3request)
 
-            let! game = host.Get<IGameRepository>().getGame game.id |> thenValue
+            let! game = host.Get<IGameRepository>().getGame game.id
 
             return Ok (user, session, game)
         }
@@ -128,7 +128,7 @@ type GetGameStartEventsTests() =
                 }
 
             let! _ = host.Get<IGameRepository>().addPlayer(game.id, p2Request)
-            let! game = host.Get<IGameRepository>().getGame game.id |> thenValue
+            let! game = host.Get<IGameRepository>().getGame game.id
 
             //Act
             let! events = host.Get<GameStartService>().getGameStartEvents game session |> thenValue

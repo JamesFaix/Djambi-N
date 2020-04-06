@@ -7,6 +7,7 @@ open Apex.Api.Db.Interfaces
 open Apex.Api.Model
 open Apex.Api.Logic
 open Apex.Api.Enums
+open FSharp.Control.Tasks
 
 type GameCrudService(gameRepo : IGameRepository) =
     member x.createGame (parameters : GameParameters) (session : Session) : Game AsyncHttpResult =
@@ -28,8 +29,11 @@ type GameCrudService(gameRepo : IGameRepository) =
                     name = Some session.user.name
                 }
 
-            gameRepo.createGameAndAddPlayer (gameRequest, playerRequest)
-            |> thenBindAsync gameRepo.getGame
+            task {
+                let! gameId = gameRepo.createGameAndAddPlayer (gameRequest, playerRequest)
+                let! game = gameRepo.getGame gameId
+                return Ok game
+            }
 
     member x.getUpdateGameParametersEvent (game : Game, parameters : GameParameters) (session : Session) : CreateEventRequest HttpResult =
         if game.status <> GameStatus.Pending

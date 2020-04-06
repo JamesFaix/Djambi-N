@@ -1,7 +1,6 @@
 namespace Apex.Api.Logic.Managers
 
 open Apex.Api.Common.Control
-open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.Logic
 open Apex.Api.Model
 open Apex.Api.Logic.Interfaces
@@ -22,7 +21,7 @@ type SnapshotManager(eventRepo : IEventRepository,
                 then raise <| HttpException(422, "Snapshot descriptions cannot exceed 100 characters.")
 
                 task {
-                    let! game = gameRepo.getGame gameId |> thenExtract
+                    let! game = gameRepo.getGame gameId
                     let! history = eventRepo.getEvents (gameId, EventsQuery.empty)
                     let request =
                         {

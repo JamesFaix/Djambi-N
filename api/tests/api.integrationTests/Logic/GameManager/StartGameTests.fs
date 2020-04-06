@@ -56,8 +56,9 @@ type StartGameTests() =
             ex.statusCode |> shouldBe 400
             ex.Message |> shouldBe "Cannot start game with only one player."
 
-            let! lobbyResult = host.Get<IGameRepository>().getGame game.id
-            lobbyResult |> Result.isOk |> shouldBeTrue
+            let! _ = host.Get<IGameRepository>().getGame game.id
+            // Didn't throw
+            return ()
         }
 
     //TODO: Test other error cases

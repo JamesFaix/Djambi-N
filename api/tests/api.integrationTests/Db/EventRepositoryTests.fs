@@ -2,7 +2,6 @@ namespace Apex.Api.IntegrationTests.Db
 
 open FSharp.Control.Tasks
 open Xunit
-open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.IntegrationTests
 open Apex.Api.Model
 open Apex.Api.Db.Interfaces
@@ -10,6 +9,8 @@ open Apex.Api.Logic.Interfaces
 open System.ComponentModel
 open Apex.Api.Enums
 open Apex.Api.Logic.Services
+open Apex.Api.Common.Control
+open System.Threading.Tasks
 
 type EventRepositoryTests() =
     inherit TestsBase()
@@ -37,7 +38,7 @@ type EventRepositoryTests() =
             let newGame = { game with players = [player] }
 
             //Act
-            let! resp = host.Get<IEventRepository>().persistEvent (TestUtilities.emptyEventRequest(user.id), game, newGame) |> thenValue
+            let! resp = host.Get<IEventRepository>().persistEvent (TestUtilities.emptyEventRequest(user.id), game, newGame)
 
             //Assert
             let persistedGame = resp.game
@@ -65,13 +66,13 @@ type EventRepositoryTests() =
                     name = Some "p2"
                 }
 
-            let! _ = host.Get<IGameRepository>().addPlayer(game.id, playerRequest) |> thenValue
-            let! game = host.Get<IGameRepository>().getGame game.id |> thenValue
+            let! _ = host.Get<IGameRepository>().addPlayer(game.id, playerRequest)
+            let! game = host.Get<IGameRepository>().getGame game.id
 
             let newGame = { game with players = [] }
 
             //Act
-            let! resp = host.Get<IEventRepository>().persistEvent (TestUtilities.emptyEventRequest(user.id), game, newGame) |> thenValue
+            let! resp = host.Get<IEventRepository>().persistEvent (TestUtilities.emptyEventRequest(user.id), game, newGame)
 
             //Assert
             let persistedGame = resp.game
@@ -95,8 +96,8 @@ type EventRepositoryTests() =
                     name = Some "p2"
                 }
 
-            let! _ = host.Get<IGameRepository>().addPlayer(game.id, p2Request) |> thenValue
-            let! game = host.Get<IGameRepository>().getGame game.id |> thenValue
+            let! _ = host.Get<IGameRepository>().addPlayer(game.id, p2Request)
+            let! game = host.Get<IGameRepository>().getGame game.id
 
             let oldP2 = game.players.[1]
             oldP2.status |> shouldBe PlayerStatus.Pending
@@ -121,7 +122,7 @@ type EventRepositoryTests() =
                 }
 
             //Act
-            let! resp = host.Get<IEventRepository>().persistEvent (TestUtilities.emptyEventRequest(user.id), game, newGame) |> thenValue
+            let! resp = host.Get<IEventRepository>().persistEvent (TestUtilities.emptyEventRequest(user.id), game, newGame)
 
             //Assert
             let persistedGame = resp.game
@@ -176,7 +177,7 @@ type EventRepositoryTests() =
                 }
 
             //Act
-            let! resp = host.Get<IEventRepository>().persistEvent (TestUtilities.emptyEventRequest(user.id), game, newGame) |> thenValue
+            let! resp = host.Get<IEventRepository>().persistEvent (TestUtilities.emptyEventRequest(user.id), game, newGame)
 
             //Assert
             let persistedGame = resp.game
@@ -198,14 +199,17 @@ type EventRepositoryTests() =
 
             let newGame = host.Get<EventService>().applyEvent game event
 
-            //Act
-            let! result = host.Get<IEventRepository>().persistEvent (TestUtilities.emptyEventRequest(user.id), game, newGame)
+            //Act/Assert
+            let! ex = Assert.ThrowsAsync<HttpException>(fun () -> 
+                host.Get<IEventRepository>().persistEvent (TestUtilities.emptyEventRequest(user.id), game, newGame)
+                :> Task
+            )
 
-            //Assert
-            result |> shouldBeError 409 "Conflict when attempting to write Event."
+            ex.statusCode |> shouldBe 409
+            ex.Message |> shouldBe "Conflict when attempting to write Event."
 
             let host = HostFactory.createHost() // Must create a new host because the DbContext's tracked changes are now in a corrupt state
-            let! persistedGame = host.Get<IGameRepository>().getGame game.id |> thenValue
+            let! persistedGame = host.Get<IGameRepository>().getGame game.id
             persistedGame.players.Length |> shouldBe 1 //Just the creator
             persistedGame.players |> shouldNotExist (fun p -> p.name = "test")
         }

@@ -2,7 +2,6 @@
 
 open FSharp.Control.Tasks
 open Xunit
-open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.IntegrationTests
 open Apex.Api.Model
 open Apex.Api.Db.Interfaces
@@ -19,7 +18,7 @@ type SearchRepositoryTests() =
             let! user = host.Get<IUserRepository>().createUser userRequest
 
             let gameRequest = getCreateGameRequest(user.id)
-            let! gameId = host.Get<IGameRepository>().createGame gameRequest |> thenValue
+            let! gameId = host.Get<IGameRepository>().createGame gameRequest
             let query = GamesQuery.empty
 
             //Act

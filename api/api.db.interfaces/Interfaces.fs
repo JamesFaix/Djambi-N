@@ -7,20 +7,20 @@ open Apex.Api.Model
 
 type IEventRepository =
     abstract member getEvents : gameId:int * query:EventsQuery -> Task<list<Event>>
-    abstract member persistEvent : request:CreateEventRequest * oldGame:Game * newGame:Game -> StateAndEventResponse AsyncHttpResult
+    abstract member persistEvent : request:CreateEventRequest * oldGame:Game * newGame:Game -> Task<StateAndEventResponse>
 
 type IGameRepository =
-    abstract member getGame : gameId:int -> Game AsyncHttpResult
+    abstract member getGame : gameId:int -> Task<Game>
     [<Obsolete("Only used for tests")>]
-    abstract member createGame : request:CreateGameRequest -> int AsyncHttpResult   
+    abstract member createGame : request:CreateGameRequest -> Task<int>   
     [<Obsolete("Only used for tests")>]
-    abstract member addPlayer : gameId:int * request:CreatePlayerRequest -> Player AsyncHttpResult
+    abstract member addPlayer : gameId:int * request:CreatePlayerRequest -> Task<Player>
     [<Obsolete("Only used for tests")>]
-    abstract member removePlayer : gameID:int * playerId:int -> unit AsyncHttpResult
+    abstract member removePlayer : gameID:int * playerId:int -> Task<unit>
     [<Obsolete("Only used for tests")>]
-    abstract member updateGame : game:Game -> unit AsyncHttpResult
-    abstract member getNeutralPlayerNames : unit -> string list AsyncHttpResult
-    abstract member createGameAndAddPlayer : gameRequest:CreateGameRequest * playerRequest:CreatePlayerRequest -> int AsyncHttpResult
+    abstract member updateGame : game:Game -> Task<unit>
+    abstract member getNeutralPlayerNames : unit -> Task<list<string>>
+    abstract member createGameAndAddPlayer : gameRequest:CreateGameRequest * playerRequest:CreatePlayerRequest -> Task<int>
 
 type ISearchRepository =
     abstract member searchGames : query:GamesQuery * currentUserId:int -> Task<list<SearchGame>>

@@ -10,6 +10,7 @@ open Apex.Api.Model
 open Apex.Api.Logic
 open Apex.Api.Enums
 open System.ComponentModel
+open FSharp.Control.Tasks
 
 type PlayerService(gameRepo : IGameRepository) =
     member x.getAddPlayerEvent (game : Game, request : CreatePlayerRequest) (session : Session) : CreateEventRequest HttpResult =
@@ -120,15 +121,17 @@ type PlayerService(gameRepo : IGameRepository) =
         if missingPlayerCount = 0
         then okTask []
         else
-            gameRepo.getNeutralPlayerNames()
-            |> thenMap getNeutralPlayerNamesToUse
-            |> thenMap (Seq.mapi (fun i name -> 
-                let placeholderPlayerId = -(i+1) //Use negative numbers to avoid conflicts
-                let f : NeutralPlayerAddedEffect = 
-                    {
-                        name = name
-                        placeholderPlayerId = placeholderPlayerId
-                    }
-                Effect.NeutralPlayerAdded f
-            ))
-            |> thenMap Seq.toList
+            task {
+                let! names = gameRepo.getNeutralPlayerNames()
+                let namesToUse = getNeutralPlayerNamesToUse names
+                let effects = namesToUse |> Seq.mapi (fun i name -> 
+                    let placeholderPlayerId = -(i+1) //Use negative numbers to avoid conflicts
+                    let f : NeutralPlayerAddedEffect = 
+                        {
+                            name = name
+                            placeholderPlayerId = placeholderPlayerId
+                        }
+                    Effect.NeutralPlayerAdded f
+                )
+                return Ok(effects |> Seq.toList)
+            }

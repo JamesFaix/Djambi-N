@@ -4,7 +4,6 @@ module Apex.Api.IntegrationTests.TestUtilities
 open System
 open System.Linq
 open FSharp.Control.Tasks
-open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.Db.Interfaces
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Model
@@ -91,10 +90,10 @@ let fillEmptyPlayerSlots (game : Game) : Task<Game> =
         for i in Enumerable.Range(0, missingPlayerCount) do
             let name = sprintf "neutral%i" (i+1)
             let request = CreatePlayerRequest.neutral name
-            let! _ = host.Get<IGameRepository>().addPlayer (game.id, request) |> thenValue
+            let! _ = host.Get<IGameRepository>().addPlayer (game.id, request)
             ()
 
-        return! host.Get<IGameRepository>().getGame game.id |> thenExtract
+        return! host.Get<IGameRepository>().getGame game.id
     }
 
 let emptyEventRequest (userId : int) : CreateEventRequest =
