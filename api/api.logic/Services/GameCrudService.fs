@@ -2,18 +2,18 @@ namespace Apex.Api.Logic.Services
 
 open Apex.Api.Common.Collections
 open Apex.Api.Common.Control
-open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.Db.Interfaces
 open Apex.Api.Model
 open Apex.Api.Logic
 open Apex.Api.Enums
 open FSharp.Control.Tasks
+open System.Threading.Tasks
 
 type GameCrudService(gameRepo : IGameRepository) =
-    member x.createGame (parameters : GameParameters) (session : Session) : Game AsyncHttpResult =
+    member x.createGame (parameters : GameParameters) (session : Session) : Task<Game> =
         match parameters.description with
         | Some x when not <| Validation.isValidGameDescription x ->
-            errorTask <| HttpException(422, "Game descriptions cannot exceed 100 characters.")
+            raise <| HttpException(422, "Game descriptions cannot exceed 100 characters.")
         | _ -> 
             let self = session.user
             let gameRequest : CreateGameRequest =
@@ -31,16 +31,16 @@ type GameCrudService(gameRepo : IGameRepository) =
 
             task {
                 let! gameId = gameRepo.createGameAndAddPlayer (gameRequest, playerRequest)
-                let! game = gameRepo.getGame gameId
-                return Ok game
+                return! gameRepo.getGame gameId
             }
 
-    member x.getUpdateGameParametersEvent (game : Game, parameters : GameParameters) (session : Session) : CreateEventRequest HttpResult =
+    member x.getUpdateGameParametersEvent (game : Game, parameters : GameParameters) (session : Session) : CreateEventRequest =
         if game.status <> GameStatus.Pending
-        then Error <| HttpException (400, "Cannot change game parameters unless game is Pending.")
-        else Ok ()
-        |> Result.bind (fun _ -> Security.ensureCreatorOrEditPendingGames session game)
-        |> Result.map (fun _ ->
+        then raise <| HttpException (400, "Cannot change game parameters unless game is Pending.")
+
+        match Security.ensureCreatorOrEditPendingGames session game with
+        | Error ex -> raise ex
+        | Ok () ->
             let effects = new ArrayList<Effect>()
 
             effects.Add(Effect.ParametersChanged { oldValue = game.parameters; newValue = parameters })
@@ -72,4 +72,3 @@ type GameCrudService(gameRepo : IGameRepository) =
                 createdByUserId = session.user.id
                 actingPlayerId = Context.getActingPlayerId session game
             }
-        )

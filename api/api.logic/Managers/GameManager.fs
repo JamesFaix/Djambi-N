@@ -116,14 +116,12 @@ type GameManager(eventRepo : IEventRepository,
             }
 
         member x.createGame parameters session =
-            gameCrudServ.createGame parameters session |> thenExtract
+            gameCrudServ.createGame parameters session
 
         //TODO: Requires integration tests
         member x.updateGameParameters gameId parameters session =
             processEvent gameId (fun game -> 
-                match gameCrudServ.getUpdateGameParametersEvent (game, parameters) session with
-                | Ok x -> x
-                | Error ex -> raise ex
+                gameCrudServ.getUpdateGameParametersEvent (game, parameters) session
             )
 
         member x.startGame gameId session =

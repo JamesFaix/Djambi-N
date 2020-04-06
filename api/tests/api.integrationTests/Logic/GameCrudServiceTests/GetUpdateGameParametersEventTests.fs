@@ -29,7 +29,7 @@ type GetUpdateGameParametersEventTests() =
                 }
 
             //Act
-            let event = host.Get<GameCrudService>().getUpdateGameParametersEvent (game, newParameters) session |> Result.value
+            let event = host.Get<GameCrudService>().getUpdateGameParametersEvent (game, newParameters) session
 
             //Assert
             event.kind |> shouldBe EventKind.GameParametersChanged
@@ -73,7 +73,7 @@ type GetUpdateGameParametersEventTests() =
             let newParameters = { game.parameters with regionCount = 3}
 
             //Act
-            let event = host.Get<GameCrudService>().getUpdateGameParametersEvent (game, newParameters) session |> Result.value
+            let event = host.Get<GameCrudService>().getUpdateGameParametersEvent (game, newParameters) session
 
             //Assert
             event.kind |> shouldBe EventKind.GameParametersChanged
@@ -110,7 +110,7 @@ type GetUpdateGameParametersEventTests() =
             let newParameters = { game.parameters with allowGuests = false }
 
             //Act
-            let event = host.Get<GameCrudService>().getUpdateGameParametersEvent (game, newParameters) session |> Result.value
+            let event = host.Get<GameCrudService>().getUpdateGameParametersEvent (game, newParameters) session
 
             //Assert
             event.kind |> shouldBe EventKind.GameParametersChanged
@@ -137,11 +137,14 @@ type GetUpdateGameParametersEventTests() =
             let! game = host.Get<IGameRepository>().getGame game.id
             let newParameters = game.parameters
 
-            //Act
-            let result = host.Get<GameCrudService>().getUpdateGameParametersEvent (game, newParameters) session
+            //Act/Assert
+            let ex = Assert.Throws<HttpException>(fun () -> 
+                host.Get<GameCrudService>().getUpdateGameParametersEvent (game, newParameters) session 
+                |> ignore
+            )
 
-            //Assert
-            result |> shouldBeError 400 "Cannot change game parameters unless game is Pending."
+            ex.statusCode |> shouldBe 400
+            ex.Message |> shouldBe "Cannot change game parameters unless game is Pending."
         }
 
     [<Fact>]
@@ -155,9 +158,12 @@ type GetUpdateGameParametersEventTests() =
 
             let otherSession = session |> TestUtilities.setSessionUserId (session.user.id + 1)
 
-            //Act
-            let result = host.Get<GameCrudService>().getUpdateGameParametersEvent (game, newParameters) otherSession
+            //Act/Assert
+            let ex = Assert.Throws<HttpException>(fun () -> 
+                host.Get<GameCrudService>().getUpdateGameParametersEvent (game, newParameters) otherSession
+                |> ignore
+            )
 
-            //Assert
-            result |> shouldBeError 403 Security.noPrivilegeOrCreatorErrorMessage
+            ex.statusCode |> shouldBe 403
+            ex.Message |> shouldBe Security.noPrivilegeOrCreatorErrorMessage
         }
