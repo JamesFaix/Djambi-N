@@ -48,7 +48,6 @@ let createHost() =
                 services.AddTransient<PlayerService>() |> ignore
                 services.AddTransient<PlayerStatusChangeService>() |> ignore
                 services.AddTransient<ISessionService, SessionService>() |> ignore
-                services.AddTransient<SessionService>() |> ignore
                 services.AddTransient<SelectionOptionsService>() |> ignore
                 services.AddTransient<SelectionService>() |> ignore
                 services.AddTransient<TurnService>() |> ignore

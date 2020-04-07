@@ -11,6 +11,7 @@ open Apex.Api.Common.Control
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Model
 open Apex.Api.Model.Configuration
+open System.Security.Authentication
 
 type SessionContextProvider(options : IOptions<ApiSettings>,
                             service : ISessionService,
@@ -25,20 +26,20 @@ type SessionContextProvider(options : IOptions<ApiSettings>,
         else
             task {
                 try 
-                    let! session = service.getSession token
-                    return Some(session)
+                    match! service.getAndRenewSession token with
+                    | Some session -> return Some session
+                    | None ->
+                        cookieProvider.AppendEmptyCookie ctx
+                        return None
                 with
-                | :? HttpException as ex when ex.statusCode = 404 ->
-                    return None
-                | :? HttpException as ex ->
+                | _ as ex ->
                     cookieProvider.AppendEmptyCookie ctx
                     return raise ex
             }
 
     member x.GetSessionFromContext (ctx : HttpContext) : Task<Session> =
         task{
-            let! sessionOption = x.GetSessionOptionFromContext ctx
-            if sessionOption.IsNone
-            then raise <| HttpException(401, "Not signed in.")
-            return sessionOption.Value
+            match! x.GetSessionOptionFromContext ctx with
+            | None -> return raise <| AuthenticationException("Not signed in.")
+            | Some session -> return session
         }

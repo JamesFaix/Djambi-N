@@ -17,9 +17,8 @@ type INotificationService =
 
 type ISessionService =
     abstract member openSession : request:LoginRequest -> Task<Session>
-    abstract member renewSession : token:string -> Task<Session>
-    abstract member getSession : token:string -> Task<Session>
     abstract member closeSession : session:Session -> Task<unit>
+    abstract member getAndRenewSession : token:string -> Task<Option<Session>>
 
 type IBoardManager =
     abstract member getBoard : regionCount:int -> session:Session -> Task<Board>

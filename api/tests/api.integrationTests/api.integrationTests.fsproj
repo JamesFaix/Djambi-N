@@ -30,9 +30,8 @@
     <Compile Include="Logic\SearchManager\SearchGamesTests.fs" />
     <Compile Include="Logic\SessionService\CloseSessionTests.fs" />
     <Compile Include="Logic\SessionService\CreateSessionTests.fs" />
-    <Compile Include="Logic\SessionService\GetSessionTests.fs" />
-    <Compile Include="Logic\SessionService\RenewSessionTests.fs" />
-    <None Include="Logic\TurnService\CommitTurnTests.fs" />
+    <Compile Include="Logic\SessionService\GetAndRenewSessionTests.fs" />
+    <Compile Include="Logic\TurnService\CommitTurnTests.fs" />
     <Compile Include="Logic\TurnService\ResetTurnTests.fs" />
     <Compile Include="Logic\UserManager\CreateUserTests.fs" />
     <Compile Include="Logic\UserManager\DeleteUserTests.fs" />
