@@ -7,6 +7,7 @@ open Apex.Api.Model
 open Apex.Api.Logic.Interfaces
 open System.Threading.Tasks
 open FSharp.Control.Tasks
+open System.Security.Authentication
 
 type SessionService(sessionRepo : ISessionRepository,
                     userRepo : IUserRepository) =
@@ -24,7 +25,7 @@ type SessionService(sessionRepo : ISessionRepository,
             let errorIfLocked (user : UserDetails) =
                 if user.failedLoginAttempts >= maxFailedLoginAttempts
                     && isWithinLockTimeoutPeriod user
-                then raise <| HttpException(401, "Account locked.")
+                then raise <| AuthenticationException("Account locked.")
                 else ()
 
             let errorIfInvalidPassword (user : UserDetails) =
@@ -39,7 +40,7 @@ type SessionService(sessionRepo : ISessionRepository,
                     let request = UpdateFailedLoginsRequest.increment (user.id, attempts)
                     task {
                         let! _ = userRepo.updateFailedLoginAttempts request
-                        raise <| HttpException(401, "Incorrect password.")
+                        raise <| AuthenticationException("Incorrect password.")
                     }
 
             let deleteSessionForUser (userId : int) : Task<unit> =            

@@ -4,9 +4,9 @@ open FSharp.Control.Tasks
 open Xunit
 open Apex.Api.IntegrationTests
 open Apex.Api.Logic.Interfaces
-open Apex.Api.Common.Control
 open System.Threading.Tasks
 open Apex.Api.Model
+open System.Security.Authentication
 
 type CreateSessionTests() =
     inherit TestsBase()
@@ -60,13 +60,12 @@ type CreateSessionTests() =
             let request = { getLoginRequest userRequest with password = "wrong" }
 
             //Act/Assert
-            let! ex = Assert.ThrowsAsync<HttpException>(fun () ->
+            let! ex = Assert.ThrowsAsync<AuthenticationException>(fun () ->
                 task {
                     return! host.Get<ISessionService>().openSession request
                 } :> Task
             )
 
-            ex.statusCode |> shouldBe 401
             ex.Message |> shouldBe "Incorrect password."
         }
 
@@ -80,7 +79,7 @@ type CreateSessionTests() =
                     let! _ = host.Get<ISessionService>().openSession request
                     return ()
                 with 
-                | :? HttpException as ex when ex.Message = "Incorrect password." ->
+                | :? AuthenticationException as ex when ex.Message = "Incorrect password." ->
                     return ()
             }
 
@@ -96,12 +95,11 @@ type CreateSessionTests() =
                 ()
 
             //Act/Assert
-            let! ex = Assert.ThrowsAsync<HttpException>(fun () ->
+            let! ex = Assert.ThrowsAsync<AuthenticationException>(fun () ->
                 task {
                     return! host.Get<ISessionService>().openSession request
                 } :> Task
             )
 
-            ex.statusCode |> shouldBe 401
             ex.Message |> shouldBe "Account locked."
         }
