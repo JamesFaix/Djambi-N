@@ -3,23 +3,25 @@ namespace Apex.Api.Logic.Managers
 open Apex.Api.Model
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Logic
-open Apex.Api.Common.Control
 open Apex.Api.Enums
 open Apex.Api.Db.Interfaces
 open FSharp.Control.Tasks
+open System
+open System.ComponentModel.DataAnnotations
+open Apex.Api.Common.Control
 
 type UserManager(userRepo : IUserRepository) =
     interface IUserManager with
         member __.createUser request sessionOption =
             match sessionOption with
             | Some s when not (s.user.has Privilege.EditUsers) -> 
-                raise <| HttpException(403, "Cannot create user if logged in.")
+                raise <| UnauthorizedAccessException("Cannot create user if logged in.")
             | _ -> 
                 if not <| Validation.isValidUserName request.name
-                then raise <| HttpException(422, "Usename must contain only letters A-Z, numbers 0-9, _ or -, and must be 1 to 20 characters.")
+                then raise <| ValidationException("Usename must contain only letters A-Z, numbers 0-9, _ or -, and must be 1 to 20 characters.")
                 
                 if not <| Validation.isValidPassord request.password
-                then raise <| HttpException(422, "Password must contain only letters A-Z, numbers 0-9, _ or -, and mus tbe 6 to 20 characters.")
+                then raise <| ValidationException("Password must contain only letters A-Z, numbers 0-9, _ or -, and mus tbe 6 to 20 characters.")
                 
                 task {
                     let! user = userRepo.createUser request
@@ -33,8 +35,9 @@ type UserManager(userRepo : IUserRepository) =
         member __.getUser userId session =
             Security.ensureSelfOrHas Privilege.EditUsers session userId
             task {
-                let! user = userRepo.getUser userId
-                return user |> UserDetails.hideDetails
+                match! userRepo.getUser userId with
+                | None -> return raise <| NotFoundException("User not found.")
+                | Some user -> return user |> UserDetails.hideDetails
             }
             
         member x.getCurrentUser session =

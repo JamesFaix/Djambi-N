@@ -2,12 +2,13 @@ namespace Apex.Api.IntegrationTests.Logic.UserManager
 
 open FSharp.Control.Tasks
 open Xunit
-open Apex.Api.Common.Control
 open Apex.Api.IntegrationTests
 open Apex.Api.Model
 open Apex.Api.Enums
 open Apex.Api.Logic.Interfaces
 open System.Threading.Tasks
+open System.Data
+open System
 
 type CreateUserTests() =
     inherit TestsBase()
@@ -37,15 +38,14 @@ type CreateUserTests() =
             let! _ = host.Get<IUserManager>().createUser request None
 
             //Act/Assert
-            let! ex = Assert.ThrowsAsync<HttpException>(fun () -> 
+            let! ex = Assert.ThrowsAsync<DuplicateNameException>(fun () -> 
                 task {
                     let! _ = host.Get<IUserManager>().createUser request None            
                     return ()
                 } :> Task
             )
             
-            ex.statusCode |> shouldBe 409
-            ex.Message |> shouldBe "Conflict when attempting to write User."
+            ex.Message |> shouldBe "User name taken."
         }
 
     [<Fact>]
@@ -59,14 +59,13 @@ type CreateUserTests() =
 
             //Act/Assert
 
-            let! ex = Assert.ThrowsAsync<HttpException>(fun () -> 
+            let! ex = Assert.ThrowsAsync<UnauthorizedAccessException>(fun () -> 
                 task {
                     let! _ = host.Get<IUserManager>().createUser request (Some session)
                     return ()
                 } :> Task
             )
 
-            ex.statusCode |> shouldBe 403
             ex.Message |> shouldBe "Cannot create user if logged in."
         }
 

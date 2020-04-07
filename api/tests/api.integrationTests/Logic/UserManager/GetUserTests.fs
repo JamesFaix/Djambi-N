@@ -45,14 +45,13 @@ type GetUserTests() =
             let session = getSessionForUser currentUser |> TestUtilities.setSessionPrivileges []
 
             //Act/Assert
-            let! ex = Assert.ThrowsAsync<HttpException>(fun () -> 
+            let! ex = Assert.ThrowsAsync<UnauthorizedAccessException>(fun () -> 
                 task {
                     let! _ = host.Get<IUserManager>().getUser user.id session
                     return ()
                 } :> Task
             )
 
-            ex.statusCode |> shouldBe 403
             ex.Message |> shouldBe Security.noPrivilegeOrSelfErrorMessage
         }
 
@@ -65,13 +64,12 @@ type GetUserTests() =
             let session = getSessionForUser user |> TestUtilities.setSessionPrivileges [Privilege.EditUsers]
 
             //Act/Assert
-            let! ex = Assert.ThrowsAsync<HttpException>(fun () -> 
+            let! ex = Assert.ThrowsAsync<NotFoundException>(fun () -> 
                 task {
                     let! _ = host.Get<IUserManager>().getUser -1 session
                     return ()
                 } :> Task
             )
 
-            ex.statusCode |> shouldBe 404
             ex.Message |> shouldBe "User not found."
         }

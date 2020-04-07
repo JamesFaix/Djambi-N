@@ -7,6 +7,8 @@ open FSharp.Control.Tasks
 open Apex.Api.Common.Control
 open System.ComponentModel
 open System.Security.Authentication
+open System.ComponentModel.DataAnnotations
+open System.Data
 
 type ErrorHandlingMiddleware(next : RequestDelegate) =
     
@@ -23,11 +25,17 @@ type ErrorHandlingMiddleware(next : RequestDelegate) =
                     match ex with
                     | :? AuthenticationException as e -> (401, e.Message)
                     | :? InvalidEnumArgumentException as e -> (400, e.Message)
+                    | :? ValidationException as e -> (400, e.Message)
+                    | :? UnauthorizedAccessException as e -> (403, e.Message)
+                    | :? DuplicateNameException as e -> (409, e.Message)
                     | :? HttpException as e1 -> (e1.statusCode, e1.Message)
                     | :? AggregateException as e1 ->
                         match e1.InnerExceptions.[0] with
                         | :? AuthenticationException as e -> (401, e.Message)
                         | :? InvalidEnumArgumentException as e -> (400, e.Message)
+                        | :? ValidationException as e -> (400, e.Message)
+                        | :? UnauthorizedAccessException as e -> (403, e.Message)
+                        | :? DuplicateNameException as e -> (409, e.Message)
                         | :? HttpException as e2 -> (e2.statusCode, e2.Message)
                         | _ as e1 -> (500, e1.Message)
                     | _ as e1 -> (500, e1.Message)

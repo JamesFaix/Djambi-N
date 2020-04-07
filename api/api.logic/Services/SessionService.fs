@@ -51,24 +51,26 @@ type SessionService(sessionRepo : ISessionRepository,
                 }
 
             task {
-                let! user = userRepo.getUserByName request.username
-                errorIfLocked user
-                let! _ = errorIfInvalidPassword user
+                match! userRepo.getUserByName request.username with
+                | None -> return raise <| AuthenticationException("User does not exist.")
+                | Some user ->
+                    errorIfLocked user
+                    let! _ = errorIfInvalidPassword user
 
-                //If a session already exists for this user, delete it
-                let! _ = deleteSessionForUser user.id
+                    //If a session already exists for this user, delete it
+                    let! _ = deleteSessionForUser user.id
 
-                //Create a new session            
-                let request : CreateSessionRequest =
-                    {
-                        userId = user.id
-                        token = Guid.NewGuid().ToString()
-                        expiresOn = DateTime.UtcNow.Add(sessionTimeout)
-                    }
-                let! session = sessionRepo.createSession request
-                let! _ = userRepo.updateFailedLoginAttempts (UpdateFailedLoginsRequest.reset user.id)
+                    //Create a new session            
+                    let request : CreateSessionRequest =
+                        {
+                            userId = user.id
+                            token = Guid.NewGuid().ToString()
+                            expiresOn = DateTime.UtcNow.Add(sessionTimeout)
+                        }
+                    let! session = sessionRepo.createSession request
+                    let! _ = userRepo.updateFailedLoginAttempts (UpdateFailedLoginsRequest.reset user.id)
 
-                return session
+                    return session
             }
 
         member __.closeSession session = 

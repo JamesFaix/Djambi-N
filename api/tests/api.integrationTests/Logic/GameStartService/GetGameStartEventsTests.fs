@@ -10,6 +10,7 @@ open Apex.Api.Enums
 open Apex.Api.Logic.Services
 open System.Threading.Tasks
 open Apex.Api.Common.Control
+open System
 
 type GetGameStartEventsTests() =
     inherit TestsBase()
@@ -44,11 +45,10 @@ type GetGameStartEventsTests() =
             let session = session |> TestUtilities.setSessionUserId (session.user.id+1)
 
             //Act/Assert
-            let! ex = Assert.ThrowsAsync<HttpException>(fun () ->
+            let! ex = Assert.ThrowsAsync<UnauthorizedAccessException>(fun () ->
                 host.Get<GameStartService>().getGameStartEvents game session :> Task
             )
 
-            ex.statusCode |> shouldBe 403
             ex.Message |> shouldBe Security.noPrivilegeOrCreatorErrorMessage
         }
 

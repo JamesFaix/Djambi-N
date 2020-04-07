@@ -1,8 +1,8 @@
 module Apex.Api.Logic.Security
 
-open Apex.Api.Common.Control
 open Apex.Api.Model
 open Apex.Api.Enums
+open System
 
 let noPrivilegeErrorMessage = "You do not have the required privilege to complete the requested action."
 
@@ -17,21 +17,21 @@ let noPrivilegeOrSelfErrorMessage = "You must be the target user or have the req
 let ensureHas (privilege : Privilege) (session : Session) : Unit =
     if session.user.has privilege
     then ()
-    else raise <| HttpException(403, noPrivilegeErrorMessage)
+    else raise <| UnauthorizedAccessException(noPrivilegeErrorMessage)
 
 let ensureCreatorOrEditPendingGames (session : Session) (game : Game) : Unit =
     let self = session.user
     if self.has Privilege.EditPendingGames
         || self.id = game.createdBy.userId
     then ()
-    else raise <| HttpException(403, noPrivilegeOrCreatorErrorMessage)
+    else raise <| UnauthorizedAccessException(noPrivilegeOrCreatorErrorMessage)
 
 let ensurePlayerOrHas (privilege : Privilege) (session : Session) (game : Game) : Unit =
     let self = session.user
     if self.has privilege
         || game.players |> List.exists (fun p -> p.userId = Some self.id)
     then ()
-    else raise <| HttpException(403, noPrivilegeOrPlayerErrorMessage)
+    else raise <| UnauthorizedAccessException(noPrivilegeOrPlayerErrorMessage)
 
 let ensureCurrentPlayerOrOpenParticipation (session : Session) (game : Game) : Unit =
     let self = session.user
@@ -45,11 +45,11 @@ let ensureCurrentPlayerOrOpenParticipation (session : Session) (game : Game) : U
         else false
 
     if pass then ()
-    else raise <| HttpException(403, noPrivilegeOrCurrentPlayerErrorMessage)
+    else raise <| UnauthorizedAccessException(noPrivilegeOrCurrentPlayerErrorMessage)
 
 let ensureSelfOrHas (privilege : Privilege) (session : Session) (userId : int) : Unit =
     let self = session.user
     if self.has privilege
         || self.id = userId
     then ()
-    else raise <| HttpException(403, noPrivilegeOrSelfErrorMessage)
+    else raise <| UnauthorizedAccessException(noPrivilegeOrSelfErrorMessage)

@@ -9,6 +9,7 @@ open Apex.Api.Logic
 open Apex.Api.Logic.Services
 open Apex.Api.Db.Interfaces
 open Apex.Api.Enums
+open System
 
 type GetUpdateGameParametersEventTests() =
     inherit TestsBase()
@@ -159,11 +160,10 @@ type GetUpdateGameParametersEventTests() =
             let otherSession = session |> TestUtilities.setSessionUserId (session.user.id + 1)
 
             //Act/Assert
-            let ex = Assert.Throws<HttpException>(fun () -> 
+            let ex = Assert.Throws<UnauthorizedAccessException>(fun () -> 
                 host.Get<GameCrudService>().getUpdateGameParametersEvent (game, newParameters) otherSession
                 |> ignore
             )
 
-            ex.statusCode |> shouldBe 403
             ex.Message |> shouldBe Security.noPrivilegeOrCreatorErrorMessage
         }

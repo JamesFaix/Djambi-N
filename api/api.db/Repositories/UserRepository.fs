@@ -4,9 +4,9 @@ open Apex.Api.Db.Interfaces
 open System
 open Apex.Api.Db.Model
 open FSharp.Control.Tasks
-open Apex.Api.Common.Control
 open Apex.Api.Db.Mappings
 open Microsoft.EntityFrameworkCore
+open System.Data
 
 type UserRepository(context : ApexDbContext) =    
     let nameConflictMessage = 
@@ -16,20 +16,16 @@ type UserRepository(context : ApexDbContext) =
     interface IUserRepository with
         member __.getUser userId =
             task {
-                let! sqlModel = context.Users.FindAsync(userId)
-
-                return match sqlModel with
-                        | null -> raise <| HttpException(404, "User not found.")
-                        | x -> x |> toUserDetails
+                match! context.Users.FindAsync(userId) with
+                | null -> return None
+                | _ as user -> return user |> toUserDetails |> Some
             }
 
         member __.getUserByName name =
             task {
-                let! sqlModel = context.Users.SingleOrDefaultAsync(fun x -> name = x.Name) // Relies on case insensitivity of SQL 
-
-                return match sqlModel with
-                        | null -> raise <| HttpException(404, "User not found.")
-                        | x -> x |> toUserDetails
+                match! context.Users.SingleOrDefaultAsync(fun x -> name.ToLower() = x.Name.ToLower()) with
+                | null -> return None
+                | _ as user -> return user |> toUserDetails |> Some
             }
 
         member __.createUser request =
@@ -47,15 +43,14 @@ type UserRepository(context : ApexDbContext) =
                     return u |> toUserDetails
                 with
                 | :? InvalidOperationException as ex when ex.Message.StartsWith(nameConflictMessage) ->
-                    return raise <| HttpException(409, "Conflict when attempting to write User.")
+                    return raise <| DuplicateNameException("User name taken.")
             }
 
         member __.deleteUser userId = 
             task {
-                let! u = context.Users.FindAsync(userId)
-                if u = null
-                then return raise <| HttpException(404, "User not found.")
-                else
+                match! context.Users.FindAsync(userId) with
+                | null -> return ()
+                | _ as u ->
                     context.Users.Remove(u) |> ignore
                     let! _ = context.SaveChangesAsync()
                     return ()
