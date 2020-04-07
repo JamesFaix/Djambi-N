@@ -26,10 +26,10 @@ type ISearchRepository =
     abstract member searchGames : query:GamesQuery * currentUserId:int -> Task<list<SearchGame>>
 
 type ISessionRepository =
-    abstract member getSession : query:SessionQuery -> Task<Session>
+    abstract member getSession : query:SessionQuery -> Task<Option<Session>>
     abstract member createSession : request:CreateSessionRequest -> Task<Session>
     abstract member renewSessionExpiration : sessionId:int * expiresOn:DateTime -> Task<Session>
-    abstract member deleteSession : sessionId:int option * token:string option -> Task<unit>
+    abstract member deleteSession : token:string -> Task<unit>
 
 type ISnapshotRepository =
     abstract member getSnapshot : snapshotId:int -> Task<Snapshot>
@@ -39,8 +39,8 @@ type ISnapshotRepository =
     abstract member loadSnapshot : gameId:int * snapshotId:int -> Task<unit>
 
 type IUserRepository =
-    abstract member getUser : userId:int -> Task<UserDetails>
-    abstract member getUserByName : name:string -> Task<UserDetails>
+    abstract member getUser : userId:int -> Task<Option<UserDetails>>
+    abstract member getUserByName : name:string -> Task<Option<UserDetails>>
     abstract member createUser : request:CreateUserRequest -> Task<UserDetails>
     abstract member deleteUser : id:int -> Task<unit>
     abstract member updateFailedLoginAttempts : request:UpdateFailedLoginsRequest -> Task<unit>

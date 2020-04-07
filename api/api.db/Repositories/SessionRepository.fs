@@ -4,9 +4,9 @@ open Apex.Api.Db.Interfaces
 open Apex.Api.Db.Model
 open System
 open FSharp.Control.Tasks
-open Apex.Api.Common.Control
 open Apex.Api.Db.Mappings
 open Microsoft.EntityFrameworkCore
+open System.Security.Authentication
 
 type SessionRepository(context : ApexDbContext) =
     interface ISessionRepository with
@@ -21,9 +21,7 @@ type SessionRepository(context : ApexDbContext) =
                             (query.userId.IsNone || s.User.UserId = query.userId.Value)
                         )
 
-                return if s = null
-                       then raise <| HttpException(404, "Session not found.")
-                       else s |> toSession
+                return s |> Option.ofObj |> Option.map toSession
             }
 
         member __.createSession request =
@@ -49,7 +47,7 @@ type SessionRepository(context : ApexDbContext) =
             task {
                 let! s = context.Sessions.FindAsync(sessionId)
                 if s = null
-                then return raise <| HttpException(404, "Session not found.")
+                then return raise <| AuthenticationException("Not signed in.")
                 else 
                     s.ExpiresOn <- expiresOn
                     context.Sessions.Update(s) |> ignore
@@ -57,31 +55,13 @@ type SessionRepository(context : ApexDbContext) =
                     return s |> toSession
             }
 
-        member __.deleteSession (sessionId, token) =
-            if sessionId.IsSome && token.IsSome
-            then raise <| ArgumentException("Cannot use both sessionID and token to delete session.")
-
-            if sessionId.IsNone && token.IsNone
-            then raise <| ArgumentException("Delete session requires either a sessionID or a token to lookup the session.")
-
+        member __.deleteSession token =
             task {
-                let mutable s : SessionSqlModel = null
-
-                if sessionId.IsSome
-                then
-                    let! x = context.Sessions.FindAsync(sessionId.Value)
-                    s <- x
-
-                if token.IsSome
-                then 
-                    let! x = context.Sessions.SingleOrDefaultAsync(fun s -> 
-                        String.Equals(s.Token.ToLower(), token.Value.ToLower()))
-                    s <- x
-
-                if s = null
-                then return raise <| HttpException(404, "Session not found.")
+                let! session = context.Sessions.SingleOrDefaultAsync(fun s -> s.Token = token)
+                if session = null
+                then return ()
                 else
-                    context.Sessions.Remove(s) |> ignore
+                    context.Sessions.Remove(session) |> ignore
                     let! _ = context.SaveChangesAsync()
                     return ()
             }

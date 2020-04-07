@@ -2,13 +2,13 @@ namespace Apex.Api.IntegrationTests.Logic.userServ
 
 open FSharp.Control.Tasks
 open Xunit
-open Apex.Api.Common.Control
 open Apex.Api.IntegrationTests
 open Apex.Api.Model
 open Apex.Api.Logic
 open Apex.Api.Enums
 open Apex.Api.Logic.Interfaces
 open System.Threading.Tasks
+open System
 
 type DeleteUserTests() =
     inherit TestsBase()
@@ -57,22 +57,18 @@ type DeleteUserTests() =
             let request = getCreateUserRequest()
             let! user = host.Get<IUserManager>().createUser request None
 
-            let session = getSessionForUser { currentUser with id = currentUser.id + 1} |> TestUtilities.setSessionPrivileges []
+            let session = getSessionForUser currentUser |> TestUtilities.setSessionPrivileges []
 
             //Act/Assert
-            let! ex = Assert.ThrowsAsync<HttpException>(fun () ->
-                task {
-                    let! _ = host.Get<IUserManager>().deleteUser user.id session
-                    return ()
-                } :> Task
+            let! ex = Assert.ThrowsAsync<UnauthorizedAccessException>(fun () ->
+                host.Get<IUserManager>().deleteUser user.id session :> Task
             )
 
-            ex.statusCode |> shouldBe 403
             ex.Message |> shouldBe Security.noPrivilegeOrSelfErrorMessage
         }
 
     [<Fact>]
-    let ``Delete user should fail if already deleted`` () =
+    let ``Delete user should not fail if already deleted`` () =
         let host = HostFactory.createHost()
         task {
             //Arrange
@@ -85,13 +81,6 @@ type DeleteUserTests() =
             let! _ = host.Get<IUserManager>().deleteUser user.id session
 
             //Act/Assert
-            let! ex = Assert.ThrowsAsync<HttpException>(fun () ->
-                task {
-                    let! _ = host.Get<IUserManager>().deleteUser user.id session
-                    return ()
-                } :> Task
-            )
-
-            ex.statusCode |> shouldBe 404
-            ex.Message |> shouldBe "User not found."
+            return! host.Get<IUserManager>().deleteUser user.id session
+            // Did not throw
         }

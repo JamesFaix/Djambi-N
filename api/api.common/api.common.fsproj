@@ -4,6 +4,7 @@
     <TargetFramework>netstandard2.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Control\NotFoundException.fs" />
     <Compile Include="TypeKind.fs" />
     <Compile Include="Collections.fs" />
     <Compile Include="Control\HttpException.fs" />

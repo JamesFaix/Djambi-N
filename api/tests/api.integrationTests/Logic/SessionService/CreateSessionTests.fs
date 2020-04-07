@@ -3,11 +3,10 @@ namespace Apex.Api.IntegrationTests.Logic.sessionServ
 open FSharp.Control.Tasks
 open Xunit
 open Apex.Api.IntegrationTests
-open Apex.Api.Logic.Services
 open Apex.Api.Logic.Interfaces
-open Apex.Api.Common.Control
 open System.Threading.Tasks
 open Apex.Api.Model
+open System.Security.Authentication
 
 type CreateSessionTests() =
     inherit TestsBase()
@@ -23,7 +22,7 @@ type CreateSessionTests() =
             let request = getLoginRequest userRequest
 
             //Act
-            let! session = host.Get<SessionService>().openSession request
+            let! session = host.Get<ISessionService>().openSession request
 
             //Assert
             session.user.id |> shouldBe user.id
@@ -41,10 +40,10 @@ type CreateSessionTests() =
 
             let request = getLoginRequest userRequest
 
-            let! oldSession = host.Get<SessionService>().openSession request
+            let! oldSession = host.Get<ISessionService>().openSession request
 
             //Act
-            let! newSession = host.Get<SessionService>().openSession request
+            let! newSession = host.Get<ISessionService>().openSession request
 
             //Assert
             newSession.token |> shouldNotBe oldSession.token
@@ -61,13 +60,12 @@ type CreateSessionTests() =
             let request = { getLoginRequest userRequest with password = "wrong" }
 
             //Act/Assert
-            let! ex = Assert.ThrowsAsync<HttpException>(fun () ->
+            let! ex = Assert.ThrowsAsync<AuthenticationException>(fun () ->
                 task {
-                    return! host.Get<SessionService>().openSession request
+                    return! host.Get<ISessionService>().openSession request
                 } :> Task
             )
 
-            ex.statusCode |> shouldBe 401
             ex.Message |> shouldBe "Incorrect password."
         }
 
@@ -78,10 +76,10 @@ type CreateSessionTests() =
         let attemptLoginAndIgnoreInvalidPasswordError (request : LoginRequest) =
             task {
                 try 
-                    let! _ = host.Get<SessionService>().openSession request
+                    let! _ = host.Get<ISessionService>().openSession request
                     return ()
                 with 
-                | :? HttpException as ex when ex.Message = "Incorrect password." ->
+                | :? AuthenticationException as ex when ex.Message = "Incorrect password." ->
                     return ()
             }
 
@@ -97,12 +95,11 @@ type CreateSessionTests() =
                 ()
 
             //Act/Assert
-            let! ex = Assert.ThrowsAsync<HttpException>(fun () ->
+            let! ex = Assert.ThrowsAsync<AuthenticationException>(fun () ->
                 task {
-                    return! host.Get<SessionService>().openSession request
+                    return! host.Get<ISessionService>().openSession request
                 } :> Task
             )
 
-            ex.statusCode |> shouldBe 401
             ex.Message |> shouldBe "Account locked."
         }

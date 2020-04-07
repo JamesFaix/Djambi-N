@@ -63,13 +63,12 @@ type SelectCellTests() =
                 | _ -> session2
 
             //Act/Assert
-            let! ex = Assert.ThrowsAsync<HttpException>(fun () ->
+            let! ex = Assert.ThrowsAsync<UnauthorizedAccessException>(fun () ->
                 task {
                     return! host.Get<ITurnManager>().selectCell (updatedGame.id, cellId) sessionWithoutActivePlayer
                 } :> Task
             )
             
-            ex.statusCode |> shouldBe 403
             ex.Message |> shouldBe Security.noPrivilegeOrCurrentPlayerErrorMessage
         }
 
