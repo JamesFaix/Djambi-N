@@ -1,14 +1,14 @@
-name: .NET Core
+name: API Quality Gates
 
 on:
   push:
     branches: [ master ]
-    paths: 
+    paths:
       - api/**/*
       - .github/workflows/api-quality-gates.yml
   pull_request:
     branches: [ master ]
-    paths: 
+    paths:
       - api/**/*
       - .github/workflows/api-quality-gates.yml
 
