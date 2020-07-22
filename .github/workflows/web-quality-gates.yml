@@ -27,7 +27,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - uses: stefanoeb/eslint-action@1.0.2
 
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
@@ -39,8 +38,9 @@ jobs:
       working-directory: ./web
 
     - name: Lint
-      run: eslint . -ext .ts, .tsx
-      working-directory: ./web
+      uses: hallee/eslint-action@1.0.3
+      with:
+        source-root: web/src/
 
     - name: Build
       run: npm run build --if-present
