@@ -3,10 +3,14 @@ name: .NET Core
 on:
   push:
     branches: [ master ]
-    paths: api/**/*
+    paths: 
+      - api/**/*
+      - .github/workflows/api-quality-gates.yml
   pull_request:
     branches: [ master ]
-    paths: api/**/*
+    paths: 
+      - api/**/*
+      - .github/workflows/api-quality-gates.yml
 
 jobs:
   build:
@@ -15,6 +19,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
@@ -22,12 +27,10 @@ jobs:
 
     - name: Install dependencies
       run: dotnet restore
-      working-directory: ./api
-    
+
     - name: Build
       run: dotnet build --configuration Release --no-restore
-      working-directory: ./api
-    
+
     - name: Test
       run: dotnet test --no-restore --verbosity normal
       working-directory: ./api/tests/api.unitTests
