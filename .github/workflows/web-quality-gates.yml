@@ -38,6 +38,10 @@ jobs:
       working-directory: ./web
 
     - name: Build
+      run: eslint . -ext .ts, .tsx
+      working-directory: ./web
+
+    - name: Build
       run: npm run build --if-present
       working-directory: ./web
 
