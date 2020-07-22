@@ -38,7 +38,7 @@ jobs:
       working-directory: ./web
 
     - name: Lint
-      run: npm i -G esling && eslint ./web --ext .ts,.tsx
+      run: npm i -G eslint && eslint ./web --ext .ts,.tsx
 
     - name: Build
       run: npm run build --if-present
