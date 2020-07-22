@@ -38,9 +38,7 @@ jobs:
       working-directory: ./web
 
     - name: Lint
-      uses: hallee/eslint-action@1.0.3
-      with:
-        source-root: web/src
+      run: eslint ./web --ext .ts,.tsx
 
     - name: Build
       run: npm run build --if-present
