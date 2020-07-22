@@ -39,7 +39,6 @@ jobs:
 
     - name: Lint
       uses: hallee/eslint-action@1.0.3
-      working-directory: ./web
       with:
         source-root: web/src
 
