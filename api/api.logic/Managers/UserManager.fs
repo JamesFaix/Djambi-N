@@ -17,6 +17,7 @@ type UserManager(userRepo : IUserRepository) =
             | Some s when not (s.user.has Privilege.EditUsers) -> 
                 raise <| UnauthorizedAccessException("Cannot create user if logged in.")
             | _ -> 
+                // TODO: Data annotation should make this obsolete
                 if not <| Validation.isValidUserName request.name
                 then raise <| ValidationException("Usename must contain only letters A-Z, numbers 0-9, _ or -, and must be 1 to 20 characters.")
                 
