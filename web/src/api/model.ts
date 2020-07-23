@@ -1,3 +1,14 @@
+//-------- Error Handling --------
+
+export interface ProblemDetails {
+    status : number,
+    title : string,
+    type : string,
+    traceId : string,
+    detail : string,
+    errors : object
+}
+
 //-------- USER --------
 
 export interface CreateUserRequest {
