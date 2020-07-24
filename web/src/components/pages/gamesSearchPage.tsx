@@ -6,12 +6,12 @@ import GamesSearchForm from '../pageSections/gamesSearchForm';
 import BasicPageContainer from '../containers/basicPageContainer';
 import Controller from '../../controllers/controller';
 import { SectionHeader } from '../controls/headers';
-import { sortedUniqBy } from 'lodash';
+import { sortedUniqBy, iteratee } from 'lodash';
 
 const GamesSearchPage : React.SFC<{}> = _ => {
     const games = useSelector((state : AppState) => {
         const results = state.search.results;
-        return sortedUniqBy(results, g => g.id);
+        return sortedUniqBy(results, iteratee('id')).reverse();
     });
     React.useEffect(() => {
         Controller.Session.redirectToLoginIfNotLoggedIn();
