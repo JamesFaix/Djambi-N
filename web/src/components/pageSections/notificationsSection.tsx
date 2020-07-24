@@ -39,6 +39,14 @@ const NotificationsSection : React.SFC<{}> = _ => {
 }
 export default NotificationsSection;
 
+const Message : React.SFC<{ text: string }> = props => {
+    return (
+        <p style={{ lineHeight: "30px" }}>
+            {props.text}
+        </p>
+    );
+}
+
 const NotificationRow : React.SFC<{ notification : NotificationInfo }> = props => {
     const theme = Selectors.theme();
     const n = props.notification;
@@ -56,14 +64,12 @@ const NotificationRow : React.SFC<{ notification : NotificationInfo }> = props =
         }}
         >
             <div>
-                {messages.map((m, i) =>
-                    <p key={i}>{m}</p>
-                )}
+                {messages.map((m, i) => <Message text={m} key={i}/>)}
             </div>
             <IconButton
                 icon={Icons.UserActions.dismiss}
                 onClick={() => Controller.removeNotification(n.id)}
             />
         </div>
-    )
+    );
 }
