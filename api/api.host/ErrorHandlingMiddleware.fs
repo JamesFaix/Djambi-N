@@ -1,17 +1,41 @@
 ﻿namespace Apex.Api.Host
 
 open System
-open System.Threading.Tasks
-open Microsoft.AspNetCore.Http
-open FSharp.Control.Tasks
-open Apex.Api.Common.Control
 open System.ComponentModel
-open System.Security.Authentication
 open System.ComponentModel.DataAnnotations
 open System.Data
+open System.Security.Authentication
+open System.Threading.Tasks
+open Apex.Api.Common.Control
+open FSharp.Control.Tasks
+open Microsoft.AspNetCore.Http
+open Microsoft.AspNetCore.Mvc
+open Newtonsoft.Json
 
 type ErrorHandlingMiddleware(next : RequestDelegate) =
+
+    let getStatus (ex : Exception) : int =
+        match ex with
+        | :? AuthenticationException -> 401
+        | :? InvalidEnumArgumentException -> 400
+        | :? ValidationException -> 400
+        | :? UnauthorizedAccessException -> 403
+        | :? DuplicateNameException -> 409
+        | :? HttpException as e -> e.statusCode
+        | _ -> 500
     
+    let toProblem (ex : Exception) : ProblemDetails =
+        let ex = 
+            match ex with
+            | :? AggregateException as e -> e.InnerExceptions.[0]
+            | _ -> ex
+
+        let status = getStatus ex
+        let p = ProblemDetails()
+        p.Status <- Nullable(status)
+        p.Title <- ex.Message
+        p
+
     member __.Invoke(ctx : HttpContext) : Task =
         task {
             try
@@ -21,28 +45,12 @@ type ErrorHandlingMiddleware(next : RequestDelegate) =
                 ()
             with
             | _ as ex ->
-                let (statusCode, message) = 
-                    match ex with
-                    | :? AuthenticationException as e -> (401, e.Message)
-                    | :? InvalidEnumArgumentException as e -> (400, e.Message)
-                    | :? ValidationException as e -> (400, e.Message)
-                    | :? UnauthorizedAccessException as e -> (403, e.Message)
-                    | :? DuplicateNameException as e -> (409, e.Message)
-                    | :? HttpException as e1 -> (e1.statusCode, e1.Message)
-                    | :? AggregateException as e1 ->
-                        match e1.InnerExceptions.[0] with
-                        | :? AuthenticationException as e -> (401, e.Message)
-                        | :? InvalidEnumArgumentException as e -> (400, e.Message)
-                        | :? ValidationException as e -> (400, e.Message)
-                        | :? UnauthorizedAccessException as e -> (403, e.Message)
-                        | :? DuplicateNameException as e -> (409, e.Message)
-                        | :? HttpException as e2 -> (e2.statusCode, e2.Message)
-                        | _ as e1 -> (500, e1.Message)
-                    | _ as e1 -> (500, e1.Message)
+                let p = ex |> toProblem
+                let json = p |> JsonConvert.SerializeObject
 
                 ctx.Response.ContentType <- "application/json"
-                ctx.Response.StatusCode <- statusCode
-                let! _ = ctx.Response.WriteAsync message
+                ctx.Response.StatusCode <- p.Status.Value
+                let! _ = ctx.Response.WriteAsync json
                 ()
             return ()
         } :> Task
