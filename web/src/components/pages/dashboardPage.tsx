@@ -5,12 +5,12 @@ import { State as AppState } from '../../store/root';
 import BasicPageContainer from '../containers/basicPageContainer';
 import Controller from '../../controllers/controller';
 import { SectionHeader } from '../controls/headers';
-import { List } from '../../utilities/collections';
+import { sortedUniqBy } from 'lodash';
 
 const DashboardPage : React.SFC<{}> = _ => {
     const games = useSelector((state : AppState) => {
         const results = state.search.recent;
-        return List.sortBy(results, g => g.id, true);
+        return sortedUniqBy(results, g => g.id);
     });
     React.useEffect(() => {
         Controller.Session.redirectToLoginIfNotLoggedIn();
