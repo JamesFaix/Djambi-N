@@ -67,12 +67,6 @@ export class ApiClientCore {
         }
     }
 
-    private static async deserialize(response: Response) : Promise<any> {
-        const obj = await response.json();
-        const camelCased = mapKeys(obj, (_, k) => camelCase(k));
-        return camelCased;
-    }
-
     private static describe(request : ApiRequest) : string {
         return `${request.method} ${request.url}`;
     }
