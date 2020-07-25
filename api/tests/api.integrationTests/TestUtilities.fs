@@ -4,27 +4,11 @@ module Apex.Api.IntegrationTests.TestUtilities
 open System
 open System.Linq
 open FSharp.Control.Tasks
-open Microsoft.Extensions.Configuration
-open Serilog
-open Apex.Api.Common.Control
-open Apex.Api.Common.Control.AsyncHttpResult
-open Apex.Api.Db
 open Apex.Api.Db.Interfaces
-open Apex.Api.Logic
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Model
-
-let private config =
-    ConfigurationBuilder()
-        .AddEnvironmentVariables("APEX_")
-        .Build()
-
-let connectionString = config.["apexConnectionString"]
-
-let log = LoggerConfiguration().CreateLogger()
-let db = DbRoot(connectionString) :> IDbRoot
-let services = ServiceRoot(db, log)
-let managers = ManagerRoot(db, services) :> IManagerRoot
+open Apex.Api.Enums
+open System.Threading.Tasks
 
 let random = Random()
 let randomAlphanumericString (length : int) : string =
@@ -71,59 +55,57 @@ let getCreatePlayerRequest : CreatePlayerRequest =
 
 let adminUserId = 1
 
-let getSessionForUser (userId : int) : Session =
+let getSessionForUser (user : User) : Session =
     {
-        user =
-            {
-                id = userId
-                name = ""
-                privileges = []
-            }
+        user = user
         id = 0
         token = ""
         createdOn = DateTime.MinValue
         expiresOn = DateTime.MinValue
     }
 
-let createUser() : UserDetails AsyncHttpResult =
+let createUser() : Task<User> =
+    let host = HostFactory.createHost()
     let userRequest = getCreateUserRequest()
-    services.users.createUser userRequest None
+    host.Get<IUserManager>().createUser userRequest None
 
-let createuserSessionAndGame(allowGuests : bool) : (UserDetails * Session * Game) AsyncHttpResult =
+let createuserSessionAndGame(allowGuests : bool) : Task<(User * Session * Game)> =
+    let host = HostFactory.createHost()
     task {
-        let! user = createUser() |> thenValue
+        let! user = createUser()
 
-        let session = getSessionForUser user.id
+        let session = getSessionForUser user
 
         let parameters = { getGameParameters() with allowGuests = allowGuests }
-        let! game = managers.games.createGame parameters session
-                     |> thenValue
+        let! game = host.Get<IGameManager>().createGame parameters session
 
-        return Ok <| (user, session, game)
+        return (user, session, game)
     }
 
-let fillEmptyPlayerSlots (game : Game) : Game AsyncHttpResult =
+let fillEmptyPlayerSlots (game : Game) : Task<Game> =
+    let host = HostFactory.createHost()
+    let gameRepo = host.Get<IGameRepository>()
     task {
         let missingPlayerCount = game.parameters.regionCount - game.players.Length
         for i in Enumerable.Range(0, missingPlayerCount) do
             let name = sprintf "neutral%i" (i+1)
             let request = CreatePlayerRequest.neutral name
-            let! _ = db.games.addPlayer (game.id, request) |> thenValue
+            let! _ = host.Get<IGameRepository>().addPlayer (game.id, request)
             ()
 
-        return! db.games.getGame game.id
+        return! host.Get<IGameRepository>().getGame game.id
     }
 
-let emptyEventRequest : CreateEventRequest =
+let emptyEventRequest (userId : int) : CreateEventRequest =
     {
         kind = EventKind.CellSelected //Kind shouldn't matter
         effects = []
-        createdByUserId = 1
+        createdByUserId = userId
         actingPlayerId = None
     }
 
-let createEventRequest (effects : Effect list) : CreateEventRequest =
-    { emptyEventRequest with effects = effects }
+let createEventRequest (userId : int) (effects : Effect list) : CreateEventRequest =
+    { (emptyEventRequest userId) with effects = effects }
 
 let defaultGame : Game =
     {

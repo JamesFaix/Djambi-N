@@ -456,7 +456,7 @@ export default class Controller {
         }
 
         private static createPieceImage(theme : Theme, kind : PieceKind, colorId : number) : HTMLImageElement {
-            let image = Controller.state.display.images.pieces.get(kind);
+            let image = Controller.state.display.images.pieces.get(kind.toString());
             if (!image) {
                 image = new (window as any).Image() as HTMLImageElement;
                 image.src = ThemeService.getPieceImagePath(theme, kind);

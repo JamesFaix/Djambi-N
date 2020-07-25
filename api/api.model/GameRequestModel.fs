@@ -2,10 +2,9 @@
 module Apex.Api.Model.GameRequestModel
 
 open System
-open Apex.ClientGenerator.Annotations
+open System.ComponentModel
+open Apex.Api.Enums
 
-[<CLIMutable>]
-[<ClientType(ClientSection.Player)>]
 type CreatePlayerRequest =
     {
         kind : PlayerKind
@@ -15,10 +14,10 @@ type CreatePlayerRequest =
 
 module CreatePlayerRequest =
 
-    let user (userId : int) : CreatePlayerRequest =
+    let user (user : User) : CreatePlayerRequest =
         {
             kind = PlayerKind.User
-            userId = Some userId
+            userId = Some user.id
             name = None
         }
 
@@ -43,24 +42,15 @@ type PlayerStatusChangeRequest =
         status : PlayerStatus
     }
 
-[<CLIMutable>]
-[<ClientType(ClientSection.Turn)>]
 type SelectionRequest =
     {
         cellId : int
     }
 
-[<ClientType(ClientSection.Misc)>]
-type ResultsDirection =
-    | Ascending
-    | Descending
-
-[<CLIMutable>]
-[<ClientType(ClientSection.Events)>]
 type EventsQuery =
     {
         maxResults : int option
-        direction : ResultsDirection
+        direction : ListSortDirection
         thresholdTime : DateTime option
         thresholdEventId : int option
     }
@@ -69,7 +59,7 @@ module EventsQuery =
     let empty : EventsQuery =
         {
             maxResults = None
-            direction = ResultsDirection.Ascending
+            direction = ListSortDirection.Ascending
             thresholdTime = None
             thresholdEventId = None
         }

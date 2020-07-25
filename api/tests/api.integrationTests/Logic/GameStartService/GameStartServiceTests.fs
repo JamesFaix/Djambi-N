@@ -3,26 +3,29 @@ namespace Apex.Api.IntegrationTests.Logic.GameStartService
 open FSharp.Control.Tasks
 open Xunit
 open Apex.Api.Common
-open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.IntegrationTests
 open Apex.Api.Logic.ModelExtensions
 open Apex.Api.Model
+open Apex.Api.Logic.Interfaces
+open Apex.Api.Enums
+open Apex.Api.Logic.Services
 
 type GameStartServiceTests() =
     inherit TestsBase()
 
     [<Fact>]
     let ``Get starting conditions should work``() =
+        let host = HostFactory.createHost()
         task {
             //Arrange
-            let session = getSessionForUser 1
+            let! user = createUser()
+            let session = getSessionForUser user
             let parameters = getGameParameters()
-            let! game = managers.games.createGame parameters session
-                        |> thenBindAsync TestUtilities.fillEmptyPlayerSlots
-                        |> thenValue
+            let! game = host.Get<IGameManager>().createGame parameters session
+            let! game = TestUtilities.fillEmptyPlayerSlots game
 
             //Act
-            let playersWithStartConditions = services.gameStart.assignStartingConditions game.players
+            let playersWithStartConditions = host.Get<GameStartService>().assignStartingConditions game.players
 
             //Assert
             Assert.Equal(game.parameters.regionCount, playersWithStartConditions.Length)
@@ -36,18 +39,20 @@ type GameStartServiceTests() =
 
     [<Fact>]
     let ``Create pieces should work``() =
+        let host = HostFactory.createHost()
         task {
             //Arrange
-            let session = getSessionForUser 1
+            let! user = createUser()
+            let session = getSessionForUser user
             let parameters = getGameParameters()
-            let! game = managers.games.createGame parameters session
-                        |> thenBindAsync TestUtilities.fillEmptyPlayerSlots
-                        |> thenValue
-            let playersWithStartConditions = services.gameStart.assignStartingConditions game.players
+            let! game = host.Get<IGameManager>().createGame parameters session
+            let! game = TestUtilities.fillEmptyPlayerSlots game
+
+            let playersWithStartConditions = host.Get<GameStartService>().assignStartingConditions game.players
             let board = BoardModelUtility.getBoardMetadata(game.parameters.regionCount)
 
             //Act
-            let pieces = services.gameStart.createPieces(board, playersWithStartConditions)
+            let pieces = host.Get<GameStartService>().createPieces(board, playersWithStartConditions)
 
             //Assert
             Assert.Equal(game.parameters.regionCount * Constants.piecesPerPlayer, pieces.Length)
@@ -56,26 +61,27 @@ type GameStartServiceTests() =
             Assert.Equal(game.parameters.regionCount, groupByPlayer.Length)
 
             for (_, grp) in groupByPlayer do
-                Assert.Single<Piece>(grp, (fun p -> p.kind = Conduit)) |> ignore
-                Assert.Single<Piece>(grp, (fun p -> p.kind = Diplomat)) |> ignore
-                Assert.Single<Piece>(grp, (fun p -> p.kind = Scientist)) |> ignore
-                Assert.Single<Piece>(grp, (fun p -> p.kind = Reaper)) |> ignore
-                Assert.Single<Piece>(grp, (fun p -> p.kind = Hunter)) |> ignore
-                Assert.Equal(4, grp |> List.filter (fun p -> p.kind = Thug) |> List.length)
+                Assert.Single<Piece>(grp, (fun p -> p.kind = PieceKind.Conduit)) |> ignore
+                Assert.Single<Piece>(grp, (fun p -> p.kind = PieceKind.Diplomat)) |> ignore
+                Assert.Single<Piece>(grp, (fun p -> p.kind = PieceKind.Scientist)) |> ignore
+                Assert.Single<Piece>(grp, (fun p -> p.kind = PieceKind.Reaper)) |> ignore
+                Assert.Single<Piece>(grp, (fun p -> p.kind = PieceKind.Hunter)) |> ignore
+                Assert.Equal(4, grp |> List.filter (fun p -> p.kind = PieceKind.Thug) |> List.length)
         }
 
     [<Fact>]
     let ``Neutral players should not be in the turn cycle``() =
+        let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (user, session, game) = createuserSessionAndGame(true) |> thenValue
+            let! (user, session, game) = createuserSessionAndGame(true)
 
             let playerRequest = CreatePlayerRequest.guest (user.id, "test")
 
-            let! _ = managers.players.addPlayer game.id playerRequest session |> thenValue
+            let! _ = host.Get<IPlayerManager>().addPlayer game.id playerRequest session
 
             //Act
-            let updatedGame = services.gameStart.applyStartGame game
+            let updatedGame = host.Get<GameStartService>().applyStartGame game
 
             //Assert
             let neutralPlayerIds =

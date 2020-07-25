@@ -1,44 +1,67 @@
-namespace Apex.Api.Db.Repositories
+﻿namespace Apex.Api.Db.Repositories
 
-open Apex.Api.Common.Control
-open Apex.Api.Common.Control.AsyncHttpResult
-open Apex.Api.Db
 open Apex.Api.Db.Interfaces
-open Apex.Api.Model
+open System
+open Apex.Api.Db.Model
+open FSharp.Control.Tasks
+open Apex.Api.Db.Mappings
+open Microsoft.EntityFrameworkCore
+open System.Data
 
-type UserRepository(ctxProvider : CommandContextProvider) =
-
-    let getUserPrivileges (userId : int) : Privilege list AsyncHttpResult =
-        Commands.getUserPrivileges (Some userId, None)
-        |> Command.execute ctxProvider
-        |> thenMap (List.map Mapping.mapPrivilegeId)
+type UserRepository(context : ApexDbContext) =    
+    let nameConflictMessage = 
+        "The instance of entity type 'UserSqlModel' cannot be tracked because " + 
+        "another instance with the same key value for {'Name'} is already being tracked."
 
     interface IUserRepository with
-        member x.getUser userId =
-            Commands.getUser (Some userId, None)
-            |> Command.execute ctxProvider
-            |> thenBindAsync (fun userSqlModel ->
-                getUserPrivileges userId
-                |> thenMap (Mapping.mapUserResponse userSqlModel)
-            )
+        member __.getUser userId =
+            task {
+                match! context.Users.FindAsync(userId) with
+                | null -> return None
+                | _ as user -> return user |> toUserDetails |> Some
+            }
 
-        member x.getUserByName name =
-            Commands.getUser (None, Some name)
-            |> Command.execute ctxProvider
-            |> thenBindAsync (fun userSqlModel ->
-                getUserPrivileges userSqlModel.userId
-                |> thenMap (Mapping.mapUserResponse userSqlModel)
-            )
+        member __.getUserByName name =
+            task {
+                match! context.Users.SingleOrDefaultAsync(fun x -> name.ToLower() = x.Name.ToLower()) with
+                | null -> return None
+                | _ as user -> return user |> toUserDetails |> Some
+            }
 
-        member x.createUser request =
-            Commands2.createUser request
-            |> Command.execute ctxProvider
-            |> thenBindAsync (x :> IUserRepository).getUser
+        member __.createUser request =
+            task {
+                let u = UserSqlModel()
+                u.Name <- request.name
+                u.Password <- request.password
+                u.FailedLoginAttempts <- 0uy
+                u.LastFailedLoginAttemptOn <- Nullable<DateTime>()
+                u.CreatedOn <- DateTime.UtcNow
 
-        member x.deleteUser userId =
-            Commands.deleteUser userId
-            |> Command.execute ctxProvider
+                try 
+                    let! _ = context.Users.AddAsync(u)
+                    let! _ = context.SaveChangesAsync()
+                    return u |> toUserDetails
+                with
+                | :? InvalidOperationException as ex when ex.Message.StartsWith(nameConflictMessage) ->
+                    return raise <| DuplicateNameException("User name taken.")
+            }
 
-        member x.updateFailedLoginAttempts request =
-            Commands2.updateFailedLoginAttempts request
-            |> Command.execute ctxProvider
+        member __.deleteUser userId = 
+            task {
+                match! context.Users.FindAsync(userId) with
+                | null -> return ()
+                | _ as u ->
+                    context.Users.Remove(u) |> ignore
+                    let! _ = context.SaveChangesAsync()
+                    return ()
+            }
+
+        member __.updateFailedLoginAttempts request =
+            task {
+                let! u = context.Users.FindAsync(request.userId)
+                u.FailedLoginAttempts <- byte request.failedLoginAttempts
+                u.LastFailedLoginAttemptOn <- request.lastFailedLoginAttemptOn |> Option.toNullable
+                context.Users.Update(u) |> ignore
+                let! _ = context.SaveChangesAsync()
+                return ()
+            }

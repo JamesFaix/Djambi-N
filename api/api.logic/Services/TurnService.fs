@@ -7,6 +7,7 @@ open Apex.Api.Logic
 open Apex.Api.Logic.ModelExtensions.GameModelExtensions
 open Apex.Api.Logic.Services
 open Apex.Api.Model
+open Apex.Api.Enums
 
 type TurnService(eventServ : EventService,
                  indirectEffectsServ : IndirectEffectsService,
@@ -54,7 +55,7 @@ type TurnService(eventServ : EventService,
                     //It should not affect how this event is processed on the server
                     let newPiece = 
                         if subjectStrategy.killsTarget 
-                        then { target with cellId = dropCellId; kind = Corpse; playerId = None }
+                        then { target with cellId = dropCellId; kind = PieceKind.Corpse; playerId = None }
                         else { target with cellId = dropCellId }
                     effects.Add(Effect.PieceDropped { oldPiece = target; newPiece = newPiece })
                 | None -> ()
@@ -67,13 +68,13 @@ type TurnService(eventServ : EventService,
                     //It should not affect how this event is processed on the server
                     let newPiece = 
                         if subjectStrategy.killsTarget 
-                        then { target with cellId = originCellId; kind = Corpse; playerId = None }
+                        then { target with cellId = originCellId; kind = PieceKind.Corpse; playerId = None }
                         else { target with cellId = originCellId }
                     effects.Add(Effect.PieceDropped { oldPiece = target; newPiece = newPiece })
 
             effects |> Seq.toList
 
-    member x.getCommitTurnEvent (game : Game) (session : Session) : CreateEventRequest HttpResult =
+    member x.getCommitTurnEvent (game : Game) (session : Session) : CreateEventRequest =
         (*
             The order of effects is important, both for the implementation and clarity of the event log to users.
 
@@ -91,7 +92,7 @@ type TurnService(eventServ : EventService,
 
         effects.AddRange (indirectEffectsServ.getIndirectEffectsForTurnCommit (game, updatedGame))
 
-        Ok {
+        {
             kind = EventKind.TurnCommitted
             effects = effects |> Seq.toList
             createdByUserId = session.user.id
@@ -100,21 +101,17 @@ type TurnService(eventServ : EventService,
 
     //--- Reset
 
-    member x.getResetTurnEvent(game : Game) (session : Session) : CreateEventRequest HttpResult =
+    member x.getResetTurnEvent(game : Game) (session : Session) : CreateEventRequest =
         Security.ensureCurrentPlayerOrOpenParticipation session game
-        |> Result.bind (fun _ ->
-            let updatedGame = { game with currentTurn = Some Turn.empty }
-            selectionOptionsServ.getSelectableCellsFromState updatedGame
-            |> Result.map (fun selectionOptions ->
-                let turn = { Turn.empty with selectionOptions = selectionOptions }
-                let effects = [
-                    Effect.CurrentTurnChanged { oldValue = game.currentTurn; newValue = Some turn }
-                ]
-                {
-                    kind = EventKind.TurnReset
-                    effects = effects
-                    createdByUserId = session.user.id
-                    actingPlayerId = Context.getActingPlayerId session game
-                }
-            )
-        )
+        let updatedGame = { game with currentTurn = Some Turn.empty }
+        let selectionOptions = selectionOptionsServ.getSelectableCellsFromState updatedGame
+        let turn = { Turn.empty with selectionOptions = selectionOptions }
+        let effects = [
+            Effect.CurrentTurnChanged { oldValue = game.currentTurn; newValue = Some turn }
+        ]            
+        {
+            kind = EventKind.TurnReset
+            effects = effects
+            createdByUserId = session.user.id
+            actingPlayerId = Context.getActingPlayerId session game
+        }

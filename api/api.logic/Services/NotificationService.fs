@@ -3,9 +3,10 @@ namespace Apex.Api.Logic.Services
 open System.Collections.Concurrent
 open Serilog
 open Apex.Api.Common.Control
-open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Model
+open System.Threading.Tasks
+open FSharp.Control.Tasks
 
 type NotificationService(log : ILogger) =
     let subscribers = new ConcurrentDictionary<int, ISubscriber>()
@@ -52,10 +53,14 @@ type NotificationService(log : ILogger) =
             subscribers.Values
             |> Seq.filter (fun s -> userIds |> List.contains s.userId)
             |> Seq.map (fun s -> 
-                s.send response
-                |> thenBindErrorAsync 500 (fun err ->
-                    (x :> INotificationService).remove s.userId
-                    okTask ()
-                )
+                task {
+                    try 
+                        return! s.send response
+                    with
+                    | :? HttpException as ex when ex.statusCode = 500 ->
+                        (x :> INotificationService).remove s.userId
+                        return ()                        
+                } :> Task
             )
-            |> AsyncHttpResult.whenAll
+            |> Task.WhenAll
+            |> Task.toGeneric

@@ -1,27 +1,51 @@
-namespace Apex.Api.Web.Controllers
+﻿namespace Apex.Api.Web.Controllers
 
-open Apex.Api.Common.Control.AsyncHttpResult
-open Apex.Api.Web.Interfaces
-open Apex.Api.Web
+open System.Threading.Tasks
+open Microsoft.AspNetCore.Mvc
+open FSharp.Control.Tasks
+open Serilog
 open Apex.Api.Logic.Interfaces
+open Apex.Api.Web
+open Apex.Api.Web.Mappings
+open Apex.Api.Web.Model
 
-type TurnController(u : HttpUtility,
-                    turnMan : ITurnManager) =
-    interface ITurnController with
-        member x.selectCell (gameId, cellId) =
-            let func ctx =
-                u.getSessionFromContext ctx
-                |> thenBindAsync (turnMan.selectCell(gameId, cellId))
-            u.handle func
-
-        member x.resetTurn gameId =
-            let func ctx =
-                u.getSessionFromContext ctx
-                |> thenBindAsync (turnMan.resetTurn gameId)
-            u.handle func
-
-        member x.commitTurn gameId =
-            let func ctx =
-                u.getSessionFromContext ctx
-                |> thenBindAsync (turnMan.commitTurn gameId)
-            u.handle func
+[<ApiController>]
+[<Route("api/games/{gameId}/current-turn")>]
+type TurnController(manager : ITurnManager,
+                       logger : ILogger,
+                       scp : SessionContextProvider) =
+    inherit ControllerBase()
+    
+    [<HttpPost("selection-request/{cellId}")>]
+    [<ProducesResponseType(200, Type = typeof<StateAndEventResponseDto>)>]
+    member __.SelectCell(gameId : int, cellId : int) : Task<IActionResult> =
+        let ctx = base.HttpContext
+        task {
+            let! session = scp.GetSessionFromContext ctx
+            let! response = manager.selectCell (gameId, cellId) session
+            let dto = response |> toStateAndEventResponseDto
+            return OkObjectResult(dto) :> IActionResult
+        }
+        
+    [<HttpPost("reset-request")>]
+    [<ProducesResponseType(200, Type = typeof<StateAndEventResponseDto>)>]
+    member __.ResetTurn(gameId : int) : Task<IActionResult> =
+        let ctx = base.HttpContext
+        task {
+            let! session = scp.GetSessionFromContext ctx
+            let! response = manager.resetTurn gameId session
+            let dto = response |> toStateAndEventResponseDto
+            return OkObjectResult(dto) :> IActionResult
+        }
+    
+    [<HttpPost("commit-request")>]
+    [<ProducesResponseType(200, Type = typeof<StateAndEventResponseDto>)>]
+    member __.CommitTurn(gameId : int) : Task<IActionResult> =
+        let ctx = base.HttpContext
+        task {
+            let! session = scp.GetSessionFromContext ctx
+            let! response = manager.commitTurn gameId session
+            let dto = response |> toStateAndEventResponseDto
+            return OkObjectResult(dto) :> IActionResult
+        }
+    

@@ -12,6 +12,10 @@ Apex is an online multiplayer strategy board game in curved space.
 
 For more details, see the [wiki](https://github.com/JamesFaix/Apex/wiki).
 
+![API Quality Gates](https://github.com/JamesFaix/Apex/workflows/API%20Quality%20Gates/badge.svg)
+![Web Quality Gates](https://github.com/JamesFaix/Apex/workflows/Web%20Quality%20Gates/badge.svg)
+
 [Contribution guidlines](CONTRIBUTING.md)
 
 <img src="https://github.com/JamesFaix/Apex/wiki/images/screenshot.gif"/>
+

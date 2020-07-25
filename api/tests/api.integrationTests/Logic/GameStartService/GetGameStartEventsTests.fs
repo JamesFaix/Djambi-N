@@ -2,17 +2,23 @@ namespace Apex.Api.IntegrationTests.Logic.GameStartService
 
 open FSharp.Control.Tasks
 open Xunit
-open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.IntegrationTests
 open Apex.Api.Model
 open Apex.Api.Logic
+open Apex.Api.Db.Interfaces
+open Apex.Api.Enums
+open Apex.Api.Logic.Services
+open System.Threading.Tasks
+open Apex.Api.Common.Control
+open System
 
 type GetGameStartEventsTests() =
     inherit TestsBase()
 
     let createUserSessionAndGameWith3Players() =
+        let host = HostFactory.createHost()
         task {
-            let! (user, session, game) = createuserSessionAndGame(true) |> thenValue
+            let! (user, session, game) = createuserSessionAndGame(true)
 
             let player2request =
                 { TestUtilities.getCreatePlayerRequest with
@@ -20,53 +26,59 @@ type GetGameStartEventsTests() =
                     kind = PlayerKind.Guest
                     name = Some "p2"
                 }
-            let! _ = db.games.addPlayer (game.id, player2request) |> thenValue
+            let! _ = host.Get<IGameRepository>().addPlayer (game.id, player2request)
 
             let player3request = { player2request with name = Some "p3" }
-            let! _ = db.games.addPlayer (game.id, player3request) |> thenValue
+            let! _ = host.Get<IGameRepository>().addPlayer (game.id, player3request)
 
-            let! game = db.games.getGame game.id |> thenValue
+            let! game = host.Get<IGameRepository>().getGame game.id
 
-            return Ok (user, session, game)
+            return user, session, game
         }
 
     [<Fact>]
     let ``Should fail not creator or EditPendingGames privilege``() =
+        let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (user, session, game) = createUserSessionAndGameWith3Players() |> thenValue
+            let! (user, session, game) = createUserSessionAndGameWith3Players()
             let session = session |> TestUtilities.setSessionUserId (session.user.id+1)
 
-            //Act
-            let! result = services.gameStart.getGameStartEvents game session
+            //Act/Assert
+            let! ex = Assert.ThrowsAsync<UnauthorizedAccessException>(fun () ->
+                host.Get<GameStartService>().getGameStartEvents game session :> Task
+            )
 
-            //Assert
-            result |> shouldBeError 403 Security.noPrivilegeOrCreatorErrorMessage
+            ex.Message |> shouldBe Security.noPrivilegeOrCreatorErrorMessage
         }
 
     [<Fact>]
     let ``Should fail if only one player``() =
+        let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (_, session, game) = createuserSessionAndGame(true) |> thenValue
+            let! (_, session, game) = createuserSessionAndGame(true)
 
-            //Act
-            let! result = services.gameStart.getGameStartEvents game session
+            //Act/Assert
+            let! ex = Assert.ThrowsAsync<HttpException>(fun () ->
+                host.Get<GameStartService>().getGameStartEvents game session :> Task
+            )
 
-            //Assert
-            result |> shouldBeError 400 "Cannot start game with only one player."
+            ex.statusCode |> shouldBe 400
+            ex.Message |> shouldBe "Cannot start game with only one player."
         }
 
     [<Fact>]
     let ``Should work if EditPendingGames privilege``() =
+        let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (user, session, game) = createUserSessionAndGameWith3Players() |> thenValue
+            let! (user, session, game) = createUserSessionAndGameWith3Players()
             let session = session |> TestUtilities.setSessionUserId (session.user.id+1)
-                                  |> TestUtilities.setSessionPrivileges [EditPendingGames]
+                                  |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames]
 
             //Act
-            let! events = services.gameStart.getGameStartEvents game session |> thenValue
+            let! events = host.Get<GameStartService>().getGameStartEvents game session
 
             //Assert
             let (addNeutralPlayers, startGame) = events
@@ -84,12 +96,13 @@ type GetGameStartEventsTests() =
 
     [<Fact>]
     let ``Should work if creator``() =
+        let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (user, session, game) = createUserSessionAndGameWith3Players() |> thenValue
+            let! (user, session, game) = createUserSessionAndGameWith3Players()
 
             //Act
-            let! events = services.gameStart.getGameStartEvents game session |> thenValue
+            let! events = host.Get<GameStartService>().getGameStartEvents game session
 
             //Assert
             let (addNeutralPlayers, startGame) = events
@@ -107,9 +120,10 @@ type GetGameStartEventsTests() =
 
     [<Fact>]
     let ``Should add players if not at capacity``() =
+        let host = HostFactory.createHost()
         task {
             //Arrange
-            let! (user, session, game) = createuserSessionAndGame(true) |> thenValue
+            let! (user, session, game) = createuserSessionAndGame(true)
 
             let p2Request =
                 {
@@ -118,11 +132,11 @@ type GetGameStartEventsTests() =
                     name = Some "p2"
                 }
 
-            let! _ = db.games.addPlayer(game.id, p2Request)
-            let! game = db.games.getGame game.id |> thenValue
+            let! _ = host.Get<IGameRepository>().addPlayer(game.id, p2Request)
+            let! game = host.Get<IGameRepository>().getGame game.id
 
             //Act
-            let! events = services.gameStart.getGameStartEvents game session |> thenValue
+            let! events = host.Get<GameStartService>().getGameStartEvents game session
             
             //Assert
             let (addNeutralPlayers, startGame) = events

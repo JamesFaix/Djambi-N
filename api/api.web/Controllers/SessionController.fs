@@ -1,35 +1,55 @@
-namespace Apex.Api.Web.Controllers
+﻿namespace Apex.Api.Web.Controllers
 
-open Microsoft.AspNetCore.Http
-open Apex.Api.Common.Control.AsyncHttpResult
-open Apex.Api.Model
-open Apex.Api.Web.Interfaces
-open Apex.Api.Web
+open System.Threading.Tasks
+open Microsoft.AspNetCore.Mvc
+open FSharp.Control.Tasks
+open Serilog
 open Apex.Api.Logic.Interfaces
+open Apex.Api.Model
+open Apex.Api.Web
+open Apex.Api.Web.Model
+open Apex.Api.Web.Mappings
 
-type SessionController(u : HttpUtility,
-                       sessionMan : ISessionManager) =
-    interface ISessionController with
+[<ApiController>]
+[<Route("api/sessions")>]
+type SessionController(manager : ISessionManager,
+                       logger : ILogger,
+                       scp : SessionContextProvider,
+                       cookieProvider : CookieProvider) =
+    inherit ControllerBase()
+    
+    [<HttpPost>]
+    [<ProducesResponseType(200, Type = typeof<SessionDto>)>]
+    member __.OpenSession([<FromBody>] request : LoginRequestDto) : Task<IActionResult> =
+        let ctx = base.HttpContext
+        task {
+            let! sessionOption = scp.GetSessionOptionFromContext ctx
+            let! _ = match sessionOption with
+                        | Some s -> manager.logout s
+                        | None -> Task.FromResult ()
 
-        member x.openSession =
-            let func (ctx : HttpContext) =
-                u.getSessionOptionAndModelFromContext<LoginRequest> ctx
-                |> thenBindAsync (fun (request, session) ->
-                    match session with
-                    | Some s -> sessionMan.logout s
-                    | None -> okTask ()
+            let request = request |> toLoginRequest
+            let! session = manager.login request
+            let dto = session |> toSessionDto
 
-                    |> thenBindAsync (fun _ -> sessionMan.login request)
-                    |> thenDo (fun session -> u.appendCookie ctx (session.token, session.expiresOn))
-                )
-            u.handle func
+            cookieProvider.AppendCookie ctx (session.token, session.expiresOn)                               
+            
+            return OkObjectResult(dto) :> IActionResult
+        }
+       
+    [<HttpDelete>]
+    [<ProducesResponseType(200)>]
+    member __.CloseSession() : Task<IActionResult> =
+        let ctx = base.HttpContext
 
-        member x.closeSession =
-            let func (ctx : HttpContext) =
-                //Always clear the cookie, even if the DB does not have a session matching it
-                u.appendEmptyCookie ctx
+        //Always clear the cookie, even if the DB does not have a session matching it
+        cookieProvider.AppendEmptyCookie ctx
 
-                u.getSessionFromContext ctx
-                |> thenBindAsync sessionMan.logout
+        task {
+            let! sessionOption = scp.GetSessionOptionFromContext ctx
+            let! _ = match sessionOption with
+                        | Some s -> manager.logout s
+                        | None -> Task.FromResult ()
 
-            u.handle func
+            return OkResult() :> IActionResult
+        }

@@ -14,7 +14,7 @@ import Geometry from '../viewModel/board/geometry';
 import { Point } from '../viewModel/board/model';
 import GameHistory from '../viewModel/gameHistory';
 import * as Settings from './settings';
-import { MapUtil } from '../utilities/collections';
+import { add } from '../utilities/collections';
 
 export interface State {
     session: Session.State,
@@ -115,7 +115,7 @@ function loadBoardReducer(state: State, action: CustomAction) : State {
         ...state,
         boards: {
             ...state.boards,
-            boards: MapUtil.add(state.boards.boards, da.data.regionCount, da.data)
+            boards: add(state.boards.boards, da.data.regionCount, da.data)
         }
     };
     //There won't be an active game if boards are being loaded for thumbnails

@@ -5,7 +5,8 @@ open Apex.Api.Logic.ModelExtensions.BoardModelExtensions
 open Apex.Api.Logic.ModelExtensions.GameModelExtensions
 open Apex.Api.Model
 open Apex.Api.Logic
-open Apex.Api.Common.Control
+open Apex.Api.Enums
+open System.ComponentModel
 
 type SelectionOptionsService() =
 
@@ -100,7 +101,7 @@ type SelectionOptionsService() =
                             else 
                                 //If the center is vacant, you must check if the target piece could stay there
                                 let subjectStrategy = Pieces.getStrategy subject
-                                let targetKind = if subjectStrategy.killsTarget then Corpse else target.kind
+                                let targetKind = if subjectStrategy.killsTarget then PieceKind.Corpse else target.kind
                                 let targetStrategy = Pieces.getStrategyForKind targetKind
                                 targetStrategy.canStayInCenter
                     ) 
@@ -126,20 +127,20 @@ type SelectionOptionsService() =
                     |> Seq.map (fun cell -> cell.id)
                     |> Seq.toList
 
-    member x.getSelectableCellsFromState(game : Game) : int list HttpResult =
+    member __.getSelectableCellsFromState(game : Game) : int list =
         let turn = game.currentTurn.Value
         match turn.requiredSelectionKind with
         | None ->
-            Ok []
-        | Some Subject ->
-            Ok <| getSubjectSelectionOptions (game, turn)
-        | Some Move ->
+            []
+        | Some SelectionKind.Subject ->
+            getSubjectSelectionOptions (game, turn)
+        | Some SelectionKind.Move ->
             let subject = turn.subjectPiece(game).Value
-            Ok <| getMoveSelectionOptions (game, subject)
-        | Some Target ->
-            Ok <| getTargetSelectionOptions (game, turn)
-        | Some Drop ->
-            Ok <| getDropSelectionOptions (game, turn)
-        | Some Vacate ->
-            Ok <| getVacateSelectionOptions (game, turn)
-         
+            getMoveSelectionOptions (game, subject)
+        | Some SelectionKind.Target ->
+            getTargetSelectionOptions (game, turn)
+        | Some SelectionKind.Drop ->
+            getDropSelectionOptions (game, turn)
+        | Some SelectionKind.Vacate ->
+            getVacateSelectionOptions (game, turn)
+        | _ -> raise <| InvalidEnumArgumentException()

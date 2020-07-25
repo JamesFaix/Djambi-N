@@ -1,25 +1,8 @@
 [<AutoOpen>]
 module Apex.Api.Model.GameModel
 
-open Apex.ClientGenerator.Annotations
+open Apex.Api.Enums
 
-[<ClientType(ClientSection.Player)>]
-type PlayerKind =
-    | User
-    | Guest
-    | Neutral
-
-[<ClientType(ClientSection.Player)>]
-type PlayerStatus =
-    | Pending
-    | Alive
-    | Eliminated
-    | Conceded
-    | WillConcede
-    | AcceptsDraw
-    | Victorious
-
-[<ClientType(ClientSection.Player)>]
 type Player =
     {
         id : int
@@ -33,17 +16,6 @@ type Player =
         startingTurnNumber : int option
     }
 
-[<ClientType(ClientSection.Game)>]
-type PieceKind =
-    | Conduit
-    | Thug
-    | Scientist
-    | Hunter
-    | Diplomat
-    | Reaper
-    | Corpse
-
-[<ClientType(ClientSection.Game)>]
 type Piece =
     {
         id : int
@@ -53,15 +25,6 @@ type Piece =
         cellId : int
     }
 
-[<ClientType(ClientSection.Turn)>]
-type SelectionKind =
-    | Subject
-    | Move
-    | Target
-    | Drop
-    | Vacate
-
-[<ClientType(ClientSection.Turn)>]
 type Selection =
     {
         kind : SelectionKind
@@ -72,53 +35,46 @@ type Selection =
 module Selection =
     let subject(cellId, pieceId) =
         {
-            kind = Subject
+            kind = SelectionKind.Subject
             cellId = cellId
             pieceId = Some pieceId
         }
 
     let move(cellId) =
         {
-            kind = Move
+            kind = SelectionKind.Move
             cellId = cellId
             pieceId = None
         }
 
     let moveWithTarget(cellId, pieceId) =
         {
-            kind = Move
+            kind = SelectionKind.Move
             cellId = cellId
             pieceId = Some pieceId
         }
 
     let target(cellId, pieceId) =
         {
-            kind = Target
+            kind = SelectionKind.Target
             cellId = cellId
             pieceId = Some pieceId
         }
 
     let drop(cellId) =
         {
-            kind = Drop
+            kind = SelectionKind.Drop
             cellId = cellId
             pieceId = None
         }
 
     let vacate(cellId) =
         {
-            kind = Vacate
+            kind = SelectionKind.Vacate
             cellId = cellId
             pieceId = None
         }
 
-[<ClientType(ClientSection.Turn)>]
-type TurnStatus =
-    | AwaitingSelection
-    | AwaitingCommit
-    | DeadEnd
-
-[<ClientType(ClientSection.Turn)>]
 type Turn =
     {
         status : TurnStatus
@@ -130,29 +86,20 @@ type Turn =
 module Turn =
     let empty =
         {
-            status = AwaitingSelection
+            status = TurnStatus.AwaitingSelection
             selections = []
             selectionOptions = []
-            requiredSelectionKind = Some Subject
+            requiredSelectionKind = Some SelectionKind.Subject
         }
 
     let deadEnd (selections) =
         {
-            status = DeadEnd
+            status = TurnStatus.DeadEnd
             selections = selections
             selectionOptions = []
             requiredSelectionKind = None
         }
 
-[<ClientType(ClientSection.Game)>]
-type GameStatus =
-    | Pending
-    | InProgress
-    | Canceled
-    | Over
-
-[<CLIMutable>]
-[<ClientType(ClientSection.Game)>]
 type GameParameters =
     {
         description : string option
@@ -161,7 +108,6 @@ type GameParameters =
         allowGuests : bool
     }
 
-[<ClientType(ClientSection.Game)>]
 type Game =
     {
         id : int

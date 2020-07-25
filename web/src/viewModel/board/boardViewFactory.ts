@@ -14,7 +14,9 @@ import {
     Game,
     User
 } from "../../api/model";
-import { List } from "../../utilities/collections";
+import { exists, groupMatches, mergeMatches } from "../../utilities/collections";
+import { flatMap } from 'lodash';
+
 const Point = Geometry.Point;
 const Line = Geometry.Line;
 const Polygon = Geometry.Polygon;
@@ -131,7 +133,7 @@ export default class BoardViewFactory {
         const polygon = this.getCellPolygon(rowBorders, location.x, cellCountPerSide);
 
         const cell = board.cells
-            .find(c => List.exists(c.locations, loc => Location.equals(loc, location)));
+            .find(c => exists(c.locations, loc => Location.equals(loc, location)));
 
         return {
             id: cell.id,
@@ -176,7 +178,7 @@ export default class BoardViewFactory {
 
     //TODO: Add tests
     public static mergePartialCellViews(cells : CellView[]) : CellView[] {
-        return List.mergeMatches(
+        return mergeMatches(
             cells,
             (a, b) => a.id === b.id,
             (a, b) => this.mergeCellViews(a, b));
@@ -208,10 +210,10 @@ export default class BoardViewFactory {
         const threshold = 0.00001;
 
         //Get all edges of each polygon
-        const edges = List.flatMap(polygons, Polygon.edges);
+        const edges = flatMap(polygons, Polygon.edges);
 
         //Group by which are the same line segment
-        const groupedEdges = List.groupMatches(
+        const groupedEdges = groupMatches(
             edges,
             (a, b) => Line.isCloseTo(a, b, threshold));
 
@@ -236,7 +238,7 @@ export default class BoardViewFactory {
             resultEdges = resultEdges.filter(e2 => !Line.isCloseTo(e, e2, threshold));
 
             //Add the vertex not already in the list
-            let nextVertex = List.exists(vertices, p => Point.isCloseTo(p, e.a, threshold)) ? e.b : e.a;
+            let nextVertex = exists(vertices, p => Point.isCloseTo(p, e.a, threshold)) ? e.b : e.a;
             vertices.push(nextVertex);
         }
 
@@ -263,10 +265,10 @@ export default class BoardViewFactory {
 
             const isSelected = turn &&
                 isCurrentUsersTurn &&
-                List.exists(turn.selections, s => s.cellId === c.id);
+                exists(turn.selections, s => s.cellId === c.id);
             const isSelectable = turn &&
                 isCurrentUsersTurn &&
-                List.exists(turn.selectionOptions, cellId => cellId === c.id);
+                exists(turn.selectionOptions, cellId => cellId === c.id);
             const piece = game.pieces.find(p => p.cellId === c.id);
             const owner = piece ? game.players.find(p => p.id === piece.playerId) : null;
             const colorId = owner ? owner.colorId : null;

@@ -1,16 +1,29 @@
 ﻿namespace Apex.Api.Web.Controllers
 
-open Apex.Api.Common.Control.AsyncHttpResult
-open Apex.Api.Model
-open Apex.Api.Web.Interfaces
-open Apex.Api.Web
+open System.Threading.Tasks
+open Microsoft.AspNetCore.Mvc
+open FSharp.Control.Tasks
+open Serilog
 open Apex.Api.Logic.Interfaces
+open Apex.Api.Web
+open Apex.Api.Web.Model
+open Apex.Api.Web.Mappings
 
-type SearchController(searchMan : ISearchManager,
-                      u : HttpUtility) =
-    interface ISearchController with
-        member x.searchGames =
-            let func ctx =
-                u.getSessionAndModelFromContext<GamesQuery> ctx
-                |> thenBindAsync (fun (jsonModel, session) -> searchMan.searchGames jsonModel session)
-            u.handle func
+[<ApiController>]
+[<Route("api/search")>]
+type SearchController(manager : ISearchManager,
+                       logger : ILogger,
+                       scp : SessionContextProvider) =
+    inherit ControllerBase()
+    
+    [<HttpPost("games")>]
+    [<ProducesResponseType(200, Type = typeof<SearchGameDto[]>)>]
+    member __.SearchGames([<FromBody>] query : GamesQueryDto) : Task<IActionResult> =
+        let ctx = base.HttpContext
+        task {
+            let! session = scp.GetSessionFromContext ctx
+            let query = query |> toGamesQuery
+            let! games = manager.searchGames query session
+            let dtos = games |> List.map toSearchGameDto
+            return OkObjectResult(dtos) :> IActionResult
+        }

@@ -3,7 +3,7 @@ import { Point } from "../viewModel/board/model";
 import ThemeFactory from "../themes/themeFactory";
 import { Theme } from "../themes/model";
 import { PieceImageInfo, getPieceImageKey } from "../utilities/images";
-import { MapUtil } from "../utilities/collections";
+import { add } from "../utilities/collections";
 
 interface Images {
     pieces : Map<string, HTMLImageElement>
@@ -98,7 +98,7 @@ export function reducer(state : State, action : CustomAction) : State {
                 ...state,
                 images: {
                     ...state.images,
-                    pieces: MapUtil.add(state.images.pieces, key, da.data.image)
+                    pieces: add(state.images.pieces, key, da.data.image)
                 }
             }
         }

@@ -1,13 +1,6 @@
 namespace Apex.Api.IntegrationTests.Logic.GameManager
 
-open System
-open FSharp.Control.Tasks
-open Xunit
-open Apex.Api.Common
-open Apex.Api.Common.Control.AsyncHttpResult
 open Apex.Api.IntegrationTests
-open Apex.Api.Logic.Services
-open Apex.Api.Model
 
 type GetGameTests() =
     inherit TestsBase()

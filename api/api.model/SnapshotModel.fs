@@ -1,8 +1,6 @@
 [<AutoOpen>]
 module Apex.Api.Model.SnapshotModel
 
-open Apex.ClientGenerator.Annotations
-
 type Snapshot =
     {
         id : int
@@ -12,7 +10,6 @@ type Snapshot =
         history : Event list
     }
 
-[<ClientType(ClientSection.Snapshots)>]
 type SnapshotInfo =
     {
         id : int
@@ -20,7 +17,6 @@ type SnapshotInfo =
         description : string
     }
 
-[<ClientType(ClientSection.Snapshots)>]
 type CreateSnapshotRequest =
     {
         description : string

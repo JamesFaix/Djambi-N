@@ -1,50 +1,67 @@
-namespace Apex.Api.Db.Repositories
+﻿namespace Apex.Api.Db.Repositories
 
-open Apex.Api.Common.Control.AsyncHttpResult
-open Apex.Api.Db;
 open Apex.Api.Db.Interfaces
-open Apex.Api.Model
+open Apex.Api.Db.Model
+open System
+open FSharp.Control.Tasks
+open Apex.Api.Db.Mappings
+open Microsoft.EntityFrameworkCore
+open System.Security.Authentication
 
-type SessionRepository(ctxProvider : CommandContextProvider,
-                       userRepo : IUserRepository) =
+type SessionRepository(context : ApexDbContext) =
     interface ISessionRepository with
-        member x.getSession query =
-            Commands2.getSession query
-            |> Command.execute ctxProvider
-            |> thenBindAsync (fun sessionSqlModel ->
-                userRepo.getUser sessionSqlModel.userId
-                |> thenMap (fun userDetails ->
-                    let user = userDetails |> UserDetails.hideDetails
-                    Mapping.mapSessionResponse sessionSqlModel user
-                )
-            )
+        member __.getSession query =
+            task {
+                let! s = 
+                    context.Sessions
+                        .Include(fun s -> s.User)
+                        .SingleOrDefaultAsync(fun s ->
+                            (query.sessionId.IsNone || s.SessionId = query.sessionId.Value) &&
+                            (query.token.IsNone || s.Token = query.token.Value) &&
+                            (query.userId.IsNone || s.User.UserId = query.userId.Value)
+                        )
 
-        member x.createSession request =
-            Commands2.createSession request
-            |> Command.execute ctxProvider
-            |> thenBindAsync(fun sessionId ->
-                let query =
-                    {
-                        sessionId = Some sessionId
-                        token = None
-                        userId = None
-                    }
-                (x :> ISessionRepository).getSession query
-            )
+                return s |> Option.ofObj |> Option.map toSession
+            }
 
-        member x.renewSessionExpiration (sessionId, expiresOn) =
-            Commands.renewSessionExpiration (sessionId, expiresOn)
-            |> Command.execute ctxProvider
-            |> thenBindAsync (fun _ ->
-                let query =
-                    {
-                        sessionId = Some sessionId
-                        token = None
-                        userId = None
-                    }
-                (x :> ISessionRepository).getSession query
-            )
+        member __.createSession request =
+            task {
+                let s = SessionSqlModel()
+                s.UserId <- request.userId
+                s.Token <- request.token
+                s.CreatedOn <- DateTime.UtcNow
+                s.ExpiresOn <- request.expiresOn
 
-        member x.deleteSession (sessionId, token) =
-            Commands.deleteSession (sessionId, token)
-            |> Command.execute ctxProvider
+                let! _ = context.Sessions.AddAsync(s)
+                let! _ = context.SaveChangesAsync()
+
+                let! s = 
+                    context.Sessions
+                        .Include(fun s -> s.User)
+                        .SingleOrDefaultAsync(fun s1 -> s1.SessionId = s.SessionId)
+
+                return s |> toSession
+            }
+
+        member __.renewSessionExpiration (sessionId, expiresOn) =
+            task {
+                let! s = context.Sessions.FindAsync(sessionId)
+                if s = null
+                then return raise <| AuthenticationException("Not signed in.")
+                else 
+                    s.ExpiresOn <- expiresOn
+                    context.Sessions.Update(s) |> ignore
+                    let! _ = context.SaveChangesAsync()
+                    return s |> toSession
+            }
+
+        member __.deleteSession token =
+            task {
+                let! session = context.Sessions.SingleOrDefaultAsync(fun s -> s.Token = token)
+                if session = null
+                then return ()
+                else
+                    context.Sessions.Remove(session) |> ignore
+                    let! _ = context.SaveChangesAsync()
+                    return ()
+            }

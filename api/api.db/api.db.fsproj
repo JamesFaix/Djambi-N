@@ -1,31 +1,33 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
+
   <ItemGroup>
-    <Compile Include="Model.fs" />
-    <Compile Include="Mapping.fs" />
-    <Compile Include="TableValuedParameters.fs" />
-    <Compile Include="CommandContext.fs" />
-    <Compile Include="Command.fs" />
-    <Compile Include="Commands.fs" />
-    <Compile Include="Repositories\UserRepository.fs" />
-    <Compile Include="Repositories\SessionRepository.fs" />
-    <Compile Include="Repositories\GameRepository.fs" />
+    <Compile Include="Model\Model.fs" />
+    <Compile Include="Mappings\EventMappings.fs" />
+    <Compile Include="Mappings\SnapshotMappings.fs" />
+    <Compile Include="Mappings\UserMappings.fs" />
+    <Compile Include="Mappings\SessionMappings.fs" />
+    <Compile Include="Mappings\GameMappings.fs" />
+    <Compile Include="Mappings\SearchMappings.fs" />
     <Compile Include="Repositories\EventRepository.fs" />
+    <Compile Include="Repositories\GameRepository.fs" />
     <Compile Include="Repositories\SearchRepository.fs" />
+    <Compile Include="Repositories\SessionRepository.fs" />
     <Compile Include="Repositories\SnapshotRepository.fs" />
-    <Compile Include="DbRoot.fs" />
+    <Compile Include="Repositories\UserRepository.fs" />
   </ItemGroup>
+
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="2.0.30" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.7.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\api.common\api.common.fsproj" />
     <ProjectReference Include="..\api.db.interfaces\api.db.interfaces.fsproj" />
+    <ProjectReference Include="..\api.db.model\api.db.model.csproj" />
     <ProjectReference Include="..\api.model\api.model.fsproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="4.7.2" />
+  </ItemGroup>
+
 </Project>

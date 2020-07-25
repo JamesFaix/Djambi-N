@@ -2,10 +2,8 @@
 module Apex.Api.Model.SearchModel
 
 open System
-open Apex.ClientGenerator.Annotations
+open Apex.Api.Enums
 
-[<CLIMutable>]
-[<ClientType(ClientSection.Search)>]
 type GamesQuery =
     {
         gameId : int option
@@ -40,7 +38,6 @@ module GamesQuery =
             lastEventAfter = None
         }
 
-[<ClientType(ClientSection.Search)>]
 type SearchGame = {
     id : int
     parameters : GameParameters

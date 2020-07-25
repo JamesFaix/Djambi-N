@@ -1,8 +1,6 @@
 [<AutoOpen>]
 module Apex.Api.Model.BoardModel
 
-open Apex.ClientGenerator.Annotations
-
 type Directions =
     | Up = 1
     | UpRight = 2
@@ -17,7 +15,6 @@ type RadialDirections =
     | Clockwise = 1
     | CounterClockwise = 2
 
-[<ClientType(ClientSection.Board)>]
 type Location =
     {
         region : int
@@ -25,7 +22,6 @@ type Location =
         y : int
     }
 
-[<ClientType(ClientSection.Board)>]
 type Cell =
     {
         id : int
@@ -38,10 +34,12 @@ type BoardMetadata =
         regionSize : int
     }
 
-[<ClientType(ClientSection.Board)>]
 type Board =
     {
+        /// <summary> Number of regions on the board. </summary>
         regionCount : int
+        /// <summary> Width/height of region in cells. </summary>
         regionSize : int
+        /// <summary> List of cells. </summary>
         cells : Cell list
     }

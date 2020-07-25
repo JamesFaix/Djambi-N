@@ -1,34 +1,56 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="CookieProvider.fs" />
+    <Compile Include="Model\BoardWebModel.fs" />
+    <Compile Include="Model\UserWebModel.fs" />
+    <Compile Include="Model\GameWebModel.fs" />
+    <Compile Include="Model\EventWebModel.fs" />
+    <Compile Include="Model\GameRequestWebModel.fs" />
+    <Compile Include="Model\SessionWebModel.fs" />
+    <Compile Include="Model\SearchWebModel.fs" />
+    <Compile Include="Model\SnapshotWebModel.fs" />
+    <Compile Include="Mappings\BoardMappings.fs" />
+    <Compile Include="Mappings\PlayerMappings.fs" />
+    <Compile Include="Mappings\TurnMappings.fs" />
+    <Compile Include="Mappings\UserMapping.fs" />
+    <Compile Include="Mappings\SnapshotMappings.fs" />
+    <Compile Include="Mappings\SessionMapping.fs" />
+    <Compile Include="Mappings\GameMapping.fs" />
+    <Compile Include="Mappings\SearchMappings.fs" />
+    <Compile Include="Mappings\EventMappings.fs" />
+    <Compile Include="SessionContextProvider.fs" />
     <Compile Include="Websockets.fs" />
-    <Compile Include="HttpUtility.fs" />
     <Compile Include="ServerSideEvents.fs" />
-    <Compile Include="Controllers\SearchController.fs" />
     <Compile Include="Controllers\BoardController.fs" />
     <Compile Include="Controllers\EventController.fs" />
     <Compile Include="Controllers\GameController.fs" />
     <Compile Include="Controllers\NotificationController.fs" />
     <Compile Include="Controllers\PlayerController.fs" />
+    <Compile Include="Controllers\SearchController.fs" />
     <Compile Include="Controllers\SessionController.fs" />
     <Compile Include="Controllers\SnapshotController.fs" />
     <Compile Include="Controllers\TurnController.fs" />
     <Compile Include="Controllers\UserController.fs" />
-    <Compile Include="WebRoot.fs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Giraffe" Version="4.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
     <PackageReference Include="Microsoft.AspNetCore.WebSockets" Version="2.2.1" />
-    <PackageReference Include="Serilog" Version="2.8.0" />
+    <PackageReference Include="Serilog" Version="2.9.0" />
     <PackageReference Include="TaskBuilder.fs" Version="2.1.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\api.common\api.common.fsproj" />
+    <ProjectReference Include="..\api.enums\api.enums.fsproj" />
     <ProjectReference Include="..\api.logic.interfaces\api.logic.interfaces.fsproj" />
     <ProjectReference Include="..\api.model\api.model.fsproj" />
-    <ProjectReference Include="..\api.web.interfaces\api.web.interfaces.fsproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="4.7.2" />
   </ItemGroup>
 </Project>

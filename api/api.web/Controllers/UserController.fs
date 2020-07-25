@@ -1,36 +1,62 @@
-namespace Apex.Api.Web.Controllers
+﻿namespace Apex.Api.Web.Controllers
 
-open Microsoft.AspNetCore.Http
-open Apex.Api.Common.Control.AsyncHttpResult
-open Apex.Api.Model
-open Apex.Api.Web.Interfaces
-open Apex.Api.Web
+open System.Threading.Tasks
+open Microsoft.AspNetCore.Mvc
+open FSharp.Control.Tasks
+open Serilog
 open Apex.Api.Logic.Interfaces
+open Apex.Api.Web
+open Apex.Api.Web.Mappings
+open Apex.Api.Web.Model
 
-type UserController(u : HttpUtility,
-                    userMan : IUserManager) =
-    interface IUserController with
-        member x.createUser =
-            let func (ctx : HttpContext) =
-                u.getSessionOptionAndModelFromContext<CreateUserRequest> ctx
-                |> thenBindAsync (fun (model, sessionOption) -> userMan.createUser model sessionOption)
-            u.handle func
-
-        member x.deleteUser userId =
-            let func ctx =
-                u.getSessionFromContext ctx
-                |> thenBindAsync (userMan.deleteUser userId)
-                //TODO: Log out if non-admin deleting self
-            u.handle func
-
-        member x.getUser userId =
-            let func ctx =
-                u.getSessionFromContext ctx
-                |> thenBindAsync (userMan.getUser userId)
-            u.handle func
-
-        member x.getCurrentUser =
-            let func ctx =
-                u.getSessionFromContext ctx
-                |> thenBindAsync userMan.getCurrentUser
-            u.handle func
+[<ApiController>]
+[<Route("api/users")>]
+type UserController(manager : IUserManager,
+                       logger : ILogger,
+                       scp : SessionContextProvider) =
+    inherit ControllerBase()
+    
+    [<HttpPost>]
+    [<ProducesResponseType(200, Type = typeof<UserDto>)>]
+    member __.CreateUser([<FromBody>] request : CreateUserRequestDto) : Task<IActionResult> =
+        let ctx = base.HttpContext
+        task {
+            let! sessionOption = scp.GetSessionOptionFromContext ctx
+            let request = request |> toCreateUserRequest
+            let! user = manager.createUser request sessionOption
+            let dto = user |> toUserDto
+            return OkObjectResult(dto) :> IActionResult
+        }
+        
+    [<HttpDelete("{userId}")>]
+    [<ProducesResponseType(200)>]
+    member __.DeleteUser(userId : int) : Task<IActionResult> =
+        let ctx = base.HttpContext
+        task {
+            let! session = scp.GetSessionFromContext ctx
+            let! response = manager.deleteUser userId session
+            //TODO: Log out if non-admin deleting self
+            return OkObjectResult(response) :> IActionResult
+        }
+    
+    [<HttpGet("{userId}")>]
+    [<ProducesResponseType(200, Type = typeof<UserDto>)>]
+    member __.GetUser(userId : int) : Task<IActionResult> =
+        let ctx = base.HttpContext
+        task {
+            let! session = scp.GetSessionFromContext ctx
+            let! user =  manager.getUser userId session
+            let dto = user |> toUserDto
+            return OkObjectResult(dto) :> IActionResult
+        }
+        
+    [<HttpGet("current")>]
+    [<ProducesResponseType(200, Type = typeof<UserDto>)>]
+    member __.GetCurrentUser() : Task<IActionResult> =
+        let ctx = base.HttpContext
+        task {
+            let! session = scp.GetSessionFromContext ctx
+            let! user = manager.getCurrentUser session
+            let dto = user |> toUserDto
+            return OkObjectResult(dto) :> IActionResult
+        }

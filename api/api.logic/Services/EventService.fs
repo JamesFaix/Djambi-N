@@ -2,6 +2,7 @@ namespace Apex.Api.Logic.Services
 
 open Apex.Api.Model
 open Apex.Api.Common.Collections
+open Apex.Api.Enums
 
 type EventService(gameStartServ : GameStartService) =
 
@@ -10,7 +11,7 @@ type EventService(gameStartServ : GameStartService) =
 
     let applyGameStatusChangedEffect (effect : GameStatusChangedEffect) (game : Game) : Game =
         match (effect.oldValue, effect.newValue) with
-        | (Pending, InProgress) ->
+        | (GameStatus.Pending, GameStatus.InProgress) ->
             //This case is a lot more complicated
             gameStartServ.applyStartGame game
         | _ ->

@@ -2,23 +2,25 @@ namespace Apex.Api.IntegrationTests.Logic.GameManager
 
 open FSharp.Control.Tasks
 open Xunit
-open Apex.Api.Common.Control
 open Apex.Api.IntegrationTests
 open Apex.Api.Model
+open Apex.Api.Logic.Interfaces
+open Apex.Api.Enums
 
 type CreateGameTests() =
     inherit TestsBase()
 
     [<Fact>]
     let ``Create game should work``() =
+        let host = HostFactory.createHost()
         task {
             //Arrange
+            let! user = createUser()
             let parameters = getGameParameters()
-            let session = getSessionForUser 1
+            let session = getSessionForUser user
 
             //Act
-            let! game = managers.games.createGame parameters session
-                        |> AsyncHttpResult.thenValue
+            let! game = host.Get<IGameManager>().createGame parameters session
 
             //Assert
             game.id |> shouldNotBe 0
@@ -31,14 +33,15 @@ type CreateGameTests() =
 
     [<Fact>]
     let ``Create game should add self as player``() =
+        let host = HostFactory.createHost()
         task {
             //Arrange
+            let! user = createUser()
             let parameters = getGameParameters()
-            let session = getSessionForUser 1
+            let session = getSessionForUser user
 
             //Act
-            let! game = managers.games.createGame parameters session
-                        |> AsyncHttpResult.thenValue
+            let! game = host.Get<IGameManager>().createGame parameters session
 
             //Assert
             let players = game.players

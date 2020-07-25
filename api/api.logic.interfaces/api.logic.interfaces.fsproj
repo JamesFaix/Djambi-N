@@ -1,15 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Routes.fs" />
     <Compile Include="Interfaces.fs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\utils\client-generator.annotations\client-generator.annotations.fsproj" />
-    <ProjectReference Include="..\api.common\api.common.fsproj" />
+    <ProjectReference Include="..\api.enums\api.enums.fsproj" />
     <ProjectReference Include="..\api.model\api.model.fsproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="4.7.2" />
   </ItemGroup>
 </Project>
