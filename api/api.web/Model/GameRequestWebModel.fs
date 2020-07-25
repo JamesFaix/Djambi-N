@@ -3,6 +3,7 @@
 open System
 open System.ComponentModel
 open Apex.Api.Enums
+open System.ComponentModel.DataAnnotations
 
 [<CLIMutable>]
 type CreatePlayerRequestDto = {
@@ -10,6 +11,8 @@ type CreatePlayerRequestDto = {
     userId : Nullable<int>
 
     // Nullable
+    [<StringLength(20, MinimumLength = 1)>]
+    [<RegularExpression("[a-zA-Z0-9\-_]+")>]
     name : string
 }
 

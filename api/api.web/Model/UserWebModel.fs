@@ -18,6 +18,7 @@ type UserDto = {
 type CreateUserRequestDto = {
     [<Required>]
     [<RegularExpression("[a-zA-Z0-9\-_]+")>]
+    [<StringLength(20, MinimumLength = 1)>]
     name : string
 
     [<Required>]
