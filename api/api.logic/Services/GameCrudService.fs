@@ -11,28 +11,24 @@ open System.Threading.Tasks
 
 type GameCrudService(gameRepo : IGameRepository) =
     member x.createGame (parameters : GameParameters) (session : Session) : Task<Game> =
-        match parameters.description with
-        | Some x when not <| Validation.isValidGameDescription x ->
-            raise <| HttpException(422, "Game descriptions cannot exceed 100 characters.")
-        | _ -> 
-            let self = session.user
-            let gameRequest : CreateGameRequest =
-                {
-                    parameters = parameters
-                    createdByUserId = self.id
-                }
-
-            let playerRequest : CreatePlayerRequest =
-                {
-                    kind = PlayerKind.User
-                    userId = Some self.id
-                    name = Some session.user.name
-                }
-
-            task {
-                let! gameId = gameRepo.createGameAndAddPlayer (gameRequest, playerRequest)
-                return! gameRepo.getGame gameId
+        let self = session.user
+        let gameRequest : CreateGameRequest =
+            {
+                parameters = parameters
+                createdByUserId = self.id
             }
+
+        let playerRequest : CreatePlayerRequest =
+            {
+                kind = PlayerKind.User
+                userId = Some self.id
+                name = Some session.user.name
+            }
+
+        task {
+            let! gameId = gameRepo.createGameAndAddPlayer (gameRequest, playerRequest)
+            return! gameRepo.getGame gameId
+        }
 
     member x.getUpdateGameParametersEvent (game : Game, parameters : GameParameters) (session : Session) : CreateEventRequest =
         if game.status <> GameStatus.Pending

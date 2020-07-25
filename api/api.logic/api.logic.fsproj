@@ -4,7 +4,6 @@
     <TargetFramework>netstandard2.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Validation.fs" />
     <Compile Include="Errors.fs" />
     <Compile Include="Context.fs" />
     <Compile Include="Security.fs" />

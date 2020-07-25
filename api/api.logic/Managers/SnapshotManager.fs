@@ -1,6 +1,5 @@
 namespace Apex.Api.Logic.Managers
 
-open Apex.Api.Common.Control
 open Apex.Api.Logic
 open Apex.Api.Model
 open Apex.Api.Logic.Interfaces
@@ -15,8 +14,6 @@ type SnapshotManager(eventRepo : IEventRepository,
 
         member x.createSnapshot gameId request session =
             Security.ensureHas Privilege.Snapshots session            
-            if not <| Validation.isValidSnapshotDescription request.description
-            then raise <| HttpException(422, "Snapshot descriptions cannot exceed 100 characters.")
 
             task {
                 let! game = gameRepo.getGame gameId
