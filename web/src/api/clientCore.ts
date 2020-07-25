@@ -67,12 +67,6 @@ export class ApiClientCore {
         }
     }
 
-    private static async deserialize(response: Response) : Promise<any> {
-        const obj = await response.json();
-        const camelCased = mapKeys(obj, (_, k) => camelCase(k));
-        return camelCased;
-    }
-
     private static describe(request : ApiRequest) : string {
         return `${request.method} ${request.url}`;
     }
@@ -90,8 +84,21 @@ export class ApiClientCore {
             console.log(`${this.describe(request)} succeeded`);
         }
 
-        const result = this.deserialize(response);
+        const result = response.json();
         return result;
+    }
+
+    private static getErrorMessage(obj : any) : string {
+        const camelCased = mapKeys(obj, (_, k) => camelCase(k));
+        const problem = camelCased as ProblemDetails;
+        if (problem.title === "One or more validation errors occurred.") {
+            return Object.values(problem.errors)
+                .reduce((x, y) => x.concat(y))
+                .join("\n");
+        }
+        else {
+            return problem.title;
+        }
     }
 
     private static async handleError<T>(request : ApiRequest, response : Response) : Promise<T> {
@@ -112,16 +119,8 @@ export class ApiClientCore {
 
         let message = ''
         try {
-            const problem = await this.deserialize(response) as ProblemDetails;
-
-            if (problem.title === "One or more validation errors occurred.") {
-                message = Object.values(problem.errors)
-                    .reduce((x, y) => x.concat(y))
-                    .join("\n");
-            }
-            else {
-                message = problem.title;
-            }
+            const obj = await response.json();
+            message = this.getErrorMessage(obj);
         }
         catch (ex) {
             if (this.shouldLog()) {
