@@ -10,7 +10,8 @@ open System
 open System.ComponentModel.DataAnnotations
 open Apex.Api.Common.Control
 
-type UserManager(userRepo : IUserRepository) =
+type UserManager(encyptionService: IEncryptionService,
+                 userRepo : IUserRepository) =
     interface IUserManager with
         member __.createUser request sessionOption =
             match sessionOption with
@@ -25,6 +26,8 @@ type UserManager(userRepo : IUserRepository) =
                 then raise <| ValidationException("Password must contain only letters A-Z, numbers 0-9, _ or -, and mus tbe 6 to 20 characters.")
                 
                 task {
+                    let hash = encyptionService.hash request.password
+                    let request = { request with password = hash }
                     let! user = userRepo.createUser request
                     return user |> UserDetails.hideDetails
                 }

@@ -12,6 +12,7 @@
     <Compile Include="ModelExtensions\BoardModelExtensions.fs" />
     <Compile Include="ModelExtensions\BoardModelUtility.fs" />
     <Compile Include="ModelExtensions\GameModelExtensions.fs" />
+    <Compile Include="Services\EncryptionService.fs" />
     <Compile Include="Services\NotificationService.fs" />
     <Compile Include="Services\SessionService.fs" />
     <Compile Include="Services\GameCrudService.fs" />
@@ -31,6 +32,7 @@
     <Compile Include="Managers\UserManager.fs" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Cryptography.KeyDerivation" Version="3.1.6" />
     <PackageReference Include="Serilog" Version="2.9.0" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.7.0" />
   </ItemGroup>

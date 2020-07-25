@@ -9,7 +9,8 @@ open System.Threading.Tasks
 open FSharp.Control.Tasks
 open System.Security.Authentication
 
-type SessionService(sessionRepo : ISessionRepository,
+type SessionService(encryptionService : IEncryptionService,
+                    sessionRepo : ISessionRepository,
                     userRepo : IUserRepository) =
 
     let maxFailedLoginAttempts = 5
@@ -29,7 +30,8 @@ type SessionService(sessionRepo : ISessionRepository,
                 else ()
 
             let errorIfInvalidPassword (user : UserDetails) =
-                if request.password = user.password
+                let result = encryptionService.check (user.password, request.password)
+                if result.verified
                 then Task.FromResult ()
                 else
                     let attempts =
