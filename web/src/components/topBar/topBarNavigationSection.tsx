@@ -110,18 +110,20 @@ interface NavigationOptions {
 }
 
 const defaultOptions : NavigationOptions = {
+    showSettings: ButtonState.Inactive,
+    showRules: ButtonState.Inactive,
+
     showLogin: ButtonState.Hidden,
     showSignup: ButtonState.Hidden,
     showHome: ButtonState.Hidden,
-    showRules: ButtonState.Hidden,
     showCreateGame: ButtonState.Hidden,
     showLobby: ButtonState.Hidden,
     showPlay: ButtonState.Hidden,
     showDiplomacy: ButtonState.Hidden,
     showSnapshots: ButtonState.Hidden,
-    showSettings: ButtonState.Hidden,
     showGameOver: ButtonState.Hidden,
     showSearch: ButtonState.Hidden,
+
     gameId: null
 }
 
@@ -137,7 +139,7 @@ enum ContextType {
 
 function getOptions(route : string, game : Game, user : User) : NavigationOptions {
     let o = { ...defaultOptions };
-    let contextType = getContextType(route, game);
+    let contextType = getContextType(user, game);
     //Order matters!
     applyDefaultsForContext(contextType, o);
     enableGamePageButtonsBasedOnState(game, user, o);
@@ -152,11 +154,11 @@ function isGamePage(route : string) : boolean {
     return parts.length === 4 && parts[1] === "games"
 }
 
-function getContextType(route : string, game : Game) : ContextType {
-    if (route === Routes.login || route === Routes.signup) {
+function getContextType(user : User, game : Game) : ContextType {
+    if (!user) {
         return ContextType.LoggedOut;
     }
-    else if (isGamePage(route) || game) {
+    else if (game) {
         return ContextType.LoggedInWithActiveGame;
     }
     else {
@@ -165,9 +167,6 @@ function getContextType(route : string, game : Game) : ContextType {
 }
 
 function applyDefaultsForContext(type : ContextType, o : NavigationOptions) : void {
-    o.showSettings = ButtonState.Inactive;
-    o.showRules = ButtonState.Inactive;
-
     if (type === ContextType.LoggedOut) {
         o.showSignup = ButtonState.Inactive;
         o.showLogin = ButtonState.Inactive;

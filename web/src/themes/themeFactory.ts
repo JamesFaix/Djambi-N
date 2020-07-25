@@ -83,7 +83,7 @@ export default class ThemeFactory {
             }
         },
         fonts: {
-            titleFamily: "Arial Black, Century Gothic, Geneva, sans-serif",
+            titleFamily: "Century Gothic, Geneva, sans-serif",
             headerFamily: "Century Gothic, Geneva, sans-serif",
             normalFamily: "Century Gothic, Geneva, sans-serif"
         }
