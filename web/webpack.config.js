@@ -6,9 +6,6 @@ module.exports = env => {
     const isProd = env.NODE_ENV === "production";
 
     return {
-        optimization: {
-            minimize: false
-        },
         entry: "./src/index.tsx",
         output: {
             filename: "bundle.js",
