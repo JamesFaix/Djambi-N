@@ -6,6 +6,7 @@ import Controller from '../../controllers/controller';
 import BasicPageContainer from '../containers/basicPageContainer';
 import Routes from '../../routes';
 import { TextInput, PasswordInput } from '../controls/input';
+import { NotificationType } from '../../store/notifications';
 
 const SignupPage : React.SFC<{}> = _ => {
     React.useEffect(() => {
@@ -24,13 +25,19 @@ export default SignupPage;
 
 const SignupForm : React.SFC<{}> = _ => {
     const [username, setUsername] = React.useState("");
-    const [password, setPassword] = React.useState("");
+    const [password1, setPassword1] = React.useState("");
+    const [password2, setPassword2] = React.useState("");
 
     return (
         <form
             onSubmit={e => {
                 e.preventDefault();
-                Controller.Session.signup({ name: username, password: password });
+                if (password1 !== password2) {
+                    Controller.addNotification(NotificationType.Error, "Password fields do not match.");
+                }
+                else {
+                    Controller.Session.signup({ name: username, password: password1 });
+                }
             }}
         >
             <table>
@@ -50,8 +57,18 @@ const SignupForm : React.SFC<{}> = _ => {
                         <td>Password</td>
                         <td>
                             <PasswordInput
-                                value={password}
-                                onChange={x => setPassword(x)}
+                                value={password1}
+                                onChange={x => setPassword1(x)}
+                                autoComplete="new-password"
+                            />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Reenter password</td>
+                        <td>
+                            <PasswordInput
+                                value={password2}
+                                onChange={x => setPassword2(x)}
                                 autoComplete="new-password"
                             />
                         </td>
