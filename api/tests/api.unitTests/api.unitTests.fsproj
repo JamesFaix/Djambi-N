@@ -5,6 +5,7 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Logic\Services\EncryptionServiceTests.fs" />
     <Compile Include="BoardModelExtensionTests.fs" />
   </ItemGroup>
   <ItemGroup>
