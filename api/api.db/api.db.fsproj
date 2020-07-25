@@ -26,4 +26,8 @@
     <ProjectReference Include="..\api.model\api.model.fsproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="4.7.2" />
+  </ItemGroup>
+
 </Project>
