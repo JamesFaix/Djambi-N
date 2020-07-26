@@ -24,7 +24,7 @@ jobs:
       run: $( aws ecr get-login --no-include-email )
 
     - name: Build image
-      run: docker build -t apex_api-prod -f ./api/DockerFile .
+      run: docker build -t apex_api-prod -f api/Dockerfile .
 
     - name: Tag image
       run: docker tag apex_api-prod ${{ secrets.AWS_API_ECR_REPOSITORY }}
