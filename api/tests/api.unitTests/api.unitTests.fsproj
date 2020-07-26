@@ -8,6 +8,7 @@
     <Compile Include="Logic\Managers\UserManagerTests\CreateUserTests.fs" />
     <Compile Include="Logic\Services\EncryptionServiceTests.fs" />
     <Compile Include="BoardModelExtensionTests.fs" />
+    <Compile Include="Logic\Services\SessionServiceTests\OpenSessionTests.fs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="FakeItEasy" Version="6.2.0" />

@@ -1,9 +1,8 @@
-﻿module Apex.Api.UnitTests.Services.EncryptionServiceTests
+﻿module Apex.Api.UnitTests.Logic.Services.EncryptionServiceTests
 
 open Xunit
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Logic.Services
-open System
 
 let service = EncryptionService() :> IEncryptionService
 

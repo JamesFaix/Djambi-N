@@ -1,4 +1,4 @@
-﻿module Apex.Api.UnitTets.Managers.UserManagerTests.CreateUserTests
+﻿module Apex.Api.UnitTets.Logic.Managers.UserManagerTests.CreateUserTests
 
 open System
 open System.Threading.Tasks
