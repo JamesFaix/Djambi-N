@@ -50,4 +50,4 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_REGION: ${{ secrets.AWS_REGION }}
         DISTRIBUTION_ID: ${{ secrets.AWS_WEB_CLOUDFRONT_DISTRO }}
-        SOURCE_PATH: "."
+        SOURCE_PATH: "/*"
