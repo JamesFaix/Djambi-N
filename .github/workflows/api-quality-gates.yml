@@ -2,12 +2,18 @@ name: API Quality Gates
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - master
+      - develop
+      - release/**
     paths:
       - api/**/*
       - .github/workflows/api-quality-gates.yml
   pull_request:
-    branches: [ master ]
+    branches:
+      - master
+      - develop
+      - release/**
     paths:
       - api/**/*
       - .github/workflows/api-quality-gates.yml
