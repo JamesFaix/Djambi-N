@@ -31,7 +31,7 @@ jobs:
     - name: Build
       run: webpack --env.NODE_ENV="production" --env.APEX_apiAddress=${{ secrets.AWS_API_URL }}
       working-directory: ./web
-      
+
     - name: Deploy to S3
       uses: jakejarvis/s3-sync-action@master
       with:
