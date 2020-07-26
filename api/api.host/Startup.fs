@@ -23,6 +23,9 @@ open Apex.Api.Web
 open Apex.Api.Web.Controllers
 open Apex.Api.Db.Model
 open Apex.Api.Enums
+open Microsoft.AspNetCore.Authentication.JwtBearer
+open Microsoft.IdentityModel.Tokens
+open System.Text
 
 type Startup() =
 
@@ -63,6 +66,20 @@ type Startup() =
         ) |> ignore
         services.AddControllers()
             .AddNewtonsoftJson() |> ignore
+     
+        // JWT Authentication
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(fun opt -> 
+                let tvps = TokenValidationParameters()
+                tvps.ValidateIssuer <- true
+                tvps.ValidateAudience <- true
+                tvps.ValidateLifetime <- true
+                tvps.ValidateIssuerSigningKey <- true
+                tvps.ValidIssuer <- "Jwt:Issuer"
+                tvps.ValidAudience <- "Jwt:Issuer"
+                tvps.IssuerSigningKey <- SymmetricSecurityKey(Encoding.UTF8.GetBytes("Jwt:Key"))
+                opt.TokenValidationParameters <- tvps
+            ) |> ignore
 
         // Configuration
         services.Configure<AppSettings>(__.Configuration) |> ignore
