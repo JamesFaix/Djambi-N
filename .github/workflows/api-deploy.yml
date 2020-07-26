@@ -1,0 +1,33 @@
+name: API Deploy
+
+on:
+  push:
+    branches: [ master ]
+
+env:
+  AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+  AWS_DEFAULT_OUTPUT: json
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup ECR
+      run: $( aws ecr get-login --no-include-email )
+      
+    - name: Build image
+      run: docker build -t apex_api-prod -f api/DockerFile .
+      
+    - name: Tag image
+      run: docker tag apex_api-prod ${{ secrets.AWS_API_ECR_REPOSITORY }}
+
+    - name: Push image
+      run: docker push ${{ secrets.AWS_API_ECR_REPOSITORY }}
+      
+    - name: Rebuild ElasticBeanstalk environment
+      run: aws elasticbeanstalk rebuild-environment --environment-name ${{ secrets.AWS_API_EBNSTALK_ENVIRONMENT }}
