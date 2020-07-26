@@ -15,6 +15,6 @@ type SnapshotInfoDto = {
 [<CLIMutable>]
 type CreateSnapshotRequestDto = {
     [<Required>]
-    [<StringLength(50, MinimumLength = 1)>]
+    [<StringLength(100, MinimumLength = 1)>]
     description : string
 }

@@ -94,6 +94,7 @@ type Startup() =
         services.AddScoped<IUserRepository, UserRepository>() |> ignore
 
         // Logic layer
+        services.AddScoped<IEncryptionService, EncryptionService>() |> ignore
         services.AddScoped<EventService>() |> ignore
         services.AddScoped<GameCrudService>() |> ignore
         services.AddScoped<GameStartService>() |> ignore

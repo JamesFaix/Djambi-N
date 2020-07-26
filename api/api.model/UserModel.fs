@@ -45,3 +45,8 @@ type CreationSource =
         userName : string
         time : DateTime
     }
+
+type PasswordCheckResult = {
+    verified: bool
+    needsUpgrade: bool
+}

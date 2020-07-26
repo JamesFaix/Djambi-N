@@ -44,8 +44,6 @@ type PlayerService(gameRepo : IGameRepository) =
                 then raise <| HttpException(400, "Must provide name when adding a guest player.")
                 elif not (self.has Privilege.EditPendingGames) && request.userId.Value <> self.id
                 then raise <| HttpException(403, "Cannot add guests for other users to a game.")
-                elif not <| Validation.isValidPlayerName request.name.Value
-                then raise <| HttpException(422, "Player names must contain only lettes A-Z, numbers 0-9, _, or -, and must be 1 to 20 characters.")
                 else ()
 
             | PlayerKind.Neutral ->

@@ -20,6 +20,10 @@ type ISessionService =
     abstract member closeSession : session:Session -> Task<unit>
     abstract member getAndRenewSession : token:string -> Task<Option<Session>>
 
+type IEncryptionService =
+    abstract member hash : password:string -> string
+    abstract member check : hash:string * password: string -> PasswordCheckResult
+
 type IBoardManager =
     abstract member getBoard : regionCount:int -> session:Session -> Task<Board>
     abstract member getCellPaths : regionCount:int * cellId:int -> session:Session -> Task<List<List<int>>>

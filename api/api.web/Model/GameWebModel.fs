@@ -52,6 +52,7 @@ type TurnDto(status : TurnStatus,
 [<CLIMutable>]
 type GameParametersDto = {
     // Nullable
+    [<StringLength(100)>]
     description : string
     
     regionCount : int
