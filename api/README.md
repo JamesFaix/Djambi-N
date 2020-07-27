@@ -1,4 +1,4 @@
- # api.common
+# api.common
 
 Contains utilities that can be used at all layers of the application.
 
@@ -8,7 +8,7 @@ Contains modules for communicating with SQL.
 
 - **Model** module contains data types that correspond to result set rows from different SQL queries.
 - **Mapping** module contains logic for mapping from `Apex.Api.Db.Model` namespace and the `Apex.Api.Model` namespace.
-- **Repository** modules contain the logic for executing SQL commands. 
+- **Repository** modules contain the logic for executing SQL commands.
 
 # api.host
 
@@ -30,3 +30,5 @@ Business logic data model.
 Contains logic for working with the HTTP protocol.
 
 - **Controller** modules are the top layer of all endpoints. Public methods on a manager should each gather context from the HTTP request, call business logic in a **Manager** and then create an HTTP response.
+
+[comment]: <> (Just adding a change here to trigger deployment)
