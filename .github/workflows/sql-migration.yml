@@ -32,7 +32,7 @@ jobs:
       run: |
         dotnet tool install --global dotnet-ef
         dotnet tool restore
-        dotnet install --runtime dotnet --version 1.0.0
+        curl -sSL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin --runtime dotnet --version 1.0.0
 
     - name: Migrate
       run: dotnet ef database update
