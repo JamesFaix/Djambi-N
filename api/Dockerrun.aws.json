@@ -8,5 +8,7 @@
         {
             "ContainerPort": "8081"
         }
+    ],
+    "Volumes": [
     ]
 }
