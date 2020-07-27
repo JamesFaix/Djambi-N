@@ -22,22 +22,11 @@ jobs:
       with:
         dotnet-version: 3.1.301
 
-    - name: Install dependencies
-      run: dotnet restore
-
-    - name: Build
-      run: dotnet build --configuration Release --no-restore
-
     - name: Install EF Core tools
       run: |
         dotnet tool install --global dotnet-ef
         dotnet tool restore
 
-    - name: Check installed tools
-      run: |
-        dotnet --list-sdks
-        dotnet tool list --global
-
     - name: Migrate
-      run: dotnet ef database update
+      run: dotnet-ef database update
       working-directory: ./api/api.db.model
