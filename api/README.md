@@ -30,5 +30,3 @@ Business logic data model.
 Contains logic for working with the HTTP protocol.
 
 - **Controller** modules are the top layer of all endpoints. Public methods on a manager should each gather context from the HTTP request, call business logic in a **Manager** and then create an HTTP response.
-
-[comment]: <> (Just adding a change here to trigger deployment)
