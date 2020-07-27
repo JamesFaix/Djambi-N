@@ -20,9 +20,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Generate build number
-      run: export BUILD_NUMBER=$(uuidgen)
-
     - name: Setup ECR
       run: $( aws ecr get-login --no-include-email )
 
@@ -36,13 +33,13 @@ jobs:
       run: docker push ${{ secrets.AWS_API_ECR_REPOSITORY }}
 
     - name: Create EB bundle
-      run: zip api/eb-bundle.$BUILD_NUMBER.zip api/Dockerrun.aws.json
+      run: zip api/eb-bundle.$GITHUB_RUN_ID.zip api/Dockerrun.aws.json
 
     - name: Upload EB bundle
-      run: aws elasticbeanstalk create-application-version --application-name ${{ secrets.AWS_API_EB_APPLICATION }} --version-label $BUILD_NUMBER --source-bundle S3Bucker=${{ secrets.AWS_API_S3_BUCKET }},S3Key=eb-bundler.$BUILD_NUMBER.zip
+      run: aws elasticbeanstalk create-application-version --application-name ${{ secrets.AWS_API_EB_APPLICATION }} --version-label $GITHUB_RUN_ID --source-bundle S3Bucker=${{ secrets.AWS_API_S3_BUCKET }},S3Key=eb-bundler.$GITHUB_RUN_ID.zip
 
     - name: Update EB environment bundle version
-      run: aws elasticbeanstalk update-environment --application-name ${{ secrets.AWS_API_EB_APPLICATION }} --environment-name ${{ secrets.AWS_API_EB_ENVIRONMENT }} --version-label $BUILD_NUMBER
+      run: aws elasticbeanstalk update-environment --application-name ${{ secrets.AWS_API_EB_APPLICATION }} --environment-name ${{ secrets.AWS_API_EB_ENVIRONMENT }} --version-label $GITHUB_RUN_ID
 
     - name: Rebuild EB environment
       run: aws elasticbeanstalk rebuild-environment --environment-name ${{ secrets.AWS_API_EB_ENVIRONMENT }}
