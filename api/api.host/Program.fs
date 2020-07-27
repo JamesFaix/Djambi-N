@@ -1,5 +1,6 @@
 module Apex.Api.Host.App
 
+open System
 open System.IO
 open Microsoft.AspNetCore.Hosting
 open Serilog
@@ -11,12 +12,17 @@ open Microsoft.Extensions.Options
 let config = Config.config
 
 Log.Logger <-
+    let mutable logConfig = 
+        LoggerConfiguration()
+            .WriteTo.Console()
+
     let dir = config.GetValue<string>("Log:Directory")
-    let logPath = Path.Combine(dir, "server.log")
-    LoggerConfiguration()
-        .WriteTo.File(logPath)
-        .WriteTo.Console()
-        .CreateLogger()
+    if not <| String.IsNullOrEmpty dir
+    then
+        let logPath = Path.Combine(dir, "server.log")
+        logConfig <- logConfig.WriteTo.File(logPath)
+
+    logConfig.CreateLogger()
 
 [<EntryPoint>]
 let main _ =
