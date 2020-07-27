@@ -82,6 +82,3 @@ function getOutputDirectory(isProd) {
 function getDevTool(isProd) {
     return isProd ? undefined : "source-map";
 }
-
-
-// Just adding a change here to trigger deployment
