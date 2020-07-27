@@ -36,7 +36,7 @@ jobs:
       run: zip api/eb-bundle.$GITHUB_RUN_ID.zip api/Dockerrun.aws.json
 
     - name: Upload EB bundle
-      run: aws elasticbeanstalk create-application-version --application-name ${{ secrets.AWS_API_EB_APPLICATION }} --version-label $GITHUB_RUN_ID --source-bundle S3Bucket=${{ secrets.AWS_API_S3_BUCKET }},S3Key=eb-bundle.$GITHUB_RUN_ID.zip
+      run: aws elasticbeanstalk create-application-version --application-name ${{ secrets.AWS_API_EB_APPLICATION }} --version-label $GITHUB_RUN_ID --source-bundle S3Bucket=${{ secrets.AWS_API_S3_BUCKET }},S3Key=eb-bundle.zip
 
     - name: Update EB environment bundle version
       run: aws elasticbeanstalk update-environment --application-name ${{ secrets.AWS_API_EB_APPLICATION }} --environment-name ${{ secrets.AWS_API_EB_ENVIRONMENT }} --version-label $GITHUB_RUN_ID
