@@ -33,10 +33,11 @@ jobs:
       run: docker push ${{ secrets.AWS_API_ECR_REPOSITORY }}
 
     - name: Create EB bundle
+      # Must use custom delimiter in sed because / will appear in URLs passed in
       run: |
-        sed -i 's/AWS_ACCOUNT/${{ secrets.AWS_ACCOUNT }}/g' api/Dockerrun.aws.json
-        sed -i 's/AWS_REGION/${{ secrets.AWS_REGION }}/g' api/Dockerrun.aws.json
-        sed -i 's/AWS_API_ECR_REPOSITORY/${{ secrets.AWS_API_ECR_REPOSITORY }}/g' api/Dockerrun.aws.json
+        sed -i 's|{AWS_ACCOUNT}|${{ secrets.AWS_ACCOUNT }}|g' api/Dockerrun.aws.json
+        sed -i 's|{AWS_REGION}|${{ secrets.AWS_REGION }}|g' api/Dockerrun.aws.json
+        sed -i 's|{AWS_API_ECR_REPOSITORY}|${{ secrets.AWS_API_ECR_REPOSITORY }}|g' api/Dockerrun.aws.json
         zip -r -j api/eb-bundle.$GITHUB_RUN_ID.zip api/Dockerrun.aws.json
 
     - name: Upload EB bundle to S3
