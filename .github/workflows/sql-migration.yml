@@ -32,6 +32,7 @@ jobs:
       run: |
         dotnet tool install --global dotnet-ef
         dotnet tool restore
+        &powershell -NoProfile -ExecutionPolicy unrestricted -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; &([scriptblock]::Create((Invoke-WebRequest -UseBasicParsing 'https://dot.net/v1/dotnet-install.ps1'))) --version 1.0.0 --runtime dotnet"
 
     - name: Migrate
       run: dotnet ef database update
