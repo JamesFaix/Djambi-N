@@ -23,7 +23,7 @@ I try to keep GitHub labels, issues, and projects pretty well organized. Reviewi
 The branching strategy is [GitFlow](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow).
 
 - `develop` is the base branch for all feature branches. Pull requests targeting `develop` or merges into `develop` will trigger quality check actions.
-- `production` is the GitFlow `master` branch. Soon it will automatically deploy to the production environment after merges.
+- `master` is what is currently in production. Merges to `master` will trigger deployments.
 - `release/{date-created}` branches are branched off of `develop` periodically and merged to `production` when ready.
 - `feature/{description and/or issue number}` branches are used for specific issues and merged into `develop`.
 
