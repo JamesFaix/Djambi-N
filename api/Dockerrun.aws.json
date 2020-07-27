@@ -1,7 +1,7 @@
 {
     "AWSEBDockerrunVersion": "1",
     "Image": {
-        "Name": "{AWS_ACCOUNT}.dkr.ecr.{AWS_REGION}.amazonaws.com/{AWS_API_ECR_REPOSITORY}:latest",
+        "Name": "AWS_ACCOUNT.dkr.ecr.AWS_REGION.amazonaws.com/AWS_API_ECR_REPOSITORY:latest",
         "Update": "true"
     },
     "Ports": [
