@@ -20,6 +20,11 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Generate build number
+      uses: einaregilsson/build-number@v2
+      with:
+        token: randomtoken
+
     - name: Setup ECR
       run: $( aws ecr get-login --no-include-email )
 
@@ -32,5 +37,16 @@ jobs:
     - name: Push image
       run: docker push ${{ secrets.AWS_API_ECR_REPOSITORY }}
 
-    - name: Rebuild ElasticBeanstalk environment
+    - name: Create EB bundle
+      run: |
+        apt-get install zip
+        zip api/eb-bundle.$BUILD_NUMBER.zip api/Dockerrun.aws.json
+
+    - name: Upload EB bundle
+      run: aws elasticbeanstalk create-application-version --application-name ${{ secrets.AWS_API_EB_APPLICATION }} --version-label $BUILD_NUMBER --source-bundle S3Bucker=${{ secrets.AWS_API_S3_BUCKET }},S3Key=eb-bundler.$BUILD_NUMBER.zip
+
+    - name: Update EB environment bundle version
+      run: aws elasticbeanstalk update-environment --application-name ${{ secrets.AWS_API_EB_APPLICATION }} --environment-name ${{ secrets.AWS_API_EB_ENVIRONMENT }} --version-label $BUILD_NUMBER
+
+    - name: Rebuild EB environment
       run: aws elasticbeanstalk rebuild-environment --environment-name ${{ secrets.AWS_API_EB_ENVIRONMENT }}
