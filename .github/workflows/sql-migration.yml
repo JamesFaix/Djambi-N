@@ -32,11 +32,7 @@ jobs:
       run: |
         dotnet tool install --global dotnet-ef
         dotnet tool restore
-
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 1.0.0
+        dotnet install --runtime dotnet --version 1.0.0
 
     - name: Migrate
       run: dotnet ef database update
