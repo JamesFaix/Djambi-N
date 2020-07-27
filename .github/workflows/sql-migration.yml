@@ -30,9 +30,13 @@ jobs:
 
     - name: Install EF Core tools
       run: |
-        dotnet tool list -g
-        dotnet tool install --global dotnet-ef --version 3.1.0
+        dotnet tool install --global dotnet-ef
         dotnet tool restore
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 1.0.0
 
     - name: Migrate
       run: dotnet ef database update
