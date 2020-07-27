@@ -33,7 +33,7 @@ jobs:
       run: docker push ${{ secrets.AWS_API_ECR_REPOSITORY }}
 
     - name: Create EB bundle
-      run: zip -r api/eb-bundle.$GITHUB_RUN_ID.zip api/Dockerrun.aws.json
+      run: zip -r -j api/eb-bundle.$GITHUB_RUN_ID.zip api/Dockerrun.aws.json
 
     - name: Upload EB bundle to S3
       run: aws s3 cp api/eb-bundle.$GITHUB_RUN_ID.zip s3://${{ secrets.AWS_API_S3_BUCKET }}
