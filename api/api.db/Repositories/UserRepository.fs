@@ -9,10 +9,6 @@ open Microsoft.EntityFrameworkCore
 open System.Data
 
 type UserRepository(context : ApexDbContext) =    
-    let nameConflictMessage = 
-        "The instance of entity type 'UserSqlModel' cannot be tracked because " + 
-        "another instance with the same key value for {'Name'} is already being tracked."
-
     interface IUserRepository with
         member __.getUser userId =
             task {
@@ -42,7 +38,13 @@ type UserRepository(context : ApexDbContext) =
                     let! _ = context.SaveChangesAsync()
                     return u |> toUserDetails
                 with
-                | :? InvalidOperationException as ex when ex.Message.StartsWith(nameConflictMessage) ->
+                | :? InvalidOperationException as ex 
+                    when ex.Message.StartsWith("The instance of entity type 'UserSqlModel' cannot be tracked because " + 
+                                               "another instance with the same key value for {'Name'} is already being tracked.") ->
+                    return raise <| DuplicateNameException("User name taken.")
+                | :? DbUpdateException as ex 
+                    when ex.InnerException <> null &&
+                         ex.InnerException.Message.StartsWith("Violation of UNIQUE KEY constraint 'AK_Users_Name'") ->
                     return raise <| DuplicateNameException("User name taken.")
             }
 
