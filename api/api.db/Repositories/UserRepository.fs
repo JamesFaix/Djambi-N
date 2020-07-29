@@ -7,6 +7,7 @@ open FSharp.Control.Tasks
 open Apex.Api.Db.Mappings
 open Microsoft.EntityFrameworkCore
 open System.Data
+open MySql.Data.MySqlClient
 
 type UserRepository(context : ApexDbContext) =    
     interface IUserRepository with
@@ -38,13 +39,17 @@ type UserRepository(context : ApexDbContext) =
                     let! _ = context.SaveChangesAsync()
                     return u |> toUserDetails
                 with
+                // This was the error on SQL Server
                 | :? InvalidOperationException as ex 
                     when ex.Message.StartsWith("The instance of entity type 'UserSqlModel' cannot be tracked because " + 
                                                "another instance with the same key value for {'Name'} is already being tracked.") ->
                     return raise <| DuplicateNameException("User name taken.")
+
+                // Both of these happened on MariaDB
                 | :? DbUpdateException as ex 
                     when ex.InnerException <> null &&
-                         ex.InnerException.Message.StartsWith("Violation of UNIQUE KEY constraint 'AK_Users_Name'") ->
+                         ex.InnerException.Message.StartsWith("Violation of UNIQUE KEY constraint 'AK_Users_Name'") ||
+                         ex.InnerException.Message.StartsWith("Duplicate entry") ->
                     return raise <| DuplicateNameException("User name taken.")
             }
 

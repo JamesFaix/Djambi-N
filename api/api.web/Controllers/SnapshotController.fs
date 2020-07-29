@@ -3,7 +3,6 @@
 open System.Threading.Tasks
 open Microsoft.AspNetCore.Mvc
 open FSharp.Control.Tasks
-open Serilog
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Web
 open Apex.Api.Web.Mappings
@@ -12,7 +11,6 @@ open Apex.Api.Web.Model
 [<ApiController>]
 [<Route("api/games/{gameId}/snapshots")>]
 type SnapshotController(manager : ISnapshotManager,
-                       logger : ILogger,
                        scp : SessionContextProvider) =
     inherit ControllerBase()
     
@@ -40,21 +38,21 @@ type SnapshotController(manager : ISnapshotManager,
         }
     
     [<HttpDelete("{snapshotId}")>]
-    [<ProducesResponseType(200)>]
+    [<ProducesResponseType(204)>]
     member __.DeleteSnapshot(gameId : int, snapshotId : int) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
             let! session = scp.GetSessionFromContext ctx
             let! _ = manager.deleteSnapshot gameId snapshotId session
-            return OkResult() :> IActionResult
+            return NoContentResult() :> IActionResult
         }
     
     [<HttpPost("{snapshotId}/load")>]
-    [<ProducesResponseType(200)>]
+    [<ProducesResponseType(204)>]
     member __.LoadSnapshot(gameId : int, snapshotId : int) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {
             let! session = scp.GetSessionFromContext ctx
             let! _ = manager.loadSnapshot gameId snapshotId session
-            return OkResult() :> IActionResult
+            return NoContentResult() :> IActionResult
         }

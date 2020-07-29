@@ -160,6 +160,8 @@ type Startup() =
                 )
             )
 
+        // Middleware order is very important
+        app.UseMiddleware<LoggingMiddelware>() |> ignore
         app.UseMiddleware<ErrorHandlingMiddleware>() |> ignore
 
         if __.Configuration.GetValue<bool>("WebServer:Enable")
