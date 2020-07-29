@@ -1,16 +1,16 @@
 namespace Apex.Api.IntegrationTests.Db
 
+open System.ComponentModel
+open System.Threading.Tasks
 open FSharp.Control.Tasks
 open Xunit
-open Apex.Api.IntegrationTests
-open Apex.Api.Model
-open Apex.Api.Db.Interfaces
-open Apex.Api.Logic.Interfaces
-open System.ComponentModel
-open Apex.Api.Enums
-open Apex.Api.Logic.Services
 open Apex.Api.Common.Control
-open System.Threading.Tasks
+open Apex.Api.Db.Interfaces
+open Apex.Api.Enums
+open Apex.Api.IntegrationTests
+open Apex.Api.Logic.Interfaces
+open Apex.Api.Logic.Services
+open Apex.Api.Model
 
 type EventRepositoryTests() =
     inherit TestsBase()
@@ -59,14 +59,14 @@ type EventRepositoryTests() =
             //Arrange
             let! (user, _, game) = TestUtilities.createuserSessionAndGame(true)
 
-            let playerRequest =
+            let player =
                 {
                     userId = Some user.id
                     kind = PlayerKind.Guest
                     name = Some "p2"
-                }
+                } |> CreatePlayerRequest.toPlayer None
 
-            let! _ = host.Get<IGameRepository>().addPlayer(game.id, playerRequest)
+            let! _ = host.Get<IPlayerRepository>().addPlayer(game.id, player)
             let! game = host.Get<IGameRepository>().getGame game.id
 
             let newGame = { game with players = [] }
@@ -89,14 +89,14 @@ type EventRepositoryTests() =
             //Arrange
             let! (user, _, game) = TestUtilities.createuserSessionAndGame(true)
 
-            let p2Request =
+            let p2 =
                 {
                     userId = Some user.id
                     kind = PlayerKind.Guest
                     name = Some "p2"
-                }
+                } |> CreatePlayerRequest.toPlayer None
 
-            let! _ = host.Get<IGameRepository>().addPlayer(game.id, p2Request)
+            let! _ = host.Get<IPlayerRepository>().addPlayer(game.id, p2)
             let! game = host.Get<IGameRepository>().getGame game.id
 
             let oldP2 = game.players.[1]

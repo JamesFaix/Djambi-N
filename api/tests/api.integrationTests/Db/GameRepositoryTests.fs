@@ -2,10 +2,10 @@ namespace Apex.Api.IntegrationTests.Db
 
 open FSharp.Control.Tasks
 open Xunit
-open Apex.Api.IntegrationTests
-open Apex.Api.Model
 open Apex.Api.Db.Interfaces
 open Apex.Api.Enums
+open Apex.Api.IntegrationTests
+open Apex.Api.Model
 
 type GameRepositoryTests() =
     inherit TestsBase()
@@ -51,10 +51,10 @@ type GameRepositoryTests() =
             let gameRequest = getCreateGameRequest(user.id)
             let userRequest = getCreateUserRequest()
             let! gameId = host.Get<IGameRepository>().createGame gameRequest
-            let request = CreatePlayerRequest.user user
+            let player = CreatePlayerRequest.user user |> CreatePlayerRequest.toPlayer (Some user.name)
 
             //Act
-            let! _ = host.Get<IGameRepository>().addPlayer (gameId, request)
+            let! _ = host.Get<IPlayerRepository>().addPlayer (gameId, player)
 
             //Assert
             let! game = host.Get<IGameRepository>().getGame gameId
@@ -73,16 +73,16 @@ type GameRepositoryTests() =
             let! user = createUser()
             let gameRequest = getCreateGameRequest(user.id)
             let! gameId = host.Get<IGameRepository>().createGame gameRequest
-            let request = CreatePlayerRequest.neutral "test"
+            let player = CreatePlayerRequest.neutral "test" |> CreatePlayerRequest.toPlayer None
 
             //Act
-            let! _ = host.Get<IGameRepository>().addPlayer (gameId, request)
+            let! _ = host.Get<IPlayerRepository>().addPlayer (gameId, player)
 
             //Assert
             let! game = host.Get<IGameRepository>().getGame gameId
             let exists = game.players |> List.exists (fun p ->
                 p.userId = None
-                && p.name = request.name.Value
+                && p.name = player.name
                 && p.kind = PlayerKind.Neutral)
             Assert.True(exists)
         }
@@ -97,16 +97,16 @@ type GameRepositoryTests() =
             let userRequest = getCreateUserRequest()
             let! gameId = host.Get<IGameRepository>().createGame gameRequest
             let! user = host.Get<IUserRepository>().createUser userRequest
-            let request = CreatePlayerRequest.guest (user.id, "test")
+            let player = CreatePlayerRequest.guest (user.id, "test") |> CreatePlayerRequest.toPlayer None
 
             //Act
-            let! _ = host.Get<IGameRepository>().addPlayer (gameId, request)
+            let! _ = host.Get<IPlayerRepository>().addPlayer (gameId, player)
 
             //Assert
             let! game = host.Get<IGameRepository>().getGame gameId
             let exists = game.players |> List.exists (fun p ->
                 p.userId = Some user.id
-                && p.name = request.name.Value
+                && p.name = player.name
                 && p.kind = PlayerKind.Guest)
             Assert.True(exists)
         }
@@ -121,11 +121,11 @@ type GameRepositoryTests() =
             let userRequest = getCreateUserRequest()
             let! gameId = host.Get<IGameRepository>().createGame gameRequest
             let! user = host.Get<IUserRepository>().createUser userRequest
-            let playerRequest = CreatePlayerRequest.user (user |> UserDetails.hideDetails)
-            let! player = host.Get<IGameRepository>().addPlayer (gameId, playerRequest)
+            let player = CreatePlayerRequest.user (user |> UserDetails.hideDetails) |> CreatePlayerRequest.toPlayer (Some user.name)
+            let! player = host.Get<IPlayerRepository>().addPlayer (gameId, player)
 
             //Act
-            let! _ = host.Get<IGameRepository>().removePlayer (gameId, player.id)
+            let! _ = host.Get<IPlayerRepository>().removePlayer (gameId, player.id)
 
             //Assert
             let! game = host.Get<IGameRepository>().getGame gameId

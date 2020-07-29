@@ -35,6 +35,19 @@ module CreatePlayerRequest =
             name = Some name
         }
 
+    let toPlayer (userName : Option<string>) (request : CreatePlayerRequest) : Player =
+        {
+            id = 0
+            gameId = 0
+            userId = request.userId
+            kind = request.kind
+            name = match request.name with Some name -> name | _ -> userName.Value
+            status = PlayerStatus.Pending
+            colorId = None
+            startingRegion = None
+            startingTurnNumber = None
+        }
+
 type PlayerStatusChangeRequest =
     {
         gameId : int

@@ -1,15 +1,15 @@
 namespace Apex.Api.IntegrationTests.Logic.GameCrudService
 
+open System
 open FSharp.Control.Tasks
 open Xunit
 open Apex.Api.Common.Control
-open Apex.Api.IntegrationTests
-open Apex.Api.Model
-open Apex.Api.Logic
-open Apex.Api.Logic.Services
 open Apex.Api.Db.Interfaces
 open Apex.Api.Enums
-open System
+open Apex.Api.IntegrationTests
+open Apex.Api.Logic
+open Apex.Api.Logic.Services
+open Apex.Api.Model
 
 type GetUpdateGameParametersEventTests() =
     inherit TestsBase()
@@ -60,13 +60,13 @@ type GetUpdateGameParametersEventTests() =
             let! _ = host.Get<IGameRepository>().updateGame newGame
 
             for n in [2..4] do
-                let playerRequest =
+                let player =
                     { TestUtilities.getCreatePlayerRequest with
                         userId = Some user.id;
                         kind = PlayerKind.Guest;
                         name = Some (sprintf "p%i" n)
-                    }
-                let! _ = host.Get<IGameRepository>().addPlayer (game.id, playerRequest)
+                    } |> CreatePlayerRequest.toPlayer None
+                let! _ = host.Get<IPlayerRepository>().addPlayer (game.id, player)
                 ()
 
             let! game = host.Get<IGameRepository>().getGame game.id
@@ -97,13 +97,13 @@ type GetUpdateGameParametersEventTests() =
             let! (user, session, game) = TestUtilities.createuserSessionAndGame(true)
 
             for n in [2..3] do
-                let playerRequest =
+                let player =
                     { TestUtilities.getCreatePlayerRequest with
                         userId = Some user.id;
                         kind = PlayerKind.Guest;
                         name = Some (sprintf "p%i" n)
-                    }
-                let! _ = host.Get<IGameRepository>().addPlayer (game.id, playerRequest)
+                    } |> CreatePlayerRequest.toPlayer None
+                let! _ = host.Get<IPlayerRepository>().addPlayer (game.id, player)
                 ()
 
             let! game = host.Get<IGameRepository>().getGame game.id

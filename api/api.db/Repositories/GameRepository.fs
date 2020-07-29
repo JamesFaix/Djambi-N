@@ -42,42 +42,6 @@ type GameRepository(context : ApexDbContext) =
             }
         
         [<Obsolete("Only used for tests")>]
-        member __.addPlayer (gameId, request) =
-            task {
-                let p = PlayerSqlModel()
-                p.GameId <- gameId
-                p.PlayerKindId <- request.kind
-                p.UserId <- request.userId |> Option.toNullable
-                p.PlayerStatusId <- PlayerStatus.Pending
-
-                let! u = 
-                    match request.userId with
-                    | Some userId -> context.Users.SingleOrDefaultAsync(fun u -> u.UserId = userId)
-                    | None -> Task.FromResult(Unchecked.defaultof<UserSqlModel>)
-
-                if request.name.IsSome 
-                then p.Name <- request.name.Value
-                else p.Name <- u.Name
-
-                try 
-                    let! _ = context.Players.AddAsync(p)
-                    let! _ = context.SaveChangesAsync()
-                    return p |> toPlayer
-                with
-                | :? InvalidOperationException as ex when ex.Message.StartsWith(nameConflictMessage) ->
-                    return raise <| HttpException(409, "Conflict when attempting to write Player.")
-            }
-            
-        [<Obsolete("Only used for tests")>]
-        member __.removePlayer (gameId, playerId) =
-            task {
-                let! p = context.Players.SingleOrDefaultAsync(fun p -> p.GameId = gameId && p.PlayerId = playerId)
-                context.Players.Remove(p) |> ignore
-                let! _ = context.SaveChangesAsync()
-                return ()
-            }
-
-        [<Obsolete("Only used for tests")>]
         member __.updateGame game =
             task {
                 let! g = context.Games.FindAsync(game.id)

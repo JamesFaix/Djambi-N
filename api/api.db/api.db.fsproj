@@ -18,6 +18,7 @@
     <Compile Include="Repositories\SessionRepository.fs" />
     <Compile Include="Repositories\SnapshotRepository.fs" />
     <Compile Include="Repositories\UserRepository.fs" />
+    <Compile Include="PlayerRepository.fs" />
   </ItemGroup>
 
   <ItemGroup>

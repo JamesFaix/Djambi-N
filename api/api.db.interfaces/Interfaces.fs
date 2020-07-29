@@ -2,7 +2,6 @@ namespace Apex.Api.Db.Interfaces
 
 open System
 open System.Threading.Tasks
-open Apex.Api.Common.Control
 open Apex.Api.Model
 
 type IEventRepository =
@@ -14,13 +13,14 @@ type IGameRepository =
     [<Obsolete("Only used for tests")>]
     abstract member createGame : request:CreateGameRequest -> Task<int>   
     [<Obsolete("Only used for tests")>]
-    abstract member addPlayer : gameId:int * request:CreatePlayerRequest -> Task<Player>
-    [<Obsolete("Only used for tests")>]
-    abstract member removePlayer : gameID:int * playerId:int -> Task<unit>
-    [<Obsolete("Only used for tests")>]
     abstract member updateGame : game:Game -> Task<unit>
     abstract member getNeutralPlayerNames : unit -> Task<list<string>>
     abstract member createGameAndAddPlayer : gameRequest:CreateGameRequest * playerRequest:CreatePlayerRequest -> Task<int>
+
+type IPlayerRepository =
+    abstract member addPlayer : gameId:int * player:Player -> Task<Player>
+    abstract member removePlayer : gameId:int * playerId:int -> Task<unit>
+    abstract member updatePlayer : gameId:int * player:Player -> Task<unit>
 
 type ISearchRepository =
     abstract member searchGames : query:GamesQuery * currentUserId:int -> Task<list<SearchGame>>

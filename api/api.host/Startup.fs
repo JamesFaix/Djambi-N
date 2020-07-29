@@ -88,6 +88,7 @@ type Startup() =
         // Database layer
         services.AddScoped<IEventRepository, EventRepository>() |> ignore
         services.AddScoped<IGameRepository, GameRepository>() |> ignore
+        services.AddScoped<IPlayerRepository, PlayerRepository>() |> ignore
         services.AddScoped<ISearchRepository, SearchRepository>() |> ignore
         services.AddScoped<ISessionRepository, SessionRepository>() |> ignore
         services.AddScoped<ISnapshotRepository, SnapshotRepository>() |> ignore
