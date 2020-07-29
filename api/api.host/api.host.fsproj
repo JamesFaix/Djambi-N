@@ -16,6 +16,7 @@
     <Content Include="Properties\launchSettings.json" />
     <Compile Include="Config.fs" />
     <Compile Include="ErrorHandlingMiddleware.fs" />
+    <Compile Include="LoggingMiddleware.fs" />
     <Compile Include="Startup.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

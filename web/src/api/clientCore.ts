@@ -84,8 +84,11 @@ export class ApiClientCore {
             console.log(`${this.describe(request)} succeeded`);
         }
 
-        const result = response.json();
-        return result;
+        if (response.status === 204) {// No content
+            return undefined;
+        } else {
+            return response.json();
+        }
     }
 
     private static getErrorMessage(obj : any) : string {

@@ -56,7 +56,7 @@ type ErrorHandlingMiddleware(next : RequestDelegate) =
                 ()
             with
             | _ as ex ->
-                Log.Logger.Error(ex, "Unhandled error")
+                Log.Logger.Warning(ex, "Error caught by middleware")
                 let p = ex |> toProblem
                 let json = p |> JsonConvert.SerializeObject
 

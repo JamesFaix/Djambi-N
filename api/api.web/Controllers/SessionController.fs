@@ -38,7 +38,7 @@ type SessionController(manager : ISessionManager,
         }
        
     [<HttpDelete>]
-    [<ProducesResponseType(200)>]
+    [<ProducesResponseType(204)>]
     member __.CloseSession() : Task<IActionResult> =
         let ctx = base.HttpContext
 
@@ -51,5 +51,5 @@ type SessionController(manager : ISessionManager,
                         | Some s -> manager.logout s
                         | None -> Task.FromResult ()
 
-            return OkResult() :> IActionResult
+            return NoContentResult() :> IActionResult
         }

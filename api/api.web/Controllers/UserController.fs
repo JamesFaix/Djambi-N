@@ -3,7 +3,6 @@
 open System.Threading.Tasks
 open Microsoft.AspNetCore.Mvc
 open FSharp.Control.Tasks
-open Serilog
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Web
 open Apex.Api.Web.Mappings
@@ -12,7 +11,6 @@ open Apex.Api.Web.Model
 [<ApiController>]
 [<Route("api/users")>]
 type UserController(manager : IUserManager,
-                       logger : ILogger,
                        scp : SessionContextProvider) =
     inherit ControllerBase()
     

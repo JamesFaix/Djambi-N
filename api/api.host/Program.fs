@@ -3,24 +3,35 @@ module Apex.Api.Host.App
 open System
 open System.IO
 open Microsoft.AspNetCore.Hosting
-open Serilog
 open Microsoft.Extensions.Configuration
-open Newtonsoft.Json
-open Apex.Api.Model.Configuration
 open Microsoft.Extensions.Options
+open Serilog
+open Serilog.Events
+open Apex.Api.Model.Configuration
 
 let config = Config.config
 
 Log.Logger <-
+    let template = "{Timestamp:yyyy/MM/dd-HH:mm:ss.fff} {Level:u3} {Message:lj}{NewLine}{Properties}{NewLine}{Exception}"
+
+    let levelConfig = config.GetSection("Log:Levels");
+
     let mutable logConfig = 
         LoggerConfiguration()
-            .WriteTo.Console()
+            .Enrich.FromLogContext()
+            .MinimumLevel.Override("Microsoft", levelConfig.GetValue<LogEventLevel>("Microsoft"))
+            .MinimumLevel.Override("Microsoft.AspNetCore", levelConfig.GetValue<LogEventLevel>("AspNetCore"))
+            .MinimumLevel.Override("Microsoft.EntityFrameworkCore.Database.Command", levelConfig.GetValue<LogEventLevel>("EfCore"))
+            .WriteTo.Console(outputTemplate = template)
 
     let dir = config.GetValue<string>("Log:Directory")
     if not <| String.IsNullOrEmpty dir
     then
         let logPath = Path.Combine(dir, "server.log")
-        logConfig <- logConfig.WriteTo.File(logPath)
+        logConfig <- logConfig.WriteTo.File(path = logPath, 
+                                            outputTemplate = template,
+                                            rollingInterval = RollingInterval.Day, 
+                                            retainedFileCountLimit = Nullable(14))
 
     logConfig.CreateLogger()
 
@@ -55,8 +66,7 @@ let main _ =
 
         let config = host.Services.GetService(typeof<IOptions<AppSettings>>) :?> IOptions<AppSettings> 
                     |> fun x -> x.Value
-        let configJson = JsonConvert.SerializeObject(config, Formatting.Indented)
-        Log.Logger.Information("Configuration: {config}", configJson)
+        Log.Logger.Information("Configuration: {@config}", config)
 
         Log.Logger.Information("Starting host.")
         host.Run()
