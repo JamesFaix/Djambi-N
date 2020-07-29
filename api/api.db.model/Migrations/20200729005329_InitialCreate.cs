@@ -1,9 +1,10 @@
 ﻿using System;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Apex.Api.Db.Model.Migrations
 {
-    public partial class _01 : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -84,7 +85,7 @@ namespace Apex.Api.Db.Model.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(maxLength: 20, nullable: false),
                     Password = table.Column<string>(nullable: false),
                     CreatedOn = table.Column<DateTime>(nullable: false),
@@ -94,6 +95,7 @@ namespace Apex.Api.Db.Model.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.UserId);
+                    table.UniqueConstraint("AK_Users_Name", x => x.Name);
                 });
 
             migrationBuilder.CreateTable(
@@ -101,7 +103,7 @@ namespace Apex.Api.Db.Model.Migrations
                 columns: table => new
                 {
                     GameId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     CreatedByUserId = table.Column<int>(nullable: false),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     GameStatusId = table.Column<byte>(nullable: false),
@@ -129,7 +131,7 @@ namespace Apex.Api.Db.Model.Migrations
                 columns: table => new
                 {
                     SessionId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Token = table.Column<string>(nullable: false),
                     UserId = table.Column<int>(nullable: false),
                     CreatedOn = table.Column<DateTime>(nullable: false),
@@ -151,7 +153,7 @@ namespace Apex.Api.Db.Model.Migrations
                 columns: table => new
                 {
                     UserPrivilegeId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     UserId = table.Column<int>(nullable: false),
                     PrivilegeId = table.Column<byte>(nullable: false),
                     UserSqlModelUserId = table.Column<int>(nullable: true)
@@ -172,7 +174,7 @@ namespace Apex.Api.Db.Model.Migrations
                 columns: table => new
                 {
                     PlayerId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     GameId = table.Column<int>(nullable: false),
                     UserId = table.Column<int>(nullable: true),
                     PlayerKindId = table.Column<byte>(nullable: false),
@@ -185,6 +187,7 @@ namespace Apex.Api.Db.Model.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Players", x => x.PlayerId);
+                    table.UniqueConstraint("AK_Players_GameId_Name", x => new { x.GameId, x.Name });
                     table.ForeignKey(
                         name: "FK_Players_Games_GameId",
                         column: x => x.GameId,
@@ -204,7 +207,7 @@ namespace Apex.Api.Db.Model.Migrations
                 columns: table => new
                 {
                     SnapshotId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     GameId = table.Column<int>(nullable: false),
                     CreatedByUserId = table.Column<int>(nullable: false),
                     CreatedOn = table.Column<DateTime>(nullable: false),
@@ -233,7 +236,7 @@ namespace Apex.Api.Db.Model.Migrations
                 columns: table => new
                 {
                     EventId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     GameId = table.Column<int>(nullable: false),
                     CreatedByUserId = table.Column<int>(nullable: false),
                     ActingPlayerId = table.Column<int>(nullable: true),
@@ -367,11 +370,6 @@ namespace Apex.Api.Db.Model.Migrations
                 name: "IX_Games_CreatedByUserId",
                 table: "Games",
                 column: "CreatedByUserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Players_GameId",
-                table: "Players",
-                column: "GameId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Players_UserId",

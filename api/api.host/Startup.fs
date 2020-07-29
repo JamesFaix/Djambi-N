@@ -79,7 +79,7 @@ type Startup() =
         // Entity Framework
         services.AddDbContext<ApexDbContext>(fun opt -> 
             let cnStr = __.Configuration.GetValue<string>("Sql:ConnectionString")
-            opt.UseSqlServer(cnStr) |> ignore
+            opt.UseMySql(cnStr) |> ignore
             ()
         ) |> ignore
 

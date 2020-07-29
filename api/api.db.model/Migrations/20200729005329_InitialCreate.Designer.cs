@@ -3,33 +3,31 @@ using System;
 using Apex.Api.Db.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Apex.Api.Db.Model.Migrations
 {
     [DbContext(typeof(ApexDbContext))]
-    [Migration("20200329235600_0.1")]
-    partial class _01
+    [Migration("20200729005329_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.3")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                .HasAnnotation("ProductVersion", "3.1.0")
+                .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("Apex.Api.Db.Model.EventKindSqlModel", b =>
                 {
                     b.Property<byte>("Id")
                         .HasColumnName("EventKindId")
-                        .HasColumnType("tinyint");
+                        .HasColumnType("tinyint unsigned");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(50)")
+                        .HasColumnType("varchar(50) CHARACTER SET utf8mb4")
                         .HasMaxLength(50);
 
                     b.HasKey("Id");
@@ -88,8 +86,7 @@ namespace Apex.Api.Db.Model.Migrations
                 {
                     b.Property<int>("EventId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
                     b.Property<int?>("ActingPlayerId")
                         .HasColumnType("int");
@@ -98,14 +95,14 @@ namespace Apex.Api.Db.Model.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("EffectsJson")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<byte>("EventKindId")
-                        .HasColumnType("tinyint");
+                        .HasColumnType("tinyint unsigned");
 
                     b.Property<int>("GameId")
                         .HasColumnType("int");
@@ -125,38 +122,37 @@ namespace Apex.Api.Db.Model.Migrations
                 {
                     b.Property<int>("GameId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
                     b.Property<bool>("AllowGuests")
-                        .HasColumnType("bit");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<int>("CreatedByUserId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("CurrentTurnJson")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<byte>("GameStatusId")
-                        .HasColumnType("tinyint");
+                        .HasColumnType("tinyint unsigned");
 
                     b.Property<bool>("IsPublic")
-                        .HasColumnType("bit");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("PiecesJson")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<byte>("RegionCount")
-                        .HasColumnType("tinyint");
+                        .HasColumnType("tinyint unsigned");
 
                     b.Property<string>("TurnCycleJson")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.HasKey("GameId");
 
@@ -169,11 +165,11 @@ namespace Apex.Api.Db.Model.Migrations
                 {
                     b.Property<byte>("Id")
                         .HasColumnName("GameStatusId")
-                        .HasColumnType("tinyint");
+                        .HasColumnType("tinyint unsigned");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(20)")
+                        .HasColumnType("varchar(20) CHARACTER SET utf8mb4")
                         .HasMaxLength(20);
 
                     b.HasKey("Id");
@@ -210,7 +206,7 @@ namespace Apex.Api.Db.Model.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(20)")
+                        .HasColumnType("varchar(20) CHARACTER SET utf8mb4")
                         .HasMaxLength(20);
 
                     b.HasKey("NeutralPlayerNameId");
@@ -294,11 +290,11 @@ namespace Apex.Api.Db.Model.Migrations
                 {
                     b.Property<byte>("Id")
                         .HasColumnName("PlayerKindId")
-                        .HasColumnType("tinyint");
+                        .HasColumnType("tinyint unsigned");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(20)")
+                        .HasColumnType("varchar(20) CHARACTER SET utf8mb4")
                         .HasMaxLength(20);
 
                     b.HasKey("Id");
@@ -327,38 +323,37 @@ namespace Apex.Api.Db.Model.Migrations
                 {
                     b.Property<int>("PlayerId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
                     b.Property<byte?>("ColorId")
-                        .HasColumnType("tinyint");
+                        .HasColumnType("tinyint unsigned");
 
                     b.Property<int>("GameId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(20)")
+                        .HasColumnType("varchar(20) CHARACTER SET utf8mb4")
                         .HasMaxLength(20);
 
                     b.Property<byte>("PlayerKindId")
-                        .HasColumnType("tinyint");
+                        .HasColumnType("tinyint unsigned");
 
                     b.Property<byte>("PlayerStatusId")
-                        .HasColumnType("tinyint");
+                        .HasColumnType("tinyint unsigned");
 
                     b.Property<byte?>("StartingRegion")
-                        .HasColumnType("tinyint");
+                        .HasColumnType("tinyint unsigned");
 
                     b.Property<byte?>("StartingTurnNumber")
-                        .HasColumnType("tinyint");
+                        .HasColumnType("tinyint unsigned");
 
                     b.Property<int?>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("PlayerId");
 
-                    b.HasIndex("GameId");
+                    b.HasAlternateKey("GameId", "Name");
 
                     b.HasIndex("UserId");
 
@@ -369,11 +364,11 @@ namespace Apex.Api.Db.Model.Migrations
                 {
                     b.Property<byte>("Id")
                         .HasColumnName("PlayerStatusId")
-                        .HasColumnType("tinyint");
+                        .HasColumnType("tinyint unsigned");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(20)")
+                        .HasColumnType("varchar(20) CHARACTER SET utf8mb4")
                         .HasMaxLength(20);
 
                     b.HasKey("Id");
@@ -422,11 +417,11 @@ namespace Apex.Api.Db.Model.Migrations
                 {
                     b.Property<byte>("Id")
                         .HasColumnName("PrivilegeId")
-                        .HasColumnType("tinyint");
+                        .HasColumnType("tinyint unsigned");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.HasKey("Id");
 
@@ -464,18 +459,17 @@ namespace Apex.Api.Db.Model.Migrations
                 {
                     b.Property<int>("SessionId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<DateTime>("ExpiresOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Token")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -491,18 +485,17 @@ namespace Apex.Api.Db.Model.Migrations
                 {
                     b.Property<int>("SnapshotId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
                     b.Property<int>("CreatedByUserId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(50)")
+                        .HasColumnType("varchar(50) CHARACTER SET utf8mb4")
                         .HasMaxLength(50);
 
                     b.Property<int>("GameId")
@@ -510,7 +503,7 @@ namespace Apex.Api.Db.Model.Migrations
 
                     b.Property<string>("SnapshotJson")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.HasKey("SnapshotId");
 
@@ -525,11 +518,10 @@ namespace Apex.Api.Db.Model.Migrations
                 {
                     b.Property<int>("UserPrivilegeId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
                     b.Property<byte>("PrivilegeId")
-                        .HasColumnType("tinyint");
+                        .HasColumnType("tinyint unsigned");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -548,28 +540,29 @@ namespace Apex.Api.Db.Model.Migrations
                 {
                     b.Property<int>("UserId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<byte>("FailedLoginAttempts")
-                        .HasColumnType("tinyint");
+                        .HasColumnType("tinyint unsigned");
 
                     b.Property<DateTime?>("LastFailedLoginAttemptOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(20)")
+                        .HasColumnType("varchar(20) CHARACTER SET utf8mb4")
                         .HasMaxLength(20);
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.HasKey("UserId");
+
+                    b.HasAlternateKey("Name");
 
                     b.ToTable("Users");
                 });
