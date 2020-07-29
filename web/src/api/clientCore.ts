@@ -146,6 +146,8 @@ export class ApiClientCore {
         : Promise<TResponse> {
 
         const [request, fetchParams] = this.createRequest(method, route, body);
+
+        alert("Click OK to send request to " + route)
         const response = await fetch(request.url, fetchParams);
 
         if (response.ok) {
