@@ -5,7 +5,6 @@ open System.IO
 open Microsoft.AspNetCore.Hosting
 open Microsoft.Extensions.Configuration
 open Microsoft.Extensions.Options
-open Newtonsoft.Json
 open Serilog
 open Serilog.Events
 open Apex.Api.Model.Configuration
@@ -13,17 +12,20 @@ open Apex.Api.Model.Configuration
 let config = Config.config
 
 Log.Logger <-
+    let template = "{Timestamp:yyyy/MM/dd-HH:mm:ss.fff} {Level:u3} {Message:lj}{NewLine}{Properties}{NewLine}{Exception}"
+
     let mutable logConfig = 
         LoggerConfiguration()
-            .WriteTo.Console()
             .Enrich.FromLogContext()
             .MinimumLevel.Override("Microsoft", config.GetValue<LogEventLevel>("Log:Levels:Microsoft"))
+            .WriteTo.Console(outputTemplate = template)
 
     let dir = config.GetValue<string>("Log:Directory")
     if not <| String.IsNullOrEmpty dir
     then
         let logPath = Path.Combine(dir, "server.log")
-        logConfig <- logConfig.WriteTo.File(logPath, 
+        logConfig <- logConfig.WriteTo.File(path = logPath, 
+                                            outputTemplate = template,
                                             rollingInterval = RollingInterval.Day, 
                                             retainedFileCountLimit = Nullable(14))
 
@@ -60,8 +62,7 @@ let main _ =
 
         let config = host.Services.GetService(typeof<IOptions<AppSettings>>) :?> IOptions<AppSettings> 
                     |> fun x -> x.Value
-        let configJson = JsonConvert.SerializeObject(config, Formatting.Indented)
-        Log.Logger.Information("Configuration: {config}", configJson)
+        Log.Logger.Information("Configuration: {@config}", config)
 
         Log.Logger.Information("Starting host.")
         host.Run()
