@@ -26,7 +26,7 @@ let createHost() =
             .ConfigureServices(fun ctx services -> 
                 services.AddDbContext<ApexDbContext>(fun opt -> 
                     let cnStr = ctx.Configuration.GetValue<string>("Sql:ConnectionString")
-                    opt.UseSqlServer(cnStr) |> ignore
+                    opt.UseMySql(cnStr) |> ignore
                     ()
                 ) |> ignore
 
