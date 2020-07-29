@@ -25,6 +25,8 @@ type ApiSettings = {
 [<CLIMutable>]
 type LogLevelSettings = {
     microsoft: LogEventLevel
+    aspnetcore: LogEventLevel
+    efcore: LogEventLevel
 }
 
 [<CLIMutable>]
@@ -62,6 +64,8 @@ module AppSettings =
             directory = ""
             levels = {
                 microsoft = LogEventLevel.Warning
+                aspnetcore = LogEventLevel.Warning
+                efcore = LogEventLevel.Warning
             }
         }
     }

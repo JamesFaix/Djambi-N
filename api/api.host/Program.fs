@@ -14,10 +14,14 @@ let config = Config.config
 Log.Logger <-
     let template = "{Timestamp:yyyy/MM/dd-HH:mm:ss.fff} {Level:u3} {Message:lj}{NewLine}{Properties}{NewLine}{Exception}"
 
+    let levelConfig = config.GetSection("Log:Levels");
+
     let mutable logConfig = 
         LoggerConfiguration()
             .Enrich.FromLogContext()
-            .MinimumLevel.Override("Microsoft", config.GetValue<LogEventLevel>("Log:Levels:Microsoft"))
+            .MinimumLevel.Override("Microsoft", levelConfig.GetValue<LogEventLevel>("Microsoft"))
+            .MinimumLevel.Override("Microsoft.AspNetCore", levelConfig.GetValue<LogEventLevel>("AspNetCore"))
+            .MinimumLevel.Override("Microsoft.EntityFrameworkCore.Database.Command", levelConfig.GetValue<LogEventLevel>("EfCore"))
             .WriteTo.Console(outputTemplate = template)
 
     let dir = config.GetValue<string>("Log:Directory")
