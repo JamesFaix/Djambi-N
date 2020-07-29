@@ -17,7 +17,7 @@ namespace Apex.Api.Db.Model
             var connStr = config.GetValue<string>("Sql:ConnectionString");
 
             var optionsBuilder = new DbContextOptionsBuilder<ApexDbContext>();
-            optionsBuilder.UseSqlServer(connStr);
+            optionsBuilder.UseMySql(connStr);
 
             return new ApexDbContext(optionsBuilder.Options);
         }
