@@ -1,5 +1,7 @@
 ﻿namespace Apex.Api.Model.Configuration
 
+open Serilog.Events
+
 [<CLIMutable>]
 type SqlSettings = {
     connectionString : string
@@ -21,8 +23,14 @@ type ApiSettings = {
 }
 
 [<CLIMutable>]
+type LogLevelSettings = {
+    microsoft: LogEventLevel
+}
+
+[<CLIMutable>]
 type LogSettings = {
     directory : string
+    levels: LogLevelSettings
 }
 
 [<CLIMutable>]
@@ -52,5 +60,8 @@ module AppSettings =
         }
         log = {
             directory = ""
+            levels = {
+                microsoft = LogEventLevel.Warning
+            }
         }
     }

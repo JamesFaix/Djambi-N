@@ -3,11 +3,12 @@ module Apex.Api.Host.App
 open System
 open System.IO
 open Microsoft.AspNetCore.Hosting
-open Serilog
 open Microsoft.Extensions.Configuration
-open Newtonsoft.Json
-open Apex.Api.Model.Configuration
 open Microsoft.Extensions.Options
+open Newtonsoft.Json
+open Serilog
+open Serilog.Events
+open Apex.Api.Model.Configuration
 
 let config = Config.config
 
@@ -15,12 +16,16 @@ Log.Logger <-
     let mutable logConfig = 
         LoggerConfiguration()
             .WriteTo.Console()
+            .Enrich.FromLogContext()
+            .MinimumLevel.Override("Microsoft", config.GetValue<LogEventLevel>("Log:Levels:Microsoft"))
 
     let dir = config.GetValue<string>("Log:Directory")
     if not <| String.IsNullOrEmpty dir
     then
         let logPath = Path.Combine(dir, "server.log")
-        logConfig <- logConfig.WriteTo.File(logPath)
+        logConfig <- logConfig.WriteTo.File(logPath, 
+                                            rollingInterval = RollingInterval.Day, 
+                                            retainedFileCountLimit = Nullable(14))
 
     logConfig.CreateLogger()
 

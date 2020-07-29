@@ -16,6 +16,9 @@
     <Compile Include="SearchModel.fs" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Serilog" Version="2.9.0" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\api.common\api.common.fsproj" />
     <ProjectReference Include="..\api.enums\api.enums.fsproj" />
   </ItemGroup>
