@@ -9,14 +9,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Apex.Api.Db.Model.Migrations
 {
     [DbContext(typeof(ApexDbContext))]
-    [Migration("20200728171445_InitialCreate")]
+    [Migration("20200729005329_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.6")
+                .HasAnnotation("ProductVersion", "3.1.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("Apex.Api.Db.Model.EventKindSqlModel", b =>
