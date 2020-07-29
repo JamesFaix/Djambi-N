@@ -12,6 +12,7 @@ open Microsoft.AspNetCore.Http
 open Microsoft.AspNetCore.Mvc
 open Newtonsoft.Json
 open MySql.Data.MySqlClient
+open Serilog
 
 type ErrorHandlingMiddleware(next : RequestDelegate) =
 
@@ -55,6 +56,7 @@ type ErrorHandlingMiddleware(next : RequestDelegate) =
                 ()
             with
             | _ as ex ->
+                Log.Logger.Error(ex, "Unhandled error")
                 let p = ex |> toProblem
                 let json = p |> JsonConvert.SerializeObject
 
