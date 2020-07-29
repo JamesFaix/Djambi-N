@@ -11,6 +11,7 @@ open FSharp.Control.Tasks
 open Microsoft.AspNetCore.Http
 open Microsoft.AspNetCore.Mvc
 open Newtonsoft.Json
+open MySql.Data.MySqlClient
 
 type ErrorHandlingMiddleware(next : RequestDelegate) =
 
@@ -23,17 +24,26 @@ type ErrorHandlingMiddleware(next : RequestDelegate) =
         | :? DuplicateNameException -> 409
         | :? HttpException as e -> e.statusCode
         | _ -> 500
+
+    let getMessage (ex : Exception) : string =
+        match ex with
+        | :? MySqlException as e when e.Message.StartsWith("Access denied") -> 
+            "Error connecting to database."
+        | _ -> ex.Message
+
+    let unNest (ex : Exception) : Exception =
+        match ex with
+        | :? AggregateException as e -> e.InnerExceptions.[0]
+        | _ -> ex
     
     let toProblem (ex : Exception) : ProblemDetails =
-        let ex = 
-            match ex with
-            | :? AggregateException as e -> e.InnerExceptions.[0]
-            | _ -> ex
-
+        let ex = unNest ex;
+        let message = getMessage ex;
         let status = getStatus ex
+
         let p = ProblemDetails()
         p.Status <- Nullable(status)
-        p.Title <- ex.Message
+        p.Title <- message
         p
 
     member __.Invoke(ctx : HttpContext) : Task =
