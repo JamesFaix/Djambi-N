@@ -5,7 +5,9 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="Properties\launchSettings.json" />
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Compile Include="HostFactory.fs" />
     <Compile Include="Assertions.fs" />
     <Compile Include="TestUtilities.fs" />

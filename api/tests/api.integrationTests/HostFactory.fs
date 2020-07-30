@@ -21,7 +21,6 @@ let createHost() =
         HostBuilder()
             .ConfigureAppConfiguration(fun ctx config ->
                 config.AddJsonFile("appsettings.json") |> ignore
-                config.AddEnvironmentVariables("APEX_") |> ignore
             )
             .ConfigureServices(fun ctx services -> 
                 services.AddDbContext<ApexDbContext>(fun opt -> 
