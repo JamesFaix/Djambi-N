@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Local": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "apexConnectionString": "Data Source=localhost;Initial Catalog=Apex;Integrated Security=True;"
+      }
+    }
+  }
+}
