@@ -10,9 +10,22 @@ open Apex.Api.Db.Mappings
 open Apex.Api.Model
 
 type PlayerRepository(context : ApexDbContext) =
+
+    let maybeSave (commit : bool) =
+        task {
+            if commit
+            then 
+                let! _ = context.SaveChangesAsync()
+                return ()
+            else
+                return ()
+        }
+
     interface IPlayerRepository with
-        member __.addPlayer (gameId, player) =
+        member __.addPlayer (gameId, player, ?commit) =
             task {
+                let commit = defaultArg commit false
+
                 let p = player |> toPlayerSqlModel
                 p.PlayerId <- 0
                 p.GameId <- gameId
@@ -21,30 +34,33 @@ type PlayerRepository(context : ApexDbContext) =
                 // Putting here because before it was in a stored proc :(
                 if String.IsNullOrEmpty(p.Name)
                 then
-                    let! user = context.Users.FindAsync(p.UserId)
+                    let! user = context.Users.FindAsync p.UserId
                     p.Name <- user.Name
 
-                let! _ = context.Players.AddAsync(p)
-                // TODO: Save?
+                let! _ = context.Players.AddAsync p
+                let! _ = maybeSave commit
                 return p |> toPlayer
             }
             
-        member __.removePlayer (gameId, playerId) =
+        member __.removePlayer (gameId, playerId, ?commit) =
             task {
+                let commit  = defaultArg commit false
+
                 let! p = context.Players.SingleOrDefaultAsync(fun p -> p.Game.GameId = gameId && p.PlayerId = playerId)
                 if p = null
                 // TODO: Better exception
                 then raise <| HttpException(404, "Not found.")
 
-                context.Players.Remove(p) |> ignore
-
-                // TODO: Save?
+                context.Players.Remove p |> ignore
+                let! _ = maybeSave commit
                 return ()
             }
 
                 
-        member __.updatePlayer (gameId, player) =
+        member __.updatePlayer (gameId, player, ?commit) =
             task {
+                let commit = defaultArg commit false
+
                 let! p = context.Players.SingleOrDefaultAsync(fun p -> p.Game.GameId = gameId && p.PlayerId = player.id)
                 if p = null                
                 // TODO: Better exception
@@ -55,7 +71,8 @@ type PlayerRepository(context : ApexDbContext) =
                 p.StartingRegion <- player.startingRegion |> Option.map byte |> Option.toNullable
                 p.StartingTurnNumber <- player.startingTurnNumber |> Option.map byte |> Option.toNullable
                 // Other properties cannot be mutated
-                context.Players.Update(p) |> ignore
-                // TODO: Save?
+ 
+                context.Players.Update p |> ignore
+                let! _ = maybeSave commit
                 return ()
             }

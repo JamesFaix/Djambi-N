@@ -14,11 +14,11 @@
     <Compile Include="Mappings\SearchMappings.fs" />
     <Compile Include="Repositories\EventRepository.fs" />
     <Compile Include="Repositories\GameRepository.fs" />
+    <Compile Include="Repositories\PlayerRepository.fs" />
     <Compile Include="Repositories\SearchRepository.fs" />
     <Compile Include="Repositories\SessionRepository.fs" />
     <Compile Include="Repositories\SnapshotRepository.fs" />
     <Compile Include="Repositories\UserRepository.fs" />
-    <Compile Include="PlayerRepository.fs" />
   </ItemGroup>
 
   <ItemGroup>

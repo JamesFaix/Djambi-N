@@ -18,9 +18,9 @@ type IGameRepository =
     abstract member createGameAndAddPlayer : gameRequest:CreateGameRequest * playerRequest:CreatePlayerRequest -> Task<int>
 
 type IPlayerRepository =
-    abstract member addPlayer : gameId:int * player:Player -> Task<Player>
-    abstract member removePlayer : gameId:int * playerId:int -> Task<unit>
-    abstract member updatePlayer : gameId:int * player:Player -> Task<unit>
+    abstract member addPlayer : gameId:int * player:Player * ?commit:bool -> Task<Player>
+    abstract member removePlayer : gameId:int * playerId:int * ?commit:bool -> Task<unit>
+    abstract member updatePlayer : gameId:int * player:Player * ?commit:bool -> Task<unit>
 
 type ISearchRepository =
     abstract member searchGames : query:GamesQuery * currentUserId:int -> Task<list<SearchGame>>
