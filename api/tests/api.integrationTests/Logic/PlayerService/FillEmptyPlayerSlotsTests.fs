@@ -30,7 +30,11 @@ type FillEmptyPlayerSlotsTests() =
             let! doubleCheck = host.Get<IGameRepository>().getGame game.id
 
             updatedGame.players.Length |> shouldBe gameRequest.regionCount
-            doubleCheck |> shouldBe updatedGame
+            { 
+                doubleCheck with
+                    createdBy = { doubleCheck.createdBy with time = updatedGame.createdBy.time } // Timestamps may vary
+            }
+            |> shouldBe updatedGame
 
             //All players after creator are neutral
             updatedGame.players

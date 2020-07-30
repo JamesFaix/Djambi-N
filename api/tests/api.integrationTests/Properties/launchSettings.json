@@ -3,7 +3,7 @@
     "Local": {
       "commandName": "Project",
       "environmentVariables": {
-        "apexConnectionString": "Data Source=localhost;Initial Catalog=Apex;Integrated Security=True;"
+        "apexConnectionString": "Server=localhost,3306;Database=Apex2;Uid=root;Pwd=badPassword;"
       }
     }
   }
