@@ -36,7 +36,6 @@ type GameRepository(context : ApexDbContext) =
                     return g |> toGame
             }
             
-        [<Obsolete("Only used for tests")>]
         member __.createGame(request, ?commit) =
             let commit = defaultArg commit false
             task {
@@ -46,7 +45,6 @@ type GameRepository(context : ApexDbContext) =
                 return g.GameId
             }
         
-        [<Obsolete("Only used for tests")>]
         member __.updateGame(game, ?commit) =
             let commit = defaultArg commit false
             task {
