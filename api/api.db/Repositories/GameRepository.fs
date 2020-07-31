@@ -1,21 +1,25 @@
 ﻿namespace Apex.Api.Db.Repositories
 
 open System
-open Apex.Api.Db.Model
-open Apex.Api.Db.Interfaces
-open FSharp.Control.Tasks
-open Apex.Api.Common.Control
-open Microsoft.EntityFrameworkCore
 open System.Linq
-open Apex.Api.Db.Mappings
-open System.Threading.Tasks
-open Apex.Api.Enums
+open FSharp.Control.Tasks
+open Microsoft.EntityFrameworkCore
 open Newtonsoft.Json
+open Apex.Api.Common.Control
+open Apex.Api.Db.Interfaces
+open Apex.Api.Db.Mappings
+open Apex.Api.Db.Model
 
 type GameRepository(context : ApexDbContext) =
-    let nameConflictMessage = 
-        "The instance of entity type 'PlayerSqlModel' cannot be tracked because " + 
-        "another instance with the same key value for {'GameId', 'Name'} is already being tracked."
+    let maybeSave (commit : bool) =
+        task {
+            if commit
+            then 
+                let! _ = context.SaveChangesAsync()
+                return ()
+            else
+                return ()
+        }
 
     interface IGameRepository with
         member __.getGame gameId =
@@ -32,17 +36,17 @@ type GameRepository(context : ApexDbContext) =
                     return g |> toGame
             }
             
-        [<Obsolete("Only used for tests")>]
-        member __.createGame request =
+        member __.createGame(request, ?commit) =
+            let commit = defaultArg commit false
             task {
                 let g = request |> toGameSqlModel
                 let! _ = context.Games.AddAsync(g)
-                let! _ = context.SaveChangesAsync()
+                let! _ = maybeSave commit
                 return g.GameId
             }
         
-        [<Obsolete("Only used for tests")>]
-        member __.updateGame game =
+        member __.updateGame(game, ?commit) =
+            let commit = defaultArg commit false
             task {
                 let! g = context.Games.FindAsync(game.id)
                 g.IsPublic <- game.parameters.isPublic
@@ -54,8 +58,8 @@ type GameRepository(context : ApexDbContext) =
                 g.TurnCycleJson <- game.turnCycle |> JsonConvert.SerializeObject
                 g.PiecesJson <- game.pieces |> JsonConvert.SerializeObject
                 context.Games.Update(g) |> ignore
-                let! _ = context.SaveChangesAsync()
-                return ()            
+                let! _ = maybeSave commit
+                return ()
             }
 
         member __.getNeutralPlayerNames () =

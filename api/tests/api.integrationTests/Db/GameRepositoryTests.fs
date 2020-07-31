@@ -18,7 +18,7 @@ type GameRepositoryTests() =
             let request = getCreateGameRequest(user.id)
 
             //Act
-            let! gameId = host.Get<IGameRepository>().createGame request
+            let! gameId = host.Get<IGameRepository>().createGame(request, true)
 
             //Assert
             Assert.NotEqual(0, gameId)
@@ -31,7 +31,7 @@ type GameRepositoryTests() =
             //Arrange
             let! user = createUser()
             let request = getCreateGameRequest(user.id)
-            let! gameId = host.Get<IGameRepository>().createGame request
+            let! gameId = host.Get<IGameRepository>().createGame(request, true)
 
             //Act
             let! game = host.Get<IGameRepository>().getGame gameId

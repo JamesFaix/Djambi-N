@@ -56,7 +56,7 @@ type SearchGamesTests() =
 
             let! (_, _, game1) = TestUtilities.createuserSessionAndGame(false)
             let! (user2, _, game2) = TestUtilities.createuserSessionAndGame(true)
-            let! _ = host.Get<IGameRepository>().updateGame({ game2 with parameters = { game2.parameters with isPublic = true }})
+            let! _ = host.Get<IGameRepository>().updateGame({ game2 with parameters = { game2.parameters with isPublic = true }}, true)
 
             let session = getSessionForUser user2 |> TestUtilities.setSessionPrivileges [Privilege.ViewGames]
             let query = { GamesQuery.empty with isPublic = Some true }
@@ -100,7 +100,7 @@ type SearchGamesTests() =
             let! (user2, _, game2) = TestUtilities.createuserSessionAndGame(false)
             let session = getSessionForUser user2 |> TestUtilities.setSessionPrivileges [Privilege.ViewGames]
 
-            let! _ = host.Get<IGameRepository>().updateGame({ game1 with status = GameStatus.Canceled });
+            let! _ = host.Get<IGameRepository>().updateGame({ game1 with status = GameStatus.Canceled }, true);
 
             let query = { GamesQuery.empty with statuses = [GameStatus.Pending] }
 
