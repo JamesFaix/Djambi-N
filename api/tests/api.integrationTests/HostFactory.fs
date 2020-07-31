@@ -1,17 +1,18 @@
 ﻿module Apex.Api.IntegrationTests.HostFactory
 
-open Microsoft.Extensions.Hosting
+open System
+open Microsoft.EntityFrameworkCore
 open Microsoft.Extensions.Configuration
 open Microsoft.Extensions.DependencyInjection
-open Apex.Api.Db.Model
+open Microsoft.Extensions.Hosting
+open Serilog
 open Apex.Api.Db.Interfaces
+open Apex.Api.Db.Model
 open Apex.Api.Db.Repositories
-open Apex.Api.Logic.Services
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Logic.Managers
-open Microsoft.EntityFrameworkCore
-open System
-open Serilog
+open Apex.Api.Logic.Services
+open Microsoft.Data.Sqlite
 
 type Host(services : IServiceProvider) =
     member __.Get<'a>() = services.GetService<'a>()
@@ -25,9 +26,19 @@ let createHost() =
             )
             .ConfigureServices(fun ctx services -> 
                 services.AddDbContext<ApexDbContext>(fun opt -> 
-                    let cnStr = ctx.Configuration.GetValue<string>("Sql:ConnectionString")
-                    opt.UseMySql(cnStr) |> ignore
-                    ()
+                    let settings = ctx.Configuration.GetSection("Sql");
+
+                    let couldParse, parsedBool = Boolean.TryParse(settings.GetValue<string>("UseInMemoryDatabase"))
+                    let inMemory = couldParse && parsedBool
+                    
+                    if inMemory
+                    then
+                        let cn = new SqliteConnection("DataSource=:memory:")
+                        cn.Open()
+                        opt.UseSqlite(cn) |> ignore
+                    else
+                        let cnStr = settings.GetValue<string>("ConnectionString")
+                        opt.UseMySql(cnStr) |> ignore
                 ) |> ignore
 
                 let logger = LoggerConfiguration().CreateLogger()
@@ -68,5 +79,9 @@ let createHost() =
             )
 
     let host = builder.Build()
+
+    // Make sure the DB is created. This is essential when using Sqlite
+    let dbContext = host.Services.GetService<ApexDbContext>()
+    dbContext.Database.EnsureCreated() |> ignore
 
     Host(host.Services)
