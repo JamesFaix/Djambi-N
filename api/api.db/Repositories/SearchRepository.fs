@@ -94,12 +94,18 @@ type SearchRepository(context : ApexDbContext) =
                 match query.lastEventBefore with
                 | None -> ()
                 | Some x ->
-                    q <- q.Where(fun g -> g.Events.OrderBy(fun e -> e.CreatedOn).Last().CreatedOn < x)
+                    q <- q.Where(fun g -> 
+                        not (g.Events.Any()) || // Pending games have 0 events 
+                        g.Events.OrderBy(fun e -> e.CreatedOn).Last().CreatedOn < x
+                    )
 
                 match query.lastEventAfter with
                 | None -> ()
                 | Some x ->
-                    q <- q.Where(fun g -> g.Events.OrderBy(fun e -> e.CreatedOn).Last().CreatedOn > x)
+                    q <- q.Where(fun g -> 
+                        not (g.Events.Any()) || // Pending games have 0 events
+                        g.Events.OrderBy(fun e -> e.CreatedOn).Last().CreatedOn > x
+                    )
 
                 // Actually get data from SQL
                 let! sqlModels = q.ToListAsync()

@@ -12,3 +12,4 @@ paket-files
 *.user
 *.log
 *.zip
+apex-local.session.sql
