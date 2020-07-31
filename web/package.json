@@ -39,8 +39,9 @@
     },
     "scripts": {
         "build": "webpack --env.APEX_apiAddress=http://localhost:5100",
-        "start": "webpack && http-server",
-        "test": "mocha --require ts-node/register test/**/*.ts"
+        "start": "cd dist/dev && http-server && cd ../..",
+        "test": "mocha --require ts-node/register test/**/*.ts",
+        "watch": "webpack --watch --env.APEX_apiAddress=http://localhost:5100"
     },
     "devDependencies": {
         "@types/chai": "^4.2.1",
