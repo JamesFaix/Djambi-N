@@ -37,6 +37,12 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release --no-restore
 
-    - name: Test
+    - name: Run unit tests
       run: dotnet test --no-restore --verbosity normal
       working-directory: ./api/tests/api.unitTests
+
+    - name: Run integration tests
+      run: dotnet test --no-restore --verbosity normal
+      working-directory: ./api/tests/api.integrationTests
+      env:
+        APEX_Sql__UseSqliteForTesting: true

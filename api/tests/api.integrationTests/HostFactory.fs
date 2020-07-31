@@ -27,11 +27,15 @@ let createHost() =
                 services.AddDbContext<ApexDbContext>(fun opt -> 
                     let settings = ctx.Configuration.GetSection("Sql");
 
-                    let couldParse, parsedBool = Boolean.TryParse(settings.GetValue<string>("UseInMemoryDatabase"))
-                    let inMemory = couldParse && parsedBool
+                    let couldParse, parsedBool = Boolean.TryParse(settings.GetValue<string>("UseSqliteForTesting"))
+                    let useSqlite = couldParse && parsedBool
                     
-                    if inMemory
+                    if useSqlite
                     then
+                        // Must use file, not in-memory Sqlite.
+                        // Using in-memory results in foreign key violations when making more than one
+                        // SQL command in a test. The data from the first command in saved in a DB instance that
+                        // is gone by the time the second command executes.
                         opt.UseSqlite("Filename=Test.db") |> ignore
                     else
                         let cnStr = settings.GetValue<string>("ConnectionString")
