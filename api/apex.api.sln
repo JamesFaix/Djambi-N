@@ -3,38 +3,38 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29324.140
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.host", "api\api.host\api.host.fsproj", "{3664C02D-2B0E-4C1B-AE20-CCDEC13105F8}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.host", "api.host\api.host.fsproj", "{3664C02D-2B0E-4C1B-AE20-CCDEC13105F8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{2FAF11B4-A2BA-48CF-8E4D-766CB7B26A3A}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.common", "api\api.common\api.common.fsproj", "{4A3444EA-56B6-469F-B9F2-4B3090BE5DE8}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.common", "api.common\api.common.fsproj", "{4A3444EA-56B6-469F-B9F2-4B3090BE5DE8}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.model", "api\api.model\api.model.fsproj", "{E265C601-7350-49E2-AE16-24C00E9DD8C1}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.model", "api.model\api.model.fsproj", "{E265C601-7350-49E2-AE16-24C00E9DD8C1}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.logic", "api\api.logic\api.logic.fsproj", "{FDE6242E-F281-4AC7-B492-067F48D62901}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.logic", "api.logic\api.logic.fsproj", "{FDE6242E-F281-4AC7-B492-067F48D62901}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.web", "api\api.web\api.web.fsproj", "{65271D46-3A49-4CB6-9AA8-61F4509AFC98}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.web", "api.web\api.web.fsproj", "{65271D46-3A49-4CB6-9AA8-61F4509AFC98}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{1A1C3DF9-1667-4BA8-88E9-B6A731A25300}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.unitTests", "api\tests\api.unitTests\api.unitTests.fsproj", "{4B12AF84-7BA7-4E12-9BF2-137FFB87C6C8}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.unitTests", "tests\api.unitTests\api.unitTests.fsproj", "{4B12AF84-7BA7-4E12-9BF2-137FFB87C6C8}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.integrationTests", "api\tests\api.integrationTests\api.integrationTests.fsproj", "{955D3C4D-6DD5-4C38-80B0-58E3781E7D21}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.integrationTests", "tests\api.integrationTests\api.integrationTests.fsproj", "{955D3C4D-6DD5-4C38-80B0-58E3781E7D21}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.logic.interfaces", "api\api.logic.interfaces\api.logic.interfaces.fsproj", "{065F3E33-525E-41E5-9924-375F74F0C007}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.logic.interfaces", "api.logic.interfaces\api.logic.interfaces.fsproj", "{065F3E33-525E-41E5-9924-375F74F0C007}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.db.interfaces", "api\api.db.interfaces\api.db.interfaces.fsproj", "{C4D54419-5950-4AF0-B5DF-AB401F4C50CF}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.db.interfaces", "api.db.interfaces\api.db.interfaces.fsproj", "{C4D54419-5950-4AF0-B5DF-AB401F4C50CF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Solution Items", "_Solution Items", "{63E66773-F912-43C2-AF2F-BF8F49EE7932}"
 	ProjectSection(SolutionItems) = preProject
-		api\README.md = api\README.md
+		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "api.db.model", "api\api.db.model\api.db.model.csproj", "{CDFF3AE4-E25B-4383-8BAD-1379F958C1D3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "api.db.model", "api.db.model\api.db.model.csproj", "{CDFF3AE4-E25B-4383-8BAD-1379F958C1D3}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.db", "api\api.db\api.db.fsproj", "{7A3F2F38-D19E-48C3-962E-F647055450AB}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.db", "api.db\api.db.fsproj", "{7A3F2F38-D19E-48C3-962E-F647055450AB}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.enums", "api\api.enums\api.enums.fsproj", "{A6EA7141-3A6F-46A5-8E2C-0EC2BE460EFE}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.enums", "api.enums\api.enums.fsproj", "{A6EA7141-3A6F-46A5-8E2C-0EC2BE460EFE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

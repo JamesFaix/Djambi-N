@@ -36,6 +36,7 @@ jobs:
 
     - name: Build
       run: dotnet build -c Release --no-restore
+      working-directory: ./api
 
     - name: Run unit tests
       run: dotnet test -c Release --no-build -v normal
