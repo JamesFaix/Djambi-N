@@ -31,9 +31,9 @@ type PlayerService(gameRepo : IGameRepository) =
                 elif request.name.IsSome
                 then raise <| GameConfigurationException("Cannot provide name when adding a user player.")
                 elif game.players |> List.exists (fun p -> p.kind = PlayerKind.User && p.userId = request.userId)
-                then raise <| HttpException(409, "User is already a player.")
+                then raise <| GameConfigurationException("User is already a player.")
                 elif not (self.has Privilege.EditPendingGames) && request.userId.Value <> self.id
-                then raise <| HttpException(403, "Cannot add other users to a game.")
+                then raise <| GameConfigurationException("Cannot add other users to a game.")
                 else ()
 
             | PlayerKind.Guest ->
@@ -44,7 +44,7 @@ type PlayerService(gameRepo : IGameRepository) =
                 elif request.name.IsNone
                 then raise <| GameConfigurationException("Must provide name when adding a guest player.")
                 elif not (self.has Privilege.EditPendingGames) && request.userId.Value <> self.id
-                then raise <| HttpException(403, "Cannot add guests for other users to a game.")
+                then raise <| GameConfigurationException("Cannot add guests for other users to a game.")
                 else ()
 
             | PlayerKind.Neutral ->
@@ -72,7 +72,7 @@ type PlayerService(gameRepo : IGameRepository) =
                     if not <| (self.has Privilege.EditPendingGames
                         || game.createdBy.userId = self.id
                         || x = self.id)
-                    then raise <| HttpException(403, "Cannot remove other users from game.")
+                    then raise <| GameConfigurationException("Cannot remove other users from game.")
                     else
                         let effects = new ArrayList<Effect>()
 

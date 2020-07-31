@@ -83,11 +83,10 @@ type GetRemovePlayerEventTests() =
             let! game = host.Get<IGameRepository>().getGame game.id
 
             //Act/Assert
-            let ex = Assert.Throws<HttpException>(fun () -> 
+            let ex = Assert.Throws<GameConfigurationException>(fun () -> 
                 host.Get<PlayerService>().getRemovePlayerEvent (game, player.id) session |> ignore
             )
 
-            ex.statusCode |> shouldBe 403
             ex.Message |> shouldBe "Cannot remove other users from game."
         }
 

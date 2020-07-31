@@ -69,11 +69,10 @@ type GetAddPlayerEventTests() =
 
             //Act/Assert
 
-            let ex = Assert.Throws<HttpException>(fun () ->
+            let ex = Assert.Throws<GameConfigurationException>(fun () ->
                 host.Get<PlayerService>().getAddPlayerEvent (game, request) session |> ignore
             )
 
-            ex.statusCode |> shouldBe 403
             ex.Message |> shouldBe "Cannot add other users to a game."
         }
 
@@ -137,11 +136,10 @@ type GetAddPlayerEventTests() =
             let request = CreatePlayerRequest.user user
             
             //Act/Assert
-            let ex = Assert.Throws<HttpException>(fun () -> 
+            let ex = Assert.Throws<GameConfigurationException>(fun () -> 
                 host.Get<PlayerService>().getAddPlayerEvent (game, request) session |> ignore
             )
 
-            ex.statusCode |> shouldBe 409
             ex.Message |> shouldBe "User is already a player."
         }
 
@@ -192,11 +190,10 @@ type GetAddPlayerEventTests() =
             let request = CreatePlayerRequest.guest (user.id, "test")
 
             //Act/Assert
-            let ex = Assert.Throws<HttpException>(fun () -> 
+            let ex = Assert.Throws<GameConfigurationException>(fun () -> 
                 host.Get<PlayerService>().getAddPlayerEvent (game, request) session |> ignore
             )
 
-            ex.statusCode |> shouldBe 403
             ex.Message |> shouldBe "Cannot add guests for other users to a game."
         }
 
