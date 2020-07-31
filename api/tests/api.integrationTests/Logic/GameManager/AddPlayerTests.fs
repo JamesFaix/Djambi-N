@@ -1,14 +1,14 @@
 namespace Apex.Api.IntegrationTests.Logic.GameManager
 
 open System
+open System.Data.Entity.Core
+open System.Threading.Tasks
 open FSharp.Control.Tasks
 open Xunit
-open Apex.Api.IntegrationTests
-open Apex.Api.Model
-open Apex.Api.Logic.Interfaces
 open Apex.Api.Enums
-open Apex.Api.Common.Control
-open System.Threading.Tasks
+open Apex.Api.IntegrationTests
+open Apex.Api.Logic.Interfaces
+open Apex.Api.Model
 
 type AddPlayerTests() =
     inherit TestsBase()
@@ -49,12 +49,11 @@ type AddPlayerTests() =
             let session = session |> TestUtilities.setSessionPrivileges [Privilege.EditPendingGames]
 
             //Act/Assert
-            let! ex = Assert.ThrowsAsync<HttpException>(fun () -> 
+            let! ex = Assert.ThrowsAsync<ObjectNotFoundException>(fun () -> 
                 task {
                     return! host.Get<IPlayerManager>().addPlayer Int32.MinValue request session
                 } :> Task
             )
 
-            ex.statusCode |> shouldBe 404
             ex.Message |> shouldBe "Game not found."
         }

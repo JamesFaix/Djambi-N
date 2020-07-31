@@ -1,17 +1,16 @@
 namespace Apex.Api.IntegrationTests.Db
 
 open System.ComponentModel
+open System.Data
 open System.Threading.Tasks
 open FSharp.Control.Tasks
 open Xunit
-open Apex.Api.Common.Control
 open Apex.Api.Db.Interfaces
 open Apex.Api.Enums
 open Apex.Api.IntegrationTests
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Logic.Services
 open Apex.Api.Model
-open System.Data
 
 type EventRepositoryTests() =
     inherit TestsBase()

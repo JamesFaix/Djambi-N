@@ -1,12 +1,12 @@
 ﻿namespace Apex.Api.Db.Repositories
 
 open System
+open System.Data.Entity.Core
 open FSharp.Control.Tasks
 open Microsoft.EntityFrameworkCore
-open Apex.Api.Common.Control
 open Apex.Api.Db.Interfaces
-open Apex.Api.Db.Model
 open Apex.Api.Db.Mappings
+open Apex.Api.Db.Model
 open Apex.Api.Model
 
 type PlayerRepository(context : ApexDbContext) =
@@ -48,8 +48,7 @@ type PlayerRepository(context : ApexDbContext) =
 
                 let! p = context.Players.SingleOrDefaultAsync(fun p -> p.Game.GameId = gameId && p.PlayerId = playerId)
                 if p = null
-                // TODO: Better exception
-                then raise <| HttpException(404, "Not found.")
+                then raise <| ObjectNotFoundException("Player not found.")
 
                 context.Players.Remove p |> ignore
                 let! _ = maybeSave commit
@@ -64,7 +63,7 @@ type PlayerRepository(context : ApexDbContext) =
                 let! p = context.Players.SingleOrDefaultAsync(fun p -> p.Game.GameId = gameId && p.PlayerId = player.id)
                 if p = null                
                 // TODO: Better exception
-                then raise <| HttpException(404, "Not found.")
+                then raise <| ObjectNotFoundException("Player not found.")
 
                 p.PlayerStatusId <- player.status
                 p.ColorId <- player.colorId |> Option.map byte |> Option.toNullable

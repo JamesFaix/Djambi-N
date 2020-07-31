@@ -13,6 +13,7 @@ open Microsoft.AspNetCore.Mvc
 open Newtonsoft.Json
 open MySql.Data.MySqlClient
 open Serilog
+open System.Data.Entity.Core
 
 type ErrorHandlingMiddleware(next : RequestDelegate) =
 
@@ -22,6 +23,7 @@ type ErrorHandlingMiddleware(next : RequestDelegate) =
         | :? InvalidEnumArgumentException -> 400
         | :? ValidationException -> 400
         | :? UnauthorizedAccessException -> 403
+        | :? ObjectNotFoundException -> 404
         | :? DuplicateNameException -> 409
         | :? HttpException as e -> e.statusCode
         | _ -> 500

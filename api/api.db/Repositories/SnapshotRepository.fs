@@ -1,15 +1,15 @@
 ﻿namespace Apex.Api.Db.Repositories
 
 open System
-open Apex.Api.Db.Interfaces
-open Apex.Api.Db.Model
-open FSharp.Control.Tasks
-open Apex.Api.Common.Control
-open Apex.Api.Db.Mappings
-open Microsoft.EntityFrameworkCore
 open System.Linq
-open Apex.Api.Model
+open System.Data.Entity.Core
+open FSharp.Control.Tasks
+open Microsoft.EntityFrameworkCore
 open Newtonsoft.Json
+open Apex.Api.Db.Interfaces
+open Apex.Api.Db.Mappings
+open Apex.Api.Db.Model
+open Apex.Api.Model
 
 type SnapshotRepository(context : ApexDbContext) =
     interface ISnapshotRepository with
@@ -18,7 +18,7 @@ type SnapshotRepository(context : ApexDbContext) =
                 let! s = context.Snapshots.FindAsync(snapshotId)
 
                 if s = null
-                then raise <| HttpException(404, "Not found")
+                then raise <| ObjectNotFoundException("Snapshot not found.")
 
                 return s |> toSnapshot
             }
@@ -34,7 +34,7 @@ type SnapshotRepository(context : ApexDbContext) =
                 let! s = context.Snapshots.FindAsync(snapshotId)
 
                 if s = null
-                then raise <| HttpException(404, "Not found")
+                then raise <| ObjectNotFoundException("Snapshot not found.")
 
                 context.Snapshots.Remove(s) |> ignore
                 let! _ = context.SaveChangesAsync()
@@ -68,11 +68,11 @@ type SnapshotRepository(context : ApexDbContext) =
                             fun s -> s.SnapshotId = snapshotId && s.Game.GameId = gameId)
                     
                 if s = null
-                then raise <| HttpException(404, "Not found")
+                then raise <| ObjectNotFoundException("Snapshot not found.")
 
                 let! gameSqlModel = context.Games.FindAsync(gameId)
                 if gameSqlModel = null
-                then raise <| HttpException(404, "Not found")
+                then raise <| ObjectNotFoundException("Game not found.")
 
                 let snapshot = JsonConvert.DeserializeObject<SnapshotJson> s.SnapshotJson
 

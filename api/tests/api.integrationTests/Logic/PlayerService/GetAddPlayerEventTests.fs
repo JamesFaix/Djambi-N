@@ -1,15 +1,15 @@
 namespace Apex.Api.IntegrationTests.Logic.PlayerService
 
+open System.Data
 open FSharp.Control.Tasks
 open Xunit
 open Apex.Api.Common.Control
-open Apex.Api.IntegrationTests
-open Apex.Api.Model
-open Apex.Api.Logic.Interfaces
 open Apex.Api.Db.Interfaces
 open Apex.Api.Enums
+open Apex.Api.IntegrationTests
+open Apex.Api.Logic.Interfaces
 open Apex.Api.Logic.Services
-open System.Data
+open Apex.Api.Model
 
 type GetAddPlayerEventTests() =
     inherit TestsBase()

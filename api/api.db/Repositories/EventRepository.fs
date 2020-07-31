@@ -11,6 +11,7 @@ open Apex.Api.Db.Mappings
 open Apex.Api.Db.Model
 open Apex.Api.Model
 open System.Data
+open System.Data.Entity.Core
 
 type EventRepository(context : ApexDbContext,
                      gameRepo : IGameRepository,
@@ -100,7 +101,7 @@ type EventRepository(context : ApexDbContext,
             task {
                 let! g = context.Games.FindAsync(gameId)
                 if g = null
-                then raise <| HttpException(404, "Not found.")
+                then raise <| ObjectNotFoundException("Game not found.")
 
                 use! transaction = context.Database.BeginTransactionAsync()
                 try
