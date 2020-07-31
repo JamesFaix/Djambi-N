@@ -11,9 +11,9 @@ type IEventRepository =
 type IGameRepository =
     abstract member getGame : gameId:int -> Task<Game>
     [<Obsolete("Only used for tests")>]
-    abstract member createGame : request:CreateGameRequest -> Task<int>   
+    abstract member createGame : request:CreateGameRequest * ?commit:bool -> Task<int>   
     [<Obsolete("Only used for tests")>]
-    abstract member updateGame : game:Game -> Task<unit>
+    abstract member updateGame : game:Game * ?commit:bool -> Task<unit>
     abstract member getNeutralPlayerNames : unit -> Task<list<string>>
     abstract member createGameAndAddPlayer : gameRequest:CreateGameRequest * playerRequest:CreatePlayerRequest -> Task<int>
 

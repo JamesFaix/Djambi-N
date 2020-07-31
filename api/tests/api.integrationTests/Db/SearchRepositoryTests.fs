@@ -18,7 +18,7 @@ type SearchRepositoryTests() =
             let! user = host.Get<IUserRepository>().createUser userRequest
 
             let gameRequest = getCreateGameRequest(user.id)
-            let! gameId = host.Get<IGameRepository>().createGame gameRequest
+            let! gameId = host.Get<IGameRepository>().createGame(gameRequest, true)
             let query = GamesQuery.empty
 
             //Act

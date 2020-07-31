@@ -18,7 +18,7 @@ type PlayerRepositoryTests() =
             let! user = createUser()
             let gameRequest = getCreateGameRequest(user.id)
             let userRequest = getCreateUserRequest()
-            let! gameId = host.Get<IGameRepository>().createGame gameRequest
+            let! gameId = host.Get<IGameRepository>().createGame(gameRequest, true)
             let player = CreatePlayerRequest.user user |> CreatePlayerRequest.toPlayer (Some user.name)
 
             //Act
@@ -40,7 +40,7 @@ type PlayerRepositoryTests() =
         task {
             let! user = createUser()
             let gameRequest = getCreateGameRequest(user.id)
-            let! gameId = host.Get<IGameRepository>().createGame gameRequest
+            let! gameId = host.Get<IGameRepository>().createGame(gameRequest, true)
             let player = CreatePlayerRequest.neutral "test" |> CreatePlayerRequest.toPlayer None
 
             //Act
@@ -63,7 +63,7 @@ type PlayerRepositoryTests() =
             let! user = createUser()
             let gameRequest = getCreateGameRequest(user.id)
             let userRequest = getCreateUserRequest()
-            let! gameId = host.Get<IGameRepository>().createGame gameRequest
+            let! gameId = host.Get<IGameRepository>().createGame(gameRequest, true)
             let! user = host.Get<IUserRepository>().createUser userRequest
             let player = CreatePlayerRequest.guest (user.id, "test") |> CreatePlayerRequest.toPlayer None
 
@@ -87,7 +87,7 @@ type PlayerRepositoryTests() =
             let! user = createUser()
             let gameRequest = getCreateGameRequest(user.id)
             let userRequest = getCreateUserRequest()
-            let! gameId = host.Get<IGameRepository>().createGame gameRequest
+            let! gameId = host.Get<IGameRepository>().createGame(gameRequest, true)
             let! user = host.Get<IUserRepository>().createUser userRequest
             let player = CreatePlayerRequest.user (user |> UserDetails.hideDetails) |> CreatePlayerRequest.toPlayer (Some user.name)
             let! player = host.Get<IPlayerRepository>().addPlayer (gameId, player, true)

@@ -5,7 +5,6 @@ open System.ComponentModel
 open System.Linq
 open FSharp.Control.Tasks
 open Microsoft.EntityFrameworkCore
-open Newtonsoft.Json
 open Apex.Api.Common.Control
 open Apex.Api.Db.Interfaces
 open Apex.Api.Db.Mappings
@@ -13,6 +12,7 @@ open Apex.Api.Db.Model
 open Apex.Api.Model
 
 type EventRepository(context : ApexDbContext,
+                     gameRepo : IGameRepository,
                      playerRepo : IPlayerRepository) =
 
     let playerNameTakenMessage = 
@@ -104,15 +104,7 @@ type EventRepository(context : ApexDbContext,
                 use! transaction = context.Database.BeginTransactionAsync()
                 try
                     // Update game
-                    g.AllowGuests <- newGame.parameters.allowGuests
-                    g.IsPublic <- newGame.parameters.isPublic
-                    g.Description <- newGame.parameters.description |> Option.toObj
-                    g.RegionCount <- byte newGame.parameters.regionCount
-                    g.CurrentTurnJson <- newGame.currentTurn |> JsonConvert.SerializeObject
-                    g.TurnCycleJson <- newGame.turnCycle |> JsonConvert.SerializeObject
-                    g.PiecesJson <- newGame.pieces |> JsonConvert.SerializeObject
-                    g.GameStatusId <- newGame.status
-                    context.Games.Update(g) |> ignore
+                    let! _ = gameRepo.updateGame(newGame, false)
 
                     // Update players
                     for p in removedPlayers do
