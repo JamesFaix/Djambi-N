@@ -16,6 +16,12 @@ open Apex.Api.Logic.Services
 type Host(services : IServiceProvider) =
     member __.Get<'a>() = services.GetService<'a>()
 
+let private lockObj = obj()
+
+let private ensureDbCreatedSafe (dbContext : DbContext) =
+    lock lockObj (fun () ->
+        dbContext.Database.EnsureCreated() |> ignore)
+
 let createHost() =
     let builder = 
         HostBuilder()
@@ -83,6 +89,6 @@ let createHost() =
 
     // Make sure the DB is created. This is essential when using Sqlite
     let dbContext = host.Services.GetService<ApexDbContext>()
-    dbContext.Database.EnsureCreated() |> ignore
+    ensureDbCreatedSafe dbContext
 
     Host(host.Services)
