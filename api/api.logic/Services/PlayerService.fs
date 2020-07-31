@@ -11,6 +11,7 @@ open Apex.Api.Enums
 open System.ComponentModel
 open FSharp.Control.Tasks
 open System.Threading.Tasks
+open System.Data
 
 type PlayerService(gameRepo : IGameRepository) =
     member __.getAddPlayerEvent (game : Game, request : CreatePlayerRequest) (session : Session) : CreateEventRequest =
@@ -19,7 +20,7 @@ type PlayerService(gameRepo : IGameRepository) =
         then raise <| HttpException(400, "Can only add players to pending games.")
         elif request.name.IsSome
             && game.players |> List.exists (fun p -> String.Equals(p.name, request.name.Value, StringComparison.OrdinalIgnoreCase))
-        then raise <| HttpException(409, "A player with that name already exists.")
+        then raise <| DuplicateNameException("Player name taken.")
         elif game.players.Length >= game.parameters.regionCount
         then raise <| HttpException(400, "Max player count reached.")
           else

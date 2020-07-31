@@ -9,6 +9,7 @@ open Apex.Api.Logic.Interfaces
 open Apex.Api.Db.Interfaces
 open Apex.Api.Enums
 open Apex.Api.Logic.Services
+open System.Data
 
 type GetAddPlayerEventTests() =
     inherit TestsBase()
@@ -256,12 +257,11 @@ type GetAddPlayerEventTests() =
             let request = CreatePlayerRequest.guest (user.id, user.name)
 
             //Act/Assert
-            let ex = Assert.Throws<HttpException>(fun () -> 
+            let ex = Assert.Throws<DuplicateNameException>(fun () -> 
                 host.Get<PlayerService>().getAddPlayerEvent (game, request) session |> ignore
             )
 
-            ex.statusCode |> shouldBe 409
-            ex.Message |> shouldBe "A player with that name already exists."
+            ex.Message |> shouldBe "Player name taken."
         }
 
     [<Fact>]
