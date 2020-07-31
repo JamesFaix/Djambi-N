@@ -45,7 +45,12 @@ type EventRepositoryTests() =
             //Assert
             let persistedGame = resp.game
 
-            { newGame with players = persistedGame.players } |> shouldBe persistedGame
+            { 
+                newGame with 
+                    players = persistedGame.players; 
+                    createdBy = { newGame.createdBy with time = persistedGame.createdBy.time } // Timestamp may vary
+            } 
+            |> shouldBe persistedGame
 
             persistedGame.players.Length |> shouldBe 1
 
@@ -180,7 +185,12 @@ type EventRepositoryTests() =
 
             //Assert
             let persistedGame = resp.game
-            persistedGame |> shouldBe newGame
+            
+            {
+                persistedGame with
+                    createdBy = { persistedGame.createdBy with time = newGame.createdBy.time } // Timestamp may vary
+            }
+            |> shouldBe newGame
         }
 
     [<Fact>]
