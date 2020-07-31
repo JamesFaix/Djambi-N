@@ -12,7 +12,6 @@ open Apex.Api.Db.Repositories
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Logic.Managers
 open Apex.Api.Logic.Services
-open Microsoft.Data.Sqlite
 
 type Host(services : IServiceProvider) =
     member __.Get<'a>() = services.GetService<'a>()
@@ -33,9 +32,7 @@ let createHost() =
                     
                     if inMemory
                     then
-                        let cn = new SqliteConnection("DataSource=:memory:")
-                        cn.Open()
-                        opt.UseSqlite(cn) |> ignore
+                        opt.UseSqlite("Filename=Test.db") |> ignore
                     else
                         let cnStr = settings.GetValue<string>("ConnectionString")
                         opt.UseMySql(cnStr) |> ignore
