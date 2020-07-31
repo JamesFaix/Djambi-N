@@ -19,9 +19,11 @@ type ErrorHandlingMiddleware(next : RequestDelegate) =
 
     let getStatus (ex : Exception) : int =
         match ex with
-        | :? AuthenticationException -> 401
         | :? InvalidEnumArgumentException -> 400
         | :? ValidationException -> 400
+        | :? GameRuleViolationException -> 400
+        | :? GameConfigurationException -> 400
+        | :? AuthenticationException -> 401
         | :? UnauthorizedAccessException -> 403
         | :? ObjectNotFoundException -> 404
         | :? NotFoundException -> 404

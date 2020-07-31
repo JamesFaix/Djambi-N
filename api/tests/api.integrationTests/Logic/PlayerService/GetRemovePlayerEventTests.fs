@@ -32,11 +32,10 @@ type GetRemovePlayerEventTests() =
             let player = response.game.players |> List.except game1.players |> List.head
 
             //Act/Assert
-            let ex = Assert.Throws<HttpException>(fun () -> 
+            let ex = Assert.Throws<NotFoundException>(fun () -> 
                 host.Get<PlayerService>().getRemovePlayerEvent (game2, player.id) session |> ignore
             )
 
-            ex.statusCode |> shouldBe 404
             ex.Message |> shouldBe "Player not found."
         }
 
@@ -57,11 +56,10 @@ type GetRemovePlayerEventTests() =
             let! game = host.Get<IGameRepository>().getGame game.id
 
             //Act/Assert
-            let ex = Assert.Throws<HttpException>(fun () -> 
+            let ex = Assert.Throws<GameConfigurationException>(fun () -> 
                 host.Get<PlayerService>().getRemovePlayerEvent (game, neutralPlayer.id) session |> ignore
             )
 
-            ex.statusCode |> shouldBe 400
             ex.Message |> shouldBe "Cannot remove neutral players from game."
         }
 
@@ -289,10 +287,9 @@ type GetRemovePlayerEventTests() =
             let game = resp.game
 
             //Act/Assert
-            let ex = Assert.Throws<HttpException>(fun () ->
+            let ex = Assert.Throws<GameConfigurationException>(fun () ->
                 host.Get<PlayerService>().getRemovePlayerEvent (game, game.players.[0].id) session |> ignore
             )
 
-            ex.statusCode |> shouldBe 400
             ex.Message |> shouldBe "Cannot remove players unless game is Pending."
         }

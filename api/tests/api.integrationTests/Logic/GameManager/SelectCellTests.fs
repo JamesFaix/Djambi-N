@@ -174,12 +174,11 @@ type SelectCellTests() =
                                        |> (not << List.exists (fun cId -> cId = n)))
 
             //Act/Assert
-            let! ex = Assert.ThrowsAsync<HttpException>(fun () ->
+            let! ex = Assert.ThrowsAsync<GameRuleViolationException>(fun () ->
                 task {
                     return! host.Get<ITurnManager>().selectCell (updatedGame.id, cellId) session
                 } :> Task
             )
 
-            ex.statusCode |> shouldBe 400
             ex.Message |> shouldBe (sprintf "Cell %i is not currently selectable." cellId)
         }

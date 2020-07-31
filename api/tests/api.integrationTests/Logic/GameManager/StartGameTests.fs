@@ -47,13 +47,12 @@ type StartGameTests() =
             let! (user, session, game) = createuserSessionAndGame(true)
 
             //Act/Assert
-            let! ex = Assert.ThrowsAsync<HttpException>(fun () -> 
+            let! ex = Assert.ThrowsAsync<GameConfigurationException>(fun () -> 
                 task {
                     return! host.Get<IGameManager>().startGame game.id session
                 } :> Task
             )
 
-            ex.statusCode |> shouldBe 400
             ex.Message |> shouldBe "Cannot start game with only one player."
 
             let! _ = host.Get<IGameRepository>().getGame game.id

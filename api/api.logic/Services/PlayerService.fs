@@ -17,19 +17,19 @@ type PlayerService(gameRepo : IGameRepository) =
     member __.getAddPlayerEvent (game : Game, request : CreatePlayerRequest) (session : Session) : CreateEventRequest =
         let self = session.user
         if game.status <> GameStatus.Pending
-        then raise <| HttpException(400, "Can only add players to pending games.")
+        then raise <| GameConfigurationException("Can only add players to pending games.")
         elif request.name.IsSome
             && game.players |> List.exists (fun p -> String.Equals(p.name, request.name.Value, StringComparison.OrdinalIgnoreCase))
         then raise <| DuplicateNameException("Player name taken.")
         elif game.players.Length >= game.parameters.regionCount
-        then raise <| HttpException(400, "Max player count reached.")
+        then raise <| GameConfigurationException("Max player count reached.")
           else
             match request.kind with
             | PlayerKind.User ->
                 if request.userId.IsNone
-                then raise <| HttpException(400, "UserID must be provided when adding a user player.")
+                then raise <| GameConfigurationException("UserID must be provided when adding a user player.")
                 elif request.name.IsSome
-                then raise <| HttpException(400, "Cannot provide name when adding a user player.")
+                then raise <| GameConfigurationException("Cannot provide name when adding a user player.")
                 elif game.players |> List.exists (fun p -> p.kind = PlayerKind.User && p.userId = request.userId)
                 then raise <| HttpException(409, "User is already a player.")
                 elif not (self.has Privilege.EditPendingGames) && request.userId.Value <> self.id
@@ -38,17 +38,17 @@ type PlayerService(gameRepo : IGameRepository) =
 
             | PlayerKind.Guest ->
                 if not game.parameters.allowGuests
-                then raise <| HttpException(400, "Game does not allow guest players.")
+                then raise <| GameConfigurationException("Game does not allow guest players.")
                 elif request.userId.IsNone
-                then raise <| HttpException(400, "UserID must be provided when adding a guest player.")
+                then raise <| GameConfigurationException("UserID must be provided when adding a guest player.")
                 elif request.name.IsNone
-                then raise <| HttpException(400, "Must provide name when adding a guest player.")
+                then raise <| GameConfigurationException("Must provide name when adding a guest player.")
                 elif not (self.has Privilege.EditPendingGames) && request.userId.Value <> self.id
                 then raise <| HttpException(403, "Cannot add guests for other users to a game.")
                 else ()
 
             | PlayerKind.Neutral ->
-                raise <| HttpException(400, "Cannot directly add neutral players to a game.")
+                raise <| GameConfigurationException("Cannot directly add neutral players to a game.")
             | _ -> raise <| InvalidEnumArgumentException()
 
         {
@@ -61,13 +61,13 @@ type PlayerService(gameRepo : IGameRepository) =
     member __.getRemovePlayerEvent (game : Game, playerId : int) (session : Session) : CreateEventRequest =
         let self = session.user
         if game.status <> GameStatus.Pending then
-            raise <| HttpException(400, "Cannot remove players unless game is Pending.")
+            raise <| GameConfigurationException("Cannot remove players unless game is Pending.")
         else
             match game.players |> List.tryFind (fun p -> p.id = playerId) with
-            | None -> raise <| HttpException(404, "Player not found.")
+            | None -> raise <| NotFoundException("Player not found.")
             | Some player ->
                 match player.userId with
-                | None -> raise <| HttpException(400, "Cannot remove neutral players from game.")
+                | None -> raise <| GameConfigurationException("Cannot remove neutral players from game.")
                 | Some x ->
                     if not <| (self.has Privilege.EditPendingGames
                         || game.createdBy.userId = self.id

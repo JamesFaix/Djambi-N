@@ -95,11 +95,10 @@ type GetAddPlayerEventTests() =
                 }
 
             //Act/Assert
-            let ex = Assert.Throws<HttpException>(fun () -> 
+            let ex = Assert.Throws<GameConfigurationException>(fun () -> 
                 host.Get<PlayerService>().getAddPlayerEvent (game, request) session |> ignore
             )
 
-            ex.statusCode |> shouldBe 400
             ex.Message |> shouldBe "UserID must be provided when adding a user player."
         }
 
@@ -121,11 +120,10 @@ type GetAddPlayerEventTests() =
                 }
 
             //Act/Assert
-            let ex = Assert.Throws<HttpException>(fun () -> 
+            let ex = Assert.Throws<GameConfigurationException>(fun () -> 
                 host.Get<PlayerService>().getAddPlayerEvent (game, request) session |> ignore
             )
 
-            ex.statusCode |> shouldBe 400
             ex.Message |> shouldBe "Cannot provide name when adding a user player."
         }
 
@@ -217,11 +215,10 @@ type GetAddPlayerEventTests() =
                 }
 
             //Act/Assert
-            let ex = Assert.Throws<HttpException>(fun () -> 
+            let ex = Assert.Throws<GameConfigurationException>(fun () -> 
                 host.Get<PlayerService>().getAddPlayerEvent (game, request) session |> ignore
             )
 
-            ex.statusCode |> shouldBe 400
             ex.Message |> shouldBe "UserID must be provided when adding a guest player."
         }
 
@@ -240,11 +237,10 @@ type GetAddPlayerEventTests() =
                 }
                 
             //Act/Assert
-            let ex = Assert.Throws<HttpException>(fun () -> 
+            let ex = Assert.Throws<GameConfigurationException>(fun () -> 
                 host.Get<PlayerService>().getAddPlayerEvent (game, request) session |> ignore
             )
 
-            ex.statusCode |> shouldBe 400
             ex.Message |> shouldBe "Must provide name when adding a guest player."
         }
 
@@ -273,11 +269,10 @@ type GetAddPlayerEventTests() =
             let request = CreatePlayerRequest.guest (user.id, "test")
 
             //Act/Assert
-            let ex = Assert.Throws<HttpException>(fun () -> 
+            let ex = Assert.Throws<GameConfigurationException>(fun () -> 
                 host.Get<PlayerService>().getAddPlayerEvent (game, request) session |> ignore
             )
 
-            ex.statusCode |> shouldBe 400
             ex.Message |> shouldBe "Game does not allow guest players."
         }
 
@@ -293,11 +288,10 @@ type GetAddPlayerEventTests() =
             let request = CreatePlayerRequest.neutral ("test")
 
             //Act/Assert
-            let ex = Assert.Throws<HttpException>(fun () -> 
+            let ex = Assert.Throws<GameConfigurationException>(fun () -> 
                 host.Get<PlayerService>().getAddPlayerEvent (game, request) session |> ignore
             )
 
-            ex.statusCode |> shouldBe 400
             ex.Message |> shouldBe "Cannot directly add neutral players to a game."
         }
 
@@ -320,11 +314,10 @@ type GetAddPlayerEventTests() =
             let! game = host.Get<IGameRepository>().getGame game.id
 
             //Act/Assert
-            let ex = Assert.Throws<HttpException>(fun () -> 
+            let ex = Assert.Throws<GameConfigurationException>(fun () -> 
                 host.Get<PlayerService>().getAddPlayerEvent (game, request3) session |> ignore
             )
 
-            ex.statusCode |> shouldBe 400
             ex.Message |> shouldBe "Max player count reached."
         }
 
@@ -338,10 +331,9 @@ type GetAddPlayerEventTests() =
             let game = { game with status = GameStatus.InProgress }
 
             //Act/Assert
-            let ex = Assert.Throws<HttpException>(fun () -> 
+            let ex = Assert.Throws<GameConfigurationException>(fun () -> 
                 host.Get<PlayerService>().getAddPlayerEvent (game, request) session |> ignore
             )
 
-            ex.statusCode |> shouldBe 400
             ex.Message |> shouldBe "Can only add players to pending games."
         }
