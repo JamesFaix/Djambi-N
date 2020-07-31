@@ -110,7 +110,7 @@ type GameManager(eventRepo : IEventRepository,
                 let! game = gameRepo.getGame gameId
                 if isGameViewableByActiveUser session game
                 then return game
-                else return raise <| HttpException(404, "Game not found.")
+                else return raise <| NotFoundException("Game not found.")
             }
 
         member x.createGame parameters session =

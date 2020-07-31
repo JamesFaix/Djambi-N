@@ -146,13 +146,12 @@ type SelectCellTests() =
             let updatedGame = resp.game
 
             //Act/Assert
-            let! ex = Assert.ThrowsAsync<HttpException>(fun () ->
+            let! ex = Assert.ThrowsAsync<NotFoundException>(fun () ->
                 task {
                     return! host.Get<ITurnManager>().selectCell (updatedGame.id, Int32.MinValue) session
                 } :> Task
             )
 
-            ex.statusCode |> shouldBe 404
             ex.Message |> shouldBe "Cell not found."
         }
 

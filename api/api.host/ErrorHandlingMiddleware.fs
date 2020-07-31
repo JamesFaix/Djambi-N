@@ -24,6 +24,7 @@ type ErrorHandlingMiddleware(next : RequestDelegate) =
         | :? ValidationException -> 400
         | :? UnauthorizedAccessException -> 403
         | :? ObjectNotFoundException -> 404
+        | :? NotFoundException -> 404
         | :? DuplicateNameException -> 409
         | :? HttpException as e -> e.statusCode
         | _ -> 500
