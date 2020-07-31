@@ -33,6 +33,7 @@ jobs:
 
     - name: Install dependencies
       run: dotnet restore
+      working-directory: ./api
 
     - name: Build
       run: dotnet build -c Release --no-restore
