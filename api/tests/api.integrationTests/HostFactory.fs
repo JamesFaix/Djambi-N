@@ -1,20 +1,26 @@
 ﻿module Apex.Api.IntegrationTests.HostFactory
 
-open Microsoft.Extensions.Hosting
+open System
+open Microsoft.EntityFrameworkCore
 open Microsoft.Extensions.Configuration
 open Microsoft.Extensions.DependencyInjection
-open Apex.Api.Db.Model
+open Microsoft.Extensions.Hosting
+open Serilog
 open Apex.Api.Db.Interfaces
+open Apex.Api.Db.Model
 open Apex.Api.Db.Repositories
-open Apex.Api.Logic.Services
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Logic.Managers
-open Microsoft.EntityFrameworkCore
-open System
-open Serilog
+open Apex.Api.Logic.Services
 
 type Host(services : IServiceProvider) =
     member __.Get<'a>() = services.GetService<'a>()
+
+let private lockObj = obj()
+
+let private ensureDbCreatedSafe (dbContext : DbContext) =
+    lock lockObj (fun () ->
+        dbContext.Database.EnsureCreated() |> ignore)
 
 let createHost() =
     let builder = 
@@ -25,9 +31,21 @@ let createHost() =
             )
             .ConfigureServices(fun ctx services -> 
                 services.AddDbContext<ApexDbContext>(fun opt -> 
-                    let cnStr = ctx.Configuration.GetValue<string>("Sql:ConnectionString")
-                    opt.UseMySql(cnStr) |> ignore
-                    ()
+                    let settings = ctx.Configuration.GetSection("Sql");
+
+                    let couldParse, parsedBool = Boolean.TryParse(settings.GetValue<string>("UseSqliteForTesting"))
+                    let useSqlite = couldParse && parsedBool
+                    
+                    if useSqlite
+                    then
+                        // Must use file, not in-memory Sqlite.
+                        // Using in-memory results in foreign key violations when making more than one
+                        // SQL command in a test. The data from the first command in saved in a DB instance that
+                        // is gone by the time the second command executes.
+                        opt.UseSqlite("Filename=Test.db") |> ignore
+                    else
+                        let cnStr = settings.GetValue<string>("ConnectionString")
+                        opt.UseMySql(cnStr) |> ignore
                 ) |> ignore
 
                 let logger = LoggerConfiguration().CreateLogger()
@@ -68,5 +86,9 @@ let createHost() =
             )
 
     let host = builder.Build()
+
+    // Make sure the DB is created. This is essential when using Sqlite
+    let dbContext = host.Services.GetService<ApexDbContext>()
+    ensureDbCreatedSafe dbContext
 
     Host(host.Services)
