@@ -9,7 +9,7 @@ open Apex.Api.Model
 
 type PlayerRepositoryTests() =
     inherit TestsBase()
-        
+
     [<Fact>]
     let ``Add user player should work``() =
         let host = HostFactory.createHost()

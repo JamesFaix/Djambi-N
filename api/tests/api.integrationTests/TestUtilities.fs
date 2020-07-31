@@ -89,7 +89,7 @@ let fillEmptyPlayerSlots (game : Game) : Task<Game> =
         for i in Enumerable.Range(0, missingPlayerCount) do
             let name = sprintf "neutral%i" (i+1)
             let player = CreatePlayerRequest.neutral name |> CreatePlayerRequest.toPlayer None
-            let! _ = host.Get<IPlayerRepository>().addPlayer (game.id, player)
+            let! _ = host.Get<IPlayerRepository>().addPlayer (game.id, player, true)
             ()
 
         return! host.Get<IGameRepository>().getGame game.id

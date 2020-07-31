@@ -14,9 +14,11 @@ open Apex.Api.Model
 type GetUpdateGameParametersEventTests() =
     inherit TestsBase()
 
+    let host = HostFactory.createHost()
+    let makePlayer gameId player = host.Get<IPlayerRepository>().addPlayer(gameId, player, true)
+
     [<Fact>]
     let ``Should work``() =
-        let host = HostFactory.createHost()
         task {
             //Arrange
             let! (_, session, game) = TestUtilities.createuserSessionAndGame(true)
@@ -47,7 +49,6 @@ type GetUpdateGameParametersEventTests() =
 
     [<Fact>]
     let ``Should have effect for truncating extra players if region count being lowered``() =
-        let host = HostFactory.createHost()
         task {
             //Arrange
             let! (user, session, game) = TestUtilities.createuserSessionAndGame(true)
@@ -66,7 +67,7 @@ type GetUpdateGameParametersEventTests() =
                         kind = PlayerKind.Guest;
                         name = Some (sprintf "p%i" n)
                     } |> CreatePlayerRequest.toPlayer None
-                let! _ = host.Get<IPlayerRepository>().addPlayer (game.id, player)
+                let! _ = makePlayer game.id player
                 ()
 
             let! game = host.Get<IGameRepository>().getGame game.id
@@ -91,7 +92,6 @@ type GetUpdateGameParametersEventTests() =
 
     [<Fact>]
     let ``Should have effect for removing guests if allowGuests is being disabled``() =
-        let host = HostFactory.createHost()
         task {
             //Arrange
             let! (user, session, game) = TestUtilities.createuserSessionAndGame(true)
@@ -103,7 +103,7 @@ type GetUpdateGameParametersEventTests() =
                         kind = PlayerKind.Guest;
                         name = Some (sprintf "p%i" n)
                     } |> CreatePlayerRequest.toPlayer None
-                let! _ = host.Get<IPlayerRepository>().addPlayer (game.id, player)
+                let! _ = makePlayer game.id player
                 ()
 
             let! game = host.Get<IGameRepository>().getGame game.id
@@ -129,7 +129,6 @@ type GetUpdateGameParametersEventTests() =
 
     [<Fact>]
     let ``Should fail if game not pending``() =
-        let host = HostFactory.createHost()
         task {
             //Arrange
             let! (_, session, game) = TestUtilities.createuserSessionAndGame(true)
@@ -150,7 +149,6 @@ type GetUpdateGameParametersEventTests() =
 
     [<Fact>]
     let ``Should fail if not game creator and no EditPendingGames privilege``() =
-        let host = HostFactory.createHost()
         task {
             //Arrange
             let! (_, session, game) = TestUtilities.createuserSessionAndGame(true)
