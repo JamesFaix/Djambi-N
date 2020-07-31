@@ -33,7 +33,7 @@ type NotificationController(service : INotificationService,
         let ctx = base.HttpContext
 
         if (ctx.Request.Headers.["Accept"] <> StringValues(contentType))
-        then raise <| HttpException(400, sprintf "Accept header must be '%s'." contentType)
+        then raise <| InvalidWebRequestException(sprintf "Accept header must be '%s'." contentType)
         
         task {
             let! session = scp.GetSessionFromContext ctx
@@ -59,7 +59,7 @@ type NotificationController(service : INotificationService,
         let ctx = base.HttpContext
 
         if not ctx.WebSockets.IsWebSocketRequest
-        then raise <| HttpException(400, "This endpoint requires a websocket request.")
+        then raise <| InvalidWebRequestException("This endpoint requires a websocket request.")
 
         task {
             let! session = scp.GetSessionFromContext ctx
