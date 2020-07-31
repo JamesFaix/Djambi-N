@@ -12,6 +12,7 @@
     <Compile Include="TestsBase.fs" />
     <Compile Include="Db\EventRepositoryTests.fs" />
     <Compile Include="Db\GameRepositoryTests.fs" />
+    <Compile Include="Db\PlayerRepositoryTests.fs" />
     <Compile Include="Db\SearchRepositoryTests.fs" />
     <Compile Include="Db\UserRepositoryTests.fs" />
     <Compile Include="Logic\EventServiceTests\EventServiceTests.fs" />

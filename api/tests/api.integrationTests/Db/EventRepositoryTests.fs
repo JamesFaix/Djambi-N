@@ -1,23 +1,25 @@
 namespace Apex.Api.IntegrationTests.Db
 
+open System.ComponentModel
+open System.Threading.Tasks
 open FSharp.Control.Tasks
 open Xunit
-open Apex.Api.IntegrationTests
-open Apex.Api.Model
-open Apex.Api.Db.Interfaces
-open Apex.Api.Logic.Interfaces
-open System.ComponentModel
-open Apex.Api.Enums
-open Apex.Api.Logic.Services
 open Apex.Api.Common.Control
-open System.Threading.Tasks
+open Apex.Api.Db.Interfaces
+open Apex.Api.Enums
+open Apex.Api.IntegrationTests
+open Apex.Api.Logic.Interfaces
+open Apex.Api.Logic.Services
+open Apex.Api.Model
 
 type EventRepositoryTests() =
     inherit TestsBase()
 
+    let host = HostFactory.createHost()
+    let makePlayer gameId player = host.Get<IPlayerRepository>().addPlayer(gameId, player, true)
+
     [<Fact>]
     let ``Should add players``() =
-        let host = HostFactory.createHost()
         task {
             //Arrange
             let! (user, _, game) = TestUtilities.createuserSessionAndGame(true)
@@ -59,19 +61,18 @@ type EventRepositoryTests() =
 
     [<Fact>]
     let ``Should remove players``() =
-        let host = HostFactory.createHost()
         task {
             //Arrange
             let! (user, _, game) = TestUtilities.createuserSessionAndGame(true)
 
-            let playerRequest =
+            let player =
                 {
                     userId = Some user.id
                     kind = PlayerKind.Guest
                     name = Some "p2"
-                }
+                } |> CreatePlayerRequest.toPlayer None
 
-            let! _ = host.Get<IGameRepository>().addPlayer(game.id, playerRequest)
+            let! _ = makePlayer game.id player
             let! game = host.Get<IGameRepository>().getGame game.id
 
             let newGame = { game with players = [] }
@@ -89,19 +90,18 @@ type EventRepositoryTests() =
 
     [<Fact>]
     let ``Should update players``() =
-        let host = HostFactory.createHost()
         task {
             //Arrange
             let! (user, _, game) = TestUtilities.createuserSessionAndGame(true)
 
-            let p2Request =
+            let p2 =
                 {
                     userId = Some user.id
                     kind = PlayerKind.Guest
                     name = Some "p2"
-                }
+                } |> CreatePlayerRequest.toPlayer None
 
-            let! _ = host.Get<IGameRepository>().addPlayer(game.id, p2Request)
+            let! _ = makePlayer game.id p2
             let! game = host.Get<IGameRepository>().getGame game.id
 
             let oldP2 = game.players.[1]
@@ -141,7 +141,6 @@ type EventRepositoryTests() =
 
     [<Fact>]
     let ``Should update game``() =
-        let host = HostFactory.createHost()
         task {
             //Arrange
             let! (user, _, game) = TestUtilities.createuserSessionAndGame(false)
@@ -196,7 +195,6 @@ type EventRepositoryTests() =
 
     [<Fact>]
     let ``Should rollback all effects if any errors``() =
-        let host = HostFactory.createHost()
         task {
             //Arrange
             let! (user, _, game) = TestUtilities.createuserSessionAndGame(true)
@@ -226,7 +224,6 @@ type EventRepositoryTests() =
 
     [<Fact>]
     let ``Should get events``() =
-        let host = HostFactory.createHost()
         task {
             //Arrange
             let! (user, session, game) = TestUtilities.createuserSessionAndGame(true)

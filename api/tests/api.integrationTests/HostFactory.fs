@@ -51,12 +51,13 @@ let createHost() =
                 let logger = LoggerConfiguration().CreateLogger()
                 services.AddSingleton<ILogger>(logger) |> ignore
 
-                services.AddTransient<IGameRepository, GameRepository>() |> ignore
-                services.AddTransient<IUserRepository, UserRepository>() |> ignore
                 services.AddTransient<IEventRepository, EventRepository>() |> ignore
+                services.AddTransient<IGameRepository, GameRepository>() |> ignore
+                services.AddTransient<IPlayerRepository, PlayerRepository>() |> ignore
                 services.AddTransient<ISearchRepository, SearchRepository>() |> ignore
                 services.AddTransient<ISessionRepository, SessionRepository>() |> ignore
                 services.AddTransient<ISnapshotRepository, SnapshotRepository>() |> ignore
+                services.AddTransient<IUserRepository, UserRepository>() |> ignore
 
                 services.AddTransient<IEncryptionService, EncryptionService>() |> ignore
                 services.AddTransient<EventService>() |> ignore

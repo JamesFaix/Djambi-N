@@ -1,16 +1,16 @@
 namespace Apex.Api.IntegrationTests.Logic.GameStartService
 
+open System
+open System.Threading.Tasks
 open FSharp.Control.Tasks
 open Xunit
-open Apex.Api.IntegrationTests
-open Apex.Api.Model
-open Apex.Api.Logic
+open Apex.Api.Common.Control
 open Apex.Api.Db.Interfaces
 open Apex.Api.Enums
+open Apex.Api.IntegrationTests
+open Apex.Api.Logic
 open Apex.Api.Logic.Services
-open System.Threading.Tasks
-open Apex.Api.Common.Control
-open System
+open Apex.Api.Model
 
 type GetGameStartEventsTests() =
     inherit TestsBase()
@@ -20,16 +20,16 @@ type GetGameStartEventsTests() =
         task {
             let! (user, session, game) = createuserSessionAndGame(true)
 
-            let player2request =
+            let player2 =
                 { TestUtilities.getCreatePlayerRequest with
                     userId = Some user.id
                     kind = PlayerKind.Guest
                     name = Some "p2"
-                }
-            let! _ = host.Get<IGameRepository>().addPlayer (game.id, player2request)
+                } |> CreatePlayerRequest.toPlayer None
+            let! _ = host.Get<IPlayerRepository>().addPlayer (game.id, player2)
 
-            let player3request = { player2request with name = Some "p3" }
-            let! _ = host.Get<IGameRepository>().addPlayer (game.id, player3request)
+            let player3 = { player2 with name = "p3" }
+            let! _ = host.Get<IPlayerRepository>().addPlayer (game.id, player3)
 
             let! game = host.Get<IGameRepository>().getGame game.id
 
@@ -125,14 +125,14 @@ type GetGameStartEventsTests() =
             //Arrange
             let! (user, session, game) = createuserSessionAndGame(true)
 
-            let p2Request =
+            let p2 =
                 {
                     userId = Some user.id
                     kind = PlayerKind.Guest
                     name = Some "p2"
-                }
+                } |> CreatePlayerRequest.toPlayer None
 
-            let! _ = host.Get<IGameRepository>().addPlayer(game.id, p2Request)
+            let! _ = host.Get<IPlayerRepository>().addPlayer(game.id, p2)
             let! game = host.Get<IGameRepository>().getGame game.id
 
             //Act
