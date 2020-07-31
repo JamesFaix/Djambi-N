@@ -27,6 +27,9 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api.db.interfaces", "api.db
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Solution Items", "_Solution Items", "{63E66773-F912-43C2-AF2F-BF8F49EE7932}"
 	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+		Dockerfile = Dockerfile
+		Dockerrun.aws.json = Dockerrun.aws.json
 		README.md = README.md
 	EndProjectSection
 EndProject
