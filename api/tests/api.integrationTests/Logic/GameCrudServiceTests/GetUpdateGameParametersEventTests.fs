@@ -138,12 +138,11 @@ type GetUpdateGameParametersEventTests() =
             let newParameters = game.parameters
 
             //Act/Assert
-            let ex = Assert.Throws<HttpException>(fun () -> 
+            let ex = Assert.Throws<GameConfigurationException>(fun () -> 
                 host.Get<GameCrudService>().getUpdateGameParametersEvent (game, newParameters) session 
                 |> ignore
             )
 
-            ex.statusCode |> shouldBe 400
             ex.Message |> shouldBe "Cannot change game parameters unless game is Pending."
         }
 

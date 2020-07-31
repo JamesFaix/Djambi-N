@@ -57,7 +57,7 @@ type NotificationService(log : ILogger) =
                     try 
                         return! s.send response
                     with
-                    | :? HttpException as ex when ex.statusCode = 500 ->
+                    | :? ApexWebsocketException ->
                         (x :> INotificationService).remove s.userId
                         return ()                        
                 } :> Task

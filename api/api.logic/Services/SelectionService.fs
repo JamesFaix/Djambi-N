@@ -82,7 +82,7 @@ type SelectionService(selectionOptionsServ : SelectionOptionsService) =
         | Some _ -> 
             let currentTurn = game.currentTurn.Value
             if currentTurn.selectionOptions |> List.contains cellId |> not
-            then raise <| HttpException(400, (sprintf "Cell %i is not currently selectable." cellId))
+            then raise <| GameRuleViolationException(sprintf "Cell %i is not currently selectable." cellId)
             elif currentTurn.status <> TurnStatus.AwaitingSelection || currentTurn.requiredSelectionKind.IsNone
             then raise <| Errors.turnStatusDoesNotAllowSelection()
             else

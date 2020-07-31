@@ -8,6 +8,7 @@ open Apex.Api.Logic.ModelExtensions.GameModelExtensions
 open Apex.Api.Logic.Services
 open Apex.Api.Model
 open Apex.Api.Enums
+open System
 
 type TurnService(eventServ : EventService,
                  indirectEffectsServ : IndirectEffectsService,
@@ -23,7 +24,7 @@ type TurnService(eventServ : EventService,
 
         match (currentTurn.subjectPiece game, currentTurn.destinationCell game.parameters.regionCount) with
         | (None, _)
-        | (_, None) -> raise (HttpException(500, "Cannot commit turn without subject and destination selected."))
+        | (_, None) -> raise <| InvalidOperationException("Cannot commit turn without subject and destination selected.")
         | (Some subject, Some destination) ->
             let originCellId = subject.cellId
 

@@ -1,14 +1,14 @@
 namespace Apex.Api.IntegrationTests.Logic.GameManager
 
 open System
+open System.Data.Entity.Core
+open System.Threading.Tasks
 open FSharp.Control.Tasks
 open Xunit
-open Apex.Api.IntegrationTests
-open Apex.Api.Model
-open Apex.Api.Logic.Interfaces
 open Apex.Api.Enums
-open Apex.Api.Common.Control
-open System.Threading.Tasks
+open Apex.Api.IntegrationTests
+open Apex.Api.Logic.Interfaces
+open Apex.Api.Model
 
 type RemovePlayerTests() =
     inherit TestsBase()
@@ -50,13 +50,12 @@ type RemovePlayerTests() =
 
             //Act/Assert
 
-            let! ex = Assert.ThrowsAsync<HttpException>(fun () -> 
+            let! ex = Assert.ThrowsAsync<ObjectNotFoundException>(fun () -> 
                 task {
                     return! host.Get<IPlayerManager>().removePlayer (Int32.MinValue, player.id) session
                 } :> Task
             )
 
-            ex.statusCode |> shouldBe 404
             ex.Message |> shouldBe "Game not found."
 
             let! game = host.Get<IGameManager>().getGame game.id session

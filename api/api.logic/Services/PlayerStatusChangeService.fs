@@ -26,7 +26,7 @@ type PlayerStatusChangeService(eventServ : EventService,
 
     member x.getUpdatePlayerStatusEvent (game : Game, request : PlayerStatusChangeRequest) (session : Session) : CreateEventRequest =
         if game.status <> GameStatus.InProgress then
-            raise <| HttpException(400, "Cannot change player status unless game is InProgress.")
+            raise <| GameRuleViolationException("Cannot change player status unless game is InProgress.")
         else
             Security.ensurePlayerOrHas Privilege.OpenParticipation session game
             let player = game.players |> List.find (fun p -> p.id = request.playerId)
@@ -34,7 +34,7 @@ type PlayerStatusChangeService(eventServ : EventService,
             let newStatus = request.status
 
             if oldStatus = newStatus
-                then raise <| HttpException(400, "Cannot change player status to current status.")
+                then raise <| GameRuleViolationException("Cannot change player status to current status.")
             else
                 let primaryEffect = Effect.PlayerStatusChanged {
                     oldStatus = oldStatus
@@ -84,4 +84,4 @@ type PlayerStatusChangeService(eventServ : EventService,
                         { event with effects = [primary] }
 
                 | _ ->
-                    raise <| HttpException(400, "Player status transition not allowed.")
+                    raise <| GameRuleViolationException("Player status transition not allowed.")

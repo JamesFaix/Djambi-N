@@ -32,8 +32,8 @@ type WebsocketSubscriber(userId : int,
                 socket.SendAsync(segment, WebSocketMessageType.Text, true, CancellationToken.None)
                 |> Task.toGeneric
             with 
-            | _ -> raise <| HttpException(500, "Socket error")
-        else raise <| HttpException(500, "Socket closed")
+            | _ -> raise <| ApexWebsocketException("Socket error")
+        else raise <| ApexWebsocketException("Socket closed")
     
     interface ISubscriber with
         member x.userId = userId

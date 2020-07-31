@@ -1,11 +1,10 @@
 ﻿namespace Apex.Api.Db.Repositories
 
-open System
+open System.Data.Entity.Core
 open System.Linq
 open FSharp.Control.Tasks
 open Microsoft.EntityFrameworkCore
 open Newtonsoft.Json
-open Apex.Api.Common.Control
 open Apex.Api.Db.Interfaces
 open Apex.Api.Db.Mappings
 open Apex.Api.Db.Model
@@ -30,7 +29,7 @@ type GameRepository(context : ApexDbContext) =
                         .Include(fun g -> g.CreatedByUser)
                         .SingleOrDefaultAsync(fun g -> g.GameId = gameId)
                 if g = null
-                then return raise <| HttpException(404, "Game not found.")
+                then return raise <| ObjectNotFoundException("Game not found.")
                 else 
                     g.Players <- g.Players.OrderBy(fun p -> p.PlayerId).ToList()
                     return g |> toGame

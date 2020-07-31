@@ -1,10 +1,10 @@
 namespace Apex.Api.IntegrationTests.Db
 
 open System.ComponentModel
+open System.Data
 open System.Threading.Tasks
 open FSharp.Control.Tasks
 open Xunit
-open Apex.Api.Common.Control
 open Apex.Api.Db.Interfaces
 open Apex.Api.Enums
 open Apex.Api.IntegrationTests
@@ -208,13 +208,12 @@ type EventRepositoryTests() =
             let newGame = host.Get<EventService>().applyEvent game event
 
             //Act/Assert
-            let! ex = Assert.ThrowsAsync<HttpException>(fun () -> 
+            let! ex = Assert.ThrowsAsync<DuplicateNameException>(fun () -> 
                 host.Get<IEventRepository>().persistEvent (TestUtilities.emptyEventRequest(user.id), game, newGame)
                 :> Task
             )
 
-            ex.statusCode |> shouldBe 409
-            ex.Message |> shouldBe "Conflict when attempting to write Event."
+            ex.Message |> shouldBe "Player name taken."
 
             let host = HostFactory.createHost() // Must create a new host because the DbContext's tracked changes are now in a corrupt state
             let! persistedGame = host.Get<IGameRepository>().getGame game.id
