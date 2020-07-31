@@ -13,6 +13,7 @@ interface ThemeColors {
     border : string,
     altRowText : string,
     altRowBackground : string,
+    disabled: string,
 
     hoverText : string,
     hoverBackground : string,

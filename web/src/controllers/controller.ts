@@ -417,6 +417,7 @@ export default class Controller {
             s.setProperty("--border-color", c.border);
             s.setProperty("--hover-text-color", c.hoverText);
             s.setProperty("--hover-background-color", c.hoverBackground);
+            s.setProperty("--disabled-color", c.disabled);
             s.setProperty("--alt-row-background-color", c.altRowBackground);
             s.setProperty("--alt-row-text-color", c.altRowText);
 

@@ -18,6 +18,7 @@ export default class ThemeFactory {
             border: lightGrayHex,
             hoverBackground: lightGrayHex,
             hoverText: darkGrayHex,
+            disabled: "#505050",
             altRowBackground: "#333333",
             altRowText: lightGrayHex,
             positiveButtonBackground: "mediumseagreen",
@@ -100,6 +101,7 @@ export default class ThemeFactory {
             border: "gainsboro",
             hoverText: "white",
             hoverBackground: "black",
+            disabled: "gainsboro",
             altRowText: "black",
             altRowBackground: "gainsboro",
 
@@ -126,6 +128,7 @@ export default class ThemeFactory {
             border: "gainsboro",
             hoverText: "white",
             hoverBackground: "black",
+            disabled: "gainsboro",
             altRowText: "black",
             altRowBackground: "gainsboro",
             cells: {
@@ -183,6 +186,7 @@ export default class ThemeFactory {
             border: "gainsboro",
             hoverText: "white",
             hoverBackground: "black",
+            disabled: "gainsboro",
             altRowText: "black",
             altRowBackground: "gainsboro",
             cells: {
