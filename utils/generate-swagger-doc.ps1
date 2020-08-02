@@ -12,7 +12,7 @@ try {
     Write-Host "API process started (ProcessId $($process.Id))..."
 
     # Download swagger doc w/ retry to wait for app start
-    $retryIntervalsInSeconds = @(1, 2, 3, 5, 8)
+    $retryIntervalsInSeconds = @(1, 2, 3, 5, 8, 13, 21)
     $maxRetries = $retryIntervalsInSeconds.count
     $retryCount = 0
     $succeeded = $false
