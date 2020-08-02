@@ -13,3 +13,4 @@ paket-files
 *.log
 *.zip
 apex-local.session.sql
+utils/swagger.json
