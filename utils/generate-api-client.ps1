@@ -7,6 +7,9 @@ else {
     Invoke-WebRequest -OutFile openapi-generator-cli.jar https://repo1.maven.org/maven2/org/openapitools/openapi-generator-cli/4.3.1/openapi-generator-cli-4.3.1.jar
 }
 
+Write-Host 'Deleting old files...'
+Remove-Item -LiteralPath "../web2/src/api-client" -Force -Recurse
+
 Write-Host 'Creating directory...'
 New-Item -ItemType Directory -Force -Path ../web2/src/api-client
 
