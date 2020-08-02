@@ -6,7 +6,9 @@ try {
         -FilePath 'dotnet' `
         -ArgumentList 'run --debug' `
         -WorkingDirectory '../api/api.host' `
-        -PassThru
+        -PassThru `
+        -RedirectStandardOutput 'api-stdout.txt' `
+        -RedirectStandardError 'api-stderr.txt'
     Write-Host "API process started (ProcessId $($process.Id))..."
 
     # Download swagger doc w/ retry to wait for app start
@@ -43,9 +45,13 @@ finally {
         Write-Host 'Stopping API process...'
         Stop-Process $process -Force
         Write-Host 'API stopped.'
+
+        Write-Host 'API stdout:'
+        Get-Content 'api-stdout.txt'
+        Write-Host 'API stderr:'
+        Get-Content 'api-stderr.txt'
     }
     else {
         Write-Host 'API never started properly. Not stopping.'
     }
-
 }
