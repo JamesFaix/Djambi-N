@@ -31,13 +31,13 @@ export interface BoardDto {
      * @type {number}
      * @memberof BoardDto
      */
-    readonly regionCount?: number;
+    readonly regionCount: number;
     /**
      * 
      * @type {number}
      * @memberof BoardDto
      */
-    readonly regionSize?: number;
+    readonly regionSize: number;
     /**
      * 
      * @type {Array<CellDto>}
@@ -56,8 +56,8 @@ export function BoardDtoFromJSONTyped(json: any, ignoreDiscriminator: boolean): 
     }
     return {
         
-        'regionCount': !exists(json, 'regionCount') ? undefined : json['regionCount'],
-        'regionSize': !exists(json, 'regionSize') ? undefined : json['regionSize'],
+        'regionCount': json['regionCount'],
+        'regionSize': json['regionSize'],
         'cells': ((json['cells'] as Array<any>).map(CellDtoFromJSON)),
     };
 }

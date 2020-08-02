@@ -31,13 +31,13 @@ export interface SelectionDto {
      * @type {SelectionKind}
      * @memberof SelectionDto
      */
-    kind?: SelectionKind;
+    kind: SelectionKind;
     /**
      * 
      * @type {number}
      * @memberof SelectionDto
      */
-    readonly cellId?: number;
+    readonly cellId: number;
     /**
      * 
      * @type {number}
@@ -56,8 +56,8 @@ export function SelectionDtoFromJSONTyped(json: any, ignoreDiscriminator: boolea
     }
     return {
         
-        'kind': !exists(json, 'kind') ? undefined : SelectionKindFromJSON(json['kind']),
-        'cellId': !exists(json, 'cellId') ? undefined : json['cellId'],
+        'kind': SelectionKindFromJSON(json['kind']),
+        'cellId': json['cellId'],
         'pieceId': !exists(json, 'pieceId') ? undefined : json['pieceId'],
     };
 }

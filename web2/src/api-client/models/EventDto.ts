@@ -39,7 +39,7 @@ export interface EventDto {
      * @type {number}
      * @memberof EventDto
      */
-    readonly id?: number;
+    readonly id: number;
     /**
      * 
      * @type {CreationSourceDto}
@@ -57,7 +57,7 @@ export interface EventDto {
      * @type {EventKind}
      * @memberof EventDto
      */
-    kind?: EventKind;
+    kind: EventKind;
     /**
      * 
      * @type {Array<EffectDto>}
@@ -76,10 +76,10 @@ export function EventDtoFromJSONTyped(json: any, ignoreDiscriminator: boolean): 
     }
     return {
         
-        'id': !exists(json, 'id') ? undefined : json['id'],
+        'id': json['id'],
         'createdBy': CreationSourceDtoFromJSON(json['createdBy']),
         'actingPlayerId': !exists(json, 'actingPlayerId') ? undefined : json['actingPlayerId'],
-        'kind': !exists(json, 'kind') ? undefined : EventKindFromJSON(json['kind']),
+        'kind': EventKindFromJSON(json['kind']),
         'effects': ((json['effects'] as Array<any>).map(EffectDtoFromJSON)),
     };
 }

@@ -18,3 +18,9 @@ java -jar openapi-generator-cli.jar generate `
     -i .\swagger.json `
     -g typescript-fetch `
     -o ../web2/src/api-client
+
+Write-Host 'Fixing OpenAPI Generator bug w/ TypeScript 3.6'
+$badFile = "../web2/src/api-client/runtime.ts"
+((Get-Content -path $badFile -Raw) -replace 'GlobalFetch','WindowOrWorkerGlobalScope') |
+Set-Content -Path $badFile
+

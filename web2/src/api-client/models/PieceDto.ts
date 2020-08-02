@@ -31,13 +31,13 @@ export interface PieceDto {
      * @type {number}
      * @memberof PieceDto
      */
-    readonly id?: number;
+    readonly id: number;
     /**
      * 
      * @type {PieceKind}
      * @memberof PieceDto
      */
-    kind?: PieceKind;
+    kind: PieceKind;
     /**
      * 
      * @type {number}
@@ -49,13 +49,13 @@ export interface PieceDto {
      * @type {number}
      * @memberof PieceDto
      */
-    readonly originalPlayerId?: number;
+    readonly originalPlayerId: number;
     /**
      * 
      * @type {number}
      * @memberof PieceDto
      */
-    readonly cellId?: number;
+    readonly cellId: number;
 }
 
 export function PieceDtoFromJSON(json: any): PieceDto {
@@ -68,11 +68,11 @@ export function PieceDtoFromJSONTyped(json: any, ignoreDiscriminator: boolean): 
     }
     return {
         
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'kind': !exists(json, 'kind') ? undefined : PieceKindFromJSON(json['kind']),
+        'id': json['id'],
+        'kind': PieceKindFromJSON(json['kind']),
         'playerId': !exists(json, 'playerId') ? undefined : json['playerId'],
-        'originalPlayerId': !exists(json, 'originalPlayerId') ? undefined : json['originalPlayerId'],
-        'cellId': !exists(json, 'cellId') ? undefined : json['cellId'],
+        'originalPlayerId': json['originalPlayerId'],
+        'cellId': json['cellId'],
     };
 }
 

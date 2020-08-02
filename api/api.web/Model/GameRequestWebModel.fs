@@ -7,7 +7,9 @@ open System.ComponentModel.DataAnnotations
 
 [<CLIMutable>]
 type CreatePlayerRequestDto = {
+    [<Required>]
     kind : PlayerKind
+    
     userId : Nullable<int>
 
     // Nullable
@@ -18,6 +20,7 @@ type CreatePlayerRequestDto = {
 
 [<CLIMutable>]
 type SelectionRequestDto = {
+    [<Required>]
     cellId : int
 }
 

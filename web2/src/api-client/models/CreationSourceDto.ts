@@ -24,7 +24,7 @@ export interface CreationSourceDto {
      * @type {number}
      * @memberof CreationSourceDto
      */
-    readonly userId?: number;
+    readonly userId: number;
     /**
      * 
      * @type {string}
@@ -36,7 +36,7 @@ export interface CreationSourceDto {
      * @type {Date}
      * @memberof CreationSourceDto
      */
-    readonly time?: Date;
+    readonly time: Date;
 }
 
 export function CreationSourceDtoFromJSON(json: any): CreationSourceDto {
@@ -49,9 +49,9 @@ export function CreationSourceDtoFromJSONTyped(json: any, ignoreDiscriminator: b
     }
     return {
         
-        'userId': !exists(json, 'userId') ? undefined : json['userId'],
+        'userId': json['userId'],
         'userName': json['userName'],
-        'time': !exists(json, 'time') ? undefined : (new Date(json['time'])),
+        'time': (new Date(json['time'])),
     };
 }
 

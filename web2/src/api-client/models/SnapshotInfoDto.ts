@@ -31,7 +31,7 @@ export interface SnapshotInfoDto {
      * @type {number}
      * @memberof SnapshotInfoDto
      */
-    readonly id?: number;
+    readonly id: number;
     /**
      * 
      * @type {CreationSourceDto}
@@ -56,7 +56,7 @@ export function SnapshotInfoDtoFromJSONTyped(json: any, ignoreDiscriminator: boo
     }
     return {
         
-        'id': !exists(json, 'id') ? undefined : json['id'],
+        'id': json['id'],
         'createdBy': CreationSourceDtoFromJSON(json['createdBy']),
         'description': json['description'],
     };

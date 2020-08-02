@@ -31,7 +31,7 @@ export interface EffectDto {
      * @type {EffectKind}
      * @memberof EffectDto
      */
-    kind?: EffectKind;
+    kind: EffectKind;
 }
 
 export function EffectDtoFromJSON(json: any): EffectDto {
@@ -44,7 +44,7 @@ export function EffectDtoFromJSONTyped(json: any, ignoreDiscriminator: boolean):
     }
     return {
         
-        'kind': !exists(json, 'kind') ? undefined : EffectKindFromJSON(json['kind']),
+        'kind': EffectKindFromJSON(json['kind']),
     };
 }
 

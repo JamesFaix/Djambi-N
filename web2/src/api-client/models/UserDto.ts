@@ -31,7 +31,7 @@ export interface UserDto {
      * @type {number}
      * @memberof UserDto
      */
-    readonly id?: number;
+    readonly id: number;
     /**
      * 
      * @type {string}
@@ -56,7 +56,7 @@ export function UserDtoFromJSONTyped(json: any, ignoreDiscriminator: boolean): U
     }
     return {
         
-        'id': !exists(json, 'id') ? undefined : json['id'],
+        'id': json['id'],
         'name': json['name'],
         'privileges': ((json['privileges'] as Array<any>).map(PrivilegeFromJSON)),
     };

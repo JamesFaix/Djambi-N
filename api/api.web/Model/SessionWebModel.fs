@@ -4,6 +4,7 @@ open System
 open System.ComponentModel.DataAnnotations
 
 type SessionDto = {
+    [<Required>]
     id : int
 
     [<Required>]
@@ -12,8 +13,10 @@ type SessionDto = {
     [<Required>]
     token : string
 
+    [<Required>]
     createdOn : DateTime
 
+    [<Required>]
     expiresOn : DateTime
 }
 

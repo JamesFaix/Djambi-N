@@ -21,6 +21,7 @@ type GamesQueryDto = {
 }
 
 type SearchGameDto = {
+    [<Required>]
     id : int
 
     [<Required>]
@@ -29,9 +30,16 @@ type SearchGameDto = {
     [<Required>]
     createdBy : CreationSourceDto
     
+    [<Required>]
     status : GameStatus
+    
+    // Nullable
     lastEventOn : DateTime
+    
+    [<Required>]
     playerCount : int
+    
+    [<Required>]
     containsMe : bool
     //TODO: Add current player name
 }

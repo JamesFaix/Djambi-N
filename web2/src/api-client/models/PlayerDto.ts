@@ -35,13 +35,13 @@ export interface PlayerDto {
      * @type {number}
      * @memberof PlayerDto
      */
-    readonly id?: number;
+    readonly id: number;
     /**
      * 
      * @type {number}
      * @memberof PlayerDto
      */
-    readonly gameId?: number;
+    readonly gameId: number;
     /**
      * 
      * @type {number}
@@ -53,7 +53,7 @@ export interface PlayerDto {
      * @type {PlayerKind}
      * @memberof PlayerDto
      */
-    kind?: PlayerKind;
+    kind: PlayerKind;
     /**
      * 
      * @type {string}
@@ -65,7 +65,7 @@ export interface PlayerDto {
      * @type {PlayerStatus}
      * @memberof PlayerDto
      */
-    status?: PlayerStatus;
+    status: PlayerStatus;
     /**
      * 
      * @type {number}
@@ -96,12 +96,12 @@ export function PlayerDtoFromJSONTyped(json: any, ignoreDiscriminator: boolean):
     }
     return {
         
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'gameId': !exists(json, 'gameId') ? undefined : json['gameId'],
+        'id': json['id'],
+        'gameId': json['gameId'],
         'userId': !exists(json, 'userId') ? undefined : json['userId'],
-        'kind': !exists(json, 'kind') ? undefined : PlayerKindFromJSON(json['kind']),
+        'kind': PlayerKindFromJSON(json['kind']),
         'name': json['name'],
-        'status': !exists(json, 'status') ? undefined : PlayerStatusFromJSON(json['status']),
+        'status': PlayerStatusFromJSON(json['status']),
         'colorId': !exists(json, 'colorId') ? undefined : json['colorId'],
         'startingRegion': !exists(json, 'startingRegion') ? undefined : json['startingRegion'],
         'startingTurnNumber': !exists(json, 'startingTurnNumber') ? undefined : json['startingTurnNumber'],

@@ -39,7 +39,7 @@ export interface SearchGameDto {
      * @type {number}
      * @memberof SearchGameDto
      */
-    readonly id?: number;
+    readonly id: number;
     /**
      * 
      * @type {GameParametersDto}
@@ -57,7 +57,7 @@ export interface SearchGameDto {
      * @type {GameStatus}
      * @memberof SearchGameDto
      */
-    status?: GameStatus;
+    status: GameStatus;
     /**
      * 
      * @type {Date}
@@ -69,13 +69,13 @@ export interface SearchGameDto {
      * @type {number}
      * @memberof SearchGameDto
      */
-    readonly playerCount?: number;
+    readonly playerCount: number;
     /**
      * 
      * @type {boolean}
      * @memberof SearchGameDto
      */
-    readonly containsMe?: boolean;
+    readonly containsMe: boolean;
 }
 
 export function SearchGameDtoFromJSON(json: any): SearchGameDto {
@@ -88,13 +88,13 @@ export function SearchGameDtoFromJSONTyped(json: any, ignoreDiscriminator: boole
     }
     return {
         
-        'id': !exists(json, 'id') ? undefined : json['id'],
+        'id': json['id'],
         'parameters': GameParametersDtoFromJSON(json['parameters']),
         'createdBy': CreationSourceDtoFromJSON(json['createdBy']),
-        'status': !exists(json, 'status') ? undefined : GameStatusFromJSON(json['status']),
+        'status': GameStatusFromJSON(json['status']),
         'lastEventOn': !exists(json, 'lastEventOn') ? undefined : (new Date(json['lastEventOn'])),
-        'playerCount': !exists(json, 'playerCount') ? undefined : json['playerCount'],
-        'containsMe': !exists(json, 'containsMe') ? undefined : json['containsMe'],
+        'playerCount': json['playerCount'],
+        'containsMe': json['containsMe'],
     };
 }
 

@@ -31,7 +31,7 @@ export interface CellDto {
      * @type {number}
      * @memberof CellDto
      */
-    readonly id?: number;
+    readonly id: number;
     /**
      * 
      * @type {Array<LocationDto>}
@@ -50,7 +50,7 @@ export function CellDtoFromJSONTyped(json: any, ignoreDiscriminator: boolean): C
     }
     return {
         
-        'id': !exists(json, 'id') ? undefined : json['id'],
+        'id': json['id'],
         'locations': ((json['locations'] as Array<any>).map(LocationDtoFromJSON)),
     };
 }

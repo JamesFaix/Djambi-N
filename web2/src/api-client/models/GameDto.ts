@@ -51,7 +51,7 @@ export interface GameDto {
      * @type {number}
      * @memberof GameDto
      */
-    readonly id?: number;
+    readonly id: number;
     /**
      * 
      * @type {CreationSourceDto}
@@ -69,7 +69,7 @@ export interface GameDto {
      * @type {GameStatus}
      * @memberof GameDto
      */
-    status?: GameStatus;
+    status: GameStatus;
     /**
      * 
      * @type {Array<PlayerDto>}
@@ -106,10 +106,10 @@ export function GameDtoFromJSONTyped(json: any, ignoreDiscriminator: boolean): G
     }
     return {
         
-        'id': !exists(json, 'id') ? undefined : json['id'],
+        'id': json['id'],
         'createdBy': CreationSourceDtoFromJSON(json['createdBy']),
         'parameters': GameParametersDtoFromJSON(json['parameters']),
-        'status': !exists(json, 'status') ? undefined : GameStatusFromJSON(json['status']),
+        'status': GameStatusFromJSON(json['status']),
         'players': ((json['players'] as Array<any>).map(PlayerDtoFromJSON)),
         'pieces': !exists(json, 'pieces') ? undefined : (json['pieces'] === null ? null : (json['pieces'] as Array<any>).map(PieceDtoFromJSON)),
         'turnCycle': !exists(json, 'turnCycle') ? undefined : json['turnCycle'],

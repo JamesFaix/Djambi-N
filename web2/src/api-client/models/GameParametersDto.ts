@@ -30,19 +30,19 @@ export interface GameParametersDto {
      * @type {number}
      * @memberof GameParametersDto
      */
-    regionCount?: number;
+    regionCount: number;
     /**
      * 
      * @type {boolean}
      * @memberof GameParametersDto
      */
-    isPublic?: boolean;
+    isPublic: boolean;
     /**
      * 
      * @type {boolean}
      * @memberof GameParametersDto
      */
-    allowGuests?: boolean;
+    allowGuests: boolean;
 }
 
 export function GameParametersDtoFromJSON(json: any): GameParametersDto {
@@ -56,9 +56,9 @@ export function GameParametersDtoFromJSONTyped(json: any, ignoreDiscriminator: b
     return {
         
         'description': !exists(json, 'description') ? undefined : json['description'],
-        'regionCount': !exists(json, 'regionCount') ? undefined : json['regionCount'],
-        'isPublic': !exists(json, 'isPublic') ? undefined : json['isPublic'],
-        'allowGuests': !exists(json, 'allowGuests') ? undefined : json['allowGuests'],
+        'regionCount': json['regionCount'],
+        'isPublic': json['isPublic'],
+        'allowGuests': json['allowGuests'],
     };
 }
 

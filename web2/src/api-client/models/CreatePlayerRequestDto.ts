@@ -31,7 +31,7 @@ export interface CreatePlayerRequestDto {
      * @type {PlayerKind}
      * @memberof CreatePlayerRequestDto
      */
-    kind?: PlayerKind;
+    kind: PlayerKind;
     /**
      * 
      * @type {number}
@@ -56,7 +56,7 @@ export function CreatePlayerRequestDtoFromJSONTyped(json: any, ignoreDiscriminat
     }
     return {
         
-        'kind': !exists(json, 'kind') ? undefined : PlayerKindFromJSON(json['kind']),
+        'kind': PlayerKindFromJSON(json['kind']),
         'userId': !exists(json, 'userId') ? undefined : json['userId'],
         'name': !exists(json, 'name') ? undefined : json['name'],
     };
