@@ -44,6 +44,17 @@ jobs:
       run: .\generate-swagger-doc
       working-directory: ./utils
 
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: '9.0.4' # The JDK version to make available on the path.
+          java-package: jdk # (jre, jdk, or jdk+fx) - defaults to jdk
+          architecture: x64 # (x64 or x86) - defaults to x64
+
+    - name: Generate API client
+      run: .\generate-api-client
+      working-directory: ./utils
+
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
