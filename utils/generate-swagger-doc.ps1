@@ -16,6 +16,7 @@ try {
     $maxRetries = $retryIntervalsInSeconds.count
     $retryCount = 0
     $succeeded = $false
+    $stop = $false
 
     do {
         try {
@@ -28,9 +29,13 @@ try {
             Write-Host "Failed to download swagger doc. Retrying in $seconds seconds..."
             Start-Sleep -Seconds $seconds
             $retryCount += 1
+            if ($null -eq (Get-Process -id $process.Id)) {
+                Write-Host "API process crashed."
+                $stop = $true
+            }
         }
     }
-    while (!$succeeded -and ($retryCount -le $maxRetries))
+    while (!$succeeded -and !$stop -and ($retryCount -le $maxRetries))
 
     if ($succeeded) {
         Write-Host 'Downloaded swagger doc.'
