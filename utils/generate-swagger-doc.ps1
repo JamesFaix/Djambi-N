@@ -35,7 +35,7 @@ try {
             }
         }
     }
-    while (!$succeeded -and !$stop -and ($retryCount -le $maxRetries))
+    while (!$succeeded -and !$stop -and ($retryCount -lt $maxRetries))
 
     if ($succeeded) {
         Write-Host 'Downloaded swagger doc.'
