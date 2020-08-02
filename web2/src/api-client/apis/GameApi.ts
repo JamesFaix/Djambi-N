@@ -15,9 +15,6 @@
 
 import * as runtime from '../runtime';
 import {
-    Game,
-    GameFromJSON,
-    GameToJSON,
     GameDto,
     GameDtoFromJSON,
     GameDtoToJSON,
@@ -140,7 +137,7 @@ export class GameApi extends runtime.BaseAPI {
 
     /**
      */
-    async apiGamesPostRaw(requestParameters: ApiGamesPostRequest): Promise<runtime.ApiResponse<Game>> {
+    async apiGamesPostRaw(requestParameters: ApiGamesPostRequest): Promise<runtime.ApiResponse<GameDto>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -155,12 +152,12 @@ export class GameApi extends runtime.BaseAPI {
             body: GameParametersDtoToJSON(requestParameters.gameParametersDto),
         });
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => GameFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => GameDtoFromJSON(jsonValue));
     }
 
     /**
      */
-    async apiGamesPost(requestParameters: ApiGamesPostRequest): Promise<Game> {
+    async apiGamesPost(requestParameters: ApiGamesPostRequest): Promise<GameDto> {
         const response = await this.apiGamesPostRaw(requestParameters);
         return await response.value();
     }
