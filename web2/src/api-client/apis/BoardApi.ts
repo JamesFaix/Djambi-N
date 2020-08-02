@@ -45,7 +45,7 @@ export class BoardApi extends runtime.BaseAPI {
             throw new runtime.RequiredError('cellId','Required parameter requestParameters.cellId was null or undefined when calling apiBoardsRegionCountCellsCellIdGet.');
         }
 
-        const queryParameters: runtime.HTTPQuery = {};
+        const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
 
@@ -74,7 +74,7 @@ export class BoardApi extends runtime.BaseAPI {
             throw new runtime.RequiredError('regionCount','Required parameter requestParameters.regionCount was null or undefined when calling apiBoardsRegionCountGet.');
         }
 
-        const queryParameters: runtime.HTTPQuery = {};
+        const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
 

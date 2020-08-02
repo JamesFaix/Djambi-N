@@ -54,7 +54,7 @@ export class SnapshotApi extends runtime.BaseAPI {
             throw new runtime.RequiredError('gameId','Required parameter requestParameters.gameId was null or undefined when calling apiGamesGameIdSnapshotsGet.');
         }
 
-        const queryParameters: runtime.HTTPQuery = {};
+        const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
 
@@ -82,7 +82,7 @@ export class SnapshotApi extends runtime.BaseAPI {
             throw new runtime.RequiredError('gameId','Required parameter requestParameters.gameId was null or undefined when calling apiGamesGameIdSnapshotsPost.');
         }
 
-        const queryParameters: runtime.HTTPQuery = {};
+        const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
 
@@ -117,7 +117,7 @@ export class SnapshotApi extends runtime.BaseAPI {
             throw new runtime.RequiredError('snapshotId','Required parameter requestParameters.snapshotId was null or undefined when calling apiGamesGameIdSnapshotsSnapshotIdDelete.');
         }
 
-        const queryParameters: runtime.HTTPQuery = {};
+        const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
 
@@ -148,7 +148,7 @@ export class SnapshotApi extends runtime.BaseAPI {
             throw new runtime.RequiredError('snapshotId','Required parameter requestParameters.snapshotId was null or undefined when calling apiGamesGameIdSnapshotsSnapshotIdLoadPost.');
         }
 
-        const queryParameters: runtime.HTTPQuery = {};
+        const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
 

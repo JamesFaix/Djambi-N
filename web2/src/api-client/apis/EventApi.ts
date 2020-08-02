@@ -40,7 +40,7 @@ export class EventApi extends runtime.BaseAPI {
             throw new runtime.RequiredError('gameId','Required parameter requestParameters.gameId was null or undefined when calling apiGamesGameIdEventsQueryPost.');
         }
 
-        const queryParameters: runtime.HTTPQuery = {};
+        const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
 

@@ -23,7 +23,7 @@ export class NotificationApi extends runtime.BaseAPI {
     /**
      */
     async apiNotificationsSseGetRaw(): Promise<runtime.ApiResponse<void>> {
-        const queryParameters: runtime.HTTPQuery = {};
+        const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
 
@@ -46,7 +46,7 @@ export class NotificationApi extends runtime.BaseAPI {
     /**
      */
     async apiNotificationsWsGetRaw(): Promise<runtime.ApiResponse<void>> {
-        const queryParameters: runtime.HTTPQuery = {};
+        const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
 

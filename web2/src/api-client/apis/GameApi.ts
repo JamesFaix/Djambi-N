@@ -58,7 +58,7 @@ export class GameApi extends runtime.BaseAPI {
             throw new runtime.RequiredError('gameId','Required parameter requestParameters.gameId was null or undefined when calling apiGamesGameIdGet.');
         }
 
-        const queryParameters: runtime.HTTPQuery = {};
+        const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
 
@@ -86,7 +86,7 @@ export class GameApi extends runtime.BaseAPI {
             throw new runtime.RequiredError('gameId','Required parameter requestParameters.gameId was null or undefined when calling apiGamesGameIdParametersPut.');
         }
 
-        const queryParameters: runtime.HTTPQuery = {};
+        const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
 
@@ -117,7 +117,7 @@ export class GameApi extends runtime.BaseAPI {
             throw new runtime.RequiredError('gameId','Required parameter requestParameters.gameId was null or undefined when calling apiGamesGameIdStartRequestPost.');
         }
 
-        const queryParameters: runtime.HTTPQuery = {};
+        const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
 
@@ -141,7 +141,7 @@ export class GameApi extends runtime.BaseAPI {
     /**
      */
     async apiGamesPostRaw(requestParameters: ApiGamesPostRequest): Promise<runtime.ApiResponse<Game>> {
-        const queryParameters: runtime.HTTPQuery = {};
+        const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
 

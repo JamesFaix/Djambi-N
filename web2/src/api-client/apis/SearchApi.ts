@@ -35,7 +35,7 @@ export class SearchApi extends runtime.BaseAPI {
     /**
      */
     async apiSearchGamesPostRaw(requestParameters: ApiSearchGamesPostRequest): Promise<runtime.ApiResponse<Array<SearchGameDto>>> {
-        const queryParameters: runtime.HTTPQuery = {};
+        const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
 

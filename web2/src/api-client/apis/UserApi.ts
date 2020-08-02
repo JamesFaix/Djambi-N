@@ -43,7 +43,7 @@ export class UserApi extends runtime.BaseAPI {
     /**
      */
     async apiUsersCurrentGetRaw(): Promise<runtime.ApiResponse<UserDto>> {
-        const queryParameters: runtime.HTTPQuery = {};
+        const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
 
@@ -67,7 +67,7 @@ export class UserApi extends runtime.BaseAPI {
     /**
      */
     async apiUsersPostRaw(requestParameters: ApiUsersPostRequest): Promise<runtime.ApiResponse<UserDto>> {
-        const queryParameters: runtime.HTTPQuery = {};
+        const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
 
@@ -98,7 +98,7 @@ export class UserApi extends runtime.BaseAPI {
             throw new runtime.RequiredError('userId','Required parameter requestParameters.userId was null or undefined when calling apiUsersUserIdDelete.');
         }
 
-        const queryParameters: runtime.HTTPQuery = {};
+        const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
 
@@ -125,7 +125,7 @@ export class UserApi extends runtime.BaseAPI {
             throw new runtime.RequiredError('userId','Required parameter requestParameters.userId was null or undefined when calling apiUsersUserIdGet.');
         }
 
-        const queryParameters: runtime.HTTPQuery = {};
+        const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
 

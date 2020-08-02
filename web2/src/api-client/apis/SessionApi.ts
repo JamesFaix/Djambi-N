@@ -35,7 +35,7 @@ export class SessionApi extends runtime.BaseAPI {
     /**
      */
     async apiSessionsDeleteRaw(): Promise<runtime.ApiResponse<void>> {
-        const queryParameters: runtime.HTTPQuery = {};
+        const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
 
@@ -58,7 +58,7 @@ export class SessionApi extends runtime.BaseAPI {
     /**
      */
     async apiSessionsPostRaw(requestParameters: ApiSessionsPostRequest): Promise<runtime.ApiResponse<SessionDto>> {
-        const queryParameters: runtime.HTTPQuery = {};
+        const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
 

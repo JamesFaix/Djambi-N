@@ -58,7 +58,7 @@ export class PlayerApi extends runtime.BaseAPI {
             throw new runtime.RequiredError('playerId','Required parameter requestParameters.playerId was null or undefined when calling apiGamesGameIdPlayersPlayerIdDelete.');
         }
 
-        const queryParameters: runtime.HTTPQuery = {};
+        const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
 
@@ -94,7 +94,7 @@ export class PlayerApi extends runtime.BaseAPI {
             throw new runtime.RequiredError('status','Required parameter requestParameters.status was null or undefined when calling apiGamesGameIdPlayersPlayerIdStatusStatusPut.');
         }
 
-        const queryParameters: runtime.HTTPQuery = {};
+        const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
 
@@ -122,7 +122,7 @@ export class PlayerApi extends runtime.BaseAPI {
             throw new runtime.RequiredError('gameId','Required parameter requestParameters.gameId was null or undefined when calling apiGamesGameIdPlayersPost.');
         }
 
-        const queryParameters: runtime.HTTPQuery = {};
+        const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
 

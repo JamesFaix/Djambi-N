@@ -45,7 +45,7 @@ export class TurnApi extends runtime.BaseAPI {
             throw new runtime.RequiredError('gameId','Required parameter requestParameters.gameId was null or undefined when calling apiGamesGameIdCurrentTurnCommitRequestPost.');
         }
 
-        const queryParameters: runtime.HTTPQuery = {};
+        const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
 
@@ -73,7 +73,7 @@ export class TurnApi extends runtime.BaseAPI {
             throw new runtime.RequiredError('gameId','Required parameter requestParameters.gameId was null or undefined when calling apiGamesGameIdCurrentTurnResetRequestPost.');
         }
 
-        const queryParameters: runtime.HTTPQuery = {};
+        const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
 
@@ -105,7 +105,7 @@ export class TurnApi extends runtime.BaseAPI {
             throw new runtime.RequiredError('cellId','Required parameter requestParameters.cellId was null or undefined when calling apiGamesGameIdCurrentTurnSelectionRequestCellIdPost.');
         }
 
-        const queryParameters: runtime.HTTPQuery = {};
+        const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
 
