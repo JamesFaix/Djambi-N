@@ -31,6 +31,10 @@ jobs:
       with:
         dotnet-version: 3.1.301
 
+    - name: Restore dotnet tools
+      run: dotnet tool restore
+      working-directory: ./api
+
     - name: Install dependencies
       run: dotnet restore
       working-directory: ./api
