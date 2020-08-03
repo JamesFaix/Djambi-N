@@ -35,7 +35,7 @@ jobs:
       run: dotnet tool restore
       working-directory: ./api
 
-    - name: Install dependencies
+    - name: Restore packages
       run: dotnet restore
       working-directory: ./api
 

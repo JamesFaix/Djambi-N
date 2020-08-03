@@ -44,9 +44,13 @@ jobs:
       run: dotnet tool restore
       working-directory: ./api
 
+    - name: Restore API packages
+      run: dotnet restore
+      working-directory: ./api/api.host
+
     - name: Build API
-      run: dotnet build -c release
-      working-directory: ./api
+      run: dotnet build -c release --no-restore
+      working-directory: ./api/api.host
 
     - name: Setup Java # for OpenAPI generator
       uses: actions/setup-java@v1
