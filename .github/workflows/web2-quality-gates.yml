@@ -8,9 +8,9 @@ on:
       - release/**
     paths:
       - web2/**/*
-      - api/api.web/**/*
+      - api/api.web/**/* # Changes in API contract
       - .github/workflows/web2-quality-gates.yml
-      - utils/generate-swagger-doc.ps1
+      - reset-client-generator/generate-api-client.ps1
 
   pull_request:
     branches:
@@ -21,12 +21,12 @@ on:
       - web2/**/*
       - api/api.web/**/*
       - .github/workflows/web2-quality-gates.yml
-      - utils/generate-swagger-doc.ps1
+      - reset-client-generator/generate-api-client.ps1
 
 jobs:
   build:
 
-    runs-on: windows-latest
+    runs-on: windows-latest # for powershell
 
     strategy:
       matrix:
@@ -35,7 +35,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Setup .NET Core
+    - name: Setup .NET Core # to build API
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.301
@@ -44,7 +44,7 @@ jobs:
       run: dotnet build -c release
       working-directory: ./api
 
-    - name: Setup Java
+    - name: Setup Java # for OpenAPI generator
       uses: actions/setup-java@v1
       with:
         java-version: '9.0.4' # The JDK version to make available on the path.
