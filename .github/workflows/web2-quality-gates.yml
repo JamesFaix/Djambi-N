@@ -40,9 +40,9 @@ jobs:
       with:
         dotnet-version: 3.1.301
 
-    - name: Generate Swagger JSON file
-      run: .\generate-swagger-doc
-      working-directory: ./utils
+    - name: Build API
+      run: dotnet build -c release
+      working-directory: ./api
 
     - name: Setup Java
       uses: actions/setup-java@v1
@@ -52,8 +52,8 @@ jobs:
         architecture: x64 # (x64 or x86) - defaults to x64
 
     - name: Generate API client
-      run: .\generate-api-client
-      working-directory: ./utils
+      run: .\generate-api-client -sourcePath ../api/api.host/bin/release/netcoreapp3.1/openapi.json -outDir ../web2/src/api-client
+      working-directory: ./rest-client-generator
 
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
