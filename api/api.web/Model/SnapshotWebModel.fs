@@ -3,6 +3,7 @@
 open System.ComponentModel.DataAnnotations
 
 type SnapshotInfoDto = {
+    [<Required>]
     id : int
 
     [<Required>]

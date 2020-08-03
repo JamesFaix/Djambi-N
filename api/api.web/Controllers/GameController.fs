@@ -5,7 +5,6 @@ open Microsoft.AspNetCore.Mvc
 open FSharp.Control.Tasks
 open Serilog
 open Apex.Api.Logic.Interfaces
-open Apex.Api.Model
 open Apex.Api.Web
 open Apex.Api.Web.Mappings
 open Apex.Api.Web.Model
@@ -29,7 +28,7 @@ type GameController(manager : IGameManager,
         }
 
     [<HttpPost>]
-    [<ProducesResponseType(200, Type = typeof<Game>)>]
+    [<ProducesResponseType(200, Type = typeof<GameDto>)>]
     member __.CreateGame([<FromBody>] request : GameParametersDto) : Task<IActionResult> =
         let ctx = base.HttpContext
         task {

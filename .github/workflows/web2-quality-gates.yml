@@ -8,7 +8,9 @@ on:
       - release/**
     paths:
       - web2/**/*
+      - api/api.web/**/* # Changes in API contract
       - .github/workflows/web2-quality-gates.yml
+      - reset-client-generator/generate-api-client.ps1
 
   pull_request:
     branches:
@@ -17,12 +19,14 @@ on:
       - release/**
     paths:
       - web2/**/*
+      - api/api.web/**/*
       - .github/workflows/web2-quality-gates.yml
+      - reset-client-generator/generate-api-client.ps1
 
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: windows-latest # for powershell
 
     strategy:
       matrix:
@@ -30,6 +34,34 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
+    - name: Setup .NET Core # to build API
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.301
+
+    - name: Restore dotnet tools
+      run: dotnet tool restore
+      working-directory: ./api
+
+    - name: Restore API packages
+      run: dotnet restore
+      working-directory: ./api/api.host
+
+    - name: Build API
+      run: dotnet build -c release --no-restore
+      working-directory: ./api/api.host
+
+    - name: Setup Java # for OpenAPI generator
+      uses: actions/setup-java@v1
+      with:
+        java-version: '9.0.4' # The JDK version to make available on the path.
+        java-package: jdk # (jre, jdk, or jdk+fx) - defaults to jdk
+        architecture: x64 # (x64 or x86) - defaults to x64
+
+    - name: Generate API client
+      run: .\generate-api-client -sourcePath ../api/api.host/bin/release/netcoreapp3.1/openapi.json -outDir ../web2/src/api-client
+      working-directory: ./rest-client-generator
 
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
