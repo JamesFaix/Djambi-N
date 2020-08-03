@@ -13,7 +13,3 @@ paket-files
 *.log
 *.zip
 apex-local.session.sql
-utils/swagger.json
-utils/api-stdout.txt
-utils/api-stderr.txt
-utils/openapi-generator-cli.jar
