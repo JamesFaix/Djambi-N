@@ -1,6 +1,7 @@
 import React from 'react';
 import logo from '../../assets/logo.svg';
 import './App.css';
+import TemporaryDrawer from '../NavigationDrawer/NavigationDrawer';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           Learn React
         </a>
       </header>
+      <TemporaryDrawer/>
     </div>
   );
 }
