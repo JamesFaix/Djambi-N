@@ -1,15 +1,70 @@
-import React from 'react';
+import React, { FC } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
-import Button from '@material-ui/core/Button';
-import List from '@material-ui/core/List';
-import Divider from '@material-ui/core/Divider';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import MailIcon from '@material-ui/icons/Mail';
+import { Button, Divider, Drawer, List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
+import {
+  AccountBalance as DiplomacyIcon,
+  Add as NewGameIcon,
+  CameraAlt as SnapshotsIcon,
+  EmojiEvents as ResultsIcon,
+  ExitToApp as SignOutIcon,
+  Gavel as RulesIcon,
+  Home as HomeIcon,
+  Input as SignInIcon,
+  MeetingRoom as LobbyIcon,
+  PersonAdd as CreateAccountIcon,
+  PlayArrow as PlayIcon,
+  Search as SearchIcon,
+  Settings as SettingsIcon
+} from '@material-ui/icons';
+
+interface NavigationItemProps {
+  text: string;
+  icon: any;
+}
+
+const NavigationItem: FC<NavigationItemProps> = ({ text, icon }) => {
+  return (
+    <ListItem button key={text}>
+      <ListItemIcon>{icon}</ListItemIcon>
+      <ListItemText primary={text} />
+    </ListItem>
+  );
+};
+
+const UnauthenticatedNavigationItems: FC = () => {
+  return (
+    <List>
+      <NavigationItem text="Sign in" icon={<SignInIcon />} />
+      <NavigationItem text="Create account" icon={<CreateAccountIcon />} />
+    </List>
+  );
+};
+
+const GamelessNavigationItems: FC = () => {
+  return (
+    <List>
+      <NavigationItem text="Home" icon={<HomeIcon />} />
+      <NavigationItem text="Settings" icon={<SettingsIcon />} />
+      <NavigationItem text="New game" icon={<NewGameIcon />} />
+      <NavigationItem text="Search games" icon={<SearchIcon />} />
+      <NavigationItem text="Rules" icon={<RulesIcon />} />
+      <NavigationItem text="Sign out" icon={<SignOutIcon />} />
+    </List>
+  );
+};
+
+const GameNavigationItems: FC = () => {
+  return (
+    <List>
+      <NavigationItem text="Game lobby" icon={<LobbyIcon />} />
+      <NavigationItem text="Resume game" icon={<PlayIcon />} />
+      <NavigationItem text="Game diplomacy" icon={<DiplomacyIcon />} />
+      <NavigationItem text="Game snapshots" icon={<SnapshotsIcon />} />
+      <NavigationItem text="Game outcome" icon={<ResultsIcon />} />
+    </List>
+  );
+};
 
 const useStyles = makeStyles({
   list: {
@@ -22,64 +77,44 @@ const useStyles = makeStyles({
 
 export default function TemporaryDrawer() {
   const classes = useStyles();
-  const [state, setState] = React.useState({
-    top: false,
-    left: false,
-    bottom: false,
-    right: false,
-  });
+  const [isOpen, setIsOpen] = React.useState(false);
 
-  const toggleDrawer = (anchor: string, open: boolean) => (event: any) => {
+  const toggleDrawer = (open: boolean) => (event: any) => {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
       return;
     }
 
-    setState({ ...state, [anchor]: open });
+    setIsOpen(open);
   };
 
-  const list = (anchor: string) => (
+  const list = () => (
     <div
       className={clsx(classes.list, {
-        [classes.fullList]: anchor === 'top' || anchor === 'bottom',
+        [classes.fullList]: false,
       })}
       role="presentation"
-      onClick={toggleDrawer(anchor, false)}
-      onKeyDown={toggleDrawer(anchor, false)}
+      onClick={toggleDrawer(false)}
+      onKeyDown={toggleDrawer(false)}
     >
-      <List>
-        {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-            <ListItemText primary={text} />
-          </ListItem>
-        ))}
-      </List>
+      <UnauthenticatedNavigationItems />
       <Divider />
-      <List>
-        {['All mail', 'Trash', 'Spam'].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-            <ListItemText primary={text} />
-          </ListItem>
-        ))}
-      </List>
+      <GamelessNavigationItems />
+      <Divider />
+      <GameNavigationItems />
     </div>
   );
 
   return (
     <div>
-      {['left', 'right', 'top', 'bottom'].map((anchor) => (
-        <React.Fragment key={anchor}>
-          <Button onClick={toggleDrawer(anchor, true)}>{anchor}</Button>
-          <Drawer
-            anchor={anchor as any}
-            open={(state as any)[anchor]}
-            onClose={toggleDrawer(anchor, false)}
-          >
-            {list(anchor)}
-          </Drawer>
-        </React.Fragment>
-      ))}
+      <Button onClick={toggleDrawer(true)}>
+        Open navigation drawer
+      </Button>
+      <Drawer
+        open={isOpen}
+        onClose={toggleDrawer(false)}
+      >
+        {list()}
+      </Drawer>
     </div>
   );
 }
