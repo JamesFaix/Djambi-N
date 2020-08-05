@@ -17,15 +17,19 @@ import {
   Search as SearchIcon,
   Settings as SettingsIcon
 } from '@material-ui/icons';
+import { GameInfo } from '../../model/game';
+import { navigateTo } from '../../utilities/navigation';
+import { PlayerKind } from '../../api-client';
 
 interface NavigationItemProps {
   text: string;
   icon: any;
+  onClick: () => void;
 }
 
-const NavigationItem: FC<NavigationItemProps> = ({ text, icon }) => {
+const NavigationItem: FC<NavigationItemProps> = ({ text, icon, onClick }) => {
   return (
-    <ListItem button key={text}>
+    <ListItem button key={text} onClick={onClick} >
       <ListItemIcon>{icon}</ListItemIcon>
       <ListItemText primary={text} />
     </ListItem>
@@ -35,8 +39,8 @@ const NavigationItem: FC<NavigationItemProps> = ({ text, icon }) => {
 const UnauthenticatedNavigationItems: FC = () => {
   return (
     <List>
-      <NavigationItem text="Sign in" icon={<SignInIcon />} />
-      <NavigationItem text="Create account" icon={<CreateAccountIcon />} />
+      <NavigationItem text="Sign in" icon={<SignInIcon />} onClick={() => navigateTo('/sign-in')} />
+      <NavigationItem text="Create account" icon={<CreateAccountIcon />} onClick={() => navigateTo('/create-account')} />
     </List>
   );
 };
@@ -44,24 +48,24 @@ const UnauthenticatedNavigationItems: FC = () => {
 const GamelessNavigationItems: FC = () => {
   return (
     <List>
-      <NavigationItem text="Home" icon={<HomeIcon />} />
-      <NavigationItem text="Settings" icon={<SettingsIcon />} />
-      <NavigationItem text="New game" icon={<NewGameIcon />} />
-      <NavigationItem text="Search games" icon={<SearchIcon />} />
-      <NavigationItem text="Rules" icon={<RulesIcon />} />
-      <NavigationItem text="Sign out" icon={<SignOutIcon />} />
+      <NavigationItem text="Home" icon={<HomeIcon />} onClick={() => navigateTo('/home')} />
+      <NavigationItem text="Settings" icon={<SettingsIcon />} onClick={() => navigateTo('/settings')} />
+      <NavigationItem text="New game" icon={<NewGameIcon />} onClick={() => navigateTo('/new-game')} />
+      <NavigationItem text="Search games" icon={<SearchIcon />} onClick={() => navigateTo('/search-games')} />
+      <NavigationItem text="Rules" icon={<RulesIcon />} onClick={() => navigateTo('/rules')} />
+      <NavigationItem text="Sign out" icon={<SignOutIcon />} onClick={() => navigateTo('/sign-out')} />
     </List>
   );
 };
 
-const GameNavigationItems: FC = () => {
+const GameNavigationItems: FC<{ game: GameInfo }> = ({ game }) => {
   return (
     <List>
-      <NavigationItem text="Game lobby" icon={<LobbyIcon />} />
-      <NavigationItem text="Resume game" icon={<PlayIcon />} />
-      <NavigationItem text="Game diplomacy" icon={<DiplomacyIcon />} />
-      <NavigationItem text="Game snapshots" icon={<SnapshotsIcon />} />
-      <NavigationItem text="Game outcome" icon={<ResultsIcon />} />
+      <NavigationItem text="Game lobby" icon={<LobbyIcon />} onClick={() => navigateTo(`/games/${game.id}/lobby`)} />
+      <NavigationItem text="Resume game" icon={<PlayIcon />} onClick={() => navigateTo(`/games/${game.id}/play`)} />
+      <NavigationItem text="Game diplomacy" icon={<DiplomacyIcon />} onClick={() => navigateTo(`/games/${game.id}/diplomacy`)} />
+      <NavigationItem text="Game snapshots" icon={<SnapshotsIcon />} onClick={() => navigateTo(`/games/${game.id}/snapshots`)} />
+      <NavigationItem text="Game outcome" icon={<ResultsIcon />} onClick={() => navigateTo(`/games/${game.id}/outcome`)} />
     </List>
   );
 };
@@ -87,6 +91,20 @@ export default function TemporaryDrawer() {
     setIsOpen(open);
   };
 
+  const game: GameInfo = {
+    id: 1,
+    description: 'some game',
+    createdBy: {
+      userId: 1,
+      userName: 'derp',
+      time: Date.UTC(2020, 12, 31, 12, 59, 59) as unknown as Date
+    },
+    players: [
+      { id: 1, name: 'derp', kind: PlayerKind.NUMBER_1, userId: 1 },
+      { id: 2, name: 'flerp', kind: PlayerKind.NUMBER_2, userId: null }
+    ]
+  };
+
   const list = () => (
     <div
       className={clsx(classes.list, {
@@ -100,8 +118,8 @@ export default function TemporaryDrawer() {
       <Divider />
       <GamelessNavigationItems />
       <Divider />
-      <GameNavigationItems />
-    </div>
+      <GameNavigationItems game={game} />
+    </div >
   );
 
   return (
