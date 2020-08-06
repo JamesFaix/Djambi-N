@@ -1,0 +1,62 @@
+name: Check for API contract changes
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+      - release/**
+    paths:
+      - api/api.web/**/* # Changes in API contract
+      - .github/workflows/check-for-api-contract-changes.yml
+      - reset-client-generator/**/*
+
+  pull_request:
+    branches:
+      - master
+      - develop
+      - release/**
+    paths:
+      - api/api.web/**/* # Changes in API contract
+      - .github/workflows/check-for-api-contract-changes.yml
+      - reset-client-generator/**/*
+
+jobs:
+  build:
+
+    runs-on: windows-latest # for powershell
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup .NET Core # to build API
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.301
+
+    - name: Restore dotnet tools
+      run: dotnet tool restore
+      working-directory: ./api
+
+    - name: Restore API packages
+      run: dotnet restore
+      working-directory: ./api/api.host
+
+    - name: Build API
+      run: dotnet build -c release --no-restore
+      working-directory: ./api/api.host
+
+    - name: Setup Java # for OpenAPI generator
+      uses: actions/setup-java@v1
+      with:
+        java-version: '9.0.4' # The JDK version to make available on the path.
+        java-package: jdk # (jre, jdk, or jdk+fx) - defaults to jdk
+        architecture: x64 # (x64 or x86) - defaults to x64
+
+    - name: Generate API client
+      run: .\generate-api-client -sourcePath ../api/api.host/bin/release/netcoreapp3.1/openapi.json -outDir ../web2/src/api-client
+      working-directory: ./rest-client-generator
+
+    - name: Check for uncommitted client changes
+      run: .\check-if-client-changed
+      working-directory: ./rest-client-generator
