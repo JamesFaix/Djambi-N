@@ -13,11 +13,8 @@ import {
 import { UserInfo } from '../../../model/game';
 import { navigateTo } from '../../../utilities/navigation';
 import NavigationItem from '../NavigationItem';
-import { sectionHeaderStyle } from '../styles';
 
 const GamelessSection: FC<{ user: UserInfo | null }> = ({ user }) => {
-  const headerStyle = sectionHeaderStyle();
-
   return (
     <List>
       {user
