@@ -32,18 +32,18 @@ const ActiveGameSection: FC<{ game: GameInfo | null }> = ({ game }) => {
 
         <NavigationItem text="Lobby" icon={<LobbyIcon />} onClick={() => navigateTo(`/games/${game.id}/lobby`)} />
 
-        {[GameStatus.NUMBER_2, GameStatus.NUMBER_3].includes(game.status)
+        {[GameStatus.InProgress, GameStatus.Over].includes(game.status)
           ? <NavigationItem text="Resume" icon={<PlayIcon />} onClick={() => navigateTo(`/games/${game.id}/play`)} />
           : undefined}
 
-        {game.status === GameStatus.NUMBER_2
+        {game.status === GameStatus.InProgress
           ? <NavigationItem text="Diplomacy" icon={<DiplomacyIcon />} onClick={() => navigateTo(`/games/${game.id}/diplomacy`)} />
           : undefined}
 
         {/* Only if user has privilege */}
         <NavigationItem text="Snapshots" icon={<SnapshotsIcon />} onClick={() => navigateTo(`/games/${game.id}/snapshots`)} />
 
-        {game.status === GameStatus.NUMBER_4
+        {game.status === GameStatus.Over
           ? <NavigationItem text="Outcome" icon={<ResultsIcon />} onClick={() => navigateTo(`/games/${game.id}/outcome`)} />
           : undefined}
       </List>

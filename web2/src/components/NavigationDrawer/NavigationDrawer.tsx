@@ -42,10 +42,10 @@ const NavigationDrawer: FC = () => {
       userName: 'derp',
       time: Date.UTC(2020, 12, 31, 12, 59, 59) as unknown as Date
     },
-    status: GameStatus.NUMBER_2,
+    status: GameStatus.InProgress,
     players: [
-      { id: 1, name: 'derp', kind: PlayerKind.NUMBER_1, userId: 1 },
-      { id: 2, name: 'flerp', kind: PlayerKind.NUMBER_2, userId: null }
+      { id: 1, name: 'derp', kind: PlayerKind.User, userId: 1 },
+      { id: 2, name: 'flerp', kind: PlayerKind.Guest, userId: null }
     ]
   };
 
