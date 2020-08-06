@@ -31,7 +31,7 @@ export interface SessionDto {
      * @type {number}
      * @memberof SessionDto
      */
-    readonly id: number;
+    id: number;
     /**
      * 
      * @type {UserDto}
@@ -43,19 +43,19 @@ export interface SessionDto {
      * @type {string}
      * @memberof SessionDto
      */
-    readonly token: string;
+    token: string;
     /**
      * 
      * @type {Date}
      * @memberof SessionDto
      */
-    readonly createdOn: Date;
+    createdOn: Date;
     /**
      * 
      * @type {Date}
      * @memberof SessionDto
      */
-    readonly expiresOn: Date;
+    expiresOn: Date;
 }
 
 export function SessionDtoFromJSON(json: any): SessionDto {
@@ -85,7 +85,11 @@ export function SessionDtoToJSON(value?: SessionDto | null): any {
     }
     return {
         
+        'id': value.id,
         'user': UserDtoToJSON(value.user),
+        'token': value.token,
+        'createdOn': (value.createdOn.toISOString()),
+        'expiresOn': (value.expiresOn.toISOString()),
     };
 }
 

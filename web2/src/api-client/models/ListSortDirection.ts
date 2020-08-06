@@ -18,8 +18,8 @@
  * @enum {string}
  */
 export enum ListSortDirection {
-    NUMBER_0 = 0,
-    NUMBER_1 = 1
+    Ascending = 'Ascending',
+    Descending = 'Descending'
 }
 
 export function ListSortDirectionFromJSON(json: any): ListSortDirection {

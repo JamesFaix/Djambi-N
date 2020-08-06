@@ -45,13 +45,13 @@ export interface TurnDto {
      * @type {Array<SelectionDto>}
      * @memberof TurnDto
      */
-    readonly selections: Array<SelectionDto>;
+    selections: Array<SelectionDto>;
     /**
      * 
      * @type {Array<number>}
      * @memberof TurnDto
      */
-    readonly selectionOptions: Array<number>;
+    selectionOptions: Array<number>;
     /**
      * 
      * @type {SelectionKind}
@@ -87,6 +87,8 @@ export function TurnDtoToJSON(value?: TurnDto | null): any {
     return {
         
         'status': TurnStatusToJSON(value.status),
+        'selections': ((value.selections as Array<any>).map(SelectionDtoToJSON)),
+        'selectionOptions': value.selectionOptions,
         'requiredSelectionKind': SelectionKindToJSON(value.requiredSelectionKind),
     };
 }

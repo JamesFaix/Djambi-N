@@ -31,19 +31,19 @@ export interface BoardDto {
      * @type {number}
      * @memberof BoardDto
      */
-    readonly regionCount: number;
+    regionCount: number;
     /**
      * 
      * @type {number}
      * @memberof BoardDto
      */
-    readonly regionSize: number;
+    regionSize: number;
     /**
      * 
      * @type {Array<CellDto>}
      * @memberof BoardDto
      */
-    readonly cells: Array<CellDto>;
+    cells: Array<CellDto>;
 }
 
 export function BoardDtoFromJSON(json: any): BoardDto {
@@ -71,6 +71,9 @@ export function BoardDtoToJSON(value?: BoardDto | null): any {
     }
     return {
         
+        'regionCount': value.regionCount,
+        'regionSize': value.regionSize,
+        'cells': ((value.cells as Array<any>).map(CellDtoToJSON)),
     };
 }
 

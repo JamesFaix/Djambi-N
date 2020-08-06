@@ -18,9 +18,9 @@
  * @enum {string}
  */
 export enum TurnStatus {
-    NUMBER_1 = 1,
-    NUMBER_2 = 2,
-    NUMBER_3 = 3
+    AwaitingSelection = 'AwaitingSelection',
+    AwaitingCommit = 'AwaitingCommit',
+    DeadEnd = 'DeadEnd'
 }
 
 export function TurnStatusFromJSON(json: any): TurnStatus {

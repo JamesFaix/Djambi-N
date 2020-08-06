@@ -51,7 +51,7 @@ export interface GameDto {
      * @type {number}
      * @memberof GameDto
      */
-    readonly id: number;
+    id: number;
     /**
      * 
      * @type {CreationSourceDto}
@@ -75,19 +75,19 @@ export interface GameDto {
      * @type {Array<PlayerDto>}
      * @memberof GameDto
      */
-    readonly players: Array<PlayerDto>;
+    players: Array<PlayerDto>;
     /**
      * 
      * @type {Array<PieceDto>}
      * @memberof GameDto
      */
-    readonly pieces?: Array<PieceDto> | null;
+    pieces?: Array<PieceDto> | null;
     /**
      * 
      * @type {Array<number>}
      * @memberof GameDto
      */
-    readonly turnCycle?: Array<number> | null;
+    turnCycle?: Array<number> | null;
     /**
      * 
      * @type {TurnDto}
@@ -126,9 +126,13 @@ export function GameDtoToJSON(value?: GameDto | null): any {
     }
     return {
         
+        'id': value.id,
         'createdBy': CreationSourceDtoToJSON(value.createdBy),
         'parameters': GameParametersDtoToJSON(value.parameters),
         'status': GameStatusToJSON(value.status),
+        'players': ((value.players as Array<any>).map(PlayerDtoToJSON)),
+        'pieces': value.pieces === undefined ? undefined : (value.pieces === null ? null : (value.pieces as Array<any>).map(PieceDtoToJSON)),
+        'turnCycle': value.turnCycle,
         'currentTurn': TurnDtoToJSON(value.currentTurn),
     };
 }
