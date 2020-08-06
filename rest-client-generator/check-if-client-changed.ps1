@@ -10,7 +10,7 @@ else {
 
         foreach ($file in $clientFiles) {
             Write-Host $file
-            cat $file
+            Get-Content $file
         }
 
         throw "API client has not been regenerated since last API contract changes."
