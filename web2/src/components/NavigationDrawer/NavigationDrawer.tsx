@@ -1,12 +1,11 @@
-import React from 'react';
+import React, { FC } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
-import { Button, Divider, Drawer } from '@material-ui/core';
-import { GameInfo } from '../../model/game';
-import { PlayerKind } from '../../api-client';
-import UnauthenticatedNavigationItems from './UnauthenticatedNavigationItems';
-import GamelessNavigationItems from './GamelessNavigationItems';
-import ActiveGameNavigationItems from './ActiveGameNavigationItems';
+import { Button, Drawer } from '@material-ui/core';
+import { GameInfo, UserInfo } from '../../model/game';
+import { PlayerKind, GameStatus } from '../../api-client';
+import GamelessSection from './GamelessSection/GamelessSection';
+import ActiveGameSection from './ActiveGameSection/ActiveGameSection';
 
 const useStyles = makeStyles({
   list: {
@@ -17,9 +16,9 @@ const useStyles = makeStyles({
   },
 });
 
-export default function TemporaryDrawer() {
+const NavigationDrawer: FC = () => {
   const classes = useStyles();
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = React.useState(true);
 
   const toggleDrawer = (open: boolean) => (event: any) => {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
@@ -29,36 +28,26 @@ export default function TemporaryDrawer() {
     setIsOpen(open);
   };
 
-  const game: GameInfo = {
+  let user: UserInfo | null = {
     id: 1,
-    description: 'some game',
+    name: "Mr. User",
+    privileges: []
+  };
+
+  let game: GameInfo | null = {
+    id: 1,
+    description: 'Ultrabattle!!!',
     createdBy: {
       userId: 1,
       userName: 'derp',
       time: Date.UTC(2020, 12, 31, 12, 59, 59) as unknown as Date
     },
+    status: GameStatus.NUMBER_2,
     players: [
       { id: 1, name: 'derp', kind: PlayerKind.NUMBER_1, userId: 1 },
       { id: 2, name: 'flerp', kind: PlayerKind.NUMBER_2, userId: null }
     ]
   };
-
-  const list = () => (
-    <div
-      className={clsx(classes.list, {
-        [classes.fullList]: false,
-      })}
-      role="presentation"
-      onClick={toggleDrawer(false)}
-      onKeyDown={toggleDrawer(false)}
-    >
-      <UnauthenticatedNavigationItems />
-      <Divider />
-      <GamelessNavigationItems />
-      <Divider />
-      <ActiveGameNavigationItems game={game} />
-    </div >
-  );
 
   return (
     <div>
@@ -69,8 +58,20 @@ export default function TemporaryDrawer() {
         open={isOpen}
         onClose={toggleDrawer(false)}
       >
-        {list()}
+        <div
+          className={clsx(classes.list, {
+            [classes.fullList]: false,
+          })}
+          role="presentation"
+          onClick={toggleDrawer(false)}
+          onKeyDown={toggleDrawer(false)}
+        >
+          <GamelessSection user={user} />
+          <ActiveGameSection game={game} />
+        </div >
       </Drawer>
     </div>
   );
-}
+};
+
+export default NavigationDrawer;
