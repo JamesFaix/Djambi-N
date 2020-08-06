@@ -39,7 +39,7 @@ export interface SearchGameDto {
      * @type {number}
      * @memberof SearchGameDto
      */
-    readonly id: number;
+    id: number;
     /**
      * 
      * @type {GameParametersDto}
@@ -63,19 +63,19 @@ export interface SearchGameDto {
      * @type {Date}
      * @memberof SearchGameDto
      */
-    readonly lastEventOn?: Date;
+    lastEventOn?: Date;
     /**
      * 
      * @type {number}
      * @memberof SearchGameDto
      */
-    readonly playerCount: number;
+    playerCount: number;
     /**
      * 
      * @type {boolean}
      * @memberof SearchGameDto
      */
-    readonly containsMe: boolean;
+    containsMe: boolean;
 }
 
 export function SearchGameDtoFromJSON(json: any): SearchGameDto {
@@ -107,9 +107,13 @@ export function SearchGameDtoToJSON(value?: SearchGameDto | null): any {
     }
     return {
         
+        'id': value.id,
         'parameters': GameParametersDtoToJSON(value.parameters),
         'createdBy': CreationSourceDtoToJSON(value.createdBy),
         'status': GameStatusToJSON(value.status),
+        'lastEventOn': value.lastEventOn === undefined ? undefined : (value.lastEventOn.toISOString()),
+        'playerCount': value.playerCount,
+        'containsMe': value.containsMe,
     };
 }
 

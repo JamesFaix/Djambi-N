@@ -18,9 +18,9 @@
  * @enum {string}
  */
 export enum PlayerKind {
-    NUMBER_1 = 1,
-    NUMBER_2 = 2,
-    NUMBER_3 = 3
+    User = 'User',
+    Guest = 'Guest',
+    Neutral = 'Neutral'
 }
 
 export function PlayerKindFromJSON(json: any): PlayerKind {

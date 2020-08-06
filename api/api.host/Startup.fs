@@ -23,6 +23,7 @@ open Apex.Api.Web
 open Apex.Api.Web.Controllers
 open Apex.Api.Db.Model
 open Apex.Api.Enums
+open Newtonsoft.Json.Converters
 
 type Startup() =
 
@@ -62,8 +63,10 @@ type Startup() =
             )
         ) |> ignore
         services.AddControllers()
-            .AddNewtonsoftJson() |> ignore
-
+            .AddNewtonsoftJson(fun options -> 
+               options.SerializerSettings.Converters.Add(new StringEnumConverter())
+            ) |> ignore
+        
         // Configuration
         services.Configure<AppSettings>(__.Configuration) |> ignore
         services.Configure<SqlSettings>(__.Configuration.GetSection("Sql")) |> ignore
@@ -75,6 +78,7 @@ type Startup() =
 
         // Swagger
         services.AddSwaggerGen(fun opt -> configureSwagger opt) |> ignore
+        services.AddSwaggerGenNewtonsoftSupport() |> ignore
 
         // Entity Framework
         services.AddDbContext<ApexDbContext>(fun opt -> 

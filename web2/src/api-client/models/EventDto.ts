@@ -39,7 +39,7 @@ export interface EventDto {
      * @type {number}
      * @memberof EventDto
      */
-    readonly id: number;
+    id: number;
     /**
      * 
      * @type {CreationSourceDto}
@@ -51,7 +51,7 @@ export interface EventDto {
      * @type {number}
      * @memberof EventDto
      */
-    readonly actingPlayerId?: number | null;
+    actingPlayerId?: number | null;
     /**
      * 
      * @type {EventKind}
@@ -63,7 +63,7 @@ export interface EventDto {
      * @type {Array<EffectDto>}
      * @memberof EventDto
      */
-    readonly effects: Array<EffectDto>;
+    effects: Array<EffectDto>;
 }
 
 export function EventDtoFromJSON(json: any): EventDto {
@@ -93,8 +93,11 @@ export function EventDtoToJSON(value?: EventDto | null): any {
     }
     return {
         
+        'id': value.id,
         'createdBy': CreationSourceDtoToJSON(value.createdBy),
+        'actingPlayerId': value.actingPlayerId,
         'kind': EventKindToJSON(value.kind),
+        'effects': ((value.effects as Array<any>).map(EffectDtoToJSON)),
     };
 }
 

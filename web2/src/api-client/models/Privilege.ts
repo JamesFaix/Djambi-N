@@ -18,11 +18,11 @@
  * @enum {string}
  */
 export enum Privilege {
-    NUMBER_1 = 1,
-    NUMBER_2 = 2,
-    NUMBER_3 = 3,
-    NUMBER_4 = 4,
-    NUMBER_5 = 5
+    EditUsers = 'EditUsers',
+    EditPendingGames = 'EditPendingGames',
+    OpenParticipation = 'OpenParticipation',
+    ViewGames = 'ViewGames',
+    Snapshots = 'Snapshots'
 }
 
 export function PrivilegeFromJSON(json: any): Privilege {

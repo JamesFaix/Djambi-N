@@ -37,13 +37,13 @@ export interface SelectionDto {
      * @type {number}
      * @memberof SelectionDto
      */
-    readonly cellId: number;
+    cellId: number;
     /**
      * 
      * @type {number}
      * @memberof SelectionDto
      */
-    readonly pieceId?: number | null;
+    pieceId?: number | null;
 }
 
 export function SelectionDtoFromJSON(json: any): SelectionDto {
@@ -72,6 +72,8 @@ export function SelectionDtoToJSON(value?: SelectionDto | null): any {
     return {
         
         'kind': SelectionKindToJSON(value.kind),
+        'cellId': value.cellId,
+        'pieceId': value.pieceId,
     };
 }
 

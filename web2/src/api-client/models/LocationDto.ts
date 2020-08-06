@@ -24,19 +24,19 @@ export interface LocationDto {
      * @type {number}
      * @memberof LocationDto
      */
-    readonly region: number;
+    region: number;
     /**
      * 
      * @type {number}
      * @memberof LocationDto
      */
-    readonly x: number;
+    x: number;
     /**
      * 
      * @type {number}
      * @memberof LocationDto
      */
-    readonly y: number;
+    y: number;
 }
 
 export function LocationDtoFromJSON(json: any): LocationDto {
@@ -64,6 +64,9 @@ export function LocationDtoToJSON(value?: LocationDto | null): any {
     }
     return {
         
+        'region': value.region,
+        'x': value.x,
+        'y': value.y,
     };
 }
 

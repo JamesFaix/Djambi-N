@@ -18,13 +18,13 @@
  * @enum {string}
  */
 export enum PieceKind {
-    NUMBER_1 = 1,
-    NUMBER_2 = 2,
-    NUMBER_3 = 3,
-    NUMBER_4 = 4,
-    NUMBER_5 = 5,
-    NUMBER_6 = 6,
-    NUMBER_7 = 7
+    Conduit = 'Conduit',
+    Thug = 'Thug',
+    Scientist = 'Scientist',
+    Hunter = 'Hunter',
+    Diplomat = 'Diplomat',
+    Reaper = 'Reaper',
+    Corpse = 'Corpse'
 }
 
 export function PieceKindFromJSON(json: any): PieceKind {

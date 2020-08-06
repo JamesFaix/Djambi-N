@@ -18,15 +18,15 @@
  * @enum {string}
  */
 export enum EventKind {
-    NUMBER_1 = 1,
-    NUMBER_2 = 2,
-    NUMBER_3 = 3,
-    NUMBER_4 = 4,
-    NUMBER_5 = 5,
-    NUMBER_6 = 6,
-    NUMBER_7 = 7,
-    NUMBER_8 = 8,
-    NUMBER_9 = 9
+    GameParametersChanged = 'GameParametersChanged',
+    GameCanceled = 'GameCanceled',
+    PlayerJoined = 'PlayerJoined',
+    PlayerRemoved = 'PlayerRemoved',
+    GameStarted = 'GameStarted',
+    TurnCommitted = 'TurnCommitted',
+    TurnReset = 'TurnReset',
+    CellSelected = 'CellSelected',
+    PlayerStatusChanged = 'PlayerStatusChanged'
 }
 
 export function EventKindFromJSON(json: any): EventKind {

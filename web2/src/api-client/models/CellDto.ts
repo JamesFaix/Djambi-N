@@ -31,13 +31,13 @@ export interface CellDto {
      * @type {number}
      * @memberof CellDto
      */
-    readonly id: number;
+    id: number;
     /**
      * 
      * @type {Array<LocationDto>}
      * @memberof CellDto
      */
-    readonly locations: Array<LocationDto>;
+    locations: Array<LocationDto>;
 }
 
 export function CellDtoFromJSON(json: any): CellDto {
@@ -64,6 +64,8 @@ export function CellDtoToJSON(value?: CellDto | null): any {
     }
     return {
         
+        'id': value.id,
+        'locations': ((value.locations as Array<any>).map(LocationDtoToJSON)),
     };
 }
 
