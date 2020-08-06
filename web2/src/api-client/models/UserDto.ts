@@ -31,19 +31,19 @@ export interface UserDto {
      * @type {number}
      * @memberof UserDto
      */
-    readonly id: number;
+    id: number;
     /**
      * 
      * @type {string}
      * @memberof UserDto
      */
-    readonly name: string;
+    name: string;
     /**
      * 
      * @type {Array<Privilege>}
      * @memberof UserDto
      */
-    readonly privileges: Array<Privilege>;
+    privileges: Array<Privilege>;
 }
 
 export function UserDtoFromJSON(json: any): UserDto {
@@ -71,6 +71,9 @@ export function UserDtoToJSON(value?: UserDto | null): any {
     }
     return {
         
+        'id': value.id,
+        'name': value.name,
+        'privileges': ((value.privileges as Array<any>).map(PrivilegeToJSON)),
     };
 }
 

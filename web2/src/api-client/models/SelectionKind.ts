@@ -18,11 +18,11 @@
  * @enum {string}
  */
 export enum SelectionKind {
-    NUMBER_1 = 1,
-    NUMBER_2 = 2,
-    NUMBER_3 = 3,
-    NUMBER_4 = 4,
-    NUMBER_5 = 5
+    Subject = 'Subject',
+    Move = 'Move',
+    Target = 'Target',
+    Drop = 'Drop',
+    Vacate = 'Vacate'
 }
 
 export function SelectionKindFromJSON(json: any): SelectionKind {

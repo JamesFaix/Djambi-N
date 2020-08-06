@@ -24,19 +24,19 @@ export interface CreationSourceDto {
      * @type {number}
      * @memberof CreationSourceDto
      */
-    readonly userId: number;
+    userId: number;
     /**
      * 
      * @type {string}
      * @memberof CreationSourceDto
      */
-    readonly userName: string;
+    userName: string;
     /**
      * 
      * @type {Date}
      * @memberof CreationSourceDto
      */
-    readonly time: Date;
+    time: Date;
 }
 
 export function CreationSourceDtoFromJSON(json: any): CreationSourceDto {
@@ -64,6 +64,9 @@ export function CreationSourceDtoToJSON(value?: CreationSourceDto | null): any {
     }
     return {
         
+        'userId': value.userId,
+        'userName': value.userName,
+        'time': (value.time.toISOString()),
     };
 }
 

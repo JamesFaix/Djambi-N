@@ -35,19 +35,19 @@ export interface PlayerDto {
      * @type {number}
      * @memberof PlayerDto
      */
-    readonly id: number;
+    id: number;
     /**
      * 
      * @type {number}
      * @memberof PlayerDto
      */
-    readonly gameId: number;
+    gameId: number;
     /**
      * 
      * @type {number}
      * @memberof PlayerDto
      */
-    readonly userId?: number | null;
+    userId?: number | null;
     /**
      * 
      * @type {PlayerKind}
@@ -59,7 +59,7 @@ export interface PlayerDto {
      * @type {string}
      * @memberof PlayerDto
      */
-    readonly name: string;
+    name: string;
     /**
      * 
      * @type {PlayerStatus}
@@ -71,19 +71,19 @@ export interface PlayerDto {
      * @type {number}
      * @memberof PlayerDto
      */
-    readonly colorId?: number | null;
+    colorId?: number | null;
     /**
      * 
      * @type {number}
      * @memberof PlayerDto
      */
-    readonly startingRegion?: number | null;
+    startingRegion?: number | null;
     /**
      * 
      * @type {number}
      * @memberof PlayerDto
      */
-    readonly startingTurnNumber?: number | null;
+    startingTurnNumber?: number | null;
 }
 
 export function PlayerDtoFromJSON(json: any): PlayerDto {
@@ -117,8 +117,15 @@ export function PlayerDtoToJSON(value?: PlayerDto | null): any {
     }
     return {
         
+        'id': value.id,
+        'gameId': value.gameId,
+        'userId': value.userId,
         'kind': PlayerKindToJSON(value.kind),
+        'name': value.name,
         'status': PlayerStatusToJSON(value.status),
+        'colorId': value.colorId,
+        'startingRegion': value.startingRegion,
+        'startingTurnNumber': value.startingTurnNumber,
     };
 }
 

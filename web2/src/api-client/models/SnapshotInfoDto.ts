@@ -31,7 +31,7 @@ export interface SnapshotInfoDto {
      * @type {number}
      * @memberof SnapshotInfoDto
      */
-    readonly id: number;
+    id: number;
     /**
      * 
      * @type {CreationSourceDto}
@@ -43,7 +43,7 @@ export interface SnapshotInfoDto {
      * @type {string}
      * @memberof SnapshotInfoDto
      */
-    readonly description: string;
+    description: string;
 }
 
 export function SnapshotInfoDtoFromJSON(json: any): SnapshotInfoDto {
@@ -71,7 +71,9 @@ export function SnapshotInfoDtoToJSON(value?: SnapshotInfoDto | null): any {
     }
     return {
         
+        'id': value.id,
         'createdBy': CreationSourceDtoToJSON(value.createdBy),
+        'description': value.description,
     };
 }
 

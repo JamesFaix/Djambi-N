@@ -18,10 +18,10 @@
  * @enum {string}
  */
 export enum GameStatus {
-    NUMBER_1 = 1,
-    NUMBER_2 = 2,
-    NUMBER_3 = 3,
-    NUMBER_4 = 4
+    Pending = 'Pending',
+    InProgress = 'InProgress',
+    Canceled = 'Canceled',
+    Over = 'Over'
 }
 
 export function GameStatusFromJSON(json: any): GameStatus {

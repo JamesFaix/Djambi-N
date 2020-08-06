@@ -18,13 +18,13 @@
  * @enum {string}
  */
 export enum PlayerStatus {
-    NUMBER_1 = 1,
-    NUMBER_2 = 2,
-    NUMBER_3 = 3,
-    NUMBER_4 = 4,
-    NUMBER_5 = 5,
-    NUMBER_6 = 6,
-    NUMBER_7 = 7
+    Pending = 'Pending',
+    Alive = 'Alive',
+    Eliminated = 'Eliminated',
+    Conceded = 'Conceded',
+    WillConcede = 'WillConcede',
+    AcceptsDraw = 'AcceptsDraw',
+    Victorious = 'Victorious'
 }
 
 export function PlayerStatusFromJSON(json: any): PlayerStatus {
