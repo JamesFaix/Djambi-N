@@ -4,8 +4,11 @@ if ($null -eq $diff) {
 }
 else {
     $clientFiles = $diff |
-        % { $_.Trim().Split(" ")[0] } |
-        Where-Object { $_.StartsWith("web2/src/api-client/") }
+        % { $_.Trim().Split(" ")[0] } | # Remove leading whitespace and trailing count of +/- lines
+        Where-Object {
+            ($_.StartsWith("web2/src/api-client/")) -and `
+            ($_ -ne "web2/src/api-client/.openapi-generator/VERSION") # This shows up as 'unset' when run in pipeline for some reason
+        }
 
     if ($clientFiles.count -gt 0) {
         Write-Host "Found $($diff.count) files in diff, including $($clientFiles.count) API client files." -ForegroundColor Red
