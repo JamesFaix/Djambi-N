@@ -7,6 +7,11 @@ else {
 
     if ($clientFiles.count -gt 0) {
         Write-Host "Found $($diff.count) files in diff, including $($clientFiles.count) API client files." -ForegroundColor Red
+
+        foreach ($file in $clientFiles) {
+            Write-Host $file
+        }
+
         throw "API client has not been regenerated since last API contract changes."
     }
     else {
