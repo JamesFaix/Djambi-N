@@ -4,8 +4,8 @@ if ($null -eq $diff) {
 }
 else {
     $clientFiles = $diff |
-        Select-Object {$_.Trim()} |
-        Where-Object {$_.StartsWith("web2/src/api-client/")}
+        % { $_.Trim().Split(" ")[0] } |
+        Where-Object { $_.StartsWith("web2/src/api-client/") }
 
     if ($clientFiles.count -gt 0) {
         Write-Host "Found $($diff.count) files in diff, including $($clientFiles.count) API client files." -ForegroundColor Red
