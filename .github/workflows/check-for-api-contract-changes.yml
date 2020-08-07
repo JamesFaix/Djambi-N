@@ -7,7 +7,8 @@ on:
       - develop
       - release/**
     paths:
-      - api/api.web/**/* # Changes in API contract
+      - api/api.web/**/*
+      - api/api.enums/**/*
       - .github/workflows/check-for-api-contract-changes.yml
       - reset-client-generator/**/*
 
@@ -17,7 +18,8 @@ on:
       - develop
       - release/**
     paths:
-      - api/api.web/**/* # Changes in API contract
+      - api/api.web/**/*
+      - api/api.enums/**/*
       - .github/workflows/check-for-api-contract-changes.yml
       - reset-client-generator/**/*
 
