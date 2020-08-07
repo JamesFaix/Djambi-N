@@ -24,28 +24,53 @@ const ActiveGameSection: FC<{ game: GameInfo | null }> = ({ game }) => {
     <>
       <Divider />
       <List>
-        <Typography variant="h5" className={headerStyle.h5}>{`Game ${game.id}`}</Typography>
+        <Typography
+          variant="h5"
+          className={headerStyle.h5}
+        >{`Game ${game.id}`}</Typography>
 
-        {game.description
-          ? <Typography variant="h6" className={headerStyle.h6}>{game.description}</Typography>
-          : undefined}
+        {game.description ? (
+          <Typography variant="h6" className={headerStyle.h6}>
+            {game.description}
+          </Typography>
+        ) : undefined}
 
-        <NavigationItem text="Lobby" icon={<LobbyIcon />} onClick={() => navigateTo(`/games/${game.id}/lobby`)} />
+        <NavigationItem
+          text="Lobby"
+          icon={<LobbyIcon />}
+          onClick={() => navigateTo(`/games/${game.id}/lobby`)}
+        />
 
-        {[GameStatus.InProgress, GameStatus.Over].includes(game.status)
-          ? <NavigationItem text="Resume" icon={<PlayIcon />} onClick={() => navigateTo(`/games/${game.id}/play`)} />
-          : undefined}
+        {[GameStatus.InProgress, GameStatus.Over].includes(game.status) ? (
+          <NavigationItem
+            text="Resume"
+            icon={<PlayIcon />}
+            onClick={() => navigateTo(`/games/${game.id}/play`)}
+          />
+        ) : undefined}
 
-        {game.status === GameStatus.InProgress
-          ? <NavigationItem text="Diplomacy" icon={<DiplomacyIcon />} onClick={() => navigateTo(`/games/${game.id}/diplomacy`)} />
-          : undefined}
+        {game.status === GameStatus.InProgress ? (
+          <NavigationItem
+            text="Diplomacy"
+            icon={<DiplomacyIcon />}
+            onClick={() => navigateTo(`/games/${game.id}/diplomacy`)}
+          />
+        ) : undefined}
 
         {/* Only if user has privilege */}
-        <NavigationItem text="Snapshots" icon={<SnapshotsIcon />} onClick={() => navigateTo(`/games/${game.id}/snapshots`)} />
+        <NavigationItem
+          text="Snapshots"
+          icon={<SnapshotsIcon />}
+          onClick={() => navigateTo(`/games/${game.id}/snapshots`)}
+        />
 
-        {game.status === GameStatus.Over
-          ? <NavigationItem text="Outcome" icon={<ResultsIcon />} onClick={() => navigateTo(`/games/${game.id}/outcome`)} />
-          : undefined}
+        {game.status === GameStatus.Over ? (
+          <NavigationItem
+            text="Outcome"
+            icon={<ResultsIcon />}
+            onClick={() => navigateTo(`/games/${game.id}/outcome`)}
+          />
+        ) : undefined}
       </List>
     </>
   );

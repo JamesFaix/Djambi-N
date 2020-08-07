@@ -9,7 +9,7 @@ interface NavigationItemProps {
 
 const NavigationItem: FC<NavigationItemProps> = ({ text, icon, onClick }) => {
   return (
-    <ListItem button key={text} onClick={onClick} >
+    <ListItem button key={text} onClick={onClick}>
       <ListItemIcon>{icon}</ListItemIcon>
       <ListItemText primary={text} />
     </ListItem>

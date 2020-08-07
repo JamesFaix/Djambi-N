@@ -23,6 +23,6 @@ const App: FC = () => {
       </header>
     </div>
   );
-}
+};
 
 export default App;
