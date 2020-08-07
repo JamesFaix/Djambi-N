@@ -1,30 +1,39 @@
 import { Config, UserConfig, EnvironmentConfig } from '../model/configuration';
 
-// #region Local storage
+// #region User config
 
-const localStorageKeyPrefix = 'Apex_';
+const key = 'Apex_UserConfig';
+
+const defaultUserConfig: UserConfig = {
+  favoriteWord: 'scrupulous',
+};
 
 // Using async functions so that user config can be persisted on the server
 // later without changing the contract.
 
 export async function getUserConfig(): Promise<UserConfig> {
-  return {
-    favoriteWord: localStorage.getItem(`${localStorageKeyPrefix}favoriteWord`) || '',
-  };
+  const json = localStorage.getItem(key);
+
+  const config = json
+    ? JSON.parse(json) as UserConfig
+    : defaultUserConfig;
+
+  return config;
 }
 
 export async function setUserConfig(config: UserConfig): Promise<void> {
-  localStorage.setItem(`${localStorageKeyPrefix}favoriteWord`, config.favoriteWord || '');
+  const json = JSON.stringify(config);
+  localStorage.setItem(key, json);
 }
 
 // #endregion
 
-// #region Config file
+// #region Environment config
 
 let envConfig: EnvironmentConfig | null = null;
 
 async function loadEnvConfig(): Promise<EnvironmentConfig> {
-  const response = await fetch('/environmentConfig.json');
+  const response = await fetch('/env.json');
   const config = await response.json();
   return config as EnvironmentConfig;
 }
