@@ -14,45 +14,48 @@ import { UserInfo } from '../../../model/game';
 import { navigateTo } from '../../../utilities/navigation';
 import NavigationItem from '../NavigationItem';
 
-const GamelessSection: FC<{ user: UserInfo | null }> = ({ user }) => (
-  <List>
-    {user ? (
-      <>
-        <NavigationItem
-          text="Home"
-          icon={<HomeIcon />}
-          onClick={() => navigateTo('/home')}
-        />
-        <NavigationItem
-          text="New game"
-          icon={<NewGameIcon />}
-          onClick={() => navigateTo('/new-game')}
-        />
-        <NavigationItem
-          text="Search games"
-          icon={<SearchIcon />}
-          onClick={() => navigateTo('/search-games')}
-        />
-        <NavigationItem
-          text="Sign out"
-          icon={<SignOutIcon />}
-          onClick={() => navigateTo('/sign-out')}
-        />
-      </>
-    ) : (
-        <>
-          <NavigationItem
-            text="Sign in"
-            icon={<SignInIcon />}
-            onClick={() => navigateTo('/sign-in')}
-          />
-          <NavigationItem
-            text="Create account"
-            icon={<CreateAccountIcon />}
-            onClick={() => navigateTo('/create-account')}
-          />
-        </>
-      )}
+const getUnauthenticatedItems = () => (
+  <>
+    <NavigationItem
+      text="Sign in"
+      icon={<SignInIcon />}
+      onClick={() => navigateTo('/sign-in')}
+    />
+    <NavigationItem
+      text="Create account"
+      icon={<CreateAccountIcon />}
+      onClick={() => navigateTo('/create-account')}
+    />
+  </>
+);
+
+const getAuthenticatedItems = () => (
+  <>
+    <NavigationItem
+      text="Home"
+      icon={<HomeIcon />}
+      onClick={() => navigateTo('/home')}
+    />
+    <NavigationItem
+      text="New game"
+      icon={<NewGameIcon />}
+      onClick={() => navigateTo('/new-game')}
+    />
+    <NavigationItem
+      text="Search games"
+      icon={<SearchIcon />}
+      onClick={() => navigateTo('/search-games')}
+    />
+    <NavigationItem
+      text="Sign out"
+      icon={<SignOutIcon />}
+      onClick={() => navigateTo('/sign-out')}
+    />
+  </>
+);
+
+const getConstantItems = () => (
+  <>
     <NavigationItem
       text="Settings"
       icon={<SettingsIcon />}
@@ -63,6 +66,13 @@ const GamelessSection: FC<{ user: UserInfo | null }> = ({ user }) => (
       icon={<RulesIcon />}
       onClick={() => navigateTo('/rules')}
     />
+  </>
+);
+
+const GamelessSection: FC<{ user: UserInfo | null }> = ({ user }) => (
+  <List>
+    {user ? getAuthenticatedItems() : getUnauthenticatedItems()}
+    {getConstantItems()}
   </List>
 );
 

@@ -20,12 +20,12 @@ const NavigationDrawer: FC = () => {
   const classes = useStyles();
   const [isOpen, setIsOpen] = React.useState(true);
 
-  const toggleDrawer = (open: boolean) => (event: any) => {
-    if (
-      event.type === 'keydown'
-      && (event.key === 'Tab' || event.key === 'Shift')
-    ) {
-      return;
+  const toggleDrawer = (open: boolean) => (event: React.MouseEvent | React.KeyboardEvent) => {
+    if (event.type === 'keydown') {
+      const e = event as React.KeyboardEvent;
+      if (e.key === 'Tab' || e.key === 'Shift') {
+        return;
+      }
     }
 
     setIsOpen(open);

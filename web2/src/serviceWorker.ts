@@ -22,7 +22,7 @@ const isLocalhost = Boolean(
   ),
 );
 
-export function register(config: any) {
+export function register(config: any): void {
   if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
     // The URL constructor is available in all browsers that support SW.
     const publicUrl = new URL(process.env.PUBLIC_URL, window.location.href);
@@ -96,7 +96,7 @@ function registerValidSW(swUrl: string, config: any) {
       };
     })
     .catch((error) => {
-      console.error('Error during service worker registration:', error);
+      Log.error('Error during service worker registration:', error);
     });
 }
 
@@ -135,7 +135,7 @@ export function unregister() {
         registration.unregister();
       })
       .catch((error) => {
-        console.error(error.message);
+        Log.error(error.message);
       });
   }
 }
