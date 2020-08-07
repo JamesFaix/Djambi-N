@@ -27,7 +27,10 @@ const ActiveGameSection: FC<{ game: GameInfo | null }> = ({ game }) => {
         <Typography
           variant="h5"
           className={headerStyle.h5}
-        >{`Game ${game.id}`}</Typography>
+        >
+          {`Game ${game.id}`}
+
+        </Typography>
 
         {game.description ? (
           <Typography variant="h6" className={headerStyle.h6}>

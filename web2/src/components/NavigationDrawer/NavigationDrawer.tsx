@@ -22,8 +22,8 @@ const NavigationDrawer: FC = () => {
 
   const toggleDrawer = (open: boolean) => (event: any) => {
     if (
-      event.type === 'keydown' &&
-      (event.key === 'Tab' || event.key === 'Shift')
+      event.type === 'keydown'
+      && (event.key === 'Tab' || event.key === 'Shift')
     ) {
       return;
     }
@@ -47,8 +47,12 @@ const NavigationDrawer: FC = () => {
     },
     status: GameStatus.InProgress,
     players: [
-      { id: 1, name: 'derp', kind: PlayerKind.User, userId: 1 },
-      { id: 2, name: 'flerp', kind: PlayerKind.Guest, userId: null },
+      {
+        id: 1, name: 'derp', kind: PlayerKind.User, userId: 1,
+      },
+      {
+        id: 2, name: 'flerp', kind: PlayerKind.Guest, userId: null,
+      },
     ],
   };
 

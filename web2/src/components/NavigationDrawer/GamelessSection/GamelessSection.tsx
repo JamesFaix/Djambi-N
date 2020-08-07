@@ -14,58 +14,56 @@ import { UserInfo } from '../../../model/game';
 import { navigateTo } from '../../../utilities/navigation';
 import NavigationItem from '../NavigationItem';
 
-const GamelessSection: FC<{ user: UserInfo | null }> = ({ user }) => {
-  return (
-    <List>
-      {user ? (
+const GamelessSection: FC<{ user: UserInfo | null }> = ({ user }) => (
+  <List>
+    {user ? (
+      <>
+        <NavigationItem
+          text="Home"
+          icon={<HomeIcon />}
+          onClick={() => navigateTo('/home')}
+        />
+        <NavigationItem
+          text="New game"
+          icon={<NewGameIcon />}
+          onClick={() => navigateTo('/new-game')}
+        />
+        <NavigationItem
+          text="Search games"
+          icon={<SearchIcon />}
+          onClick={() => navigateTo('/search-games')}
+        />
+        <NavigationItem
+          text="Sign out"
+          icon={<SignOutIcon />}
+          onClick={() => navigateTo('/sign-out')}
+        />
+      </>
+    ) : (
         <>
           <NavigationItem
-            text="Home"
-            icon={<HomeIcon />}
-            onClick={() => navigateTo('/home')}
+            text="Sign in"
+            icon={<SignInIcon />}
+            onClick={() => navigateTo('/sign-in')}
           />
           <NavigationItem
-            text="New game"
-            icon={<NewGameIcon />}
-            onClick={() => navigateTo('/new-game')}
-          />
-          <NavigationItem
-            text="Search games"
-            icon={<SearchIcon />}
-            onClick={() => navigateTo('/search-games')}
-          />
-          <NavigationItem
-            text="Sign out"
-            icon={<SignOutIcon />}
-            onClick={() => navigateTo('/sign-out')}
+            text="Create account"
+            icon={<CreateAccountIcon />}
+            onClick={() => navigateTo('/create-account')}
           />
         </>
-      ) : (
-          <>
-            <NavigationItem
-              text="Sign in"
-              icon={<SignInIcon />}
-              onClick={() => navigateTo('/sign-in')}
-            />
-            <NavigationItem
-              text="Create account"
-              icon={<CreateAccountIcon />}
-              onClick={() => navigateTo('/create-account')}
-            />
-          </>
-        )}
-      <NavigationItem
-        text="Settings"
-        icon={<SettingsIcon />}
-        onClick={() => navigateTo('/settings')}
-      />
-      <NavigationItem
-        text="Rules"
-        icon={<RulesIcon />}
-        onClick={() => navigateTo('/rules')}
-      />
-    </List>
-  );
-};
+      )}
+    <NavigationItem
+      text="Settings"
+      icon={<SettingsIcon />}
+      onClick={() => navigateTo('/settings')}
+    />
+    <NavigationItem
+      text="Rules"
+      icon={<RulesIcon />}
+      onClick={() => navigateTo('/rules')}
+    />
+  </List>
+);
 
 export default GamelessSection;

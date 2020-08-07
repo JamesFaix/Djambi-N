@@ -10,7 +10,7 @@
   },
   "plugins": [
     "@typescript-eslint",
-    "prettier"
+    "react"
   ],
   "rules": {
     "import/extensions": [
@@ -24,17 +24,6 @@
       }
     ],
     "import/no-unresolved": 0,
-    "jsx-a11y/label-has-for": [
-      2,
-      {
-        "required": {
-          "some": [
-            "nesting",
-            "id"
-          ]
-        }
-      }
-    ],
     "react/jsx-filename-extension": [
       1,
       {
@@ -44,17 +33,7 @@
         ]
       }
     ],
-    "prettier/prettier": [
-      "error",
-      {
-        "fileInfoOptions": {
-          "withNodeModules": true
-        },
-        "singleQuote": true,
-        "usePrettierrc": false,
-        "endOfLine": "auto"
-      }
-    ]
+    "react/prop-types": 0
   },
   "settings": {
     "import/resolver": {
@@ -73,10 +52,7 @@
     "airbnb",
     "airbnb/hooks",
     "airbnb-typescript",
-    "plugin:prettier/recommended",
     "plugin:@typescript-eslint/eslint-recommended",
-    "plugin:@typescript-eslint/recommended",
-    "prettier/@typescript-eslint",
-    "prettier/react"
+    "plugin:@typescript-eslint/recommended"
   ]
 }
