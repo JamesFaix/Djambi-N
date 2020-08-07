@@ -25,6 +25,7 @@
       }
     ],
     "import/no-unresolved": 0,
+    "linebreak-style": "off",
     "react/jsx-filename-extension": [
       1,
       {
