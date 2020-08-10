@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, Drawer } from '@material-ui/core';
-import { GameInfo, UserInfo } from '../../model/game';
+import { GameInfo } from '../../model/game';
 import { PlayerKind, GameStatus } from '../../api-client';
 import GamelessSection from './GamelessSection/GamelessSection';
 import ActiveGameSection from './ActiveGameSection/ActiveGameSection';
@@ -29,12 +29,6 @@ const NavigationDrawer: FC = () => {
     }
 
     setIsOpen(open);
-  };
-
-  const user: UserInfo | null = {
-    id: 1,
-    name: 'Mr. User',
-    privileges: [],
   };
 
   const game: GameInfo | null = {
@@ -68,7 +62,7 @@ const NavigationDrawer: FC = () => {
           onClick={toggleDrawer(false)}
           onKeyDown={toggleDrawer(false)}
         >
-          <GamelessSection user={user} />
+          <GamelessSection />
           <ActiveGameSection game={game} />
         </div>
       </Drawer>

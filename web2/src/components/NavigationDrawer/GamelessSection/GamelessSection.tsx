@@ -10,9 +10,10 @@ import {
   Gavel as RulesIcon,
   Settings as SettingsIcon,
 } from '@material-ui/icons';
-import { UserInfo } from '../../../model/game';
+import { useSelector } from 'react-redux';
 import { navigateTo } from '../../../utilities/navigation';
 import NavigationItem from '../NavigationItem';
+import { selectSession } from '../../../hooks/selectors';
 
 const getUnauthenticatedItems = () => (
   <>
@@ -69,11 +70,15 @@ const getConstantItems = () => (
   </>
 );
 
-const GamelessSection: FC<{ user: UserInfo | null }> = ({ user }) => (
-  <List>
-    {user ? getAuthenticatedItems() : getUnauthenticatedItems()}
-    {getConstantItems()}
-  </List>
-);
+const GamelessSection: FC = () => {
+  const session = useSelector(selectSession);
+
+  return (
+    <List>
+      {session.user ? getAuthenticatedItems() : getUnauthenticatedItems()}
+      {getConstantItems()}
+    </List>
+  );
+};
 
 export default GamelessSection;

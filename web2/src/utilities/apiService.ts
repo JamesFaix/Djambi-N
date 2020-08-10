@@ -12,63 +12,88 @@ import {
   TurnApi,
   UserApi,
 } from '../api-client';
+import { RootState } from '../redux/root';
+import { ApexStore, store } from '../redux';
 
-const configParams: ConfigurationParameters = {
-  basePath: '',
-  middleware: [],
-  headers: {
-
-  },
-  credentials: 'include',
-};
-
-const config = new Configuration(configParams);
-
-interface IApiService {
-  boards: BoardApi,
-  events: EventApi,
-  games: GameApi,
-  notifications: NotificationApi,
-  players: PlayerApi,
-  search: SearchApi,
-  sessions: SessionApi,
-  turns: TurnApi,
-  users: UserApi
+function getApiUrl(state: RootState): string {
+  return state.config.environment.apiUrl;
 }
 
-class ApiService implements IApiService {
-  constructor(c: Configuration) {
-    this.boards = new BoardApi(c);
-    this.events = new EventApi(c);
-    this.games = new GameApi(c);
-    this.notifications = new NotificationApi(c);
-    this.players = new PlayerApi(c);
-    this.search = new SearchApi(c);
-    this.sessions = new SessionApi(c);
-    this.snapshots = new SnapshotApi(c);
-    this.turns = new TurnApi(c);
-    this.users = new UserApi(c);
+function getConfigParams(apiUrl: string): ConfigurationParameters {
+  return {
+    basePath: apiUrl,
+    middleware: [],
+    headers: {
+
+    },
+    credentials: 'include',
+  };
+}
+
+function getConfig(store: ApexStore): Configuration {
+  const state = store.getState();
+  const apiUrl = getApiUrl(state);
+  const params = getConfigParams(apiUrl);
+  const config = new Configuration(params);
+  return config;
+}
+
+class ApiService {
+  constructor(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    private store: ApexStore,
+  ) {
   }
 
-  boards: BoardApi;
+  get boards(): BoardApi {
+    const config = getConfig(this.store);
+    return new BoardApi(config);
+  }
 
-  events: EventApi;
+  get events(): EventApi {
+    const config = getConfig(this.store);
+    return new EventApi(config);
+  }
 
-  games: GameApi;
+  get games(): GameApi {
+    const config = getConfig(this.store);
+    return new GameApi(config);
+  }
 
-  notifications: NotificationApi;
+  get notifications(): NotificationApi {
+    const config = getConfig(this.store);
+    return new NotificationApi(config);
+  }
 
-  players: PlayerApi;
+  get players(): PlayerApi {
+    const config = getConfig(this.store);
+    return new PlayerApi(config);
+  }
 
-  search: SearchApi;
+  get search(): SearchApi {
+    const config = getConfig(this.store);
+    return new SearchApi(config);
+  }
 
-  sessions: SessionApi;
+  get sessions(): SessionApi {
+    const config = getConfig(this.store);
+    return new SessionApi(config);
+  }
 
-  snapshots: SnapshotApi;
+  get snapshots(): SnapshotApi {
+    const config = getConfig(this.store);
+    return new SnapshotApi(config);
+  }
 
-  turns: TurnApi;
+  get turns(): TurnApi {
+    const config = getConfig(this.store);
+    return new TurnApi(config);
+  }
 
-  users: UserApi;
+  get users(): UserApi {
+    const config = getConfig(this.store);
+    return new UserApi(config);
+  }
 }
 
-export const apiService = new ApiService(config);
+export const apiService = new ApiService(store);

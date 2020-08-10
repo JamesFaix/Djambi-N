@@ -1,21 +1,23 @@
 import React, {
   FC, useEffect, ChangeEvent, useState,
 } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import logo from '../../assets/logo.svg';
 import './App.css';
 import NavigationDrawer from '../NavigationDrawer/NavigationDrawer';
 import { loadConfig, setUserConfig } from '../../utilities/configService';
-import { RootState } from '../../redux/root';
-import { LoginRequestDto } from '../../api-client';
+import { LoginRequestDto, ApiSessionsPostRequest } from '../../api-client';
+import { loggedIn } from '../../redux/session/actionFactory';
+import { apiService } from '../../utilities/apiService';
+import { selectConfig } from '../../hooks/selectors';
 
 const App: FC = () => {
   useEffect(() => {
     loadConfig();
   }, []);
 
-  const selectConfig = (state: RootState) => state.config;
   const config = useSelector(selectConfig);
+  const dispatch = useDispatch();
 
   const [loginRequest, setLoginRequest] = useState<LoginRequestDto>({
     username: '',
@@ -54,8 +56,15 @@ const App: FC = () => {
     });
   };
 
-  const onLoginClicked = () => {
-    console.log('login clicked');
+  const onLoginClicked = async () => {
+    const request: ApiSessionsPostRequest = {
+      loginRequestDto: loginRequest,
+    };
+
+    const session = await apiService.sessions.apiSessionsPost(request);
+
+    const action = loggedIn(session.user);
+    dispatch(action);
   };
 
   return (
