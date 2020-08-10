@@ -1,5 +1,5 @@
 export enum ConfigActionTypes {
-  UpdateUserConfig = 'Config_UpdateUserConfig',
+  UserConfigChanged = 'Config_UserConfigChanged',
   UserConfigLoaded = 'Config_UserConfig',
   EnvironmentConfigLoaded = 'Config_EnvironmentConfigLoaded'
 }

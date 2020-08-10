@@ -2,9 +2,9 @@ import { UserConfig, EnvironmentConfig } from '../../model/configuration';
 import { UpdateUserConfigAction, UserConfigLoadedAction, EnvironmentConfigLoadedAction } from './actions';
 import { ConfigActionTypes } from './actionTypes';
 
-export function updateUserConfig(config: UserConfig): UpdateUserConfigAction {
+export function userConfigChanged(config: UserConfig): UpdateUserConfigAction {
   return {
-    type: ConfigActionTypes.UpdateUserConfig,
+    type: ConfigActionTypes.UserConfigChanged,
     value: config,
   };
 }

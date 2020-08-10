@@ -7,7 +7,7 @@ export function configReducer(
   action: ConfigAction,
 ): ConfigState {
   switch (action.type) {
-    case ConfigActionTypes.UpdateUserConfig:
+    case ConfigActionTypes.UserConfigChanged:
       return {
         ...state,
         user: action.value,

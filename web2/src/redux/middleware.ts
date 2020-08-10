@@ -4,8 +4,18 @@ import * as Log from '../utilities/log';
 
 // eslint-disable-next-line  max-len
 export const logMiddleware = (store: MiddlewareAPI) => (next: Dispatch) => (action: RootAction): RootAction => {
-  Log.info('dispatching', action);
+  const oldState = store.getState();
+  const shouldLog = oldState.config.user.logRedux as boolean;
+
+  if (shouldLog) {
+    Log.info('dispatching', action);
+  }
+
   const result = next(action);
-  Log.info('next state', store.getState());
+
+  if (shouldLog) {
+    Log.info('next state', store.getState());
+  }
+
   return result;
 };

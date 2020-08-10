@@ -8,6 +8,7 @@ export type ConfigState = {
 export const defaultConfigState: ConfigState = {
   user: {
     favoriteWord: 'scrupulous',
+    logRedux: false,
   },
   environment: {
     apiUrl: '',

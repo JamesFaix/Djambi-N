@@ -2,7 +2,7 @@ import { ConfigActionTypes } from './actionTypes';
 import { UserConfig, EnvironmentConfig } from '../../model/configuration';
 
 export type UpdateUserConfigAction = {
-  type: typeof ConfigActionTypes.UpdateUserConfig,
+  type: typeof ConfigActionTypes.UserConfigChanged,
   value: UserConfig
 };
 
