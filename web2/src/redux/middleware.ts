@@ -14,7 +14,8 @@ export const logMiddleware = (store: MiddlewareAPI) => (next: Dispatch) => (acti
   const result = next(action);
 
   if (shouldLog) {
-    Log.info('next state', store.getState());
+    const newState = store.getState();
+    Log.info('next state', newState);
   }
 
   return result;

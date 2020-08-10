@@ -1,11 +1,10 @@
 import React, { FC, useEffect, ChangeEvent } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import logo from '../../assets/logo.svg';
 import './App.css';
 import NavigationDrawer from '../NavigationDrawer/NavigationDrawer';
-import { loadConfig } from '../../utilities/configService';
+import { loadConfig, setUserConfig } from '../../utilities/configService';
 import { RootState } from '../../redux/root';
-import { userConfigChanged } from '../../redux/config/actionFactory';
 
 const App: FC = () => {
   useEffect(() => {
@@ -14,24 +13,23 @@ const App: FC = () => {
 
   const selectConfig = (state: RootState) => state.config;
   const config = useSelector(selectConfig);
-  const dispatch = useDispatch();
 
   const onLogReduxChanged = (e: ChangeEvent<HTMLInputElement>) => {
     const isChecked = e.target.checked;
-    const action = userConfigChanged({
+    const newConfig = {
       ...config.user,
       logRedux: isChecked,
-    });
-    dispatch(action);
+    };
+    setUserConfig(newConfig);
   };
 
   const onFavoriteWordChanged = (e: ChangeEvent<HTMLInputElement>) => {
     const word = e.target.value;
-    const action = userConfigChanged({
+    const newConfig = {
       ...config.user,
       favoriteWord: word,
-    });
-    dispatch(action);
+    };
+    setUserConfig(newConfig);
   };
 
   return (
