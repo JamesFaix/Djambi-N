@@ -1,5 +1,6 @@
 export type UserConfig = {
   favoriteWord: string;
+  logRedux: boolean;
 };
 
 export type EnvironmentConfig = {
@@ -9,13 +10,4 @@ export type EnvironmentConfig = {
 export type Config = {
   environment: EnvironmentConfig;
   user: UserConfig;
-};
-
-export const defaultConfig: Config = {
-  environment: {
-    apiUrl: 'default api url',
-  },
-  user: {
-    favoriteWord: 'default favorite word',
-  },
 };
