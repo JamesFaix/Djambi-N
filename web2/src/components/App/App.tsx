@@ -1,10 +1,13 @@
-import React, { FC, useEffect, ChangeEvent } from 'react';
+import React, {
+  FC, useEffect, ChangeEvent, useState,
+} from 'react';
 import { useSelector } from 'react-redux';
 import logo from '../../assets/logo.svg';
 import './App.css';
 import NavigationDrawer from '../NavigationDrawer/NavigationDrawer';
 import { loadConfig, setUserConfig } from '../../utilities/configService';
 import { RootState } from '../../redux/root';
+import { LoginRequestDto } from '../../api-client';
 
 const App: FC = () => {
   useEffect(() => {
@@ -13,6 +16,11 @@ const App: FC = () => {
 
   const selectConfig = (state: RootState) => state.config;
   const config = useSelector(selectConfig);
+
+  const [loginRequest, setLoginRequest] = useState<LoginRequestDto>({
+    username: '',
+    password: '',
+  });
 
   const onLogReduxChanged = (e: ChangeEvent<HTMLInputElement>) => {
     const isChecked = e.target.checked;
@@ -30,6 +38,24 @@ const App: FC = () => {
       favoriteWord: word,
     };
     setUserConfig(newConfig);
+  };
+
+  const onUsernameChanged = (e: ChangeEvent<HTMLInputElement>) => {
+    setLoginRequest({
+      ...loginRequest,
+      username: e.target.value,
+    });
+  };
+
+  const onPasswordChanged = (e: ChangeEvent<HTMLInputElement>) => {
+    setLoginRequest({
+      ...loginRequest,
+      password: e.target.value,
+    });
+  };
+
+  const onLoginClicked = () => {
+    console.log('login clicked');
   };
 
   return (
@@ -58,6 +84,31 @@ const App: FC = () => {
             checked={config.user.logRedux}
             onChange={onLogReduxChanged}
           />
+        </p>
+        <p>
+          <form>
+            <h2>Login</h2>
+            Username:
+            <input
+              type="text"
+              value={loginRequest.username}
+              onChange={onUsernameChanged}
+            />
+            <br />
+            Password:
+            <input
+              type="password"
+              value={loginRequest.password}
+              onChange={onPasswordChanged}
+            />
+            <br />
+            <button
+              type="submit"
+              onClick={onLoginClicked}
+            >
+              Login
+            </button>
+          </form>
         </p>
       </header>
     </div>
