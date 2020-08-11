@@ -6,10 +6,13 @@ import logo from '../../assets/logo.svg';
 import './App.css';
 import NavigationDrawer from '../NavigationDrawer/NavigationDrawer';
 import { loadConfig, setUserConfig } from '../../utilities/configService';
-import { LoginRequestDto, ApiSessionsPostRequest } from '../../api-client';
+import {
+  LoginRequestDto, ApiSessionsPostRequest, CreateUserRequestDto, ApiUsersPostRequest,
+} from '../../api-client';
 import { loggedIn } from '../../redux/session/actionFactory';
 import { apiService } from '../../utilities/apiService';
 import { selectConfig } from '../../hooks/selectors';
+import SignupForm from '../pages/SignupForm/SignupForm';
 
 const App: FC = () => {
   useEffect(() => {
@@ -21,6 +24,11 @@ const App: FC = () => {
 
   const [loginRequest, setLoginRequest] = useState<LoginRequestDto>({
     username: '',
+    password: '',
+  });
+
+  const [createUserRequest, setCreateUserRequest] = useState<CreateUserRequestDto>({
+    name: '',
     password: '',
   });
 
@@ -42,30 +50,65 @@ const App: FC = () => {
     setUserConfig(newConfig);
   };
 
-  const onUsernameChanged = (e: ChangeEvent<HTMLInputElement>) => {
+  // #region Login
+
+  const onLoginUsernameChanged = (e: ChangeEvent<HTMLInputElement>) => {
     setLoginRequest({
       ...loginRequest,
       username: e.target.value,
     });
   };
 
-  const onPasswordChanged = (e: ChangeEvent<HTMLInputElement>) => {
+  const onLoginPasswordChanged = (e: ChangeEvent<HTMLInputElement>) => {
     setLoginRequest({
       ...loginRequest,
       password: e.target.value,
     });
   };
 
-  const onLoginClicked = async () => {
+  const onLoginClicked = () => {
     const request: ApiSessionsPostRequest = {
       loginRequestDto: loginRequest,
     };
 
-    const session = await apiService.sessions.apiSessionsPost(request);
+    apiService.sessions.apiSessionsPost(request)
+      .then((session) => {
+        const action = loggedIn(session.user);
+        dispatch(action);
+      });
 
-    const action = loggedIn(session.user);
-    dispatch(action);
+    return false;
   };
+
+  // #endregion
+
+  // #region Signup
+
+  const onSignupUsernameChanged = (e: ChangeEvent<HTMLInputElement>) => {
+    setCreateUserRequest({
+      ...createUserRequest,
+      name: e.target.value,
+    });
+  };
+
+  const onSignupPasswordChanged = (e: ChangeEvent<HTMLInputElement>) => {
+    setCreateUserRequest({
+      ...createUserRequest,
+      password: e.target.value,
+    });
+  };
+
+  const onSignupClicked = () => {
+    const request: ApiUsersPostRequest = {
+      createUserRequestDto: createUserRequest,
+    };
+
+    apiService.users.apiUsersPost(request);
+
+    return false;
+  };
+
+  // #endregion
 
   return (
     <div className="App">
@@ -94,31 +137,31 @@ const App: FC = () => {
             onChange={onLogReduxChanged}
           />
         </p>
-        <p>
-          <form>
-            <h2>Login</h2>
-            Username:
-            <input
-              type="text"
-              value={loginRequest.username}
-              onChange={onUsernameChanged}
-            />
-            <br />
-            Password:
-            <input
-              type="password"
-              value={loginRequest.password}
-              onChange={onPasswordChanged}
-            />
-            <br />
-            <button
-              type="submit"
-              onClick={onLoginClicked}
-            >
-              Login
-            </button>
-          </form>
-        </p>
+        <form>
+          <h2>Login</h2>
+          Username:
+          <input
+            type="text"
+            value={loginRequest.username}
+            onChange={onLoginUsernameChanged}
+          />
+          <br />
+          Password:
+          <input
+            type="password"
+            value={loginRequest.password}
+            onChange={onLoginPasswordChanged}
+          />
+          <br />
+          <button
+            type="button"
+            onClick={onLoginClicked}
+          >
+            Login
+          </button>
+        </form>
+        <SignupForm />
+
       </header>
     </div>
   );
