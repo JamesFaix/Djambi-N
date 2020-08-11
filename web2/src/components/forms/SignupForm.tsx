@@ -3,10 +3,9 @@ import {
   FormControl, FormLabel, Button, TextField, FormControlLabel, FormGroup,
 } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
-import { apiService } from '../../../utilities/apiService';
-import { ApiUsersPostRequest, ApiSessionsPostRequest } from '../../../api-client';
-import { LoggedInAction } from '../../../redux/session/actions';
-import { loggedIn } from '../../../redux/session/actionFactory';
+import { apiService } from '../../utilities/apiService';
+import { ApiUsersPostRequest, ApiSessionsPostRequest } from '../../api-client';
+import { loggedIn } from '../../redux/session/actionFactory';
 
 type SignupFormState = {
   username: string,
