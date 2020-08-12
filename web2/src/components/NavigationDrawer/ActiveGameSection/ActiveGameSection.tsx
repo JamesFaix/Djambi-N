@@ -8,10 +8,10 @@ import {
   PlayArrow as PlayIcon,
 } from '@material-ui/icons';
 import { GameInfo } from '../../../model/game';
-import { navigateTo } from '../../../utilities/navigation';
 import NavigationItem from '../NavigationItem';
 import { sectionHeaderStyle } from '../styles';
 import { GameStatus } from '../../../api-client';
+import * as Routes from '../../../utilities/routes';
 
 const ActiveGameSection: FC<{ game: GameInfo | null }> = ({ game }) => {
   const headerStyle = sectionHeaderStyle();
@@ -41,14 +41,14 @@ const ActiveGameSection: FC<{ game: GameInfo | null }> = ({ game }) => {
         <NavigationItem
           text="Lobby"
           icon={<LobbyIcon />}
-          onClick={() => navigateTo(`/games/${game.id}/lobby`)}
+          path={Routes.gameLobby(game.id)}
         />
 
         {[GameStatus.InProgress, GameStatus.Over].includes(game.status) ? (
           <NavigationItem
             text="Resume"
             icon={<PlayIcon />}
-            onClick={() => navigateTo(`/games/${game.id}/play`)}
+            path={Routes.gamePlay(game.id)}
           />
         ) : undefined}
 
@@ -56,7 +56,7 @@ const ActiveGameSection: FC<{ game: GameInfo | null }> = ({ game }) => {
           <NavigationItem
             text="Diplomacy"
             icon={<DiplomacyIcon />}
-            onClick={() => navigateTo(`/games/${game.id}/diplomacy`)}
+            path={Routes.gameDiplomacy(game.id)}
           />
         ) : undefined}
 
@@ -64,14 +64,14 @@ const ActiveGameSection: FC<{ game: GameInfo | null }> = ({ game }) => {
         <NavigationItem
           text="Snapshots"
           icon={<SnapshotsIcon />}
-          onClick={() => navigateTo(`/games/${game.id}/snapshots`)}
+          path={Routes.gameSnapshots(game.id)}
         />
 
         {game.status === GameStatus.Over ? (
           <NavigationItem
             text="Outcome"
             icon={<ResultsIcon />}
-            onClick={() => navigateTo(`/games/${game.id}/outcome`)}
+            path={Routes.gameOutcome(game.id)}
           />
         ) : undefined}
       </List>

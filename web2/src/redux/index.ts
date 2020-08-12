@@ -7,3 +7,5 @@ export const store = createStore(
   defaultRootState,
   applyMiddleware(logMiddleware),
 );
+
+export type ApexStore = typeof store;

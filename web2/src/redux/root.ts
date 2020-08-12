@@ -7,26 +7,35 @@ import { ApiClientAction } from './apiClient/actions';
 import { ConfigAction } from './config/actions';
 import { ApiClientActionTypes } from './apiClient/actionTypes';
 import { ConfigActionTypes } from './config/actionTypes';
+import { SessionState, defaultSessionState } from './session/state';
+import { SessionActionTypes } from './session/actionTypes';
+import { SessionAction } from './session/actions';
+import { sessionReducer } from './session/reducer';
 
 export type RootState = {
   apiClient: ApiClientState,
-  config: ConfigState
+  config: ConfigState,
+  session: SessionState
 };
 
 export type RootActionTypes =
   ApiClientActionTypes |
-  ConfigActionTypes;
+  ConfigActionTypes |
+  SessionActionTypes;
 
 export type RootAction =
   ApiClientAction |
-  ConfigAction;
+  ConfigAction |
+  SessionAction;
 
 export const defaultRootState: RootState = {
   apiClient: defaultApiClientState,
   config: defaultConfigState,
+  session: defaultSessionState,
 };
 
 export const rootReducer = combineReducers({
   apiClient: apiClientReducer,
   config: configReducer,
+  session: sessionReducer,
 });

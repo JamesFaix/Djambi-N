@@ -10,21 +10,22 @@ import {
   Gavel as RulesIcon,
   Settings as SettingsIcon,
 } from '@material-ui/icons';
-import { UserInfo } from '../../../model/game';
-import { navigateTo } from '../../../utilities/navigation';
+import { useSelector } from 'react-redux';
 import NavigationItem from '../NavigationItem';
+import { selectSession } from '../../../hooks/selectors';
+import * as Routes from '../../../utilities/routes';
 
 const getUnauthenticatedItems = () => (
   <>
     <NavigationItem
       text="Sign in"
       icon={<SignInIcon />}
-      onClick={() => navigateTo('/sign-in')}
+      path={Routes.signIn}
     />
     <NavigationItem
       text="Create account"
       icon={<CreateAccountIcon />}
-      onClick={() => navigateTo('/create-account')}
+      path={Routes.createAccount}
     />
   </>
 );
@@ -34,22 +35,22 @@ const getAuthenticatedItems = () => (
     <NavigationItem
       text="Home"
       icon={<HomeIcon />}
-      onClick={() => navigateTo('/home')}
+      path={Routes.home}
     />
     <NavigationItem
       text="New game"
       icon={<NewGameIcon />}
-      onClick={() => navigateTo('/new-game')}
+      path={Routes.newGame}
     />
     <NavigationItem
       text="Search games"
       icon={<SearchIcon />}
-      onClick={() => navigateTo('/search-games')}
+      path={Routes.searchGames}
     />
     <NavigationItem
       text="Sign out"
       icon={<SignOutIcon />}
-      onClick={() => navigateTo('/sign-out')}
+      path={Routes.signOut}
     />
   </>
 );
@@ -59,21 +60,25 @@ const getConstantItems = () => (
     <NavigationItem
       text="Settings"
       icon={<SettingsIcon />}
-      onClick={() => navigateTo('/settings')}
+      path={Routes.settings}
     />
     <NavigationItem
       text="Rules"
       icon={<RulesIcon />}
-      onClick={() => navigateTo('/rules')}
+      path={Routes.rules}
     />
   </>
 );
 
-const GamelessSection: FC<{ user: UserInfo | null }> = ({ user }) => (
-  <List>
-    {user ? getAuthenticatedItems() : getUnauthenticatedItems()}
-    {getConstantItems()}
-  </List>
-);
+const GamelessSection: FC = () => {
+  const session = useSelector(selectSession);
+
+  return (
+    <List>
+      {session.user ? getAuthenticatedItems() : getUnauthenticatedItems()}
+      {getConstantItems()}
+    </List>
+  );
+};
 
 export default GamelessSection;
