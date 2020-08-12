@@ -12,6 +12,7 @@ import CreateAccountForm from '../forms/CreateAccountForm';
 import SignInForm from '../forms/SignInForm';
 import UserConfigForm from '../forms/UserConfigForm';
 import * as Routes from '../../utilities/routes';
+import NoMatchPage from '../pages/NoMatchPage';
 
 const App: FC = () => {
   useEffect(() => {
@@ -27,15 +28,10 @@ const App: FC = () => {
         </header>
         <div style={{ padding: '20px' }}>
           <Switch>
-            <Route path={Routes.settings}>
-              <UserConfigForm />
-            </Route>
-            <Route path={Routes.signIn}>
-              <SignInForm />
-            </Route>
-            <Route path={Routes.createAccount}>
-              <CreateAccountForm />
-            </Route>
+            <Route path={Routes.settings} component={UserConfigForm} />
+            <Route path={Routes.signIn} component={SignInForm} />
+            <Route path={Routes.createAccount} component={CreateAccountForm} />
+            <Route component={NoMatchPage} />
           </Switch>
         </div>
       </BrowserRouter>
