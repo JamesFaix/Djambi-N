@@ -7,19 +7,19 @@ import { apiService } from '../../utilities/apiService';
 import { ApiUsersPostRequest, ApiSessionsPostRequest } from '../../api-client';
 import { loggedIn } from '../../redux/session/actionFactory';
 
-type SignupFormState = {
+type FormState = {
   username: string,
   password1: string,
   password2: string
 };
 
-const defaultState: SignupFormState = {
+const defaultState: FormState = {
   username: '',
   password1: '',
   password2: '',
 };
 
-const SignupForm: FC = () => {
+const CreateAccountForm: FC = () => {
   const [state, setState] = useState(defaultState);
   const dispatch = useDispatch();
 
@@ -114,7 +114,7 @@ const SignupForm: FC = () => {
             onClick={onSubmitClicked}
             style={controlStyle}
           >
-            Create account
+            Submit
           </Button>
         </FormGroup>
       </FormControl>
@@ -122,4 +122,4 @@ const SignupForm: FC = () => {
   );
 };
 
-export default SignupForm;
+export default CreateAccountForm;

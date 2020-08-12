@@ -8,8 +8,8 @@ import logo from '../../assets/logo.svg';
 import './App.css';
 import NavigationDrawer from '../NavigationDrawer/NavigationDrawer';
 import { loadConfig } from '../../utilities/configService';
-import SignupForm from '../forms/SignupForm';
-import LoginForm from '../forms/LoginForm';
+import CreateAccountForm from '../forms/CreateAccountForm';
+import SignInForm from '../forms/SignInForm';
 import UserConfigForm from '../forms/UserConfigForm';
 import * as Routes from '../../utilities/routes';
 
@@ -31,10 +31,10 @@ const App: FC = () => {
               <UserConfigForm />
             </Route>
             <Route path={Routes.signIn}>
-              <LoginForm />
+              <SignInForm />
             </Route>
             <Route path={Routes.createAccount}>
-              <SignupForm />
+              <CreateAccountForm />
             </Route>
           </Switch>
         </div>

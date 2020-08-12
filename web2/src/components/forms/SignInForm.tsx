@@ -7,17 +7,17 @@ import { apiService } from '../../utilities/apiService';
 import { ApiSessionsPostRequest } from '../../api-client';
 import { loggedIn } from '../../redux/session/actionFactory';
 
-type LoginFormState = {
+type FormState = {
   username: string,
   password: string
 };
 
-const defaultState: LoginFormState = {
+const defaultState: FormState = {
   username: '',
   password: '',
 };
 
-const LoginForm: FC = () => {
+const SignInForm: FC = () => {
   const [state, setState] = useState(defaultState);
   const dispatch = useDispatch();
 
@@ -51,7 +51,7 @@ const LoginForm: FC = () => {
   return (
     <div>
       <FormControl component="fieldset">
-        <FormLabel>Log in</FormLabel>
+        <FormLabel>Sign in</FormLabel>
         <FormGroup>
           <FormControlLabel
             value={state.username}
@@ -80,7 +80,7 @@ const LoginForm: FC = () => {
             onClick={onSubmitClicked}
             style={controlStyle}
           >
-            Log in
+            Submit
           </Button>
         </FormGroup>
       </FormControl>
@@ -88,4 +88,4 @@ const LoginForm: FC = () => {
   );
 };
 
-export default LoginForm;
+export default SignInForm;
