@@ -2,7 +2,7 @@ import React, { FC, useState, ChangeEvent } from 'react';
 import {
   FormControl, FormLabel, Button, TextField, FormControlLabel, FormGroup, Checkbox,
 } from '@material-ui/core';
-import { setUserConfig } from '../../utilities/configService';
+import { setUserConfig } from '../../utilities/config';
 import { UserConfig } from '../../model/configuration';
 
 type FormState = {

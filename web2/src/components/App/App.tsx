@@ -7,7 +7,7 @@ import {
 import logo from '../../assets/logo.svg';
 import './App.css';
 import NavigationDrawer from '../NavigationDrawer/NavigationDrawer';
-import { loadConfig } from '../../utilities/configService';
+import { loadConfig } from '../../utilities/config';
 import CreateAccountForm from '../forms/CreateAccountForm';
 import SignInForm from '../forms/SignInForm';
 import UserConfigForm from '../forms/UserConfigForm';

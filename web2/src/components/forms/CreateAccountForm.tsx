@@ -3,7 +3,7 @@ import {
   FormControl, FormLabel, Button, TextField, FormControlLabel, FormGroup,
 } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
-import * as Api from '../../utilities/apiService';
+import * as Api from '../../utilities/api';
 import { ApiUsersPostRequest, ApiSessionsPostRequest } from '../../api-client';
 import { loggedIn } from '../../redux/session/actionFactory';
 

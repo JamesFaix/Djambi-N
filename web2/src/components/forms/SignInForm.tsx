@@ -5,7 +5,7 @@ import {
 import { useDispatch } from 'react-redux';
 import { ApiSessionsPostRequest } from '../../api-client';
 import { loggedIn } from '../../redux/session/actionFactory';
-import * as Api from '../../utilities/apiService';
+import * as Api from '../../utilities/api';
 
 type FormState = {
   username: string,
