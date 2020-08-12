@@ -3,7 +3,7 @@ import {
   FormControl, FormLabel, Button, TextField, FormControlLabel, FormGroup,
 } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
-import { apiService } from '../../utilities/apiService';
+import * as Api from '../../utilities/apiService';
 import { ApiUsersPostRequest, ApiSessionsPostRequest } from '../../api-client';
 import { loggedIn } from '../../redux/session/actionFactory';
 
@@ -45,7 +45,7 @@ const CreateAccountForm: FC = () => {
         password: state.password1,
       },
     };
-    await apiService.users.apiUsersPost(createUserparams);
+    await Api.users().apiUsersPost(createUserparams);
 
     const loginParams: ApiSessionsPostRequest = {
       loginRequestDto: {
@@ -53,7 +53,7 @@ const CreateAccountForm: FC = () => {
         password: state.password1,
       },
     };
-    const session = await apiService.sessions.apiSessionsPost(loginParams);
+    const session = await Api.sessions().apiSessionsPost(loginParams);
 
     const action = loggedIn(session.user);
     dispatch(action);

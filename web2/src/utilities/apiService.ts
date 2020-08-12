@@ -13,7 +13,7 @@ import {
   UserApi,
 } from '../api-client';
 import { RootState } from '../redux/root';
-import { ApexStore, store } from '../redux';
+import { store } from '../redux';
 
 function getApiUrl(state: RootState): string {
   return state.config.environment.apiUrl;
@@ -30,7 +30,7 @@ function getConfigParams(apiUrl: string): ConfigurationParameters {
   };
 }
 
-function getConfig(store: ApexStore): Configuration {
+function getConfig(): Configuration {
   const state = store.getState();
   const apiUrl = getApiUrl(state);
   const params = getConfigParams(apiUrl);
@@ -38,62 +38,52 @@ function getConfig(store: ApexStore): Configuration {
   return config;
 }
 
-class ApiService {
-  constructor(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    private store: ApexStore,
-  ) {
-  }
-
-  get boards(): BoardApi {
-    const config = getConfig(this.store);
-    return new BoardApi(config);
-  }
-
-  get events(): EventApi {
-    const config = getConfig(this.store);
-    return new EventApi(config);
-  }
-
-  get games(): GameApi {
-    const config = getConfig(this.store);
-    return new GameApi(config);
-  }
-
-  get notifications(): NotificationApi {
-    const config = getConfig(this.store);
-    return new NotificationApi(config);
-  }
-
-  get players(): PlayerApi {
-    const config = getConfig(this.store);
-    return new PlayerApi(config);
-  }
-
-  get search(): SearchApi {
-    const config = getConfig(this.store);
-    return new SearchApi(config);
-  }
-
-  get sessions(): SessionApi {
-    const config = getConfig(this.store);
-    return new SessionApi(config);
-  }
-
-  get snapshots(): SnapshotApi {
-    const config = getConfig(this.store);
-    return new SnapshotApi(config);
-  }
-
-  get turns(): TurnApi {
-    const config = getConfig(this.store);
-    return new TurnApi(config);
-  }
-
-  get users(): UserApi {
-    const config = getConfig(this.store);
-    return new UserApi(config);
-  }
+export function boards(): BoardApi {
+  const config = getConfig();
+  return new BoardApi(config);
 }
 
-export const apiService = new ApiService(store);
+export function events(): EventApi {
+  const config = getConfig();
+  return new EventApi(config);
+}
+
+export function games(): GameApi {
+  const config = getConfig();
+  return new GameApi(config);
+}
+
+export function notifications(): NotificationApi {
+  const config = getConfig();
+  return new NotificationApi(config);
+}
+
+export function players(): PlayerApi {
+  const config = getConfig();
+  return new PlayerApi(config);
+}
+
+export function search(): SearchApi {
+  const config = getConfig();
+  return new SearchApi(config);
+}
+
+export function sessions(): SessionApi {
+  const config = getConfig();
+  return new SessionApi(config);
+}
+
+export function snapshots(): SnapshotApi {
+  const config = getConfig();
+  return new SnapshotApi(config);
+}
+
+export function turns(): TurnApi {
+  const config = getConfig();
+  return new TurnApi(config);
+}
+
+export function users(): UserApi {
+  const config = getConfig();
+  return new UserApi(config);
+}
