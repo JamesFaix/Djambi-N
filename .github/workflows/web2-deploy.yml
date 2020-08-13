@@ -32,6 +32,11 @@ jobs:
       run: npm run build
       working-directory: ./web2
 
+    - name: Update environment config file
+      run: sed -i 's|http://localhost:5100|${{ secrets.AWS_API_URL }}|g' build/env.json
+        # Must use custom delimiter with sed because paths have /'s
+      working-directory: ./web2
+
     - name: Deploy to S3
       uses: jakejarvis/s3-sync-action@master
       with:
