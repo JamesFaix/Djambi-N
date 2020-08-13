@@ -8,12 +8,12 @@ import logo from '../../assets/logo.svg';
 import './App.css';
 import NavigationDrawer from '../NavigationDrawer/NavigationDrawer';
 import { loadConfig } from '../../utilities/config';
-import CreateAccountForm from '../forms/CreateAccountForm';
-import SignInForm from '../forms/SignInForm';
-import UserConfigForm from '../forms/UserConfigForm';
 import * as Routes from '../../utilities/routes';
 import NoMatchPage from '../pages/NoMatchPage';
 import RedirectBasedOnStore from '../routing/RedirectBasedOnStore';
+import CreateAccountPage from '../pages/CreateAccountPage';
+import SignInPage from '../pages/SignInPage';
+import UserConfigPage from '../pages/UserConfigPage';
 
 const App: FC = () => {
   useEffect(() => {
@@ -30,9 +30,9 @@ const App: FC = () => {
         </header>
         <div style={{ padding: '20px' }}>
           <Switch>
-            <Route path={Routes.settings} component={UserConfigForm} />
-            <Route path={Routes.signIn} component={SignInForm} />
-            <Route path={Routes.createAccount} component={CreateAccountForm} />
+            <Route path={Routes.settings} component={UserConfigPage} />
+            <Route path={Routes.signIn} component={SignInPage} />
+            <Route path={Routes.createAccount} component={CreateAccountPage} />
             <Route component={NoMatchPage} />
           </Switch>
         </div>
