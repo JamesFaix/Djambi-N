@@ -3,12 +3,12 @@ module Apex.Api.IntegrationTests.TestUtilities
 
 open System
 open System.Linq
+open System.Threading.Tasks
 open FSharp.Control.Tasks
 open Apex.Api.Db.Interfaces
+open Apex.Api.Enums
 open Apex.Api.Logic.Interfaces
 open Apex.Api.Model
-open Apex.Api.Enums
-open System.Threading.Tasks
 
 let random = Random()
 let randomAlphanumericString (length : int) : string =
@@ -84,13 +84,12 @@ let createuserSessionAndGame(allowGuests : bool) : Task<(User * Session * Game)>
 
 let fillEmptyPlayerSlots (game : Game) : Task<Game> =
     let host = HostFactory.createHost()
-    let gameRepo = host.Get<IGameRepository>()
     task {
         let missingPlayerCount = game.parameters.regionCount - game.players.Length
         for i in Enumerable.Range(0, missingPlayerCount) do
             let name = sprintf "neutral%i" (i+1)
-            let request = CreatePlayerRequest.neutral name
-            let! _ = host.Get<IGameRepository>().addPlayer (game.id, request)
+            let player = CreatePlayerRequest.neutral name |> CreatePlayerRequest.toPlayer None
+            let! _ = host.Get<IPlayerRepository>().addPlayer (game.id, player, true)
             ()
 
         return! host.Get<IGameRepository>().getGame game.id

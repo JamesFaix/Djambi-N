@@ -1,15 +1,16 @@
 namespace Apex.Api.IntegrationTests.Logic.GameManager
 
 open System
+open System.Data.Entity.Core
+open System.Threading.Tasks
 open FSharp.Control.Tasks
 open Xunit
 open Apex.Api.Common.Control
+open Apex.Api.Enums
 open Apex.Api.IntegrationTests
 open Apex.Api.Logic
-open Apex.Api.Model
 open Apex.Api.Logic.Interfaces
-open Apex.Api.Enums
-open System.Threading.Tasks
+open Apex.Api.Model
 
 type SelectCellTests() =
     inherit TestsBase()
@@ -122,13 +123,12 @@ type SelectCellTests() =
             let cellId = updatedGame.currentTurn.Value.selectionOptions.Head
 
             //Act/Assert
-            let! ex = Assert.ThrowsAsync<HttpException>(fun () ->
+            let! ex = Assert.ThrowsAsync<ObjectNotFoundException>(fun () ->
                 task {
                     return! host.Get<ITurnManager>().selectCell (Int32.MinValue, cellId) session
                 } :> Task
             )
             
-            ex.statusCode |> shouldBe 404
             ex.Message |> shouldBe "Game not found."
         }
 
@@ -146,13 +146,12 @@ type SelectCellTests() =
             let updatedGame = resp.game
 
             //Act/Assert
-            let! ex = Assert.ThrowsAsync<HttpException>(fun () ->
+            let! ex = Assert.ThrowsAsync<NotFoundException>(fun () ->
                 task {
                     return! host.Get<ITurnManager>().selectCell (updatedGame.id, Int32.MinValue) session
                 } :> Task
             )
 
-            ex.statusCode |> shouldBe 404
             ex.Message |> shouldBe "Cell not found."
         }
 
@@ -175,12 +174,11 @@ type SelectCellTests() =
                                        |> (not << List.exists (fun cId -> cId = n)))
 
             //Act/Assert
-            let! ex = Assert.ThrowsAsync<HttpException>(fun () ->
+            let! ex = Assert.ThrowsAsync<GameRuleViolationException>(fun () ->
                 task {
                     return! host.Get<ITurnManager>().selectCell (updatedGame.id, cellId) session
                 } :> Task
             )
 
-            ex.statusCode |> shouldBe 400
             ex.Message |> shouldBe (sprintf "Cell %i is not currently selectable." cellId)
         }

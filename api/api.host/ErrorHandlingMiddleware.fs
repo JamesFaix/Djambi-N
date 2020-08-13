@@ -4,26 +4,32 @@ open System
 open System.ComponentModel
 open System.ComponentModel.DataAnnotations
 open System.Data
+open System.Data.Entity.Core
 open System.Security.Authentication
 open System.Threading.Tasks
-open Apex.Api.Common.Control
 open FSharp.Control.Tasks
 open Microsoft.AspNetCore.Http
 open Microsoft.AspNetCore.Mvc
-open Newtonsoft.Json
 open MySql.Data.MySqlClient
+open Newtonsoft.Json
 open Serilog
+open Apex.Api.Common.Control
 
 type ErrorHandlingMiddleware(next : RequestDelegate) =
 
     let getStatus (ex : Exception) : int =
         match ex with
-        | :? AuthenticationException -> 401
+        | :? GameConfigurationException -> 400
+        | :? GameRuleViolationException -> 400
         | :? InvalidEnumArgumentException -> 400
+        | :? InvalidWebRequestException -> 400
         | :? ValidationException -> 400
+        | :? AuthenticationException -> 401
         | :? UnauthorizedAccessException -> 403
+        | :? NotFoundException -> 404
+        | :? ObjectNotFoundException -> 404
         | :? DuplicateNameException -> 409
-        | :? HttpException as e -> e.statusCode
+        | :? ApexWebsocketException -> 500
         | _ -> 500
 
     let getMessage (ex : Exception) : string =

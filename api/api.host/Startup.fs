@@ -23,6 +23,7 @@ open Apex.Api.Web
 open Apex.Api.Web.Controllers
 open Apex.Api.Db.Model
 open Apex.Api.Enums
+open Newtonsoft.Json.Converters
 
 type Startup() =
 
@@ -51,10 +52,10 @@ type Startup() =
 
         // ASP.NET
         services.AddCors(fun opt ->
-            let webAddress = __.Configuration.GetValue<string>("Api:WebAddress")
+            let allowedOrigins = __.Configuration.GetValue<string>("Api:AllowedOrigins").Split(',')
             opt.AddPolicy("ApiCorsPolicy", fun builder -> 
                 builder
-                    .WithOrigins(webAddress)
+                    .WithOrigins(allowedOrigins)
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials()
@@ -62,8 +63,10 @@ type Startup() =
             )
         ) |> ignore
         services.AddControllers()
-            .AddNewtonsoftJson() |> ignore
-
+            .AddNewtonsoftJson(fun options -> 
+               options.SerializerSettings.Converters.Add(new StringEnumConverter())
+            ) |> ignore
+        
         // Configuration
         services.Configure<AppSettings>(__.Configuration) |> ignore
         services.Configure<SqlSettings>(__.Configuration.GetSection("Sql")) |> ignore
@@ -75,6 +78,7 @@ type Startup() =
 
         // Swagger
         services.AddSwaggerGen(fun opt -> configureSwagger opt) |> ignore
+        services.AddSwaggerGenNewtonsoftSupport() |> ignore
 
         // Entity Framework
         services.AddDbContext<ApexDbContext>(fun opt -> 
@@ -88,6 +92,7 @@ type Startup() =
         // Database layer
         services.AddScoped<IEventRepository, EventRepository>() |> ignore
         services.AddScoped<IGameRepository, GameRepository>() |> ignore
+        services.AddScoped<IPlayerRepository, PlayerRepository>() |> ignore
         services.AddScoped<ISearchRepository, SearchRepository>() |> ignore
         services.AddScoped<ISessionRepository, SessionRepository>() |> ignore
         services.AddScoped<ISnapshotRepository, SnapshotRepository>() |> ignore

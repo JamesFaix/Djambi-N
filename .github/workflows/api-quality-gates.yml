@@ -19,8 +19,7 @@ on:
       - .github/workflows/api-quality-gates.yml
 
 jobs:
-  build:
-
+  build_and_test:
     runs-on: ubuntu-latest
 
     steps:
@@ -31,12 +30,33 @@ jobs:
       with:
         dotnet-version: 3.1.301
 
-    - name: Install dependencies
+    - name: Restore dotnet tools
+      run: dotnet tool restore
+      working-directory: ./api
+
+    - name: Restore packages
       run: dotnet restore
+      working-directory: ./api
 
     - name: Build
-      run: dotnet build --configuration Release --no-restore
+      run: dotnet build -c Release --no-restore
+      working-directory: ./api
 
-    - name: Test
-      run: dotnet test --no-restore --verbosity normal
+    - name: Run unit tests
+      run: dotnet test -c Release --no-build -v normal
       working-directory: ./api/tests/api.unitTests
+
+    - name: Run integration tests
+      run: dotnet test -c Release --no-build -v normal
+      working-directory: ./api/tests/api.integrationTests
+      env:
+        APEX_Sql__UseSqliteForTesting: true
+
+  build_docker:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Build image
+      run: docker build -t apex_api-prod -f api/Dockerfile .

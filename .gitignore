@@ -12,3 +12,5 @@ paket-files
 *.user
 *.log
 *.zip
+apex-local.session.sql
+rest-client-generator/openapi-generator-cli.jar

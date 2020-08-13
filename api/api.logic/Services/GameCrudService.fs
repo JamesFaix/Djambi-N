@@ -32,7 +32,7 @@ type GameCrudService(gameRepo : IGameRepository) =
 
     member x.getUpdateGameParametersEvent (game : Game, parameters : GameParameters) (session : Session) : CreateEventRequest =
         if game.status <> GameStatus.Pending
-        then raise <| HttpException (400, "Cannot change game parameters unless game is Pending.")
+        then raise <| GameConfigurationException("Cannot change game parameters unless game is Pending.")
         Security.ensureCreatorOrEditPendingGames session game
 
         let effects = new ArrayList<Effect>()

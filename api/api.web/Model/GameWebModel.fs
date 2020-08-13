@@ -5,31 +5,51 @@ open System.ComponentModel.DataAnnotations
 open Apex.Api.Enums
 
 type PlayerDto = {
+    [<Required>]
     id : int
+    
+    [<Required>]
     gameId : int
+    
     userId : Nullable<int>
+    
+    [<Required>]
     kind : PlayerKind
 
     [<Required>]
     name : string
 
+    [<Required>]
     status : PlayerStatus
+    
     colorId : Nullable<int>
     startingRegion : Nullable<int>
     startingTurnNumber : Nullable<int>
 }
 
 type PieceDto = {
+    [<Required>]
     id : int
+    
+    [<Required>]
     kind : PieceKind
+    
     playerId : Nullable<int>
+    
+    [<Required>]
     originalPlayerId : int
+    
+    [<Required>]
     cellId : int
 }
 
 type SelectionDto = {
+    [<Required>]
     kind : SelectionKind
+    
+    [<Required>]
     cellId : int
+    
     pieceId : Nullable<int>
 }
 
@@ -55,14 +75,18 @@ type GameParametersDto = {
     [<StringLength(100)>]
     description : string
     
+    [<Required>]
     regionCount : int
     
+    [<Required>]
     isPublic : bool
     
+    [<Required>]
     allowGuests : bool
 }
 
 type GameDto = {
+    [<Required>]
     id : int
 
     [<Required>]
@@ -71,6 +95,7 @@ type GameDto = {
     [<Required>]
     parameters : GameParametersDto
 
+    [<Required>]
     status : GameStatus
 
     [<Required>]

@@ -3,12 +3,18 @@
 open System.ComponentModel.DataAnnotations
 
 type LocationDto = {
+    [<Required>]
     region : int
+    
+    [<Required>]
     x : int
+    
+    [<Required>]
     y : int
 }
 
 type CellDto = {
+    [<Required>]
     id : int
 
     [<Required>]
@@ -16,8 +22,10 @@ type CellDto = {
 }
 
 type BoardDto = {
+    [<Required>]
     regionCount : int
 
+    [<Required>]
     regionSize : int
     
     [<Required>]

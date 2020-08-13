@@ -5,6 +5,7 @@ open System.ComponentModel.DataAnnotations
 open Apex.Api.Enums
 
 type UserDto = {
+    [<Required>]
     id : int
 
     [<Required>]
@@ -27,10 +28,12 @@ type CreateUserRequestDto = {
 }
 
 type CreationSourceDto = {
+    [<Required>]
     userId : int
 
     [<Required>]
     userName : string
 
+    [<Required>]
     time : DateTime
 }

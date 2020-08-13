@@ -1,19 +1,22 @@
 ﻿namespace Apex.Api.Db.Repositories
 
-open Apex.Api.Db.Interfaces
-open Apex.Api.Db.Model
-open System.Linq
-open Microsoft.EntityFrameworkCore
-open FSharp.Control.Tasks
-open Apex.Api.Db.Mappings
-open Apex.Api.Model
-open System.ComponentModel
-open Apex.Api.Common.Control
-open System.Threading.Tasks
 open System
-open Newtonsoft.Json
+open System.ComponentModel
+open System.Linq
+open FSharp.Control.Tasks
+open Microsoft.EntityFrameworkCore
+open Apex.Api.Common.Control
+open Apex.Api.Db.Interfaces
+open Apex.Api.Db.Mappings
+open Apex.Api.Db.Model
+open Apex.Api.Model
+open System.Data
+open System.Data.Entity.Core
 
-type EventRepository(context : ApexDbContext) =
+type EventRepository(context : ApexDbContext,
+                     gameRepo : IGameRepository,
+                     playerRepo : IPlayerRepository) =
+
     let playerNameTakenMessage = 
         "The instance of entity type 'PlayerSqlModel' cannot be tracked because another " + 
         "instance with the same key value for {'GameId', 'Name'} is already being tracked."
@@ -94,81 +97,27 @@ type EventRepository(context : ApexDbContext) =
                 )
                 |> Seq.filter (fun (o, n) -> o <> n)
                 |> Seq.map (fun (_, n) -> n)
-
-            let addPlayer(player : Player) : Task<Player> =
-                task {
-                    let p = player |> toPlayerSqlModel
-                    p.PlayerId <- 0
-                    p.GameId <- gameId
-
-                    // This should really be handled in the logic layer
-                    // Putting here because before it was in a stored proc :(
-                    if String.IsNullOrEmpty(p.Name)
-                    then
-                        let! user = context.Users.FindAsync(p.UserId)
-                        p.Name <- user.Name
-
-                    let! _ = context.Players.AddAsync(p)
-                    return p |> toPlayer
-                }
-
-            let removePlayer(playerId : int) : Task<unit> =
-                task {
-                    let! p = context.Players.SingleOrDefaultAsync(fun p -> p.Game.GameId = gameId && p.PlayerId = playerId)
-                    if p = null
-                    then raise <| HttpException(404, "Not found.")
-
-                    context.Players.Remove(p) |> ignore
-                    return ()
-                }
-
-            let updatePlayer(playerSqlModel : PlayerSqlModel, player : Player) : Task<unit> =
-                task {
-                    playerSqlModel.PlayerStatusId <- player.status
-                    playerSqlModel.ColorId <- player.colorId |> Option.map byte |> Option.toNullable
-                    playerSqlModel.StartingRegion <- player.startingRegion |> Option.map byte |> Option.toNullable
-                    playerSqlModel.StartingTurnNumber <- player.startingTurnNumber |> Option.map byte |> Option.toNullable
-                    // Other properties cannot be mutated
-                    context.Players.Update(playerSqlModel) |> ignore
-                    return ()
-                }
-
+            
             task {
                 let! g = context.Games.FindAsync(gameId)
                 if g = null
-                then raise <| HttpException(404, "Not found.")
+                then raise <| ObjectNotFoundException("Game not found.")
 
                 use! transaction = context.Database.BeginTransactionAsync()
                 try
                     // Update game
-                    g.AllowGuests <- newGame.parameters.allowGuests
-                    g.IsPublic <- newGame.parameters.isPublic
-                    g.Description <- newGame.parameters.description |> Option.toObj
-                    g.RegionCount <- byte newGame.parameters.regionCount
-                    g.CurrentTurnJson <- newGame.currentTurn |> JsonConvert.SerializeObject
-                    g.TurnCycleJson <- newGame.turnCycle |> JsonConvert.SerializeObject
-                    g.PiecesJson <- newGame.pieces |> JsonConvert.SerializeObject
-                    g.GameStatusId <- newGame.status
-                    context.Games.Update(g) |> ignore
+                    let! _ = gameRepo.updateGame(newGame, false)
 
                     // Update players
                     for p in removedPlayers do
-                        let! _ = removePlayer(p.id)
+                        let! _ = playerRepo.removePlayer(gameId, p.id)
                         ()
                     for p in addedPlayers do
-                        let! _ = addPlayer(p)
+                        let! _ = playerRepo.addPlayer(gameId, p)
                         ()
 
-                    let! playerSqlModels = context.Players.Where(fun p -> p.GameId = gameId).ToListAsync()
-                    let updates = 
-                        modifiedPlayers.Join(
-                            playerSqlModels, 
-                            (fun p -> p.id), 
-                            (fun sqlModel -> sqlModel.PlayerId),
-                            (fun player sqlModel -> (player, sqlModel)))
-
-                    for (player, sqlModel) in updates do
-                        let! _ = updatePlayer(sqlModel, player)
+                    for p in modifiedPlayers do
+                        let! _ = playerRepo.updatePlayer(gameId, p)
                         ()
 
                     // Save event               
@@ -198,5 +147,5 @@ type EventRepository(context : ApexDbContext) =
                     return response
                 with
                 | :? InvalidOperationException as ex when ex.Message.StartsWith(playerNameTakenMessage) ->
-                    return raise <| HttpException(409, "Conflict when attempting to write Event.")
+                    return raise <| DuplicateNameException("Player name taken.")
             }

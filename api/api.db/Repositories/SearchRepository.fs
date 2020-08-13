@@ -1,15 +1,15 @@
 ﻿namespace Apex.Api.Db.Repositories
 
 open System
+open System.Data.Entity.Core
+open System.Linq
+open FSharp.Control.Tasks
+open Microsoft.EntityFrameworkCore
 open Apex.Api.Db.Interfaces
 open Apex.Api.Db.Model
-open FSharp.Control.Tasks
 open Apex.Api.Db.Mappings
-open System.Linq
-open Apex.Api.Model
-open Apex.Api.Common.Control
-open Microsoft.EntityFrameworkCore
 open Apex.Api.Enums
+open Apex.Api.Model
 
 type SearchRepository(context : ApexDbContext) =
 
@@ -22,7 +22,8 @@ type SearchRepository(context : ApexDbContext) =
                         .SingleOrDefaultAsync(fun u -> u.UserId = currentUserId)
 
                 if currentUser = null
-                then raise <| HttpException(404, "Not found.")
+                // TODO: This should probably 500 not 404
+                then raise <| ObjectNotFoundException("User not found.")
                 
                 // Note: LINQ-to-SQL below
                 // Using wordy conditional building of IQueryable rather than higher-order-functions
@@ -93,12 +94,18 @@ type SearchRepository(context : ApexDbContext) =
                 match query.lastEventBefore with
                 | None -> ()
                 | Some x ->
-                    q <- q.Where(fun g -> g.Events.OrderBy(fun e -> e.CreatedOn).Last().CreatedOn < x)
+                    q <- q.Where(fun g -> 
+                        not (g.Events.Any()) || // Pending games have 0 events 
+                        g.Events.OrderBy(fun e -> e.CreatedOn).Last().CreatedOn < x
+                    )
 
                 match query.lastEventAfter with
                 | None -> ()
                 | Some x ->
-                    q <- q.Where(fun g -> g.Events.OrderBy(fun e -> e.CreatedOn).Last().CreatedOn > x)
+                    q <- q.Where(fun g -> 
+                        not (g.Events.Any()) || // Pending games have 0 events
+                        g.Events.OrderBy(fun e -> e.CreatedOn).Last().CreatedOn > x
+                    )
 
                 // Actually get data from SQL
                 let! sqlModels = q.ToListAsync()
