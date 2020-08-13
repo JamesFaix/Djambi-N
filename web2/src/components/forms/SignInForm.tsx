@@ -2,10 +2,7 @@ import React, { FC, useState, ChangeEvent } from 'react';
 import {
   FormControl, FormLabel, Button, TextField, FormControlLabel, FormGroup,
 } from '@material-ui/core';
-import { useDispatch } from 'react-redux';
-import { ApiSessionsPostRequest } from '../../api-client';
-import { loggedIn } from '../../redux/session/actionFactory';
-import * as Api from '../../utilities/api';
+import { signIn } from '../../controllers/userController';
 
 type FormState = {
   username: string,
@@ -19,7 +16,6 @@ const defaultState: FormState = {
 
 const SignInForm: FC = () => {
   const [state, setState] = useState(defaultState);
-  const dispatch = useDispatch();
 
   const onUsernameChanged = (e: ChangeEvent<HTMLInputElement>) => setState({
     ...state,
@@ -31,17 +27,11 @@ const SignInForm: FC = () => {
     password: e.target.value,
   });
 
-  const onSubmitClicked = async () => {
-    const loginParams: ApiSessionsPostRequest = {
-      loginRequestDto: {
-        username: state.username,
-        password: state.password,
-      },
-    };
-    const session = await Api.sessions().apiSessionsPost(loginParams);
-
-    const action = loggedIn(session.user);
-    dispatch(action);
+  const onSubmitClicked = () => {
+    signIn({
+      username: state.username,
+      password: state.password,
+    });
   };
 
   const controlStyle = {

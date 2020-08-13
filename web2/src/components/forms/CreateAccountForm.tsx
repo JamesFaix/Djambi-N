@@ -2,10 +2,7 @@ import React, { FC, useState, ChangeEvent } from 'react';
 import {
   FormControl, FormLabel, Button, TextField, FormControlLabel, FormGroup,
 } from '@material-ui/core';
-import { useDispatch } from 'react-redux';
-import * as Api from '../../utilities/api';
-import { ApiUsersPostRequest, ApiSessionsPostRequest } from '../../api-client';
-import { loggedIn } from '../../redux/session/actionFactory';
+import { createAccount } from '../../controllers/userController';
 
 type FormState = {
   username: string,
@@ -21,7 +18,6 @@ const defaultState: FormState = {
 
 const CreateAccountForm: FC = () => {
   const [state, setState] = useState(defaultState);
-  const dispatch = useDispatch();
 
   const onUsernameChanged = (e: ChangeEvent<HTMLInputElement>) => setState({
     ...state,
@@ -38,25 +34,11 @@ const CreateAccountForm: FC = () => {
     password2: e.target.value,
   });
 
-  const onSubmitClicked = async () => {
-    const createUserparams: ApiUsersPostRequest = {
-      createUserRequestDto: {
-        name: state.username,
-        password: state.password1,
-      },
-    };
-    await Api.users().apiUsersPost(createUserparams);
-
-    const loginParams: ApiSessionsPostRequest = {
-      loginRequestDto: {
-        username: state.username,
-        password: state.password1,
-      },
-    };
-    const session = await Api.sessions().apiSessionsPost(loginParams);
-
-    const action = loggedIn(session.user);
-    dispatch(action);
+  const onSubmitClicked = () => {
+    createAccount({
+      name: state.username,
+      password: state.password1,
+    });
   };
 
   const passwordsDontMatch = (state.password1 !== state.password2)
