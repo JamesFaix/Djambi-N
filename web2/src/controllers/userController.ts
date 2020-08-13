@@ -2,7 +2,7 @@ import {
   CreateUserRequestDto, ApiUsersPostRequest, ApiSessionsPostRequest, LoginRequestDto,
 } from '../api-client';
 import * as Api from '../utilities/api';
-import { loggedIn } from '../redux/session/actionFactory';
+import { loggedIn, restored } from '../redux/session/actionFactory';
 import { store } from '../redux';
 
 export async function signIn(request: LoginRequestDto): Promise<void> {
@@ -31,4 +31,10 @@ export async function createAccount(request: CreateUserRequestDto): Promise<void
     username: request.name,
     password: request.password,
   });
+}
+
+export async function restoreSession(): Promise<void> {
+  const user = await Api.users().apiUsersCurrentGet();
+  const action = restored(user);
+  store.dispatch(action);
 }

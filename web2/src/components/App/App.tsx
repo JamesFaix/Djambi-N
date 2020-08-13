@@ -14,10 +14,12 @@ import RedirectBasedOnStore from '../routing/RedirectBasedOnStore';
 import CreateAccountPage from '../pages/CreateAccountPage';
 import SignInPage from '../pages/SignInPage';
 import UserConfigPage from '../pages/UserConfigPage';
+import { restoreSession } from '../../controllers/userController';
 
 const App: FC = () => {
   useEffect(() => {
-    loadConfig();
+    loadConfig()
+      .then(() => restoreSession()); // Must happen after environment config is loaded
   }, []);
 
   return (

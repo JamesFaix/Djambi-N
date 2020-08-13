@@ -1,5 +1,5 @@
 import { UserDto } from '../../api-client';
-import { LoggedInAction, LoggedOutAction } from './actions';
+import { LoggedInAction, LoggedOutAction, RestoredAction } from './actions';
 import { SessionActionTypes } from './actionTypes';
 
 export function loggedIn(user: UserDto): LoggedInAction {
@@ -12,5 +12,12 @@ export function loggedIn(user: UserDto): LoggedInAction {
 export function loggedOut(): LoggedOutAction {
   return {
     type: SessionActionTypes.LoggedOut,
+  };
+}
+
+export function restored(user: UserDto): RestoredAction {
+  return {
+    type: SessionActionTypes.Restored,
+    user,
   };
 }

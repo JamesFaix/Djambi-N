@@ -10,6 +10,12 @@ export type LoggedOutAction = {
   type: typeof SessionActionTypes.LoggedOut,
 };
 
+export type RestoredAction = {
+  type: typeof SessionActionTypes.Restored,
+  user: UserDto
+};
+
 export type SessionAction =
   LoggedInAction |
-  LoggedOutAction;
+  LoggedOutAction |
+  RestoredAction;
