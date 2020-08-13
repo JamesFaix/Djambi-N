@@ -4,7 +4,6 @@ import React, {
 import {
   BrowserRouter, Switch, Route,
 } from 'react-router-dom';
-import logo from '../../assets/logo.svg';
 import './App.css';
 import NavigationDrawer from '../NavigationDrawer/NavigationDrawer';
 import { loadConfig } from '../../utilities/config';
@@ -15,6 +14,7 @@ import CreateAccountPage from '../pages/CreateAccountPage';
 import SignInPage from '../pages/SignInPage';
 import UserConfigPage from '../pages/UserConfigPage';
 import { restoreSession } from '../../controllers/userController';
+import TopBar from '../TopBar/TopBar';
 
 const App: FC = () => {
   useEffect(() => {
@@ -27,9 +27,7 @@ const App: FC = () => {
       <BrowserRouter>
         <RedirectBasedOnStore />
         <NavigationDrawer />
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" style={{ width: '200px' }} />
-        </header>
+        <TopBar />
         <div style={{ padding: '20px' }}>
           <Switch>
             <Route path={Routes.settings} component={UserConfigPage} />
