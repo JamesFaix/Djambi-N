@@ -52,10 +52,10 @@ type Startup() =
 
         // ASP.NET
         services.AddCors(fun opt ->
-            let webAddress = __.Configuration.GetValue<string>("Api:WebAddress")
+            let allowedOrigins = __.Configuration.GetValue<string>("Api:AllowedOrigins").Split(',')
             opt.AddPolicy("ApiCorsPolicy", fun builder -> 
                 builder
-                    .WithOrigins(webAddress)
+                    .WithOrigins(allowedOrigins)
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials()

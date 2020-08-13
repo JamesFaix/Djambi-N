@@ -17,7 +17,7 @@ type WebServerSettings = {
 [<CLIMutable>]
 type ApiSettings = {
     apiAddress : string
-    webAddress : string
+    allowedOrigins : string
     cookieDomain : string
     cookieName : string
 }
@@ -56,7 +56,7 @@ module AppSettings =
         }
         api = {
             apiAddress = ""
-            webAddress = ""
+            allowedOrigins = ""
             cookieDomain = ""
             cookieName = ""
         }

@@ -24,7 +24,7 @@ function getConfigParams(apiUrl: string): ConfigurationParameters {
     basePath: apiUrl,
     middleware: [],
     headers: {
-
+      'Content-Type': 'application/json',
     },
     credentials: 'include',
   };
