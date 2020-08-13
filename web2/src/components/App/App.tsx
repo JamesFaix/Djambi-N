@@ -13,6 +13,7 @@ import SignInForm from '../forms/SignInForm';
 import UserConfigForm from '../forms/UserConfigForm';
 import * as Routes from '../../utilities/routes';
 import NoMatchPage from '../pages/NoMatchPage';
+import RedirectBasedOnStore from '../routing/RedirectBasedOnStore';
 
 const App: FC = () => {
   useEffect(() => {
@@ -22,6 +23,7 @@ const App: FC = () => {
   return (
     <div className="App">
       <BrowserRouter>
+        <RedirectBasedOnStore />
         <NavigationDrawer />
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" style={{ width: '200px' }} />
