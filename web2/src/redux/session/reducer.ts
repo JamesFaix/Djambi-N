@@ -19,6 +19,12 @@ export function sessionReducer(
         user: null,
       };
 
+    case SessionActionTypes.Restored:
+      return {
+        ...state,
+        user: action.user,
+      };
+
     default:
       return state;
   }
