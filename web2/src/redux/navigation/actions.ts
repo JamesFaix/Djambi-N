@@ -5,5 +5,15 @@ export type NavigateToAction = {
   value: string
 };
 
+export type OpenNavigationDrawerAction = {
+  type: typeof NavigationActionTypes.OpenDrawer,
+};
+
+export type CloseNavigationDrawerAction = {
+  type: typeof NavigationActionTypes.CloseDrawer,
+};
+
 export type NavigationAction =
-  NavigateToAction;
+  NavigateToAction |
+  OpenNavigationDrawerAction |
+  CloseNavigationDrawerAction;

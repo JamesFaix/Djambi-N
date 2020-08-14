@@ -12,6 +12,19 @@ export function navigationReducer(
         ...state,
         path: action.value,
       };
+
+    case NavigationActionTypes.OpenDrawer:
+      return {
+        ...state,
+        isDrawerOpen: true,
+      };
+
+    case NavigationActionTypes.CloseDrawer:
+      return {
+        ...state,
+        isDrawerOpen: false,
+      };
+
     default:
       return state;
   }

@@ -15,8 +15,13 @@ import { NavigationState, defaultNavigationState } from './navigation/state';
 import { NavigationActionTypes } from './navigation/actionTypes';
 import { NavigationAction } from './navigation/actions';
 import { navigationReducer } from './navigation/reducer';
+import { ActiveGameState, defaultActiveGameState } from './activeGame/state';
+import { ActiveGameActionTypes } from './activeGame/actionTypes';
+import { ActiveGameAction } from './activeGame/actionts';
+import { activeGameReducer } from './activeGame/reducer';
 
 export type RootState = {
+  activeGame: ActiveGameState,
   apiClient: ApiClientState,
   config: ConfigState,
   navigation: NavigationState,
@@ -24,18 +29,21 @@ export type RootState = {
 };
 
 export type RootActionTypes =
+  ActiveGameActionTypes |
   ApiClientActionTypes |
   ConfigActionTypes |
   NavigationActionTypes |
   SessionActionTypes;
 
 export type RootAction =
+  ActiveGameAction |
   ApiClientAction |
   ConfigAction |
   NavigationAction |
   SessionAction;
 
 export const defaultRootState: RootState = {
+  activeGame: defaultActiveGameState,
   apiClient: defaultApiClientState,
   config: defaultConfigState,
   navigation: defaultNavigationState,
@@ -43,6 +51,7 @@ export const defaultRootState: RootState = {
 };
 
 export const rootReducer = combineReducers({
+  activeGame: activeGameReducer,
   apiClient: apiClientReducer,
   config: configReducer,
   navigation: navigationReducer,
