@@ -1,9 +1,12 @@
 import React, { FC } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
-import { Button, Drawer } from '@material-ui/core';
+import { Drawer } from '@material-ui/core';
+import { useSelector } from 'react-redux';
 import GamelessSection from './GamelessSection/GamelessSection';
 import ActiveGameSection from './ActiveGameSection/ActiveGameSection';
+import { selectNavigation } from '../../hooks/selectors';
+import { toggleDrawer } from '../../utilities/navigation';
 
 const useStyles = makeStyles({
   list: {
@@ -16,9 +19,10 @@ const useStyles = makeStyles({
 
 const NavigationDrawer: FC = () => {
   const classes = useStyles();
-  const [isOpen, setIsOpen] = React.useState(true);
+  const state = useSelector(selectNavigation);
+  const isOpen = state.isDrawerOpen;
 
-  const toggleDrawer = (open: boolean) => (event: React.MouseEvent | React.KeyboardEvent) => {
+  const close = (event: React.MouseEvent | React.KeyboardEvent) => {
     if (event.type === 'keydown') {
       const e = event as React.KeyboardEvent;
       if (e.key === 'Tab' || e.key === 'Shift') {
@@ -26,20 +30,20 @@ const NavigationDrawer: FC = () => {
       }
     }
 
-    setIsOpen(open);
+    toggleDrawer(false);
   };
 
   return (
     <div>
-      <Button onClick={toggleDrawer(true)}>Open navigation drawer</Button>
-      <Drawer open={isOpen} onClose={toggleDrawer(false)}>
+      {/* <Button onClick={toggleDrawer(true)}>Open navigation drawer</Button> */}
+      <Drawer open={isOpen} onClose={close}>
         <div
           className={clsx(classes.list, {
             [classes.fullList]: false,
           })}
           role="presentation"
-          onClick={toggleDrawer(false)}
-          onKeyDown={toggleDrawer(false)}
+          onClick={close}
+          onKeyDown={close}
         >
           <GamelessSection />
           <ActiveGameSection />
