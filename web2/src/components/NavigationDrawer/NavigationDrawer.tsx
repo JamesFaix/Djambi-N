@@ -2,8 +2,6 @@ import React, { FC } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, Drawer } from '@material-ui/core';
-import { GameInfo } from '../../model/game';
-import { PlayerKind, GameStatus } from '../../api-client';
 import GamelessSection from './GamelessSection/GamelessSection';
 import ActiveGameSection from './ActiveGameSection/ActiveGameSection';
 
@@ -31,25 +29,6 @@ const NavigationDrawer: FC = () => {
     setIsOpen(open);
   };
 
-  const game: GameInfo | null = {
-    id: 1,
-    description: 'Ultrabattle!!!',
-    createdBy: {
-      userId: 1,
-      userName: 'derp',
-      time: (Date.UTC(2020, 12, 31, 12, 59, 59) as unknown) as Date,
-    },
-    status: GameStatus.InProgress,
-    players: [
-      {
-        id: 1, name: 'derp', kind: PlayerKind.User, userId: 1,
-      },
-      {
-        id: 2, name: 'flerp', kind: PlayerKind.Guest, userId: null,
-      },
-    ],
-  };
-
   return (
     <div>
       <Button onClick={toggleDrawer(true)}>Open navigation drawer</Button>
@@ -63,7 +42,7 @@ const NavigationDrawer: FC = () => {
           onKeyDown={toggleDrawer(false)}
         >
           <GamelessSection />
-          <ActiveGameSection game={game} />
+          <ActiveGameSection />
         </div>
       </Drawer>
     </div>
