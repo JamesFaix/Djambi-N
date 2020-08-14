@@ -15,6 +15,13 @@ import CreateAccountPage from '../pages/CreateAccountPage';
 import SignInPage from '../pages/SignInPage';
 import UserConfigPage from '../pages/UserConfigPage';
 import { restoreSession } from '../../controllers/userController';
+import RulesPage from '../pages/RulesPage';
+import GameDiplomacyPage from '../pages/GameDiplomacyPage';
+import GameLobbyPage from '../pages/GameLobbyPage';
+import GameOutcomePage from '../pages/GameOutcomePage';
+import GameSnapshotsPage from '../pages/GameSnapshotsPage';
+import GamePage from '../pages/GamePage';
+import GamePlayPage from '../pages/GamePlayPage';
 
 const App: FC = () => {
   useEffect(() => {
@@ -35,6 +42,13 @@ const App: FC = () => {
             <Route path={Routes.settings} component={UserConfigPage} />
             <Route path={Routes.signIn} component={SignInPage} />
             <Route path={Routes.createAccount} component={CreateAccountPage} />
+            <Route path={Routes.rules} component={RulesPage} />
+            <Route path={Routes.gameDiplomacyTemplate} component={GameDiplomacyPage} />
+            <Route path={Routes.gameLobbyTemplate} component={GameLobbyPage} />
+            <Route path={Routes.gameOutcomeTemplate} component={GameOutcomePage} />
+            <Route path={Routes.gamePlayTemplate} component={GamePlayPage} />
+            <Route path={Routes.gameSnapshotsTemplate} component={GameSnapshotsPage} />
+            <Route path={Routes.gameTemplate} component={GamePage} />
             <Route component={NoMatchPage} />
           </Switch>
         </div>
