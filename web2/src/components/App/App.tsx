@@ -14,7 +14,18 @@ import CreateAccountPage from '../pages/CreateAccountPage';
 import SignInPage from '../pages/SignInPage';
 import UserConfigPage from '../pages/UserConfigPage';
 import { restoreSession } from '../../controllers/userController';
+import RulesPage from '../pages/RulesPage';
+import GameDiplomacyPage from '../pages/GameDiplomacyPage';
+import GameLobbyPage from '../pages/GameLobbyPage';
+import GameOutcomePage from '../pages/GameOutcomePage';
+import GameSnapshotsPage from '../pages/GameSnapshotsPage';
+import GamePage from '../pages/GamePage';
+import GamePlayPage from '../pages/GamePlayPage';
+import CreateGamePage from '../pages/CreateGamePage';
+import HomePage from '../pages/HomePage';
+import SearchGamesPage from '../pages/SearchGamesPage';
 import TopBar from '../TopBar/TopBar';
+import SignOutPage from '../pages/SignOutPage';
 
 const App: FC = () => {
   useEffect(() => {
@@ -30,9 +41,41 @@ const App: FC = () => {
         <TopBar />
         <div style={{ padding: '20px' }}>
           <Switch>
+            {/* Gameless pages */}
             <Route path={Routes.settings} component={UserConfigPage} />
             <Route path={Routes.signIn} component={SignInPage} />
+            <Route path={Routes.signOut} component={SignOutPage} />
             <Route path={Routes.createAccount} component={CreateAccountPage} />
+            <Route path={Routes.rules} component={RulesPage} />
+            <Route path={Routes.home} component={HomePage} />
+            <Route path={Routes.newGame} component={CreateGamePage} />
+            <Route path={Routes.searchGames} component={SearchGamesPage} />
+            {/* Active game pages */}
+            <Route
+              path={Routes.gameDiplomacyTemplate}
+              render={(props) => <GameDiplomacyPage gameId={props.match.params.gameId} />}
+            />
+            <Route
+              path={Routes.gameLobbyTemplate}
+              render={(props) => <GameLobbyPage gameId={props.match.params.gameId} />}
+            />
+            <Route
+              path={Routes.gameOutcomeTemplate}
+              render={(props) => <GameOutcomePage gameId={props.match.params.gameId} />}
+            />
+            <Route
+              path={Routes.gamePlayTemplate}
+              render={(props) => <GamePlayPage gameId={props.match.params.gameId} />}
+            />
+            <Route
+              path={Routes.gameSnapshotsTemplate}
+              render={(props) => <GameSnapshotsPage gameId={props.match.params.gameId} />}
+            />
+            <Route
+              path={Routes.gameTemplate}
+              render={(props) => <GamePage gameId={props.match.params.gameId} />}
+            />
+            {/* Misc pages */}
             <Route component={NoMatchPage} />
           </Switch>
         </div>

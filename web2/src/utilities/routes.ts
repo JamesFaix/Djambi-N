@@ -14,12 +14,20 @@ export const signIn = '/sign-in';
 
 export const signOut = '/sign-out';
 
+export const game = (gameId: number): string => `/games/${gameId}`;
+export const gameTemplate = '/games/:gameId';
+
 export const gameDiplomacy = (gameId: number): string => `/games/${gameId}/diplomacy`;
+export const gameDiplomacyTemplate = '/games/:gameId/diplomacy';
 
 export const gameLobby = (gameId: number): string => `/games/${gameId}/lobby`;
+export const gameLobbyTemplate = '/games/:gameId/lobby';
 
 export const gameOutcome = (gameId: number): string => `/games/${gameId}/outcome`;
+export const gameOutcomeTemplate = '/games/:gameId/outcome';
 
 export const gamePlay = (gameId: number): string => `/games/${gameId}/play`;
+export const gamePlayTemplate = '/games/:gameId/play';
 
 export const gameSnapshots = (gameId: number): string => `/games/${gameId}/snapshots`;
+export const gameSnapshotsTemplate = '/games/:gameId/snapshots';
