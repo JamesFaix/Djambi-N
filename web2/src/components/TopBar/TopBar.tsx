@@ -2,10 +2,9 @@ import React, { FC } from 'react';
 import {
   AppBar, Toolbar, Typography, makeStyles,
 } from '@material-ui/core';
-import logo from '../../assets/logo.svg';
 import MenuButton from './MenuButton';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   root: {
     flexGrow: 1,
   },
@@ -28,7 +27,6 @@ const TopBar: FC = () => {
           >
             Apex
           </Typography>
-          {/* <img src={logo} className="App-logo" alt="logo" style={{ width: '200px' }} /> */}
         </Toolbar>
       </AppBar>
     </div>

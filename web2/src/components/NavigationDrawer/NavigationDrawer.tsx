@@ -35,7 +35,6 @@ const NavigationDrawer: FC = () => {
 
   return (
     <div>
-      {/* <Button onClick={toggleDrawer(true)}>Open navigation drawer</Button> */}
       <Drawer open={isOpen} onClose={close}>
         <div
           className={clsx(classes.list, {
