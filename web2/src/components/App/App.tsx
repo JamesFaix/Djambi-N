@@ -25,6 +25,7 @@ import CreateGamePage from '../pages/CreateGamePage';
 import HomePage from '../pages/HomePage';
 import SearchGamesPage from '../pages/SearchGamesPage';
 import TopBar from '../TopBar/TopBar';
+import SignOutPage from '../pages/SignOutPage';
 
 const App: FC = () => {
   useEffect(() => {
@@ -43,6 +44,7 @@ const App: FC = () => {
             {/* Gameless pages */}
             <Route path={Routes.settings} component={UserConfigPage} />
             <Route path={Routes.signIn} component={SignInPage} />
+            <Route path={Routes.signOut} component={SignOutPage} />
             <Route path={Routes.createAccount} component={CreateAccountPage} />
             <Route path={Routes.rules} component={RulesPage} />
             <Route path={Routes.home} component={HomePage} />
