@@ -1,11 +1,12 @@
 import React, { FC } from 'react';
 import RedirectToSignInIfSignedOut from '../routing/RedirectToSignInIfSignedOut';
+import { GamePageProps } from './GamePage';
 
-const GameLobbyPage: FC = () => {
+const GameLobbyPage: FC<GamePageProps> = ({ gameId }) => {
   return (
     <div>
       <RedirectToSignInIfSignedOut />
-      Game lobby page
+      {`Game ${gameId} lobby page`}
     </div>
   );
 };
