@@ -22,6 +22,9 @@ import GameOutcomePage from '../pages/GameOutcomePage';
 import GameSnapshotsPage from '../pages/GameSnapshotsPage';
 import GamePage from '../pages/GamePage';
 import GamePlayPage from '../pages/GamePlayPage';
+import CreateGamePage from '../pages/CreateGamePage';
+import HomePage from '../pages/HomePage';
+import SearchGamesPage from '../pages/SearchGamesPage';
 
 const App: FC = () => {
   useEffect(() => {
@@ -39,16 +42,22 @@ const App: FC = () => {
         </header>
         <div style={{ padding: '20px' }}>
           <Switch>
+            {/* Gameless pages */}
             <Route path={Routes.settings} component={UserConfigPage} />
             <Route path={Routes.signIn} component={SignInPage} />
             <Route path={Routes.createAccount} component={CreateAccountPage} />
             <Route path={Routes.rules} component={RulesPage} />
+            <Route path={Routes.home} component={HomePage} />
+            <Route path={Routes.newGame} component={CreateGamePage} />
+            <Route path={Routes.searchGames} component={SearchGamesPage} />
+            {/* Active game pages */}
             <Route path={Routes.gameDiplomacyTemplate} component={GameDiplomacyPage} />
             <Route path={Routes.gameLobbyTemplate} component={GameLobbyPage} />
             <Route path={Routes.gameOutcomeTemplate} component={GameOutcomePage} />
             <Route path={Routes.gamePlayTemplate} component={GamePlayPage} />
             <Route path={Routes.gameSnapshotsTemplate} component={GameSnapshotsPage} />
             <Route path={Routes.gameTemplate} component={GamePage} />
+            {/* Misc pages */}
             <Route component={NoMatchPage} />
           </Switch>
         </div>
