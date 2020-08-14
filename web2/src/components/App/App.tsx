@@ -36,9 +36,12 @@ const theme = createMuiTheme({
 const useStyles = makeStyles({
   app: {
     textAlign: 'center',
+    height: '100%',
   },
   page: {
     padding: '20px',
+    background: '#161616',
+    height: '100%',
   },
 });
 
