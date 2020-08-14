@@ -9,11 +9,13 @@ export function apiClientReducer(
   switch (action.type) {
     case ApiClientActionTypes.RequestSent:
       return {
+        ...state,
         pendingRequestIds: [...state.pendingRequestIds, action.requestId],
       };
 
     case ApiClientActionTypes.ResponseReceived:
       return {
+        ...state,
         pendingRequestIds: state.pendingRequestIds.filter((x) => x !== action.requestId),
       };
 

@@ -4,7 +4,6 @@ import React, {
 import {
   BrowserRouter, Switch, Route,
 } from 'react-router-dom';
-import logo from '../../assets/logo.svg';
 import './App.css';
 import NavigationDrawer from '../NavigationDrawer/NavigationDrawer';
 import { loadConfig } from '../../utilities/config';
@@ -25,6 +24,7 @@ import GamePlayPage from '../pages/GamePlayPage';
 import CreateGamePage from '../pages/CreateGamePage';
 import HomePage from '../pages/HomePage';
 import SearchGamesPage from '../pages/SearchGamesPage';
+import TopBar from '../TopBar/TopBar';
 
 const App: FC = () => {
   useEffect(() => {
@@ -37,9 +37,7 @@ const App: FC = () => {
       <BrowserRouter>
         <RedirectBasedOnStore />
         <NavigationDrawer />
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" style={{ width: '200px' }} />
-        </header>
+        <TopBar />
         <div style={{ padding: '20px' }}>
           <Switch>
             {/* Gameless pages */}

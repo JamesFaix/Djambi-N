@@ -7,14 +7,17 @@ import {
   MeetingRoom as LobbyIcon,
   PlayArrow as PlayIcon,
 } from '@material-ui/icons';
-import { GameInfo } from '../../../model/game';
+import { useSelector } from 'react-redux';
 import NavigationItem from '../NavigationItem';
 import { sectionHeaderStyle } from '../styles';
 import { GameStatus } from '../../../api-client';
 import * as Routes from '../../../utilities/routes';
+import { selectActiveGame } from '../../../hooks/selectors';
 
-const ActiveGameSection: FC<{ game: GameInfo | null }> = ({ game }) => {
+const ActiveGameSection: FC = () => {
   const headerStyle = sectionHeaderStyle();
+  const activeGame = useSelector(selectActiveGame);
+  const { game } = activeGame;
 
   if (game === null) {
     return <></>;
@@ -32,9 +35,9 @@ const ActiveGameSection: FC<{ game: GameInfo | null }> = ({ game }) => {
 
         </Typography>
 
-        {game.description ? (
+        {game.parameters.description ? (
           <Typography variant="h6" className={headerStyle.h6}>
-            {game.description}
+            {game.parameters.description}
           </Typography>
         ) : undefined}
 
