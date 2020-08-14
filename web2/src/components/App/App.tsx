@@ -51,12 +51,30 @@ const App: FC = () => {
             <Route path={Routes.newGame} component={CreateGamePage} />
             <Route path={Routes.searchGames} component={SearchGamesPage} />
             {/* Active game pages */}
-            <Route path={Routes.gameDiplomacyTemplate} component={GameDiplomacyPage} />
-            <Route path={Routes.gameLobbyTemplate} component={GameLobbyPage} />
-            <Route path={Routes.gameOutcomeTemplate} component={GameOutcomePage} />
-            <Route path={Routes.gamePlayTemplate} component={GamePlayPage} />
-            <Route path={Routes.gameSnapshotsTemplate} component={GameSnapshotsPage} />
-            <Route path={Routes.gameTemplate} component={GamePage} />
+            <Route
+              path={Routes.gameDiplomacyTemplate}
+              render={(props) => <GameDiplomacyPage gameId={props.match.params.gameId} />}
+            />
+            <Route
+              path={Routes.gameLobbyTemplate}
+              render={(props) => <GameLobbyPage gameId={props.match.params.gameId} />}
+            />
+            <Route
+              path={Routes.gameOutcomeTemplate}
+              render={(props) => <GameOutcomePage gameId={props.match.params.gameId} />}
+            />
+            <Route
+              path={Routes.gamePlayTemplate}
+              render={(props) => <GamePlayPage gameId={props.match.params.gameId} />}
+            />
+            <Route
+              path={Routes.gameSnapshotsTemplate}
+              render={(props) => <GameSnapshotsPage gameId={props.match.params.gameId} />}
+            />
+            <Route
+              path={Routes.gameTemplate}
+              render={(props) => <GamePage gameId={props.match.params.gameId} />}
+            />
             {/* Misc pages */}
             <Route component={NoMatchPage} />
           </Switch>
