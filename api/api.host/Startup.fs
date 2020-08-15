@@ -62,11 +62,14 @@ type Startup() =
                     |> ignore
             )
         ) |> ignore
+        
         services.AddControllers()
             .AddNewtonsoftJson(fun options -> 
                options.SerializerSettings.Converters.Add(new StringEnumConverter())
             ) |> ignore
         
+        services.AddHealthChecks() |> ignore
+
         // Configuration
         services.Configure<AppSettings>(__.Configuration) |> ignore
         services.Configure<SqlSettings>(__.Configuration.GetSection("Sql")) |> ignore
@@ -179,6 +182,7 @@ type Startup() =
 
         app.UseEndpoints(fun endpoints -> 
             endpoints.MapControllers() |> ignore
+            endpoints.MapHealthChecks("/status") |> ignore
         ) |> ignore
 
         app.UseSwagger() |> ignore
