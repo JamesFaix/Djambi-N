@@ -5,7 +5,7 @@ import { GamePageProps } from './GamePage';
 import { selectActiveGame } from '../../hooks/selectors';
 import { loadGame } from '../../controllers/gameController';
 import { GameStatus } from '../../api-client';
-import PendingLobbyPlayersTable from '../tables/PendingLobbyPlayersTable';
+import PendingGamePlayersTable from '../tables/PendingGamePlayersTable/PendingGamePlayersTable';
 import InProgressLobbyPlayersTable from '../tables/InProgressLobbyPlayersTable';
 
 const GameLobbyPage: FC<GamePageProps> = ({ gameId }) => {
@@ -28,7 +28,7 @@ const GameLobbyPage: FC<GamePageProps> = ({ gameId }) => {
       <br />
       {
         game.status === GameStatus.Pending
-          ? <PendingLobbyPlayersTable />
+          ? <PendingGamePlayersTable />
           : <InProgressLobbyPlayersTable />
       }
     </div>
