@@ -1,4 +1,4 @@
-module Apex.Api.Common.Enum
+module Djambi.Api.Common.Enum
 
 open System
 

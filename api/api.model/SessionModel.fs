@@ -1,8 +1,8 @@
 [<AutoOpen>]
-module Apex.Api.Model.SessionModel
+module Djambi.Api.Model.SessionModel
 
 open System
-open Apex.Api.Model
+open Djambi.Api.Model
 
 type Session =
     {

@@ -1,13 +1,13 @@
-namespace Apex.Api.Logic.Managers
+namespace Djambi.Api.Logic.Managers
 
-open Apex.Api.Model
-open Apex.Api.Logic.Interfaces
-open Apex.Api.Logic
-open Apex.Api.Enums
-open Apex.Api.Db.Interfaces
+open Djambi.Api.Model
+open Djambi.Api.Logic.Interfaces
+open Djambi.Api.Logic
+open Djambi.Api.Enums
+open Djambi.Api.Db.Interfaces
 open FSharp.Control.Tasks
 open System
-open Apex.Api.Common.Control
+open Djambi.Api.Common.Control
 
 type UserManager(encyptionService: IEncryptionService,
                  userRepo : IUserRepository) =

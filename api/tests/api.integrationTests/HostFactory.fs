@@ -1,4 +1,4 @@
-﻿module Apex.Api.IntegrationTests.HostFactory
+﻿module Djambi.Api.IntegrationTests.HostFactory
 
 open System
 open Microsoft.EntityFrameworkCore
@@ -6,12 +6,12 @@ open Microsoft.Extensions.Configuration
 open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.Hosting
 open Serilog
-open Apex.Api.Db.Interfaces
-open Apex.Api.Db.Model
-open Apex.Api.Db.Repositories
-open Apex.Api.Logic.Interfaces
-open Apex.Api.Logic.Managers
-open Apex.Api.Logic.Services
+open Djambi.Api.Db.Interfaces
+open Djambi.Api.Db.Model
+open Djambi.Api.Db.Repositories
+open Djambi.Api.Logic.Interfaces
+open Djambi.Api.Logic.Managers
+open Djambi.Api.Logic.Services
 
 type Host(services : IServiceProvider) =
     member __.Get<'a>() = services.GetService<'a>()
@@ -27,10 +27,10 @@ let createHost() =
         HostBuilder()
             .ConfigureAppConfiguration(fun ctx config ->
                 config.AddJsonFile("appsettings.json") |> ignore
-                config.AddEnvironmentVariables("APEX_") |> ignore
+                config.AddEnvironmentVariables("DJAMBI_") |> ignore
             )
             .ConfigureServices(fun ctx services -> 
-                services.AddDbContext<ApexDbContext>(fun opt -> 
+                services.AddDbContext<DjambiDbContext>(fun opt -> 
                     let settings = ctx.Configuration.GetSection("Sql");
 
                     let couldParse, parsedBool = Boolean.TryParse(settings.GetValue<string>("UseSqliteForTesting"))
@@ -89,7 +89,7 @@ let createHost() =
     let host = builder.Build()
 
     // Make sure the DB is created. This is essential when using Sqlite
-    let dbContext = host.Services.GetService<ApexDbContext>()
+    let dbContext = host.Services.GetService<DjambiDbContext>()
     ensureDbCreatedSafe dbContext
 
     Host(host.Services)

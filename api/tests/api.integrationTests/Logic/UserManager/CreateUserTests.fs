@@ -1,11 +1,11 @@
-namespace Apex.Api.IntegrationTests.Logic.UserManager
+namespace Djambi.Api.IntegrationTests.Logic.UserManager
 
 open FSharp.Control.Tasks
 open Xunit
-open Apex.Api.IntegrationTests
-open Apex.Api.Model
-open Apex.Api.Enums
-open Apex.Api.Logic.Interfaces
+open Djambi.Api.IntegrationTests
+open Djambi.Api.Model
+open Djambi.Api.Enums
+open Djambi.Api.Logic.Interfaces
 open System.Threading.Tasks
 open System.Data
 open System

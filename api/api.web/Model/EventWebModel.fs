@@ -1,8 +1,8 @@
-﻿namespace Apex.Api.Web.Model
+﻿namespace Djambi.Api.Web.Model
 
 open System
 open System.ComponentModel.DataAnnotations
-open Apex.Api.Enums
+open Djambi.Api.Enums
 
 [<AbstractClass>]
 type EffectDto(kind : EffectKind) =

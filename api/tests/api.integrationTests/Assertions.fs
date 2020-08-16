@@ -1,5 +1,5 @@
 [<AutoOpen>]
-module Apex.Api.IntegrationTests.Assertions
+module Djambi.Api.IntegrationTests.Assertions
 
 open Xunit
 

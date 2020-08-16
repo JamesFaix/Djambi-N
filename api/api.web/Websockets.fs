@@ -1,4 +1,4 @@
-﻿namespace Apex.Api.Web.Websockets
+﻿namespace Djambi.Api.Web.Websockets
 
 open System
 open System.Net.WebSockets
@@ -6,9 +6,9 @@ open System.Text
 open System.Threading
 open Newtonsoft.Json
 open Serilog
-open Apex.Api.Common.Control
-open Apex.Api.Logic.Interfaces
-open Apex.Api.Model
+open Djambi.Api.Common.Control
+open Djambi.Api.Logic.Interfaces
+open Djambi.Api.Model
 
 type WebSocketMessage = 
     {
@@ -32,8 +32,8 @@ type WebsocketSubscriber(userId : int,
                 socket.SendAsync(segment, WebSocketMessageType.Text, true, CancellationToken.None)
                 |> Task.toGeneric
             with 
-            | _ -> raise <| ApexWebsocketException("Socket error")
-        else raise <| ApexWebsocketException("Socket closed")
+            | _ -> raise <| DjambiWebsocketException("Socket error")
+        else raise <| DjambiWebsocketException("Socket closed")
     
     interface ISubscriber with
         member x.userId = userId

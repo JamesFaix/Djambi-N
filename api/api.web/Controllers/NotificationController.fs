@@ -1,4 +1,4 @@
-﻿namespace Apex.Api.Web.Controllers
+﻿namespace Djambi.Api.Web.Controllers
 
 open System
 open System.Threading
@@ -9,12 +9,12 @@ open Microsoft.Extensions.Primitives
 open FSharp.Control.Tasks
 open Serilog
 
-open Apex.Api.Common.Control
-open Apex.Api.Logic.Interfaces
-open Apex.Api.Model
-open Apex.Api.Web
-open Apex.Api.Web.Sse
-open Apex.Api.Web.Websockets
+open Djambi.Api.Common.Control
+open Djambi.Api.Logic.Interfaces
+open Djambi.Api.Model
+open Djambi.Api.Web
+open Djambi.Api.Web.Sse
+open Djambi.Api.Web.Websockets
 
 [<ApiController>]
 [<Route("api/notifications")>]

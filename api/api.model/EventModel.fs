@@ -1,7 +1,7 @@
 [<AutoOpen>]
-module Apex.Api.Model.EventModel
+module Djambi.Api.Model.EventModel
 
-open Apex.Api.Enums
+open Djambi.Api.Enums
 
 type CurrentTurnChangedEffect =
     {

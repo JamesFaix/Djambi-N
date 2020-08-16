@@ -1,7 +1,7 @@
 [<AutoOpen>]
-module Apex.Api.Model.GameModel
+module Djambi.Api.Model.GameModel
 
-open Apex.Api.Enums
+open Djambi.Api.Enums
 
 type Player =
     {

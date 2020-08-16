@@ -1,6 +1,6 @@
-namespace Apex.Api.Logic.Managers
+namespace Djambi.Api.Logic.Managers
 
-open Apex.Api.Logic.Interfaces
+open Djambi.Api.Logic.Interfaces
 
 type SessionManager(sessionServ : ISessionService) =
     interface ISessionManager with

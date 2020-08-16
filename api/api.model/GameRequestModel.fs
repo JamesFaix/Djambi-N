@@ -1,9 +1,9 @@
 [<AutoOpen>]
-module Apex.Api.Model.GameRequestModel
+module Djambi.Api.Model.GameRequestModel
 
 open System
 open System.ComponentModel
-open Apex.Api.Enums
+open Djambi.Api.Enums
 
 type CreatePlayerRequest =
     {

@@ -1,10 +1,10 @@
-﻿namespace Apex.Api.Db.Mappings
+﻿namespace Djambi.Api.Db.Mappings
 
-open Apex.Api.Model
+open Djambi.Api.Model
 open System
-open Apex.Api.Db.Model
+open Djambi.Api.Db.Model
 open System.Collections.Generic
-open Apex.Api.Enums
+open Djambi.Api.Enums
 open Newtonsoft.Json
 
 [<AutoOpen>]

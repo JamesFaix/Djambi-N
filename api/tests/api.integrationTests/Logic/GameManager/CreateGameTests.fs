@@ -1,11 +1,11 @@
-namespace Apex.Api.IntegrationTests.Logic.GameManager
+namespace Djambi.Api.IntegrationTests.Logic.GameManager
 
 open FSharp.Control.Tasks
 open Xunit
-open Apex.Api.IntegrationTests
-open Apex.Api.Model
-open Apex.Api.Logic.Interfaces
-open Apex.Api.Enums
+open Djambi.Api.IntegrationTests
+open Djambi.Api.Model
+open Djambi.Api.Logic.Interfaces
+open Djambi.Api.Enums
 
 type CreateGameTests() =
     inherit TestsBase()

@@ -1,4 +1,4 @@
-﻿namespace Apex.Api.Host
+﻿namespace Djambi.Api.Host
 
 open System
 open System.IO
@@ -13,16 +13,16 @@ open Microsoft.EntityFrameworkCore
 open Serilog
 open Swashbuckle.AspNetCore.SwaggerGen
 
-open Apex.Api.Db.Interfaces
-open Apex.Api.Db.Repositories
-open Apex.Api.Logic.Interfaces
-open Apex.Api.Logic.Managers
-open Apex.Api.Logic.Services
-open Apex.Api.Model.Configuration
-open Apex.Api.Web
-open Apex.Api.Web.Controllers
-open Apex.Api.Db.Model
-open Apex.Api.Enums
+open Djambi.Api.Db.Interfaces
+open Djambi.Api.Db.Repositories
+open Djambi.Api.Logic.Interfaces
+open Djambi.Api.Logic.Managers
+open Djambi.Api.Logic.Services
+open Djambi.Api.Model.Configuration
+open Djambi.Api.Web
+open Djambi.Api.Web.Controllers
+open Djambi.Api.Db.Model
+open Djambi.Api.Enums
 open Newtonsoft.Json.Converters
 
 type Startup() =
@@ -34,8 +34,8 @@ type Startup() =
             let version = "v1"
 
             let info = OpenApiInfo()
-            info.Title <- "Apex API"
-            info.Description <- "API for Apex"
+            info.Title <- "Djambi API"
+            info.Description <- "API for Djambi"
             info.Version <- version
 
             opt.SwaggerDoc(version, info)
@@ -84,7 +84,7 @@ type Startup() =
         services.AddSwaggerGenNewtonsoftSupport() |> ignore
 
         // Entity Framework
-        services.AddDbContext<ApexDbContext>(fun opt -> 
+        services.AddDbContext<DjambiDbContext>(fun opt -> 
             let cnStr = __.Configuration.GetValue<string>("Sql:ConnectionString")
             opt.UseMySql(cnStr) |> ignore
             ()
@@ -187,6 +187,6 @@ type Startup() =
 
         app.UseSwagger() |> ignore
         app.UseSwaggerUI(fun opt -> 
-            opt.SwaggerEndpoint("/swagger/v1/swagger.json", "Apex API V1")        
+            opt.SwaggerEndpoint("/swagger/v1/swagger.json", "Djambi API V1")        
         ) |> ignore
         ()

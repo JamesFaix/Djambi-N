@@ -1,8 +1,8 @@
-namespace Apex.Api.Common.Control
+namespace Djambi.Api.Common.Control
 
 open System
 
-type ApexWebsocketException(message : string) =
+type DjambiWebsocketException(message : string) =
     inherit Exception(message)
 
 type GameConfigurationException(message : string) =

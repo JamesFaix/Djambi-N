@@ -1,16 +1,16 @@
-namespace Apex.Api.IntegrationTests.Logic.GameStartService
+namespace Djambi.Api.IntegrationTests.Logic.GameStartService
 
 open System
 open System.Threading.Tasks
 open FSharp.Control.Tasks
 open Xunit
-open Apex.Api.Common.Control
-open Apex.Api.Db.Interfaces
-open Apex.Api.Enums
-open Apex.Api.IntegrationTests
-open Apex.Api.Logic
-open Apex.Api.Logic.Services
-open Apex.Api.Model
+open Djambi.Api.Common.Control
+open Djambi.Api.Db.Interfaces
+open Djambi.Api.Enums
+open Djambi.Api.IntegrationTests
+open Djambi.Api.Logic
+open Djambi.Api.Logic.Services
+open Djambi.Api.Model
 
 type GetGameStartEventsTests() =
     inherit TestsBase()

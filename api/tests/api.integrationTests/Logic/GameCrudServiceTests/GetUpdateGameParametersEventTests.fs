@@ -1,15 +1,15 @@
-namespace Apex.Api.IntegrationTests.Logic.GameCrudService
+namespace Djambi.Api.IntegrationTests.Logic.GameCrudService
 
 open System
 open FSharp.Control.Tasks
 open Xunit
-open Apex.Api.Common.Control
-open Apex.Api.Db.Interfaces
-open Apex.Api.Enums
-open Apex.Api.IntegrationTests
-open Apex.Api.Logic
-open Apex.Api.Logic.Services
-open Apex.Api.Model
+open Djambi.Api.Common.Control
+open Djambi.Api.Db.Interfaces
+open Djambi.Api.Enums
+open Djambi.Api.IntegrationTests
+open Djambi.Api.Logic
+open Djambi.Api.Logic.Services
+open Djambi.Api.Model
 
 type GetUpdateGameParametersEventTests() =
     inherit TestsBase()

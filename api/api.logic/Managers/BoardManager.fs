@@ -1,11 +1,11 @@
-namespace Apex.Api.Logic.Managers
+namespace Djambi.Api.Logic.Managers
 
-open Apex.Api.Logic.Interfaces
-open Apex.Api.Logic.ModelExtensions
+open Djambi.Api.Logic.Interfaces
+open Djambi.Api.Logic.ModelExtensions
 open System.Threading.Tasks
-open Apex.Api.Common.Control
-open Apex.Api.Logic.ModelExtensions.BoardModelExtensions
-open Apex.Api.Model
+open Djambi.Api.Common.Control
+open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
+open Djambi.Api.Model
 
 type BoardManager() =
     interface IBoardManager with

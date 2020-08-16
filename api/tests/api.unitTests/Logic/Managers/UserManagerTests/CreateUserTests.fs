@@ -1,15 +1,15 @@
-﻿module Apex.Api.UnitTets.Logic.Managers.UserManagerTests.CreateUserTests
+﻿module Djambi.Api.UnitTets.Logic.Managers.UserManagerTests.CreateUserTests
 
 open System
 open System.Threading.Tasks
-open Apex.Api.Logic.Interfaces
-open Apex.Api.Db.Interfaces
-open Apex.Api.Logic.Managers
-open Apex.Api.Model
+open Djambi.Api.Logic.Interfaces
+open Djambi.Api.Db.Interfaces
+open Djambi.Api.Logic.Managers
+open Djambi.Api.Model
 open FakeItEasy
 open FSharp.Control.Tasks
 open Xunit
-open Apex.Api.Enums
+open Djambi.Api.Enums
 
 [<Fact>]
 let ``throws if logged in and no EditUsers privilege``() =

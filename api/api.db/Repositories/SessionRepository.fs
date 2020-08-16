@@ -1,14 +1,14 @@
-﻿namespace Apex.Api.Db.Repositories
+﻿namespace Djambi.Api.Db.Repositories
 
-open Apex.Api.Db.Interfaces
-open Apex.Api.Db.Model
+open Djambi.Api.Db.Interfaces
+open Djambi.Api.Db.Model
 open System
 open FSharp.Control.Tasks
-open Apex.Api.Db.Mappings
+open Djambi.Api.Db.Mappings
 open Microsoft.EntityFrameworkCore
 open System.Security.Authentication
 
-type SessionRepository(context : ApexDbContext) =
+type SessionRepository(context : DjambiDbContext) =
     interface ISessionRepository with
         member __.getSession query =
             task {

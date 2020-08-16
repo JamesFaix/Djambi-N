@@ -1,11 +1,11 @@
-namespace Apex.Api.Logic.Services
+namespace Djambi.Api.Logic.Services
 
-open Apex.Api.Logic.ModelExtensions
-open Apex.Api.Logic.ModelExtensions.BoardModelExtensions
-open Apex.Api.Logic.ModelExtensions.GameModelExtensions
-open Apex.Api.Model
-open Apex.Api.Logic
-open Apex.Api.Enums
+open Djambi.Api.Logic.ModelExtensions
+open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
+open Djambi.Api.Logic.ModelExtensions.GameModelExtensions
+open Djambi.Api.Model
+open Djambi.Api.Logic
+open Djambi.Api.Enums
 open System.ComponentModel
 
 type SelectionOptionsService() =

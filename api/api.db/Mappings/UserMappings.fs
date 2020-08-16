@@ -1,9 +1,9 @@
-﻿namespace Apex.Api.Db.Mappings
+﻿namespace Djambi.Api.Db.Mappings
 
-open Apex.Api.Db.Model
-open Apex.Api.Model
+open Djambi.Api.Db.Model
+open Djambi.Api.Model
 open System.ComponentModel
-open Apex.Api.Enums
+open Djambi.Api.Enums
 
 type ArrayList<'a> = System.Collections.Generic.List<'a>
 
