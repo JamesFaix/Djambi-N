@@ -21,3 +21,4 @@ In the project directory, you can run:
 - Cleaner architecture, avoid spaghetti code of previous version
 - Avoid Redux, use React contexts for state
 - Better logging
+ 
