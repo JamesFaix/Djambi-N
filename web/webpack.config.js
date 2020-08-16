@@ -1,6 +1,6 @@
 const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-//
+
 module.exports = env => {
     console.log(env);
     const isProd = env.NODE_ENV === "production";
