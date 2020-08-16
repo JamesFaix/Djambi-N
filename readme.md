@@ -10,7 +10,7 @@ Apex is an online multiplayer strategy board game in curved space.
   <img src="https://github.com/JamesFaix/Apex/wiki/images/8board.png" width=100/>
 </div>
 
-**CLICK [HERE](http://d1dln0cx9yp4tk.cloudfront.net/) TO PLAY.**
+**VISIT [djambi-n.com](https://djambi-n.com/) TO PLAY.**
 
 For more details, see the [wiki](https://github.com/JamesFaix/Apex/wiki).
 

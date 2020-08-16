@@ -3,7 +3,7 @@
     "Kestrel": {
       "commandName": "Project",
       "environmentVariables": {
-        "APEX_Api__allowedOrigins": "http://localhost:5100,http://localhost:3000",
+        "APEX_Api__allowedOrigins": "http://localhost:8080,http://localhost:3000",
         "APEX_Api__apiAddress": "http://localhost:5100",
         "APEX_Api__cookieDomain": "localhost",
         "APEX_Log__directory": "C:\\Git\\Apex\\logs",
