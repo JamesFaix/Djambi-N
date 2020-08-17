@@ -34,8 +34,8 @@ type Startup() =
             let version = "v1"
 
             let info = OpenApiInfo()
-            info.Title <- "Djambi API"
-            info.Description <- "API for Djambi"
+            info.Title <- "Djambi-N API"
+            info.Description <- "API for Djambi-N"
             info.Version <- version
 
             opt.SwaggerDoc(version, info)
