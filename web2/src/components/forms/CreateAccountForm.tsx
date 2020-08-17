@@ -1,6 +1,6 @@
 import React, { FC, useState, ChangeEvent } from 'react';
 import {
-  FormControl, FormLabel, Button, TextField, FormControlLabel, FormGroup,
+  FormControl, FormLabel, Button, TextField, FormControlLabel, FormGroup, makeStyles, useTheme,
 } from '@material-ui/core';
 import { createAccount } from '../../controllers/userController';
 
@@ -44,9 +44,25 @@ const CreateAccountForm: FC = () => {
   const passwordsDontMatch = (state.password1 !== state.password2)
     && (state.password2 !== '');
 
-  const controlStyle = {
-    padding: '10px',
-  };
+  const theme = useTheme();
+
+  const useStyles = makeStyles({
+    button: {
+      border: '1px',
+      borderStyle: 'solid',
+      padding: '10px',
+      width: '50%',
+      alignSelf: 'center',
+    },
+    control: {
+      padding: '10px',
+    },
+    label: {
+      color: theme.palette.text.secondary,
+    },
+  });
+
+  const styles = useStyles();
 
   return (
     <div>
@@ -57,10 +73,11 @@ const CreateAccountForm: FC = () => {
             value={state.username}
             label="Username"
             labelPlacement="start"
+            className={styles.label}
             control={(
               <TextField
+                className={styles.control}
                 onChange={onUsernameChanged}
-                style={controlStyle}
               />
             )}
           />
@@ -68,13 +85,14 @@ const CreateAccountForm: FC = () => {
             value={state.password1}
             label="Password"
             labelPlacement="start"
+            className={styles.label}
             control={(
               <TextField
                 type="password"
                 onChange={onPassword1Changed}
                 error={passwordsDontMatch}
                 helperText={passwordsDontMatch ? 'Passwords do not match' : undefined}
-                style={controlStyle}
+                className={styles.control}
               />
             )}
           />
@@ -82,19 +100,21 @@ const CreateAccountForm: FC = () => {
             value={state.password2}
             label="Confirm password"
             labelPlacement="start"
+            className={styles.label}
             control={(
               <TextField
                 type="password"
                 onChange={onPassword2Changed}
                 error={passwordsDontMatch}
                 helperText={passwordsDontMatch ? 'Passwords do not match' : undefined}
-                style={controlStyle}
+                className={styles.control}
               />
             )}
           />
+          <br />
           <Button
             onClick={onSubmitClicked}
-            style={controlStyle}
+            className={styles.button}
           >
             Submit
           </Button>

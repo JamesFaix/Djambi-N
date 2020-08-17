@@ -26,12 +26,7 @@ import HomePage from '../pages/HomePage';
 import SearchGamesPage from '../pages/SearchGamesPage';
 import TopBar from '../TopBar/TopBar';
 import SignOutPage from '../pages/SignOutPage';
-
-const theme = createMuiTheme({
-  palette: {
-    type: 'dark',
-  },
-});
+import { theme } from '../../styles/materialTheme';
 
 const useStyles = makeStyles({
   app: {
