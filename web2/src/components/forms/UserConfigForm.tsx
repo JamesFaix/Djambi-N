@@ -1,9 +1,11 @@
-import React, { FC, useState, ChangeEvent } from 'react';
+import React, { FC, useState } from 'react';
 import {
-  FormControl, FormLabel, Button, TextField, FormControlLabel, FormGroup, Checkbox,
+  FormControl, FormLabel, FormGroup,
 } from '@material-ui/core';
 import { setUserConfig } from '../../utilities/config';
-import { UserConfig } from '../../model/configuration';
+import FormTextField from './controls/FormTextField';
+import FormSubmitButton from './controls/FormSubmitButton';
+import FormCheckbox from './controls/FormCheckbox';
 
 type FormState = {
   logRedux: boolean,
@@ -18,62 +20,35 @@ const defaultState: FormState = {
 const UserConfigForm: FC = () => {
   const [state, setState] = useState(defaultState);
 
-  const onLogReduxChanged = (e: ChangeEvent<HTMLInputElement>) => setState({
-    ...state,
-    logRedux: e.target.checked,
-  });
-
-  const onFavoriteWordChanged = (e: ChangeEvent<HTMLInputElement>) => setState({
-    ...state,
-    favoriteWord: e.target.value,
-  });
-
-  const onSubmitClicked = async () => {
-    const config: UserConfig = {
-      logRedux: state.logRedux,
-      favoriteWord: state.favoriteWord,
-    };
-
-    await setUserConfig(config);
-  };
-
-  const controlStyle = {
-    padding: '10px',
-  };
-
   return (
     <div>
       <FormControl component="fieldset">
         <FormLabel>Settings</FormLabel>
         <FormGroup>
-          <FormControlLabel
-            checked={state.logRedux}
+          <FormCheckbox
             label="Log Redux"
-            labelPlacement="start"
-            control={(
-              <Checkbox
-                onChange={onLogReduxChanged}
-                style={controlStyle}
-              />
-            )}
+            value={state.logRedux}
+            onChanged={(e) => setState({
+              ...state,
+              logRedux: e.target.checked,
+            })}
           />
-          <FormControlLabel
-            value={state.favoriteWord}
+          <FormTextField
             label="Favorite word"
-            labelPlacement="start"
-            control={(
-              <TextField
-                onChange={onFavoriteWordChanged}
-                style={controlStyle}
-              />
-            )}
+            value={state.favoriteWord}
+            onChanged={(e) => setState({
+              ...state,
+              favoriteWord: e.target.value,
+            })}
           />
-          <Button
-            onClick={onSubmitClicked}
-            style={controlStyle}
-          >
-            Save
-          </Button>
+          <br />
+          <FormSubmitButton
+            text="Save"
+            onClick={() => setUserConfig({
+              logRedux: state.logRedux,
+              favoriteWord: state.favoriteWord,
+            })}
+          />
         </FormGroup>
       </FormControl>
     </div>
