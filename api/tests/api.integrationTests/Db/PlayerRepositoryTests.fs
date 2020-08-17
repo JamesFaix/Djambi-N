@@ -1,11 +1,11 @@
-﻿namespace Apex.Api.IntegrationTests.Db
+﻿namespace Djambi.Api.IntegrationTests.Db
 
 open FSharp.Control.Tasks
 open Xunit
-open Apex.Api.Db.Interfaces
-open Apex.Api.Enums
-open Apex.Api.IntegrationTests
-open Apex.Api.Model
+open Djambi.Api.Db.Interfaces
+open Djambi.Api.Enums
+open Djambi.Api.IntegrationTests
+open Djambi.Api.Model
 
 type PlayerRepositoryTests() =
     inherit TestsBase()

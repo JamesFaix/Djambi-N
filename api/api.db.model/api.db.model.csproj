@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <RootNamespace>Apex.Api.Db.Model</RootNamespace>
+    <RootNamespace>Djambi.Api.Db.Model</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,6 +1,6 @@
-﻿namespace Apex.Api.Web
+﻿namespace Djambi.Api.Web
 
 open System
     
-type ApexWebsocketException(message : string) =
+type DjambiWebsocketException(message : string) =
     inherit Exception(message)

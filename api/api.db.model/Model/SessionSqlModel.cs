@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Apex.Api.Db.Model
+namespace Djambi.Api.Db.Model
 {
     [Table("Sessions")]
     public class SessionSqlModel

@@ -12,7 +12,7 @@ COPY ["web/", "."]
 # We need to set the environment variables during image building.
 # This gets injected into the JS bundle by Webpack.
 # This is different than a docker-compose file, where environment variables are set for containers.
-ENV APEX_apiAddress="http://localhost:5100"
+ENV DJAMBI_apiAddress="http://localhost:5100"
 RUN npm run build
 
 # Copy artifacts

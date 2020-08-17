@@ -1,9 +1,9 @@
-﻿namespace Apex.Api.IntegrationTests.Logic.sessionServ
+﻿namespace Djambi.Api.IntegrationTests.Logic.sessionServ
 
 open FSharp.Control.Tasks
 open Xunit
-open Apex.Api.IntegrationTests
-open Apex.Api.Logic.Interfaces
+open Djambi.Api.IntegrationTests
+open Djambi.Api.Logic.Interfaces
 
 type GetAndRenewSessionTests() =
     inherit TestsBase()

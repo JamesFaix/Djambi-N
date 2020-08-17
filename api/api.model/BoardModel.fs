@@ -1,5 +1,5 @@
 [<AutoOpen>]
-module Apex.Api.Model.BoardModel
+module Djambi.Api.Model.BoardModel
 
 type Directions =
     | Up = 1

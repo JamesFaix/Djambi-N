@@ -1,7 +1,7 @@
-﻿namespace Apex.Api.Web.Mappings
+﻿namespace Djambi.Api.Web.Mappings
 
-open Apex.Api.Model
-open Apex.Api.Web.Model
+open Djambi.Api.Model
+open Djambi.Api.Web.Model
 
 [<AutoOpen>]
 module GameMapping =

@@ -1,10 +1,10 @@
-namespace Apex.Api.Logic.Services
+namespace Djambi.Api.Logic.Services
 
 open System.Collections.Concurrent
 open Serilog
-open Apex.Api.Common.Control
-open Apex.Api.Logic.Interfaces
-open Apex.Api.Model
+open Djambi.Api.Common.Control
+open Djambi.Api.Logic.Interfaces
+open Djambi.Api.Model
 open System.Threading.Tasks
 open FSharp.Control.Tasks
 
@@ -57,7 +57,7 @@ type NotificationService(log : ILogger) =
                     try 
                         return! s.send response
                     with
-                    | :? ApexWebsocketException ->
+                    | :? DjambiWebsocketException ->
                         (x :> INotificationService).remove s.userId
                         return ()                        
                 } :> Task

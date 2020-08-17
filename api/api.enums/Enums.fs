@@ -1,4 +1,4 @@
-﻿namespace Apex.Api.Enums
+﻿namespace Djambi.Api.Enums
 
 type EffectKind =
     | CurrentTurnChanged = 1

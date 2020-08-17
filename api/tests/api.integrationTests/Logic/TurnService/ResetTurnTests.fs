@@ -1,6 +1,6 @@
-namespace Apex.Api.IntegrationTests.Logic.TurnService
+namespace Djambi.Api.IntegrationTests.Logic.TurnService
 
-open Apex.Api.IntegrationTests
+open Djambi.Api.IntegrationTests
 
 type ResetTurnTests() =
     inherit TestsBase()

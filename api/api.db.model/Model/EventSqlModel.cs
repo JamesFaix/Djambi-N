@@ -1,9 +1,9 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Apex.Api.Enums;
+using Djambi.Api.Enums;
 
-namespace Apex.Api.Db.Model
+namespace Djambi.Api.Db.Model
 {
     [Table("Events")]
     public class EventSqlModel

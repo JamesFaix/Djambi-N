@@ -8,4 +8,4 @@ export const store = createStore(
   applyMiddleware(logMiddleware),
 );
 
-export type ApexStore = typeof store;
+export type DjambiStore = typeof store;

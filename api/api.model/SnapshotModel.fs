@@ -1,5 +1,5 @@
 [<AutoOpen>]
-module Apex.Api.Model.SnapshotModel
+module Djambi.Api.Model.SnapshotModel
 
 type Snapshot =
     {

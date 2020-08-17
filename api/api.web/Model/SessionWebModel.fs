@@ -1,4 +1,4 @@
-﻿namespace Apex.Api.Web.Model
+﻿namespace Djambi.Api.Web.Model
 
 open System
 open System.ComponentModel.DataAnnotations

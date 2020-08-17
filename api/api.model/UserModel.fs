@@ -1,8 +1,8 @@
 [<AutoOpen>]
-module Apex.Api.Model.UserModel
+module Djambi.Api.Model.UserModel
 
 open System
-open Apex.Api.Enums
+open Djambi.Api.Enums
 
 type User =
     {

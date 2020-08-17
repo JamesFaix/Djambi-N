@@ -1,6 +1,6 @@
-﻿namespace Apex.Api.Db.Model
+﻿namespace Djambi.Api.Db.Model
 
-open Apex.Api.Model
+open Djambi.Api.Model
 
 [<CLIMutable>]
 type SnapshotJson = {

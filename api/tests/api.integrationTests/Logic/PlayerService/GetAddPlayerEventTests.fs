@@ -1,15 +1,15 @@
-namespace Apex.Api.IntegrationTests.Logic.PlayerService
+namespace Djambi.Api.IntegrationTests.Logic.PlayerService
 
 open System.Data
 open FSharp.Control.Tasks
 open Xunit
-open Apex.Api.Common.Control
-open Apex.Api.Db.Interfaces
-open Apex.Api.Enums
-open Apex.Api.IntegrationTests
-open Apex.Api.Logic.Interfaces
-open Apex.Api.Logic.Services
-open Apex.Api.Model
+open Djambi.Api.Common.Control
+open Djambi.Api.Db.Interfaces
+open Djambi.Api.Enums
+open Djambi.Api.IntegrationTests
+open Djambi.Api.Logic.Interfaces
+open Djambi.Api.Logic.Services
+open Djambi.Api.Model
 
 type GetAddPlayerEventTests() =
     inherit TestsBase()

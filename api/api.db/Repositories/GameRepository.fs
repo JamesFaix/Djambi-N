@@ -1,15 +1,15 @@
-﻿namespace Apex.Api.Db.Repositories
+﻿namespace Djambi.Api.Db.Repositories
 
 open System.Data.Entity.Core
 open System.Linq
 open FSharp.Control.Tasks
 open Microsoft.EntityFrameworkCore
 open Newtonsoft.Json
-open Apex.Api.Db.Interfaces
-open Apex.Api.Db.Mappings
-open Apex.Api.Db.Model
+open Djambi.Api.Db.Interfaces
+open Djambi.Api.Db.Mappings
+open Djambi.Api.Db.Model
 
-type GameRepository(context : ApexDbContext) =
+type GameRepository(context : DjambiDbContext) =
     let maybeSave (commit : bool) =
         task {
             if commit
