@@ -1,6 +1,6 @@
-# djambi-n
+# Djambi-N
 
-djambi-n is an online multiplayer strategy board game in curved space, based on [Djambi](https://en.wikipedia.org/wiki/Djambi).
+Djambi-N is an online multiplayer strategy board game in curved space, based on [Djambi](https://en.wikipedia.org/wiki/Djambi).
 <div style="display:flex">
   <img src="https://github.com/JamesFaix/djambi-n/wiki/images/3board.png" width=100>
   <img src="https://github.com/JamesFaix/djambi-n/wiki/images/4board.png" width=100/>
