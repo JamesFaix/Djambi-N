@@ -50,7 +50,7 @@ jobs:
       run: dotnet test -c Release --no-build -v normal
       working-directory: ./api/tests/api.integrationTests
       env:
-        APEX_Sql__UseSqliteForTesting: true
+        DJAMBI_Sql__UseSqliteForTesting: true
 
   build_docker:
     runs-on: ubuntu-latest
@@ -59,4 +59,4 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Build image
-      run: docker build -t apex_api-prod -f api/Dockerfile .
+      run: docker build -t djambi_api-prod -f api/Dockerfile .
