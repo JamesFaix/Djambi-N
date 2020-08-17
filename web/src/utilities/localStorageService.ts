@@ -1,6 +1,6 @@
 import { DebugSettings } from "../debug";
 
-const keyPrefix = "Apex_";
+const keyPrefix = "Djambi_";
 
 export default class LocalStorageService {
     static get themeName() : string {

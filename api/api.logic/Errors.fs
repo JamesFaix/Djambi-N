@@ -1,6 +1,6 @@
-module Apex.Api.Logic.Errors
+module Djambi.Api.Logic.Errors
 
-open Apex.Api.Common.Control
+open Djambi.Api.Common.Control
 
 let noPieceInCell<'a>() =
     GameRuleViolationException("No piece in the selected cell.")

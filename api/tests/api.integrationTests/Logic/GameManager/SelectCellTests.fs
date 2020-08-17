@@ -1,16 +1,16 @@
-namespace Apex.Api.IntegrationTests.Logic.GameManager
+namespace Djambi.Api.IntegrationTests.Logic.GameManager
 
 open System
 open System.Data.Entity.Core
 open System.Threading.Tasks
 open FSharp.Control.Tasks
 open Xunit
-open Apex.Api.Common.Control
-open Apex.Api.Enums
-open Apex.Api.IntegrationTests
-open Apex.Api.Logic
-open Apex.Api.Logic.Interfaces
-open Apex.Api.Model
+open Djambi.Api.Common.Control
+open Djambi.Api.Enums
+open Djambi.Api.IntegrationTests
+open Djambi.Api.Logic
+open Djambi.Api.Logic.Interfaces
+open Djambi.Api.Model
 
 type SelectCellTests() =
     inherit TestsBase()

@@ -1,4 +1,4 @@
-module Apex.Api.Common.Collections
+module Djambi.Api.Common.Collections
 
 type ArrayList<'a> = System.Collections.Generic.List<'a>
 

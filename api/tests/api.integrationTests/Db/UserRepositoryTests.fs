@@ -1,9 +1,9 @@
-namespace Apex.Api.IntegrationTests.Db
+namespace Djambi.Api.IntegrationTests.Db
 
 open FSharp.Control.Tasks
 open Xunit
-open Apex.Api.IntegrationTests
-open Apex.Api.Db.Interfaces
+open Djambi.Api.IntegrationTests
+open Djambi.Api.Db.Interfaces
 
 type UserRepositoryTests() =
     inherit TestsBase()

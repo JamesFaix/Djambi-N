@@ -1,12 +1,12 @@
-﻿namespace Apex.Api.IntegrationTests.Logic.SearchManager
+﻿namespace Djambi.Api.IntegrationTests.Logic.SearchManager
 
 open FSharp.Control.Tasks
 open Xunit
-open Apex.Api.IntegrationTests
-open Apex.Api.Model
-open Apex.Api.Logic.Interfaces
-open Apex.Api.Enums
-open Apex.Api.Db.Interfaces
+open Djambi.Api.IntegrationTests
+open Djambi.Api.Model
+open Djambi.Api.Logic.Interfaces
+open Djambi.Api.Enums
+open Djambi.Api.Db.Interfaces
 
 type SearchGamesTests() =
     inherit TestsBase()

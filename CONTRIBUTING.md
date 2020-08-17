@@ -29,4 +29,4 @@ The branching strategy is [GitFlow](https://www.atlassian.com/git/tutorials/comp
 
 ## See also
 
-More information is available on the project [wiki](https://github.com/JamesFaix/Apex/wiki).
+More information is available on the project [wiki](https://github.com/JamesFaix/Djambi-N/wiki).

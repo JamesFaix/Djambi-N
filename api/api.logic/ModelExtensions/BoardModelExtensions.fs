@@ -1,9 +1,9 @@
-namespace Apex.Api.Logic.ModelExtensions
+namespace Djambi.Api.Logic.ModelExtensions
 
 open System.Collections.Generic
 open System.Linq
-open Apex.Api.Common
-open Apex.Api.Model
+open Djambi.Api.Common
+open Djambi.Api.Model
 
 module BoardModelExtensions =
 

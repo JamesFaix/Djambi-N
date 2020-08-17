@@ -1,16 +1,11 @@
-environment.json
 .vs/
 bin/
 obj/
 .fake
 packages/
-paket-files
-.paket/paket.targets
-.paket/Paket.Restore.targets
-.paket/paket.bootstrapper.exe
 .ionide/symbolCache.db
 *.user
 *.log
 *.zip
-apex-local.session.sql
+*-local.session.sql
 rest-client-generator/openapi-generator-cli.jar

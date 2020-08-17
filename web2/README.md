@@ -1,4 +1,4 @@
-# Apex Web vNext
+# Djambi-N Web vNext
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
@@ -19,5 +19,4 @@ In the project directory, you can run:
 - Leverage Create React App as much as possible, minimal build customization
 - Less state management bugs and page redirects
 - Cleaner architecture, avoid spaghetti code of previous version
-- Avoid Redux, use React contexts for state
 - Better logging

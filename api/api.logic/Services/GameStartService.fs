@@ -1,15 +1,15 @@
-namespace Apex.Api.Logic.Services
+namespace Djambi.Api.Logic.Services
 
 open System.Linq
-open Apex.Api.Common
-open Apex.Api.Common.Collections
-open Apex.Api.Common.Control
-open Apex.Api.Logic.ModelExtensions
-open Apex.Api.Logic.ModelExtensions.BoardModelExtensions
-open Apex.Api.Logic.Services
-open Apex.Api.Model
-open Apex.Api.Logic
-open Apex.Api.Enums
+open Djambi.Api.Common
+open Djambi.Api.Common.Collections
+open Djambi.Api.Common.Control
+open Djambi.Api.Logic.ModelExtensions
+open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
+open Djambi.Api.Logic.Services
+open Djambi.Api.Model
+open Djambi.Api.Logic
+open Djambi.Api.Enums
 open FSharp.Control.Tasks
 open System.Threading.Tasks
 

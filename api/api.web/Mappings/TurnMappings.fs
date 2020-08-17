@@ -1,7 +1,7 @@
-﻿namespace Apex.Api.Web.Mappings
+﻿namespace Djambi.Api.Web.Mappings
 
-open Apex.Api.Web.Model
-open Apex.Api.Model
+open Djambi.Api.Web.Model
+open Djambi.Api.Model
 
 [<AutoOpen>]
 module TurnMappings = 

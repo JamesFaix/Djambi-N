@@ -1,5 +1,5 @@
 {
-    "name": "apex",
+    "name": "djambi-n",
     "version": "0.1.0",
     "dependencies": {
         "@fortawesome/fontawesome-svg-core": "^1.2.21",
@@ -38,10 +38,10 @@
         "sprintf-js": "^1.1.2"
     },
     "scripts": {
-        "build": "webpack --env.APEX_apiAddress=http://localhost:5100",
+        "build": "webpack --env.DJAMBI_apiAddress=http://localhost:5100",
         "start": "cd dist/dev && http-server && cd ../..",
         "test": "mocha --require ts-node/register test/**/*.ts",
-        "watch": "webpack --watch --env.APEX_apiAddress=http://localhost:5100"
+        "watch": "webpack --watch --env.DJAMBI_apiAddress=http://localhost:5100"
     },
     "devDependencies": {
         "@types/chai": "^4.2.1",

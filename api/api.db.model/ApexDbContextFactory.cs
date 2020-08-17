@@ -2,24 +2,24 @@
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 
-namespace Apex.Api.Db.Model
+namespace Djambi.Api.Db.Model
 {
-    public class ApexDbContextFactory : IDesignTimeDbContextFactory<ApexDbContext>
+    public class DjambiDbContextFactory : IDesignTimeDbContextFactory<DjambiDbContext>
     {
-        public ApexDbContext CreateDbContext(string[] args)
+        public DjambiDbContext CreateDbContext(string[] args)
         {
             var builder = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
-                .AddEnvironmentVariables("APEX_");
+                .AddEnvironmentVariables("DJAMBI_");
 
             var config = builder.Build();
 
             var connStr = config.GetValue<string>("Sql:ConnectionString");
 
-            var optionsBuilder = new DbContextOptionsBuilder<ApexDbContext>();
+            var optionsBuilder = new DbContextOptionsBuilder<DjambiDbContext>();
             optionsBuilder.UseMySql(connStr);
 
-            return new ApexDbContext(optionsBuilder.Options);
+            return new DjambiDbContext(optionsBuilder.Options);
         }
     }
 }
