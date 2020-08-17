@@ -1,4 +1,4 @@
-module Apex.Api.Host.App
+module Djambi.Api.Host.App
 
 open System
 open System.IO
@@ -7,7 +7,7 @@ open Microsoft.Extensions.Configuration
 open Microsoft.Extensions.Options
 open Serilog
 open Serilog.Events
-open Apex.Api.Model.Configuration
+open Djambi.Api.Model.Configuration
 
 let config = Config.config
 

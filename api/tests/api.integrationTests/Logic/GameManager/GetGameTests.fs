@@ -1,6 +1,6 @@
-namespace Apex.Api.IntegrationTests.Logic.GameManager
+namespace Djambi.Api.IntegrationTests.Logic.GameManager
 
-open Apex.Api.IntegrationTests
+open Djambi.Api.IntegrationTests
 
 type GetGameTests() =
     inherit TestsBase()

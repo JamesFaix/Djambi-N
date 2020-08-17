@@ -1,8 +1,8 @@
-namespace Apex.Api.Db.Interfaces
+namespace Djambi.Api.Db.Interfaces
 
 open System
 open System.Threading.Tasks
-open Apex.Api.Model
+open Djambi.Api.Model
 
 type IEventRepository =
     abstract member getEvents : gameId:int * query:EventsQuery -> Task<list<Event>>

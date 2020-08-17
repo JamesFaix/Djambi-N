@@ -1,14 +1,14 @@
 [<AutoOpen>]
-module Apex.Api.IntegrationTests.TestUtilities
+module Djambi.Api.IntegrationTests.TestUtilities
 
 open System
 open System.Linq
 open System.Threading.Tasks
 open FSharp.Control.Tasks
-open Apex.Api.Db.Interfaces
-open Apex.Api.Enums
-open Apex.Api.Logic.Interfaces
-open Apex.Api.Model
+open Djambi.Api.Db.Interfaces
+open Djambi.Api.Enums
+open Djambi.Api.Logic.Interfaces
+open Djambi.Api.Model
 
 let random = Random()
 let randomAlphanumericString (length : int) : string =

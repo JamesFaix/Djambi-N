@@ -1,8 +1,8 @@
 ﻿[<AutoOpen>]
-module Apex.Api.Model.SearchModel
+module Djambi.Api.Model.SearchModel
 
 open System
-open Apex.Api.Enums
+open Djambi.Api.Enums
 
 type GamesQuery =
     {

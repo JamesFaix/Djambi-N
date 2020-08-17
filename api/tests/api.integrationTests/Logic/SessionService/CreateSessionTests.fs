@@ -1,11 +1,11 @@
-namespace Apex.Api.IntegrationTests.Logic.sessionServ
+namespace Djambi.Api.IntegrationTests.Logic.sessionServ
 
 open FSharp.Control.Tasks
 open Xunit
-open Apex.Api.IntegrationTests
-open Apex.Api.Logic.Interfaces
+open Djambi.Api.IntegrationTests
+open Djambi.Api.Logic.Interfaces
 open System.Threading.Tasks
-open Apex.Api.Model
+open Djambi.Api.Model
 open System.Security.Authentication
 
 type CreateSessionTests() =

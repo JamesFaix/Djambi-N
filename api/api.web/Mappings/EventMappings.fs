@@ -1,8 +1,8 @@
-﻿namespace Apex.Api.Web.Mappings
+﻿namespace Djambi.Api.Web.Mappings
 
-open Apex.Api.Model
-open Apex.Api.Web.Model
-open Apex.Api.Enums
+open Djambi.Api.Model
+open Djambi.Api.Web.Model
+open Djambi.Api.Enums
 
 [<AutoOpen>]
 module EventMappings =

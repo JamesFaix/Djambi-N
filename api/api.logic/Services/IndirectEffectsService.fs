@@ -1,14 +1,14 @@
-namespace Apex.Api.Logic.Services
+namespace Djambi.Api.Logic.Services
 
 open System.Collections.Generic
 open System.Linq
-open Apex.Api.Common.Collections
-open Apex.Api.Logic.ModelExtensions.BoardModelExtensions
-open Apex.Api.Logic.ModelExtensions.GameModelExtensions
-open Apex.Api.Logic
-open Apex.Api.Logic.Services
-open Apex.Api.Model
-open Apex.Api.Enums
+open Djambi.Api.Common.Collections
+open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
+open Djambi.Api.Logic.ModelExtensions.GameModelExtensions
+open Djambi.Api.Logic
+open Djambi.Api.Logic.Services
+open Djambi.Api.Model
+open Djambi.Api.Enums
 
 type IndirectEffectsService(eventServ : EventService,
                             selectionOptionsServ : SelectionOptionsService) =

@@ -1,19 +1,19 @@
-﻿namespace Apex.Api.Db.Repositories
+﻿namespace Djambi.Api.Db.Repositories
 
 open System
 open System.ComponentModel
 open System.Linq
 open FSharp.Control.Tasks
 open Microsoft.EntityFrameworkCore
-open Apex.Api.Common.Control
-open Apex.Api.Db.Interfaces
-open Apex.Api.Db.Mappings
-open Apex.Api.Db.Model
-open Apex.Api.Model
+open Djambi.Api.Common.Control
+open Djambi.Api.Db.Interfaces
+open Djambi.Api.Db.Mappings
+open Djambi.Api.Db.Model
+open Djambi.Api.Model
 open System.Data
 open System.Data.Entity.Core
 
-type EventRepository(context : ApexDbContext,
+type EventRepository(context : DjambiDbContext,
                      gameRepo : IGameRepository,
                      playerRepo : IPlayerRepository) =
 

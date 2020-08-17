@@ -1,10 +1,10 @@
-namespace Apex.Api.IntegrationTests.Logic.EventServiceTests
+namespace Djambi.Api.IntegrationTests.Logic.EventServiceTests
 
 open Xunit
-open Apex.Api.IntegrationTests
-open Apex.Api.Model
-open Apex.Api.Enums
-open Apex.Api.Logic.Services
+open Djambi.Api.IntegrationTests
+open Djambi.Api.Model
+open Djambi.Api.Enums
+open Djambi.Api.Logic.Services
 open FSharp.Control.Tasks
 
 //TODO: Move to unit test project

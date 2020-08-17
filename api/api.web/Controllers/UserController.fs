@@ -1,12 +1,12 @@
-﻿namespace Apex.Api.Web.Controllers
+﻿namespace Djambi.Api.Web.Controllers
 
 open System.Threading.Tasks
 open Microsoft.AspNetCore.Mvc
 open FSharp.Control.Tasks
-open Apex.Api.Logic.Interfaces
-open Apex.Api.Web
-open Apex.Api.Web.Mappings
-open Apex.Api.Web.Model
+open Djambi.Api.Logic.Interfaces
+open Djambi.Api.Web
+open Djambi.Api.Web.Mappings
+open Djambi.Api.Web.Model
 
 [<ApiController>]
 [<Route("api/users")>]

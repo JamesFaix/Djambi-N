@@ -1,7 +1,7 @@
-namespace Apex.Api.Logic.ModelExtensions
+namespace Djambi.Api.Logic.ModelExtensions
 
-open Apex.Api.Logic.ModelExtensions.BoardModelExtensions
-open Apex.Api.Model
+open Djambi.Api.Logic.ModelExtensions.BoardModelExtensions
+open Djambi.Api.Model
 
 module BoardModelUtility =
 

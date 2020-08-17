@@ -71,7 +71,7 @@ export default class ThemeFactory {
             }
         },
         copy: {
-            gameTitle: "Apex",
+            gameTitle: "Djambi-N",
             centerCellName: "Apex",
             pieces: {
                 hunter: "Hunter",
