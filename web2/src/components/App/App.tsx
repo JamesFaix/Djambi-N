@@ -4,7 +4,7 @@ import React, {
 import {
   BrowserRouter, Switch, Route,
 } from 'react-router-dom';
-import { createMuiTheme, ThemeProvider, makeStyles } from '@material-ui/core';
+import { ThemeProvider, makeStyles } from '@material-ui/core';
 import NavigationDrawer from '../NavigationDrawer/NavigationDrawer';
 import { loadConfig } from '../../utilities/config';
 import * as Routes from '../../utilities/routes';
