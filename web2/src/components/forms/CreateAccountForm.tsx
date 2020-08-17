@@ -1,4 +1,4 @@
-import React, { FC, useState, ChangeEvent } from 'react';
+import React, { FC, useState } from 'react';
 import {
   FormControl, FormLabel, FormGroup,
 } from '@material-ui/core';
@@ -21,28 +21,6 @@ const defaultState: FormState = {
 const CreateAccountForm: FC = () => {
   const [state, setState] = useState(defaultState);
 
-  const onUsernameChanged = (e: ChangeEvent<HTMLInputElement>) => setState({
-    ...state,
-    username: e.target.value,
-  });
-
-  const onPassword1Changed = (e: ChangeEvent<HTMLInputElement>) => setState({
-    ...state,
-    password1: e.target.value,
-  });
-
-  const onPassword2Changed = (e: ChangeEvent<HTMLInputElement>) => setState({
-    ...state,
-    password2: e.target.value,
-  });
-
-  const onSubmitClicked = () => {
-    createAccount({
-      name: state.username,
-      password: state.password1,
-    });
-  };
-
   const passwordsDontMatch = (state.password1 !== state.password2)
     && (state.password2 !== '');
 
@@ -54,26 +32,38 @@ const CreateAccountForm: FC = () => {
           <FormTextField
             label="Username"
             value={state.username}
-            onChanged={onUsernameChanged}
+            onChanged={(e) => setState({
+              ...state,
+              username: e.target.value,
+            })}
           />
           <FormTextField
             label="Password"
             value={state.password1}
-            onChanged={onPassword1Changed}
+            onChanged={(e) => setState({
+              ...state,
+              password1: e.target.value,
+            })}
             error={passwordsDontMatch}
             helperText={passwordsDontMatch ? 'Passwords do not match' : undefined}
           />
           <FormTextField
             label="Confirm password"
             value={state.password2}
-            onChanged={onPassword2Changed}
+            onChanged={(e) => setState({
+              ...state,
+              password2: e.target.value,
+            })}
             error={passwordsDontMatch}
             helperText={passwordsDontMatch ? 'Passwords do not match' : undefined}
           />
           <br />
           <FormSubmitButton
             text="Submit"
-            onClick={onSubmitClicked}
+            onClick={() => createAccount({
+              name: state.username,
+              password: state.password1,
+            })}
           />
         </FormGroup>
       </FormControl>
