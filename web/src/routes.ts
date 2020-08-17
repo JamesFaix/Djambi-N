@@ -25,5 +25,5 @@ export default class Routes {
     static gameResults = (gameId : number) => `${Routes.game(gameId)}/results`;
     static readonly gameResultsPattern = `${Routes.gamePattern}/results`;
 
-    static readonly rules = "https://github.com/JamesFaix/Djambi-N/wiki/Rules";
+    static readonly rules = "https://github.com/JamesFaix/djambi-n/wiki/Rules";
 }
