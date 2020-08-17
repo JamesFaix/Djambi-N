@@ -1,9 +1,10 @@
-import React, { FC, useState, ChangeEvent } from 'react';
+import React, { FC, useState } from 'react';
 import {
-  FormControl, FormLabel, Button, TextField, FormControlLabel, FormGroup, useTheme,
+  FormControl, FormLabel, FormGroup,
 } from '@material-ui/core';
 import { signIn } from '../../controllers/userController';
-import { useFormStyles } from '../../styles/styles';
+import FormTextField from './controls/FormTextField';
+import FormSubmitButton from './controls/FormSubmitButton';
 
 type FormState = {
   username: string,
@@ -17,64 +18,36 @@ const defaultState: FormState = {
 
 const SignInForm: FC = () => {
   const [state, setState] = useState(defaultState);
-  const theme = useTheme();
-  const styles = useFormStyles(theme);
-
-  const onUsernameChanged = (e: ChangeEvent<HTMLInputElement>) => setState({
-    ...state,
-    username: e.target.value,
-  });
-
-  const onPasswordChanged = (e: ChangeEvent<HTMLInputElement>) => setState({
-    ...state,
-    password: e.target.value,
-  });
-
-  const onSubmitClicked = () => {
-    signIn({
-      username: state.username,
-      password: state.password,
-    });
-  };
-
-  const controlStyle = {
-    padding: '10px',
-  };
 
   return (
     <div>
       <FormControl component="fieldset">
         <FormLabel>Sign in</FormLabel>
         <FormGroup>
-          <FormControlLabel
-            value={state.username}
+          <FormTextField
             label="Username"
-            labelPlacement="start"
-            control={(
-              <TextField
-                onChange={onUsernameChanged}
-                style={controlStyle}
-              />
-            )}
+            value={state.username}
+            onChanged={(e) => setState({
+              ...state,
+              username: e.target.value,
+            })}
           />
-          <FormControlLabel
-            value={state.password}
+          <FormTextField
             label="Password"
-            labelPlacement="start"
-            control={(
-              <TextField
-                type="password"
-                onChange={onPasswordChanged}
-                style={controlStyle}
-              />
-            )}
+            value={state.password}
+            onChanged={(e) => setState({
+              ...state,
+              password: e.target.value,
+            })}
           />
-          <Button
-            onClick={onSubmitClicked}
-            style={controlStyle}
-          >
-            Submit
-          </Button>
+          <br />
+          <FormSubmitButton
+            text="Submit"
+            onClick={() => signIn({
+              username: state.username,
+              password: state.password,
+            })}
+          />
         </FormGroup>
       </FormControl>
     </div>
