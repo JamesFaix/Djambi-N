@@ -1,8 +1,11 @@
-import React, { FC, useState, ChangeEvent } from 'react';
+import React, { FC, useState } from 'react';
 import {
-  FormControl, FormLabel, Button, TextField, FormControlLabel, FormGroup,
+  FormControl, FormLabel, FormGroup,
 } from '@material-ui/core';
 import { createAccount } from '../../controllers/userController';
+import FormTextField from './controls/FormTextField';
+import FormSubmitButton from './controls/FormSubmitButton';
+import FormPasswordField from './controls/FormPasswordField';
 
 type FormState = {
   username: string,
@@ -19,85 +22,50 @@ const defaultState: FormState = {
 const CreateAccountForm: FC = () => {
   const [state, setState] = useState(defaultState);
 
-  const onUsernameChanged = (e: ChangeEvent<HTMLInputElement>) => setState({
-    ...state,
-    username: e.target.value,
-  });
-
-  const onPassword1Changed = (e: ChangeEvent<HTMLInputElement>) => setState({
-    ...state,
-    password1: e.target.value,
-  });
-
-  const onPassword2Changed = (e: ChangeEvent<HTMLInputElement>) => setState({
-    ...state,
-    password2: e.target.value,
-  });
-
-  const onSubmitClicked = () => {
-    createAccount({
-      name: state.username,
-      password: state.password1,
-    });
-  };
-
   const passwordsDontMatch = (state.password1 !== state.password2)
     && (state.password2 !== '');
-
-  const controlStyle = {
-    padding: '10px',
-  };
 
   return (
     <div>
       <FormControl component="fieldset">
         <FormLabel>Create account</FormLabel>
         <FormGroup>
-          <FormControlLabel
-            value={state.username}
+          <FormTextField
             label="Username"
-            labelPlacement="start"
-            control={(
-              <TextField
-                onChange={onUsernameChanged}
-                style={controlStyle}
-              />
-            )}
+            value={state.username}
+            onChanged={(e) => setState({
+              ...state,
+              username: e.target.value,
+            })}
           />
-          <FormControlLabel
-            value={state.password1}
+          <FormPasswordField
             label="Password"
-            labelPlacement="start"
-            control={(
-              <TextField
-                type="password"
-                onChange={onPassword1Changed}
-                error={passwordsDontMatch}
-                helperText={passwordsDontMatch ? 'Passwords do not match' : undefined}
-                style={controlStyle}
-              />
-            )}
+            value={state.password1}
+            onChanged={(e) => setState({
+              ...state,
+              password1: e.target.value,
+            })}
+            error={passwordsDontMatch}
+            helperText={passwordsDontMatch ? 'Passwords do not match' : undefined}
           />
-          <FormControlLabel
-            value={state.password2}
+          <FormPasswordField
             label="Confirm password"
-            labelPlacement="start"
-            control={(
-              <TextField
-                type="password"
-                onChange={onPassword2Changed}
-                error={passwordsDontMatch}
-                helperText={passwordsDontMatch ? 'Passwords do not match' : undefined}
-                style={controlStyle}
-              />
-            )}
+            value={state.password2}
+            onChanged={(e) => setState({
+              ...state,
+              password2: e.target.value,
+            })}
+            error={passwordsDontMatch}
+            helperText={passwordsDontMatch ? 'Passwords do not match' : undefined}
           />
-          <Button
-            onClick={onSubmitClicked}
-            style={controlStyle}
-          >
-            Submit
-          </Button>
+          <br />
+          <FormSubmitButton
+            text="Submit"
+            onClick={() => createAccount({
+              name: state.username,
+              password: state.password1,
+            })}
+          />
         </FormGroup>
       </FormControl>
     </div>

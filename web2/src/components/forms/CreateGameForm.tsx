@@ -1,18 +1,22 @@
-import React, { FC, useState, ChangeEvent } from 'react';
+import React, { FC, useState } from 'react';
 import {
-  FormControl, FormLabel, Button, TextField, FormControlLabel, FormGroup, Checkbox,
+  FormControl, FormLabel, FormGroup,
 } from '@material-ui/core';
 import { createGame } from '../../controllers/gameController';
+import FormTextField from './controls/FormTextField';
+import FormCheckbox from './controls/FormCheckbox';
+import FormSubmitButton from './controls/FormSubmitButton';
+import FormNumberField from './controls/FormNumberField';
 
 type FormState = {
-  description: string | null,
+  description: string,
   allowGuests: boolean,
   isPublic: boolean,
   regionCount: number
 };
 
 const defaultState: FormState = {
-  description: null,
+  description: '',
   allowGuests: true,
   isPublic: true,
   regionCount: 3,
@@ -21,95 +25,53 @@ const defaultState: FormState = {
 const CreateGameForm: FC = () => {
   const [state, setState] = useState(defaultState);
 
-  const onDescriptionChanged = (e: ChangeEvent<HTMLInputElement>) => setState({
-    ...state,
-    description: e.target.value,
-  });
-
-  const onAllowGuestsChanged = (e: ChangeEvent<HTMLInputElement>) => setState({
-    ...state,
-    allowGuests: e.target.checked,
-  });
-
-  const onIsPublicChanged = (e: ChangeEvent<HTMLInputElement>) => setState({
-    ...state,
-    isPublic: e.target.checked,
-  });
-
-  const onRegionCountChanged = (e: ChangeEvent<HTMLInputElement>) => setState({
-    ...state,
-    regionCount: Number(e.target.value),
-  });
-
-  const onSubmitClicked = () => {
-    createGame({
-      description: state.description,
-      allowGuests: state.allowGuests,
-      isPublic: state.isPublic,
-      regionCount: state.regionCount,
-    });
-  };
-
-  const controlStyle = {
-    padding: '10px',
-  };
-
   return (
     <div>
       <FormControl component="fieldset">
         <FormLabel>Create game</FormLabel>
         <FormGroup>
-          <FormControlLabel
-            value={state.description}
+          <FormTextField
             label="Description"
-            labelPlacement="start"
-            control={(
-              <TextField
-                onChange={onDescriptionChanged}
-                style={controlStyle}
-              />
-            )}
+            value={state.description}
+            onChanged={(e) => setState({
+              ...state,
+              description: e.target.value,
+            })}
           />
-          <FormControlLabel
-            checked={state.allowGuests}
+          <FormCheckbox
             label="Allow guest players"
-            labelPlacement="start"
-            control={(
-              <Checkbox
-                onChange={onAllowGuestsChanged}
-                style={controlStyle}
-              />
-            )}
+            value={state.allowGuests}
+            onChanged={(e) => setState({
+              ...state,
+              allowGuests: e.target.checked,
+            })}
           />
-          <FormControlLabel
-            checked={state.isPublic}
+          <FormCheckbox
             label="Public"
-            labelPlacement="start"
-            control={(
-              <Checkbox
-                onChange={onIsPublicChanged}
-                style={controlStyle}
-              />
-            )}
+            value={state.isPublic}
+            onChanged={(e) => setState({
+              ...state,
+              isPublic: e.target.checked,
+            })}
           />
-          <FormControlLabel
-            value={state.regionCount}
+          <FormNumberField
             label="Board region count"
-            labelPlacement="start"
-            control={(
-              <TextField
-                type="number"
-                onChange={onRegionCountChanged}
-                style={controlStyle}
-              />
-            )}
+            value={state.regionCount}
+            onChanged={(e) => setState({
+              ...state,
+              regionCount: Number(e.target.value),
+            })}
           />
-          <Button
-            onClick={onSubmitClicked}
-            style={controlStyle}
-          >
-            Submit
-          </Button>
+          <br />
+          <FormSubmitButton
+            text="Submit"
+            onClick={() => createGame({
+              description: state.description,
+              allowGuests: state.allowGuests,
+              isPublic: state.isPublic,
+              regionCount: state.regionCount,
+            })}
+          />
         </FormGroup>
       </FormControl>
     </div>
