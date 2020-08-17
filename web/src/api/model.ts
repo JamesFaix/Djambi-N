@@ -23,11 +23,11 @@ export interface CreationSource {
 }
 
 export enum Privilege {
-    EditUsers = 1,
-    EditPendingGames = 2,
-    OpenParticipation = 3,
-    Snapshots = 4,
-    ViewGames = 5,
+    EditUsers = "EditUsers",
+    EditPendingGames = "EditPendingGames",
+    OpenParticipation = "OpenParticipation",
+    Snapshots = "Snapshots",
+    ViewGames = "ViewGames",
 }
 
 export interface User {
@@ -91,10 +91,10 @@ export interface GameParameters {
 }
 
 export enum GameStatus {
-    Pending = 1,
-    InProgress = 2,
-    Canceled = 3,
-    Over = 4,
+    Pending = "Pending",
+    InProgress = "InProgress",
+    Canceled = "Canceled",
+    Over = "Over",
 }
 
 export interface Piece {
@@ -106,13 +106,13 @@ export interface Piece {
 }
 
 export enum PieceKind {
-    Conduit = 1,
-    Thug = 2,
-    Scientist = 3,
-    Hunter = 4,
-    Diplomat = 5,
-    Reaper = 6,
-    Corpse = 7,
+    Conduit = "Conduit",
+    Thug = "Thug",
+    Scientist = "Scientist",
+    Hunter = "Hunter",
+    Diplomat = "Diplomat",
+    Reaper = "Reaper",
+    Corpse = "Corpse",
 }
 
 //-------- PLAYER --------
@@ -136,19 +136,19 @@ export interface Player {
 }
 
 export enum PlayerKind {
-    User = 1,
-    Guest = 2,
-    Neutral = 3,
+    User = "User",
+    Guest = "Guest",
+    Neutral = "Neutral",
 }
 
 export enum PlayerStatus {
-    Pending = 1,
-    Alive = 2,
-    Eliminated = 3,
-    Conceded = 4,
-    WillConcede = 5,
-    AcceptsDraw = 6,
-    Victorious = 7,
+    Pending = "Pending",
+    Alive = "Alive",
+    Eliminated = "Eliminated",
+    Conceded = "Conceded",
+    WillConcede = "WillConcede",
+    AcceptsDraw = "AcceptsDraw",
+    Victorious = "Victorious",
 }
 
 //-------- TURN --------
@@ -160,11 +160,11 @@ export interface Selection {
 }
 
 export enum SelectionKind {
-    Subject = 1,
-    Move = 2,
-    Target = 3,
-    Drop = 4,
-    Vacate = 5,
+    Subject = "Subject",
+    Move = "Move",
+    Target = "Target",
+    Drop = "Drop",
+    Vacate = "Vacate",
 }
 
 export interface SelectionRequest {
@@ -179,9 +179,9 @@ export interface Turn {
 }
 
 export enum TurnStatus {
-    AwaitingSelection = 1,
-    AwaitingCommit = 2,
-    DeadEnd = 3,
+    AwaitingSelection = "AwaitingSelection",
+    AwaitingCommit = "AwaitingCommit",
+    DeadEnd = "DeadEnd",
 }
 
 //-------- EVENTS --------
@@ -191,24 +191,24 @@ export interface Effect {
 }
 
 export enum EffectKind {
-    CurrentTurnChanged = 1,
-    GameStatusChanged = 2,
-    NeutralPlayerAdded = 3,
-    ParametersChanged = 4,
-    PieceAbandoned = 5,
-    PieceDropped = 6,
-    PieceEnlisted = 7,
-    PieceKilled = 8,
-    PieceMoved = 9,
-    PieceVacated = 10,
-    PlayerAdded = 11,
-    PlayerOutOfMoves = 12,
-    PlayerRemoved = 13,
-    PlayerStatusChanged = 14,
-    TurnCycleAdvanced = 15,
-    TurnCyclePlayerFellFromPower = 16,
-    TurnCyclePlayerRemoved = 17,
-    TurnCyclePlayerRoseToPower = 18,
+    CurrentTurnChanged = "CurrentTurnChanged",
+    GameStatusChanged = "GameStatusChanged",
+    NeutralPlayerAdded = "NeutralPlayerAdded",
+    ParametersChanged = "ParametersChanged",
+    PieceAbandoned = "PieceAbandoned",
+    PieceDropped = "PieceDropped",
+    PieceEnlisted = "PieceEnlisted",
+    PieceKilled = "PieceKilled",
+    PieceMoved = "PieceMoved",
+    PieceVacated = "PieceVacated",
+    PlayerAdded = "PlayerAdded",
+    PlayerOutOfMoves = "PlayerOutOfMoves",
+    PlayerRemoved = "PlayerRemoved",
+    PlayerStatusChanged = "PlayerStatusChanged",
+    TurnCycleAdvanced = "TurnCycleAdvanced",
+    TurnCyclePlayerFellFromPower = "TurnCyclePlayerFellFromPower",
+    TurnCyclePlayerRemoved = "TurnCyclePlayerRemoved",
+    TurnCyclePlayerRoseToPower = "TurnCyclePlayerRoseToPower",
 }
 
 export interface Event {
@@ -220,15 +220,15 @@ export interface Event {
 }
 
 export enum EventKind {
-    GameParametersChanged = 1,
-    GameCanceled = 2,
-    PlayerJoined = 3,
-    PlayerRemoved = 4,
-    GameStarted = 5,
-    TurnCommitted = 6,
-    TurnReset = 7,
-    CellSelected = 8,
-    PlayerStatusChanged = 9,
+    GameParametersChanged = "GameParametersChanged",
+    GameCanceled = "GameCanceled",
+    PlayerJoined = "PlayerJoined",
+    PlayerRemoved = "PlayerRemoved",
+    GameStarted = "GameStarted",
+    TurnCommitted = "TurnCommitted",
+    TurnReset = "TurnReset",
+    CellSelected = "CellSelected",
+    PlayerStatusChanged = "PlayerStatusChanged",
 }
 
 export interface EventsQuery {
@@ -376,7 +376,7 @@ export interface SearchGame {
 //-------- MISC --------
 
 export enum ResultsDirection {
-    Ascending = 0,
-    Descending = 1,
+    Ascending = "Ascending",
+    Descending = "Descending",
 }
 
