@@ -1,10 +1,10 @@
-namespace Apex.Api.Web
+namespace Djambi.Api.Web
 
 open System
 open Microsoft.AspNetCore.Http
 open Microsoft.Extensions.Options
-open Apex.Api.Common
-open Apex.Api.Model.Configuration
+open Djambi.Api.Common
+open Djambi.Api.Model.Configuration
 open Microsoft.Extensions.Primitives
 
 type CookieProvider(options : IOptions<ApiSettings>) =

@@ -1,4 +1,4 @@
-﻿namespace Apex.Api.Web
+﻿namespace Djambi.Api.Web
 
 open System
 open System.Security.Authentication
@@ -7,10 +7,10 @@ open FSharp.Control.Tasks
 open Microsoft.AspNetCore.Http
 open Microsoft.Extensions.Options
 open Serilog
-open Apex.Api.Common.Control
-open Apex.Api.Logic.Interfaces
-open Apex.Api.Model
-open Apex.Api.Model.Configuration
+open Djambi.Api.Common.Control
+open Djambi.Api.Logic.Interfaces
+open Djambi.Api.Model
+open Djambi.Api.Model.Configuration
 
 type SessionContextProvider(options : IOptions<ApiSettings>,
                             service : ISessionService,

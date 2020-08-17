@@ -1,8 +1,8 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * Apex API
- * API for Apex
+ * Djambi-N API
+ * API for Djambi-N
  *
  * The version of the OpenAPI document: v1
  * 

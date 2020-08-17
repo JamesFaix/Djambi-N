@@ -1,4 +1,4 @@
-﻿namespace Apex.Api.Db.Repositories
+﻿namespace Djambi.Api.Db.Repositories
 
 open System
 open System.Linq
@@ -6,12 +6,12 @@ open System.Data.Entity.Core
 open FSharp.Control.Tasks
 open Microsoft.EntityFrameworkCore
 open Newtonsoft.Json
-open Apex.Api.Db.Interfaces
-open Apex.Api.Db.Mappings
-open Apex.Api.Db.Model
-open Apex.Api.Model
+open Djambi.Api.Db.Interfaces
+open Djambi.Api.Db.Mappings
+open Djambi.Api.Db.Model
+open Djambi.Api.Model
 
-type SnapshotRepository(context : ApexDbContext) =
+type SnapshotRepository(context : DjambiDbContext) =
     interface ISnapshotRepository with
         member __.getSnapshot snapshotId =
             task {

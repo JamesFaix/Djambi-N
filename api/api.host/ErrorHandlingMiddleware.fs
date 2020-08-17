@@ -1,4 +1,4 @@
-﻿namespace Apex.Api.Host
+﻿namespace Djambi.Api.Host
 
 open System
 open System.ComponentModel
@@ -13,7 +13,7 @@ open Microsoft.AspNetCore.Mvc
 open MySql.Data.MySqlClient
 open Newtonsoft.Json
 open Serilog
-open Apex.Api.Common.Control
+open Djambi.Api.Common.Control
 
 type ErrorHandlingMiddleware(next : RequestDelegate) =
 
@@ -29,7 +29,7 @@ type ErrorHandlingMiddleware(next : RequestDelegate) =
         | :? NotFoundException -> 404
         | :? ObjectNotFoundException -> 404
         | :? DuplicateNameException -> 409
-        | :? ApexWebsocketException -> 500
+        | :? DjambiWebsocketException -> 500
         | _ -> 500
 
     let getMessage (ex : Exception) : string =

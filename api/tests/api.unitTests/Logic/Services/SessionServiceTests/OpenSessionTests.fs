@@ -1,12 +1,12 @@
-﻿module Apex.Api.UnitTests.Logic.Services.SessionServiceTests.OpenSessionTests
+﻿module Djambi.Api.UnitTests.Logic.Services.SessionServiceTests.OpenSessionTests
 
 open FSharp.Control.Tasks
 open FakeItEasy
 open Xunit
-open Apex.Api.Logic.Interfaces
-open Apex.Api.Db.Interfaces
-open Apex.Api.Logic.Services
-open Apex.Api.Model
+open Djambi.Api.Logic.Interfaces
+open Djambi.Api.Db.Interfaces
+open Djambi.Api.Logic.Services
+open Djambi.Api.Model
 open System.Security.Authentication
 open System.Threading.Tasks
 open System

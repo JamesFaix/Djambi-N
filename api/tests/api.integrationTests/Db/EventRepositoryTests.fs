@@ -1,16 +1,16 @@
-namespace Apex.Api.IntegrationTests.Db
+namespace Djambi.Api.IntegrationTests.Db
 
 open System.ComponentModel
 open System.Data
 open System.Threading.Tasks
 open FSharp.Control.Tasks
 open Xunit
-open Apex.Api.Db.Interfaces
-open Apex.Api.Enums
-open Apex.Api.IntegrationTests
-open Apex.Api.Logic.Interfaces
-open Apex.Api.Logic.Services
-open Apex.Api.Model
+open Djambi.Api.Db.Interfaces
+open Djambi.Api.Enums
+open Djambi.Api.IntegrationTests
+open Djambi.Api.Logic.Interfaces
+open Djambi.Api.Logic.Services
+open Djambi.Api.Model
 
 type EventRepositoryTests() =
     inherit TestsBase()

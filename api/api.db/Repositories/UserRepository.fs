@@ -1,15 +1,15 @@
-﻿namespace Apex.Api.Db.Repositories
+﻿namespace Djambi.Api.Db.Repositories
 
-open Apex.Api.Db.Interfaces
+open Djambi.Api.Db.Interfaces
 open System
-open Apex.Api.Db.Model
+open Djambi.Api.Db.Model
 open FSharp.Control.Tasks
-open Apex.Api.Db.Mappings
+open Djambi.Api.Db.Mappings
 open Microsoft.EntityFrameworkCore
 open System.Data
 open MySql.Data.MySqlClient
 
-type UserRepository(context : ApexDbContext) =    
+type UserRepository(context : DjambiDbContext) =    
     interface IUserRepository with
         member __.getUser userId =
             task {

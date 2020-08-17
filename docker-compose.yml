@@ -14,11 +14,11 @@ services:
     ports:
       - "5100:5100"
     environment:
-      - APEX_Api__apiAddress=http://*:5100
-      - APEX_Api__cookieDomain=localhost
-      - APEX_Api__webAddress=http://localhost:8080
-      - APEX_Log__directory=
-      - "APEX_Sql__connectionString=Data Source=db;Initial Catalog=Apex2;User Id=SA;Password=GR3@Tpassword;"
+      - DJAMBI_Api__apiAddress=http://*:5100
+      - DJAMBI_Api__cookieDomain=localhost
+      - DJAMBI_Api__webAddress=http://localhost:8080
+      - DJAMBI_Log__directory=
+      - "DJAMBI_Sql__connectionString=Data Source=db;Initial Catalog=Apex2;User Id=SA;Password=GR3@Tpassword;"
   web:
     build:
       context: .

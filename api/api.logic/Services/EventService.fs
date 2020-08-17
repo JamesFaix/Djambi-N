@@ -1,8 +1,8 @@
-namespace Apex.Api.Logic.Services
+namespace Djambi.Api.Logic.Services
 
-open Apex.Api.Model
-open Apex.Api.Common.Collections
-open Apex.Api.Enums
+open Djambi.Api.Model
+open Djambi.Api.Common.Collections
+open Djambi.Api.Enums
 
 type EventService(gameStartServ : GameStartService) =
 

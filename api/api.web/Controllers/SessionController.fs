@@ -1,14 +1,14 @@
-﻿namespace Apex.Api.Web.Controllers
+﻿namespace Djambi.Api.Web.Controllers
 
 open System.Threading.Tasks
 open Microsoft.AspNetCore.Mvc
 open FSharp.Control.Tasks
 open Serilog
-open Apex.Api.Logic.Interfaces
-open Apex.Api.Model
-open Apex.Api.Web
-open Apex.Api.Web.Model
-open Apex.Api.Web.Mappings
+open Djambi.Api.Logic.Interfaces
+open Djambi.Api.Model
+open Djambi.Api.Web
+open Djambi.Api.Web.Model
+open Djambi.Api.Web.Mappings
 
 [<ApiController>]
 [<Route("api/sessions")>]

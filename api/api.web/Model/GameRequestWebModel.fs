@@ -1,8 +1,8 @@
-﻿namespace Apex.Api.Web.Model
+﻿namespace Djambi.Api.Web.Model
 
 open System
 open System.ComponentModel
-open Apex.Api.Enums
+open Djambi.Api.Enums
 open System.ComponentModel.DataAnnotations
 
 [<CLIMutable>]

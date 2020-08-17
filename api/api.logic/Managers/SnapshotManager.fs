@@ -1,10 +1,10 @@
-namespace Apex.Api.Logic.Managers
+namespace Djambi.Api.Logic.Managers
 
-open Apex.Api.Logic
-open Apex.Api.Model
-open Apex.Api.Logic.Interfaces
-open Apex.Api.Db.Interfaces
-open Apex.Api.Enums
+open Djambi.Api.Logic
+open Djambi.Api.Model
+open Djambi.Api.Logic.Interfaces
+open Djambi.Api.Db.Interfaces
+open Djambi.Api.Enums
 open FSharp.Control.Tasks
 
 type SnapshotManager(eventRepo : IEventRepository,

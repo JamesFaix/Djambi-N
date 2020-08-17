@@ -1,5 +1,5 @@
 //Intentionally not AutoOpen
-module Apex.Api.Common.Control.Task
+module Djambi.Api.Common.Control.Task
 
 open System.Threading.Tasks
 

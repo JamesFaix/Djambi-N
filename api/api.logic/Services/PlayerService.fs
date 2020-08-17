@@ -1,4 +1,4 @@
-namespace Apex.Api.Logic.Services
+namespace Djambi.Api.Logic.Services
 
 open System
 open System.ComponentModel
@@ -6,12 +6,12 @@ open System.Data
 open System.Linq
 open System.Threading.Tasks
 open FSharp.Control.Tasks
-open Apex.Api.Common.Collections
-open Apex.Api.Common.Control
-open Apex.Api.Db.Interfaces
-open Apex.Api.Enums
-open Apex.Api.Logic
-open Apex.Api.Model
+open Djambi.Api.Common.Collections
+open Djambi.Api.Common.Control
+open Djambi.Api.Db.Interfaces
+open Djambi.Api.Enums
+open Djambi.Api.Logic
+open Djambi.Api.Model
 
 type PlayerService(gameRepo : IGameRepository) =
     member __.getAddPlayerEvent (game : Game, request : CreatePlayerRequest) (session : Session) : CreateEventRequest =

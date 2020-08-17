@@ -1,9 +1,9 @@
-namespace Apex.Api.Logic.Interfaces
+namespace Djambi.Api.Logic.Interfaces
 
 open System
 open System.Threading.Tasks
-open Apex.Api.Model
-open Apex.Api.Enums
+open Djambi.Api.Model
+open Djambi.Api.Enums
 
 type ISubscriber =
     inherit IDisposable

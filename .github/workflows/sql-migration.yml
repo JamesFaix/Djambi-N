@@ -8,7 +8,7 @@ on:
       - .github/workflows/sql-migration.yml
 
 env:
-  APEX_Sql__ConnectionString: ${{ secrets.SQL_CONNECTION_STRING }}
+  DJAMBI_Sql__ConnectionString: ${{ secrets.SQL_CONNECTION_STRING }}
 
 jobs:
   migrate:

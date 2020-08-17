@@ -25,7 +25,7 @@ const TopBar: FC = () => {
             variant="h6"
             className={classes.title}
           >
-            Apex
+            Djambi-N
           </Typography>
         </Toolbar>
       </AppBar>

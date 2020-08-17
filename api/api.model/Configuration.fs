@@ -1,4 +1,4 @@
-﻿namespace Apex.Api.Model.Configuration
+﻿namespace Djambi.Api.Model.Configuration
 
 open Serilog.Events
 

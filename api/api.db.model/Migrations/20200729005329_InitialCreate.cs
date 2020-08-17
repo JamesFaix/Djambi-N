@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Apex.Api.Db.Model.Migrations
+namespace Djambi.Api.Db.Model.Migrations
 {
     public partial class InitialCreate : Migration
     {

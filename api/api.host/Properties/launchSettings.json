@@ -3,12 +3,12 @@
     "Kestrel": {
       "commandName": "Project",
       "environmentVariables": {
-        "APEX_Api__allowedOrigins": "http://localhost:5100,http://localhost:3000",
-        "APEX_Api__apiAddress": "http://localhost:5100",
-        "APEX_Api__cookieDomain": "localhost",
-        "APEX_Log__directory": "C:\\Git\\Apex\\logs",
-        "APEX_Sql__connectionString": "Server=localhost,3306;Database=Apex2;Uid=root;Pwd=badPassword;",
-        "APEX_WebServer__webRoot": "C:\\Git\\Apex\\web",
+        "DJAMBI_Api__allowedOrigins": "http://localhost:8080,http://localhost:3000",
+        "DJAMBI_Api__apiAddress": "http://localhost:5100",
+        "DJAMBI_Api__cookieDomain": "localhost",
+        "DJAMBI_Log__directory": "C:\\Git\\Djambi\\logs",
+        "DJAMBI_Sql__connectionString": "Server=localhost,3306;Database=Apex2;Uid=root;Pwd=badPassword;",
+        "DJAMBI_WebServer__webRoot": "C:\\Git\\Djambi\\web",
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "applicationUrl": "http://localhost:5100/",

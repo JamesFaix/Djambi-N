@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Apex.Api.Enums;
+using Djambi.Api.Enums;
 using Microsoft.EntityFrameworkCore;
 
-namespace Apex.Api.Db.Model
+namespace Djambi.Api.Db.Model
 {
-    public class ApexDbContext : DbContext
+    public class DjambiDbContext : DbContext
     {
         public DbSet<EventSqlModel> Events { get; set; }
         public DbSet<EventKindSqlModel> EventKinds { get; set; }
@@ -22,7 +22,7 @@ namespace Apex.Api.Db.Model
         public DbSet<UserSqlModel> Users { get; set; }
         public DbSet<UserPrivilegeSqlModel> UserPrivileges { get; set; }
 
-        public ApexDbContext(DbContextOptions<ApexDbContext> options)
+        public DjambiDbContext(DbContextOptions<DjambiDbContext> options)
             : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

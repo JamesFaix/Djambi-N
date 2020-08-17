@@ -1,8 +1,8 @@
-﻿module Apex.Api.UnitTests.Logic.Services.EncryptionServiceTests
+﻿module Djambi.Api.UnitTests.Logic.Services.EncryptionServiceTests
 
 open Xunit
-open Apex.Api.Logic.Interfaces
-open Apex.Api.Logic.Services
+open Djambi.Api.Logic.Interfaces
+open Djambi.Api.Logic.Services
 
 let service = EncryptionService() :> IEncryptionService
 

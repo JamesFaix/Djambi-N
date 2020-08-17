@@ -1,4 +1,4 @@
-﻿namespace Apex.Api.Host
+﻿namespace Djambi.Api.Host
 
 open System.Diagnostics
 open System.Threading.Tasks

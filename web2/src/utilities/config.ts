@@ -3,7 +3,7 @@ import { store } from '../redux';
 import { defaultConfigState } from '../redux/config/state';
 import { userConfigLoaded, environmentConfigLoaded } from '../redux/config/actionFactory';
 
-const localStorageKey = 'Apex_UserConfig';
+const localStorageKey = 'Djambi_UserConfig';
 
 // Using async functions so that user config can be persisted on the server
 // later without changing the contract.

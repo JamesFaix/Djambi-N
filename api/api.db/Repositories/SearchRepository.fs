@@ -1,17 +1,17 @@
-﻿namespace Apex.Api.Db.Repositories
+﻿namespace Djambi.Api.Db.Repositories
 
 open System
 open System.Data.Entity.Core
 open System.Linq
 open FSharp.Control.Tasks
 open Microsoft.EntityFrameworkCore
-open Apex.Api.Db.Interfaces
-open Apex.Api.Db.Model
-open Apex.Api.Db.Mappings
-open Apex.Api.Enums
-open Apex.Api.Model
+open Djambi.Api.Db.Interfaces
+open Djambi.Api.Db.Model
+open Djambi.Api.Db.Mappings
+open Djambi.Api.Enums
+open Djambi.Api.Model
 
-type SearchRepository(context : ApexDbContext) =
+type SearchRepository(context : DjambiDbContext) =
 
     interface ISearchRepository with
         member __.searchGames (query, currentUserId) =
