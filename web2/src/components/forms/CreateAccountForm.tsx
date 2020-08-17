@@ -1,9 +1,8 @@
 import React, { FC, useState, ChangeEvent } from 'react';
 import {
-  FormControl, FormLabel, FormGroup, useTheme,
+  FormControl, FormLabel, FormGroup,
 } from '@material-ui/core';
 import { createAccount } from '../../controllers/userController';
-import { useFormStyles } from '../../styles/styles';
 import FormTextField from './controls/FormTextField';
 import FormSubmitButton from './controls/FormSubmitButton';
 
@@ -21,8 +20,6 @@ const defaultState: FormState = {
 
 const CreateAccountForm: FC = () => {
   const [state, setState] = useState(defaultState);
-  const theme = useTheme();
-  const styles = useFormStyles(theme);
 
   const onUsernameChanged = (e: ChangeEvent<HTMLInputElement>) => setState({
     ...state,
