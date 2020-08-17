@@ -5,6 +5,7 @@ import {
 import { signIn } from '../../controllers/userController';
 import FormTextField from './controls/FormTextField';
 import FormSubmitButton from './controls/FormSubmitButton';
+import FormPasswordField from './controls/FormPasswordField';
 
 type FormState = {
   username: string,
@@ -32,7 +33,7 @@ const SignInForm: FC = () => {
               username: e.target.value,
             })}
           />
-          <FormTextField
+          <FormPasswordField
             label="Password"
             value={state.password}
             onChanged={(e) => setState({

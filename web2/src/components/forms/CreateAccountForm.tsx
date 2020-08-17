@@ -5,6 +5,7 @@ import {
 import { createAccount } from '../../controllers/userController';
 import FormTextField from './controls/FormTextField';
 import FormSubmitButton from './controls/FormSubmitButton';
+import FormPasswordField from './controls/FormPasswordField';
 
 type FormState = {
   username: string,
@@ -37,7 +38,7 @@ const CreateAccountForm: FC = () => {
               username: e.target.value,
             })}
           />
-          <FormTextField
+          <FormPasswordField
             label="Password"
             value={state.password1}
             onChanged={(e) => setState({
@@ -47,7 +48,7 @@ const CreateAccountForm: FC = () => {
             error={passwordsDontMatch}
             helperText={passwordsDontMatch ? 'Passwords do not match' : undefined}
           />
-          <FormTextField
+          <FormPasswordField
             label="Confirm password"
             value={state.password2}
             onChanged={(e) => setState({

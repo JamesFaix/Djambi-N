@@ -3,14 +3,14 @@ import { FormControlLabel, TextField, useTheme } from '@material-ui/core';
 import { useFormStyles } from '../../../styles/styles';
 
 interface Props {
-  value: string,
+  value: number,
   label: string,
   onChanged: (e: ChangeEvent<HTMLInputElement>) => void,
   error?: boolean,
   helperText?: string
 }
 
-const FormTextField: FC<Props> = ({
+const FormNumberField: FC<Props> = ({
   value, label, onChanged, error, helperText,
 }) => {
   const theme = useTheme();
@@ -28,10 +28,11 @@ const FormTextField: FC<Props> = ({
           onChange={onChanged}
           error={error}
           helperText={helperText}
+          type="number"
         />
       )}
     />
   );
 };
 
-export default FormTextField;
+export default FormNumberField;

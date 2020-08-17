@@ -10,7 +10,7 @@ interface Props {
   helperText?: string
 }
 
-const FormTextField: FC<Props> = ({
+const FormPasswordField: FC<Props> = ({
   value, label, onChanged, error, helperText,
 }) => {
   const theme = useTheme();
@@ -28,10 +28,11 @@ const FormTextField: FC<Props> = ({
           onChange={onChanged}
           error={error}
           helperText={helperText}
+          type="password"
         />
       )}
     />
   );
 };
 
-export default FormTextField;
+export default FormPasswordField;
