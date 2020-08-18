@@ -1,5 +1,6 @@
 import React, { FC, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { Typography } from '@material-ui/core';
 import RedirectToSignInIfSignedOut from '../routing/RedirectToSignInIfSignedOut';
 import { GamePageProps } from './GamePage';
 import { selectActiveGame } from '../../hooks/selectors';
@@ -17,7 +18,9 @@ const GameSnapshotsPage: FC<GamePageProps> = ({ gameId }) => {
   return (
     <div>
       <RedirectToSignInIfSignedOut />
-      {`Game ${gameId} snapshots page`}
+      <Typography variant="h4">
+        {`Game ${gameId} snapshots page`}
+      </Typography>
       <br />
       {state.game ? JSON.stringify(state.game) : ''}
     </div>

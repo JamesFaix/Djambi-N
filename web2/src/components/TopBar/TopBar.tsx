@@ -4,12 +4,13 @@ import {
 } from '@material-ui/core';
 import MenuButton from './MenuButton';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
   },
   title: {
     flexGrow: 1,
+    color: theme.palette.text.secondary,
   },
 }));
 

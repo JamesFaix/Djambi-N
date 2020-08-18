@@ -1,7 +1,5 @@
 import React, { FC, useState } from 'react';
-import {
-  FormControl, FormLabel, FormGroup,
-} from '@material-ui/core';
+import { FormControl, FormGroup } from '@material-ui/core';
 import { createGame } from '../../controllers/gameController';
 import FormTextField from './controls/FormTextField';
 import FormCheckbox from './controls/FormCheckbox';
@@ -28,7 +26,6 @@ const CreateGameForm: FC = () => {
   return (
     <div>
       <FormControl component="fieldset">
-        <FormLabel>Create game</FormLabel>
         <FormGroup>
           <FormTextField
             label="Description"

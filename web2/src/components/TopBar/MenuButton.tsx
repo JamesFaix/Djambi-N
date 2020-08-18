@@ -8,6 +8,7 @@ import { toggleDrawer } from '../../utilities/navigation';
 const useStyles = makeStyles((theme) => ({
   menuButton: {
     marginRight: theme.spacing(2),
+    color: theme.palette.text.secondary,
   },
 }));
 
@@ -25,7 +26,6 @@ const MenuButton: FC = () => {
     <IconButton
       edge="start"
       className={classes.menuButton}
-      color="inherit"
       onClick={toggle}
     >
       <MenuIcon />

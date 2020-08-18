@@ -1,11 +1,14 @@
 import React, { FC } from 'react';
+import { Typography } from '@material-ui/core';
 import RedirectToSignInIfSignedOut from '../routing/RedirectToSignInIfSignedOut';
 
 const SearchGamesPage: FC = () => {
   return (
     <div>
       <RedirectToSignInIfSignedOut />
-      Search games page
+      <Typography variant="h4">
+        Search games
+      </Typography>
     </div>
   );
 };
