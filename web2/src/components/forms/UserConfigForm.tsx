@@ -1,7 +1,5 @@
 import React, { FC, useState } from 'react';
-import {
-  FormControl, FormLabel, FormGroup,
-} from '@material-ui/core';
+import { FormControl, FormGroup } from '@material-ui/core';
 import { setUserConfig } from '../../utilities/config';
 import FormTextField from './controls/FormTextField';
 import FormSubmitButton from './controls/FormSubmitButton';
@@ -23,7 +21,6 @@ const UserConfigForm: FC = () => {
   return (
     <div>
       <FormControl component="fieldset">
-        <FormLabel>Settings</FormLabel>
         <FormGroup>
           <FormCheckbox
             label="Log Redux"

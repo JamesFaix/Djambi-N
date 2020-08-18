@@ -36,7 +36,7 @@ const useStyles = makeStyles({
   page: {
     padding: '20px',
     background: '#161616',
-    height: '100%',
+    height: 'calc(100vh - 104px)',
   },
 });
 
