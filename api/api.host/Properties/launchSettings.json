@@ -6,9 +6,9 @@
         "DJAMBI_Api__allowedOrigins": "http://localhost:8080,http://localhost:3000",
         "DJAMBI_Api__apiAddress": "http://localhost:5100",
         "DJAMBI_Api__cookieDomain": "localhost",
-        "DJAMBI_Log__directory": "C:\\Git\\Djambi\\logs",
+        "DJAMBI_Log__directory": "C:\\Git\\JamesFaix\\Djambi-N\\logs",
         "DJAMBI_Sql__connectionString": "Server=localhost,3306;Database=Apex2;Uid=root;Pwd=badPassword;",
-        "DJAMBI_WebServer__webRoot": "C:\\Git\\Djambi\\web",
+        "DJAMBI_WebServer__webRoot": "C:\\Git\\JamesFaix\\Djambi-N\\web",
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "applicationUrl": "http://localhost:5100/",
