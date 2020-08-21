@@ -1,5 +1,5 @@
 import React, { FC, useState, useEffect } from 'react';
-import { Typography } from '@material-ui/core';
+import { Typography, Container } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import RedirectToSignInIfSignedOut from '../routing/RedirectToSignInIfSignedOut';
 import GameSearchResultsTable from '../tables/GameSearchResultsTable';
@@ -34,7 +34,9 @@ const HomePage: FC = () => {
         Recent games
       </Typography>
       <br />
-      <GameSearchResultsTable games={recentGames} />
+      <Container maxWidth="md">
+        <GameSearchResultsTable games={recentGames} />
+      </Container>
     </div>
   );
 };
