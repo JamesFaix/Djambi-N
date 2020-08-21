@@ -8,6 +8,7 @@ import { loadGame } from '../../controllers/gameController';
 import { GameStatus } from '../../api-client';
 import PendingGamePlayersTable from '../tables/PendingGamePlayersTable/PendingGamePlayersTable';
 import InProgressLobbyPlayersTable from '../tables/InProgressLobbyPlayersTable';
+import GameParametersTable from '../tables/GameParametersTable';
 
 const GameLobbyPage: FC<GamePageProps> = ({ gameId }) => {
   const { game } = useSelector(selectActiveGame);
@@ -29,7 +30,18 @@ const GameLobbyPage: FC<GamePageProps> = ({ gameId }) => {
         {`Game ${gameId} lobby page`}
       </Typography>
       <br />
+      <Container maxWidth="xs">
+        <Typography variant="h5">
+          Settings
+        </Typography>
+        <GameParametersTable />
+      </Container>
+      <br />
+      <br />
       <Container maxWidth="sm">
+        <Typography variant="h5">
+          Players
+        </Typography>
         {
           game.status === GameStatus.Pending
             ? <PendingGamePlayersTable />
