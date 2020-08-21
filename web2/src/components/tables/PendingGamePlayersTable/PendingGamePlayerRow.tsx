@@ -11,6 +11,8 @@ import { GameDto, PlayerKind } from '../../../api-client';
 import { PendingGamePlayerSlotViewModel, PendingGamePlayerActionType } from './viewModel';
 import { addPlayer, removePlayer } from '../../../controllers/gameController';
 import { selectSession } from '../../../hooks/selectors';
+import { useFormStyles } from '../../../styles/styles';
+import { theme } from '../../../styles/materialTheme';
 
 interface Props {
   player: PendingGamePlayerSlotViewModel,
@@ -30,10 +32,23 @@ const getActionIcon = (action: PendingGamePlayerActionType | null) => {
   }
 };
 
+const getActionLabel = (action: PendingGamePlayerActionType | null) => {
+  switch (action) {
+    case PendingGamePlayerActionType.AddGuest:
+      return 'Add guest';
+    case PendingGamePlayerActionType.SelfJoin:
+      return 'Join';
+    case PendingGamePlayerActionType.SelfQuit:
+      return 'Quit';
+    case PendingGamePlayerActionType.Remove:
+      return 'Remove';
+    default:
+      return '';
+  }
+};
+
 const PendingGamePlayerRow: FC<Props> = ({ player, game }) => {
-  const controlStyle = {
-    padding: '10px',
-  };
+  const styles = useFormStyles(theme);
 
   const [guestName, setGuestName] = useState('');
   const { user } = useSelector(selectSession);
@@ -49,12 +64,7 @@ const PendingGamePlayerRow: FC<Props> = ({ player, game }) => {
     helperText = `There is already a player named ${guestName}`;
   }
 
-  const isBlank = guestName === '';
-  if (isBlank) {
-    helperText = 'Name cannot be blank';
-  }
-
-  const isValidName = !isDuplicateName && !isBlank;
+  const isValidName = !isDuplicateName;
 
   const addGuest = () => {
     addPlayer(game.id, {
@@ -106,7 +116,7 @@ const PendingGamePlayerRow: FC<Props> = ({ player, game }) => {
               onChange={(e) => setGuestName(e.target.value)}
               error={!isValidName}
               helperText={helperText}
-              style={controlStyle}
+            // className={styles.control}
             />
           )
           : player.name
@@ -114,12 +124,22 @@ const PendingGamePlayerRow: FC<Props> = ({ player, game }) => {
       </TableCell>
       <TableCell>{player.note}</TableCell>
       <TableCell>
-        <Button
-          style={controlStyle}
-          onClick={onClick}
-        >
-          {getActionIcon(player.actionType)}
-        </Button>
+        {/* <ListItem button onClick={onClick}>
+          <ListItemIcon>{getActionIcon(player.actionType)}</ListItemIcon>
+          <ListItemText primary={getActionLabel(player.actionType)} />
+        </ListItem> */}
+        {player.actionType === PendingGamePlayerActionType.None || player.actionType === null
+          ? <></>
+          : (
+            <Button
+              className={styles.button}
+              onClick={onClick}
+              style={{ width: '100%' }}
+            >
+              {getActionIcon(player.actionType)}
+              {getActionLabel(player.actionType)}
+            </Button>
+          )}
       </TableCell>
     </TableRow>
   );

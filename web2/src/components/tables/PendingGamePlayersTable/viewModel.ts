@@ -66,30 +66,40 @@ export function getViewModels(currentUser: UserDto, game: GameDto)
   : PendingGamePlayerSlotViewModel[] {
   const viewModels = getViewModelsForCurrentPlayers(currentUser, game);
   const emptySlotCount = game.parameters.regionCount - viewModels.length;
+  const userIsPlayer = game.players.map((p) => p.userId).includes(currentUser.id);
 
   if (emptySlotCount > 0) {
+    if (!userIsPlayer) {
+      viewModels.push({
+        id: null,
+        name: '',
+        kind: null,
+        userId: null,
+        note: '',
+        actionType: PendingGamePlayerActionType.SelfJoin,
+      });
+    } else {
+      viewModels.push({
+        id: null,
+        name: '',
+        kind: null,
+        userId: null,
+        note: '',
+        actionType: PendingGamePlayerActionType.AddGuest,
+      });
+    }
+  }
+
+  for (let i = 1; i < emptySlotCount; i += 1) {
     viewModels.push({
       id: null,
       name: '',
       kind: null,
       userId: null,
       note: '',
-      actionType: PendingGamePlayerActionType.SelfJoin,
+      actionType: PendingGamePlayerActionType.None,
     });
   }
 
-  const emptySlots: PendingGamePlayerSlotViewModel[] = [];
-
-  for (let i = 0; i < emptySlotCount; i += 1) {
-    emptySlots.push({
-      id: null,
-      name: '',
-      kind: null,
-      userId: null,
-      note: '',
-      actionType: PendingGamePlayerActionType.Add,
-    });
-  }
-
-  return players.concat(emptySlots);
+  return viewModels;
 }

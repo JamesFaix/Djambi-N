@@ -1,6 +1,6 @@
 import React, { FC, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { Typography } from '@material-ui/core';
+import { Typography, Container } from '@material-ui/core';
 import RedirectToSignInIfSignedOut from '../routing/RedirectToSignInIfSignedOut';
 import { GamePageProps } from './GamePage';
 import { selectActiveGame } from '../../hooks/selectors';
@@ -29,11 +29,13 @@ const GameLobbyPage: FC<GamePageProps> = ({ gameId }) => {
         {`Game ${gameId} lobby page`}
       </Typography>
       <br />
-      {
-        game.status === GameStatus.Pending
-          ? <PendingGamePlayersTable />
-          : <InProgressLobbyPlayersTable />
-      }
+      <Container maxWidth="sm">
+        {
+          game.status === GameStatus.Pending
+            ? <PendingGamePlayersTable />
+            : <InProgressLobbyPlayersTable />
+        }
+      </Container>
     </div>
   );
 };

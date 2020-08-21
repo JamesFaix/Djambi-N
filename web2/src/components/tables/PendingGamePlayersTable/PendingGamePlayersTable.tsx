@@ -20,6 +20,11 @@ const PendingGamePlayersTable: FC = () => {
   return (
     <TableContainer>
       <Table>
+        <colgroup>
+          <col style={{ width: '33%' }} />
+          <col style={{ width: '33%' }} />
+          <col style={{ width: '33%' }} />
+        </colgroup>
         <TableHead>
           <TableRow>
             <TableCell>Name</TableCell>
