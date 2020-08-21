@@ -20,6 +20,9 @@ export const gameTemplate = '/games/:gameId';
 export const gameDiplomacy = (gameId: number): string => `/games/${gameId}/diplomacy`;
 export const gameDiplomacyTemplate = '/games/:gameId/diplomacy';
 
+export const gameInfo = (gameId: number): string => `/games/${gameId}/info`;
+export const gameInfoTemplate = '/games/:gameId/info';
+
 export const gameLobby = (gameId: number): string => `/games/${gameId}/lobby`;
 export const gameLobbyTemplate = '/games/:gameId/lobby';
 

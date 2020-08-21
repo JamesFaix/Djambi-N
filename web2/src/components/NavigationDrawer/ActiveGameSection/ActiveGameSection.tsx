@@ -6,6 +6,7 @@ import {
   EmojiEvents as ResultsIcon,
   MeetingRoom as LobbyIcon,
   PlayArrow as PlayIcon,
+  Info as InfoIcon,
 } from '@material-ui/icons';
 import { useSelector } from 'react-redux';
 import NavigationItem from '../NavigationItem';
@@ -41,11 +42,20 @@ const ActiveGameSection: FC = () => {
           </Typography>
         ) : undefined}
 
-        <NavigationItem
-          text="Lobby"
-          icon={<LobbyIcon />}
-          path={Routes.gameLobby(game.id)}
-        />
+        {game.status === GameStatus.Pending ? (
+          <NavigationItem
+            text="Lobby"
+            icon={<LobbyIcon />}
+            path={Routes.gameLobby(game.id)}
+          />
+        )
+          : (
+            <NavigationItem
+              text="Info"
+              icon={<InfoIcon />}
+              path={Routes.gameInfo(game.id)}
+            />
+          )}
 
         {[GameStatus.InProgress, GameStatus.Over].includes(game.status) ? (
           <NavigationItem

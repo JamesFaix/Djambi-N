@@ -3,7 +3,7 @@ import { IconButton, makeStyles } from '@material-ui/core';
 import { Menu as MenuIcon } from '@material-ui/icons';
 import { useSelector } from 'react-redux';
 import { selectNavigation } from '../../hooks/selectors';
-import { toggleDrawer } from '../../utilities/navigation';
+import { toggleDrawer } from '../../controllers/navigationController';
 
 const useStyles = makeStyles((theme) => ({
   menuButton: {
