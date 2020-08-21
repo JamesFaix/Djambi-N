@@ -4,10 +4,10 @@ import {
 } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import { selectActiveGame, selectSession } from '../../../hooks/selectors';
-import PendingGamePlayerRow from './PendingGamePlayerRow';
+import LobbyPlayerRow from './LobbyPlayerRow';
 import { getViewModels } from './viewModel';
 
-const PendingGamePlayersTable: FC = () => {
+const LobbyPlayersTable: FC = () => {
   const { game } = useSelector(selectActiveGame);
   const { user } = useSelector(selectSession);
 
@@ -35,7 +35,7 @@ const PendingGamePlayersTable: FC = () => {
         <TableBody>
           {
             viewModels.map((p, i) => (
-              <PendingGamePlayerRow
+              <LobbyPlayerRow
                 key={i.toString()}
                 player={p}
                 game={game}
@@ -48,4 +48,4 @@ const PendingGamePlayersTable: FC = () => {
   );
 };
 
-export default PendingGamePlayersTable;
+export default LobbyPlayersTable;
