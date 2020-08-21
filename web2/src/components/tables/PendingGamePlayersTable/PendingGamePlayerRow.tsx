@@ -23,10 +23,10 @@ const getActionIcon = (action: PendingGamePlayerActionType | null) => {
   switch (action) {
     case PendingGamePlayerActionType.AddGuest:
     case PendingGamePlayerActionType.SelfJoin:
-      return <AddIcon />;
+      return <AddIcon style={{ paddingRight: '5px' }} />;
     case PendingGamePlayerActionType.Remove:
     case PendingGamePlayerActionType.SelfQuit:
-      return <RemoveIcon />;
+      return <RemoveIcon style={{ paddingRight: '5px' }} />;
     default:
       return <></>;
   }
