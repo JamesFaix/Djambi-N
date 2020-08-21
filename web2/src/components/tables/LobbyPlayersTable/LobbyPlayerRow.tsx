@@ -116,7 +116,6 @@ const LobbyPlayerRow: FC<Props> = ({ player, game }) => {
               onChange={(e) => setGuestName(e.target.value)}
               error={!isValidName}
               helperText={helperText}
-            // className={styles.control}
             />
           )
           : player.name
@@ -124,10 +123,6 @@ const LobbyPlayerRow: FC<Props> = ({ player, game }) => {
       </TableCell>
       <TableCell>{player.note}</TableCell>
       <TableCell>
-        {/* <ListItem button onClick={onClick}>
-          <ListItemIcon>{getActionIcon(player.actionType)}</ListItemIcon>
-          <ListItemText primary={getActionLabel(player.actionType)} />
-        </ListItem> */}
         {player.actionType === LobbyPlayerActionType.None || player.actionType === null
           ? <></>
           : (
@@ -135,6 +130,7 @@ const LobbyPlayerRow: FC<Props> = ({ player, game }) => {
               className={styles.button}
               onClick={onClick}
               style={{ width: '100%' }}
+              disabled={player.actionType === LobbyPlayerActionType.AddGuest && !guestName}
             >
               {getActionIcon(player.actionType)}
               {getActionLabel(player.actionType)}
