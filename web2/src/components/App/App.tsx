@@ -27,6 +27,7 @@ import SearchGamesPage from '../pages/SearchGamesPage';
 import TopBar from '../TopBar/TopBar';
 import SignOutPage from '../pages/SignOutPage';
 import { theme } from '../../styles/materialTheme';
+import GameInfoPage from '../pages/GameInfoPage';
 
 const useStyles = makeStyles({
   app: {
@@ -70,6 +71,10 @@ const App: FC = () => {
               <Route
                 path={Routes.gameDiplomacyTemplate}
                 render={(props) => <GameDiplomacyPage gameId={props.match.params.gameId} />}
+              />
+              <Route
+                path={Routes.gameInfoTemplate}
+                render={(props) => <GameInfoPage gameId={props.match.params.gameId} />}
               />
               <Route
                 path={Routes.gameLobbyTemplate}
