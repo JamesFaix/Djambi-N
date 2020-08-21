@@ -3,7 +3,7 @@ import { gameLoaded, gameUpdated } from '../redux/activeGame/actionFactory';
 import { store } from '../redux';
 import { GameParametersDto, CreatePlayerRequestDto } from '../api-client';
 import * as Routes from '../utilities/routes';
-import { navigateTo } from '../utilities/navigation';
+import { navigateTo } from './navigationController';
 
 export async function loadGame(gameId: number): Promise<void> {
   const game = await Api.games().apiGamesGameIdGet({ gameId });

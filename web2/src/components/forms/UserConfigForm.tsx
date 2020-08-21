@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react';
 import { FormControl, FormGroup } from '@material-ui/core';
-import { setUserConfig } from '../../utilities/config';
+import { setUserConfig } from '../../controllers/configController';
 import FormTextField from './controls/FormTextField';
 import FormSubmitButton from './controls/FormSubmitButton';
 import FormCheckbox from './controls/FormCheckbox';

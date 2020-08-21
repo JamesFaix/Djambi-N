@@ -8,7 +8,7 @@ import { loadGame } from '../../controllers/gameController';
 import { GameStatus } from '../../api-client';
 import InProgressLobbyPlayersTable from '../tables/InProgressLobbyPlayersTable';
 import GameParametersTable from '../tables/GameParametersTable';
-import { navigateTo } from '../../utilities/navigation';
+import { navigateTo } from '../../controllers/navigationController';
 import * as Routes from '../../utilities/routes';
 
 const GameInfoPage: FC<GamePageProps> = ({ gameId }) => {

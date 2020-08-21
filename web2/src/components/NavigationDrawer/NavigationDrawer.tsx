@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import GamelessSection from './GamelessSection/GamelessSection';
 import ActiveGameSection from './ActiveGameSection/ActiveGameSection';
 import { selectNavigation } from '../../hooks/selectors';
-import { toggleDrawer } from '../../utilities/navigation';
+import { toggleDrawer } from '../../controllers/navigationController';
 
 const useStyles = makeStyles({
   list: {
