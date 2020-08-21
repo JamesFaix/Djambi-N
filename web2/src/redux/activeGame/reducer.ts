@@ -13,6 +13,12 @@ export function activeGameReducer(
         game: action.game,
       };
 
+    case ActiveGameActionTypes.GameUpdated:
+      return {
+        ...state,
+        game: action.response.game,
+      };
+
     default:
       return state;
   }
