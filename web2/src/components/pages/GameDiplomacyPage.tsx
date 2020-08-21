@@ -6,7 +6,7 @@ import { GamePageProps } from './GamePage';
 import { loadGame } from '../../controllers/gameController';
 import { selectActiveGame } from '../../hooks/selectors';
 import { GameStatus } from '../../api-client';
-import { navigateTo } from '../../utilities/navigation';
+import { navigateTo } from '../../controllers/navigationController';
 import * as Routes from '../../utilities/routes';
 
 const GameDiplomacyPage: FC<GamePageProps> = ({ gameId }) => {

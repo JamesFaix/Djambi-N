@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
-import { navigateTo } from '../../utilities/navigation';
+import { navigateTo } from '../../controllers/navigationController';
 
 interface NavigationItemProps {
   text: string;

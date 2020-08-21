@@ -6,7 +6,7 @@ import {
 } from 'react-router-dom';
 import { ThemeProvider, makeStyles } from '@material-ui/core';
 import NavigationDrawer from '../NavigationDrawer/NavigationDrawer';
-import { loadConfig } from '../../utilities/config';
+import { loadConfig } from '../../controllers/configController';
 import * as Routes from '../../utilities/routes';
 import NoMatchPage from '../pages/NoMatchPage';
 import RedirectBasedOnStore from '../routing/RedirectBasedOnStore';
