@@ -6,7 +6,7 @@ import { GamePageProps } from './GamePage';
 import { selectActiveGame } from '../../hooks/selectors';
 import { loadGame, startGame } from '../../controllers/gameController';
 import { GameStatus } from '../../api-client';
-import PendingGamePlayersTable from '../tables/PendingGamePlayersTable/PendingGamePlayersTable';
+import LobbyPlayersTable from '../tables/LobbyPlayersTable/LobbyPlayersTable';
 import GameParametersTable from '../tables/GameParametersTable';
 import { theme } from '../../styles/materialTheme';
 import { useFormStyles } from '../../styles/styles';
@@ -54,7 +54,7 @@ const GameLobbyPage: FC<GamePageProps> = ({ gameId }) => {
         <Typography variant="h5">
           Players
         </Typography>
-        <PendingGamePlayersTable />
+        <LobbyPlayersTable />
       </Container>
       <br />
       <br />

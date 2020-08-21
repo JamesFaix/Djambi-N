@@ -2,7 +2,7 @@ import {
   UserDto, GameDto, PlayerKind, PlayerDto,
 } from '../../../api-client';
 
-export enum PendingGamePlayerActionType {
+export enum LobbyPlayerActionType {
   None,
   SelfJoin,
   AddGuest,
@@ -10,13 +10,13 @@ export enum PendingGamePlayerActionType {
   SelfQuit
 }
 
-export type PendingGamePlayerSlotViewModel = {
+export type LobbyPlayerViewModel = {
   id: number | null,
   name: string,
   kind: PlayerKind | null,
   userId: number | null,
   note: string,
-  actionType: PendingGamePlayerActionType
+  actionType: LobbyPlayerActionType
 };
 
 function getPlayerNote(player: PlayerDto, game: GameDto): string {
@@ -36,26 +36,26 @@ function getPlayerNote(player: PlayerDto, game: GameDto): string {
 
 function getViewModelsForCurrentPlayers(currentUser: UserDto, game: GameDto) {
   return game.players.map((p) => {
-    const viewModel: PendingGamePlayerSlotViewModel = {
+    const viewModel: LobbyPlayerViewModel = {
       id: p.id,
       name: p.name,
       kind: p.kind,
       userId: p.userId || null,
       note: getPlayerNote(p, game),
-      actionType: PendingGamePlayerActionType.None,
+      actionType: LobbyPlayerActionType.None,
     };
 
     if (p.userId === currentUser.id) {
       if (p.kind === PlayerKind.Guest) {
         // User can remove their own guests
-        viewModel.actionType = PendingGamePlayerActionType.Remove;
+        viewModel.actionType = LobbyPlayerActionType.Remove;
       } else if (p.kind === PlayerKind.User) {
         // User can quit
-        viewModel.actionType = PendingGamePlayerActionType.SelfQuit;
+        viewModel.actionType = LobbyPlayerActionType.SelfQuit;
       }
     } else if (game.createdBy.userId === currentUser.id) {
       // Game creator can remove any player
-      viewModel.actionType = PendingGamePlayerActionType.Remove;
+      viewModel.actionType = LobbyPlayerActionType.Remove;
     }
 
     return viewModel;
@@ -63,7 +63,7 @@ function getViewModelsForCurrentPlayers(currentUser: UserDto, game: GameDto) {
 }
 
 export function getViewModels(currentUser: UserDto, game: GameDto)
-  : PendingGamePlayerSlotViewModel[] {
+  : LobbyPlayerViewModel[] {
   const viewModels = getViewModelsForCurrentPlayers(currentUser, game);
   const emptySlotCount = game.parameters.regionCount - viewModels.length;
   const userIsPlayer = game.players.map((p) => p.userId).includes(currentUser.id);
@@ -76,7 +76,7 @@ export function getViewModels(currentUser: UserDto, game: GameDto)
         kind: null,
         userId: null,
         note: '',
-        actionType: PendingGamePlayerActionType.SelfJoin,
+        actionType: LobbyPlayerActionType.SelfJoin,
       });
     } else {
       viewModels.push({
@@ -85,7 +85,7 @@ export function getViewModels(currentUser: UserDto, game: GameDto)
         kind: null,
         userId: null,
         note: '',
-        actionType: PendingGamePlayerActionType.AddGuest,
+        actionType: LobbyPlayerActionType.AddGuest,
       });
     }
   }
@@ -97,7 +97,7 @@ export function getViewModels(currentUser: UserDto, game: GameDto)
       kind: null,
       userId: null,
       note: '',
-      actionType: PendingGamePlayerActionType.None,
+      actionType: LobbyPlayerActionType.None,
     });
   }
 

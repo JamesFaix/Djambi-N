@@ -8,46 +8,46 @@ import {
 } from '@material-ui/icons';
 import { useSelector } from 'react-redux';
 import { GameDto, PlayerKind } from '../../../api-client';
-import { PendingGamePlayerSlotViewModel, PendingGamePlayerActionType } from './viewModel';
+import { LobbyPlayerViewModel, LobbyPlayerActionType } from './viewModel';
 import { addPlayer, removePlayer } from '../../../controllers/gameController';
 import { selectSession } from '../../../hooks/selectors';
 import { useFormStyles } from '../../../styles/styles';
 import { theme } from '../../../styles/materialTheme';
 
 interface Props {
-  player: PendingGamePlayerSlotViewModel,
+  player: LobbyPlayerViewModel,
   game: GameDto
 }
 
-const getActionIcon = (action: PendingGamePlayerActionType | null) => {
+const getActionIcon = (action: LobbyPlayerActionType | null) => {
   switch (action) {
-    case PendingGamePlayerActionType.AddGuest:
-    case PendingGamePlayerActionType.SelfJoin:
+    case LobbyPlayerActionType.AddGuest:
+    case LobbyPlayerActionType.SelfJoin:
       return <AddIcon style={{ paddingRight: '5px' }} />;
-    case PendingGamePlayerActionType.Remove:
-    case PendingGamePlayerActionType.SelfQuit:
+    case LobbyPlayerActionType.Remove:
+    case LobbyPlayerActionType.SelfQuit:
       return <RemoveIcon style={{ paddingRight: '5px' }} />;
     default:
       return <></>;
   }
 };
 
-const getActionLabel = (action: PendingGamePlayerActionType | null) => {
+const getActionLabel = (action: LobbyPlayerActionType | null) => {
   switch (action) {
-    case PendingGamePlayerActionType.AddGuest:
+    case LobbyPlayerActionType.AddGuest:
       return 'Add guest';
-    case PendingGamePlayerActionType.SelfJoin:
+    case LobbyPlayerActionType.SelfJoin:
       return 'Join';
-    case PendingGamePlayerActionType.SelfQuit:
+    case LobbyPlayerActionType.SelfQuit:
       return 'Quit';
-    case PendingGamePlayerActionType.Remove:
+    case LobbyPlayerActionType.Remove:
       return 'Remove';
     default:
       return '';
   }
 };
 
-const PendingGamePlayerRow: FC<Props> = ({ player, game }) => {
+const LobbyPlayerRow: FC<Props> = ({ player, game }) => {
   const styles = useFormStyles(theme);
 
   const [guestName, setGuestName] = useState('');
@@ -91,14 +91,14 @@ const PendingGamePlayerRow: FC<Props> = ({ player, game }) => {
 
   const onClick = () => {
     switch (player.actionType) {
-      case PendingGamePlayerActionType.AddGuest:
+      case LobbyPlayerActionType.AddGuest:
         addGuest();
         break;
-      case PendingGamePlayerActionType.SelfJoin:
+      case LobbyPlayerActionType.SelfJoin:
         selfJoin();
         break;
-      case PendingGamePlayerActionType.SelfQuit:
-      case PendingGamePlayerActionType.Remove:
+      case LobbyPlayerActionType.SelfQuit:
+      case LobbyPlayerActionType.Remove:
         remove();
         break;
       default:
@@ -109,7 +109,7 @@ const PendingGamePlayerRow: FC<Props> = ({ player, game }) => {
   return (
     <TableRow>
       <TableCell>{
-        player.actionType === PendingGamePlayerActionType.AddGuest
+        player.actionType === LobbyPlayerActionType.AddGuest
           ? (
             <TextField
               value={guestName}
@@ -128,7 +128,7 @@ const PendingGamePlayerRow: FC<Props> = ({ player, game }) => {
           <ListItemIcon>{getActionIcon(player.actionType)}</ListItemIcon>
           <ListItemText primary={getActionLabel(player.actionType)} />
         </ListItem> */}
-        {player.actionType === PendingGamePlayerActionType.None || player.actionType === null
+        {player.actionType === LobbyPlayerActionType.None || player.actionType === null
           ? <></>
           : (
             <Button
@@ -145,4 +145,4 @@ const PendingGamePlayerRow: FC<Props> = ({ player, game }) => {
   );
 };
 
-export default PendingGamePlayerRow;
+export default LobbyPlayerRow;
