@@ -11,5 +11,9 @@ export const theme = createMuiTheme({
     h5: {
       color: '#fff',
     },
+    caption: {
+      color: '#fff',
+      opacity: 0.7,
+    },
   },
 });

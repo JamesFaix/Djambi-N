@@ -31,3 +31,11 @@ export async function removePlayer(gameId: number, playerId: number): Promise<vo
   const action = gameUpdated(response);
   store.dispatch(action);
 }
+
+export async function startGame(gameId: number): Promise<void> {
+  const request = { gameId };
+  const response = await Api.games().apiGamesGameIdStartRequestPost(request);
+  const action = gameUpdated(response);
+  store.dispatch(action);
+  navigateTo(Routes.gamePlay(gameId));
+}
