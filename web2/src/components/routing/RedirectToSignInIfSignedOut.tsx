@@ -5,9 +5,10 @@ import { navigateTo } from '../../controllers/navigationController';
 import * as Routes from '../../utilities/routes';
 
 const RedirectToSignInIfSignedOut: FC = () => {
-  const session = useSelector(selectSession);
+  const { user, isRestorePending } = useSelector(selectSession);
+  const isSignedOut = !isRestorePending && user === null;
 
-  if (session.user === null) {
+  if (isSignedOut) {
     navigateTo(Routes.signIn);
   }
 
