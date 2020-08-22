@@ -33,6 +33,7 @@ const UserConfigForm: FC = () => {
               <TableCell>
                 <Checkbox
                   className={styles.control}
+                  checked={state.logRedux}
                   onChange={(e) => setState({
                     ...state,
                     logRedux: e.target.checked,
@@ -45,6 +46,7 @@ const UserConfigForm: FC = () => {
               <TableCell>
                 <TextField
                   className={styles.control}
+                  value={state.favoriteWord}
                   onChange={(e) => setState({
                     ...state,
                     favoriteWord: e.target.value,
