@@ -18,7 +18,7 @@ const FormCheckbox: FC<Props> = ({
 
   return (
     <FormControlLabel
-      value={value}
+      checked={value}
       label={label}
       labelPlacement="start"
       className={styles.label}
