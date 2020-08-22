@@ -21,7 +21,7 @@ function getPlayerNote(player: PlayerDto, game: GameDto): string {
   }
 }
 
-const InProgressLobbyPlayersTable: FC = () => {
+const InfoPlayersTable: FC = () => {
   const { game } = useSelector(selectActiveGame);
   if (game === null) {
     return <></>;
@@ -53,4 +53,4 @@ const InProgressLobbyPlayersTable: FC = () => {
   );
 };
 
-export default InProgressLobbyPlayersTable;
+export default InfoPlayersTable;

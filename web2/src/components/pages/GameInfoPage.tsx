@@ -6,7 +6,7 @@ import { GamePageProps } from './GamePage';
 import { selectActiveGame } from '../../hooks/selectors';
 import { loadGame } from '../../controllers/gameController';
 import { GameStatus } from '../../api-client';
-import InProgressLobbyPlayersTable from '../tables/InProgressLobbyPlayersTable';
+import InfoPlayersTable from '../tables/InfoPlayersTable';
 import GameParametersTable from '../tables/GameParametersTable';
 import { navigateTo } from '../../controllers/navigationController';
 import * as Routes from '../../utilities/routes';
@@ -48,7 +48,7 @@ const GameInfoPage: FC<GamePageProps> = ({ gameId }) => {
         <Typography variant="h5">
           Players
         </Typography>
-        <InProgressLobbyPlayersTable />
+        <InfoPlayersTable />
       </Container>
     </div>
   );

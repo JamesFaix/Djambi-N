@@ -116,6 +116,7 @@ const LobbyPlayerRow: FC<Props> = ({ player, game }) => {
               onChange={(e) => setGuestName(e.target.value)}
               error={!isValidName}
               helperText={helperText}
+              placeholder="Guest player name"
             />
           )
           : player.name
