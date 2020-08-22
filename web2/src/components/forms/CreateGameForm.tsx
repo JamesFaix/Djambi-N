@@ -5,13 +5,12 @@ import {
   Table,
   TableBody,
   TableRow,
-  TableCell as MuiTableCell,
   TextField,
   Checkbox,
-  withStyles,
 } from '@material-ui/core';
 import { createGame } from '../../controllers/gameController';
 import FormSubmitButton from './controls/FormSubmitButton';
+import FormTableCell from './controls/FormTableCell';
 
 type FormState = {
   description: string,
@@ -27,11 +26,7 @@ const defaultState: FormState = {
   regionCount: 3,
 };
 
-const TableCell = withStyles({
-  root: {
-    borderBottom: 'none',
-  },
-})(MuiTableCell);
+const TableCell = FormTableCell;
 
 const CreateGameForm: FC = () => {
   const [state, setState] = useState(defaultState);
