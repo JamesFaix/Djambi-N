@@ -11,22 +11,48 @@ import {
   SnapshotApi,
   TurnApi,
   UserApi,
+  Middleware,
 } from '../api-client';
 import { RootState } from '../redux/root';
 import { store } from '../redux';
+import { Notification, NotificationLevel } from '../model/notifications';
+import { addNotification } from '../redux/notifications/actionFactory';
+import { Problem } from '../model/errorHandling';
 
 function getApiUrl(state: RootState): string {
   return state.config.environment.apiUrl;
 }
 
+function getNotificationsMiddleware(): Middleware {
+  return {
+    post: async (context) => {
+      const r = context.response;
+      if (r.status > 399) {
+        const text = await r.text();
+        const problem = JSON.parse(text) as Problem;
+        const notification: Notification = {
+          id: '',
+          message: problem.Title,
+          time: new Date(),
+          level: NotificationLevel.Error,
+        };
+        const action = addNotification(notification);
+        store.dispatch(action);
+      }
+    },
+  };
+}
+
 function getConfigParams(apiUrl: string): ConfigurationParameters {
   return {
     basePath: apiUrl,
-    middleware: [],
     headers: {
       'Content-Type': 'application/json',
     },
     credentials: 'include',
+    middleware: [
+      getNotificationsMiddleware(),
+    ],
   };
 }
 
