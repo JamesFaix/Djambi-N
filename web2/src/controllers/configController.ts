@@ -1,7 +1,7 @@
 import { UserConfig, EnvironmentConfig } from '../model/configuration';
 import { store } from '../redux';
 import { defaultConfigState } from '../redux/config/state';
-import { userConfigLoaded, environmentConfigLoaded } from '../redux/config/actionFactory';
+import { userConfigLoaded, environmentConfigLoaded, userConfigChanged } from '../redux/config/actionFactory';
 
 const localStorageKey = 'Djambi_UserConfig';
 
@@ -34,6 +34,6 @@ export async function loadConfig(): Promise<void> {
 export async function setUserConfig(config: UserConfig): Promise<void> {
   const json = JSON.stringify(config);
   localStorage.setItem(localStorageKey, json);
-  const action = userConfigLoaded(config);
+  const action = userConfigChanged(config);
   store.dispatch(action);
 }

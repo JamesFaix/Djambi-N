@@ -1,10 +1,16 @@
 import React, { FC, useState } from 'react';
-import { FormControl, FormGroup } from '@material-ui/core';
+import {
+  FormControl,
+  FormGroup,
+  Table,
+  TableBody,
+  TableRow,
+  TextField,
+  Checkbox,
+} from '@material-ui/core';
 import { createGame } from '../../controllers/gameController';
-import FormTextField from './controls/FormTextField';
-import FormCheckbox from './controls/FormCheckbox';
 import FormSubmitButton from './controls/FormSubmitButton';
-import FormNumberField from './controls/FormNumberField';
+import FormTableCell from './controls/FormTableCell';
 
 type FormState = {
   description: string,
@@ -20,6 +26,8 @@ const defaultState: FormState = {
   regionCount: 3,
 };
 
+const TableCell = FormTableCell;
+
 const CreateGameForm: FC = () => {
   const [state, setState] = useState(defaultState);
 
@@ -27,38 +35,67 @@ const CreateGameForm: FC = () => {
     <div>
       <FormControl component="fieldset">
         <FormGroup>
-          <FormTextField
-            label="Description"
-            value={state.description}
-            onChanged={(e) => setState({
-              ...state,
-              description: e.target.value,
-            })}
-          />
-          <FormCheckbox
-            label="Allow guest players"
-            value={state.allowGuests}
-            onChanged={(e) => setState({
-              ...state,
-              allowGuests: e.target.checked,
-            })}
-          />
-          <FormCheckbox
-            label="Public"
-            value={state.isPublic}
-            onChanged={(e) => setState({
-              ...state,
-              isPublic: e.target.checked,
-            })}
-          />
-          <FormNumberField
-            label="Board region count"
-            value={state.regionCount}
-            onChanged={(e) => setState({
-              ...state,
-              regionCount: Number(e.target.value),
-            })}
-          />
+          <Table>
+            <TableBody>
+              <TableRow>
+                <TableCell>
+                  Description
+                </TableCell>
+                <TableCell>
+                  <TextField
+                    value={state.description}
+                    onChange={(e) => setState({
+                      ...state,
+                      description: e.target.value,
+                    })}
+                  />
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>
+                  Allow guest players
+                </TableCell>
+                <TableCell>
+                  <Checkbox
+                    checked={state.allowGuests}
+                    onChange={(e) => setState({
+                      ...state,
+                      allowGuests: e.target.checked,
+                    })}
+                  />
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>
+                  Public
+                </TableCell>
+                <TableCell>
+                  <Checkbox
+                    checked={state.isPublic}
+                    onChange={(e) => setState({
+                      ...state,
+                      isPublic: e.target.checked,
+                    })}
+                  />
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>
+                  Board regions
+                </TableCell>
+                <TableCell>
+                  <TextField
+                    type="number"
+                    value={state.regionCount}
+                    onChange={(e) => setState({
+                      ...state,
+                      regionCount: Number(e.target.value),
+                    })}
+                  />
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
           <br />
           <FormSubmitButton
             text="Submit"

@@ -8,10 +8,11 @@ interface Props {
   onChanged: (e: ChangeEvent<HTMLInputElement>) => void,
   error?: boolean,
   helperText?: string
+  placeholder?: string
 }
 
 const FormTextField: FC<Props> = ({
-  value, label, onChanged, error, helperText,
+  value, label, onChanged, error, helperText, placeholder,
 }) => {
   const theme = useTheme();
   const styles = useFormStyles(theme);
@@ -28,6 +29,7 @@ const FormTextField: FC<Props> = ({
           onChange={onChanged}
           error={error}
           helperText={helperText}
+          placeholder={placeholder}
         />
       )}
     />

@@ -5,9 +5,10 @@ import { navigateTo } from '../../controllers/navigationController';
 import * as Routes from '../../utilities/routes';
 
 const RedirectToHomeIfSignedIn: FC = () => {
-  const session = useSelector(selectSession);
+  const { user, isRestorePending } = useSelector(selectSession);
+  const isSignedIn = !isRestorePending && user !== null;
 
-  if (session.user !== null) {
+  if (isSignedIn) {
     navigateTo(Routes.home);
   }
 

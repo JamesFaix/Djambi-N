@@ -27,7 +27,9 @@ const GamePlayPage: FC<GamePageProps> = ({ gameId }) => {
         {`Game ${gameId} play page`}
       </Typography>
       <br />
-      {state.game ? JSON.stringify(state.game) : ''}
+      <Typography variant="body1">
+        {state.game ? JSON.stringify(state.game) : ''}
+      </Typography>
     </div>
   );
 };
