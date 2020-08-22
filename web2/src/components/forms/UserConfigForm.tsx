@@ -1,47 +1,62 @@
 import React, { FC, useState } from 'react';
-import { FormControl, FormGroup } from '@material-ui/core';
+import {
+  FormControl, FormGroup, TableBody, Table, TableRow, TableCell,
+  Checkbox,
+  TextField,
+} from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import { setUserConfig } from '../../controllers/configController';
-import FormTextField from './controls/FormTextField';
 import FormSubmitButton from './controls/FormSubmitButton';
-import FormCheckbox from './controls/FormCheckbox';
 import { selectConfig } from '../../hooks/selectors';
+import { useFormStyles } from '../../styles/styles';
+import { theme } from '../../styles/materialTheme';
 
 const UserConfigForm: FC = () => {
   const { user } = useSelector(selectConfig);
   const [state, setState] = useState(user);
+  const styles = useFormStyles(theme);
 
   return (
-    <div>
-      <FormControl component="fieldset">
-        <FormGroup>
-          <FormCheckbox
-            label="Log Redux"
-            value={state.logRedux}
-            onChanged={(e) => setState({
-              ...state,
-              logRedux: e.target.checked,
-            })}
-          />
-          <FormTextField
-            label="Favorite word"
-            value={state.favoriteWord}
-            onChanged={(e) => setState({
-              ...state,
-              favoriteWord: e.target.value,
-            })}
-          />
-          <br />
-          <FormSubmitButton
-            text="Save"
-            onClick={() => setUserConfig({
-              logRedux: state.logRedux,
-              favoriteWord: state.favoriteWord,
-            })}
-          />
-        </FormGroup>
-      </FormControl>
-    </div>
+    <FormControl component="fieldset">
+      <FormGroup>
+        <Table>
+          <TableBody>
+            <TableRow>
+              <TableCell>Log Redux</TableCell>
+              <TableCell>
+                <Checkbox
+                  className={styles.control}
+                  onChange={(e) => setState({
+                    ...state,
+                    logRedux: e.target.checked,
+                  })}
+                />
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>Favorite word</TableCell>
+              <TableCell>
+                <TextField
+                  className={styles.control}
+                  onChange={(e) => setState({
+                    ...state,
+                    favoriteWord: e.target.value,
+                  })}
+                />
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+        <br />
+        <FormSubmitButton
+          text="Save"
+          onClick={() => setUserConfig({
+            logRedux: state.logRedux,
+            favoriteWord: state.favoriteWord,
+          })}
+        />
+      </FormGroup>
+    </FormControl>
   );
 };
 
