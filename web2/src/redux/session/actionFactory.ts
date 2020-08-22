@@ -1,5 +1,11 @@
 import { UserDto } from '../../api-client';
-import { LoggedInAction, LoggedOutAction, RestoredAction } from './actions';
+import {
+  LoggedInAction,
+  LoggedOutAction,
+  AttemptingRestoreAction,
+  RestoreSucceededAction,
+  RestoreFailedAction,
+} from './actions';
 import { SessionActionTypes } from './actionTypes';
 
 export function loggedIn(user: UserDto): LoggedInAction {
@@ -15,9 +21,21 @@ export function loggedOut(): LoggedOutAction {
   };
 }
 
-export function restored(user: UserDto): RestoredAction {
+export function attemptingRestore(): AttemptingRestoreAction {
   return {
-    type: SessionActionTypes.Restored,
+    type: SessionActionTypes.AttemptingRestore,
+  };
+}
+
+export function restoreSucceeded(user: UserDto): RestoreSucceededAction {
+  return {
+    type: SessionActionTypes.RestoreSucceeded,
     user,
+  };
+}
+
+export function restoreFailed(): RestoreFailedAction {
+  return {
+    type: SessionActionTypes.RestoreFailed,
   };
 }

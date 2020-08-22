@@ -19,10 +19,23 @@ export function sessionReducer(
         user: null,
       };
 
-    case SessionActionTypes.Restored:
+    case SessionActionTypes.AttemptingRestore:
+      return {
+        ...state,
+        isRestorePending: true,
+      };
+
+    case SessionActionTypes.RestoreSucceeded:
       return {
         ...state,
         user: action.user,
+        isRestorePending: false,
+      };
+
+    case SessionActionTypes.RestoreFailed:
+      return {
+        ...state,
+        isRestorePending: false,
       };
 
     default:
