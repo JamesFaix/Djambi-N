@@ -12,7 +12,7 @@ export const theme = createMuiTheme({
       color: '#fff',
     },
     body1: {
-      color: '#fff',
+      color: '#ddd',
     },
     caption: {
       color: '#fff',
