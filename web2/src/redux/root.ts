@@ -17,7 +17,7 @@ import { NavigationAction } from './navigation/actions';
 import { navigationReducer } from './navigation/reducer';
 import { ActiveGameState, defaultActiveGameState } from './activeGame/state';
 import { ActiveGameActionTypes } from './activeGame/actionTypes';
-import { ActiveGameAction } from './activeGame/actionts';
+import { ActiveGameAction } from './activeGame/actions';
 import { activeGameReducer } from './activeGame/reducer';
 
 export type RootState = {
