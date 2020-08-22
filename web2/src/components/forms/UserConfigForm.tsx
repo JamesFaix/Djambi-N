@@ -1,8 +1,9 @@
 import React, { FC, useState } from 'react';
 import {
-  FormControl, FormGroup, TableBody, Table, TableRow, TableCell,
+  FormControl, FormGroup, TableBody, Table, TableRow, TableCell as MuiTableCell,
   Checkbox,
   TextField,
+  withStyles,
 } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import { setUserConfig } from '../../controllers/configController';
@@ -10,6 +11,12 @@ import FormSubmitButton from './controls/FormSubmitButton';
 import { selectConfig } from '../../hooks/selectors';
 import { useFormStyles } from '../../styles/styles';
 import { theme } from '../../styles/materialTheme';
+
+const TableCell = withStyles({
+  root: {
+    borderBottom: 'none',
+  },
+})(MuiTableCell);
 
 const UserConfigForm: FC = () => {
   const { user } = useSelector(selectConfig);

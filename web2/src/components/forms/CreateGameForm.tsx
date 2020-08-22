@@ -1,6 +1,14 @@
 import React, { FC, useState } from 'react';
 import {
-  FormControl, FormGroup, Table, TableBody, TableRow, TableCell, TextField, Checkbox,
+  FormControl,
+  FormGroup,
+  Table,
+  TableBody,
+  TableRow,
+  TableCell as MuiTableCell,
+  TextField,
+  Checkbox,
+  withStyles,
 } from '@material-ui/core';
 import { createGame } from '../../controllers/gameController';
 import FormSubmitButton from './controls/FormSubmitButton';
@@ -18,6 +26,12 @@ const defaultState: FormState = {
   isPublic: true,
   regionCount: 3,
 };
+
+const TableCell = withStyles({
+  root: {
+    borderBottom: 'none',
+  },
+})(MuiTableCell);
 
 const CreateGameForm: FC = () => {
   const [state, setState] = useState(defaultState);
