@@ -30,14 +30,10 @@ import { theme } from '../../styles/materialTheme';
 import GameInfoPage from '../pages/GameInfoPage';
 
 const useStyles = makeStyles({
-  app: {
-    textAlign: 'center',
-    height: '100%',
-  },
   page: {
+    textAlign: 'center',
     padding: '20px',
     background: '#161616',
-    height: 'calc(100vh - 104px)',
   },
 });
 
@@ -50,59 +46,57 @@ const App: FC = () => {
   const classes = useStyles();
 
   return (
-    <div className={classes.app}>
-      <ThemeProvider theme={theme}>
-        <BrowserRouter>
-          <RedirectBasedOnStore />
-          <NavigationDrawer />
-          <TopBar />
-          <div className={classes.page}>
-            <Switch>
-              {/* Gameless pages */}
-              <Route path={Routes.settings} component={UserConfigPage} />
-              <Route path={Routes.signIn} component={SignInPage} />
-              <Route path={Routes.signOut} component={SignOutPage} />
-              <Route path={Routes.createAccount} component={CreateAccountPage} />
-              <Route path={Routes.rules} component={RulesPage} />
-              <Route path={Routes.home} component={HomePage} />
-              <Route path={Routes.newGame} component={CreateGamePage} />
-              <Route path={Routes.searchGames} component={SearchGamesPage} />
-              {/* Active game pages */}
-              <Route
-                path={Routes.gameDiplomacyTemplate}
-                render={(props) => <GameDiplomacyPage gameId={props.match.params.gameId} />}
-              />
-              <Route
-                path={Routes.gameInfoTemplate}
-                render={(props) => <GameInfoPage gameId={props.match.params.gameId} />}
-              />
-              <Route
-                path={Routes.gameLobbyTemplate}
-                render={(props) => <GameLobbyPage gameId={props.match.params.gameId} />}
-              />
-              <Route
-                path={Routes.gameOutcomeTemplate}
-                render={(props) => <GameOutcomePage gameId={props.match.params.gameId} />}
-              />
-              <Route
-                path={Routes.gamePlayTemplate}
-                render={(props) => <GamePlayPage gameId={props.match.params.gameId} />}
-              />
-              <Route
-                path={Routes.gameSnapshotsTemplate}
-                render={(props) => <GameSnapshotsPage gameId={props.match.params.gameId} />}
-              />
-              <Route
-                path={Routes.gameTemplate}
-                render={(props) => <GamePage gameId={props.match.params.gameId} />}
-              />
-              {/* Misc pages */}
-              <Route component={NoMatchPage} />
-            </Switch>
-          </div>
-        </BrowserRouter>
-      </ThemeProvider>
-    </div>
+    <ThemeProvider theme={theme}>
+      <BrowserRouter>
+        <RedirectBasedOnStore />
+        <NavigationDrawer />
+        <TopBar />
+        <div className={classes.page}>
+          <Switch>
+            {/* Gameless pages */}
+            <Route path={Routes.settings} component={UserConfigPage} />
+            <Route path={Routes.signIn} component={SignInPage} />
+            <Route path={Routes.signOut} component={SignOutPage} />
+            <Route path={Routes.createAccount} component={CreateAccountPage} />
+            <Route path={Routes.rules} component={RulesPage} />
+            <Route path={Routes.home} component={HomePage} />
+            <Route path={Routes.newGame} component={CreateGamePage} />
+            <Route path={Routes.searchGames} component={SearchGamesPage} />
+            {/* Active game pages */}
+            <Route
+              path={Routes.gameDiplomacyTemplate}
+              render={(props) => <GameDiplomacyPage gameId={props.match.params.gameId} />}
+            />
+            <Route
+              path={Routes.gameInfoTemplate}
+              render={(props) => <GameInfoPage gameId={props.match.params.gameId} />}
+            />
+            <Route
+              path={Routes.gameLobbyTemplate}
+              render={(props) => <GameLobbyPage gameId={props.match.params.gameId} />}
+            />
+            <Route
+              path={Routes.gameOutcomeTemplate}
+              render={(props) => <GameOutcomePage gameId={props.match.params.gameId} />}
+            />
+            <Route
+              path={Routes.gamePlayTemplate}
+              render={(props) => <GamePlayPage gameId={props.match.params.gameId} />}
+            />
+            <Route
+              path={Routes.gameSnapshotsTemplate}
+              render={(props) => <GameSnapshotsPage gameId={props.match.params.gameId} />}
+            />
+            <Route
+              path={Routes.gameTemplate}
+              render={(props) => <GamePage gameId={props.match.params.gameId} />}
+            />
+            {/* Misc pages */}
+            <Route component={NoMatchPage} />
+          </Switch>
+        </div>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 };
 
