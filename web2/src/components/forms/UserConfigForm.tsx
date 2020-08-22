@@ -1,22 +1,15 @@
 import React, { FC, useState } from 'react';
 import { FormControl, FormGroup } from '@material-ui/core';
+import { useSelector } from 'react-redux';
 import { setUserConfig } from '../../controllers/configController';
 import FormTextField from './controls/FormTextField';
 import FormSubmitButton from './controls/FormSubmitButton';
 import FormCheckbox from './controls/FormCheckbox';
-
-type FormState = {
-  logRedux: boolean,
-  favoriteWord: string
-};
-
-const defaultState: FormState = {
-  logRedux: false,
-  favoriteWord: 'scrupulous',
-};
+import { selectConfig } from '../../hooks/selectors';
 
 const UserConfigForm: FC = () => {
-  const [state, setState] = useState(defaultState);
+  const { user } = useSelector(selectConfig);
+  const [state, setState] = useState(user);
 
   return (
     <div>
