@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { Alert } from '@material-ui/lab';
-import { Notification, NotificationLevel } from '../model/notifications';
-import { removeNotification } from '../controllers/notificationsController';
+import { Notification, NotificationLevel } from '../../model/notifications';
+import { removeNotification } from '../../controllers/notificationsController';
 
 type AlertSeverity = 'info' | 'success' | 'warning' | 'error' | undefined;
 

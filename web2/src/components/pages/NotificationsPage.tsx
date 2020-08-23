@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import { Typography, Container, List } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import { selectNotifications } from '../../hooks/selectors';
-import NotificationAlert from '../NotificationAlert';
+import NotificationAlert from '../notifications/NotificationAlert';
 
 const PageContent: FC = () => {
   const { notifications } = useSelector(selectNotifications);

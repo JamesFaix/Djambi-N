@@ -29,6 +29,7 @@ import SignOutPage from '../pages/SignOutPage';
 import { theme } from '../../styles/materialTheme';
 import GameInfoPage from '../pages/GameInfoPage';
 import NotificationsPage from '../pages/NotificationsPage';
+import LatestNotificationSnackbar from '../notifications/LatestNotificationSnackBar';
 
 const useStyles = makeStyles({
   page: {
@@ -51,6 +52,7 @@ const App: FC = () => {
       <BrowserRouter>
         <RedirectBasedOnStore />
         <NavigationDrawer />
+        <LatestNotificationSnackbar />
         <TopBar />
         <div className={classes.page}>
           <Switch>
