@@ -1,8 +1,7 @@
 import React, { FC } from 'react';
-import { List } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
-import { Notification, NotificationLevel } from '../../model/notifications';
-import { removeNotification } from '../../controllers/notificationsController';
+import { Notification, NotificationLevel } from '../model/notifications';
+import { removeNotification } from '../controllers/notificationsController';
 
 type AlertSeverity = 'info' | 'success' | 'warning' | 'error' | undefined;
 
@@ -43,20 +42,4 @@ const NotificationAlert: FC<AlertProps> = ({ notification }) => {
   );
 };
 
-interface ListProps {
-  notifications: Notification[]
-}
-
-const NotificationsTable: FC<ListProps> = ({ notifications }) => {
-  return (
-    <List>
-      {
-        notifications.map((n, i) => (
-          <NotificationAlert notification={n} key={i.toString()} />
-        ))
-      }
-    </List>
-  );
-};
-
-export default NotificationsTable;
+export default NotificationAlert;
