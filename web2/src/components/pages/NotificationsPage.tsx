@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Typography } from '@material-ui/core';
+import { Typography, Container } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import NotificationsTable from '../tables/NotificationsTable';
 import { selectNotifications } from '../../hooks/selectors';
@@ -14,11 +14,13 @@ const NotificationsPage: FC = () => {
         Notifications
       </Typography>
       <br />
-      {
-        showTable
-          ? <NotificationsTable notifications={notifications} />
-          : <Typography variant="body1">You do not have any notifications.</Typography>
-      }
+      <Container maxWidth="sm">
+        {
+          showTable
+            ? <NotificationsTable notifications={notifications} />
+            : <Typography variant="body1">You do not have any notifications.</Typography>
+        }
+      </Container>
     </div>
   );
 };

@@ -1,17 +1,8 @@
 import React, { FC } from 'react';
-import {
-  Table,
-  TableContainer,
-  TableCell,
-  TableRow,
-  TableBody,
-} from '@material-ui/core';
+import { List } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { Notification, NotificationLevel } from '../../model/notifications';
-
-interface Props {
-  notifications: Notification[]
-}
+import { removeNotification } from '../../controllers/notificationsController';
 
 type AlertSeverity = 'info' | 'success' | 'warning' | 'error' | undefined;
 
@@ -28,23 +19,43 @@ function getAlertSeverity(level: NotificationLevel): AlertSeverity {
   }
 }
 
-const NotificationsTable: FC<Props> = ({ notifications }) => {
+interface AlertProps {
+  notification: Notification
+}
+
+const NotificationAlert: FC<AlertProps> = ({ notification }) => {
+  const messages = notification.message.split('\n');
+
   return (
-    <TableContainer>
-      <Table>
-        <TableBody>
-          {
-            notifications.map((n, i) => (
-              <TableRow key={i.toString()}>
-                <TableCell>
-                  <Alert severity={getAlertSeverity(n.level)}>{n.message}</Alert>
-                </TableCell>
-              </TableRow>
-            ))
-          }
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <Alert
+      severity={getAlertSeverity(notification.level)}
+      onClose={() => removeNotification(notification.id)}
+    >
+      {messages.map((m, i) => (
+        <div
+          key={i.toString()}
+          style={{ textAlign: 'left' }}
+        >
+          {m}
+        </div>
+      ))}
+    </Alert>
+  );
+};
+
+interface ListProps {
+  notifications: Notification[]
+}
+
+const NotificationsTable: FC<ListProps> = ({ notifications }) => {
+  return (
+    <List>
+      {
+        notifications.map((n, i) => (
+          <NotificationAlert notification={n} key={i.toString()} />
+        ))
+      }
+    </List>
   );
 };
 
