@@ -28,6 +28,8 @@ import TopBar from '../TopBar/TopBar';
 import SignOutPage from '../pages/SignOutPage';
 import { theme } from '../../styles/materialTheme';
 import GameInfoPage from '../pages/GameInfoPage';
+import NotificationsPage from '../pages/NotificationsPage';
+import LatestNotificationSnackbar from '../notifications/LatestNotificationSnackBar';
 
 const useStyles = makeStyles({
   page: {
@@ -50,6 +52,7 @@ const App: FC = () => {
       <BrowserRouter>
         <RedirectBasedOnStore />
         <NavigationDrawer />
+        <LatestNotificationSnackbar />
         <TopBar />
         <div className={classes.page}>
           <Switch>
@@ -60,6 +63,7 @@ const App: FC = () => {
             <Route path={Routes.createAccount} component={CreateAccountPage} />
             <Route path={Routes.rules} component={RulesPage} />
             <Route path={Routes.home} component={HomePage} />
+            <Route path={Routes.notifications} component={NotificationsPage} />
             <Route path={Routes.newGame} component={CreateGamePage} />
             <Route path={Routes.searchGames} component={SearchGamesPage} />
             {/* Active game pages */}

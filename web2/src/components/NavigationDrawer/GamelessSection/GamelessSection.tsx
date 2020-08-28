@@ -9,6 +9,7 @@ import {
   Search as SearchIcon,
   Gavel as RulesIcon,
   Settings as SettingsIcon,
+  Notifications as NotificationsIcon,
 } from '@material-ui/icons';
 import { useSelector } from 'react-redux';
 import NavigationItem from '../NavigationItem';
@@ -57,6 +58,11 @@ const getAuthenticatedItems = () => (
 
 const getConstantItems = () => (
   <>
+    <NavigationItem
+      text="Notifications"
+      icon={<NotificationsIcon />}
+      path={Routes.notifications}
+    />
     <NavigationItem
       text="Settings"
       icon={<SettingsIcon />}

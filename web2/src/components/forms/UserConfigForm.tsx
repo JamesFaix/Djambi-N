@@ -42,14 +42,15 @@ const UserConfigForm: FC = () => {
               </TableCell>
             </TableRow>
             <TableRow>
-              <TableCell>Favorite word</TableCell>
+              <TableCell>Seconds to display notifications</TableCell>
               <TableCell>
                 <TextField
+                  type="number"
                   className={styles.control}
-                  value={state.favoriteWord}
+                  value={state.notificationDisplaySeconds}
                   onChange={(e) => setState({
                     ...state,
-                    favoriteWord: e.target.value,
+                    notificationDisplaySeconds: Number(e.target.value),
                   })}
                 />
               </TableCell>
@@ -59,10 +60,7 @@ const UserConfigForm: FC = () => {
         <br />
         <FormSubmitButton
           text="Save"
-          onClick={() => setUserConfig({
-            logRedux: state.logRedux,
-            favoriteWord: state.favoriteWord,
-          })}
+          onClick={() => setUserConfig(state)}
         />
       </FormGroup>
     </FormControl>
