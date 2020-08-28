@@ -1,6 +1,6 @@
 export type UserConfig = {
-  favoriteWord: string;
   logRedux: boolean;
+  notificationDisplaySeconds: number;
 };
 
 export type EnvironmentConfig = {

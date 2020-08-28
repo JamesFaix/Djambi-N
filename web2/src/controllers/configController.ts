@@ -11,9 +11,16 @@ const localStorageKey = 'Djambi_UserConfig';
 async function loadUserConfig(): Promise<void> {
   const json = localStorage.getItem(localStorageKey);
 
-  const config = json
+  let config = json
     ? JSON.parse(json) as UserConfig
     : defaultConfigState.user;
+
+  // Fill in default props for anything missing
+  // This is required to be able to introduce new settings
+  config = {
+    ...defaultConfigState.user,
+    ...config,
+  };
 
   const action = userConfigLoaded(config);
   store.dispatch(action);
