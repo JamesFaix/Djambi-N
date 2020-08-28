@@ -36,6 +36,18 @@ export function notificationsReducer(
         ),
       };
 
+    case NotificationActionTypes.ShowSnackbar:
+      return {
+        ...state,
+        isSnackbarVisible: true,
+      };
+
+    case NotificationActionTypes.HideSnackbar:
+      return {
+        ...state,
+        isSnackbarVisible: false,
+      };
+
     default:
       return state;
   }

@@ -11,6 +11,16 @@ export type NotificationRemovedAction = {
   id: string
 };
 
+export type ShowNotificationSnackbarAction = {
+  type: typeof NotificationActionTypes.ShowSnackbar
+};
+
+export type HideNotificationSnackbarAction = {
+  type: typeof NotificationActionTypes.HideSnackbar
+};
+
 export type NotificationAction =
   NotificationAddedAction |
-  NotificationRemovedAction;
+  NotificationRemovedAction |
+  ShowNotificationSnackbarAction |
+  HideNotificationSnackbarAction;

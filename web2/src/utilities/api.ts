@@ -17,7 +17,7 @@ import {
 import { RootState } from '../redux/root';
 import { store } from '../redux';
 import { Notification, NotificationLevel } from '../model/notifications';
-import { addNotification } from '../redux/notifications/actionFactory';
+import { addNotification } from '../controllers/notificationsController';
 import { Problem, ValidationProblem } from '../model/errorHandling';
 
 function getApiUrl(state: RootState): string {
@@ -64,8 +64,7 @@ function getNotificationsMiddleware(): Middleware {
           time: new Date(),
           level: NotificationLevel.Error,
         };
-        const action = addNotification(notification);
-        store.dispatch(action);
+        addNotification(notification);
       }
     },
   };
