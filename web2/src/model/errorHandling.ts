@@ -13,7 +13,6 @@ export type ValidationProblem = {
   title: string,
   status: number,
   traceId: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   errors: ValidationErrors
 };
 
