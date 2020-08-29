@@ -23,8 +23,13 @@ const UserConfigForm: FC = () => {
   const [state, setState] = useState(user);
   const styles = useFormStyles(theme);
 
+  const submit = () => setUserConfig(state);
+
   return (
-    <FormControl component="fieldset">
+    <FormControl
+      component="fieldset"
+      onSubmit={submit}
+    >
       <FormGroup>
         <Table>
           <TableBody>
@@ -60,7 +65,7 @@ const UserConfigForm: FC = () => {
         <br />
         <FormSubmitButton
           text="Save"
-          onClick={() => setUserConfig(state)}
+          onClick={submit}
         />
       </FormGroup>
     </FormControl>
