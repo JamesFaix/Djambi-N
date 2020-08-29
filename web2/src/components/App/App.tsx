@@ -92,31 +92,31 @@ const App: FC = () => {
             {/* Active game pages */}
             <Route
               path={Routes.gameDiplomacyTemplate}
-              render={(props) => <GameDiplomacyPage gameId={props.match.params.gameId} />}
+              render={(props) => <GameDiplomacyPage gameId={Number(props.match.params.gameId)} />}
             />
             <Route
               path={Routes.gameInfoTemplate}
-              render={(props) => <GameInfoPage gameId={props.match.params.gameId} />}
+              render={(props) => <GameInfoPage gameId={Number(props.match.params.gameId)} />}
             />
             <Route
               path={Routes.gameLobbyTemplate}
-              render={(props) => <GameLobbyPage gameId={props.match.params.gameId} />}
+              render={(props) => <GameLobbyPage gameId={Number(props.match.params.gameId)} />}
             />
             <Route
               path={Routes.gameOutcomeTemplate}
-              render={(props) => <GameOutcomePage gameId={props.match.params.gameId} />}
+              render={(props) => <GameOutcomePage gameId={Number(props.match.params.gameId)} />}
             />
             <Route
               path={Routes.gamePlayTemplate}
-              render={(props) => <GamePlayPage gameId={props.match.params.gameId} />}
+              render={(props) => <GamePlayPage gameId={Number(props.match.params.gameId)} />}
             />
             <Route
               path={Routes.gameSnapshotsTemplate}
-              render={(props) => <GameSnapshotsPage gameId={props.match.params.gameId} />}
+              render={(props) => <GameSnapshotsPage gameId={Number(props.match.params.gameId)} />}
             />
             <Route
               path={Routes.gameTemplate}
-              render={(props) => <GamePage gameId={props.match.params.gameId} />}
+              render={(props) => <GamePage gameId={Number(props.match.params.gameId)} />}
             />
             {/* Misc pages */}
             <Route component={NoMatchPage} />
