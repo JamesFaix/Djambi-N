@@ -53,10 +53,16 @@ function getNotificationsMiddleware(): Middleware {
       const r = context.response;
       if (r.status > 399) {
         const text = await r.text();
-        const problem = JSON.parse(text) as Problem;
-        const message = problem.title
-          ? mapProblemToNotificationMessage(problem)
-          : getDefaultNotificationMessage(r.status);
+        let message = '';
+        try {
+          const problem = JSON.parse(text) as Problem;
+          message = problem.title
+            ? mapProblemToNotificationMessage(problem)
+            : getDefaultNotificationMessage(r.status);
+        } catch (e) {
+          // If API is down, will get XML 404 message
+          message = getDefaultNotificationMessage(r.status);
+        }
 
         const notification: Notification = {
           id: uuid(),
