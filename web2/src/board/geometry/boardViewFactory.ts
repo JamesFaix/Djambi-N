@@ -15,6 +15,7 @@ import * as Loc from './location';
 import {
   LocationDto, BoardDto, GameDto, UserDto,
 } from '../../api-client';
+import { exists, groupMatches, mergeMatches } from '../../utilities/collections';
 
 // --- Empty boardview creation ---
 
@@ -120,6 +121,16 @@ export function getCellPolygon(
   ]);
 }
 
+export function getCellType(location: LocationDto): CellType {
+  if (location.x === 0 && location.y === 0) {
+    return CellType.Center;
+  }
+  if ((location.x + location.y) % 2 === 1) {
+    return CellType.Odd;
+  }
+  return CellType.Even;
+}
+
 // TODO: Add unit tests
 export function getCellView(
   board: BoardDto,
@@ -140,45 +151,6 @@ export function getCellView(
     isSelected: false,
     piece: null,
     polygon,
-  };
-}
-
-// TODO: Add tests
-export function mergePartialCellViews(cells: CellView[]): CellView[] {
-  return mergeMatches(
-    cells,
-    (a, b) => a.id === b.id,
-    (a, b) => mergeCellViews(a, b),
-  );
-}
-
-// TODO: Add unit tests
-export function createEmptyBoardView(board: BoardDto): BoardView {
-  const cellCountPerSide = (board.regionSize * 2) - 1;
-  const boardPolygon = Rpl.create(board.regionCount, 1);
-  let cellViews: CellView[] = [];
-
-  for (let region = 0; region < board.regionCount; region += 1) {
-    const regionPolygon = getRegionPolygon(boardPolygon, region);
-
-    for (let y = 0; y < board.regionSize; y += 1) {
-      const rowBorders = getRowBorders(regionPolygon, y, cellCountPerSide);
-
-      for (let x = 0; x < board.regionSize; x += 1) {
-        const location = Loc.create(region, x, y);
-        const cv = getCellView(board, rowBorders, location, cellCountPerSide);
-        cellViews.push(cv);
-      }
-    }
-  }
-
-  cellViews = mergePartialCellViews(cellViews);
-
-  return {
-    regionCount: board.regionCount,
-    cellCountPerSide,
-    cells: cellViews,
-    polygon: boardPolygon,
   };
 }
 
@@ -244,14 +216,43 @@ export function mergeCellViews(a: CellView, b: CellView): CellView {
   };
 }
 
-export function getCellType(location: LocationDto): CellType {
-  if (location.x === 0 && location.y === 0) {
-    return CellType.Center;
+// TODO: Add tests
+export function mergePartialCellViews(cells: CellView[]): CellView[] {
+  return mergeMatches(
+    cells,
+    (a, b) => a.id === b.id,
+    (a, b) => mergeCellViews(a, b),
+  );
+}
+
+// TODO: Add unit tests
+export function createEmptyBoardView(board: BoardDto): BoardView {
+  const cellCountPerSide = (board.regionSize * 2) - 1;
+  const boardPolygon = Rpl.create(board.regionCount, 1);
+  let cellViews: CellView[] = [];
+
+  for (let region = 0; region < board.regionCount; region += 1) {
+    const regionPolygon = getRegionPolygon(boardPolygon, region);
+
+    for (let y = 0; y < board.regionSize; y += 1) {
+      const rowBorders = getRowBorders(regionPolygon, y, cellCountPerSide);
+
+      for (let x = 0; x < board.regionSize; x += 1) {
+        const location = Loc.create(region, x, y);
+        const cv = getCellView(board, rowBorders, location, cellCountPerSide);
+        cellViews.push(cv);
+      }
+    }
   }
-  if ((location.x + location.y) % 2 === 1) {
-    return CellType.Odd;
-  }
-  return CellType.Even;
+
+  cellViews = mergePartialCellViews(cellViews);
+
+  return {
+    regionCount: board.regionCount,
+    cellCountPerSide,
+    cells: cellViews,
+    polygon: boardPolygon,
+  };
 }
 
 export function fillEmptyBoardView(board: BoardView, game: GameDto, user: UserDto): BoardView {
