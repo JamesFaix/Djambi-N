@@ -12,15 +12,15 @@ export interface GamePageProps {
 }
 
 const GamePage: FC<GamePageProps> = ({ gameId }) => {
-  const state = useSelector(selectActiveGame);
+  const { game } = useSelector(selectActiveGame);
 
   useEffect(() => {
-    if (state.game === null) {
+    if (game === null) {
       loadGame(gameId);
       return;
     }
 
-    switch (state.game.status) {
+    switch (game.status) {
       case GameStatus.InProgress:
         navigateTo(Routes.gamePlay(gameId));
         return;
@@ -32,7 +32,7 @@ const GamePage: FC<GamePageProps> = ({ gameId }) => {
         navigateTo(Routes.gameOutcome(gameId));
         return;
       default:
-        throw new Error(`Invalid game status ${state.game.status}`);
+        throw new Error(`Invalid game status ${game.status}`);
     }
   });
 
@@ -41,7 +41,7 @@ const GamePage: FC<GamePageProps> = ({ gameId }) => {
       <RedirectToSignInIfSignedOut />
       {`Game ${gameId} page`}
       <br />
-      {state.game ? JSON.stringify(state.game) : ''}
+      {game ? JSON.stringify(game) : ''}
     </div>
   );
 };

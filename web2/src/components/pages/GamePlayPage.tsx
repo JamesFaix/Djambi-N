@@ -10,12 +10,12 @@ import { navigateTo } from '../../controllers/navigationController';
 import * as Routes from '../../utilities/routes';
 
 const GamePlayPage: FC<GamePageProps> = ({ gameId }) => {
-  const state = useSelector(selectActiveGame);
+  const { game } = useSelector(selectActiveGame);
 
   useEffect(() => {
-    if (state.game === null) {
+    if (game === null) {
       loadGame(gameId);
-    } else if (![GameStatus.InProgress, GameStatus.Over].includes(state.game.status)) {
+    } else if (![GameStatus.InProgress, GameStatus.Over].includes(game.status)) {
       navigateTo(Routes.game(gameId));
     }
   });
@@ -28,7 +28,7 @@ const GamePlayPage: FC<GamePageProps> = ({ gameId }) => {
       </Typography>
       <br />
       <Typography variant="body1">
-        {state.game ? JSON.stringify(state.game) : ''}
+        {game ? JSON.stringify(game) : ''}
       </Typography>
     </div>
   );

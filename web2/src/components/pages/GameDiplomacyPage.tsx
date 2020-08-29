@@ -10,12 +10,12 @@ import { navigateTo } from '../../controllers/navigationController';
 import * as Routes from '../../utilities/routes';
 
 const GameDiplomacyPage: FC<GamePageProps> = ({ gameId }) => {
-  const state = useSelector(selectActiveGame);
+  const { game } = useSelector(selectActiveGame);
 
   useEffect(() => {
-    if (state.game === null) {
+    if (game === null) {
       loadGame(gameId);
-    } else if (state.game.status !== GameStatus.InProgress) {
+    } else if (game.status !== GameStatus.InProgress) {
       navigateTo(Routes.game(gameId));
     }
   });
@@ -27,7 +27,7 @@ const GameDiplomacyPage: FC<GamePageProps> = ({ gameId }) => {
         {`Game ${gameId} diplomacy page`}
       </Typography>
       <br />
-      {state.game ? JSON.stringify(state.game) : ''}
+      {game ? JSON.stringify(game) : ''}
     </div>
   );
 };
