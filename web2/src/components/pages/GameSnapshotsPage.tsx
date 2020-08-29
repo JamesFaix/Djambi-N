@@ -10,7 +10,7 @@ const GameSnapshotsPage: FC<GamePageProps> = ({ gameId }) => {
   const { game } = useSelector(selectActiveGame);
 
   useEffect(() => {
-    if (game === null) {
+    if (game?.id !== gameId) {
       loadGame(gameId);
     }
   });

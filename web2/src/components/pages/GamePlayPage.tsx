@@ -13,7 +13,7 @@ const GamePlayPage: FC<GamePageProps> = ({ gameId }) => {
   const { game } = useSelector(selectActiveGame);
 
   useEffect(() => {
-    if (game === null) {
+    if (game?.id !== gameId) {
       loadGame(gameId);
     } else if (![GameStatus.InProgress, GameStatus.Over].includes(game.status)) {
       navigateTo(Routes.game(gameId));
