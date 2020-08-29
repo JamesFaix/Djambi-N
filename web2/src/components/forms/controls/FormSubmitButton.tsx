@@ -15,6 +15,7 @@ const FormSubmitButton: FC<FormSubmitButtonProps> = ({ onClick, text }) => {
     <Button
       onClick={onClick}
       className={styles.button}
+      type="submit"
     >
       {text}
     </Button>

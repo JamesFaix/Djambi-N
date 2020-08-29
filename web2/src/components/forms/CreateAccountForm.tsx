@@ -23,9 +23,17 @@ const CreateAccountForm: FC = () => {
   const passwordsDontMatch = (state.password1 !== state.password2)
     && (state.password2 !== '');
 
+  const submit = () => createAccount({
+    name: state.username,
+    password: state.password1,
+  });
+
   return (
     <div>
-      <FormControl component="fieldset">
+      <FormControl
+        component="fieldset"
+        onSubmit={submit}
+      >
         <FormGroup>
           <FormTextField
             label="Username"
@@ -58,10 +66,7 @@ const CreateAccountForm: FC = () => {
           <br />
           <FormSubmitButton
             text="Submit"
-            onClick={() => createAccount({
-              name: state.username,
-              password: state.password1,
-            })}
+            onClick={submit}
           />
         </FormGroup>
       </FormControl>
