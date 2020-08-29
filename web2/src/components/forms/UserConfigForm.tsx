@@ -23,8 +23,13 @@ const UserConfigForm: FC = () => {
   const [state, setState] = useState(user);
   const styles = useFormStyles(theme);
 
+  const submit = () => setUserConfig(state);
+
   return (
-    <FormControl component="fieldset">
+    <FormControl
+      component="fieldset"
+      onSubmit={submit}
+    >
       <FormGroup>
         <Table>
           <TableBody>
@@ -42,14 +47,15 @@ const UserConfigForm: FC = () => {
               </TableCell>
             </TableRow>
             <TableRow>
-              <TableCell>Favorite word</TableCell>
+              <TableCell>Seconds to display notifications</TableCell>
               <TableCell>
                 <TextField
+                  type="number"
                   className={styles.control}
-                  value={state.favoriteWord}
+                  value={state.notificationDisplaySeconds}
                   onChange={(e) => setState({
                     ...state,
-                    favoriteWord: e.target.value,
+                    notificationDisplaySeconds: Number(e.target.value),
                   })}
                 />
               </TableCell>
@@ -59,10 +65,7 @@ const UserConfigForm: FC = () => {
         <br />
         <FormSubmitButton
           text="Save"
-          onClick={() => setUserConfig({
-            logRedux: state.logRedux,
-            favoriteWord: state.favoriteWord,
-          })}
+          onClick={submit}
         />
       </FormGroup>
     </FormControl>

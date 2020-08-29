@@ -19,12 +19,17 @@ import { ActiveGameState, defaultActiveGameState } from './activeGame/state';
 import { ActiveGameActionTypes } from './activeGame/actionTypes';
 import { ActiveGameAction } from './activeGame/actions';
 import { activeGameReducer } from './activeGame/reducer';
+import { NotificationsState, defaultNotificationsState } from './notifications/state';
+import { NotificationAction } from './notifications/actions';
+import { NotificationActionTypes } from './notifications/actionTypes';
+import { notificationsReducer } from './notifications/reducer';
 
 export type RootState = {
   activeGame: ActiveGameState,
   apiClient: ApiClientState,
   config: ConfigState,
   navigation: NavigationState,
+  notifications: NotificationsState,
   session: SessionState
 };
 
@@ -33,6 +38,7 @@ export type RootActionTypes =
   ApiClientActionTypes |
   ConfigActionTypes |
   NavigationActionTypes |
+  NotificationActionTypes |
   SessionActionTypes;
 
 export type RootAction =
@@ -40,6 +46,7 @@ export type RootAction =
   ApiClientAction |
   ConfigAction |
   NavigationAction |
+  NotificationAction |
   SessionAction;
 
 export const defaultRootState: RootState = {
@@ -47,6 +54,7 @@ export const defaultRootState: RootState = {
   apiClient: defaultApiClientState,
   config: defaultConfigState,
   navigation: defaultNavigationState,
+  notifications: defaultNotificationsState,
   session: defaultSessionState,
 };
 
@@ -55,5 +63,6 @@ export const rootReducer = combineReducers({
   apiClient: apiClientReducer,
   config: configReducer,
   navigation: navigationReducer,
+  notifications: notificationsReducer,
   session: sessionReducer,
 });

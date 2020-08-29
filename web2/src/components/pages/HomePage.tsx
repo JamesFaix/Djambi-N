@@ -12,6 +12,10 @@ const HomePage: FC = () => {
   const { user } = useSelector(selectSession);
 
   useEffect(() => {
+    if (recentGames.length > 0) {
+      return;
+    }
+
     searchGames({
       playerUserName: user?.name,
       statuses: [GameStatus.Pending, GameStatus.InProgress],

@@ -3,6 +3,7 @@ import {
   AppBar, Toolbar, Typography, makeStyles, Grid,
 } from '@material-ui/core';
 import MenuButton from './MenuButton';
+import NotificationsButton from './NotificationsButton';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -29,6 +30,7 @@ const TopBar: FC = () => {
           <Grid container className={classes.root}>
             <Grid item xs style={{ display: 'flex' }}>
               <MenuButton />
+              <NotificationsButton />
             </Grid>
             <Grid item xs>
               <Typography

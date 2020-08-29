@@ -4,6 +4,8 @@ export const home = '/home';
 
 export const newGame = '/new-game';
 
+export const notifications = '/notifications';
+
 export const rules = '/rules';
 
 export const searchGames = '/search-games';

@@ -18,9 +18,14 @@ const defaultState: FormState = {
 const SignInForm: FC = () => {
   const [state, setState] = useState(defaultState);
 
+  const submit = () => signIn(state);
+
   return (
     <div>
-      <FormControl component="fieldset">
+      <FormControl
+        component="fieldset"
+        onSubmit={submit}
+      >
         <FormGroup>
           <FormTextField
             label="Username"
@@ -41,10 +46,7 @@ const SignInForm: FC = () => {
           <br />
           <FormSubmitButton
             text="Submit"
-            onClick={() => signIn({
-              username: state.username,
-              password: state.password,
-            })}
+            onClick={submit}
           />
         </FormGroup>
       </FormControl>
