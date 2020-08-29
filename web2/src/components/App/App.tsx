@@ -30,6 +30,7 @@ import { theme } from '../../styles/materialTheme';
 import GameInfoPage from '../pages/GameInfoPage';
 import NotificationsPage from '../pages/NotificationsPage';
 import LatestNotificationSnackbar from '../notifications/LatestNotificationSnackBar';
+import { loadGame, blockGameLoading } from '../../controllers/gameController';
 
 const useStyles = makeStyles({
   page: {
@@ -39,10 +40,32 @@ const useStyles = makeStyles({
   },
 });
 
+const getGameId = (): number | null => {
+  const url = window.location.href;
+  const regex = new RegExp('.*games/(\\d+).*');
+  const match = regex.exec(url);
+  const gameId = match?.[1];
+  return gameId ? Number(gameId) : null;
+};
+
 const App: FC = () => {
   useEffect(() => {
-    loadConfig()
-      .then(() => restoreSession()); // Must happen after environment config is loaded
+    // All API calls must happen after config is loaded, because that sets the API URL.
+
+    const gameId = getGameId();
+
+    if (gameId) {
+      // If the URL has a gameID when the app first loads, load that game.
+      // Game pages will also load the game because of in-app navigation.
+      // First block the pages from redundantly loading the game.
+      blockGameLoading();
+      loadConfig()
+        .then(() => restoreSession())
+        .then(() => loadGame(gameId, true));
+    } else {
+      loadConfig()
+        .then(() => restoreSession());
+    }
   }, []);
 
   const classes = useStyles();
