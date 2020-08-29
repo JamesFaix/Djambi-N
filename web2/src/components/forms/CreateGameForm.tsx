@@ -31,9 +31,14 @@ const TableCell = FormTableCell;
 const CreateGameForm: FC = () => {
   const [state, setState] = useState(defaultState);
 
+  const submit = () => createGame(state);
+
   return (
     <div>
-      <FormControl component="fieldset">
+      <FormControl
+        component="fieldset"
+        onSubmit={submit}
+      >
         <FormGroup>
           <Table>
             <TableBody>
@@ -99,12 +104,7 @@ const CreateGameForm: FC = () => {
           <br />
           <FormSubmitButton
             text="Submit"
-            onClick={() => createGame({
-              description: state.description,
-              allowGuests: state.allowGuests,
-              isPublic: state.isPublic,
-              regionCount: state.regionCount,
-            })}
+            onClick={submit}
           />
         </FormGroup>
       </FormControl>

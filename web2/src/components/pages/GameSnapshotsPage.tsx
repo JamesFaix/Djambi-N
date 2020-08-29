@@ -7,10 +7,10 @@ import { selectActiveGame } from '../../hooks/selectors';
 import { loadGame } from '../../controllers/gameController';
 
 const GameSnapshotsPage: FC<GamePageProps> = ({ gameId }) => {
-  const state = useSelector(selectActiveGame);
+  const { game } = useSelector(selectActiveGame);
 
   useEffect(() => {
-    if (state.game === null) {
+    if (game?.id !== gameId) {
       loadGame(gameId);
     }
   });
@@ -22,7 +22,7 @@ const GameSnapshotsPage: FC<GamePageProps> = ({ gameId }) => {
         {`Game ${gameId} snapshots page`}
       </Typography>
       <br />
-      {state.game ? JSON.stringify(state.game) : ''}
+      {game ? JSON.stringify(game) : ''}
     </div>
   );
 };

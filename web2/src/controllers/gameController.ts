@@ -1,11 +1,21 @@
 import * as Api from '../utilities/api';
-import { gameLoaded, gameUpdated } from '../redux/activeGame/actionFactory';
+import { gameLoaded, gameUpdated, attemptingGameLoad } from '../redux/activeGame/actionFactory';
 import { store } from '../redux';
 import { GameParametersDto, CreatePlayerRequestDto } from '../api-client';
 import * as Routes from '../utilities/routes';
 import { navigateTo } from './navigationController';
 
-export async function loadGame(gameId: number): Promise<void> {
+export async function blockGameLoading(): Promise<void> {
+  const action = attemptingGameLoad();
+  store.dispatch(action);
+}
+
+export async function loadGame(gameId: number, force?: boolean): Promise<void> {
+  if (store.getState().activeGame.isLoadPending && !force) {
+    return;
+  }
+
+  blockGameLoading();
   const game = await Api.games().apiGamesGameIdGet({ gameId });
   const action = gameLoaded(game);
   store.dispatch(action);
