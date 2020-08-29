@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import {
-  Table, TableContainer, TableCell, TableRow, TableBody, TableHead,
+  Table, TableContainer, TableCell, TableRow, TableBody, TableHead, makeStyles,
 } from '@material-ui/core';
 import { SearchGameDto } from '../../api-client';
 import * as Routes from '../../utilities/routes';
@@ -11,6 +11,15 @@ interface Props {
 }
 
 const GameSearchResultsTable: FC<Props> = ({ games }) => {
+  const classes = makeStyles({
+    row: {
+      background: '#000000',
+      '&:hover': {
+        background: '#555555',
+      },
+    },
+  })();
+
   return (
     <TableContainer>
       <Table>
@@ -24,7 +33,11 @@ const GameSearchResultsTable: FC<Props> = ({ games }) => {
         <TableBody>
           {
             games.map((g, i) => (
-              <TableRow key={i.toString()} onClick={() => navigateTo(Routes.game(g.id))}>
+              <TableRow
+                className={classes.row}
+                key={i.toString()}
+                onClick={() => navigateTo(Routes.game(g.id))}
+              >
                 <TableCell>{g.id}</TableCell>
                 <TableCell>{g.parameters.description}</TableCell>
                 <TableCell>{g.status}</TableCell>
