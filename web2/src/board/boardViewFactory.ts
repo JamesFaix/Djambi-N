@@ -14,8 +14,8 @@ import * as Li from './line';
 import * as Loc from './location';
 import {
   LocationDto, BoardDto, GameDto, UserDto, PieceDto,
-} from '../../api-client';
-import { exists, groupMatches, mergeMatches } from '../../utilities/collections';
+} from '../api-client';
+import { exists, groupMatches, mergeMatches } from '../utilities/collections';
 
 // --- Empty boardview creation ---
 

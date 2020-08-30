@@ -1,4 +1,4 @@
-import { PieceKind, LocationDto } from '../../api-client';
+import { PieceKind, LocationDto } from '../api-client';
 
 export type Point = {
   x: number,

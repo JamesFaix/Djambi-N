@@ -1,4 +1,4 @@
-import { LocationDto } from '../../api-client/models/LocationDto';
+import { LocationDto } from '../api-client/models/LocationDto';
 
 export function create(region: number, x: number, y: number): LocationDto {
   return { x, y, region };

@@ -1,6 +1,6 @@
 import { Line, Point } from './model';
 import * as P from './point';
-import { xors } from '../../utilities/logic';
+import { xors } from '../utilities/logic';
 
 export function create(a: Point, b: Point): Line {
   return { a, b };
