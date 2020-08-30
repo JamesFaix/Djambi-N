@@ -30,7 +30,7 @@ describe('boardViewFactory', () => {
         Point.create(1, 2),
       ]);
       const actual = mergePolygons(ps);
-      expect(actual).toBe(expected);
+      expect(actual).toStrictEqual(expected);
     });
   });
 

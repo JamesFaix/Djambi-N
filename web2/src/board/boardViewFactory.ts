@@ -1,3 +1,4 @@
+import { flatMap } from 'lodash';
 import {
   BoardView,
   CellType,
@@ -158,7 +159,6 @@ export function getCellView(
   };
 }
 
-// TODO: Add tests; fix bugs
 export function mergePolygons(polygons: Polygon[]): Polygon {
   if (polygons.length === 0) {
     throw Error('Cannot merge 0 polygons.');
@@ -171,7 +171,7 @@ export function mergePolygons(polygons: Polygon[]): Polygon {
   const threshold = 0.00001;
 
   // Get all edges of each polygon
-  const edges = polygons.flatMap(Pl.edges);
+  const edges = flatMap(polygons, Pl.edges);
 
   // Group by which are the same line segment
   const groupedEdges = groupMatches(
