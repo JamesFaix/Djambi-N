@@ -9,3 +9,7 @@ export function equals(a: LocationDto, b: LocationDto): boolean {
     && a.y === b.y
     && a.region === b.region;
 }
+
+export function toString(location: LocationDto): string {
+  return `(X:${location.x}, Y:${location.y}, R:${location.region})`;
+}

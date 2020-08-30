@@ -1,4 +1,4 @@
-import { PieceKind } from '../../api-client';
+import { PieceKind, LocationDto } from '../../api-client';
 
 export type Point = {
   x: number,
@@ -23,17 +23,17 @@ export enum CellType {
 export type PieceView = {
   id: number,
   kind: PieceKind,
-  colorId: number,
-  playerName: string
+  colorId: number | null,
+  playerName: string | null
 };
 
 export type CellView = {
   id: number,
-  locations: Location[],
+  locations: LocationDto[],
   type: CellType,
   isSelected: boolean,
   isSelectable: boolean,
-  piece: PieceView,
+  piece: PieceView | null,
   polygon: Polygon
 };
 
