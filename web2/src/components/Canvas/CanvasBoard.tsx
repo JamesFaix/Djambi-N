@@ -15,7 +15,6 @@ interface CanvasBoardStyle {
   width : number,
   height : number
   scale : number,
-  strokeWidth : number,
 }
 
 interface Props {
@@ -76,3 +75,4 @@ const CanvasBoard : FC<Props> = ({
     </Stage>
   );
 };
+export default CanvasBoard;
