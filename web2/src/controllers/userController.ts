@@ -6,6 +6,11 @@ import {
   loggedIn, restoreSucceeded, restoreFailed,
 } from '../redux/session/actionFactory';
 import { store } from '../redux';
+import { preloadAllBoards } from './boardController';
+
+function postLoginActions() : void {
+  preloadAllBoards();
+}
 
 export async function signIn(request: LoginRequestDto): Promise<void> {
   const loginParams: ApiSessionsPostRequest = {
@@ -18,6 +23,8 @@ export async function signIn(request: LoginRequestDto): Promise<void> {
 
   const action = loggedIn(session.user);
   store.dispatch(action);
+
+  postLoginActions();
 }
 
 export async function createAccount(request: CreateUserRequestDto): Promise<void> {
@@ -40,6 +47,8 @@ export async function restoreSession(): Promise<void> {
     const user = await Api.users().apiUsersCurrentGet();
     const action = restoreSucceeded(user);
     store.dispatch(action);
+
+    postLoginActions();
   } catch {
     const action = restoreFailed();
     store.dispatch(action);
