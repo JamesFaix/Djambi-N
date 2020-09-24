@@ -8,6 +8,8 @@ export type ConfigState = {
 export const defaultConfigState: ConfigState = {
   user: {
     logRedux: false,
+    showBoardTooltips: false,
+    showCellAndPieceIds: false,
     notificationDisplaySeconds: 5,
   },
   environment: {
