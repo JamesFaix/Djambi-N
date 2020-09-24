@@ -1,8 +1,9 @@
 import React, { FC, useEffect, useState } from 'react';
 import { Layer } from 'react-konva';
-import { Animation } from 'konva';
+import { Animation } from 'konva/types/Animation';
+import { IFrame } from 'konva/types/types';
 import { BoardView, CellView, PieceView } from '../../board/model';
-import { AnimationFrame, BoardTooltipState } from './model';
+import { BoardTooltipState } from './model';
 import CanvasCell from './CanvasCell/CanvasCell';
 import { getBoardPieceScale } from '../../board/canvasTransformService';
 import { getPieceImageKey } from '../../utilities/images';
@@ -31,7 +32,8 @@ const CanvasCellsLayer : FC<Props> = ({
     const period = 0.5; // sec
     const maxOpactiy = 0.5;
 
-    const a = new Animation((frame: AnimationFrame) => {
+    const a = new Animation((frame?: IFrame) => {
+      if (!frame) { return; }
       const timeSec = frame.time / 1000;
       const opacity = Math.abs(Math.sin(timeSec / period)) * maxOpactiy;
       setHighlightOpacity(opacity);
