@@ -8,12 +8,14 @@ interface Props {
   style: CanvasPolygonStyle
 }
 
-const CanvasBoardOutlineLayer : FC<Props> = ({board, style}) =>
-  <Layer>
-    <CanvasPolygon
-      polygon={board.polygon}
-      style={style}
-    />
-  </Layer>
-);
+const CanvasBoardOutlineLayer : FC<Props> = ({ board, style }) => {
+  return (
+    <Layer>
+      <CanvasPolygon
+        polygon={board.polygon}
+        style={style}
+      />
+    </Layer>
+  );
+};
 export default CanvasBoardOutlineLayer;

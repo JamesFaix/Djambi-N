@@ -3,12 +3,16 @@ import { CellType, CellView } from '../../board/model';
 export const colors = {
   background: '',
   selectedCell: '',
+  selectableCell: '',
   centerCell: '',
   evenCell: '',
   oddCell: '',
   centerCellBorder: '',
   evenCellBorder: '',
   oddCellBorder: '',
+  tooltipBorder: '',
+  tooltipBackground: '',
+  tooltipText: '',
 };
 
 export function getCellColor(cell: CellView) : string {

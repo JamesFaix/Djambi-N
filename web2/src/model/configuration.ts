@@ -1,6 +1,7 @@
 export type UserConfig = {
   logRedux: boolean;
   notificationDisplaySeconds: number;
+  showCellAndPieceIds: boolean;
 };
 
 export type EnvironmentConfig = {
