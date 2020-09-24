@@ -1,5 +1,7 @@
 import React, { FC } from 'react';
-import { Layer, Label, Tag, Text } from 'react-konva';
+import {
+  Layer, Label, Tag, Text,
+} from 'react-konva';
 import { Point } from '../../board/model';
 import { colors } from './styles';
 
@@ -21,21 +23,21 @@ const CanvasTooltip : FC<Props> = ({ visible, text, position }) => {
         y={position.y}
         opacity={1}
       >
-      <Tag
-        stroke={colors.tooltipBorder}
-        strokeWidth={1}
-        fill={colors.tooltipBackground}
-        shadowColor={"black"}
-        shadowBlur={5}
-        shadowOpacity={1}
-      />
-      <Text
-        text={text}
-        fill={colors.tooltipText}
-        padding={5}
-      />
+        <Tag
+          stroke={colors.tooltipBorder}
+          strokeWidth={1}
+          fill={colors.tooltipBackground}
+          shadowColor="black"
+          shadowBlur={5}
+          shadowOpacity={1}
+        />
+        <Text
+          text={text}
+          fill={colors.tooltipText}
+          padding={5}
+        />
       </Label>
     </Layer>
   );
-}
+};
 export default CanvasTooltip;
