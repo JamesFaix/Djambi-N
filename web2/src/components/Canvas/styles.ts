@@ -1,22 +1,22 @@
 import { CellType, CellView } from '../../board/model';
 
 export const colors = {
-  background: '',
-  selectedCell: '',
-  selectableCell: '',
-  centerCell: '',
-  evenCell: '',
-  oddCell: '',
-  centerCellBorder: '',
-  evenCellBorder: '',
-  oddCellBorder: '',
-  tooltipBorder: '',
-  tooltipBackground: '',
-  tooltipText: '',
-  outline: '',
+  background: 'black',
+  selectedCell: '#6AC921', // Green
+  selectableCell: '#E5E500', // Yellow
+  centerCell: '#EEEEEE',
+  evenCell: 'black',
+  oddCell: '#333333',
+  centerCellBorder: '#DDDDDD',
+  evenCellBorder: '#DDDDDD',
+  oddCellBorder: '#DDDDDD',
+  tooltipBorder: '#DCDCDC',
+  tooltipBackground: '#161616',
+  tooltipText: '#DCDCDC',
+  outline: 'black',
 };
 
-export const outlineThickness = 1;
+export const outlineThickness = 5;
 
 export function getCellColor(cell: CellView) : string {
   if (cell.isSelected) {
