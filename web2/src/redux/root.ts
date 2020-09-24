@@ -23,10 +23,15 @@ import { NotificationsState, defaultNotificationsState } from './notifications/s
 import { NotificationAction } from './notifications/actions';
 import { NotificationActionTypes } from './notifications/actionTypes';
 import { notificationsReducer } from './notifications/reducer';
+import { BoardsState, defaultBoardsState } from './boards/state';
+import { BoardsActionTypes } from './boards/actionTypes';
+import { BoardsAction } from './boards/actions';
+import { boardsReducer } from './boards/reducer';
 
 export type RootState = {
   activeGame: ActiveGameState,
   apiClient: ApiClientState,
+  boards: BoardsState,
   config: ConfigState,
   navigation: NavigationState,
   notifications: NotificationsState,
@@ -36,6 +41,7 @@ export type RootState = {
 export type RootActionTypes =
   ActiveGameActionTypes |
   ApiClientActionTypes |
+  BoardsActionTypes |
   ConfigActionTypes |
   NavigationActionTypes |
   NotificationActionTypes |
@@ -44,6 +50,7 @@ export type RootActionTypes =
 export type RootAction =
   ActiveGameAction |
   ApiClientAction |
+  BoardsAction |
   ConfigAction |
   NavigationAction |
   NotificationAction |
@@ -52,6 +59,7 @@ export type RootAction =
 export const defaultRootState: RootState = {
   activeGame: defaultActiveGameState,
   apiClient: defaultApiClientState,
+  boards: defaultBoardsState,
   config: defaultConfigState,
   navigation: defaultNavigationState,
   notifications: defaultNotificationsState,
@@ -61,6 +69,7 @@ export const defaultRootState: RootState = {
 export const rootReducer = combineReducers({
   activeGame: activeGameReducer,
   apiClient: apiClientReducer,
+  boards: boardsReducer,
   config: configReducer,
   navigation: navigationReducer,
   notifications: notificationsReducer,
