@@ -46,7 +46,6 @@ const CanvasBoard : FC<Props> = ({
 
   return (
     <Stage
-      className={Classes.canvasBoard}
       width={style.width}
       height={style.height}
     >
