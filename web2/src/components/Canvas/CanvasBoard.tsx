@@ -1,5 +1,6 @@
 import React, { FC, useState } from 'react';
 import { Stage } from 'react-konva';
+import { useSelector } from 'react-redux';
 import CanvasCellsLayer from './CanvasCellsLayer';
 import CanvasBoardOutlineLayer from './CanvasBoardOutlineLayer';
 import CanvasBackgroundLayer from './CanvasBackgroundLayer';
@@ -7,6 +8,8 @@ import CanvasTooltip from './CanvasTooltip';
 import { BoardTooltipState, defaultBoardTooltipState } from './model';
 import { GameDto } from '../../api-client';
 import { BoardView, CellView } from '../../board/model';
+import { colors, outlineThickness } from './styles';
+import { selectConfig } from '../../hooks/selectors';
 
 interface CanvasBoardStyle {
   width : number,
@@ -21,27 +24,22 @@ interface Props {
   selectCell : (cell : CellView) => void,
   style : CanvasBoardStyle,
   pieceImages : Map<string, HTMLImageElement>,
-  debugSettings : DebugSettings
 }
 
 const CanvasBoard : FC<Props> = ({
-  board, selectCell, style, pieceImages, debugSettings,
+  board, selectCell, style, pieceImages,
 }) => {
   const [tooltipState, setTooltipState] = useState(defaultBoardTooltipState);
-
-  const outlineStyle = {
-    strokeWidth: style.strokeWidth,
-    strokeColor: style.theme.colors.cells.boardBorder,
-  };
+  const { showBoardTooltips } = useSelector(selectConfig).user;
 
   function updateTooltip(state : BoardTooltipState) {
-    if (debugSettings.showBoardTooltips) {
+    if (showBoardTooltips) {
       setTooltipState(state);
     }
   }
 
   function clearTooltip() {
-    if (debugSettings.showBoardTooltips) {
+    if (showBoardTooltips) {
       setTooltipState(defaultBoardTooltipState);
     }
   }
@@ -58,7 +56,10 @@ const CanvasBoard : FC<Props> = ({
       />
       <CanvasBoardOutlineLayer
         board={board}
-        style={outlineStyle}
+        style={{
+          strokeColor: colors.outline,
+          strokeWidth: outlineThickness,
+        }}
       />
       <CanvasCellsLayer
         board={board}
@@ -66,10 +67,10 @@ const CanvasBoard : FC<Props> = ({
         pieceImages={pieceImages}
         scale={style.scale}
         setTooltip={updateTooltip}
-        showBoardTooltip={debugSettings.showBoardTooltips}
+        showBoardTooltip={showBoardTooltips}
       />
       <CanvasTooltip
-        visible={tooltipState.visible && debugSettings.showBoardTooltips}
+        visible={tooltipState.visible && showBoardTooltips}
         text={tooltipState.text}
         position={tooltipState.position}
       />

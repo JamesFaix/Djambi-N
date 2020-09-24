@@ -13,7 +13,10 @@ export const colors = {
   tooltipBorder: '',
   tooltipBackground: '',
   tooltipText: '',
+  outline: '',
 };
+
+export const outlineThickness = 1;
 
 export function getCellColor(cell: CellView) : string {
   if (cell.isSelected) {

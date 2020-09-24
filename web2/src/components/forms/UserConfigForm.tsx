@@ -60,6 +60,19 @@ const UserConfigForm: FC = () => {
               </TableCell>
             </TableRow>
             <TableRow>
+              <TableCell>Show board tooltips</TableCell>
+              <TableCell>
+                <Checkbox
+                  className={styles.control}
+                  checked={state.showBoardTooltips}
+                  onChange={(e) => setState({
+                    ...state,
+                    showBoardTooltips: e.target.checked,
+                  })}
+                />
+              </TableCell>
+            </TableRow>
+            <TableRow>
               <TableCell>Seconds to display notifications</TableCell>
               <TableCell>
                 <TextField
