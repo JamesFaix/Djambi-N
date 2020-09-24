@@ -1,6 +1,8 @@
 export type UserConfig = {
   logRedux: boolean;
   notificationDisplaySeconds: number;
+  showCellAndPieceIds: boolean;
+  showBoardTooltips: boolean;
 };
 
 export type EnvironmentConfig = {
