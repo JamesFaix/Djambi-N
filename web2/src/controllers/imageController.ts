@@ -8,7 +8,7 @@ import { replaceColor } from '../utilities/images';
 const minPlayerColorId = 0;
 const maxPlayerColorId = 7;
 
-const piecesDir = '../../public/pieces';
+const piecesDir = '/pieces';
 
 function getPieceImagePath(kind: PieceKind) : string {
   switch (kind) {
