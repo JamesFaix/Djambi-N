@@ -19,3 +19,24 @@ export function useFormStyles(theme: Theme) {
   });
   return useStyles();
 }
+
+const playerColors = new Map<number, string>([
+  [0, 'blue'],
+  [1, 'red'],
+  [2, 'green'],
+  [3, 'orange'],
+  [4, 'brown'],
+  [5, 'teal'],
+  [6, 'magenta'],
+  [7, 'gold'],
+]);
+
+export const pieceColors = {
+  placeholder: '#CCCC33',
+  getPlayer: (colorId: number | null) : string => {
+    if (colorId === null) { return '#555555'; }
+    const color = playerColors.get(colorId);
+    if (!color) { throw Error(`Invalid colorID: ${colorId}`); }
+    return color;
+  },
+};
