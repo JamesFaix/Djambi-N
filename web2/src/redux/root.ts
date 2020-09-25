@@ -27,12 +27,17 @@ import { BoardsState, defaultBoardsState } from './boards/state';
 import { BoardsActionTypes } from './boards/actionTypes';
 import { BoardsAction } from './boards/actions';
 import { boardsReducer } from './boards/reducer';
+import { defaultImagesState, ImagesState } from './images/state';
+import { ImagesActionTypes } from './images/actionTypes';
+import { imagesReducer } from './images/reducer';
+import { ImagesAction } from './images/actions';
 
 export type RootState = {
   activeGame: ActiveGameState,
   apiClient: ApiClientState,
   boards: BoardsState,
   config: ConfigState,
+  images: ImagesState,
   navigation: NavigationState,
   notifications: NotificationsState,
   session: SessionState
@@ -43,6 +48,7 @@ export type RootActionTypes =
   ApiClientActionTypes |
   BoardsActionTypes |
   ConfigActionTypes |
+  ImagesActionTypes |
   NavigationActionTypes |
   NotificationActionTypes |
   SessionActionTypes;
@@ -52,6 +58,7 @@ export type RootAction =
   ApiClientAction |
   BoardsAction |
   ConfigAction |
+  ImagesAction |
   NavigationAction |
   NotificationAction |
   SessionAction;
@@ -61,6 +68,7 @@ export const defaultRootState: RootState = {
   apiClient: defaultApiClientState,
   boards: defaultBoardsState,
   config: defaultConfigState,
+  images: defaultImagesState,
   navigation: defaultNavigationState,
   notifications: defaultNotificationsState,
   session: defaultSessionState,
@@ -71,6 +79,7 @@ export const rootReducer = combineReducers({
   apiClient: apiClientReducer,
   boards: boardsReducer,
   config: configReducer,
+  images: imagesReducer,
   navigation: navigationReducer,
   notifications: notificationsReducer,
   session: sessionReducer,

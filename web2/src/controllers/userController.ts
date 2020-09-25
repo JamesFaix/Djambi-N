@@ -7,9 +7,11 @@ import {
 } from '../redux/session/actionFactory';
 import { store } from '../redux';
 import { preloadAllBoards } from './boardController';
+import { preloadAllPieceImages } from './imageController';
 
 function postLoginActions() : void {
   preloadAllBoards();
+  preloadAllPieceImages();
 }
 
 export async function signIn(request: LoginRequestDto): Promise<void> {
