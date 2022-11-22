@@ -33,9 +33,16 @@
                 </StackPanel>
                 <StackPanel>
                     <Button x:Name="btnQuitToMenu"
-                        Content="Menu"
+                        Content="Quit to Menu"
                         Click="btnQuitToMenu_Click"
                         Margin="10"/>
+                    <ComboBox x:Name="cmbTheme"
+                              SelectionChanged="cmbTheme_SelectionChanged"
+                        Margin="10"
+                    >
+                        <ComboBoxItem IsSelected="True">Default</ComboBoxItem>
+                        <ComboBoxItem>Hotdogtown</ComboBoxItem>
+                    </ComboBox>
                     <Border BorderBrush="Gray" 
                             BorderThickness="3" 
                             Margin="10">
@@ -67,7 +74,7 @@
                             Margin="10">
                         <StackPanel>
                             <Button x:Name="btnConfirm" 
-                                    Content="Execute" 
+                                    Content="Confirm" 
                                     Click="btnConfirm_Click"
                                     IsEnabled="False"/>
                             <Button x:Name="btnCancel" 

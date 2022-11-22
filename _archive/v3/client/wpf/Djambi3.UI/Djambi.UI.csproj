@@ -8,6 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.31" />
+  </ItemGroup>
+
+
+  <ItemGroup>
     <ProjectReference Include="..\..\..\lib\Djambi.Engine\Djambi.Engine.csproj" />
     <ProjectReference Include="..\..\..\lib\Djambi.Model\Djambi.Model.csproj" />
   </ItemGroup>
@@ -29,26 +34,54 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Images\assassin.png">
+    <None Update="Resources\Default\assassin.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Images\chief.png">
+    <None Update="Resources\Default\chief.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Images\corpse.png">
+    <None Update="Resources\Default\keys.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Images\diplomat.png">
+
+    <None Include="Resources\Default\corpse.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Images\journalist.png">
+    <None Include="Resources\Default\diplomat.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Images\thug.png">
+    <None Include="Resources\Default\journalist.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Images\undertaker.png">
+    <None Include="Resources\Default\thug.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\Default\undertaker.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\HotdogTown\Assassin.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\HotdogTown\Chief.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\HotdogTown\Corpse.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\HotdogTown\Diplomat.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\HotdogTown\Journalist.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\HotdogTown\Thug.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\HotdogTown\Undertaker.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\HotdogTown\keys.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

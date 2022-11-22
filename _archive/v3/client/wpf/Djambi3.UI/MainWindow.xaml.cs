@@ -1,39 +1,35 @@
-﻿using System;
-using System.Windows;
-using System.Windows.Navigation;
+﻿using System.Windows;
+using Djambi.UI.Pages;
+using Djambi.UI.Resources;
 
 namespace Djambi.UI
 {
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        private readonly IImageRepository _imageRepository;
+        private readonly PageFactory _pageFactory;
+
+        public MainWindow(
+            IImageRepository imageRepository,
+            PageFactory pageFactory)
         {
+            _imageRepository = imageRepository;
+            _pageFactory = pageFactory;
+
             InitializeComponent();
             NavigateToMainMenu();
 
-            var images = new ImageRepository();
-            this.Icon = images.AppIcon;
+            Icon = _imageRepository.AppIcon;
         }
 
-        private void NavigateToPage(string pageName)
-        {
-            var nav = frameMain.NavigationService;
-            nav.Navigate(new Uri($"/Djambi.UI;component/Pages/{pageName}.xaml", UriKind.Relative));
-        }
+        private void NavigateToPage(string pageName) =>
+            frameMain.NavigationService.Navigate(_pageFactory(pageName));
 
-        public void NavigateToMainMenu()
-        {
-            NavigateToPage("MainMenuPage");
-        }
+        public void NavigateToMainMenu() => 
+            NavigateToPage(nameof(MainMenuPage));
 
-        public void NavigateToGame()
-        {
-            NavigateToPage("GamePage");
-        }
-
-        public void AutoResizeWindow()
-        {
-            var x = 1;
-        }
+        public void NavigateToGame() =>
+            NavigateToPage(nameof(GamePage));
+        
     }
 }

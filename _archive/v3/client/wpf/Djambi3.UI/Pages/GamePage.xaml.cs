@@ -9,20 +9,15 @@ using System.Windows.Shapes;
 using Djambi.Engine;
 using Djambi.Engine.Extensions;
 using Djambi.Model;
+using Djambi.UI.Resources;
 
 namespace Djambi.UI.Pages
 {
     public partial class GamePage : Page
     {
-        private readonly ImageRepository _images;
-        private readonly Dictionary<PlayerColor, Brush> _playerColorBrushes;
-        private readonly Brush _selectionOptionBrush;
-        private readonly Brush _selectionBrush;
-        private readonly Brush _boardLabelBrush;
-        private readonly Brush _whiteCellBrush;
-        private readonly Brush _blackCellBrush;
-        private readonly Brush _seatCellBrush;
-        private readonly Brush _boardLabelBackgroundBrush;
+        private readonly IImageRepository _imageRepository;
+        private readonly IBrushRepository _brushRepository;
+        private readonly IThemeLoader _themeLoader;
 
         private const double _selectionOpacity = 0.5;
         private const string _selectionOptionRectName = "SelectionOption";
@@ -31,29 +26,17 @@ namespace Djambi.UI.Pages
         private const string _turnCycleElementName = "Turn";
         private const string _playerElementName = "Player";
 
-        public GamePage()
+        public GamePage(
+            IThemeLoader themeLoader,
+            IImageRepository imageRepository,
+            IBrushRepository brushRepository)
         {
+            _themeLoader = themeLoader;
+            _imageRepository = imageRepository;
+            _brushRepository = brushRepository;
+
             InitializeComponent();
 
-            _images = new ImageRepository();
-
-            _playerColorBrushes = new Dictionary<PlayerColor, Brush>
-            {
-                [PlayerColor.Red] = new SolidColorBrush(Colors.Firebrick),
-                [PlayerColor.Green] = new SolidColorBrush(Colors.ForestGreen),
-                [PlayerColor.Blue] = new SolidColorBrush(Colors.MediumBlue),
-                [PlayerColor.Purple] = new SolidColorBrush(Colors.Purple),
-                [PlayerColor.Dead] = new SolidColorBrush(Colors.Gray)
-            };
-            _selectionOptionBrush = new SolidColorBrush(Colors.Yellow);
-            _selectionBrush = new SolidColorBrush(Colors.Green);
-            _boardLabelBrush = new SolidColorBrush(Colors.Silver);
-            _whiteCellBrush = new SolidColorBrush(Colors.White);
-            _blackCellBrush = new SolidColorBrush(Colors.Black);
-            _seatCellBrush = new SolidColorBrush(Colors.Gray);
-            _boardLabelBackgroundBrush = new SolidColorBrush(Color.FromRgb(102, 51, 0)); //Dark brown
-
-            DrawBoard();
             RedrawGameState(Controller.GameState);
             AddLogEntries(Controller.GameState.Log);
             Controller.GetValidSelections()
@@ -79,6 +62,10 @@ namespace Djambi.UI.Pages
 
         private void DrawBoard()
         {
+            gridBoard.RowDefinitions.Clear();
+            gridBoard.ColumnDefinitions.Clear();
+            gridBoard.Children.Clear();
+
             gridBoard.RowDefinitions.Add(new RowDefinition
             {
                 Name = $"{nameof(gridBoard)}LabelRow",
@@ -121,7 +108,7 @@ namespace Djambi.UI.Pages
                     var rect = new Rectangle
                     {
                         Stretch = Stretch.Uniform,
-                        Fill = GetCellBrush(loc)
+                        Fill = _brushRepository.GetCellBrush(loc)
                     };
                     rect.InputBindings.Add(GetCellClickedInputBinding(loc));
                     AddToGrid(gridBoard, rect, r, c);
@@ -133,14 +120,14 @@ namespace Djambi.UI.Pages
         {
             var background = new Rectangle
             {
-                Fill = _boardLabelBackgroundBrush,
+                Fill = _brushRepository.BoardLabelBackgroundBrush,
                 Stretch = Stretch.UniformToFill
             };
 
             var label = new Label
             {
                 Content = $"{number}",
-                Foreground = _boardLabelBrush,
+                Foreground = _brushRepository.BoardLabelBrush,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center
             };
@@ -149,22 +136,9 @@ namespace Djambi.UI.Pages
             AddToGrid(gridBoard, label, row, column);
         }
 
-        private Brush GetCellBrush(Location location)
-        {
-            if (location.IsSeat())
-            {
-                return _seatCellBrush;
-            }
-            else
-            {
-                return (location.X + location.Y) % 2 == 0
-                    ? _whiteCellBrush
-                    : _blackCellBrush;
-            }
-        }
-
         private void RedrawGameState(GameState game)
         {
+            DrawBoard();
             RedrawPieces(game);
             RedrawTurnCycle(game);
             RedrawPlayers(game);
@@ -207,13 +181,13 @@ namespace Djambi.UI.Pages
                 var background = new Ellipse
                 {
                     Name = _pieceElementName,
-                    Fill = _playerColorBrushes[piece.Color],
+                    Fill = _brushRepository.GetPlayerBrush(piece.Color),
                     Stretch = Stretch.Uniform,
                 };
 
                 var image = new Image
                 {
-                    Source = _images.GetPieceImage(piece.Piece),
+                    Source = _imageRepository.GetPieceImage(piece.Piece),
                     Name = _pieceElementName,
                     Height = 45,
                     Width = 45
@@ -223,7 +197,7 @@ namespace Djambi.UI.Pages
                 {
                     Name = _pieceElementName,
                     Content = piece.Piece.Id.ToString(),
-                    Foreground = _boardLabelBrush,
+                    Foreground = _brushRepository.BoardLabelBrush,
                     HorizontalAlignment = HorizontalAlignment.Right,
                     Margin = new Thickness(20, 20, 0, 0)
                 };
@@ -283,14 +257,14 @@ namespace Djambi.UI.Pages
                 var indexBackground = new Rectangle
                 {
                     Name = _turnCycleElementName,
-                    Fill = _playerColorBrushes[turn.Color],
+                    Fill = _brushRepository.GetPlayerBrush(turn.Color),
                     Stretch = Stretch.Uniform
                 };
                 
                 var indexLabel = new Label
                 {
                     Name = _turnCycleElementName,
-                    Foreground = _boardLabelBrush,
+                    Foreground = _brushRepository.BoardLabelBrush,
                     Content = (i+1).ToString()
                 };
 
@@ -334,7 +308,7 @@ namespace Djambi.UI.Pages
                 var colorSquare = new Rectangle
                 {
                     Name = _playerElementName,
-                    Fill = _playerColorBrushes[player.Color],
+                    Fill = _brushRepository.GetPlayerBrush(player.Color),
                     Stretch = Stretch.Uniform
                 };
                                 
@@ -394,7 +368,7 @@ namespace Djambi.UI.Pages
                 var rect = new Rectangle
                 {
                     Name = _selectionOptionRectName,
-                    Fill = _selectionOptionBrush,
+                    Fill = _brushRepository.SelectionOptionBrush,
                     Opacity = _selectionOpacity,
                     Stretch = Stretch.Uniform
                 };
@@ -437,7 +411,7 @@ namespace Djambi.UI.Pages
             var rect = new Rectangle
             {
                 Name = _selectionRectName,
-                Fill = _selectionBrush,
+                Fill = _brushRepository.SelectionOptionBrush,
                 Opacity = _selectionOpacity,
                 Stretch = Stretch.Uniform
             };
@@ -536,6 +510,18 @@ namespace Djambi.UI.Pages
                 .OnValue(DrawSelectionOptions)
                 .OnError(error => ShowError(error.Message));
             EnableOrDisableConfirmButtons();
+        }
+
+        private void cmbTheme_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var selectedItem = (ComboBoxItem)cmbTheme.SelectedItem;
+            var themeName = (string)selectedItem.Content;
+
+            if (themeName != null) // null during page initialization
+            {
+                _themeLoader.LoadTheme(themeName);
+                RedrawGameState(Controller.GameState);
+            }
         }
 
         #endregion

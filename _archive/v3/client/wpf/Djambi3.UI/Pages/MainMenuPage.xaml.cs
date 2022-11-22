@@ -12,12 +12,10 @@ namespace Djambi.UI.Pages
     public partial class MainMenuPage : Page
     {
         private readonly ValidationService _validationService;
-        private readonly GameInitializationService _gameInitializationService;
 
-        public MainMenuPage()
+        public MainMenuPage(ValidationService validationService)
         {
-            _validationService = new ValidationService();
-            _gameInitializationService = new GameInitializationService();
+            _validationService = validationService;
             InitializeComponent();            
 #if DEBUG
             listPlayerNames.Items.Add("Mario");

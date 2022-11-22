@@ -1,0 +1,32 @@
+﻿{
+  "ThemeName": "Hotdogtown",
+  "Names": {
+    "Assassin": "Fork",
+    "Chief": "Ketchup",
+    "Corpse": "Hotdog",
+    "Diplomat": "Fluffy Fingers",
+    "Journalist": "Fart",
+    "Thug": "Fries",
+    "Undertaker": "Mouth",
+    "Seat": "The Seat",
+    "Game": "Hotdog Town"
+  },
+  "Style": {
+    "BoardLabelColor": "#FFC0C0C0",
+    "BoardLabelBackgroundColor": "#FF663300",
+    "SelectionHighlightColor": "#FF008000",
+    "SelectionOptionHighlightColor": "#FFFFFF00",
+    "PlayerColors": [
+      "#AAFF7F50",
+      "#AA00FF7F",
+      "#AA4169e1",
+      "#AADA70D6",
+      "#FF808080"
+    ],
+    "CellColors": [
+      "#FFFFFFFF",
+      "#FFAAAAAA",
+      "#FF808080"
+    ]
+  }
+}
