@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Windows.Media.Imaging;
 using Djambi.Model;
 
@@ -6,10 +7,13 @@ namespace Djambi.UI
 {
     class ImageRepository
     {
-        private static BitmapImage GetImage(string imageName) =>
-            new BitmapImage(new Uri($"/Djambi.UI;component/Images/{imageName}.png", UriKind.Relative));
+        private static BitmapImage GetImage(string imageName)
+        {
+            var path = $"{Directory.GetCurrentDirectory()}/Images/{imageName}.png";
+            return new BitmapImage(new Uri(path));
+        }
 
-        public BitmapImage AppIcon { get; } = new BitmapImage(new Uri("pack://application:,,,/Images/chief.png", UriKind.RelativeOrAbsolute));
+        public BitmapImage AppIcon => Chief;
         
         #region Pieces
 
