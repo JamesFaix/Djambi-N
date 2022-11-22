@@ -1,0 +1,32 @@
+﻿{
+  "ThemeName": "Default",
+  "Names": {
+    "Assassin": "Assassin",
+    "Chief": "Chief",
+    "Corpse": "Corpse",
+    "Diplomat": "Diplomat",
+    "Journalist": "Journalist",
+    "Thug": "Thug",
+    "Undertaker": "Undertaker",
+    "Seat": "The Seat",
+    "Game": "Djambi"
+  },
+  "Style": {
+    "BoardLabelColor": "#FFC0C0C0",
+    "BoardLabelBackgroundColor": "#FF663300",
+    "SelectionHighlightColor": "#FF008000",
+    "SelectionOptionHighlightColor": "#FFFFFF00",
+    "PlayerColors": [
+      "#FFB22222",
+      "#FF228B22",
+      "#FF0000CD",
+      "#FF800080",
+      "#FF808080"
+    ],
+    "CellColors": [
+      "#FFFFFFFF",
+      "#FF000000",
+      "#FF808080"
+    ]
+  }
+}
