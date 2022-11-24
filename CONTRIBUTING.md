@@ -1,5 +1,7 @@
 # Contributing
 
+[Developer setup](https://github.com/JamesFaix/Djambi-N/wiki/Developer-Setup#deploying-locally)
+
 ## Help wanted
 
 If you'd like to help me build this game, I would greatly appreciate it. Any skill sets or level of experience are welcome. Even if you think you don't have enough experience, there is probably something you can help with.
