@@ -57,6 +57,7 @@
     <ProjectReference Include="..\..\api.common\api.common.fsproj" />
     <ProjectReference Include="..\..\api.db\api.db.fsproj" />
     <ProjectReference Include="..\..\api.enums\api.enums.fsproj" />
+    <ProjectReference Include="..\..\api.host\api.host.fsproj" />
     <ProjectReference Include="..\..\api.logic\api.logic.fsproj" />
     <ProjectReference Include="..\..\api.model\api.model.fsproj" />
   </ItemGroup>

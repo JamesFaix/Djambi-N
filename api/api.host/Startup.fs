@@ -7,6 +7,7 @@ open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.FileProviders
 open Microsoft.EntityFrameworkCore
 
+open Newtonsoft.Json.Converters
 open Serilog
 
 open Djambi.Api.Db.Interfaces
@@ -18,8 +19,59 @@ open Djambi.Api.Model.Configuration
 open Djambi.Api.Web
 open Djambi.Api.Db.Model
 open Newtonsoft.Json.Converters
+open Djambi.Api.Enums
 
 type Startup() =
+    static member AddDbContext (config: IConfiguration) (services: IServiceCollection) =
+        services.AddDbContext<DjambiDbContext>(fun opt -> 
+            let section = config.GetSection("Sql")
+            let couldParse, parsedBool = Boolean.TryParse(section.GetValue<string>("UseSqliteForTesting"))
+            
+            if true then
+                // Must use file, not in-memory Sqlite.
+                // Using in-memory results in foreign key violations when making more than one
+                // SQL command in a test. The data from the first command in saved in a DB instance that
+                // is gone by the time the second command executes.
+                opt.UseSqlite("Filename=Djambi-Sqlite.db") |> ignore
+            else
+                let cnStr = section.GetValue<string>("ConnectionString")
+                opt.UseMySql(cnStr) |> ignore
+        ) |> ignore
+
+    static member AddDatabaseLayer (services: IServiceCollection) =
+        services.AddScoped<IEventRepository, EventRepository>() |> ignore
+        services.AddScoped<IGameRepository, GameRepository>() |> ignore
+        services.AddScoped<IPlayerRepository, PlayerRepository>() |> ignore
+        services.AddScoped<ISearchRepository, SearchRepository>() |> ignore
+        services.AddScoped<ISessionRepository, SessionRepository>() |> ignore
+        services.AddScoped<ISnapshotRepository, SnapshotRepository>() |> ignore
+        services.AddScoped<IUserRepository, UserRepository>() |> ignore
+
+    static member AddLogicLayer (services: IServiceCollection) =
+        services.AddScoped<IEncryptionService, EncryptionService>() |> ignore
+        services.AddScoped<EventService>() |> ignore
+        services.AddScoped<GameCrudService>() |> ignore
+        services.AddScoped<GameStartService>() |> ignore
+        services.AddScoped<IndirectEffectsService>() |> ignore
+        services.AddScoped<INotificationService, NotificationService>() |> ignore
+        services.AddScoped<PlayerService>() |> ignore
+        services.AddScoped<PlayerStatusChangeService>() |> ignore
+        services.AddScoped<ISessionService, SessionService>() |> ignore
+        services.AddScoped<SelectionOptionsService>() |> ignore
+        services.AddScoped<SelectionService>() |> ignore
+        services.AddScoped<TurnService>() |> ignore
+    
+        services.AddScoped<IBoardManager, BoardManager>() |> ignore
+        services.AddScoped<ISearchManager, SearchManager>() |> ignore
+        services.AddScoped<ISessionManager, SessionManager>() |> ignore
+        services.AddScoped<ISnapshotManager, SnapshotManager>() |> ignore
+        services.AddScoped<IUserManager, UserManager>() |> ignore
+        // TODO: Break up game manager
+        services.AddScoped<IEventManager, GameManager>() |> ignore
+        services.AddScoped<IGameManager, GameManager>() |> ignore
+        services.AddScoped<IPlayerManager, GameManager>() |> ignore
+        services.AddScoped<ITurnManager, GameManager>() |> ignore
+
 
     member val Configuration : IConfiguration = (Config.config :> IConfiguration) with get, set
 
@@ -55,47 +107,12 @@ type Startup() =
         services.AddSingleton<Serilog.ILogger>(Log.Logger) |> ignore
 
         // Entity Framework
-        services.AddDbContext<DjambiDbContext>(fun opt -> 
-            let cnStr = __.Configuration.GetValue<string>("Sql:ConnectionString")
-            opt.UseMySql(cnStr) |> ignore
-            ()
-        ) |> ignore
+        services |> Startup.AddDbContext __.Configuration
 
         // Anything that depends on DbContext (repositories, services, managers) must be in Scoped or Transient mode
 
-        // Database layer
-        services.AddScoped<IEventRepository, EventRepository>() |> ignore
-        services.AddScoped<IGameRepository, GameRepository>() |> ignore
-        services.AddScoped<IPlayerRepository, PlayerRepository>() |> ignore
-        services.AddScoped<ISearchRepository, SearchRepository>() |> ignore
-        services.AddScoped<ISessionRepository, SessionRepository>() |> ignore
-        services.AddScoped<ISnapshotRepository, SnapshotRepository>() |> ignore
-        services.AddScoped<IUserRepository, UserRepository>() |> ignore
-
-        // Logic layer
-        services.AddScoped<IEncryptionService, EncryptionService>() |> ignore
-        services.AddScoped<EventService>() |> ignore
-        services.AddScoped<GameCrudService>() |> ignore
-        services.AddScoped<GameStartService>() |> ignore
-        services.AddScoped<IndirectEffectsService>() |> ignore
-        services.AddScoped<INotificationService, NotificationService>() |> ignore
-        services.AddScoped<PlayerService>() |> ignore
-        services.AddScoped<PlayerStatusChangeService>() |> ignore
-        services.AddScoped<ISessionService, SessionService>() |> ignore
-        services.AddScoped<SelectionOptionsService>() |> ignore
-        services.AddScoped<SelectionService>() |> ignore
-        services.AddScoped<TurnService>() |> ignore
-        
-        services.AddScoped<IBoardManager, BoardManager>() |> ignore
-        services.AddScoped<ISearchManager, SearchManager>() |> ignore
-        services.AddScoped<ISessionManager, SessionManager>() |> ignore
-        services.AddScoped<ISnapshotManager, SnapshotManager>() |> ignore
-        services.AddScoped<IUserManager, UserManager>() |> ignore
-        // TODO: Break up game manager
-        services.AddScoped<IEventManager, GameManager>() |> ignore
-        services.AddScoped<IGameManager, GameManager>() |> ignore
-        services.AddScoped<IPlayerManager, GameManager>() |> ignore
-        services.AddScoped<ITurnManager, GameManager>() |> ignore
+        services |> Startup.AddDatabaseLayer
+        services |> Startup.AddLogicLayer
 
         // Controller layer
         services.AddScoped<CookieProvider>() |> ignore
@@ -143,6 +160,11 @@ type Startup() =
         app.UseMiddleware<LoggingMiddelware>() |> ignore
         app.UseMiddleware<ErrorHandlingMiddleware>() |> ignore
 
+        if __.Configuration.GetValue<bool>("Sql:UseSqliteForTesting") then 
+            use serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope() 
+            let context = serviceScope.ServiceProvider.GetRequiredService<DjambiDbContext>()
+            context.Database.EnsureCreated() |> ignore
+           
         if __.Configuration.GetValue<bool>("WebServer:Enable")
         then configureWebServer(app) |> ignore
 
