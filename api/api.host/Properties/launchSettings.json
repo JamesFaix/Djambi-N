@@ -6,6 +6,7 @@
         "DJAMBI_Api__allowedOrigins": "http://localhost:8080,http://localhost:3000",
         "DJAMBI_Api__apiAddress": "http://localhost:5100",
         "DJAMBI_Api__cookieDomain": "localhost",
+        "DJAMBI_Api__enableSwagger": "false",
         "DJAMBI_Log__directory": "C:\\GitHub\\GamesFaix\\Djambi-N\\logs",
         "DJAMBI_Sql__connectionString": "Server=localhost,3306;Database=Apex2;Uid=root;Pwd=root;",
         "DJAMBI_Sql__useSqliteForTesting": "true",

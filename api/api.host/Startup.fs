@@ -130,8 +130,9 @@ type Startup() =
         services.AddSingleton<Serilog.ILogger>(Log.Logger) |> ignore
 
         // Swagger
-        services.AddSwaggerGen(fun opt -> configureSwagger opt) |> ignore
-        services.AddSwaggerGenNewtonsoftSupport() |> ignore
+        if __.Configuration.GetValue<bool>("Api:EnableSwagger") then
+            services.AddSwaggerGen(fun opt -> configureSwagger opt) |> ignore
+            services.AddSwaggerGenNewtonsoftSupport() |> ignore
 
         // Entity Framework
         services |> Startup.AddDbContext __.Configuration
@@ -205,8 +206,8 @@ type Startup() =
             endpoints.MapHealthChecks("/status") |> ignore
         ) |> ignore
 
-        app.UseSwagger() |> ignore
-        app.UseSwaggerUI(fun opt -> 
-            opt.SwaggerEndpoint("/swagger/v1/swagger.json", "Djambi API V1")        
-        ) |> ignore
-        ()
+        if __.Configuration.GetValue<bool>("Api:EnableSwagger") then
+            app.UseSwagger() |> ignore
+            app.UseSwaggerUI(fun opt -> 
+                opt.SwaggerEndpoint("/swagger/v1/swagger.json", "Djambi API V1")        
+            ) |> ignore

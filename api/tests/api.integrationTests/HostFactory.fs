@@ -6,13 +6,14 @@ open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.Hosting
 open Serilog
 open Djambi.Api.Host
+open Djambi.Api.Db.Model
 
 type Host(services : IServiceProvider) =
     member __.Get<'a>() = services.GetService<'a>()
 
 let private lockObj = obj()
 
-let private ensureDbCreatedSafe (dbContext : DbContext) =
+let private ensureDbCreatedSafe (dbContext : DjambiDbContext) =
     lock lockObj (fun () ->
         dbContext.Database.EnsureCreated() |> ignore)
 
