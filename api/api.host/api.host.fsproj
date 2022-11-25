@@ -10,7 +10,6 @@
     <DockerfileContext>..\..</DockerfileContext>
     <!--<PublishSingleFile>true</PublishSingleFile>-->
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-	  <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
   </PropertyGroup>
   <ItemGroup>
     <Content Include="appsettings.json">
