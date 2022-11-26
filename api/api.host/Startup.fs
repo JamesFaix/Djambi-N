@@ -1,17 +1,13 @@
 ﻿namespace Djambi.Api.Host
 
-open System
-open System.IO
 open Microsoft.AspNetCore.Builder
 open Microsoft.AspNetCore.Hosting
 open Microsoft.Extensions.Configuration
 open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.FileProviders
-open Microsoft.OpenApi.Models
 open Microsoft.EntityFrameworkCore
 
 open Serilog
-open Swashbuckle.AspNetCore.SwaggerGen
 
 open Djambi.Api.Db.Interfaces
 open Djambi.Api.Db.Repositories
@@ -20,9 +16,7 @@ open Djambi.Api.Logic.Managers
 open Djambi.Api.Logic.Services
 open Djambi.Api.Model.Configuration
 open Djambi.Api.Web
-open Djambi.Api.Web.Controllers
 open Djambi.Api.Db.Model
-open Djambi.Api.Enums
 open Newtonsoft.Json.Converters
 
 type Startup() =
@@ -30,25 +24,6 @@ type Startup() =
     member val Configuration : IConfiguration = (Config.config :> IConfiguration) with get, set
 
     member __.ConfigureServices(services : IServiceCollection) : unit =
-        let configureSwagger (opt : SwaggerGenOptions) : unit =
-            let version = "v1"
-
-            let info = OpenApiInfo()
-            info.Title <- "Djambi-N API"
-            info.Description <- "API for Djambi-N"
-            info.Version <- version
-
-            opt.SwaggerDoc(version, info)
-
-            let assemblies = [
-                typeof<UserController>.Assembly // Model and controllers
-                typeof<PlayerKind>.Assembly // Enums
-            ]
-
-            for a in assemblies do
-                let file = a.GetName().Name + ".xml"
-                let path = Path.Combine(AppContext.BaseDirectory, file)
-                opt.IncludeXmlComments(path)
 
         // ASP.NET
         services.AddCors(fun opt ->
@@ -78,10 +53,6 @@ type Startup() =
 
         // Serilog
         services.AddSingleton<Serilog.ILogger>(Log.Logger) |> ignore
-
-        // Swagger
-        services.AddSwaggerGen(fun opt -> configureSwagger opt) |> ignore
-        services.AddSwaggerGenNewtonsoftSupport() |> ignore
 
         // Entity Framework
         services.AddDbContext<DjambiDbContext>(fun opt -> 
@@ -184,9 +155,4 @@ type Startup() =
             endpoints.MapControllers() |> ignore
             endpoints.MapHealthChecks("/status") |> ignore
         ) |> ignore
-
-        app.UseSwagger() |> ignore
-        app.UseSwaggerUI(fun opt -> 
-            opt.SwaggerEndpoint("/swagger/v1/swagger.json", "Djambi API V1")        
-        ) |> ignore
-        ()
+        

@@ -8,6 +8,7 @@
     <EnableDefaultContentItems>false</EnableDefaultContentItems>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Content Include="appsettings.json">
@@ -54,7 +55,4 @@
   <ItemGroup>
     <PackageReference Update="FSharp.Core" Version="4.7.2" />
   </ItemGroup>
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="dotnet swagger tofile --output $(OutDir)openapi.json $(OutDir)api.host.dll v1" />
-  </Target>
 </Project>
