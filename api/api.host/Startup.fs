@@ -1,5 +1,6 @@
 ﻿namespace Djambi.Api.Host
 
+open System
 open Microsoft.AspNetCore.Builder
 open Microsoft.AspNetCore.Hosting
 open Microsoft.Extensions.Configuration
