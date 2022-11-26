@@ -108,16 +108,16 @@ type Startup() =
         // regarding middleware order
     
         let configureWebServer(app : IApplicationBuilder) : IApplicationBuilder =
-            let isDefault (path : string) =
-                path = "/" || path = "/index.html"
-
             app.UseWhen(
                 (fun ctx ->
                     let path = ctx.Request.Path.ToString()
                     let mutable isPublic =
-                        path.StartsWith("/resources") ||
-                        path.StartsWith("/dist") ||
-                        isDefault path
+                        path = "/" ||
+                        path = "/index.html" ||
+                        path = "/bundle.js" ||
+                        path = "/bundle.js.map" ||
+                        path = "/manifest.json" ||
+                        path.StartsWith("/resources")
 
                     if __.Configuration.GetValue<bool>("WebServer:EnableDevelopmentMode") then
                         //This has to be allowed in development because of the React development packages.
