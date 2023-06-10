@@ -5,6 +5,7 @@ open Serilog.Events
 [<CLIMutable>]
 type SqlSettings = {
     connectionString : string
+    useSqliteForTesting: bool
 }
 
 [<CLIMutable>]
@@ -48,6 +49,7 @@ module AppSettings =
     let empty : AppSettings = {
         sql = {
             connectionString = ""
+            useSqliteForTesting = false
         }
         webServer = {
             enable = false

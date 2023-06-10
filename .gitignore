@@ -9,3 +9,5 @@ packages/
 *.zip
 *-local.session.sql
 rest-client-generator/openapi-generator-cli.jar
+Djambi-Sqlite.db*
+desktop-dist/
