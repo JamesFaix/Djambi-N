@@ -4,6 +4,18 @@ type title.txt
 echo.
 echo.
 
+echo Configuring server...
+setlocal enableextensions disabledelayedexpansion
+set search={app-directory}
+set replace=%cd:\=/%
+set textFile=%cd%\\server\\appsettings.json
+for /f "delims=" %%i in ('type "%textFile%" ^& break ^> "%textFile%" ') do (
+    set "line=%%i"
+    setlocal enabledelayedexpansion
+    >>"%textFile%" echo(!line:%search%=%replace%!
+    endlocal
+)
+
 echo Starting server...
 cd server
 start /b ./api.host.exe 1>NUL
