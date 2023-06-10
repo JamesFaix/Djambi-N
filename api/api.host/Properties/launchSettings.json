@@ -10,7 +10,7 @@
         "DJAMBI_Sql__connectionString": "Server=localhost,3306;Database=Apex2;Uid=root;Pwd=root;",
         "DJAMBI_Sql__useSqliteForTesting": "true",
         "DJAMBI_WebServer__enable": "true",
-        "DJAMBI_WebServer__webRoot": "C:\\GitHub\\GamesFaix\\Djambi-N\\web\\dist\\dev",
+        "DJAMBI_WebServer__webRoot": "C:\\Git\\GamesFaix\\Djambi-N\\web\\dist\\dev",
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "applicationUrl": "http://localhost:5100/",
